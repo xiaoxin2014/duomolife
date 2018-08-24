@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+    <include layout="@layout/layout_integral_lottery_prize"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingTop="40px"
+        android:visibility="visible"
+        android:gravity="center_vertical"
+        android:textColor="@color/yellow_bg_fsae"
+        android:textSize="34px"
+        android:text="我的夺宝码"
+        android:drawableRight="@drawable/att_integ_next"
+        android:id="@+id/tv_integral_lottery_mine_code"
+        android:layout_height="wrap_content" />
+</LinearLayout>

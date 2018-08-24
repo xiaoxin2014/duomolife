@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:Emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:paddingTop="25px">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_inv_user_avatar"
+            android:layout_width="72px"
+            android:layout_height="72px"
+            android:layout_gravity="top"
+            attr:civ_border_color="@color/circle_border_avatar"
+            attr:civ_border_width="1dp"
+            attr:layout_auto_basewidth = "height"/>
+        <!--评论信息-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="26px"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <!--个人信息-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <emojicon.EmojiconTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/tv_user_proName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="28px"
+                        app:emojiconSize = "16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_recommend_comment_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_below="@id/tv_user_proName"
+                        android:layout_marginTop="16px"
+                        android:gravity="center"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="24px" />
+                </LinearLayout>
+                <!--评论点赞-->
+                <TextView
+                    android:id="@+id/tv_mes_com_receiver"
+                    android:layout_width="100px"
+                    android:layout_height="52px"
+                    android:layout_marginLeft="20px"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:background="@drawable/border_cir_2dp_gray_c_s_trans"
+                    android:text="回复"
+                    android:textColor="@color/text_gray_hint_n"
+                    android:textSize="26px" />
+                <TextView
+                    android:id="@+id/tv_pro_comment_liked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20px"
+                    android:padding="10px"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/selector_article_liked"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="赞"
+                    android:textColor="@color/text_gray_hint_n"
+                    android:textSize="26px" />
+            </LinearLayout>
+            <emojicon.EmojiconTextView
+                android:id="@+id/tv_receiver_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
+                android:layout_marginTop="28px"
+                android:layout_marginBottom="24px"
+                android:textColor="@color/text_black_t"
+                android:textSize="30px"
+                android:visibility="visible"
+                Emojicon:emojiconSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+

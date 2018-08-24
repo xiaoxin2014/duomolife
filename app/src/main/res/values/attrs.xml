@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <attr name="radius" format="dimension" />
+    <attr name="type">
+        <enum name="circle" value="0" />
+        <enum name="round" value="1" />
+    </attr>
+    <declare-styleable name="FlowLayout">
+        <attr name="horizontalSpacing" format="dimension" />
+        <attr name="verticalSpacing" format="dimension" />
+        <attr name="orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="debugDraw" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_LayoutParams">
+        <attr name="layout_newLine" format="boolean" />
+        <attr name="layout_horizontalSpacing" format="dimension" />
+        <attr name="layout_verticalSpacing" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="RoundImageView1">
+        <attr name="radius" />
+        <attr name="type" />
+    </declare-styleable>
+    <declare-styleable name="TagFlowLayout">
+        <attr name="auto_select_effect" format="boolean"></attr>
+        <attr name="max_select" format="integer"></attr>
+        <attr name="gravity">
+            <enum name="left" value="-1" />
+            <enum name="center" value="0" />
+            <enum name="right" value="1" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="BadgedImageView">
+        <attr name="badgeColor" format="color|reference" />
+        <attr name="badgeText" format="string|reference" />
+        <attr name="badgeTextSize" format="dimension|reference" />
+        <attr name="badgeTextColor" format="color|reference" />
+        <attr name="badgePadding" format="dimension|reference" />
+        <attr name="badgeWidthRatio" format="integer" />
+        <attr name="badgeHeightRatio" format="integer" />
+        <attr name="badgeCornerRadius" format="dimension|reference" />
+    </declare-styleable>
+    <declare-styleable name="CircleBadgedView">
+        <attr name="circleBadgeGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x30" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x50" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="left" value="0x03" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="right" value="0x05" />
+            <!-- Push object to the beginning of its container, not changing its size. -->
+            <flag name="start" value="0x00800003" />
+            <!-- Push object to the end of its container, not changing its size. -->
+            <flag name="end" value="0x00800005" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="lbBaseGridView">
+
+        <!--
+             Allow DPAD key to navigate out at the front of the View (where position = 0),
+             default is false
+        -->
+        <attr name="focusOutFront" format="boolean" />
+        <!-- Allow DPAD key to navigate out at the end of the view, default is false -->
+        <attr name="focusOutEnd" format="boolean" />
+        <!-- Defining margin between two items horizontally -->
+        <attr name="horizontalMargin" format="dimension" />
+        <!-- Defining margin between two items vertically -->
+        <attr name="verticalMargin" format="dimension" />
+        <!-- Defining gravity of child view -->
+        <attr name="android:gravity" />
+    </declare-styleable>
+
+    <declare-styleable name="lbHorizontalGridView">
+        <!-- Defining height of each row of HorizontalGridView -->
+        <attr name="rowHeight" format="dimension">
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <!-- Defining number of rows -->
+        <attr name="numberOfRows" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="EmojiconStyle">
+        <attr name="emojiconGridViewStyle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="Emojicon">
+        <attr name="emojiconSize" format="dimension" />
+        <attr name="emojiconAlignment" format="enum">
+            <enum name="bottom" value="0" />
+            <enum name="baseline" value="1" />
+        </attr>
+        <attr name="emojiconTextStart" format="integer" />
+        <attr name="emojiconTextLength" format="integer" />
+        <attr name="emojiconUseSystemDefault" format="boolean" />
+    </declare-styleable>
+    <!--星星评分-->
+    <declare-styleable name="ProperRatingBar">
+        <!-- Total number of ticks to show. Default is '5' -->
+        <attr name="prb_totalTicks" format="integer" />
+        <!-- Use this to set rating from xml. Default is '3' -->
+        <attr name="prb_defaultRating" format="integer" />
+        <!-- If set to 'true' - use will be able to change rating by clicking. Default is 'false' -->
+        <attr name="prb_clickable" format="boolean" />
+        <!-- Symbol to be used as a tick. Default is '$' -->
+        <attr name="prb_symbolicTick" format="string" />
+        <!-- Text size of symbolic tick. Default is '15sp' -->
+        <attr name="android:textSize" />
+        <!-- Text style of symbolic tick. Possible: 'bold', 'italic', 'normal'. Default is 'normal'. -->
+        <attr name="android:textStyle" />
+        <!-- Color of symbolic tick that is not select (not rated). Default is '#FF000000' (black). -->
+        <attr name="prb_symbolicTickNormalColor" format="reference|color" />
+        <!-- Color of symbolic tick that is select (rated). Default is '#FF888888' (gray). -->
+        <attr name="prb_symbolicTickSelectedColor" format="reference|color" />
+        <!-- Drawable resource to use as a tick that is not select (not rated). No default value. -->
+        <attr name="prb_tickNormalDrawable" format="reference" />
+        <!-- Drawable resource to use as a tick that is select (rated). No default value. -->
+        <attr name="prb_tickSelectedDrawable" format="reference" />
+        <!-- Margin to be applied to tick drawables. Only applies to drawable-type ticks. Default is '1dp' (gray). -->
+        <attr name="prb_tickSpacing" format="dimension" />
+    </declare-styleable>
+    <item name="prb_tick_tag_id" type="id" />
+    <!--刷新控件-->
+    <declare-styleable name="SwipeRefreshLayout">
+        <attr name="srl_direction">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="both" value="2" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="ProgressLayout">
+        <attr name="progressLoadingStateBackgroundColor" format="color" />
+        <attr name="progressEmptyStateBackgroundColor" format="color" />
+        <attr name="progressErrorStateBackgroundColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="CircleTextView">
+        <attr name="ct_backgroundColor" format="color" />
+        <attr name="ct_border_width" format="dimension" />
+        <attr name="ct_border_color" format="color" />
+        <attr name="ct_border_alpha" format="float" />
+        <attr name="ct_type" format="enum">
+            <enum name="shadow_gradual" value="1" />
+            <enum name="shadow_alpha" value="2" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="LineCircleView">
+        <attr name="lt_border_width" format="dimension" />
+        <attr name="lt_line_sel_color" format="color" />
+        <attr name="lt_line_un_color" format="color" />
+    </declare-styleable>
+    <!--发现左上角标签 推荐 被推荐-->
+    <declare-styleable name="LabelView">
+        <!-- 设置文字内容 -->
+        <attr name="lv_text" format="string" />
+        <!-- 设置文字颜色,默认#ffffff -->
+        <attr name="lv_text_color" format="color" />
+        <!-- 设置文字大小,默认11sp -->
+        <attr name="lv_text_size" format="dimension" />
+        <!-- 设置文字是否支持加粗,默认true -->
+        <attr name="lv_text_bold" format="boolean" />
+        <!-- 设置文字是否支持全部大写,默认true-->
+        <attr name="lv_text_all_caps" format="boolean" />
+        <!-- 设置背景颜色,默认"#FF4081"-->
+        <attr name="lv_background_color" format="color" />
+        <!-- 设置LabelView所在矩形最小宽高,默认mFillTriangle?35dp:50dp-->
+        <attr name="lv_min_size" format="dimension" />
+        <!-- 设置文字上下padding,默认3.5dp,mFillTriangle为true时无效-->
+        <attr name="lv_padding" format="dimension" />
+        <!-- 设置LabelView方向 -->
+        <attr name="lv_gravity" format="enum">
+            <enum name="TOP_LEFT" value="51" />
+            <enum name="TOP_RIGHT" value="53" />
+            <enum name="BOTTOM_LEFT" value="83" />
+            <enum name="BOTTOM_RIGHT" value="85" />
+        </attr>
+        <!-- 设置是否填充三角区域,默认false -->
+        <attr name="lv_fill_triangle" format="boolean" />
+
+    </declare-styleable>
+    <declare-styleable name="AlignTextView">
+        <attr name="align" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+    </declare-styleable>
+
+    <!-- 标点转换 -->
+    <declare-styleable name="CBAlignTextView">
+        <attr name="punctuationConvert" format="boolean"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_bg"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line">
+
+        <include layout="@layout/activity_domolife_header" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:divider="@drawable/divider_ll_10dp_gray_bg"
+            android:showDividers="middle"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/ll_mine_personal"
+                android:divider="@drawable/item_divider_gray_f_two_px"
+                android:showDividers="middle"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_mine_setting_per"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30px"
+                    android:paddingRight="36px"
+                    android:text="个人信息"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px" />
+                <TextView
+                    android:id="@+id/tv_mine_setting_account_safe"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30px"
+                    android:paddingRight="36px"
+                    android:text="账户安全"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px" />
+                <TextView
+                    android:visibility="visible"
+                    android:id="@+id/tv_mine_setting_mes"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30px"
+                    android:paddingRight="36px"
+                    android:text="消息推送"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="30px"
+                        android:text="地址管理"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="30px" />
+
+                    <TextView
+                        android:id="@+id/tv_mine_setting_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:drawableRight="@drawable/right_btn_nor"
+                        android:drawablePadding="@dimen/dimen_6_dp"
+                        android:layout_marginLeft="82px"
+                        android:gravity="left|center_vertical"
+                        android:lines="1"
+                        android:ellipsize="end"
+                        android:paddingRight="36px"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="26px" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:divider="@drawable/item_divider_gray_f_two_px"
+                android:showDividers="middle">
+
+                <TextView
+                    android:id="@+id/tv_setting_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30px"
+                    android:paddingRight="36px"
+                    android:text="关于多么生活"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px" />
+                <TextView
+                    android:id="@+id/tv_setting_good"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30px"
+                    android:paddingRight="36px"
+                    android:text="给个好评"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px" />
+                <TextView
+                    android:id="@+id/tv_setting_sug"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30px"
+                    android:paddingRight="36px"
+                    android:text="意见反馈"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:clickable="true"
+                    android:id="@+id/rel_mine_cache"
+                    android:layout_height="114px">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="30px"
+                        android:gravity="center_vertical"
+                        android:text="清理缓存"
+                        android:paddingLeft="30px"
+                        android:layout_height="match_parent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center_vertical"
+                        android:paddingRight="36px"
+                        android:text="0.00B"
+                        android:clickable="true"
+                        android:textSize="28px"
+                        android:id="@+id/tv_set_clear_cache"
+                        android:layout_height="match_parent" />
+                </RelativeLayout>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_set_account_exit"
+                android:layout_width="match_parent"
+                android:layout_height="104px"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:gravity="center"
+                android:paddingLeft="30px"
+                android:paddingRight="36px"
+                android:text="退出登录"
+                android:textColor="@color/text_normal_red"
+                android:textSize="32px" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

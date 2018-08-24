@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/white"
+    android:paddingLeft="30px"
+    android:paddingRight="30px"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:lineSpacingExtra="@dimen/dimen_4dp"
+        android:id="@+id/tv_integral_introduce_pro_n"
+        android:textColor="@color/text_black_t"
+        android:textSize="32px"
+        android:lines="1"
+        android:ellipsize="end"
+        android:layout_marginTop="20px"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:layout_marginTop="40px"
+        android:layout_marginBottom="42px"
+        android:layout_gravity="bottom"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_integral_introduce_price"
+            android:textSize="24px"
+            android:minHeight="40px"
+            android:gravity="bottom"
+            android:textColor="@color/text_b_red_color"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginLeft="46px"
+            android:paddingRight="@dimen/gap_right"
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_integral_introduce_mk"
+            android:textSize="24px"
+            android:textColor="@color/text_gray_hint_n"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

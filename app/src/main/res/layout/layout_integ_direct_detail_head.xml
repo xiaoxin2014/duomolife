@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:divider="@drawable/divider_ll_10dp_gray_bg"
+    android:showDividers="end"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_indent_border_first_gray"
+        android:textSize="30px"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_login_gray_s"
+        android:background="@color/bg_light_blue_e"
+        android:layout_height="100px" />
+    <include layout="@layout/layout_recycler_top_address_default" />
+</LinearLayout>

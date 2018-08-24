@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="26px"
+        android:gravity="center"
+        android:layout_marginRight="30px"
+        android:layout_marginBottom="20px"
+        android:id="@+id/tv_product_sort_type"
+        android:background="@drawable/sel_cir_five_za_blue_dn_gray_select"
+        android:textColor="@color/sel_font_za_blue_tr_black_select"
+        android:layout_height="56px" />
+</RelativeLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="226px"
+    android:layout_height="226px"
+    android:background="@color/white"
+    app:layout_auto_basewidth = "height">
+    <ImageView
+        android:layout_width="match_parent"
+        android:id="@+id/iv_mine_bg_img"
+        android:scaleType="centerCrop"
+        android:background="@drawable/border_dot_line"
+        android:layout_height="match_parent" />
+</FrameLayout>

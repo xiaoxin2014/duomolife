@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/dl_ql_search"
+    android:layout_height="match_parent">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:layout_height="match_parent">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <include layout="@layout/layout_ql_cart_share_header"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/rel_article_bottom"
+                android:layout_height="wrap_content">
+                <include layout="@layout/layout_comment_edit"/>
+                <include layout="@layout/layout_article_comment_bottom"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <include layout="@layout/layout_slide_menu_tag"/>
+    </FrameLayout>
+    <include layout="@layout/layout_slid_draw_pro"/>
+</android.support.v4.widget.DrawerLayout>

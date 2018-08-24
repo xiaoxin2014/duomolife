@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_ql_cart_share_header" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/smart_refresh_ql_sp_details"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1">
+
+                <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <android.support.v4.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.bigkoo.convenientbanner.ConvenientBanner
+                                android:id="@+id/banner_ql_gp_sp_details"
+                                android:layout_width="match_parent"
+                                android:layout_height="750px"
+                                android:visibility="visible"
+                                app:layout_auto_basewidth="height" />
+
+                            <TextView
+                                android:id="@+id/tv_ql_gp_sp_new_detail"
+                                android:layout_width="116px"
+                                android:layout_height="74px"
+                                android:layout_marginLeft="20px"
+                                android:background="@drawable/ql_gp_detail_icon"
+                                android:gravity="center"
+                                android:text="邀新团"
+                                android:textColor="@color/white"
+                                android:textSize="28px"
+                                android:visibility="gone" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/rel_ql_gp_sp_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20px"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="30px"
+                            android:paddingRight="30px">
+
+                            <TextView
+                                android:id="@+id/tv_open_pro_label"
+                                android:layout_width="60px"
+                                android:layout_height="32px"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/border_circle_two_str_solid_red"
+                                android:gravity="center"
+                                android:text="拼团"
+                                android:textColor="@color/white"
+                                android:textSize="22px" />
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="16px"
+                                android:layout_toRightOf="@id/tv_open_pro_label">
+
+                                <include layout="@layout/layout_down_time_prodetails" />
+                            </RelativeLayout>
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/tv_ql_sp_pro_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18px"
+                            android:maxLines="2"
+                            android:paddingLeft="30px"
+                            android:paddingRight="30px"
+                            android:text="商品名字商品名字"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="28px" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="28px"
+                            android:paddingLeft="30px"
+                            android:paddingRight="20px">
+
+                            <include layout="@layout/layout_ql_gp_sp_price" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:divider="@drawable/divider_ll_10dp_gray_bg"
+                            android:orientation="vertical"
+                            android:showDividers="middle">
+
+                            <LinearLayout
+                                android:id="@+id/ll_layout_pro_tag"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="21px"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingLeft="36px">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center">
+
+                                    <include layout="@layout/activity_hot_search_tag" />
+                                </RelativeLayout>
+
+                                <ImageView
+                                    android:id="@+id/iv_ql_gp_sp_dig"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:minHeight="68px"
+                                    android:paddingLeft="10px"
+                                    android:paddingRight="26px"
+                                    android:src="@drawable/right_btn_nor" />
+                            </LinearLayout>
+
+                            <include layout="@layout/layout_communal_recycler_wrap" />
+
+                            <com.flyco.tablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                                android:id="@+id/ctb_ql_gp_sp_tab"
+                                android:layout_width="match_parent"
+                                android:layout_height="88px"
+                                android:layout_marginBottom="@dimen/dimen_1dp"
+                                android:background="@drawable/border_bottom_line"
+                                tl:tl_iconMargin="@dimen/dimen_1dp"
+                                tl:tl_indicator_color="@color/text_normal_red"
+                                tl:tl_indicator_corner_radius="1px"
+                                tl:tl_indicator_gravity="BOTTOM"
+                                tl:tl_indicator_height="@dimen/dimen_1dp"
+                                tl:tl_indicator_width="@dimen/dimen_60dp"
+                                tl:tl_tab_space_equal="true"
+                                tl:tl_textSelectColor="@color/text_normal_red"
+                                tl:tl_textUnselectColor="@color/text_black_t"
+                                tl:tl_textsize="15sp" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/fl_ql_sp_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
+            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+            <include layout="@layout/layout_ql_gp_sp_details_bottom" />
+        </LinearLayout>
+
+        <include layout="@layout/communal_loading_empty_error" />
+    </FrameLayout>
+</LinearLayout>

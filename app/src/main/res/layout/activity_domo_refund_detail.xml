@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_duomolife_indent_header" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sv_layout_refund_detail"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_light_blue_e"
+                android:minHeight="200px"
+                android:paddingBottom="30px"
+                android:paddingLeft="@dimen/gap_left"
+                android:paddingRight="@dimen/gap_right"
+                android:paddingTop="52px">
+
+                <TextView
+                    android:id="@+id/tv_refund_detail_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="申请通过"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_refund_detail_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_refund_detail_status"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="30px"
+                    android:lineSpacingExtra="@dimen/dimen_7_dp"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="24px" />
+
+                <LinearLayout
+                    android:id="@+id/ll_refund_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_refund_detail_msg"
+                    android:layout_marginTop="20px"
+                    android:visibility="visible"
+                    android:gravity="center_vertical|right"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_refund_first"
+                        android:layout_width="160px"
+                        android:layout_height="58px"
+                        android:layout_below="@id/tv_refund_detail_status"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/border_cir_2dp_gray_c_s_trans"
+                        android:clickable="true"
+                        android:visibility="visible"
+                        android:gravity="center"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="24px" />
+
+                    <TextView
+                        android:id="@+id/tv_refund_second"
+                        android:layout_width="160px"
+                        android:layout_height="58px"
+                        android:visibility="visible"
+                        android:layout_below="@id/tv_refund_detail_status"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20px"
+                        android:background="@drawable/border_cir_2dp_gray_c_s_trans"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="24px" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_refund_logistic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/divider_ll_10dp_gray_bg"
+                android:orientation="vertical"
+                android:paddingTop="40px"
+                android:showDividers="end"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:paddingRight="@dimen/gap_right">
+
+                    <TextView
+                        android:id="@+id/tv_refund_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="收货地址:"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+                    <TextView
+                        android:layout_toRightOf="@id/tv_refund_add"
+                        android:id="@+id/tv_repair_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="@dimen/dimen_8_dp"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10px"
+                        android:layout_toRightOf="@id/tv_refund_add"
+                        android:layout_below="@id/tv_repair_address"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tv_repair_consignee_phone"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/text_black_t"
+                            android:layout_marginRight="12px"
+                            android:textSize="28px" />
+                        <include layout="@layout/layout_communal_copy_text_button"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_refund_logistic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30px"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:paddingRight="@dimen/gap_right"
+                    android:text="物流公司*"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="28px" />
+
+                <TextView
+                    android:id="@+id/tv_refund_logistic_sel"
+                    android:layout_width="match_parent"
+                    android:layout_height="80px"
+                    android:layout_marginLeft="@dimen/gap_left"
+                    android:layout_marginRight="@dimen/gap_right"
+                    android:layout_marginTop="20px"
+                    android:paddingLeft="30px"
+                    android:paddingRight="@dimen/gap_right"
+                    android:background="@drawable/border_cir_4dp_gray_bg"
+                    android:drawableRight="@drawable/sel_bt_top_bot_icon"
+                    android:gravity="center_vertical"
+                    android:hint="请选择物流公司"
+                    android:textColor="@color/text_black_t"
+                    android:textColorHint="@color/text_gray_c"
+                    android:textSize="28px" />
+
+                <TextView
+                    android:id="@+id/tv_refund_logistic_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30px"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:text="物流单号*"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="28px" />
+
+                <EditText
+                    android:id="@+id/et_refund_logistic_no"
+                    android:layout_width="match_parent"
+                    android:singleLine="true"
+                    android:layout_height="80px"
+                    android:layout_marginBottom="40px"
+                    android:layout_marginLeft="@dimen/gap_left"
+                    android:layout_marginRight="@dimen/gap_right"
+                    android:layout_marginTop="20px"
+                    android:paddingLeft="30px"
+                    android:background="@drawable/border_cir_4dp_gray_bg"
+                    android:gravity="center_vertical"
+                    android:hint="请输入物流单号"
+                    android:textColor="@color/text_black_t"
+                    android:textColorHint="@color/text_gray_c"
+                    android:textSize="28px" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:id="@+id/rel_repair_logistic_fee"
+                    android:visibility="gone"
+                    android:layout_marginLeft="@dimen/gap_left"
+                    android:layout_marginRight="@dimen/gap_right"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_refund_logistic_fee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="运费*"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <EditText
+                        android:layout_below="@id/tv_refund_logistic_fee"
+                        android:id="@+id/et_refund_logistic_fee"
+                        android:layout_width="match_parent"
+                        android:singleLine="true"
+                        android:layout_height="80px"
+                        android:layout_marginBottom="40px"
+                        android:layout_marginTop="20px"
+                        android:paddingLeft="30px"
+                        android:background="@drawable/border_cir_4dp_gray_bg"
+                        android:gravity="center_vertical"
+                        android:hint="￥"
+                        android:textColor="@color/text_black_t"
+                        android:textColorHint="@color/text_gray_c"
+                        android:textSize="28px" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bottom_line">
+
+                <include layout="@layout/layout_direct_indent_product_item" />
+            </RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:scrollbars="none"
+                android:id="@+id/rv_refund_type"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="80px"
+            android:layout_marginLeft="@dimen/gap_left"
+            android:layout_marginRight="@dimen/gap_right"
+            layout="@layout/layout_direct_refund_submit" />
+
+        <include layout="@layout/layout_wheel_one" />
+    </RelativeLayout>
+</LinearLayout>

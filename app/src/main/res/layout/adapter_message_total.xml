@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="104px"
+        android:gravity="center_vertical">
+
+        <FrameLayout
+            android:id="@+id/fra_home_message_total"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_mes_total"
+                android:layout_width="87px"
+                android:layout_height="45px"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="27px"
+                android:paddingRight="20px"
+                android:src="@drawable/home_mes_icon" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_mes_total_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="105px"
+            android:layout_weight="1"
+            android:textColor="@color/text_black_t"
+            android:textSize="32px" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="30px"
+            android:src="@drawable/att_integ_next" />
+    </RelativeLayout>
+</RelativeLayout>

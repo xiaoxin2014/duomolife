@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tb_indent_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="88px"
+    android:background="@drawable/sel_bg_border_gray_white"
+    app:contentInsetStart="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80px"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_indent_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:drawableLeft="@drawable/common_back_btn_nor"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="26px"
+            android:textColor="@color/home_text_color"
+            android:textSize="32px" />
+
+        <TextView
+            android:layout_centerInParent="true"
+            android:id="@+id/tv_indent_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="多么订单"
+            android:textColor="@color/home_text_color"
+            android:textSize="32px" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/iv_indent_search"
+                android:layout_width="82px"
+                android:layout_height="match_parent"
+                android:paddingTop="18px"
+                android:paddingBottom="18px"
+                android:layout_gravity="center_vertical|right"
+                android:src="@drawable/indent_search_icon"
+                android:scaleType="centerCrop"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/gap_left"
+                android:paddingRight="26px"/>
+            <FrameLayout
+                android:layout_width="90px"
+                android:layout_gravity="center_vertical"
+                android:layout_height="82px"
+                android:id="@+id/fl_service"
+                app:layout_auto_basewidth = "height">
+                <ImageView
+                    android:id="@+id/iv_indent_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical|right"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="22px"
+                    android:visibility="visible"
+                    android:paddingRight="22px"
+                    android:src="@drawable/service_gray"
+                    android:textColor="@color/selector_mine_warm_time" />
+                <ProgressBar
+                    android:id="@+id/pb_down_invoice"
+                    android:layout_width="50px"
+                    android:layout_height="50px"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
+                    android:indeterminateBehavior="repeat" />
+            </FrameLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</com.amkj.dmsh.views.autoviews.AutoToolbar>

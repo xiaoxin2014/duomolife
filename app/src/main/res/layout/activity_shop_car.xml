@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1">
+                <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel_shop_car_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="98px"
+                android:paddingTop="1px"
+                android:background="@drawable/border_top_line"
+                android:layout_gravity="bottom">
+
+                <include layout="@layout/layout_shopcar_del" />
+
+                <include layout="@layout/layout_communal_settlement" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <include layout="@layout/shop_car_loading_empty_error" />
+    </FrameLayout>
+</LinearLayout>

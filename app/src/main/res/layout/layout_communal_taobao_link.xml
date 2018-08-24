@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:id="@+id/iv_communal_tb_cover"
+        android:visibility="gone"
+        android:adjustViewBounds="true"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_communal_tb_link"
+        android:textSize="30px"
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:paddingTop="10px"
+        android:clickable="true"
+        android:paddingBottom="10px"
+        android:textColor="@color/text_blue_sev"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

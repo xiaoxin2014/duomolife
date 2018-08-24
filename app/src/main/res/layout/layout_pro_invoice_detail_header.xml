@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:divider="@drawable/item_divider_five_gray_f"
+    android:showDividers="end"
+    android:gravity="center_vertical"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_indent_invoice_header_type"
+            android:paddingTop="5px"
+            android:text="订单已完成"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/text_black_t"
+            android:textSize="36px" />
+    </LinearLayout>
+
+    <TextView
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:id="@+id/tv_indent_invoice_orderID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16px"
+        android:ellipsize="end"
+        android:lines="1"
+        android:longClickable="true"
+        android:textColor="@color/text_black_t"
+        android:textSize="24px" />
+
+    <TextView
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:id="@+id/tv_indent_invoice_orderTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16px"
+        android:ellipsize="end"
+        android:gravity="top"
+        android:lines="1"
+        android:textColor="@color/text_black_t"
+        android:textSize="24px"
+        android:paddingBottom="30px"/>
+</LinearLayout>

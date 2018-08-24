@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/tv_search_details_title"
+        android:layout_width="match_parent"
+        android:layout_height="60px"
+        android:gravity="center_vertical"
+        android:background="@color/gray_bg"
+        android:paddingLeft="32px"
+        android:layout_weight="1"
+        android:textColor="@color/home_text_color"
+        android:textSize="32px" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:paddingBottom="14px"
+        android:paddingLeft="24px"
+        android:paddingRight="26px"
+        android:paddingTop="14px"
+        android:gravity="center">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/search_details_user_header"
+            android:layout_width="90px"
+            android:layout_height="90px"
+            android:layout_centerHorizontal="true"
+            attr:civ_border_color="@color/circle_border_avatar"
+            attr:civ_border_width="@dimen/dimen_1dp"
+            attr:layout_auto_basewidth = "height"/>
+
+        <emojicon.EmojiconTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tv_search_details_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32px"
+            android:layout_weight="1"
+            android:textColor="@color/home_text_color"
+            android:textSize="32px"
+            app:emojiconSize = "18sp"/>
+    </LinearLayout>
+
+</LinearLayout>

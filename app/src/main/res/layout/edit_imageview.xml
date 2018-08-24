@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingLeft="@dimen/dimen_8dp"
+    android:paddingRight="@dimen/dimen_8dp"
+    android:layout_height="wrap_content" >
+
+    <com.amkj.dmsh.views.richeditor.DataImageView
+        android:id="@+id/edit_imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY" />
+
+    <ImageView
+        android:id="@+id/image_close"
+        android:layout_width="@dimen/dimen_50dp"
+        android:layout_height="@dimen/dimen_50dp"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="@dimen/dimen_20_dp"
+        android:paddingLeft="@dimen/dimen_20_dp"
+        android:paddingRight="@dimen/dimen_5_dp"
+        android:paddingTop="@dimen/dimen_5_dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/delete_btn_sel" />
+</RelativeLayout>

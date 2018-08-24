@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:background="@drawable/border_top_bottom_line"
+    android:paddingBottom="30px"
+    android:paddingLeft="24px"
+    android:paddingRight="30px"
+    android:paddingTop="30px">
+
+    <ImageView
+        android:id="@+id/iv_ql_bl_product"
+        android:layout_width="176px"
+        android:layout_height="176px"
+        android:scaleType="centerCrop"
+        app:layout_auto_basewidth="height" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="30px">
+
+        <TextView
+            android:id="@+id/tv_ql_bl_pro_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/text_black_t"
+            android:textSize="28px" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginTop="22px"
+                android:id="@+id/tv_ql_bl_pro_rec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/sel_font_red_n_gray"
+                android:textSize="24px" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="22px">
+
+            <TextView
+                android:id="@+id/tv_ql_bl_pro_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                android:textColor="@color/sel_font_b_gray_un_red"
+                android:textSize="30px" />
+
+            <ImageView
+                android:id="@+id/iv_ql_bl_add_car"
+                android:padding="15px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/sel_ql_shop_b_car" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

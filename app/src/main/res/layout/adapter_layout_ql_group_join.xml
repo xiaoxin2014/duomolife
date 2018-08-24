@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center"
+    android:paddingTop="15px"
+    android:orientation="vertical">
+    <include layout="@layout/layout_communal_time_countdown_bg" />
+    <TextView
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_marginTop="30px"
+        android:text="盼你就像盼星星盼月亮，就差你了"
+        android:textSize="28px"
+        android:layout_height="wrap_content" />
+    <View
+        android:layout_width= "match_parent"
+        android:layout_marginTop="15px"
+        android:background="@color/gray_bg"
+        android:layout_height="@dimen/dp_10" />
+</LinearLayout>

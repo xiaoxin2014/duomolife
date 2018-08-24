@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line">
+        <include layout="@layout/activity_search_header" />
+    </LinearLayout>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ll_search_history"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:gravity="center_vertical"
+                    android:layout_height="80px">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="60px"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px"
+                        android:gravity="center_vertical"
+                        android:text="搜索历史"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:paddingLeft="20px"
+                        android:paddingRight="20px"
+                        android:id="@+id/iv_search_record"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/search_trush_icon"
+                        android:layout_height="match_parent" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="26px"
+                    android:layout_marginRight="26px"
+                    android:layout_height="wrap_content">
+                    <com.amkj.dmsh.views.flowlayout.TagFlowLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/tfl_search_history"
+                        app:max_select="-1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    </com.amkj.dmsh.views.flowlayout.TagFlowLayout>
+                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ll_search_hot"
+                android:layout_marginTop="20px"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:gravity="center_vertical"
+                    android:layout_height="80px">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_height="60px"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px"
+                        android:gravity="center_vertical"
+                        android:layout_centerVertical="true"
+                        android:text="热门搜索" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="26px"
+                    android:layout_marginRight="26px"
+                    android:layout_height="wrap_content">
+                    <com.amkj.dmsh.views.flowlayout.TagFlowLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/tfl_search_hot"
+                        app:max_select="-1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    </com.amkj.dmsh.views.flowlayout.TagFlowLayout>
+                </RelativeLayout>
+            </LinearLayout>
+            <com.amkj.dmsh.views.DrawableCenterTextView
+                android:layout_width="match_parent"
+                android:layout_marginTop="30px"
+                android:background="@color/light_gray_f"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/dimen_10_dp"
+                android:drawableLeft="@drawable/search_leave_mes_icon"
+                android:textColor="@color/text_login_gray_s"
+                android:clickable="true"
+                android:id="@+id/tv_search_leave_mes"
+                android:text="@string/search_leave_mes"
+                android:textSize="28px"
+                android:layout_height="88px" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

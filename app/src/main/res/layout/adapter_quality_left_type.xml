@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingTop="50px"
+        android:textColor="@color/sel_font_blue_gray_s_sel"
+        android:paddingBottom="50px"
+        android:id="@+id/tv_quality_type"
+        android:gravity="center"
+        android:textSize="28px"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

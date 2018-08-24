@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="46px"
+    android:paddingRight="36px">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingBottom="25px"
+        android:paddingRight="25px"
+        android:paddingTop="25px">
+
+        <TextView
+            android:id="@+id/tv_att_obt_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black_t"
+            android:textSize="30px" />
+
+        <TextView
+            android:id="@+id/tv_att_obt_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_below="@id/tv_att_obt_title"
+            android:layout_marginTop="12px"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="22px" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/bt_att_integ_complete"
+            android:layout_width="125px"
+            android:layout_height="52px"
+            android:visibility="gone"
+            android:clickable="false"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/sel_border_cir_thr_lblue_white"
+            android:textColor="@color/selector_font_white_black"
+            android:textSize="28px" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:id="@+id/iv_att_integ_skip"
+            android:layout_gravity="right|center_vertical"
+            android:src="@drawable/att_integ_next"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="84px"
+        android:paddingRight="84px"
+        android:layout_weight="1">
+
+        <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="40px"
+        android:paddingLeft="84px"
+        android:paddingRight="84px"
+        android:id="@+id/rel_habit_type"
+        android:visibility="gone"
+        android:paddingTop="40px">
+
+        <TextView
+            android:id="@+id/tv_habit_type_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="80px"
+            android:background="@drawable/border_civ_four_solid_blue_sev"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="32px" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|bottom"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_gp_sp_per_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ql_gp_sp_per"
+        android:drawablePadding="@dimen/dimen_5_dp"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="24px" />
+
+    <TextView
+        android:id="@+id/tv_gp_sp_per_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18px"
+        android:textColor="@color/text_normal_red"
+        android:textSize="30px" />
+
+    <TextView
+        android:id="@+id/tv_gp_sp_nor_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30px"
+        android:textColor="@color/text_gray_hint_n"
+        android:textSize="24px" />
+</LinearLayout>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/white">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="center"
+            android:layerType="software"
+            android:background="@drawable/dotted_line" />
+
+        <ImageView
+            android:id="@+id/iv_attendance_award_icon"
+            android:layout_width="35px"
+            android:layout_height="35px"
+            android:layout_gravity="center"
+            android:src="@drawable/sel_attendance_award"
+            app:layout_auto_basewidth = "height"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_attendance_award_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18px"
+        android:text="周日"
+        android:textColor="@color/sel_font_gray_s_gray_n"
+        android:textSize="24px" />
+</LinearLayout>

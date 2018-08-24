@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@drawable/item_divider_ten_dp_f_f"
+    android:showDividers="end"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:paddingLeft="20px"
+        android:layout_height="80px">
+        <View
+            android:layout_width="6px"
+            android:layout_centerVertical="true"
+            android:background="@color/ct_deep_red_bg"
+            android:id="@+id/v_red"
+            android:layout_height="34px"/>
+        <TextView
+            android:layout_toRightOf="@id/v_red"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="19px"
+            android:gravity="center_vertical"
+            android:id="@+id/tv_spring_hori_time"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+    <include layout="@layout/layout_communal_recycler_wrap"/>
+</LinearLayout>

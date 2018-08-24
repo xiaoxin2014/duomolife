@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="26px">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/gap_left">
+
+            <include layout="@layout/layout_invitation_user" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_find_rec_tag"
+            android:layout_width="56px"
+            android:layout_height="56px"
+            android:src="@drawable/sel_find_rec_tag"
+            android:visibility="gone"
+            app:layout_auto_basewidth="height" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="26px">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <emojicon.EmojiconTextViewLink
+                app:emojiconAlignment="baseline"
+                app:emojiconSize="17sp"
+                android:id="@+id/tv_inv_live_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:lineSpacingExtra="@dimen/dimen_3dp"
+                android:longClickable="true"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="32px"/>
+            <!--
+                android:paddingBottom="@dimen/dimen_2dp"
+                android:ellipsize="end"
+                android:maxLength="3"-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/text_login_blue_z"
+                android:textSize="32px"
+                android:id="@+id/tv_find_look_more"
+                android:visibility="gone"
+                android:paddingRight="@dimen/dimen_2dp"
+                android:background="@color/white"
+                android:text="查看更多"
+                android:paddingLeft="@dimen/dimen_2dp"
+                android:gravity="center_vertical"
+                android:layout_alignBottom="@id/tv_inv_live_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="24px"
+            android:id="@+id/rel_find_article"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="match_parent"
+                android:scaleType="fitXY"
+                android:id="@+id/iv_find_article_cover"
+                android:adjustViewBounds="true"
+                android:layout_height="wrap_content" />
+            <emojicon.EmojiconTextView
+                android:layout_width="match_parent"
+                android:layout_below="@id/iv_find_article_cover"
+                android:id="@+id/tv_find_article_digest"
+                android:layout_height="wrap_content"
+                app:emojiconAlignment="baseline"
+                android:textSize="28px"
+                android:layout_marginTop="26px"
+                android:textColor="@color/text_login_gray_s"
+                app:emojiconSize="17sp" />
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_find_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25px"
+            android:nestedScrollingEnabled="false"
+            android:paddingBottom="10px"
+            android:scrollbars="none" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="14px"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/rel_tag_layout"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="10px"
+                android:visibility="invisible">
+
+                <include
+                    android:layout_centerVertical="true"
+                    layout="@layout/activity_hot_search_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <include layout="@layout/layout_com_art_bottom" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_inv_pro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_top_line"
+        android:paddingTop="1px">
+
+        <include layout="@layout/layout_communal_recycler_wrap" />
+    </RelativeLayout>
+</LinearLayout>

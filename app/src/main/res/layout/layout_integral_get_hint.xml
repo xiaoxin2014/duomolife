@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:visibility="gone"
+    android:id="@+id/fl_integral_get_hint"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60px"
+        android:layout_marginLeft="54px"
+        android:layout_marginRight="82px"
+        android:layout_marginTop="75px"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30px"
+            android:src="@drawable/invoice_hint_icon" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="如发现有用户违规刷积分，多么生活有权取消用户的积分资格"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="28px" />
+    </LinearLayout>
+</FrameLayout>

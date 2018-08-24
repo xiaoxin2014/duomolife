@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="88px"
+    android:background="@android:color/transparent"
+    app:contentInsetStart="0dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:paddingLeft="30px"
+            android:paddingRight="34px"
+            android:layout_centerVertical="true"
+            android:id="@+id/iv_user_back"
+            android:layout_width="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/m_set_icon"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/iv_mine_mes"
+            android:layout_alignParentRight="true"
+            android:paddingRight="34px"
+            android:paddingLeft="34px"
+            android:background="@android:color/transparent"
+            android:src="@drawable/m_mes_icon"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</com.amkj.dmsh.views.autoviews.AutoToolbar>

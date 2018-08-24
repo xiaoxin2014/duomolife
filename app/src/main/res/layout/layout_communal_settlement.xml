@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_communal_settlement"
+    android:layout_width="match_parent"
+    android:layout_height="98px"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <CheckBox
+            android:id="@+id/check_box_all_buy"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:background="@color/transparent"
+            android:button="@null"
+            android:drawableLeft="@drawable/sel_check_box_shop_car"
+            android:drawablePadding="@dimen/dimen_10_dp"
+            android:gravity="center"
+            android:paddingLeft="24px"
+            android:paddingRight="8px"
+            android:text="全选"
+            android:textColor="@color/text_black_t"
+            android:textSize="28px"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="46px"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="合计:"
+                android:id="@+id/tv_set_total_text"
+                android:textColor="@color/text_black_t"
+                android:textSize="28px" />
+
+            <TextView
+                android:id="@+id/tv_communal_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="￥0.00 "
+                android:layout_toRightOf="@id/tv_set_total_text"
+                android:textColor="@color/text_b_red_color"
+                android:textSize="28px" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="10px"
+                android:id="@+id/tv_settlement_dis_car_price"
+                android:textColor="@color/text_normal_red"
+                android:textSize="22px"
+                android:visibility="gone"
+                android:layout_below="@id/tv_set_total_text"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_communal_buy_or_count"
+            android:layout_width="250px"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@color/text_normal_red"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="结算"
+            android:textColor="@android:color/white"
+            android:textSize="32px" />
+    </RelativeLayout>
+</LinearLayout>

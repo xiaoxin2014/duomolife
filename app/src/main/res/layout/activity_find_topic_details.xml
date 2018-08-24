@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/smart_refresh_find_topic"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    cube_ptr:srlEnableAutoLoadMore="false"
+    cube_ptr:srlEnableLoadMore="false">
+
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/ab_find_topic_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@android:color/white"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                <com.zhy.autolayout.AutoLinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@drawable/item_divider_ten_dp_f_f"
+                    android:orientation="vertical"
+                    android:showDividers="end">
+
+                    <com.zhy.autolayout.AutoRelativeLayout
+                        android:id="@+id/rel_find_topic_cover"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="88px"
+                        app:layout_auto_basewidth="height">
+
+                        <ImageView
+                            android:id="@+id/iv_find_topic_details_cover"
+                            android:layout_width="match_parent"
+                            android:layout_height="403px"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            app:layout_auto_basewidth="height" />
+
+                        <com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/jvp_find_video_play"
+                            android:layout_width="match_parent"
+                            android:layout_height="422px"
+                            android:visibility="gone"
+                            app:layout_auto_basewidth="height" />
+                    </com.zhy.autolayout.AutoRelativeLayout>
+
+                    <com.zhy.autolayout.AutoLinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="24px"
+                        android:paddingLeft="30px"
+                        android:paddingRight="20px"
+                        android:paddingTop="24px">
+
+                        <TextView
+                            android:id="@+id/tv_find_topic_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="28px" />
+
+                        <TextView
+                            android:id="@+id/tv_find_topic_collect"
+                            android:layout_width="150px"
+                            android:layout_height="60px"
+                            android:layout_marginLeft="10px"
+                            android:background="@drawable/border_cir_four_bg_blue_ff"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="28px" />
+                    </com.zhy.autolayout.AutoLinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_find_topic_des"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="@dimen/dimen_7_dp"
+                        android:paddingBottom="30px"
+                        android:paddingLeft="30px"
+                        android:paddingRight="20px"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="26px" />
+                </com.zhy.autolayout.AutoLinearLayout>
+
+                <include layout="@layout/activity_domolife_header" />
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+            <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/std_find_topic_art_type"
+                android:layout_width="wrap_content"
+                android:layout_height="88px"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                tl:tl_indicator_color="@color/text_login_blue_z"
+                tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+                tl:tl_indicator_gravity="BOTTOM"
+                tl:tl_indicator_height="@dimen/dimen_2dp"
+                tl:tl_indicator_style="NORMAL"
+                tl:tl_indicator_width_equal_title="true"
+                tl:tl_tab_padding="126px"
+                tl:tl_textSelectColor="@color/text_login_blue_z"
+                tl:tl_textUnselectColor="@color/text_login_gray_s"
+                tl:tl_textsize="15sp" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/find_topic_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border_top_line"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <include layout="@layout/layout_find_topic_release" />
+    </android.support.design.widget.CoordinatorLayout>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_communal_sel_wheel"
+    android:layout_width="match_parent"
+    android:layout_height="415px"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70px"
+        android:background="#f9f9f9"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_one_click_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#f9f9f9"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="20px"
+            android:text="取消"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="32px" />
+
+        <TextView
+            android:id="@+id/tv_one_click_confirmed"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingLeft="20px"
+            android:paddingRight="@dimen/gap_right"
+            android:text="确定"
+            android:textColor="#408ed6"
+            android:textSize="32px" />
+    </RelativeLayout>
+
+    <com.amkj.dmsh.address.widget.WheelView
+        android:id="@+id/wv_communal_one"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="match_parent" />
+</LinearLayout>

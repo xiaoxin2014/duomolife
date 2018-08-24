@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"
+        android:id="@+id/iv_springSale_topic"
+        android:layout_height="match_parent"
+        app:layout_auto_basewidth="height"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="47px"
+        android:paddingRight="47px"
+        android:background="#ccffffff"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:textSize="30px"
+            android:textColor = "@color/text_black_t"
+            android:layout_marginTop="17px"
+            android:id="@+id/tv_fore_show_topic_name"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="16px"
+            android:padding="@dimen/dimen_3dp"
+            android:layout_marginBottom="10px"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_foreShow_time_topic_status"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical|right"
+                android:textColor="@color/text_black_t"
+                android:drawableLeft="@drawable/clock_btn_nor"
+                android:drawablePadding="@dimen/dimen_5_dp"
+                android:text="距结束"
+                android:textSize="22px"
+                android:layout_height="match_parent" />
+            <cn.iwgang.countdownview.CountdownView
+                android:layout_marginLeft="@dimen/dimen_3dp"
+                android:id="@+id/ct_show_time_topic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:isShowMillisecond="false"
+                app:isShowDay="true"
+                app:suffixDay="天"
+                app:isShowHour="true"
+                app:suffixHour=":"
+                app:isShowMinute="true"
+                app:suffixMinute=":"
+                app:isShowSecond="true"
+                app:suffixGravity="center"
+                app:suffixTextColor="@color/text_black_t"
+                app:suffixTextSize="22px"
+                app:timeTextColor="@color/text_black_t"
+                app:timeTextSize="22px"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

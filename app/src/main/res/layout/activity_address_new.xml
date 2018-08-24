@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray_f"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:divider="@drawable/divider_ll_10dp_gray_bg"
+            android:showDividers="middle"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:divider="@drawable/item_divider_gray_f_two_px"
+                android:showDividers="middle"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@color/white"
+                    android:hint="收件人"
+                    android:singleLine="true"
+                    android:id="@+id/et_address_consignee"
+                    android:textColorHint="@color/text_gray_hint_n"
+                    android:textColor="@color/text_black_t"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:textSize="30px"
+                    android:layout_height="104px" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@color/white"
+                    android:singleLine="true"
+                    android:hint="手机号"
+                    android:textSize="30px"
+                    android:id="@+id/et_address_mobile"
+                    android:textColorHint="@color/text_gray_hint_n"
+                    android:textColor="@color/text_black_t"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:layout_height="104px" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@color/white"
+                    android:hint="所在地区"
+                    android:clickable="true"
+                    android:textSize="30px"
+                    android:id="@+id/tv_address_district"
+                    android:textColorHint="@color/text_gray_hint_n"
+                    android:textColor="@color/text_black_t"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:layout_height="104px" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@color/white"
+                    android:hint="详细地址"
+                    android:textSize="30px"
+                    android:id="@+id/et_address_detail_district"
+                    android:textColorHint="@color/text_gray_hint_n"
+                    android:textColor="@color/text_black_t"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:minHeight="150px"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/rel_address_default"
+                android:layout_height="104px">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:background="@color/white"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="30px"
+                    android:id="@+id/cb_address_default"
+                    android:text="设为默认地址"
+                    android:drawableLeft="@drawable/selector_address_red"
+                    android:drawablePadding="@dimen/dimen_15_dp"
+                    android:gravity="center_vertical"
+                    android:button="@null"
+                    android:layout_centerVertical="true"
+                    android:layout_height="match_parent" />
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+    <include layout="@layout/layout_communal_time_multi"/>
+</LinearLayout>

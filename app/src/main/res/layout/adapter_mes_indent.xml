@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_gray_f"
+    android:orientation="vertical"
+    android:paddingLeft="30px"
+    android:paddingRight="30px">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="88px">
+
+        <TextView
+            android:id="@+id/tv_mes_indent_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/border_cir_four_bg_all_gray"
+            android:gravity="center_vertical"
+            android:padding="12px"
+            android:textColor="@color/white"
+            android:textSize="26px" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="30px"
+        android:paddingLeft="30px"
+        android:paddingRight="30px">
+
+        <TextView
+            android:id="@+id/tv_mes_indent_status"
+            android:layout_width="match_parent"
+            android:layout_height="88px"
+            android:gravity="center_vertical"
+            android:textColor="@color/text_black_t"
+            android:textSize="32px" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="120px"
+            app:layout_auto_basewidth="height" >
+
+            <ImageView
+                android:id="@+id/iv_mes_indent_cover"
+                android:layout_width="120px"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+                <TextView
+                    android:layout_toRightOf="@id/iv_mes_indent_cover"
+                    android:layout_marginLeft="26px"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="@dimen/dimen_7_dp"
+                    android:lines="2"
+                    android:ellipsize="end"
+                    android:id="@+id/tv_mes_indent_content"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="28px" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

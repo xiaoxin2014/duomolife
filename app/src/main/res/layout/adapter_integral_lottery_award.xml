@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingLeft="30px"
+        android:id="@+id/tv_integral_lottery_award_time"
+        android:textSize="26px"
+        android:background="@drawable/border_bottom_line"
+        android:textColor="@color/text_login_gray_s"
+        android:gravity="center_vertical"
+        android:layout_height="68px" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingLeft="30px"
+        android:paddingRight="28px"
+        android:gravity="center_vertical"
+        android:layout_height="240px">
+        <RelativeLayout
+            android:layout_width="180px"
+            android:background="@drawable/border_rect_four_gray_c_one_bg_white"
+            android:layout_height="180px"
+            android:padding="0.5dp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:id="@+id/rel_lottery_award"
+            app:layout_auto_basewidth = "height">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:id="@+id/iv_integral_lottery_award_image"
+                app:layout_auto_basewidth  = "height"/>
+            <ImageView
+                android:layout_width="130px"
+                android:layout_height="130px"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                android:src="@drawable/sel_integral_lottery_award_tag"
+                android:id="@+id/iv_integral_lottery_award_tag"
+                app:layout_auto_basewidth  = "height"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:layout_toRightOf="@id/rel_lottery_award"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/tv_integral_lottery_award_name"
+                android:textColor="@color/text_black_t"
+                android:textSize="26px"
+                android:lines="1"
+                android:ellipsize="end"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_marginTop="20px"
+                android:id="@+id/tv_integral_lottery_award_count"
+                android:textColor="@color/text_black_t"
+                android:textSize="26px"
+                android:text="x1"
+                android:gravity="center_vertical|right"
+                android:ellipsize="end"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="180px"
+                android:textSize="28px"
+                android:layout_marginTop="30px"
+                android:layout_gravity="right"
+                android:textColor="@color/white"
+                android:text="立即领取"
+                android:visibility="invisible"
+                android:id="@+id/tv_integral_lottery_award_get"
+                android:background="@drawable/border_cir_5dp_solid_yel_ffae"
+                android:gravity="center"
+                android:layout_height="60px" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

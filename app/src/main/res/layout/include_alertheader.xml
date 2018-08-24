@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loAlertHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/dimen_30_dp"
+    android:background="@drawable/bg_alertview_alert_mes_title"
+    android:paddingTop="@dimen/dimen_20_dp"
+    android:paddingBottom="@dimen/dimen_15_dp"
+    android:gravity="center"
+    android:paddingRight="@dimen/dimen_20_dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvAlertTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:paddingBottom="@dimen/dimen_10_dp"
+        android:lineSpacingExtra="@dimen/dimen_5_dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/textColor_alert_title"
+        android:textSize="28px" />
+
+    <TextView
+        android:id="@+id/tvAlertMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:lineSpacingExtra="@dimen/dimen_5_dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/textColor_alert_msg"
+        android:textSize="26px" />
+</LinearLayout>

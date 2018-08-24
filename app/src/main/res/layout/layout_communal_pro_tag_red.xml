@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_communal_pro_red_tag"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:layout_marginRight="8px"
+    android:background="@drawable/border_circle_two_str_solid_red"
+    android:gravity="center"
+    android:paddingBottom="2px"
+    android:paddingLeft="5px"
+    android:paddingRight="5px"
+    android:paddingTop="2px"
+    android:textColor="@color/white"
+    android:textSize="24px"
+    android:visibility="gone" />

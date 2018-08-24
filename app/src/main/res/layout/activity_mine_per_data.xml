@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/item_divider_gray_f_two_px"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:showDividers="middle|beginning|end">
+
+                <LinearLayout
+                    android:id="@+id/ll_per_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30px"
+                        android:layout_weight="1"
+                        android:text="头像"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/rImg_personal_header"
+                        android:layout_width="80px"
+                        android:layout_height="80px"
+                        android:layout_centerVertical="true"
+                        app:layout_auto_basewidth="height" />
+
+                    <ImageView
+                        android:id="@+id/iv_per_data_header_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="@dimen/dimen_12dp"
+                        android:paddingRight="36px"
+                        android:src="@drawable/att_integ_next" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_per_bg_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30px"
+                        android:gravity="center_vertical"
+                        android:text="个人主页背景"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <TextView
+                        android:id="@+id/tv_per_data_cover"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="@dimen/dimen_12dp"
+                        android:drawableRight="@drawable/att_integ_next"
+                        android:gravity="right|center_vertical"
+                        android:paddingRight="36px"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="28px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_per_nickname"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30px"
+                        android:gravity="center_vertical"
+                        android:text="昵称"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <TextView
+                        android:id="@+id/tv_per_data_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="@dimen/dimen_12dp"
+                        android:drawableRight="@drawable/att_integ_next"
+                        android:gravity="right|center_vertical"
+                        android:paddingRight="36px"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="28px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_per_sex"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30px"
+                        android:gravity="center_vertical"
+                        android:text="性别"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <TextView
+                        android:id="@+id/tv_per_data_sex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="@dimen/dimen_12dp"
+                        android:drawableRight="@drawable/att_integ_next"
+                        android:gravity="right|center_vertical"
+                        android:paddingRight="36px"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="28px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_per_birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30px"
+                        android:gravity="center_vertical"
+                        android:text="生日"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <TextView
+                        android:id="@+id/tv_per_data_birth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="@dimen/dimen_12dp"
+                        android:drawableRight="@drawable/att_integ_next"
+                        android:gravity="right|center_vertical"
+                        android:paddingRight="36px"
+                        android:hint="@string/personal_perfect"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="28px" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_per_habit"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30px"
+                        android:gravity="center_vertical"
+                        android:text="兴趣爱好"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+                    <TextView
+                        android:id="@+id/tv_per_data_habit"
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="match_parent"
+                        android:drawablePadding="@dimen/dimen_12dp"
+                        android:drawableRight="@drawable/att_integ_next"
+                        android:gravity="right|center_vertical"
+                        android:paddingLeft="30px"
+                        android:paddingRight="36px"
+                        android:hint="@string/personal_perfect"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="28px"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/rel_per_baby_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="104px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30px"
+                        android:gravity="center_vertical"
+                        android:text="宝宝信息"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <TextView
+                        android:id="@+id/tv_per_data_baby_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="@dimen/dimen_12dp"
+                        android:drawableRight="@drawable/att_integ_next"
+                        android:gravity="right|center_vertical"
+                        android:paddingRight="36px"
+                        android:hint="@string/personal_perfect"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="28px" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <include layout="@layout/communal_loading_empty_error" />
+    </FrameLayout>
+
+</LinearLayout>

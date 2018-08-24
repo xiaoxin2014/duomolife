@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/iv_launch_wel_page"
+        android:layout_width="match_parent"
+        android:src="@drawable/launch"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="30px"
+        android:id="@+id/fl_skip"
+        android:visibility="visible"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_launch_wel_skip_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_rect_four_gray_eight"
+            android:clickable="true"
+            android:paddingBottom="5dp"
+            android:layout_gravity="center"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="5dp"
+            android:text="跳过"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+        <ProgressBar
+            android:id="@+id/reg_req_code_gif_skip"
+            android:layout_width="@dimen/dimen_20_dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="12px"
+            android:layout_marginBottom="12px"
+            android:layout_marginLeft="17px"
+            android:layout_marginRight="17px"
+            android:layout_height="@dimen/dimen_20_dp"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
+            android:visibility="gone" />
+    </FrameLayout>
+</RelativeLayout>

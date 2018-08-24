@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_act_topic_time"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/text_light_pink_da"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="12px"
+    android:paddingLeft="20px"
+    android:paddingTop="12px">
+
+    <include layout="@layout/layout_communal_pro_tag_red" />
+
+    <RelativeLayout
+        android:layout_width="0px"
+        android:layout_marginRight="12px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_pro_act_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10px"
+            android:visibility="visible"
+            android:paddingRight="10px"
+            android:textColor="@color/text_black_t"
+            android:textSize="26px" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_below="@id/tv_pro_act_desc"
+            android:layout_marginTop="12px"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="24px">
+
+            <include layout="@layout/layout_countdown_time_hours" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <include layout="@layout/layout_comm_next_right" />
+</LinearLayout>

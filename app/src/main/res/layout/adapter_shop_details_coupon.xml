@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:id="@+id/view_coupon"
+        android:layout_height="30px"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/ll_layout_coupon_bg"
+            android:minHeight="240px"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="180px"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:gravity="center|bottom"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/tv_money_symbol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="30px" />
+                        <TextView
+                            android:id="@+id/tv_coupon_money"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="70px" />
+
+                        <TextView
+                            android:id="@+id/tv_coupon_discount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="折"
+                            android:visibility="gone"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="28px" />
+                    </LinearLayout>
+                    <TextView
+                        android:layout_marginTop="20px"
+                        android:layout_width="match_parent"
+                        android:id="@+id/tv_coupon_start_fee"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="24px"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:gravity="center"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="32px"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textSize="22px"
+                                android:paddingRight="5px"
+                                android:layout_marginRight="18px"
+                                android:gravity="center"
+                                android:layout_centerVertical="true"
+                                android:background="@color/promotion_blue"
+                                android:id="@+id/tv_coupon_type"
+                                android:textColor="@color/white"
+                                android:layout_height="32px" />
+                            <TextView
+                                android:layout_centerVertical="true"
+                                android:layout_width="wrap_content"
+                                android:layout_toRightOf="@id/tv_coupon_type"
+                                android:textSize="26px"
+                                android:ellipsize="end"
+                                android:id="@+id/tv_coupon_title"
+                                android:maxLines="1"
+                                android:textColor="@color/text_black_t"
+                                android:layout_height="wrap_content" />
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="34px"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:visibility="visible"
+                                android:layout_weight="1"
+                                android:id="@+id/tv_coupon_descrip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="24px" />
+                            <TextView
+                                android:layout_width="104px"
+                                android:textSize="26px"
+                                android:visibility="gone"
+                                android:gravity="center"
+                                android:id="@+id/tv_coupon_used"
+                                android:textColor="@color/white"
+                                android:layout_marginLeft="36px"
+                                android:layout_marginRight="41px"
+                                android:text="去使用"
+                                android:layout_height="42px" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_due_soon_expire"
+                        android:layout_width="86px"
+                        android:layout_height="86px"
+                        android:layout_gravity="right"
+                        android:src="@drawable/coupon_due_soon_icon"
+                        android:visibility="gone"
+                        app:layout_auto_basewidth = "height"/>
+                </FrameLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginLeft="24px"
+                android:layout_marginRight="38px"
+                android:layout_height="60px">
+                <TextView
+                    android:id="@+id/tv_coupon_timer_limitation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentLeft="true"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="26px" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/tv_coupon_status"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="26px"
+                    android:layout_height="match_parent" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/rel_nonuse_coupon_reason"
+                android:layout_marginLeft="24px"
+                android:layout_marginRight="38px"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_nonuse_coupon_text"
+                    android:textColor="@color/text_normal_red"
+                    android:textSize="22px"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:drawableRight="@drawable/sel_coupon_top_bot_icon"
+                    android:text="不可用原因"
+                    android:layout_marginBottom="20px"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_nonuse_coupon_reason"
+                    android:textSize="22px"
+                    android:textColor="@color/text_login_gray_s"
+                    android:layout_marginBottom="12px"
+                    android:ellipsize="end"
+                    android:visibility="gone"
+                    android:singleLine="true"
+                    android:layout_below="@id/tv_nonuse_coupon_text"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </LinearLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/rImg_coupon_tag"
+            android:layout_width="150px"
+            android:layout_height="150px"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            app:civ_border_width="@dimen/dimen_1dp"
+            app:civ_border_color="@color/text_gray_c"
+            app:layout_auto_basewidth = "height"/>
+    </FrameLayout>
+</LinearLayout>

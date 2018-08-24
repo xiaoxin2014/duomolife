@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="160px"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <RelativeLayout
+        android:layout_width="0px"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="30px"
+            android:lines="1"
+            android:ellipsize="end"
+            android:textColor="@color/text_black_t"
+            android:id="@+id/tv_integral_get_title"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="22px"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="28px"
+            android:layout_below="@id/tv_integral_get_title"
+            android:textColor="@color/text_gray_hint_n"
+            android:id="@+id/tv_integral_get_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="30px"
+        android:orientation="vertical"
+        android:layout_marginRight="@dimen/gap_right"
+        android:gravity="right"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="125px"
+            android:layout_height="55px"
+            android:gravity="center"
+            android:textSize="28px"
+            android:id="@+id/tv_integral_get_button_text"
+            android:background="@drawable/sel_border_cir_thr_lblue_white"
+            android:textColor="@color/selector_font_white_black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="22px"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="15px"
+            android:textColor="@color/text_gray_hint_n"
+            android:id="@+id/tv_integral_get_desc"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

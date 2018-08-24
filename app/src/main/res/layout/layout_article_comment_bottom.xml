@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:id="@+id/ll_article_comment"
+    android:visibility="visible"
+    android:gravity="center_vertical"
+    android:background="@drawable/border_top_line"
+    android:paddingTop="15px"
+    android:paddingBottom="15px"
+    android:paddingLeft="20px"
+    android:paddingRight="15px"
+    android:layout_height="98px">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="20px"
+        android:clickable="true"
+        android:id="@+id/tv_publish_comment"
+        android:gravity="center_vertical"
+        android:text="写评论……"
+        android:textSize="28px"
+        android:textColor="@color/text_gray_hint_n"
+        android:background="@drawable/border_cir_4dp_gray_f"
+        android:layout_height="match_parent" />
+    <TextView
+        android:gravity="bottom|center"
+        android:paddingLeft="50px"
+        android:paddingRight="25px"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:drawableTop="@drawable/sel_comment_like_heart"
+        android:id="@+id/tv_article_bottom_like"
+        android:textSize="18px"
+        android:text="赞"
+        android:layout_height="match_parent" />
+    <TextView
+        android:paddingLeft="25px"
+        android:paddingRight="40px"
+        android:clickable="true"
+        android:gravity="bottom|center"
+        android:layout_width="wrap_content"
+        android:drawableTop="@drawable/sel_comment_collect_star"
+        android:id="@+id/tv_article_bottom_collect"
+        android:textSize="18px"
+        android:text="收藏"
+        android:layout_height="match_parent" />
+</LinearLayout>

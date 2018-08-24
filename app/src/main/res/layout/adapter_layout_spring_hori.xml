@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20px"
+    android:paddingRight="20px"
+    android:paddingBottom="30px"
+    android:background="@color/white">
+    <RelativeLayout
+        android:id="@+id/rel_goods_pro_layout"
+        android:layout_width="240px"
+        android:layout_height="240px"
+        app:layout_auto_basewidth="height">
+
+        <ImageView
+            android:id="@+id/iv_springSale_hori_product"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/iv_spring_hori_sale_tag_out"
+            android:layout_width="172px"
+            android:layout_height="172px"
+            android:layout_centerInParent="true"
+            android:src="@drawable/goods_sold_out"
+            android:visibility="gone" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="240px"
+        android:id="@+id/ll_show_time_horizon_good"
+        android:layout_below="@id/rel_goods_pro_layout"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_spring_horizon_pro_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rel_goods_pro_layout"
+            android:layout_marginTop="18px"
+            android:ellipsize="end"
+            android:gravity="center_vertical|left"
+            android:lineSpacingExtra="@dimen/dimen_3_dp"
+            android:lines="2"
+            android:text="电热蚊香一体器"
+            android:textColor="@color/text_black_t"
+            android:textSize="22px" />
+        <TextView
+            android:id="@+id/tv_spring_horizon_pro_price"
+            android:layout_below="@id/tv_spring_horizon_pro_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="$666.00"
+            android:textColor="#ff6065"
+            android:textSize="26px" />
+    </LinearLayout>
+
+</RelativeLayout>

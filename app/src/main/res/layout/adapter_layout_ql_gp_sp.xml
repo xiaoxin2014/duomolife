@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingBottom="26px">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/layout_communal_img_bg_time" />
+        <TextView
+            android:layout_width="108px"
+            android:layout_height="68px"
+            android:layout_marginLeft="20px"
+            android:textSize="28px"
+            android:textColor="@color/white"
+            android:text="邀新团"
+            android:gravity="center"
+            android:visibility="gone"
+            android:background="@drawable/ql_gp_icon"
+            android:id="@+id/tv_ql_gp_sp_new"
+            app:layout_auto_basewidth = "height"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_gp_sp_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:paddingLeft="20px"
+        android:paddingTop="20px"
+        android:textColor="@color/text_black_t"
+        android:textSize="28px" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28px"
+        android:paddingLeft="30px"
+        android:paddingRight="20px">
+        <include layout="@layout/layout_ql_gp_sp_price" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28px"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="20px"
+        android:paddingRight="20px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已成团:"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="24px" />
+
+        <TextView
+            android:id="@+id/tv_gp_sp_open_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18px"
+            android:textColor="@color/text_normal_red"
+            android:textSize="24px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="68px"
+            android:text="库存:"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="24px" />
+
+        <TextView
+            android:id="@+id/tv_gp_sp_inventory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18px"
+            android:layout_weight="1"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="24px" />
+
+        <TextView
+            android:layout_width="177px"
+            android:layout_height="58px"
+            android:id="@+id/tv_gp_sp_count"
+            android:background="@drawable/sel_red_nor_gray_cir_five"
+            android:gravity="center"
+            android:text="去开团"
+            android:textColor="@color/white"
+            android:textSize="32px" />
+    </LinearLayout>
+</LinearLayout>

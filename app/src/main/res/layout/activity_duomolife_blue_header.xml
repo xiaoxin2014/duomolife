@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="80px"
+    android:background="@android:color/white"
+    app:contentInsetStart="0dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_height="match_parent">
+        <ImageView
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="26px"
+            android:layout_alignParentLeft="true"
+            android:layout_width="70px"
+            android:id="@+id/iv_blue_back"
+            android:src="@drawable/back_blue"
+            android:gravity="center_vertical"
+            android:layout_height="match_parent" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="32px"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:id="@+id/tv_blue_title"
+            android:textColor="@color/textColor_blue"
+            android:gravity="center"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_gravity="center_vertical|right"
+            android:layout_width="90px"
+            android:layout_alignParentRight="true"
+            android:paddingRight="26px"
+            android:paddingLeft="@dimen/gap_left"
+            android:gravity="center_vertical"
+            android:id="@+id/iv_blue_close"
+            android:src="@drawable/login_exit"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</com.amkj.dmsh.views.autoviews.AutoToolbar>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="98px"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="28px"
+        android:layout_marginLeft="30px"
+        android:text="实付："
+        android:textColor="@color/text_black_t"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tv_indent_total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="￥0.00 "
+        android:layout_weight="1"
+        android:textColor="@color/text_normal_red"
+        android:textSize="40px" />
+
+    <TextView
+        android:id="@+id/tv_indent_write_commit"
+        android:layout_width="250px"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/sel_nor_red_un_gray"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="提交订单"
+        android:textColor="@android:color/white"
+        android:textSize="34px" />
+</LinearLayout>

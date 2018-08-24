@@ -1,0 +1,155 @@
+package com.amkj.dmsh.constant;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import com.amkj.dmsh.AppUpdateDialogActivity;
+import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.AppVersionEntity;
+import com.amkj.dmsh.bean.AppVersionEntity.AppVersionBean;
+import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.inteface.MyCallBack;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.amkj.dmsh.constant.ConstantMethod.getAppendNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.ConstantVariable.APP_VERSION_INFO;
+import static com.amkj.dmsh.constant.ConstantVariable.INTERVAL_TIME;
+import static com.amkj.dmsh.constant.ConstantVariable.LAST_UPDATE_TIME;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_TIME;
+import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
+import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_LOW;
+
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2018/4/26
+ * version 3.1.2
+ * class description:app更新提示 安装 工具
+ */
+public class AppUpdateUtils {
+    private static AppUpdateUtils appUpdateUtils = new AppUpdateUtils();
+    private Context context;
+
+    private AppUpdateUtils() {
+    }
+
+    public static AppUpdateUtils getInstance() {
+        return appUpdateUtils;
+    }
+
+    /**
+     * 获取app版本更新
+     */
+    public void getAppUpdate(Context context) {
+        getAppUpdate(context, false);
+    }
+
+    /**
+     * 检查更新
+     * @param context
+     * @param isManual 是否手动
+     */
+    public void getAppUpdate(Context context, boolean isManual) {
+        this.context = context;
+        if (NetWorkUtils.checkNet(context)) {
+            String url = Url.BASE_URL + Url.APP_VERSION_INFO;
+            Map<String, Object> params = new HashMap<>();
+            params.put("device_type_id", 2);
+            XUtil.Post(url, params, new MyCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    AppVersionEntity appVersionEntity = AppVersionEntity.objectFromData(result);
+                    if (appVersionEntity != null) {
+                        if (appVersionEntity.getCode().equals("01")
+                                && appVersionEntity.getAppVersionBean() != null) {
+                            AppVersionBean appVersionBean = appVersionEntity.getAppVersionBean();
+                            SharedPreferences sharedPreferences = context.getSharedPreferences(APP_VERSION_INFO, MODE_PRIVATE);
+                            String updateTime = sharedPreferences.getString(UPDATE_TIME, "");
+                            String lastUpdateTime = sharedPreferences.getString(LAST_UPDATE_TIME, "");
+                            long intervalTime = sharedPreferences.getLong(INTERVAL_TIME, 0);
+                            /**
+                             * 更新时间  时间间隔
+                             */
+                            if (isManual) {
+                                setAppUpdateData(appVersionEntity, sharedPreferences);
+                                if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
+                                    openDialog(appVersionBean);
+                                } else {
+                                    showToast(context, R.string.app_version_tint);
+                                }
+                            } else if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
+                                if (!appVersionBean.getUpdateTime().equals(updateTime)) {
+                                    setAppUpdateData(appVersionEntity, sharedPreferences);
+                                    if (appVersionBean.getShowPop() == 1) {
+                                        openDialog(appVersionBean);
+                                    }
+                                } else if (!isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
+                                    setAppUpdateData(appVersionEntity, sharedPreferences);
+                                    openDialog(appVersionBean);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void setAppUpdateData(AppVersionEntity appVersionEntity, SharedPreferences sharedPreferences) {
+        AppVersionBean appVersionBean = appVersionEntity.getAppVersionBean();
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString(UPDATE_TIME, getStrings(appVersionBean.getUpdateTime()));
+        edit.putLong(INTERVAL_TIME, appVersionBean.getInterval_seconds());
+        edit.putString(LAST_UPDATE_TIME, appVersionEntity.getCurrentTime());
+        edit.putString(APP_CURRENT_UPDATE_VERSION, appVersionBean.getVersion());
+        edit.apply();
+    }
+
+    /**
+     * @param appVersionBean
+     */
+    private void openDialog(AppVersionBean appVersionBean) {
+        if(!TextUtils.isEmpty(appVersionBean.getLink())){
+            Intent intent = new Intent(context, AppUpdateDialogActivity.class);
+            intent.putExtra(VERSION_DOWN_LINK, getStrings(appVersionBean.getLink()));
+            intent.putExtra(VERSION_UPDATE_DESCRIPTION, getStrings(appVersionBean.getDescription()));
+            intent.putExtra(VERSION_UPDATE_LOW, getStrings(appVersionBean.getLowestVersion()));
+            intent.putExtra(APP_CURRENT_UPDATE_VERSION, getStrings(appVersionBean.getVersion()));
+            context.startActivity(intent);
+            ((Activity) context).overridePendingTransition(0, 0);
+        }
+    }
+
+    /**
+     *  目标版本是否高于当前版本
+     * @param targetVersion
+     * @return
+     */
+    private boolean isHeightUpdate(String targetVersion) {
+        String constraintVersion = getAppendNumber(targetVersion);
+        String currentVersion = getAppendNumber(getVersionName(context));
+        int constraintLength = constraintVersion.length();
+        int currentLength = currentVersion.length();
+        int absNumber = Math.abs(constraintLength - currentLength);
+        if (absNumber > 0) {
+            if (constraintLength > currentLength) {
+                currentVersion += String.format("%1$0" + absNumber + "d", 0);
+            } else {
+                constraintVersion += String.format("%1$0" + absNumber + "d", 0);
+            }
+        }
+        return Long.parseLong(constraintVersion) > Long.parseLong(currentVersion);
+    }
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rel_del_shop_car"
+    android:layout_width="match_parent"
+    android:layout_height="98px"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingRight="@dimen/gap_right"
+    android:visibility="visible">
+
+    <CheckBox
+        android:id="@+id/check_box_all_del"
+        android:layout_width="wrap_content"
+        android:paddingLeft="24px"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:background="@color/transparent"
+        android:button="@null"
+        android:drawableLeft="@drawable/sel_check_box_shop_car"
+        android:drawablePadding="@dimen/dimen_10_dp"
+        android:gravity="center"
+        android:paddingRight="8px"
+        android:text="全选"
+        android:textColor="@color/text_black_t"
+        android:textSize="28px"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_shop_car_del"
+        android:layout_width="240px"
+        android:layout_height="68px"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/border_del_circel_one_red"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="删除"
+        android:textColor="@color/text_red_color"
+        android:textSize="32px" />
+</RelativeLayout>

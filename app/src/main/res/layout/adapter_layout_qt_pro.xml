@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/ll_quality_product"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20px">
+        <RelativeLayout
+            android:id="@+id/rel_goods_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="370px">
+
+                <ImageView
+                    android:id="@+id/iv_qt_pro_img"
+                    android:layout_width="match_parent"
+                    android:foregroundGravity="center"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+
+                <TextView
+                    android:id="@+id/tv_qt_pro_activity_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="50px"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/text_pink_red_fe"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:visibility="gone" />
+            </RelativeLayout>
+            <include layout="@layout/layout_communal_pro_out_img"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rel_goods_layout"
+            android:paddingLeft="8px"
+            android:layout_marginTop="20px">
+            <include layout="@layout/layout_communal_pro_tag_red"/>
+            <TextView
+                android:id="@+id/tv_qt_pro_descrip"
+                android:layout_toRightOf="@+id/tv_communal_pro_red_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:gravity="center_vertical|left"
+                android:lineSpacingExtra="@dimen/dimen_3_dp"
+                android:lines="1"
+                android:textColor="@color/text_black_t"
+                android:textSize="24px" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_qt_pro_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rel_goods_layout"
+            android:layout_marginTop="16px"
+            android:ellipsize="end"
+            android:gravity="center_vertical|left"
+            android:lines="1"
+            android:paddingLeft="8px"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="22px" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_qt_pro_name"
+            android:layout_marginTop="20px"
+            android:gravity="center_vertical"
+            android:paddingLeft="8px"
+            android:paddingRight="8px">
+
+            <TextView
+                android:id="@+id/tv_qt_pro_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:textColor="@color/text_red_color"
+                android:textSize="28px" />
+
+            <TextView
+                android:id="@+id/tv_qt_pro_wait_buy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10px"
+                android:layout_toRightOf="@id/tv_qt_pro_price"
+                android:background="@drawable/border_cir_2dp_yel"
+                android:padding="2px"
+                android:text="待售"
+                android:textColor="@color/white"
+                android:textSize="22px"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/tv_qt_pro_market_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="40px"
+                android:layout_toRightOf="@id/tv_qt_pro_wait_buy"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="26px"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_pro_add_car"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="5px"
+                android:paddingRight="12px"
+                android:src="@drawable/sel_ql_shop_b_car"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:id="@+id/iv_quality_good_product_ad"
+        android:layout_height="match_parent"
+        android:minHeight="520px"
+        />
+</FrameLayout>

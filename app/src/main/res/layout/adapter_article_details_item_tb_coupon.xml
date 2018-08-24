@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true">
+    <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:background="@drawable/coupon_taobao_bg"
+        android:layout_height="155px"
+        app:layout_auto_basewidth = "height"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="24px"
+        android:clickable="true"
+        android:id="@+id/ll_get_lucky_money"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_coupon_money_amount"
+            android:textColor="@color/white"
+            android:textSize="36px"
+            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8px"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:id="@+id/tv_coupon_description"
+                android:textSize="24px"
+                android:text="此款产品需先领券"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_centerVertical="true"
+                android:id="@+id/tv_click_get_lucky_money"
+                android:layout_toRightOf="@id/tv_coupon_description"
+                android:layout_width="wrap_content"
+                android:background="@drawable/border_circle_three_white"
+                android:layout_marginLeft="8px"
+                android:paddingLeft="22px"
+                android:paddingTop="8px"
+                android:paddingBottom="8px"
+                android:paddingRight="22px"
+                android:gravity="center_vertical"
+                android:textColor="@color/pinkColor"
+                android:text="@string/coupon_click"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

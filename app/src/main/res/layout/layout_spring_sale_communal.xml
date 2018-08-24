@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ll_spr_sale"
+    android:orientation="vertical">
+    <include layout="@layout/activity_domolife_header"/>
+    <com.flyco.tablayout.SlidingTabLayoutDouble
+        xmlns:tl="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/std_time_shaft"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#4f494b"
+        tl:tl_indicator_color="@color/ct_deep_red_bg"
+        tl:tl_indicator_corner_radius="0dp"
+        tl:tl_textUnselectColor="@color/white"
+        tl:tl_textSelectColor="@color/white"
+        tl:tl_indicator_margin_top="0dp"
+        tl:tl_indicator_margin_bottom="0dp"
+        tl:tl_tab_width="100dp"
+        tl:tl_textsize="14sp"
+        tl:tl_sub_textsize="12sp"
+        tl:tl_indicator_style="BLOCK"/>
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:id="@+id/vp_show_time"
+        android:background="@color/white"
+        android:layout_height="match_parent"/>
+</LinearLayout>

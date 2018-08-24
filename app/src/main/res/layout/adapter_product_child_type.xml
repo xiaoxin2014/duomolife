@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:background="@color/gray_bg"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="135px"
+        android:id="@+id/tv_product_child_type"
+        android:textSize="26px"
+        android:textColor="@color/sel_font_blue_black_sel"
+        android:background="@drawable/sel_cir_five_za_blue_ff_white_select"
+        android:layout_marginTop="20px"
+        android:gravity="center"
+        android:text="全部"
+        android:layout_marginRight="20px"
+        android:layout_height="56px" />
+</FrameLayout>

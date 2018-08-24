@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+    <com.amkj.dmsh.views.DrawableCenterTextView
+        android:layout_width="match_parent"
+        android:drawablePadding="@dimen/dimen_12dp"
+        android:textSize="40px"
+        android:paddingTop="58px"
+        android:paddingBottom="58px"
+        android:textColor="@color/text_black_t"
+        android:text="支付成功"
+        android:drawableLeft="@drawable/pay_suc_icon"
+        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="60px"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="156px"
+            android:background="@drawable/border_circle_four_gray_bg_white"
+            android:gravity="center"
+            android:textColor="@color/text_login_gray_s"
+            android:text="@string/look_indent"
+            android:id="@+id/tv_pay_suc_indent"
+            android:textSize="26px"
+            android:clickable="true"
+            android:layout_height="60px" />
+        <TextView
+            android:layout_width="156px"
+            android:layout_marginLeft="49px"
+            android:background="@drawable/border_circle_four_gray_bg_white"
+            android:gravity="center"
+            android:textColor="@color/text_login_gray_s"
+            android:text="@string/skip_quality"
+            android:layout_toRightOf="@+id/tv_pay_suc_indent"
+            android:id="@+id/tv_pay_suc_quality"
+            android:textSize="26px"
+            android:clickable="true"
+            android:layout_height="60px" />
+    </RelativeLayout>
+    <include layout="@layout/adapter_ql_goods_pro_header"/>
+</LinearLayout>

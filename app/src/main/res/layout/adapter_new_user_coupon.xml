@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="164px"
+    android:gravity="center"
+    android:background="@drawable/new_coupon_bg"
+    android:padding = "16px"
+    android:orientation="vertical"
+    app:layout_auto_basewidth = "height">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_marginTop="5px"
+        android:layout_height="55px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_new_user_coupon_amount"
+            android:gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:textSize="22px"
+            android:minHeight="55px"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            android:lines="1"
+            android:textColor="@color/text_black_t"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_new_user_start_fee"
+            android:textColor="@color/text_black_t"
+            android:textSize="22px"
+            android:ellipsize="end"
+            android:lines="1"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40px"
+            android:layout_toRightOf="@id/tv_new_user_coupon_amount"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/tv_new_user_coupon_description"
+        android:textColor="@color/text_black_t"
+        android:textSize="22px"
+        android:lines="1"
+        android:ellipsize="end"
+        android:layout_marginTop="18px"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_new_user_coupon_period"
+        android:textColor="@color/text_black_t"
+        android:textSize="22px"
+        android:gravity="center"
+        android:layout_marginTop="30px"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_height="wrap_content" />
+</LinearLayout>

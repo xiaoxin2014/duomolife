@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/attention_info_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32px"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/attendance_user_header"
+            android:layout_width="130px"
+            android:layout_height="130px"
+            android:layout_marginLeft="26px"
+            android:src="@drawable/coupon"
+            attr:civ_border_color="@color/circle_border_avatar"
+            attr:civ_border_width="@dimen/dimen_1dp"
+            attr:layout_auto_basewidth="height" />
+
+        <TextView
+            android:id="@+id/tv_att_score"
+            android:layout_marginLeft="50px"
+            android:drawableLeft="@drawable/inte_mon_icon"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="430000"
+            android:textColor="@color/light_blue_n"
+            android:textSize="50px" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right|bottom"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginRight="50px">
+
+            <Button
+                android:id="@+id/bt_attendance"
+                android:layout_width="160px"
+                android:layout_height="70px"
+                android:background="@drawable/sel_attention_sign_in"
+                android:textColor="@color/selector_font_enable_white_black"
+                android:enabled="true"
+                android:gravity="center"
+                android:textSize="30px" />
+        </LinearLayout>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:id="@+id/rv_attend_award"
+        android:scrollbars="none"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_att_hint"
+        android:paddingLeft="30px"
+        android:paddingTop="26px"
+        android:paddingBottom="26px"
+        android:textSize="24px"
+        android:textColor="@color/text_gray_hint_n"
+        android:layout_height="wrap_content" />
+</LinearLayout>

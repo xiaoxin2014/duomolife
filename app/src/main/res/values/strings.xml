@@ -1,0 +1,186 @@
+<resources>
+    <string name="app_name">多么生活</string>
+    <string name="viewpager_indicator">%1$d/%2$d</string>
+    <string name="prb_default_symbolic_string">$</string>
+
+    <!-- Nav label -->
+
+    <!-- sample group -->
+    <string name="sample_group_suite">功能套件</string>
+    <string name="sample_group_comp">常用组件</string>
+    <string name="sample_group_examples">组件用法示例</string>
+    <string name="sample_group_extend">自定义界面示例</string>
+    <string name="sample_group_define">API 使用示例</string>
+
+    <!-- samples -->
+    <string name="sample_CameraComponent">相机组件</string>
+
+    <!-- face detection -->
+    <string name="progressActivityErrorButton">重新加载</string>
+    <string name="progressActivityEmptyTitlePlaceholder">未加载到任何内容!</string>
+    <string name="progressActivityEmptyContentPlaceholder">We couldn\'t find anything. Tap the button to take your first image</string>
+    <string name="progressActivityErrorContentPlaceholder">网络不给力哦，加载失败</string>
+    <!--版本检测-->
+    <string name="find_release_topic">参与话题</string>
+    <string name="coupon_click">戳我领取</string>
+    <string name="userDataNull">暂无此用户</string>
+    <string name="unConnectedNetwork">暂无网络,请检查是否联网</string>
+    <string name="connectedFaile">请求失败，无效商品</string>
+    <string name="shopOverdue">请求失败，商品已过期</string>
+    <string name="invalidData">请求失败，无效数据</string>
+    <string name="saveSuccess">保存成功</string>
+    <string name="MobileError">手机号码有误，请重新输入</string>
+    <string name="SmsCodeNull">验证码为空，请输入验证码</string>
+    <string name="PasswordDiffer">两次密码输入不一致</string>
+    <string name="PasswordLessSix">密码小于6位，请重新输入</string>
+    <string name="GetSmsCodeSuccess">获取验证码成功</string>
+    <string name="personal_name_hint">昵称由2-20个字组成</string>
+    <string name="personal_name_more_hint">字数超过限定</string>
+    <string name="text_fonts_empty">请输入字符</string>
+    <string name="buy_go_it">立即购买</string>
+    <string name="buy_go_null">已抢光</string>
+    <string name="buy_go_wait">待售</string>
+    <string name="send_sms">发送验证码</string>
+    <string name="wait_msg">请稍后(%1$d)秒</string>
+    <string name="sug_max_text_length">450</string>
+    <string name="sug_hint_text">请写下您对Domolife的感受及需要解决的问题，我们将及时为您解决，努力提供更优质的服务</string>
+    <string name="add_img">添加图片</string>
+    <string name="do_failed">操作失败，请重试</string>
+    <string name="shop_goods_overdue">该商品已失效</string>
+    <string name="direct_eva_hint">你的支持是我们的动力，你的宝贵意见是我们改进的方向，感谢你支持多么生活！</string>
+    <string name="invoice_title">请输入发票抬头</string>
+    <string name="unavailable_ticket">暂无适用优惠券</string>
+    <string name="comment_send_failed">发送失败，请重新发送</string>
+    <string name="comment_type_lack">评论类型缺失，评论失败</string>
+    <string name="comment_send_success">发送完成</string>
+    <string name="quality_search_hint">输入商品关键字</string>
+    <string name="Get_Coupon_Fail">优惠券领取失败</string>
+    <string name="AddCarSuccess">添加商品成功</string>
+    <string name="integral_hint">积分可以兑换礼品，晒单可获得更多积分</string>
+    <string name="collect_failed">收藏%1$s失败</string>
+    <string name="collect_success">收藏%1$s成功</string>
+    <!--公用取消-->
+    <string name="cancel_done">已取消%1$s%2$s</string>
+    <string name="search_leave_mes">给Domo留言</string>
+    <string name="leave_mes_hint">你可以告诉我们想团什么宝贝？也可以留下你的问题和建议</string>
+    <string name="no_data">暂无数据</string>
+    <string name="doSuccess">%1$s成功</string>
+    <string name="find_relev_invita_tint">添加关联会让更多人看到你的帖子</string>
+    <string name="relevance_pro_more">最多可关联5件商品</string>
+    <string name="sel_rel_pro">请选择关联商品</string>
+    <string name="no_found_content">没有找到相关%1$s</string>
+    <!--传递数据至web-->
+    <string name="web_uid_method">javascript:getUserId(%1$d)</string>
+    <!--图片上传-->
+    <string name="web_image_up_method">javascript:upBackImage(\'%1$s\',\'%2$s\')</string>
+    <!--获取分享数据-->
+    <string name="web_share_getData_method">javascript:shareBtnGo()</string>
+    <string name="Submit_Success">提交成功，我们会尽快处理</string>
+    <string name="Submit_Failed">提交失败，请填写正确内容再提交</string>
+    <string name="no_install_app_store">未安装应用市场</string>
+    <string name="birthday_set">生日已配置不可更改</string>
+    <string name="set_sex">请设置性别</string>
+    <string name="load_img_failed">图片地址错误</string>
+    <string name="sel_habit_tag">至少选择一项</string>
+    <string name="img_url_error">图片地址错误</string>
+    <string name="sel_no_not">请选择%1$s</string>
+    <string name="mine_baby_show">偷偷告诉我们你当前的状态\n我们将给您和宝宝推荐全球更好的商品</string>
+    <string name="list_date_due">清单已过期</string>
+    <string name="ql_new_gp_tint">该团仅限新用户参团，非新用户直接开团并分享好友 </string>
+    <string name="ql_normal_gp_tint">有小伙伴正在发起拼团，您可以直接参与 </string>
+    <string name="join_group">去参团</string>
+    <string name="join_new_group">新人团</string>
+    <string name="sel_pro_sku">请选择%1$s</string>
+    <string name="not_attention_self">亲亲，这个是你呦</string>
+    <string name="skip_topic">进入%1$s专区</string>
+    <string name="look_indent">查看订单</string>
+    <string name="skip_quality">返回首页</string>
+    <string name="hot_text">热门</string>
+    <string name="text_more">查看更多</string>
+    <string name="topic_format">#%1$s#</string>
+    <string name="commit_failed">提交失败，请重新提交</string>
+    <string name="text_oversea_hint">温馨提示：为保障顺利过关，收货地址使用的收货人姓名，身份证号码与付款人真实信息保持一致</string>
+    <string name="input_name">请输入用户姓名</string>
+    <string name="input_card">请输入身份证号码</string>
+    <!--评论-->
+    <string name="copy_url_success">复制链接成功</string>
+
+    <string name="umeng_share_c_url">复制链接</string>
+    <!--商品-->
+    <string name="refrence_only">该金额仅供参考，具体金额以实际结算为准</string>
+    <string name="text_act_not_start">活动价 ￥%1$s（未开始）</string>
+    <string name="car_discount_price" >优惠了￥%1$s元</string>
+    <string name="money_price_chn">￥%1$s</string>
+    <string name="cart_present">【赠品】%1$s</string>
+    <string name="cart_combine">【组合购】%1$s</string>
+    <string name="comment_count">全部评论(%1$d)</string>
+    <string name="combine_price">组合价 </string>
+    <!--skuDialog sku选择-->
+    <string name="sku_max_discount_price" >最多可优惠%1$s元</string>
+    <string name="sku_discount_price" >优惠了%1$s元</string>
+    <!--订单商品信息-->
+    <string name="price_count">共 %1$d 件 合计:￥%2$s</string>
+    <string name="appraise_integral">评价赢积分</string>
+    <string name="appraise_integral_score">评价赢%1$s积分</string>
+    <string name="appraise_public_hint">带图评价商品超过10个字有机会获取积分哦！</string>
+    <string name="appraise_public_success">评价完成,晒单可赢得更多积分！</string>
+    <string name="pay_failed">你的订单在%1$d小时%2$d分内未支付将被\n取消，请尽快支付。</string>
+    <!--售后退款-->
+    <string name="refund_time">\n如果在 %1$d天%2$d时%3$d分%4$d秒 未寄回，此次售后将自动关闭</string>
+    <string name="refund_type_sel_errror">类型选择错误，请重新选择</string>
+    <string name="refund_type">请选择退款类型</string>
+    <string name="refund_reason">请选择退款原因</string>
+    <string name="refund_address_sel">请选择售后收货地址</string>
+    <string name="refund_repair_content">请描述售后问题</string>
+    <string name="cancel_invite">您将撤销本次申请，如果问题未解决，您还可以再次发起</string>
+    <string name="refund_type_error">服务类型异常,请重试</string>
+    <!--搜索-->
+    <string name="search_pro_empty">没有找到“ %1$s ”相关商品</string>
+    <string name="look_more_good">查看更多好物 >></string>
+    <!--个人信息-->
+    <string name="login_success">登录成功</string>
+    <string name="personal_real_name">姓名（因海关需要，请填写收货人真实姓名）</string>
+    <string name="personal_real_id_card">请填写收货人身份证号码</string>
+    <string name="personal_nick_name">取个昵称会更受欢迎哦</string>
+    <string name="personal_perfect">资料完善可获得积分</string>
+    <string name="buy_get_integral_tint">购买后评价即可获得%1$d积分</string>
+    <string name="refund_repair_address">收货地址(该地址是多么生活回寄给您的地址)</string>
+    <string name="variable_exception">参数异常，请重新刷新数据</string>
+    <string name="refund_account_time_price">退回账号：%1$s\n到账时间：%2$s</string>
+    <string name="app_version_tint">已是最新版本，暂无更多更新</string>
+    <!--商品详情信息-->
+    <string name="product_detail_newline">商品\n详情</string>
+    <string name="group_discount">拼团省\n%1$s</string>
+    <!--Sku通知提醒-->
+    <string name="sku_notice">到货提醒</string>
+    <string name="sku_cancel_notice">取消提醒</string>
+    <!--拼团-->
+    <string name="share_join_group">邀请好友一起来拼团吧\n还差%1$d人就可拼团成功，快去分享给好友吧</string>
+    <string name="group_buy_count">已团%1$d件</string>
+    <!--评论提示-->
+    <string name="comment_article_hint">给小编留言互动，入选送积分</string>
+    <string name="comment_article_send_success">小编收到啦(*╹▽╹*)</string>
+    <string name="comment_handpick_count">精选评论(%1$d)</string>
+    <string name="comment_hint_invitation">你的走心评论是po主的最大动力</string>
+    <string name="comment_hint_empty">你知道ta在等你评论吗</string>
+    <string name="product_sell_out">此商品库存不足</string>
+    <!--签到-->
+    <string name="integral_score_marquee">获得%1$d积分</string>
+    <string name="integral_lottery_number">数量：%1$d\n参与人数：%2$d</string>
+    <string name="integral_lottery_code">我的夺宝码：%1$s</string>
+    <string name="integral_lottery_award_count">x%1$d</string>
+    <string name="integral_lottery_award_rule">备注：已中奖用户公布中奖名单后超过48小时未领取视为自动放弃，参考开奖规则。</string>
+    <string name="address_not_null">请填写收货地址</string>
+    <!--积分订单-->
+    <string name="integral_product_and_price">%1$d积分+%2$s元</string>
+    <string name="integral_product_add">%1$d积分+</string>
+    <string name="integral_indent_product_price_and_money">%1$d积分+￥%2$s</string>
+    <string name="integral_indent_product_price">%1$d积分</string>
+    <string name="integral_indent_product_count">共%1$d件 实付:</string>
+    <!--新人专享优惠券-->
+    <string name="coupon_start_fee">满%1$d可使用</string>
+    <string name="coupon_period_date">有效期:%1$s~%2$s</string>
+    <string name="product_comment_count">Ta们在说(%1$d)</string>
+    <string name="buy_return_integral_total">返%1$d积分</string>
+    <string name="invite_partner_register">你的好友 %1$s 邀请你注册多么生活</string>
+</resources>

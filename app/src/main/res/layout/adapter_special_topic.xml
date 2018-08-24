@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20px"
+    android:paddingRight="20px"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/layout_communal_cover_padding"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_margin="20px"
+            android:id="@+id/tv_sp_label"
+            android:paddingTop="10px"
+            android:paddingBottom="10px"
+            android:paddingLeft="15px"
+            android:paddingRight="15px"
+            android:visibility="gone"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:textSize="22px"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/tag_label_icon"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_search_sp_title"
+        android:textColor="@color/text_black_t"
+        android:textSize="32px"
+        android:gravity="center"
+        android:paddingTop="20px"
+        android:lines="1"
+        android:ellipsize="end"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_search_sp_descrip"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="26px"
+        android:paddingTop="26px"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40px"/>
+</LinearLayout>

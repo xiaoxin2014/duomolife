@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="30px"
+    android:paddingRight="@dimen/gap_right"
+    android:paddingTop="30px">
+
+    <CheckBox
+        android:id="@+id/cb_collect_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:button="@null"
+        android:drawableRight="@drawable/sel_check_box_shop_car"
+        android:gravity="center_vertical"
+        android:paddingBottom="20px"
+        android:paddingLeft="24px"
+        android:paddingRight="12px"
+        android:paddingTop="20px"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="176px"
+        android:layout_height="176px"
+        app:layout_auto_basewidth="height">
+
+        <ImageView
+            android:id="@+id/iv_mine_col_pro"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12px"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/tv_collect_pro_sack_tag"
+            android:layout_width="match_parent"
+            android:layout_height="42px"
+            android:layout_alignParentBottom="true"
+            android:background="#7f000000"
+            android:gravity="center"
+            android:text="已失效"
+            android:textColor="@color/white"
+            android:textSize="24px"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="30px">
+
+        <TextView
+            android:id="@+id/tv_mine_col_pro_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_black_t"
+            android:textSize="28px" />
+
+        <TextView
+            android:id="@+id/tv_mine_col_pro_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_mine_col_pro_name"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="18px"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_normal_red"
+            android:textSize="24px" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="22px"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_mine_col_pro_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:textColor="@color/text_normal_red"
+                android:textSize="28px" />
+
+            <TextView
+                android:id="@+id/tv_mine_col_pro_buy"
+                android:layout_width="120px"
+                android:layout_height="50px"
+                android:background="@drawable/border_circle_two_red_white"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="去购买"
+                android:textColor="@color/text_red_color"
+                android:textSize="24px" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

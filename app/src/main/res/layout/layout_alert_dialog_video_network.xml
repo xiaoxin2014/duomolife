@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_rect_15dp_bg_white"
+    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:orientation="vertical"
+    android:showDividers="middle">
+    <TextView
+        android:id="@+id/tv_alert_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="@dimen/dimen_5_dp"
+        android:minHeight="88px"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        android:textColor="@color/text_black_t"
+        android:textSize="28px" />
+
+    <TextView
+        android:id="@+id/tv_alert_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_alert_title"
+        android:layout_marginTop="15px"
+        android:gravity="center_vertical"
+        android:visibility="visible"
+        android:lineSpacingExtra="@dimen/dimen_5_dp"
+        android:minHeight="68px"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="26px" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80px"
+        android:layout_below="@id/tv_alert_message"
+        android:layout_marginTop="@dimen/dp_10"
+        android:divider="@drawable/item_divider_gray_f_two_px"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="40px"
+        android:paddingRight="40px"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/tv_alert_confirm"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/text_login_blue_z"
+            android:textSize="28px"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_alert_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="visible"
+            android:text="取消"
+            android:textColor="@color/text_login_blue_z"
+            android:textSize="28px" />
+    </LinearLayout>
+</LinearLayout>

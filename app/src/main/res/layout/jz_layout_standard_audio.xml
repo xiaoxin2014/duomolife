@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+    <FrameLayout
+        android:id="@+id/surface_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginLeft="46px"
+            android:layout_marginRight="46px"
+            android:paddingRight="30px"
+            android:gravity="center_vertical"
+            android:layout_height="195px">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:src="@drawable/sel_audio_player_icon"
+                android:layout_marginLeft="30px"
+                android:layout_marginRight="30px"
+                android:id="@+id/ib_audio_player"
+                android:layout_centerVertical="true"
+                android:background="@color/white"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_toRightOf="@+id/ib_audio_player"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/tv_audio_player_title"
+                    android:textColor="@color/text_black_t"
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:textSize="28px"
+                    android:text="灵魂有香气的女子"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/tv_audio_player_source"
+                    android:layout_marginTop="20px"
+                    android:textColor="@color/text_login_gray_s"
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:textSize="24px"
+                    android:layout_height="wrap_content" />
+                <SeekBar
+                    android:id="@+id/bottom_seek_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="17dp"
+                    android:background="@null"
+                    android:max="100"
+                    android:layout_marginTop="21px"
+                    android:minHeight="1dp"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:progressDrawable="@drawable/audio_player_seek_progress"
+                    android:thumb="@null" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="13px"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/current"
+                        android:textSize="24px"
+                        android:text="00:00"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/total"
+                        android:layout_alignParentRight="true"
+                        android:textSize="24px"
+                        android:text="00:00"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:id="@+id/rel_audio"
+        android:visibility="gone"
+        android:descendantFocusability="blocksDescendants">
+        <include layout="@layout/jz_layout_standard"/>
+    </RelativeLayout>
+</RelativeLayout>

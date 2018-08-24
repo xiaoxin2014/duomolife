@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <TextView
+        android:background="@drawable/border_cir_4dp_light_blue"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20px"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
+        android:textSize="32px"
+        android:id="@+id/tv_nonuse_coupon"
+        android:textColor="@color/text_black_t"
+        android:text="不使用优惠券"
+        android:gravity="center"
+        android:layout_height="92px" />
+</FrameLayout>

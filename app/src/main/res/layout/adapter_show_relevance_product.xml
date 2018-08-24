@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/white"
+    android:paddingLeft="@dimen/gap_left"
+    android:paddingRight="26px"
+    android:paddingTop="15px"
+    android:paddingBottom="15px"
+    android:orientation="horizontal">
+    <ImageView
+        android:layout_width="100px"
+        android:id="@+id/iv_inv_pro"
+        android:layout_height="100px"
+        android:scaleType="centerCrop"
+        app:layout_auto_basewidth = "height"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="14px"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:lines="1"
+            android:ellipsize="end"
+            android:id="@+id/tv_inv_pro_name"
+            android:textColor="@color/text_black_t"
+            android:textSize="26px"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="23px"
+            android:lines="1"
+            android:ellipsize="end"
+            android:id="@+id/tv_inv_pro_price"
+            android:textColor="@color/text_black_t"
+            android:layout_below="@id/tv_inv_pro_name"
+            android:textSize="24px"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_gravity="top"
+        android:padding="10px"
+        android:id="@+id/iv_rel_pro_img"
+        android:visibility="gone"
+        android:src="@drawable/relev_close_icon"
+        android:layout_height="wrap_content" />
+</LinearLayout>

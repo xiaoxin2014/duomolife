@@ -1,0 +1,172 @@
+package com.amkj.dmsh.shopdetails.bean;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.Map;
+
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2017/4/25
+ * class description:请输入类描述
+ */
+
+public class IndentInvoiceEntity {
+
+    /**
+     * result : {"invoice":{"imgUrl":"http://img.domolife.cn/platform/M6wBbjNxbX.png","amount":0,"orderNo":"cX27863X4763X1492755883425","id":7,"title":"测试","type":1,"content":"明细","status":2},"type":{"1":"电子发票","2":"纸质发票 "},"status":{"0":"未开","1":"待开","2":"已开 "}}
+     * msg : 请求成功
+     * code : 01
+     */
+
+    @SerializedName("result")
+    private IndentInvoiceBean indentInvoiceBean;
+    private String msg;
+    private String code;
+
+    public IndentInvoiceBean getIndentInvoiceBean() {
+        return indentInvoiceBean;
+    }
+
+    public void setIndentInvoiceBean(IndentInvoiceBean indentInvoiceBean) {
+        this.indentInvoiceBean = indentInvoiceBean;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public static class IndentInvoiceBean {
+        /**
+         * invoice : {"imgUrl":"http://img.domolife.cn/platform/M6wBbjNxbX.png","amount":0,"orderNo":"cX27863X4763X1492755883425","id":7,"title":"测试","type":1,"content":"明细","status":2}
+         * type : {"1":"电子发票","2":"纸质发票 "}
+         * status : {"0":"未开","1":"待开","2":"已开 "}
+         */
+
+        private InvoiceBean invoice;
+        private Map<String, String> type;
+        private Map<String, String> status;
+
+        public InvoiceBean getInvoice() {
+            return invoice;
+        }
+
+        public void setInvoice(InvoiceBean invoice) {
+            this.invoice = invoice;
+        }
+
+        public Map<String, String> getType() {
+            return type;
+        }
+
+        public void setType(Map<String, String> type) {
+            this.type = type;
+        }
+
+        public Map<String, String> getStatus() {
+            return status;
+        }
+
+        public void setStatus(Map<String, String> status) {
+            this.status = status;
+        }
+
+        public static class InvoiceBean {
+            /**
+             * imgUrl : http://img.domolife.cn/platform/M6wBbjNxbX.png
+             * amount : 0
+             * orderNo : cX27863X4763X1492755883425
+             * id : 7
+             * title : 测试
+             * type : 1
+             * content : 明细
+             * status : 2
+             */
+
+            private String imgUrl;
+            private int amount;
+            private String orderNo;
+            private int id;
+            private String title;
+            private int type;
+            private String content;
+            private int status;
+
+            public String getImgUrl() {
+                return imgUrl;
+            }
+
+            public void setImgUrl(String imgUrl) {
+                this.imgUrl = imgUrl;
+            }
+
+            public int getAmount() {
+                return amount;
+            }
+
+            public void setAmount(int amount) {
+                this.amount = amount;
+            }
+
+            public String getOrderNo() {
+                return orderNo;
+            }
+
+            public void setOrderNo(String orderNo) {
+                this.orderNo = orderNo;
+            }
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
+
+            public int getType() {
+                return type;
+            }
+
+            public void setType(int type) {
+                this.type = type;
+            }
+
+            public String getContent() {
+                return content;
+            }
+
+            public void setContent(String content) {
+                this.content = content;
+            }
+
+            public int getStatus() {
+                return status;
+            }
+
+            public void setStatus(int status) {
+                this.status = status;
+            }
+        }
+    }
+}

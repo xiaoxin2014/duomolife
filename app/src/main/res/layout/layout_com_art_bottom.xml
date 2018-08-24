@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="88px"
+    android:gravity="center_vertical|right"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="110px"
+        android:id="@+id/tv_com_art_like_count"
+        android:textSize="22px"
+        android:textColor="@color/text_login_gray_s"
+        android:clickable="true"
+        android:drawableLeft="@drawable/sel_art_like_heart"
+        android:drawablePadding="@dimen/dimen_8_dp"
+        android:gravity="center_vertical"
+        android:text="赞"
+        android:layout_height="match_parent" />
+    <!--android:paddingLeft="30px"-->
+    <TextView
+        android:layout_width="110px"
+        android:layout_marginLeft="10px"
+        android:id="@+id/tv_com_art_comment_count"
+        android:textSize="22px"
+        android:textColor="@color/text_login_gray_s"
+        android:drawableLeft="@drawable/art_comment_icon"
+        android:drawablePadding="@dimen/dimen_8_dp"
+        android:gravity="center_vertical"
+        android:text="评论"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_com_art_collect_count"
+        android:textSize="22px"
+        android:visibility="gone"
+        android:textColor="@color/text_login_gray_s"
+        android:clickable="true"
+        android:drawableLeft="@drawable/sel_art_collect_star"
+        android:drawablePadding="@dimen/dimen_8_dp"
+        android:gravity="center_vertical"
+        android:text="收藏"
+        android:layout_width="110px"
+        android:layout_marginLeft="15px"
+        android:layout_height="match_parent" />
+</LinearLayout>

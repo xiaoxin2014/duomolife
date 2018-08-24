@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/iv_user_header_bg"
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"
+        android:layout_height="300px"
+        attr:layout_auto_basewidth = "height"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingTop="130px"
+        android:gravity="center_vertical"
+        android:paddingRight="@dimen/gap_right"
+        android:layout_height="300px"
+        android:background="@color/translucence"
+        attr:layout_auto_basewidth = "height">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="130px"
+            android:id="@+id/cir_user_avatar"
+            android:layout_centerVertical="true"
+            android:layout_height="130px"
+            android:scaleType="centerCrop"
+            attr:civ_border_color="@color/gray_bg"
+            android:layout_marginLeft="30px"
+            attr:layout_auto_basewidth = "height"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/cir_user_avatar"
+            android:orientation="horizontal"
+            android:layout_marginRight="136px"
+            android:layout_marginLeft="70px"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+            <emojicon.EmojiconTextView
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="32px"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="@color/white"
+                android:id="@+id/tv_user_name"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_width="32px"
+                android:layout_height="32px"
+                android:id="@+id/iv_user_sex"
+                android:src="@drawable/sel_user_sex"
+                attr:layout_auto_basewidth = "height"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_alignParentRight="true"
+            android:layout_width="126px"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="26px"
+            android:layout_gravity="right|center_vertical"
+            android:id="@+id/tv_user_att_status"
+            android:clickable="true"
+            android:background="@drawable/border_civ_four_white_solid_trans"
+            android:layout_height="50px" />
+    </RelativeLayout>
+</com.zhy.autolayout.AutoRelativeLayout>

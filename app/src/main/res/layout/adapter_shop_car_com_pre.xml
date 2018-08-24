@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="15px"
+    android:paddingTop="15px">
+
+    <ImageView
+        android:id="@+id/iv_cart_com_pre"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:scaleType="fitCenter"
+        app:layout_auto_basewidth="height" />
+
+    <LinearLayout
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30px"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_cart_com_pre_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_black_t"
+            android:textSize="24px" />
+
+        <TextView
+            android:id="@+id/tv_cart_cp_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18px"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="22px" />
+
+        <RelativeLayout
+            android:id="@+id/rel_cart_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18px">
+
+            <TextView
+                android:id="@+id/tv_cart_cp_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:textColor="@color/text_black_t"
+                android:textSize="26px" />
+
+            <TextView
+                android:id="@+id/tv_cart_cp_price_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40px"
+                android:layout_toRightOf="@+id/tv_cart_cp_price"
+                android:ellipsize="end"
+                android:lines="1"
+                android:textColor="@color/text_normal_red"
+                android:textSize="22px" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_cart_com_pre_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30px"
+        android:layout_marginRight="24px"
+        android:text="x1"
+        android:textColor="@color/text_black_t"
+        android:textSize="28px" />
+</LinearLayout>

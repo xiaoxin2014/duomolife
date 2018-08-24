@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ll_baby_status"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="570px"
+        android:id="@+id/tv_mine_baby_foot_sex"
+        android:textSize="28px"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        android:textColorHint="@color/text_gray_hint_n"
+        android:hint="请选择宝宝性别"
+        android:gravity="center_vertical"
+        android:drawableRight="@drawable/sel_bt_top_bot_blue_icon"
+        android:textColor="@color/text_black_t"
+        android:background="@drawable/border_circle_four_blue_sev_bg_white"
+        android:layout_marginBottom="40px"
+        android:layout_height="88px"
+        android:clickable="true"/>
+    <TextView
+        android:layout_width="570px"
+        android:id="@+id/tv_mine_baby_time"
+        android:textSize="28px"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        android:textColorHint="@color/text_gray_hint_n"
+        android:hint="请选择宝宝生日"
+        android:gravity="center_vertical"
+        android:background="@drawable/border_circle_four_blue_sev_bg_white"
+        android:drawableRight="@drawable/sel_bt_top_bot_blue_icon"
+        android:textColor="@color/text_black_t"
+        android:layout_height="88px"
+        android:clickable="true"/>
+</LinearLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="240px"
+        android:layout_height="240px"
+        android:layout_marginRight="20px"
+        android:scaleType="centerCrop"
+        android:id="@+id/iv_image_path"
+        app:layout_auto_basewidth = "height"/>
+</RelativeLayout>

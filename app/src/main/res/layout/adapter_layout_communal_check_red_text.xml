@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:id="@+id/cb_red_communal_text"
+        android:textColor="@color/sel_font_red_n_gray_check"
+        android:textSize="24px"
+        android:button="@null"
+        android:enabled="false"
+        android:drawableLeft="@drawable/sel_icon_red_gray"
+        android:drawablePadding="@dimen/dimen_5_dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:layout_height="48px" />
+</RelativeLayout>

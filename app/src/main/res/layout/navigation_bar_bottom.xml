@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <com.amkj.dmsh.views.autoviews.AutoRadioGroup
+        android:id="@+id/rp_bottom_main"
+        android:background="@drawable/border_top_line"
+        style="@style/RadioGroupStyleBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rb_homepage"
+            style="@style/RadioButtonStyleBottom.Checked"
+            android:drawableTop="@drawable/selector_bottom_home_bar"
+            android:text="首页" />
+
+        <RadioButton
+            android:id="@+id/rb_gProduct"
+            style="@style/RadioButtonStyleBottom"
+            android:drawableTop="@drawable/selector_bottom_quality_bar"
+            android:text="良品" />
+
+        <RadioButton
+            android:id="@+id/rb_time"
+            style="@style/RadioButtonStyleBottom"
+            android:drawableTop="@drawable/selector_bottom_time_bar"
+            android:text="限时特惠" />
+
+        <RadioButton
+            android:id="@+id/rb_find"
+            style="@style/RadioButtonStyleBottom"
+            android:drawableTop="@drawable/selector_bottom_find_bar"
+            android:text="发现" />
+
+        <RadioButton
+            android:id="@+id/rb_mine"
+            style="@style/RadioButtonStyleBottom"
+            android:drawableTop="@drawable/selector_bottom_mine_bar"
+            android:text="我的" />
+    </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
+</LinearLayout>

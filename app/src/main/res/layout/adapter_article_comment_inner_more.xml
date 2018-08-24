@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingTop="24px"
+        android:paddingBottom="24px"
+        android:gravity="center"
+        android:textColor="@color/text_login_blue_z"
+        android:text="查看更多"
+        android:textSize="24px"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

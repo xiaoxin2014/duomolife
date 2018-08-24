@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="@drawable/divider_ll_10dp_gray_bg"
+    android:orientation="vertical"
+    android:showDividers="beginning|end">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="68px"
+        android:gravity="center_vertical"
+        android:paddingLeft="20px"
+        android:paddingRight="33px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="创建时间"
+            android:textColor="@color/text_black_t"
+            android:textSize="26px" />
+
+        <TextView
+            android:id="@+id/tv_gp_ql_share_product_c_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="2011111111111111111111111111"
+            android:textColor="@color/text_black_t"
+            android:textSize="26px" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="216px"
+        android:orientation="horizontal"
+        android:paddingLeft="30px"
+        android:gravity="center_vertical"
+        android:paddingRight="35px">
+
+        <ImageView
+            android:id="@+id/iv_gp_ql_share_product"
+            android:layout_width="176px"
+            android:layout_height="176px"
+            android:scaleType="centerCrop"
+            app:layout_auto_basewidth="height" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="30px"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/tv_gp_ql_share_pro_name"
+                android:textColor="@color/text_black_t"
+                android:textSize="28px"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="22px"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/tv_gp_ql_share_count"
+                    android:textSize="24px"
+                    android:textColor="@color/text_gray_hint_n"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15px"
+                    android:layout_toRightOf="@id/tv_gp_ql_share_count"
+                    android:id="@+id/tv_gp_ql_share_open_count"
+                    android:textSize="24px"
+                    android:textColor="@color/text_gray_hint_n"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="22px"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/tv_gp_ql_share_price"
+                    android:textSize="30px"
+                    android:textColor="@color/text_normal_red"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="30px"
+                    android:layout_toRightOf="@id/tv_gp_ql_share_price"
+                    android:id="@+id/tv_gp_ql_share_only_price"
+                    android:textSize="24px"
+                    android:textColor="@color/text_gray_hint_n"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

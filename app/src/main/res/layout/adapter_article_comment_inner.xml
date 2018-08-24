@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="16px"
+    android:paddingLeft="30px"
+    android:paddingRight="26px"
+    android:paddingBottom="24px"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_comm_comment_inner_avatar"
+            android:layout_width="50px"
+            android:layout_height="50px"
+            android:src="@drawable/coupon"
+            android:layout_centerVertical="true"
+            app:layout_auto_basewidth="height" />
+        <emojicon.EmojiconTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12px"
+            android:lines="1"
+            android:ellipsize="end"
+            android:text="多么生活 回复 domolife"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/civ_comm_comment_inner_avatar"
+            android:id="@+id/tv_comm_comment_inner_name"
+            android:textSize="24px"
+            android:textColor="@color/text_gray_hint_n"
+            app:emojiconSize="14sp"/>
+    </RelativeLayout>
+    <emojicon.EmojiconTextView
+        android:layout_width="wrap_content"
+        android:layout_marginTop="16px"
+        android:id="@+id/tv_comm_comment_inner_content"
+        android:layout_height="wrap_content"
+        android:textSize="24px"
+        android:textColor="@color/text_black_t"
+        app:emojiconSize="14sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:gravity="center_vertical|right"
+        android:paddingTop="14px"
+        android:layout_height="wrap_content">
+        <include layout="@layout/layout_comm_comment_like_rec"/>
+    </RelativeLayout>
+</LinearLayout>

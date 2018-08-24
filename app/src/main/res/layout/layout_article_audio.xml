@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <com.amkj.dmsh.views.JzVideo.CustomAudioPlayer
+        android:layout_width="match_parent"
+        android:id="@+id/jvp_audio_play"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

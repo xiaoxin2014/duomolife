@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingLeft="30px"
+        android:paddingRight="@dimen/gap_right"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/layout_invitation_user" />
+    </RelativeLayout>
+    <include layout="@layout/layout_communal_recycler_wrap"/>
+
+    <RelativeLayout
+        android:id="@+id/rel_img_art_com"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/layout_comm_comment_header" />
+    </RelativeLayout>
+</LinearLayout>

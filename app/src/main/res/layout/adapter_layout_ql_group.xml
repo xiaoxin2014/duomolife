@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="20px"
+    android:paddingLeft="30px"
+    android:paddingRight="30px"
+    android:paddingTop="20px">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="80px"
+            android:layout_marginLeft="50px"
+            android:background="@drawable/border_rect_nor_red"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="54px"
+            android:paddingRight="30px">
+
+            <TextView
+                android:id="@+id/tv_ql_gp_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.7"
+                android:maxLines="2"
+                android:gravity="center"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="26px" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="80px"
+                android:gravity="center|right"
+                android:orientation="vertical"
+                android:layout_weight="2"
+                android:paddingBottom="8px"
+                android:paddingTop="8px">
+
+                <TextView
+                    android:id="@+id/tv_join_dif_per_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10px"
+                    android:text="还差一人成团"
+                    android:textColor="@color/text_normal_red"
+                    android:textSize="22px" />
+
+                <include layout="@layout/layout_countdown_time_hours" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:layout_width="140px"
+            android:text="去参团"
+            android:textSize="28px"
+            android:textColor="@color/white"
+            android:id="@+id/tv_ql_gp_sp_join"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cir_ql_gp_ava"
+        android:layout_width="100px"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/load_loading_image"
+        android:layout_height="100px"
+        app:layout_auto_basewidth="height" />
+</FrameLayout>

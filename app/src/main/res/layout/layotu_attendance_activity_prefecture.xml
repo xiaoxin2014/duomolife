@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <View
+        android:layout_width="match_parent"
+        android:background="@drawable/item_divider_five_gray_f"
+        android:layout_height="@dimen/dimen_5_dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_activity_prefecture"
+        android:textColor="@color/text_black_t"
+        android:textSize="32px"
+        android:text="更多专区"
+        android:paddingLeft="@dimen/gap_left"
+        android:gravity="center_vertical"
+        android:layout_height="100px" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_below="@id/tv_activity_prefecture"
+        android:id="@+id/rv_activity_prefecture"
+        android:layout_marginBottom="50px"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

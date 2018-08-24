@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_bg"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="wrap_content">
+        <include layout="@layout/activity_domolife_header"/>
+    </RelativeLayout>
+    <emojicon.EmojiconEditTextClean
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:layout_marginTop="10px"
+        android:id="@+id/edit_personal_name"
+        android:textColor="@color/home_text_color"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:textSize="32px"
+        android:singleLine="true"
+        android:textColorHint="@color/text_hint_gray_ae"
+        android:hint="@string/personal_name_hint"
+        android:gravity="center_vertical"
+        android:minHeight="104px"
+        android:layout_height="wrap_content"
+        app:emojiconSize="20sp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:id="@+id/tv_personal_name_length"
+        android:gravity="right|center_vertical"
+        android:text="20"
+        android:background="@color/gray_bg"
+        android:layout_marginBottom="4px"/>
+</LinearLayout>

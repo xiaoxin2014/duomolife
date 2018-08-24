@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/activity_domolife_header" />
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/adapter_direct_sales_return_item" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_5_dp"
+                    android:background="@color/bg_color" />
+
+                <emojicon.EmojiconEditText
+                    android:id="@+id/et_appeal_reason"
+                    android:layout_width="match_parent"
+                    android:minHeight="70px"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_bottom_line"
+                    android:gravity="center_vertical"
+                    android:hint="申诉理由"
+                    android:paddingLeft="28px"
+                    android:paddingRight="28px"
+                    android:textColor="@color/home_text_color"
+                    android:textColorHint="@color/text_hint_gray_ae"
+                    android:textSize="24px" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_height="wrap_content">
+
+                    <emojicon.EmojiconEditText
+                        android:id="@+id/et_appeal_question_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:gravity="left"
+                        android:textColor="@color/home_text_color"
+                        android:textColorHint="@color/text_hint_gray_ae"
+                        android:hint="请填写问题描述"
+                        android:minHeight="205px"
+                        android:paddingLeft="28px"
+                        android:paddingRight="28px"
+                        android:paddingTop="25px"
+                        android:paddingBottom="25px"
+                        android:textSize="24px" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="wrap_content"
+                        android:paddingLeft="@dimen/gap_left"
+                        android:id="@+id/rv_sale_return_img"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:paddingRight="26px"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_5_dp"
+                    android:background="@color/bg_color" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/viewStub"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="42px"
+                    android:text="如有其它疑问，请拨打服务电话：400-000-1019"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="24px" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/viewStub"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16px"
+                    android:layout_marginTop="16px"
+                    android:text="服务时间：周一至周日：09:00-18:00"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/rel_progressBar"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        android:background="@color/translucence">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:visibility="visible"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+</RelativeLayout>

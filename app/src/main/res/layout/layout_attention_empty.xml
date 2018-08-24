@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="你还没有关注Ta人\n快去围观各位千手观音吧！\nฅ( ̳• ·̫ • ̳) 喵"
+        android:textColor="#8f8f8f"
+        android:textSize="28px" />
+</FrameLayout>

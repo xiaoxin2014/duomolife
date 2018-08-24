@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="24px"
+    android:background="@color/light_gray_f"
+    android:paddingRight="@dimen/gap_right"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="88px">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="26px"
+            android:id="@+id/tv_mes_official_time"
+            android:background="@drawable/border_cir_four_bg_all_gray"
+            android:padding="12px"
+            android:gravity="center_vertical"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:paddingLeft="16px"
+        android:paddingRight="16px"
+        android:paddingBottom="26px"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_height="68px">
+            <TextView
+                android:layout_width="61px"
+                android:layout_marginRight="17px"
+                android:background="@drawable/border_cir_1dp5_nor_red"
+                android:textSize="20px"
+                android:id="@+id/tv_mes_official_tag"
+                android:textColor="@color/white"
+                android:text="未读"
+                android:gravity="center"
+                android:layout_height="30px" />
+            <TextView
+                android:layout_width="match_parent"
+                android:textColor="@color/text_black_t"
+                android:textSize="30px"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:id="@+id/tv_mes_official_title"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:scaleType="centerCrop"
+            android:id="@+id/iv_mes_official_cover"
+            android:layout_height="360px"
+            app:layout_auto_basewidth = "height"/>
+
+        <TextView
+            android:layout_marginTop="20px"
+            android:layout_width="match_parent"
+            android:textColor="@color/text_black_t"
+            android:textSize="26px"
+            android:lineSpacingExtra="@dimen/dimen_8_dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:id="@+id/tv_mes_official_descrip"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

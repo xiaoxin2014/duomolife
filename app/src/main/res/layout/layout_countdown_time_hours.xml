@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="36px"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="10px"
+        android:text="距结束"
+        android:textSize="22px"
+        android:id="@+id/tv_count_time_before_white"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_login_gray_s"
+        android:layout_height="wrap_content" />
+    <cn.iwgang.countdownview.CountdownView
+        android:id="@+id/cv_countdownTime_white_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10px"
+        android:layout_gravity="center_vertical"
+        app:isHideTimeBackground="true"
+        app:isShowMillisecond="false"
+        app:isShowDay="false"
+        app:isShowHour="true"
+        app:suffixHour=":"
+        app:isShowMinute="true"
+        app:suffixMinute=":"
+        app:isShowSecond="true"
+        app:suffixGravity="center"
+        app:suffixTextColor="@color/text_login_gray_s"
+        app:suffixTextSize="22px"
+        app:timeTextColor="@color/text_login_gray_s"
+        app:timeTextSize="22px" />
+</LinearLayout>

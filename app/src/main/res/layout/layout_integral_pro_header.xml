@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:layout_height="100px">
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/light_gray_f"
+        android:layout_height="@dimen/dimen_5_dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/tv_integral_pro_shop"
+        android:layout_centerVertical="true"
+        android:textColor="@color/text_login_gray_s"
+        android:layout_marginLeft="26px"
+        android:text="积分商城"
+        android:textSize="32px"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/tv_integral_pro_type"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/text_login_gray_s"
+        android:padding="26px"
+        android:gravity="center_vertical"
+        android:text="全部"
+        android:drawablePadding="@dimen/dimen_11dp"
+        android:drawableRight="@drawable/att_integ_next"
+        android:textSize="28px"
+        android:layout_height="match_parent" />
+</RelativeLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="88px"
+        android:layout_centerInParent="true"
+        android:textColor="@color/text_black_t"
+        android:textSize="32px"
+        android:gravity="center"
+        android:text="更多同类商品推荐"
+        android:id="@+id/tv_communal_more"/>
+</RelativeLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="403px"
+    app:layout_auto_basewidth="height">
+
+    <ImageView
+        android:id="@+id/iv_communal_img_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50px"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="25px"
+        android:layout_marginLeft="25px"
+        android:background="@drawable/countdown_border"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16px"
+        android:paddingRight="16px">
+
+        <TextView
+            android:id="@+id/tv_communal_time_status"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/clock_btn_nor"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/text_black_t"
+            android:textSize="22px" />
+
+        <cn.iwgang.countdownview.CountdownView
+            android:id="@+id/ct_communal_time_details"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dimen_5_dp"
+            app:isShowDay="true"
+            app:isShowHour="true"
+            app:isShowMillisecond="false"
+            app:isShowMinute="true"
+            app:isShowSecond="true"
+            app:suffixDay="天"
+            app:suffixGravity="center"
+            app:suffixHour=":"
+            app:suffixMinute=":"
+            app:suffixTextColor="@color/text_black_t"
+            app:suffixTextSize="22px"
+            app:timeTextColor="@color/text_black_t"
+            app:timeTextSize="22px" />
+    </LinearLayout>
+</FrameLayout>

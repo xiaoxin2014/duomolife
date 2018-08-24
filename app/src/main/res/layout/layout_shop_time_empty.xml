@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@drawable/time_domolife_gray_icon"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="32px"
+        android:textColor="@color/text_gray_hint_n"
+        android:layout_marginTop="44px"
+        android:lineSpacingExtra="@dimen/dimen_4dp"
+        android:gravity="center"
+        android:text="还没有商品提醒哦\n快去添加吧"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="88px">
+        <View
+            android:layout_width="5px"
+            android:layout_centerVertical="true"
+            android:background="@color/text_login_blue_z"
+            android:layout_height="30px"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:textSize="28px"
+            android:layout_marginLeft="14px"
+            android:textColor="@color/text_login_gray_s"
+            android:text="@string/hot_text"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_find_hot_topic"
+            android:clickable="true"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="24px"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:paddingRight="20px"
+            android:text="@string/text_more"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:drawableRight="@drawable/black_next_icon"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</RelativeLayout>

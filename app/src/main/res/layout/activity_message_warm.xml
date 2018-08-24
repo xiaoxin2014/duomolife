@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:showDividers="middle"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.amkj.dmsh.views.autoviews.AutoRadioGroup
+        android:id="@+id/rp_message_warm"
+        android:layout_width="match_parent"
+        android:divider="@drawable/item_divider_gray_f_two_px"
+        android:showDividers="middle|end"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            style="@style/MessageWarm"
+            android:text="提前3分钟提醒" />
+
+        <RadioButton
+            style="@style/MessageWarm"
+            android:text="提前5分钟提醒" />
+
+        <RadioButton
+            style="@style/MessageWarm"
+            android:text="提前10分钟提醒" />
+
+        <RadioButton
+            style="@style/MessageWarm"
+            android:text="提前30分钟提醒" />
+
+        <RadioButton
+            style="@style/MessageWarm"
+            android:text="提前60分钟提醒" />
+    </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
+</LinearLayout>

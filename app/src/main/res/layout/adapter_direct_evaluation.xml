@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="20px"
+    android:paddingTop="30px"
+    android:paddingBottom="30px"
+    android:paddingRight="32px">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="30px">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_direct_avatar"
+            android:layout_width="70px"
+            android:layout_height="70px"
+            app:civ_border_color="@color/circle_border_avatar"
+            app:civ_border_width="@dimen/dimen_1dp"
+            app:layout_auto_basewidth="height" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:layout_weight="1">
+
+            <emojicon.EmojiconTextView
+                android:id="@+id/tv_eva_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="多么生活"
+                android:textColor="@color/home_text_color"
+                android:textSize="30px"
+                app:emojiconSize="17sp" />
+
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                android:id="@+id/ratingBar_direct_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_eva_user_name"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginTop="16px"
+                android:clickable="false"
+                android:isIndicator="true"
+                android:maxHeight="32px"
+                android:minHeight="32px"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="1"
+                app:mrb_progressTint="@color/ratingBar_yellow"
+                app:mrb_secondaryProgressTint="@color/text_gray_c" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_eva_count"
+            android:layout_width="wrap_content"
+            android:paddingTop="10px"
+            android:paddingBottom="10px"
+            android:paddingLeft="20px"
+            android:paddingRight="20px"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:drawableLeft="@drawable/sel_art_like_heart"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:text="18"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="24px" />
+    </LinearLayout>
+
+    <emojicon.EmojiconTextView
+        android:layout_marginLeft="90px"
+        android:id="@+id/tv_direct_evaluation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textColor="@color/home_text_color"
+        android:textSize="26px"
+        app:emojiconSize="15sp" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/rv_pro_eva"
+        android:layout_marginLeft="90px"
+        android:paddingTop="20px"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_marginLeft="90px"
+        android:id="@+id/ll_eva_comment_reply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16px"
+        android:orientation="vertical"
+        android:paddingTop="16px"
+        android:paddingBottom="16px"
+        android:paddingLeft="30px"
+        android:paddingRight="30px"
+        android:background="@drawable/border_circle_four_light_blue"
+        android:visibility="visible">
+
+        <emojicon.EmojiconTextView xmlns:attr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/emo_direct_eva_reply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black_t"
+            android:textSize="24px"
+            attr:emojiconAlignment = "baseline"
+            attr:emojiconSize="14sp"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:showDividers="middle|end"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_aliPay"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_checked_alipay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_pay_way"
+            android:button="@null"
+            android:checked="true" />
+
+        <ImageView
+            android:id="@+id/img_aliPay"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginLeft="40px"
+            android:background="@drawable/border_circle_two_white"
+            android:src="@drawable/alipay"
+            app:layout_auto_basewidth="height" />
+
+        <TextView
+            android:id="@+id/tv_item_alipay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16px"
+            android:text="支付宝支付"
+            android:textColor="@color/home_text_color"
+            android:textSize="28px" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_Layout_weChat"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_checked_wechat_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_pay_way"
+            android:button="@null" />
+
+        <ImageView
+            android:id="@+id/img_weChat_way"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginLeft="40px"
+            android:background="@drawable/border_circle_two_white"
+            android:src="@drawable/wechat_pay"
+            app:layout_auto_basewidth="height" />
+
+        <TextView
+            android:id="@+id/tv_item_wechat_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16px"
+            android:text="微信支付"
+            android:textColor="@color/home_text_color"
+            android:textSize="28px" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="20px"
+    android:paddingRight="20px">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="382px"
+        android:scaleType="centerCrop"
+        app:layout_auto_basewidth="height" >
+        <ImageView
+            android:id="@+id/iv_article_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="36px"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:textColor="@color/white"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical"
+            android:textSize="22px"
+            android:drawableLeft="@drawable/art_eye_icon"
+            android:id="@+id/tv_article_view_count"
+            android:paddingLeft="12px"
+            android:paddingRight="12px"
+            android:layout_marginBottom="20px"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_article_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:paddingBottom="20px"
+        android:paddingTop="20px"
+        android:textColor="@color/text_black_t"
+        android:textSize="32px" />
+
+    <TextView
+        android:id="@+id/tv_article_descrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6px"
+        android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/dimen_8_dp"
+        android:maxLines="3"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="26px" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_article_type"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="60px"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="22px" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical">
+
+            <include layout="@layout/layout_com_art_bottom" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

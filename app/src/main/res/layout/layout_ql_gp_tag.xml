@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_ql_gp_tag"
+    android:layout_width="wrap_content"
+    android:layout_height="68px"
+    android:layout_centerVertical="true"
+    android:layout_marginRight="40px"
+    android:drawableLeft="@drawable/ql_gp_tag_icon"
+    android:drawablePadding="@dimen/dimen_8_dp"
+    android:gravity="center"
+    android:textColor="@color/text_gray_hint_n"
+    android:textSize="24px" />

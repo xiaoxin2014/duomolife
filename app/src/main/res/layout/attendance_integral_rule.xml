@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/translucence">
+
+    <LinearLayout
+        android:layout_width="540px"
+        android:layout_height="665px"
+        android:layout_centerInParent="true"
+        android:background="@drawable/border_cir_7dp_bg_white"
+        android:divider="@drawable/divider_ll_0_5_dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:showDividers="middle">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="30px">
+
+            <TextView
+                android:id="@+id/tv_integral_rule_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40px"
+                android:paddingLeft="50px"
+                android:paddingRight="40px"
+                android:textColor="@color/text_black_t"
+                android:textSize="32px" />
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rv_communal_rule"
+                android:scrollbars="vertical"
+                android:layout_below="@id/tv_integral_rule_title"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="50px"
+                android:layout_marginRight="40px"
+                android:layout_marginTop="50px"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_integral_rule_dismiss"
+            android:layout_width="match_parent"
+            android:layout_height="88px"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="我知道了"
+            android:textColor="@color/text_login_blue_z"
+            android:textSize="32px" />
+    </LinearLayout>
+</RelativeLayout>

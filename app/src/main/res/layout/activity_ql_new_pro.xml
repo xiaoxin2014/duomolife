@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/activity_communal_ql_shop_car"/>
+    <TextView
+        android:layout_width="80px"
+        android:id="@+id/tv_ql_new_pro_time_tag"
+        android:visibility="gone"
+        android:layout_marginTop="511px"
+        android:text="1天"
+        android:gravity="center"
+        android:textSize="22px"
+        android:clickable="true"
+        android:textColor="@color/white"
+        android:layout_height="50px" />
+</RelativeLayout>

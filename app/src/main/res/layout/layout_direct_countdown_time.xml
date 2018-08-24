@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/ll_direct_count_time"
+    android:visibility="gone"
+    android:background="@color/transparent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/tv_count_time_before"
+        android:layout_width="wrap_content"
+        android:text="剩 "
+        android:textSize="26px"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_login_gray_s"
+        android:layout_height="wrap_content" />
+    <cn.iwgang.countdownview.CountdownView
+        android:id="@+id/cv_countdownTime_direct"
+        android:layout_width="wrap_content"
+        android:layout_height="30px"
+        android:layout_gravity="center_vertical"
+        app:isConvertDaysToHours="false"
+        app:isShowMillisecond="false"
+        app:isShowDay="false"
+        app:isShowHour="true"
+        app:isShowMinute="true"
+        app:isShowSecond="true"
+        app:suffixGravity="center"
+        app:suffixTextColor="@color/text_login_blue_z"
+        app:suffixTextSize="28px"
+        app:isSuffixTextBold="true"
+        app:timeTextColor="@color/text_login_blue_z"
+        app:isTimeTextBold="true"
+        app:timeTextSize="28px"/>
+    <TextView
+        android:id="@+id/tv_count_time_after"
+        android:layout_width="wrap_content"
+        android:text=" 自动关闭"
+        android:textSize="26px"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_login_gray_s"
+        android:layout_height="wrap_content" />
+</LinearLayout>

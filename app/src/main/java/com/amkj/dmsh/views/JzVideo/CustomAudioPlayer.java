@@ -1,0 +1,164 @@
+package com.amkj.dmsh.views.JzVideo;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.amkj.dmsh.R;
+
+import java.util.LinkedHashMap;
+
+import cn.jzvd.JZMediaManager;
+import cn.jzvd.JZUserAction;
+import cn.jzvd.JZUtils;
+import cn.jzvd.JZVideoPlayer;
+
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+
+;
+
+
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2018/2/5
+ * version 3.9
+ * class description:自定义音频播放
+ */
+
+public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
+
+    private ImageView ib_audio_player;
+    private TextView tv_audio_player_title,tv_audio_player_source;
+    private RelativeLayout rel_audio;
+
+    public CustomAudioPlayer(Context context) {
+        super(context);
+    }
+    public CustomAudioPlayer(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    @Override
+    public int getLayoutId() {
+        return R.layout.jz_layout_standard_audio;
+    }
+
+    @Override
+    public void init(Context context) {
+        super.init(context);
+        ib_audio_player = findViewById(R.id.ib_audio_player);
+        tv_audio_player_title = findViewById(R.id.tv_audio_player_title);
+        tv_audio_player_source = findViewById(R.id.tv_audio_player_source);
+        rel_audio = findViewById(R.id.rel_audio);
+        ib_audio_player.setOnClickListener(this);
+    }
+
+    /**
+     * 设置音频数据
+     * @param url
+     * @param title
+     * @param sourceTitle
+     */
+    public void setAudioData(@NonNull String url,String title,String sourceTitle){
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(URL_KEY_DEFAULT, url);
+        Object[] dataSourceObjects = new Object[1];
+        dataSourceObjects[0] = map;
+        if(!TextUtils.isEmpty(title)){
+            tv_audio_player_title.setVisibility(VISIBLE);
+            tv_audio_player_title.setText(title);
+        }else{
+            tv_audio_player_title.setVisibility(GONE);
+        }
+        if(!TextUtils.isEmpty(sourceTitle)){
+            tv_audio_player_source.setVisibility(VISIBLE);
+            tv_audio_player_source.setText(sourceTitle);
+        }else{
+            tv_audio_player_source.setVisibility(GONE);
+        }
+        setUp(dataSourceObjects, 0, JZVideoPlayer.SCREEN_WINDOW_NORMAL, "");
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        if(v.getId() == R.id.ib_audio_player){
+            if (dataSourceObjects == null || JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
+                Toast.makeText(getContext(), getResources().getString(cn.jzvd.R.string.no_url), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (currentState == CURRENT_STATE_NORMAL) {
+                if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
+                        JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                        !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                    showWifiDialog();
+                    return;
+                }
+                startVideo();
+                onEvent(JZUserAction.ON_CLICK_START_ICON);
+            } else if (currentState == CURRENT_STATE_PLAYING) {
+                onEvent(JZUserAction.ON_CLICK_PAUSE);
+                Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
+                JZMediaManager.pause();
+                onStatePause();
+            } else if (currentState == CURRENT_STATE_PAUSE) {
+                onEvent(JZUserAction.ON_CLICK_RESUME);
+                JZMediaManager.start();
+                onStatePlaying();
+            } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
+                onEvent(JZUserAction.ON_CLICK_START_AUTO_COMPLETE);
+                startVideo();
+            }
+        }
+    }
+
+    @Override
+    public void startVideo() {
+        super.startVideo();
+        ib_audio_player.setSelected(true);
+    }
+
+    @Override
+    public void onStateNormal() {
+        super.onStateNormal();
+        ib_audio_player.setSelected(false);
+    }
+
+    @Override
+    public void onStatePlaying() {
+        super.onStatePlaying();
+        ib_audio_player.setSelected(true);
+    }
+//
+    @Override
+    public void onStatePause() {
+        super.onStatePause();
+        ib_audio_player.setSelected(false);
+    }
+
+    @Override
+    public void onStateAutoComplete() {
+        super.onStateAutoComplete();
+        ib_audio_player.setSelected(false);
+    }
+
+    @Override
+    public void onError(int what, int extra) {
+        ib_audio_player.setSelected(false);
+        showToast(getContext(),"播放异常，请重新刷新重试");
+    }
+
+    @Override
+    public void onStateError() {
+        super.onStateError();
+        ib_audio_player.setSelected(false);
+        showToast(getContext(),"播放异常，请重新刷新重试");
+    }
+}

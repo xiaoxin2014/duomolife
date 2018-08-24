@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@color/text_normal_red"
+        android:id="@+id/tv_communal_present_tag"
+        android:layout_centerVertical="true"
+        android:textSize="24px"
+        android:layout_height="wrap_content" />
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:id="@+id/tv_communal_text"
+        android:layout_marginLeft="16px"
+        android:textColor="@color/text_black_t"
+        android:layout_toRightOf="@id/tv_communal_present_tag"
+        android:layout_centerVertical="true"
+        android:textSize="24px"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:layout_height="48px" />
+</RelativeLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+        <include layout="@layout/layout_communal_refresh_recyacle_header_indent"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:divider="@drawable/divider_ll_10dp_gray_bg"
+        android:showDividers="beginning"
+        android:id="@+id/ll_indent_detail_bottom"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginRight="24px"
+        android:layout_height="wrap_content">
+        <include layout="@layout/layout_communal_indent_bottom"/>
+    </LinearLayout>
+</LinearLayout>

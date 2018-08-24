@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_about_us_new_logo"
+            android:layout_width="240px"
+            android:layout_height="240px"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/domolife_logo_w" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="31px"
+            android:gravity="center"
+            android:text="分享生活美学"
+            android:textColor="@color/text_black_t"
+            android:textSize="28px" />
+
+        <TextView
+            android:id="@+id/tv_mine_more_about_version_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100px"
+            android:gravity="center"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="26px" />
+
+        <TextView
+            android:id="@+id/tv_check_update"
+            android:layout_width="172px"
+            android:layout_height="70px"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30px"
+            android:background="@drawable/border_cir_4dp_gray_c_bg_f_four"
+            android:gravity="center"
+            android:text="检查更新"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="26px" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="86px"
+        android:text="深圳市安漫科技有限公司"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/text_black_t"
+        android:textSize="30px" />
+</RelativeLayout>

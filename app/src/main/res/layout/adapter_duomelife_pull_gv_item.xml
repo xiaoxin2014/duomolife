@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="344px"
+        app:layout_auto_basewidth="height">
+        <ImageView
+            android:id="@+id/img_domolife_product"
+            android:layout_width="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img_tag_duomelife_out_tag"
+            android:layout_width="172px"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:src="@drawable/goods_sold_out"
+            android:layout_height="172px" />
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_duomolife_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="22px"
+        android:lineSpacingExtra="@dimen/dimen_3_dp"
+        android:paddingRight="22px"
+        android:gravity="center_vertical"
+        android:lines="2"
+        android:ellipsize="end"
+        android:textColor="@color/text_black_t"
+        android:textSize="24px" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="22px"
+        android:paddingRight="22px"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="10px"
+        android:paddingBottom="10px">
+        <TextView
+            android:id="@+id/tv_product_duomolife_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_red_color"
+            android:textSize="30px" />
+
+        <TextView
+            android:id="@+id/tv_product_domolife_original_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:textColor="@color/home_text_color"
+            android:textSize="24px" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/transparent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/border_rect_15dp_bg_white"
+        android:clickable="true"
+        android:paddingLeft="30px"
+        android:paddingRight="30px">
+        <TextView
+            android:id="@+id/tv_app_version_info"
+            android:layout_width="match_parent"
+            android:layout_height="80px"
+            android:lines="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="@dimen/dimen_3_dp"
+            android:paddingTop="15px"
+            android:textColor="@color/text_black_t"
+            android:textSize="28px" />
+
+        <TextView
+            android:id="@+id/tv_app_version_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="60px"
+            android:maxHeight="250px"
+            android:lineSpacingExtra="@dimen/dimen_3_dp"
+            android:layout_below="@id/tv_app_version_info"
+            android:paddingBottom="15px"
+            android:paddingTop="15px"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="26px" />
+
+        <TextView
+            android:id="@+id/tv_app_version_update"
+            android:layout_width="320px"
+            android:layout_marginTop="15px"
+            android:layout_height="70px"
+            android:layout_below="@id/tv_app_version_description"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="15px"
+            android:background="@drawable/border_cir_42_bg_blue"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="立即更新"
+            android:textColor="@color/white"
+            android:textSize="32px" />
+
+        <LinearLayout
+            android:id="@+id/ll_app_version_down_total"
+            android:layout_width="match_parent"
+            android:layout_height="80px"
+            android:layout_marginTop="15px"
+            android:layout_below="@id/tv_app_version_description"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <SeekBar
+                android:id="@+id/seek_bar_app_version_total"
+                android:layout_width="0px"
+                android:layout_height="@dimen/dimen_2dp"
+                android:layout_weight="1"
+                android:paddingEnd="0dp"
+                android:paddingStart="0dp"
+                android:progressDrawable="@drawable/app_down_seek_progress"
+                android:thumb="@null" />
+
+            <TextView
+                android:id="@+id/tv_app_version_total_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
+                android:textColor="@color/blue_nor_ff"
+                android:textSize="28px" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="88px"
+    android:id="@+id/tl_web_normal_bar"
+    android:paddingBottom="1px"
+    android:background="@drawable/sel_bg_border_gray_white"
+    app:layout_collapseMode="pin"
+    app:contentInsetStart="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_height="88px">
+        <TextView
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="26px"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_web_back"
+            android:clickable="true"
+            android:background="@color/white"
+            android:textSize="32px"
+            android:textColor="@color/home_text_color"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/common_back_btn_nor"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="26px"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@+id/tv_web_back"
+            android:id="@+id/iv_close_reload_page"
+            android:gravity="center_vertical"
+            android:src="@drawable/sel_selector_web_load_close"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="32px"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_marginLeft="90px"
+            android:layout_marginRight="140px"
+            android:id="@+id/tv_web_title"
+            android:textColor="@color/text_black_t"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_gravity="center_vertical|right"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingRight="26px"
+            android:paddingLeft="@dimen/gap_left"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:textSize="32px"
+            android:textColor="@color/selector_mine_warm_time"
+            android:id="@+id/tv_web_shared"
+            android:clickable="true"
+            android:drawableRight="@drawable/common_share_btn_nor"
+            android:layout_height="match_parent" />
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/bottom_seek_web_progress"
+            android:visibility="gone"
+            android:background="@null"
+            android:max="100"
+            android:layout_marginTop="21px"
+            android:minHeight="1dp"
+            android:progressDrawable="@drawable/web_load_seek_progress"
+            android:thumb="@null" />
+    </RelativeLayout>
+</com.amkj.dmsh.views.autoviews.AutoToolbar>

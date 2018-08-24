@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="98px"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_sp_details_collect"
+        android:layout_width="125px"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:paddingTop="17px"
+        android:drawableTop="@drawable/sel_comment_collect_star"
+        android:gravity="center"
+        android:text="收藏"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="22px" />
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="48px"
+        android:layout_gravity="center_vertical"
+        android:background="#686868" />
+
+    <TextView
+        android:id="@+id/tv_sp_details_service"
+        android:layout_width="125px"
+        android:paddingTop="17px"
+        android:layout_height="match_parent"
+        android:drawableTop="@drawable/service_gray"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="客服"
+        android:textColor="@color/home_text_color"
+        android:textSize="22px" />
+
+    <TextView
+        android:id="@+id/tv_sp_details_add_car"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/sel_light_red_un_gray"
+        android:enabled="true"
+        android:gravity="center"
+        android:text="加入购物车"
+        android:textColor="@color/white"
+        android:textSize="34px" />
+
+    <TextView
+        android:id="@+id/tv_sp_details_buy_it"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/sel_deep_red_yel_gray"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="立即购买"
+        android:textColor="@color/white"
+        android:textSize="34px" />
+</LinearLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_layout_slp"
+    android:layout_width="match_parent"
+    android:clickable="true"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="216px"
+            android:background="@color/white"
+            android:id="@+id/ll_product_sku_header"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="30px"
+            android:paddingRight="30px">
+
+            <ImageView
+                android:id="@+id/iv_dir_indent_pro"
+                android:layout_width="176px"
+                android:layout_height="176px"
+                android:scaleType="centerCrop"
+                app:layout_auto_basewidth="height" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32px"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_dir_indent_pro_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="@dimen/dimen_2dp"
+                    android:maxLines="2"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="28px" />
+                <TextView
+                    android:id="@+id/tv_pro_combine_discount"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="20px"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:lineSpacingExtra="@dimen/dimen_2dp"
+                    android:maxLines="2"
+                    android:textColor="@color/text_normal_red"
+                    android:textSize="22px" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="24px"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_dir_indent_pro_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|left"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="28px" />
+
+                    <TextView
+                        android:id="@+id/tv_dir_indent_pro_quality"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:textColor="@color/sel_font_gray_s_yel_fsc"
+                        android:textSize="26px" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/scroll_sku_values"
+            android:minHeight="350px"
+            android:layout_weight="1"
+            android:background="@drawable/border_top_bottom_line">
+
+            <LinearLayout
+                android:id="@+id/layout_parameter_slp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+        </android.support.v4.widget.NestedScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/bt_direct_attribute_car"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="98px"
+                android:visibility="gone"
+                android:background="@drawable/sel_bg_pink_yellow_gray"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="加入购物车"
+                android:textColor="@color/white"
+                android:textSize="32px" />
+            <Button
+                android:id="@+id/bt_direct_attribute_buy"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="98px"
+                android:background="@drawable/sel_deep_red_yel_gray"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="立即购买"
+                android:textColor="@color/white"
+                android:textSize="32px" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

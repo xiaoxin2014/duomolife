@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="88px"
+    android:id="@+id/tl_quality_bar"
+    android:background="@drawable/sel_bg_border_gray_white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_life_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:drawableLeft="@drawable/common_back_btn_nor"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="26px"
+            android:textColor="@color/home_text_color"
+            android:textSize="32px" />
+
+        <com.flyco.tablayout.CommonTabLayout
+            android:layout_centerInParent="true"
+            android:id="@+id/ctb_qt_pro_details"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            tl:tl_indicator_style="NORMAL"
+            tl:tl_tab_padding="25dp"
+            tl:tl_indicator_height="@dimen/dimen_2dp"
+            tl:tl_indicator_width="@dimen/dimen_20_dp"
+            tl:tl_indicator_margin_bottom="@dimen/dimen_2dp"
+            tl:tl_indicator_color="@color/text_black_t"
+            tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+            tl:tl_textSelectColor="@color/text_black_t"
+            tl:tl_textUnselectColor="@color/text_black_t"
+            tl:tl_textsize="14sp" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:id="@+id/fl_header_service"
+            android:layout_alignParentRight="true"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_img_service"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="24px"
+                android:paddingLeft="@dimen/gap_left"
+                android:src="@drawable/service_gray" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/iv_img_share"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/fl_header_service"
+            android:clickable="true"
+            android:paddingLeft="@dimen/gap_left"
+            android:src="@drawable/common_share_btn_nor" />
+
+    </RelativeLayout>
+</com.amkj.dmsh.views.autoviews.AutoToolbar>

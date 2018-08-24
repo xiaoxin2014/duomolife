@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ll_product_coupon"
+    android:background="@drawable/sel_border_top_gray"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@color/text_normal_red"
+        android:id="@+id/tv_communal_tag"
+        android:textSize="24px"
+        android:layout_height="wrap_content" />
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0px"
+        android:layout_weight="1"
+        android:layout_marginLeft="16px"
+        android:id="@+id/tv_communal_coupon_name"
+        android:textColor="@color/text_black_t"
+        android:textSize="24px"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:layout_height="48px" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@color/text_normal_red"
+        android:text="领取"
+        android:paddingRight="36px"
+        android:paddingLeft="36px"
+        android:paddingTop="18px"
+        android:paddingBottom="18px"
+        android:textSize="24px"
+        android:id="@+id/tv_communal_get_coupon"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+    <include layout="@layout/activity_domolife_header" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0px">
+                <include layout="@layout/layout_communal_recycler"/>
+            </RelativeLayout>
+            <include layout="@layout/layout_indent_write_commit" />
+        </LinearLayout>
+        <include layout="@layout/communal_loading_empty_error"/>
+    </FrameLayout>
+</LinearLayout>

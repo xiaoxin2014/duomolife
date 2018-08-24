@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:showDividers="middle"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ll_integral_detail_product"
+        android:divider="@drawable/item_divider_ten_dp_f_f"
+        android:showDividers="middle"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.bigkoo.convenientbanner.ConvenientBanner
+                android:id="@+id/banner_integration_details"
+                android:layout_width="match_parent"
+                android:layout_height="750px"
+                android:background="@drawable/border_bottom_line"
+                app:layout_auto_basewidth="height" />
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/banner_integration_details"
+                layout="@layout/layout_integration_details_introduce" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/ll_product_comment"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+            <include layout="@layout/layout_product_comment_eva"/>
+            <include layout="@layout/adapter_direct_evaluation"/>
+        </LinearLayout>
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:id="@+id/flex_integral_tag"
+            android:paddingLeft="30px"
+            android:paddingRight="26px"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"/>
+    </LinearLayout>
+    <include layout="@layout/layout_communal_recycler_wrap"/>
+</LinearLayout>

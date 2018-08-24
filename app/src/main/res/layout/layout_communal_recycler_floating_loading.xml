@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:background="@color/white">
+    <include layout="@layout/layout_communal_recycler" />
+    <include layout="@layout/layout_communal_floating" />
+    <include layout="@layout/communal_loading_empty_error" />
+</FrameLayout>

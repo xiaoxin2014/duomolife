@@ -1,0 +1,3 @@
+include ':app', ':Emoj', ':pinneditem', 'RecyclerViewPager', 'FlycoTabLayout_Lib', ':countdowntime', ':permission', ':TuSDKUIDefault', ':TextView-LinkBuilder', ':Luban', ':picture_library', ':ucrop', ':ShortcutBadger'
+include ':xiaonengChatUI', ':convenientbanner',"jiaozivideoplayer"
+

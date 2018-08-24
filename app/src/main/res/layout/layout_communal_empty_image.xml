@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray_f"
+    android:gravity="center"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_width="400px"
+        android:layout_weight="1"
+        android:id="@+id/iv_communal_image_empty"
+        android:src="@drawable/integral_lottery_award_empty"
+        android:layout_height="0dp" />
+    <include layout="@layout/layout_integral_lottery_hint"/>
+</LinearLayout>

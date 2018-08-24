@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="88px"
+                android:background="@drawable/border_bottom_line"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:clickable="true"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="24px"
+                    android:text="清理缓存"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_mine_more_clean_cache"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/gap_right"
+                    android:text="0.00K"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="88px"
+                android:background="@drawable/border_bottom_line"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:clickable="true"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="24px"
+                    android:text="意见反馈"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_mine_more_suggestion_feedback"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/gap_right"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="88px"
+                android:background="@drawable/border_bottom_line"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:clickable="true"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="24px"
+                    android:text="常见问题"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_mine_more_normal_question"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/gap_right"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="88px"
+                android:background="@drawable/border_bottom_line"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:clickable="true"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="24px"
+                    android:text="关于多么生活"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_mine_more_about"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/gap_right"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_update_version"
+                android:layout_width="match_parent"
+                android:layout_height="88px"
+                android:background="@drawable/border_bottom_line"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="24px"
+                    android:text="版本号"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_mine_more_version_num"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/gap_right"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="88px"
+                android:background="@drawable/border_bottom_line"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:clickable="true"
+                    android:gravity="center_vertical|left"
+                    android:paddingLeft="24px"
+                    android:text="加入多么生活"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+
+                <TextView
+                    android:id="@+id/tv_mine_more_join"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/dimen_5_dp"
+                    android:drawableRight="@drawable/right_btn_nor"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/gap_right"
+                    android:textColor="@color/home_text_color"
+                    android:textSize="30px" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

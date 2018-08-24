@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="90px">
+        <TextView
+            android:paddingLeft="24px"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_mine_baby_sex"
+            android:textColor="@color/home_text_color"
+            android:textSize="30px"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:drawablePadding="@dimen/dimen_15_dp"
+            android:paddingRight="@dimen/dimen_5_dp"
+            android:textSize="30px"
+            android:drawableRight="@drawable/right_btn_nor"
+            android:id="@+id/tv_baby_data_time"
+            android:layout_centerVertical="true"
+            android:textColor="@color/home_text_color"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:divider="@drawable/divider_ll_10dp_gray_bg"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <include layout="@layout/layout_communal_refresh_recycle_header" />
+    </RelativeLayout>
+
+    <include
+        layout="@layout/layout_communal_indent_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="98px"
+        android:layout_marginRight="26px" />
+</LinearLayout>

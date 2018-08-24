@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@drawable/divider_ll_10dp_gray_bg"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:showDividers="end">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:background="@color/bg_light_blue_e">
+
+        <TextView
+            android:id="@+id/tv_indent_detail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingTop="20px"
+            android:paddingBottom="20px"
+            android:lineSpacingExtra="@dimen/dimen_5_dp"
+            android:text="订单取消"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="30px" />
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tv_indent_detail_to_refund"
+            android:textSize="24px"
+            android:layout_below="@id/tv_indent_detail_status"
+            android:visibility="gone"
+            android:lineSpacingExtra="@dimen/dimen_5_dp"
+            android:textColor="@color/text_login_gray_s"
+            android:paddingBottom="20px"
+            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:id="@+id/rel_indent_time_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true">
+            <include layout="@layout/layout_direct_countdown_time" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <include layout="@layout/layout_recycler_top_address_default" />
+
+    <RelativeLayout
+        android:id="@+id/rel_indent_lea_mes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_top_line"
+        android:paddingBottom="40px"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:paddingTop="40px"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_indent_lea_mes_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/indent_lea_mes_icon" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20px"
+            android:layout_toRightOf="@id/iv_indent_lea_mes_icon">
+
+            <TextView
+                android:id="@+id/tv_indent_user_lea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="买家留言"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="28px" />
+
+            <TextView
+                android:id="@+id/tv_indent_user_lea_mes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_indent_user_lea"
+                android:layout_marginTop="28px"
+                android:lineSpacingExtra="@dimen/dimen_5_dp"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="28px" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
+

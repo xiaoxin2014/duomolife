@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/white">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <include layout="@layout/activity_domolife_header"/>
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <include layout="@layout/layout_direct_indent_write_header_address"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:paddingRight="@dimen/gap_right"
+                    android:layout_height="239px">
+                    <ImageView
+                        android:layout_width="180px"
+                        android:layout_height="180px"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/iv_integral_product_image"
+                        app:layout_auto_baseheight = "width"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30px"
+                        android:orientation="vertical"
+                        android:layout_toRightOf="@id/iv_integral_product_image"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:id="@+id/tv_integral_product_name"
+                            android:textSize="28px"
+                            android:lines="1"
+                            android:ellipsize="end"
+                            android:textColor="@color/text_black_t"
+                            android:layout_height="wrap_content" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="20px"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:id="@+id/tv_integral_sku_value"
+                                android:textColor="@color/text_login_gray_s"
+                                android:textSize="24px"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center_vertical|right"
+                                android:layout_marginLeft="30px"
+                                android:id="@+id/tv_integral_product_count"
+                                android:textSize="28px"
+                                android:textColor="@color/text_black_t"
+                                android:layout_toRightOf="@id/tv_integral_sku_value"
+                                android:layout_height="wrap_content" />
+                        </RelativeLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:textColor="@color/text_normal_red"
+                            android:textSize="22px"
+                            android:minHeight="36px"
+                            android:gravity="bottom"
+                            android:id="@+id/tv_integral_product_price"
+                            android:layout_marginTop="40px"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </RelativeLayout>
+                <include layout="@layout/layout_integral_indent_write_foot"/>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+        <include layout="@layout/layout_integral_direct_bottom"/>
+    </LinearLayout>
+    <include layout="@layout/communal_loading_empty_error" />
+</FrameLayout>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="statusbar_view" type="id" />
+    <item name="translucent_view" type="id" />
+    <item name="tag_first" type="id" />
+    <item name="tag_second" type="id" />
+    <item name="iv_avatar_tag" type="id"/>
+    <item name="iv_tag" type="id"/>
+    <item name="iv_type_tag" type="id"/>
+    <!--传递第二个参数-->
+    <item name="iv_two_tag" type="id"/>
+    <item name="sku_param" type="id"/>
+    <item name="copy_text_content" type="id"/>
+    <item name="shop_car_position" type="id"/>
+    <item name="shop_car_parameter" type="id"/>
+    <item name="shop_car_cb" type="id"/>
+    <item name="img_eva_list" type="id"/>
+    <item name="tag_position" type="id"/>
+    <item type="id" name="statusbarutil_fake_status_bar_view" />
+    <item type="id" name="statusbarutil_translucent_view" />
+    <item name="time_due" type="id"/>
+    <item name="tag_obj" type="id"/>
+    <item name="main_page" type="id">mainPage</item>
+    <!--身份证识别-->
+    <item name="id_tag" type="id"/>
+</resources>

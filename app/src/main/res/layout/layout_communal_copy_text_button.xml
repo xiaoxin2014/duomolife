@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_copy_text"
+    android:layout_width="120px"
+    android:layout_height="40px"
+    android:background="@drawable/border_cir_1dp5_gray_white"
+    android:gravity="center"
+    android:text="复制"
+    android:textColor="@color/text_login_gray_s"
+    android:textSize="26px" />

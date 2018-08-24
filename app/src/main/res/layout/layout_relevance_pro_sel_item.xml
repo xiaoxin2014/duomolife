@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="200px"
+    android:paddingRight="@dimen/gap_right"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <CheckBox
+        android:id="@+id/cb_rev_pro_sel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:background="@color/transparent"
+        android:button="@null"
+        android:clickable="true"
+        android:drawableLeft="@drawable/sel_time_warm_blue"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="center"
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right" />
+    <ImageView
+        android:layout_width="150px"
+        android:layout_height="150px"
+        android:id="@+id/iv_rev_pro_img"
+        android:scaleType="centerCrop"
+        app:layout_auto_basewidth = "height"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingLeft="24px"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:textSize="28px"
+            android:layout_marginTop="30px"
+            android:maxLines="2"
+            android:textColor="@color/text_black_t"
+            android:id="@+id/tv_rev_pro_name"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:textSize="28px"
+            android:layout_marginBottom="45px"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/text_black_t"
+            android:id="@+id/tv_rev_pro_price"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</LinearLayout>

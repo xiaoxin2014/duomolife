@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="160px"
+        android:paddingLeft="20px"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/img_appraise_product_img"
+            android:layout_width="120px"
+            android:layout_height="120px"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            app:layout_auto_basewidth = "height"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="40px"
+            android:layout_toRightOf="@id/img_appraise_product_img"
+            android:layout_centerVertical="true"
+            android:paddingLeft="24px">
+
+            <TextView
+                android:id="@+id/tv_product_grade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:text="商品评分"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="28px" />
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                android:layout_toRightOf="@id/tv_product_grade"
+                android:layout_marginLeft="24px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:maxHeight="60px"
+                android:minHeight="50px"
+                android:stepSize="1"
+                android:rating="5"
+                android:numStars="5"
+                android:clickable="false"
+                android:id="@+id/ratingBar_direct_eva_count"
+                app:mrb_progressTint="@color/ratingBar_yellow"
+                app:mrb_secondaryProgressTint="@color/text_gray_c" />
+        </RelativeLayout>
+    </RelativeLayout>
+    <emojicon.EmojiconEditText
+        android:padding="20px"
+        android:id="@+id/et_indent_appraise_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_top_line"
+        android:hint="@string/appraise_public_hint"
+        android:textColorHint="@color/text_gray_c"
+        android:lines="4"
+        android:lineSpacingExtra="@dimen/dimen_3_dp"
+        android:textColor="@color/text_black_t"
+        android:textSize="28px" />
+    <android.support.v7.widget.RecyclerView
+        android:descendantFocusability="beforeDescendants"
+        android:layout_width="wrap_content"
+        android:paddingTop="24px"
+        android:paddingBottom="24px"
+        android:id="@+id/rv_product_eva"
+        android:paddingLeft="24px"
+        android:paddingRight="@dimen/gap_right"
+        android:scrollbars="none"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

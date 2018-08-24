@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_act_topic_no_coun_time"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/text_light_pink_da"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="23px"
+    android:paddingLeft="20px"
+    android:paddingTop="23px">
+
+    <include layout="@layout/layout_communal_pro_tag_red" />
+
+    <RelativeLayout
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10px"
+        android:paddingRight="10px"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/tv_pro_act_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_communal_pro_red_tag"
+            android:textColor="@color/text_black_t"
+            android:textSize="26px" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="16px"
+            android:layout_below="@id/tv_pro_act_desc"
+            android:id="@+id/tv_pro_act_s_end_time"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="24px" />
+    </RelativeLayout>
+
+    <include layout="@layout/layout_comm_next_right" />
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_gravity="center"
+    android:layout_height="wrap_content">
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tv_integral_lottery_join_in"
+        android:layout_width="420px"
+        android:layout_height="85px"
+        android:background="@drawable/border_cir_42_border_yel_fs"
+        android:gravity="center"
+        android:text="立即参与"
+        android:textColor="@color/yellow_bg_fsae"
+        android:textSize="34px" />
+</RelativeLayout>

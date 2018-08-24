@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_tag_release"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/release_tag_tv_bg"
+    android:enabled="true"
+    android:paddingLeft="24px"
+    android:paddingRight="@dimen/gap_right"
+    android:gravity="center"
+    android:text="热门"
+    android:textColor="@color/sel_font_blue_gray_check"
+    android:textSize="24px" />

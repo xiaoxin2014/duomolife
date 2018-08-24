@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="68px"
+    android:paddingLeft="22px"
+    android:paddingRight="22px"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:id="@+id/tv_show_text_all_comment"
+        android:gravity="center_vertical"
+        android:textSize="28px"
+        android:text="全部评论" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:drawableLeft="@drawable/view_btn_nor"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:textColor="@color/text_time"
+        android:textSize="28px" />
+<!--android:layout_marginLeft="22px"-->
+    <TextView
+        android:id="@+id/tv_article_collect_count"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:drawableLeft="@drawable/selector_article_list_liked"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:textSize="28px"
+        android:textColor="@color/text_time" />
+
+    <TextView
+        android:id="@+id/tv_article_comment_count"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="22px"
+        android:drawableLeft="@drawable/bubble_btn_nor"
+        android:drawablePadding="5dp"
+        android:textSize="28px"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_time" />
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+    <include layout="@layout/jz_layout_standard" />
+    <ImageView
+        android:layout_width="@dimen/dimen_40_dp"
+        android:id="@+id/iv_video_product"
+        android:src="@drawable/video_tag_normal_icon"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/dimen_20_dp"
+        android:layout_marginBottom="@dimen/dimen_30_dp"
+        android:layout_height="@dimen/dimen_40_dp" />
+</RelativeLayout>

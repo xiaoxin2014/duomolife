@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:showDividers="middle"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <include layout="@layout/activity_domolife_header"/>
+    <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading"/>
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:divider="@drawable/item_divider_ten_dp"
+    android:showDividers="beginning"
+    android:background="@drawable/border_bottom_line"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_comm_comment_count"
+        android:textSize="30px"
+        android:paddingLeft="20px"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_black_t"
+        android:layout_height="88px"/>
+</LinearLayout>

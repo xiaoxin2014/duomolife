@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/smart_refresh_find"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/ab_find_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/home_title_collapsing_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@android:color/white"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+<!--enterAlwaysCollapsed exitUntilCollapsed-->
+                <com.zhy.autolayout.AutoRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+<!--app:layout_collapseMode="parallax"-->
+                    <com.zhy.autolayout.AutoLinearLayout
+                        android:id="@+id/ll_find_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/light_gray_f"
+                        android:divider="@drawable/item_divider_ten_dp"
+                        android:orientation="vertical"
+                        android:showDividers="end">
+
+                        <com.zhy.autolayout.AutoRelativeLayout
+                            android:id="@+id/rel_find_ad"
+                            android:layout_width="match_parent"
+                            android:layout_height="240px"
+                            android:background="@color/white"
+                            android:visibility="gone">
+
+                            <include layout="@layout/layout_al_new_sp_banner" />
+                        </com.zhy.autolayout.AutoRelativeLayout>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rv_find_act"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/dp_10"
+                            android:background="@color/white"
+                            android:scrollbars="none" />
+
+                        <com.zhy.autolayout.AutoLinearLayout
+                            android:id="@+id/ll_find_hot_topic"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:orientation="vertical"
+                            android:paddingLeft="@dimen/gap_left"
+                            android:visibility="gone">
+
+                            <include layout="@layout/layout_find_hot_topic_header" />
+
+                            <include layout="@layout/layout_communal_recycler_wrap" />
+                        </com.zhy.autolayout.AutoLinearLayout>
+                    </com.zhy.autolayout.AutoLinearLayout>
+                </com.zhy.autolayout.AutoRelativeLayout>
+
+                <include layout="@layout/find_header" />
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+            <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/std_find_art_type"
+                android:layout_width="wrap_content"
+                android:layout_height="88px"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                tl:tl_indicator_color="@color/text_login_blue_z"
+                tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+                tl:tl_indicator_gravity="BOTTOM"
+                tl:tl_indicator_height="@dimen/dimen_2dp"
+                tl:tl_indicator_style="NORMAL"
+                tl:tl_indicator_width_equal_title="true"
+                tl:tl_tab_padding="126px"
+                tl:tl_textSelectColor="@color/text_login_blue_z"
+                tl:tl_textUnselectColor="@color/text_login_gray_s"
+                tl:tl_textsize="15sp" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/find_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border_top_line"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <include layout="@layout/layout_find_release" />
+    </android.support.design.widget.CoordinatorLayout>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>
