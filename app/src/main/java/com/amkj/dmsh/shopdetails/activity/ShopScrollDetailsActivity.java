@@ -96,7 +96,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.melnykov.fab.ObservableScrollView;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.stat.StatService;
@@ -275,7 +274,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     RecyclerView rv_shop_details_text_communal;
 
     @BindView(R.id.scroll_pro)
-    ObservableScrollView scroll_pro;
+    NestedScrollView scroll_pro;
 
     @BindView(R.id.communal_load)
     View communal_load;
@@ -532,23 +531,26 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
         ctb_qt_pro_details.setCurrentTab(0);
-        scroll_pro.setOnScrollChangedListener((who, l, t, oldl, oldt) -> {
-            if (measuredHeight < 1) {
-                measuredHeight = ll_pro_layout.getMeasuredHeight();
-            }
-            if (recommendHeightStart < 1) {
-                recommendHeightStart = ll_pro_layout.getMeasuredHeight() + rv_product_details.getMeasuredHeight();
-            }
-            if (measuredHeight < 1) {
-                return;
-            }
-            int currentTab = ctb_qt_pro_details.getCurrentTab();
-            if (t >= 0 && t < measuredHeight && currentTab != 0) {
-                ctb_qt_pro_details.setCurrentTab(0);
-            } else if (t >= measuredHeight && t < recommendHeightStart && currentTab != 1) {
-                ctb_qt_pro_details.setCurrentTab(1);
-            } else if (t >= recommendHeightStart && currentTab != 2) {
-                ctb_qt_pro_details.setCurrentTab(2);
+        scroll_pro.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (measuredHeight < 1) {
+                    measuredHeight = ll_pro_layout.getMeasuredHeight();
+                }
+                if (recommendHeightStart < 1) {
+                    recommendHeightStart = ll_pro_layout.getMeasuredHeight() + rv_product_details.getMeasuredHeight();
+                }
+                if (measuredHeight < 1) {
+                    return;
+                }
+                int currentTab = ctb_qt_pro_details.getCurrentTab();
+                if (scrollY >= 0 && scrollY < measuredHeight && currentTab != 0) {
+                    ctb_qt_pro_details.setCurrentTab(0);
+                } else if (scrollY >= measuredHeight && scrollY < recommendHeightStart && currentTab != 1) {
+                    ctb_qt_pro_details.setCurrentTab(1);
+                } else if (scrollY >= recommendHeightStart && currentTab != 2) {
+                    ctb_qt_pro_details.setCurrentTab(2);
+                }
             }
         });
         rv_shop_details_text_communal.setLayoutManager(new LinearLayoutManager(ShopScrollDetailsActivity.this));
@@ -1008,10 +1010,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .build();
         } else {
             String marketPriceTag;
-            if(!TextUtils.isEmpty(shopProperty.getNewUserTag())){
+            if (!TextUtils.isEmpty(shopProperty.getNewUserTag())) {
                 tv_new_user_tag.setVisibility(VISIBLE);
-                marketPriceTag = String.format(getString(R.string.money_price_chn),shopProperty.getMarketPrice());
-            }else{
+                marketPriceTag = String.format(getString(R.string.money_price_chn), shopProperty.getMarketPrice());
+            } else {
                 tv_new_user_tag.setVisibility(GONE);
                 marketPriceTag = "市场参考价 ￥" + shopProperty.getMarketPrice();
             }
@@ -1154,13 +1156,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setReplenishmentNotice() {
         ShopPropertyBean.SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
-        if(shopPropertyBean.getSkuSale().size()>0&&shopPropertyBean.getSkuSale().size()<2
-                &&(skuSaleBean.getIsNotice()==1||skuSaleBean.getIsNotice()==2)){
+        if (shopPropertyBean.getSkuSale().size() > 0 && shopPropertyBean.getSkuSale().size() < 2
+                && (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2)) {
             tv_sp_details_add_car.setEnabled(true);
             tv_sp_details_add_car.setSelected(true);
             skuSaleBeanId = skuSaleBean.getId();
-            tv_sp_details_add_car.setText(skuSaleBean.getIsNotice()==1?"到货提醒":"取消提醒");
-        }else{
+            tv_sp_details_add_car.setText(skuSaleBean.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
+        } else {
             tv_sp_details_add_car.setEnabled(false);
         }
     }
@@ -1234,7 +1236,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_count_time_before_white.setText("距结束 ");
             try {
                 //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date dateEnd = formatter.parse(shopPropertyBean.getActivityEndTime());
                 Date dateCurrent;
                 if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
@@ -1292,7 +1294,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     public boolean isTimeStart(ShopDetailsEntity shopDetailsEntity) {
         try {
             //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             Date dateStart = formatter.parse(shopDetailsEntity.getShopPropertyBean().getActivityStartTime());
             Date dateCurrent;
             if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
@@ -1313,7 +1315,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (shopPropertyBean != null) {
             try {
                 //格式化开始时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date dateStart = formatter.parse(shopPropertyBean.getStartTime());
                 Date dateCurrent;
                 if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
@@ -1580,18 +1582,20 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setVisitorOpenService() {
         ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("自营商品详情：" + shopPropertyBean.getName());
         chatParamsBody.startPageUrl = BASE_SERVICE_URL + "pro_details";
         ItemParamsBody itemParams = chatParamsBody.itemparams;
         itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
         itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
         itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.goods_id = String.valueOf(shopPropertyBean.getId());
-        itemParams.goods_name = getStrings(shopPropertyBean.getName());
-        itemParams.goods_image = getStrings(shopPropertyBean.getPicUrl());
-        itemParams.goods_price = getStrings(shopPropertyBean.getPrice());
-        itemParams.goods_url = sharePageUrl + shopPropertyBean.getId();
-        chatParamsBody.headurl = getPersonalInfo(ShopScrollDetailsActivity.this).getAvatar();
+        if(shopPropertyBean!=null){
+            chatParamsBody.startPageTitle = getStrings("自营商品详情：" + shopPropertyBean.getName());
+            itemParams.goods_id = String.valueOf(shopPropertyBean.getId());
+            itemParams.goods_name = getStrings(shopPropertyBean.getName());
+            itemParams.goods_image = getStrings(shopPropertyBean.getPicUrl());
+            itemParams.goods_price = getStrings(shopPropertyBean.getPrice());
+            itemParams.goods_url = sharePageUrl + shopPropertyBean.getId();
+            chatParamsBody.headurl = getPersonalInfo(ShopScrollDetailsActivity.this).getAvatar();
+        }
         skipXNService(ShopScrollDetailsActivity.this, chatParamsBody);
     }
 
@@ -1779,7 +1783,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     private void getLoginStatus() {
-        if (userId<1) {
+        if (userId < 1) {
             Intent intent = new Intent(this, MineLoginActivity.class);
             startActivityForResult(intent, IS_LOGIN_CODE);
         }
@@ -1798,7 +1802,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     class ShopCommentHeaderView {
-
         //        商品评论展示
         @BindView(R.id.rel_pro_comment)
         RelativeLayout rel_pro_comment;
@@ -2128,9 +2131,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void addCarCheckLoginStatus() {
         if (userId > 0) {
-            if(tv_sp_details_add_car.isSelected()&&shopPropertyBean!=null){
+            if (tv_sp_details_add_car.isSelected() && shopPropertyBean != null) {
                 addCancelNotice();
-            }else{
+            } else {
                 addGoodsToCar();
             }
         } else {
@@ -2154,7 +2157,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 if (requestStatus != null) {
                     showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
                     if (requestStatus.getCode().equals("01")) {
-                        tv_sp_details_add_car.setText(requestStatus.getIsNotice()==1?"到货提醒":"取消提醒");
+                        tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
                     }
                 }
             }

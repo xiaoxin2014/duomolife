@@ -287,6 +287,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         });
         //        小能客服登录 获取用户信息 登进登出……
         getNetDataInfo();
+//        QyServiceUtils.getQyInstance().loginQyUserInfo(this);
     }
 
     /**

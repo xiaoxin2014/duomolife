@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,7 +21,6 @@ import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -121,7 +121,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
     private boolean isSelectNotice;
     private int noticeType;
     private RelativeLayout rel_rect_count;
-    private ScrollView scrollView;
+    private NestedScrollView scrollView;
 
     /**
      * skuValues ID对应的ProValues值;

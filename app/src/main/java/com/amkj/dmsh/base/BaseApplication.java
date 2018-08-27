@@ -216,6 +216,7 @@ public class BaseApplication extends Application {
         //        小能客服初始化
         if (isAppMainProcess()) {
             initXNService();
+//            initQYService();
             setTotalChanel();
             //      友盟初始化
             youMengInit();
@@ -265,6 +266,11 @@ public class BaseApplication extends Application {
         initWebUrlTransformLocation();
     }
 
+//    private void initQYService() {
+//        QyServiceUtils qyInstance = QyServiceUtils.getQyInstance();
+//        qyInstance.initQyService(getApplicationContext());
+//    }
+
     private void initLinkMe() {
         if (isDebugTag) {
             //设置debug模式下打印LinkedME日志
@@ -289,18 +295,19 @@ public class BaseApplication extends Application {
         //  }
         LinkedME.getInstance().setImmediate(true);
     }
+
     /**
      * 配置统计渠道
      */
     private void setTotalChanel() {
         String channel = ChannelReaderUtil.getChannel(getApplicationContext());
-        if(!TextUtils.isEmpty(channel)) {
+        if (!TextUtils.isEmpty(channel)) {
             CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
             strategy.setAppChannel(channel);  //设置渠道
             strategy.setAppVersion(getVersionName());      //App的版本
             strategy.setAppPackageName(getStrings(getPackageName()));  //App的包名
-            Bugly.init(this, BUGLY_APP_ID, isDebugTag,strategy);
-        }else{
+            Bugly.init(this, BUGLY_APP_ID, isDebugTag, strategy);
+        } else {
             Bugly.init(this, BUGLY_APP_ID, isDebugTag);
         }
     }
@@ -318,6 +325,7 @@ public class BaseApplication extends Application {
         }
         return "";
     }
+
     /**
      * 初始化小能客服
      */
@@ -387,7 +395,7 @@ public class BaseApplication extends Application {
 
     private void youMengInit() {
         //SDK 初始化
-        UMConfigure.init(this,"57db8f1fe0f55a7ac0004684", getStrings(ChannelReaderUtil.getChannel(getApplicationContext())), UMConfigure.DEVICE_TYPE_PHONE, null);
+        UMConfigure.init(this, "57db8f1fe0f55a7ac0004684", getStrings(ChannelReaderUtil.getChannel(getApplicationContext())), UMConfigure.DEVICE_TYPE_PHONE, null);
         /**
          * 设置组件化的Log开关
          * 参数: boolean 默认为false，如需查看LOG设置为true
@@ -495,10 +503,9 @@ public class BaseApplication extends Application {
     }
 
     /**
-     * 
      * @throws IOException
      */
-    private void initTotalAction(){
+    private void initTotalAction() {
         try {
             AssetManager asset = getAssets();
             InputStream totalStream = asset.open("totalAction.txt");
@@ -506,11 +513,11 @@ public class BaseApplication extends Application {
             String fileTotal = FileStreamUtils.InputStreamTOString(totalStream);
             for (String totalString : fileTotal.split("\r\n")) {
                 String[] split = totalString.split(",");
-                if(split.length==3){
-                    Map<String,String> totalIdName = new HashMap<>();
-                    totalIdName.put(TOTAL_NAME,split[1]);
-                    totalIdName.put(TOTAL_ID,split[2]);
-                    totalActionMap.put(split[0],totalIdName);
+                if (split.length == 3) {
+                    Map<String, String> totalIdName = new HashMap<>();
+                    totalIdName.put(TOTAL_NAME, split[1]);
+                    totalIdName.put(TOTAL_ID, split[2]);
+                    totalActionMap.put(split[0], totalIdName);
                 }
             }
         } catch (Exception e) {
@@ -520,7 +527,6 @@ public class BaseApplication extends Application {
     }
 
     /**
-     * 
      * @throws IOException
      */
     private void getAssetAdsData() throws IOException {
@@ -776,7 +782,7 @@ public class BaseApplication extends Application {
 
 
 //    public DisplayImageOptions getImageOptions() {
-//        return options;
+//        return QYOptions;
 //    }
 //
 //    public ImageLoader getImageLoader() {

@@ -3,17 +3,17 @@ apply plugin: 'channel'
 // 依赖插件脚本
 apply from: 'tinker-support.gradle'
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 190
-        versionName '3.1.5'
+        versionCode 191
+        versionName '3.1.5.1'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a','x86', 'x86_64'
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64'
             // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
         }
         manifestPlaceholders = [
@@ -43,6 +43,10 @@ android {
             } catch (ex) {
                 throw new InvalidUserDataException(ex.toString())
             }
+            keyAlias 'com.amkj.dmsh'
+            keyPassword 'comtmkj'
+            storeFile file('C:/Users/atd48/Desktop/917555f39de315ae75eff6a621b59b47.keystore')
+            storePassword 'comtmkj'
         }
     }
     // 构建类型
@@ -63,6 +67,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion '27.0.3'
 }
 /*直接编译生成多渠道包*/
 channel {
@@ -82,10 +87,10 @@ channel {
 
 rebuildChannel {
     //指定渠道文件
-    channelFile = file("D:/domolife3/channel.txt")
+    channelFile = file("D:/domolife/channel.txt")
 //    baseDebugApk = 已有Debug APK
 //    baseReleaseApk = file("C:/jiagu/output/13751077044/domolife3.0.8.apk")
-    baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.1.4.apk")
+    baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.1.5.2.apk")
     //默认为new File(project.buildDir, "rebuildChannel/debug")
 //    debugOutputDir = Debug渠道包输出目录
     //默认为new File(project.buildDir, "rebuildChannel/release")
@@ -266,6 +271,8 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'me.zhanghai.android.materialratingbar:library:1.2.0'
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
+//    网易七鱼
+//    implementation 'com.qiyukf.unicorn:unicorn:4.3.1'
     implementation project(':RecyclerViewPager')
     implementation project(':FlycoTabLayout_Lib')
     implementation project(':pinneditem')

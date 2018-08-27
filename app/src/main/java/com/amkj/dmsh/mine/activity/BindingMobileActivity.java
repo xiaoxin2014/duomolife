@@ -275,6 +275,7 @@ public class BindingMobileActivity extends BaseActivity {
                             loginXNService(BindingMobileActivity.this,communalUserInfo.getUid()
                                     , getStrings(communalUserInfo.getNickname())
                                     ,getStrings(communalUserInfo.getMobile()));
+//                            QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this,communalUserInfo.getUid(),communalUserInfo.getNickname(),communalUserInfo.getMobile(),communalUserInfo.getAvatar());
                             showToast(BindingMobileActivity.this, "绑定成功");
                             Intent intent = new Intent(BindingMobileActivity.this,RegisterSelSexActivity.class);
                             startActivity(intent);

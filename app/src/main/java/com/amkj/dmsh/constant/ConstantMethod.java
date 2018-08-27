@@ -65,6 +65,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.utils.Log;
+import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
@@ -2438,6 +2439,50 @@ public class ConstantMethod {
                 .build();
     }
 
+    /**
+     * 获取应用市场
+     */
+    public static void getMarketApp(Context context) {
+        //        获取已安装应用商店的包名列表
+        try {
+            List<PackageInfo> packageInfo = context.getPackageManager().getInstalledPackages(0);
+            List<String> marketPackages = MarketUtils.getMarketPackages();
+            String appMarketStore = "";
+            outLoop:
+            for (int i = 0; i < packageInfo.size(); i++) {
+                for (int j = 0; j < marketPackages.size(); j++) {
+                    if (packageInfo.get(i).packageName.equals(marketPackages.get(j))) {
+                        appMarketStore = marketPackages.get(j);
+                        break outLoop;
+                    }
+                }
+            }
+            if(!TextUtils.isEmpty(appMarketStore)){
+                try {
+                    MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
+                } catch (Exception e) {
+                    skipDownStore(context);
+                }
+            }else{
+                skipDownStore(context);
+            }
+        } catch (Exception e) {
+            skipDownStore(context);
+        }
+    }
+
+    /**
+     * 跳转应用宝下载中心
+     * @param context
+     */
+    private static void skipDownStore(Context context) {
+        String DownUriAddress = "http://app.qq.com/#id=detail&appid=1101070898";
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(DownUriAddress);
+        intent.setData(content_url);
+        context.startActivity(intent);
+    }
     /**
      * 创建线程定时器
      */

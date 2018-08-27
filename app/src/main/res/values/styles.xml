@@ -6,26 +6,28 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
     </style>
 
     <style name="fullTheme" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@drawable/bitmap_launch_bg</item>
     </style>
 
     <style name="fullTheme1" parent="AppTheme">
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="vtransparentTheme" parent="AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>
     <!-- Activity去短暂黑屏主题 -->
     <style name="activityTheme" parent="@style/AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
     </style>
 
     <!--dialog样式主题-->

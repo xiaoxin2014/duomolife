@@ -304,3 +304,6 @@ public static final int *;
 -keepclasseswithmembers class * {
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
+#网易七鱼客服
+-dontwarn com.qiyukf.**
+-keep class com.qiyukf.** {*;}

@@ -7,21 +7,22 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.AppUpdateDialogActivity;
-import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.AppVersionEntity;
 import com.amkj.dmsh.bean.AppVersionEntity.AppVersionBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.beta.UpgradeInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.getAppendNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_VERSION_INFO;
 import static com.amkj.dmsh.constant.ConstantVariable.INTERVAL_TIME;
@@ -58,6 +59,7 @@ public class AppUpdateUtils {
 
     /**
      * 检查更新
+     *
      * @param context
      * @param isManual 是否手动
      */
@@ -87,7 +89,15 @@ public class AppUpdateUtils {
                                 if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
                                     openDialog(appVersionBean);
                                 } else {
-                                    showToast(context, R.string.app_version_tint);
+                                    /**
+                                     * 获取升级信息
+                                     */
+                                    UpgradeInfo upgradeInfo = Beta.getUpgradeInfo();
+                                    if (upgradeInfo == null) {
+                                        getMarketApp(context);
+                                    } else {
+                                        Beta.checkUpgrade();
+                                    }
                                 }
                             } else if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
                                 if (!appVersionBean.getUpdateTime().equals(updateTime)) {
@@ -121,7 +131,7 @@ public class AppUpdateUtils {
      * @param appVersionBean
      */
     private void openDialog(AppVersionBean appVersionBean) {
-        if(!TextUtils.isEmpty(appVersionBean.getLink())){
+        if (!TextUtils.isEmpty(appVersionBean.getLink())) {
             Intent intent = new Intent(context, AppUpdateDialogActivity.class);
             intent.putExtra(VERSION_DOWN_LINK, getStrings(appVersionBean.getLink()));
             intent.putExtra(VERSION_UPDATE_DESCRIPTION, getStrings(appVersionBean.getDescription()));
@@ -133,7 +143,8 @@ public class AppUpdateUtils {
     }
 
     /**
-     *  目标版本是否高于当前版本
+     * 目标版本是否高于当前版本
+     *
      * @param targetVersion
      * @return
      */

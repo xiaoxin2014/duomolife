@@ -935,14 +935,12 @@
         <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <!-- 涂图 -->
         <activity
             android:name="org.lasque.tusdk.impl.activity.TuFragmentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <!-- 友盟 -->
         <!--新浪-->
@@ -950,7 +948,6 @@
             android:name="com.umeng.socialize.media.WBShareCallBackActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
@@ -983,14 +980,12 @@
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!--微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!-- 友盟appKey -->
         <meta-data
@@ -1030,13 +1025,11 @@
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTop"/>
         <!--腾讯bugly-->
         <!--升级策略-->
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent" />
 
         <provider
@@ -1137,15 +1130,19 @@
         <!-- ***************************小能SDK所需要receiver和Service ********************* -->
         <activity
             android:name=".ServiceListenerActivity"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity
             android:name=".ServiceReceiverActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:noHistory="true"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
+        <!--activity
+            android:name=".qyservice.QyServiceNotifyReceiver"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar" />-->
         <!--app更新弹窗-->
         <activity
             android:name=".AppUpdateDialogActivity"

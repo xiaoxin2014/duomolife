@@ -213,6 +213,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         loginXNService(this, communalUserInfoBean.getUid()
                 , getStrings(communalUserInfoBean.getNickname())
                 , getStrings(communalUserInfoBean.getMobile()));
+//        QyServiceUtils.getQyInstance().loginQyUserInfo(this,communalUserInfoBean.getUid(),communalUserInfoBean.getNickname(),communalUserInfoBean.getMobile(),communalUserInfoBean.getAvatar());
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
         Intent data = new Intent();

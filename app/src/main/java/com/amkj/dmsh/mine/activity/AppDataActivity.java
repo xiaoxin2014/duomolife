@@ -3,12 +3,9 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +25,6 @@ import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.FileCacheUtils;
-import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
@@ -46,6 +42,7 @@ import cn.xiaoneng.uiapi.Ntalker;
 
 import static com.amkj.dmsh.constant.ConstantMethod.NEW_USER_DIALOG;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
+import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.unBindJPush;
@@ -81,8 +78,6 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     private String Img_PATH;
     private List<File> files = new ArrayList<>();
     private boolean isPause;
-    private Thread thread;
-    private String DownUriAddress = "http://app.qq.com/#id=detail&appid=1101070898";
     @Override
     protected int getContentView() {
         return R.layout.activity_persional_data_setting;
@@ -197,8 +192,9 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
         if (o == exitAccount && position != AlertView.CANCELPOSITION) {
 //            注销账号 关闭账号统计
             MobclickAgent.onProfileSignOff();
-//                        解绑JPush
+//            解绑JPush
             unBindJPush();
+//            QyServiceUtils.getQyInstance().logoutQyUser();
             NEW_USER_DIALOG = true;
             SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
@@ -250,7 +246,6 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     @Override
     protected void onDestroy() {
         mHandler.removeCallbacksAndMessages(null);
-        thread = null;
         super.onDestroy();
     }
 
@@ -307,40 +302,7 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     //    给个好评  跳转app商店
     @OnClick(R.id.tv_setting_good)
     void skipShop(View view) {
-//        获取已安装应用商店的包名列表
-        try {
-            List<PackageInfo> packageInfo = getPackageManager().getInstalledPackages(0);
-            List<String> marketPackages = MarketUtils.getMarketPackages();
-            String appMarketStore = "";
-            outLoop:
-            for (int i = 0; i < packageInfo.size(); i++) {
-                for (int j = 0; j < marketPackages.size(); j++) {
-                    if (packageInfo.get(i).packageName.equals(marketPackages.get(j))) {
-                        appMarketStore = marketPackages.get(j);
-                        break outLoop;
-                    }
-                }
-            }
-            if(!TextUtils.isEmpty(appMarketStore)){
-                try {
-                    MarketUtils.launchAppDetail(getApplicationContext(), getPackageName(), appMarketStore);
-                } catch (Exception e) {
-                    skipDownStore();
-                }
-            }else{
-                skipDownStore();
-            }
-        } catch (Exception e) {
-            skipDownStore();
-        }
-    }
-
-    private void skipDownStore() {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(DownUriAddress);
-        intent.setData(content_url);
-        startActivity(intent);
+        getMarketApp(AppDataActivity.this);
     }
 
     //    意见反馈
@@ -364,6 +326,8 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
                         if (getFolderSize(AppDataActivity.this.getCacheDir()) > 0) {
                             FileCacheUtils.cleanInternalCache(AppDataActivity.this);
                         }
+//                       七鱼客服清除缓存
+//                        QyServiceUtils.getQyInstance().clearQyCache();
                         PictureFileUtils.deleteCacheDirFile(AppDataActivity.this);
                         Message message = mHandler.obtainMessage();
                         message.arg1 = 66;

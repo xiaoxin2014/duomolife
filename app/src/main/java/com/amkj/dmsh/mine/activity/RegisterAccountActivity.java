@@ -207,6 +207,7 @@ public class RegisterAccountActivity extends BaseActivity {
                         loginXNService(RegisterAccountActivity.this, registerUserInfoBean.getUid()
                                 , getStrings(registerUserInfoBean.getNickname())
                                 , getStrings(registerUserInfoBean.getMobile()));
+//                        QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this,registerUserInfoBean.getUid(),registerUserInfoBean.getNickname(),registerUserInfoBean.getMobile(),registerUserInfoBean.getAvatar());
                         Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                         startActivity(intent);
                         finish();

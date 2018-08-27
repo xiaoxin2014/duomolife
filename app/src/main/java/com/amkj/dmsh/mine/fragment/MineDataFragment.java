@@ -179,6 +179,7 @@ public class MineDataFragment extends BaseFragment {
     private CBViewHolderCreator cbViewHolderCreator;
     private AlertDialogImage alertDialogImage;
     private AlertDialog alertImageDialog;
+//    private QyServiceUtils qyInstance;
 
     @Override
     protected int getContentView() {
@@ -229,10 +230,6 @@ public class MineDataFragment extends BaseFragment {
                     conversation();
                 } else {
                     Intent intent = new Intent();
-                    if (qualityTypeBean.getId() == 7) {
-//                            客服
-                        conversation();
-                    }
 //                    if (uid != 0) {
                     switch (qualityTypeBean.getId()) {
                         case 0: //购物车
@@ -318,7 +315,37 @@ public class MineDataFragment extends BaseFragment {
             }
         });
         setStatusColor();
+//        setQyService();
     }
+
+    /**
+     * 设置客服消息监听
+     */
+//    private void setQyService() {
+//        qyInstance = QyServiceUtils.getQyInstance();
+//        setServiceUnread(qyInstance.getServiceTotalCount());
+//        qyInstance.getServiceCount(new UnreadCountChangeListener() {
+//            @Override
+//            public void onUnreadCountChange(int count) {
+//                setServiceUnread(count);
+//            }
+//        });
+//    }
+
+    /**
+     * 更新客服未读消息
+//     * @param serviceTotalCount 未读消息条数
+     */
+//    private void setServiceUnread(int serviceTotalCount) {
+//        if (mineTypeList.size() > 7) {
+//            if (serviceTotalCount > 0) {
+//                mineTypeList.get(7).setType(serviceTotalCount);
+//            } else {
+//                mineTypeList.get(7).setType(0);
+//            }
+//            typeMineAdapter.notifyItemChanged(7);
+//        }
+//    }
 
     private void setStatusColor() {
         SystemBarHelper.setStatusBarDarkMode(getActivity());
@@ -396,7 +423,12 @@ public class MineDataFragment extends BaseFragment {
         typeMineAdapter.notifyDataSetChanged();
     }
 
-    //启动美洽客服，登录
+    //启动客服，登录
+//    private void conversation() {
+//        QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+//        qyServiceUtils.openQyServiceChat(getActivity(), "首页-我的");
+//    }
+
     private void conversation() {
         requestPermissions();
         setVisitorOpenService();
@@ -767,6 +799,22 @@ public class MineDataFragment extends BaseFragment {
         });
     }
 
+    //    private void getUnReadMessage() {
+//        int mesCount = getUnReadServiceMessage();
+//        if (mineTypeList.size() > 7) {
+//            if (mesCount > 0) {
+//                mineTypeList.get(7).setType(mesCount);
+//            } else {
+//                mineTypeList.get(7).setType(0);
+//            }
+//            getActivity().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    typeMineAdapter.notifyItemChanged(7);
+//                }
+//            });
+//        }
+//    }
     private void getUnReadMessage() {
         int mesCount = getUnReadServiceMessage();
         if (mineTypeList.size() > 7) {
