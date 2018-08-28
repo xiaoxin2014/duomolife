@@ -66,8 +66,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 public class DoMoGroupJoinShareActivity extends BaseActivity {
     @BindView(R.id.smart_scroll_communal_refresh)
     RefreshLayout smart_scroll_communal_refresh;
-    @BindView(R.id.communal_recycler)
-    RecyclerView communal_recycler;
+    @BindView(R.id.communal_recycler_wrap)
+    RecyclerView communal_recycler_wrap;
     @BindView(R.id.communal_load)
     View communal_load;
     @BindView(R.id.communal_error)
@@ -99,14 +99,14 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         smart_scroll_communal_refresh.setOnRefreshListener((refreshLayout) ->
             loadData()
         );
-        communal_recycler.setLayoutManager(new LinearLayoutManager(DoMoGroupJoinShareActivity.this));
+        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoGroupJoinShareActivity.this));
         View headerView = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_ql_gp_sp_join_share, null);
         groupShareJoinView = new GroupShareJoinView();
         ButterKnife.bind(groupShareJoinView, headerView);
-        communal_recycler.setNestedScrollingEnabled(false);
+        communal_recycler_wrap.setNestedScrollingEnabled(false);
         gpRuleDetailsAdapter = new CommunalDetailAdapter(DoMoGroupJoinShareActivity.this, gpRuleList);
         gpRuleDetailsAdapter.addHeaderView(headerView);
-        communal_recycler.setAdapter(gpRuleDetailsAdapter);
+        communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
         communal_load.setVisibility(View.VISIBLE);
     }
 

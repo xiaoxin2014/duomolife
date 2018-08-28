@@ -60,6 +60,8 @@ import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
+import com.amkj.dmsh.qyservice.QyProductIndentInfo;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.adapter.ProductTextAdapter;
 import com.amkj.dmsh.shopdetails.adapter.ShopRecommendHotTopicAdapter;
@@ -1575,9 +1577,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //    小能客服
     private void getDataInfo() {
-        requestPermissions();
-        //传递用户信息
-        setVisitorOpenService();
+//        requestPermissions();
+//        //传递用户信息
+//        setVisitorOpenService();
+        QyProductIndentInfo qyProductIndentInfo = null;
+        if (shopPropertyBean != null) {
+            qyProductIndentInfo = new QyProductIndentInfo();
+            qyProductIndentInfo.setUrl(sharePageUrl + productId);
+            qyProductIndentInfo.setTitle(getStrings(shopPropertyBean.getName()));
+            qyProductIndentInfo.setPicUrl(shopPropertyBean.getPicUrl());
+            qyProductIndentInfo.setDesc(getStrings(shopPropertyBean.getActivityTag()));
+            qyProductIndentInfo.setNote("￥" + shopPropertyBean.getPrice());
+        }
+        QyServiceUtils.getQyInstance().openQyServiceChat(this, "商品详情", sharePageUrl + productId, qyProductIndentInfo);
     }
 
     private void setVisitorOpenService() {
@@ -1587,7 +1599,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
         itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
         itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        if(shopPropertyBean!=null){
+        if (shopPropertyBean != null) {
             chatParamsBody.startPageTitle = getStrings("自营商品详情：" + shopPropertyBean.getName());
             itemParams.goods_id = String.valueOf(shopPropertyBean.getId());
             itemParams.goods_name = getStrings(shopPropertyBean.getName());

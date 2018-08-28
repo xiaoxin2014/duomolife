@@ -56,6 +56,7 @@ import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.activity.ShopTimeMyWarmActivity;
 import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectGoodsSaleAfterActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity;
@@ -75,6 +76,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.qiyukf.unicorn.api.UnreadCountChangeListener;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.HeightAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
@@ -179,7 +181,7 @@ public class MineDataFragment extends BaseFragment {
     private CBViewHolderCreator cbViewHolderCreator;
     private AlertDialogImage alertDialogImage;
     private AlertDialog alertImageDialog;
-//    private QyServiceUtils qyInstance;
+    private QyServiceUtils qyInstance;
 
     @Override
     protected int getContentView() {
@@ -315,37 +317,37 @@ public class MineDataFragment extends BaseFragment {
             }
         });
         setStatusColor();
-//        setQyService();
+        setQyService();
     }
 
     /**
      * 设置客服消息监听
      */
-//    private void setQyService() {
-//        qyInstance = QyServiceUtils.getQyInstance();
-//        setServiceUnread(qyInstance.getServiceTotalCount());
-//        qyInstance.getServiceCount(new UnreadCountChangeListener() {
-//            @Override
-//            public void onUnreadCountChange(int count) {
-//                setServiceUnread(count);
-//            }
-//        });
-//    }
+    private void setQyService() {
+        qyInstance = QyServiceUtils.getQyInstance();
+        setServiceUnread(qyInstance.getServiceTotalCount());
+        qyInstance.getServiceCount(new UnreadCountChangeListener() {
+            @Override
+            public void onUnreadCountChange(int count) {
+                setServiceUnread(count);
+            }
+        });
+    }
 
     /**
      * 更新客服未读消息
 //     * @param serviceTotalCount 未读消息条数
      */
-//    private void setServiceUnread(int serviceTotalCount) {
-//        if (mineTypeList.size() > 7) {
-//            if (serviceTotalCount > 0) {
-//                mineTypeList.get(7).setType(serviceTotalCount);
-//            } else {
-//                mineTypeList.get(7).setType(0);
-//            }
-//            typeMineAdapter.notifyItemChanged(7);
-//        }
-//    }
+    private void setServiceUnread(int serviceTotalCount) {
+        if (mineTypeList.size() > 7) {
+            if (serviceTotalCount > 0) {
+                mineTypeList.get(7).setType(serviceTotalCount);
+            } else {
+                mineTypeList.get(7).setType(0);
+            }
+            typeMineAdapter.notifyItemChanged(7);
+        }
+    }
 
     private void setStatusColor() {
         SystemBarHelper.setStatusBarDarkMode(getActivity());
@@ -357,7 +359,7 @@ public class MineDataFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getLoginStatus();
-        getUnReadMessage();
+//        getUnReadMessage();
         getDuoMeIndentDataCount();
         getMineAd();
     }
@@ -424,15 +426,15 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //启动客服，登录
-//    private void conversation() {
-//        QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-//        qyServiceUtils.openQyServiceChat(getActivity(), "首页-我的");
-//    }
-
     private void conversation() {
-        requestPermissions();
-        setVisitorOpenService();
+        QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+        qyServiceUtils.openQyServiceChat(getActivity(), "首页-我的");
     }
+
+//    private void conversation() {
+//        requestPermissions();
+//        setVisitorOpenService();
+//    }
 
     private void setVisitorOpenService() {
         ChatParamsBody chatParamsBody = new ChatParamsBody();

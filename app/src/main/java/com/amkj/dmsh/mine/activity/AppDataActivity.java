@@ -21,6 +21,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -194,7 +195,7 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
             MobclickAgent.onProfileSignOff();
 //            解绑JPush
             unBindJPush();
-//            QyServiceUtils.getQyInstance().logoutQyUser();
+            QyServiceUtils.getQyInstance().logoutQyUser();
             NEW_USER_DIALOG = true;
             SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
@@ -327,7 +328,7 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
                             FileCacheUtils.cleanInternalCache(AppDataActivity.this);
                         }
 //                       七鱼客服清除缓存
-//                        QyServiceUtils.getQyInstance().clearQyCache();
+                        QyServiceUtils.getQyInstance().clearQyCache();
                         PictureFileUtils.deleteCacheDirFile(AppDataActivity.this);
                         Message message = mHandler.obtainMessage();
                         message.arg1 = 66;

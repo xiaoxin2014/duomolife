@@ -43,6 +43,8 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.qyservice.QyProductIndentInfo;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -98,10 +100,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import cn.iwgang.countdownview.CountdownView;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
 import cn.xiaoneng.uiapi.Ntalker;
-import cn.xiaoneng.utils.CoreData;
 
 import static android.view.View.GONE;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
@@ -109,8 +108,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipInitDataXNService;
-import static com.amkj.dmsh.constant.ConstantVariable.BASE_SERVICE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
@@ -703,7 +700,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             tv_indent_border_second_blue.setTag(R.id.tag_first, INVITE_GROUP);
             tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
             tv_indent_border_second_blue.setOnClickListener(this);
-        }  else if (12 == statusCode) {
+        } else if (12 == statusCode) {
             ll_indent_detail_bottom.setVisibility(View.VISIBLE);
             tv_indent_border_second_blue.setVisibility(View.GONE);
             tv_indent_border_first_gray.setVisibility(View.VISIBLE);
@@ -711,7 +708,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             tv_indent_border_first_gray.setTag(R.id.tag_first, LITTER_CONSIGN);
             tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
             tv_indent_border_first_gray.setOnClickListener(this);
-        }else if (statusCode == -10 || 10 < statusCode && statusCode < 20) {
+        } else if (statusCode == -10 || 10 < statusCode && statusCode < 20) {
             ll_indent_detail_bottom.setVisibility(GONE);
         } else if (statusCode == -25 || statusCode == -26 || statusCode == -24) {//交易关闭 拼团失败 -》删除订单
             ll_indent_detail_bottom.setVisibility(View.VISIBLE);
@@ -1043,6 +1040,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
 
     /**
      * 邀请参团
+     *
      * @param qualityGroupShareBean 参团信息
      */
     private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean) {
@@ -1121,10 +1119,11 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             CommunalCopyTextUtils.showPopWindow(DirectExchangeDetailsActivity.this, (TextView) view, (String) view.getTag());
             return true;
         }
+
         @OnClick(R.id.tv_copy_text)
-        void copyNo(View view){
+        void copyNo(View view) {
             String content = (String) tv_indent_order_no.getTag();
-            ClipboardManager cmb = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Label", getStrings(content));
             cmb.setPrimaryClip(mClipData);
             showToast(DirectExchangeDetailsActivity.this, "已复制");
@@ -1207,7 +1206,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
     }
 
     private void skipDirectIndent() {
-        if(totalPersonalTrajectory!=null){
+        if (totalPersonalTrajectory != null) {
             isUpTotalFile = true;
             createExecutor().execute(() -> {
                 totalPersonalTrajectory.getFileTotalTrajectory();
@@ -1426,29 +1425,40 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         if (infoDetailEntity != null) {
             IndentInfoDetailBean indentInfoDetailBean = infoDetailEntity.getIndentInfoDetailBean();
             OrderDetailBean orderDetailBean = indentInfoDetailBean.getOrderDetailBean();
-            ChatParamsBody chatParamsBody = new ChatParamsBody();
-            chatParamsBody.startPageTitle = "订单号:" + orderDetailBean.getNo();
-            /**
-             * 待支付详情
-             */
-            if (orderDetailBean.getStatus() == 0) {
-                chatParamsBody.startPageUrl = BASE_SERVICE_URL + "indent_detail_no_pay";
-            } else {
-                chatParamsBody.startPageUrl = BASE_SERVICE_URL + "indent_detail_other";
+//            ChatParamsBody chatParamsBody = new ChatParamsBody();
+//            chatParamsBody.startPageTitle = "订单号:" + orderDetailBean.getNo();
+//            /**
+//             * 待支付详情
+//             */
+//            if (orderDetailBean.getStatus() == 0) {
+//                chatParamsBody.startPageUrl = BASE_SERVICE_URL + "indent_detail_no_pay";
+//            } else {
+//                chatParamsBody.startPageUrl = BASE_SERVICE_URL + "indent_detail_other";
+//            }
+//            chatParamsBody.erpParam = getStrings(orderDetailBean.getNo());
+//            chatParamsBody.headurl = avatar;
+//            ItemParamsBody itemParams = chatParamsBody.itemparams;
+//            itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
+//            itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
+//            itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
+//            if (goodsBeanList.size() > 0) {
+//                itemParams.goods_image = getStrings(goodsBeanList.get(0).getPicUrl());
+//                itemParams.goods_url = sharePageUrl + goodsBeanList.get(0).getId();
+//            }
+//            itemParams.goods_name = "订 单 号:" + getStrings(orderDetailBean.getNo());
+//            itemParams.goods_price = "创建时间:" + getStrings(orderDetailBean.getCreateTime());
+//            skipInitDataXNService(DirectExchangeDetailsActivity.this, chatParamsBody);
+            QyProductIndentInfo qyProductIndentInfo = null;
+            if (orderDetailBean != null) {
+                qyProductIndentInfo = new QyProductIndentInfo();
+                qyProductIndentInfo.setTitle("订 单 号:"+orderDetailBean.getNo());
+                if (goodsBeanList.size() > 0) {
+                    qyProductIndentInfo.setPicUrl(getStrings(goodsBeanList.get(0).getPicUrl()));
+                }
+                qyProductIndentInfo.setDesc("订单金额:" + orderDetailBean.getAmount());
+                qyProductIndentInfo.setNote("创建时间:" + orderDetailBean.getCreateTime());
             }
-            chatParamsBody.erpParam = getStrings(orderDetailBean.getNo());
-            chatParamsBody.headurl = avatar;
-            ItemParamsBody itemParams = chatParamsBody.itemparams;
-            itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-            itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-            itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-            if (goodsBeanList.size() > 0) {
-                itemParams.goods_image = getStrings(goodsBeanList.get(0).getPicUrl());
-                itemParams.goods_url = sharePageUrl + goodsBeanList.get(0).getId();
-            }
-            itemParams.goods_name = "订 单 号:" + getStrings(orderDetailBean.getNo());
-            itemParams.goods_price = "创建时间:" + getStrings(orderDetailBean.getCreateTime());
-            skipInitDataXNService(DirectExchangeDetailsActivity.this, chatParamsBody);
+            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", null, qyProductIndentInfo);
         }
     }
 

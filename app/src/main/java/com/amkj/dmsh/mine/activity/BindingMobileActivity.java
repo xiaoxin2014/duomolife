@@ -25,6 +25,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -275,7 +276,7 @@ public class BindingMobileActivity extends BaseActivity {
                             loginXNService(BindingMobileActivity.this,communalUserInfo.getUid()
                                     , getStrings(communalUserInfo.getNickname())
                                     ,getStrings(communalUserInfo.getMobile()));
-//                            QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this,communalUserInfo.getUid(),communalUserInfo.getNickname(),communalUserInfo.getMobile(),communalUserInfo.getAvatar());
+                            QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this,communalUserInfo.getUid(),communalUserInfo.getNickname(),communalUserInfo.getMobile(),communalUserInfo.getAvatar());
                             showToast(BindingMobileActivity.this, "绑定成功");
                             Intent intent = new Intent(BindingMobileActivity.this,RegisterSelSexActivity.class);
                             startActivity(intent);

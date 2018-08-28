@@ -21,7 +21,7 @@ public class QyServiceNotifyReceiver extends Activity {
         Intent intent = getIntent();
         if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
             // 打开客服窗口
-//            QyServiceUtils.getQyInstance().openQyServiceChat(this);
+            QyServiceUtils.getQyInstance().openQyServiceChat(this);
         }
     }
 }

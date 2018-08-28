@@ -31,6 +31,7 @@ import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -213,7 +214,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         loginXNService(this, communalUserInfoBean.getUid()
                 , getStrings(communalUserInfoBean.getNickname())
                 , getStrings(communalUserInfoBean.getMobile()));
-//        QyServiceUtils.getQyInstance().loginQyUserInfo(this,communalUserInfoBean.getUid(),communalUserInfoBean.getNickname(),communalUserInfoBean.getMobile(),communalUserInfoBean.getAvatar());
+        QyServiceUtils.getQyInstance().loginQyUserInfo(this,communalUserInfoBean.getUid(),communalUserInfoBean.getNickname(),communalUserInfoBean.getMobile(),communalUserInfoBean.getAvatar());
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
         Intent data = new Intent();

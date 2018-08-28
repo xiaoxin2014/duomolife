@@ -24,6 +24,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
@@ -207,7 +208,7 @@ public class RegisterAccountActivity extends BaseActivity {
                         loginXNService(RegisterAccountActivity.this, registerUserInfoBean.getUid()
                                 , getStrings(registerUserInfoBean.getNickname())
                                 , getStrings(registerUserInfoBean.getMobile()));
-//                        QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this,registerUserInfoBean.getUid(),registerUserInfoBean.getNickname(),registerUserInfoBean.getMobile(),registerUserInfoBean.getAvatar());
+                        QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this,registerUserInfoBean.getUid(),registerUserInfoBean.getNickname(),registerUserInfoBean.getMobile(),registerUserInfoBean.getAvatar());
                         Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                         startActivity(intent);
                         finish();

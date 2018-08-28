@@ -761,9 +761,6 @@
             android:name=".homepage.activity.HomePageSearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".homepage.activity.IntegRuleActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".homepage.activity.SearchLeaveMessageActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -935,7 +932,6 @@
         <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <!-- 涂图 -->
         <activity
@@ -947,8 +943,7 @@
         <activity
             android:name="com.umeng.socialize.media.WBShareCallBackActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:exported="false" />
         <activity
             android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -956,8 +951,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.sina.weibo.sdk.share.WbShareTransActivity"
-            android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -979,14 +973,12 @@
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
         <!--微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:exported="true" />
         <!-- 友盟appKey -->
         <meta-data
             android:name="UMENG_APPKEY"
@@ -1029,8 +1021,7 @@
         <!--腾讯bugly-->
         <!--升级策略-->
         <activity
-            android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:theme="@android:style/Theme.Translucent" />
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -1070,13 +1061,11 @@
         <activity
             android:name="cn.xiaoneng.activity.ChatActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="cn.xiaoneng.activity.LeaveMsgActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="cn.xiaoneng.activity.ShowCameraActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|navigation|layoutDirection|touchscreen|locale|mnc|mcc|fontScale"
@@ -1086,8 +1075,7 @@
         <activity
             android:name="cn.xiaoneng.activity.ShowAlbumActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="cn.xiaoneng.activity.ValuationActivity"
             android:screenOrientation="portrait"
@@ -1095,25 +1083,20 @@
         <activity
             android:name="cn.xiaoneng.activity.ShowPictureActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="cn.xiaoneng.activity.XNExplorerActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="cn.xiaoneng.video.VideoPreviewActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="cn.xiaoneng.video.RecordVideoActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="cn.xiaoneng.video.XNVideoPlayer"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:screenOrientation="portrait"/>
         <!-- ***************************小能SDK所需要receiver和Service ********************* -->
         <service android:name="cn.xiaoneng.xpush.pushxiaoneng.XPushIMService" />
         <receiver
@@ -1129,20 +1112,17 @@
         </receiver>
         <!-- ***************************小能SDK所需要receiver和Service ********************* -->
         <activity
-            android:name=".ServiceListenerActivity"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:name=".ServiceListenerActivity"/>
         <activity
             android:name=".ServiceReceiverActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:noHistory="true"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <!--activity
+            android:noHistory="true"/>
+        <activity
             android:name=".qyservice.QyServiceNotifyReceiver"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:noHistory="true"
-            android:theme="@android:style/Theme.NoTitleBar" />-->
+            android:noHistory="true" />
         <!--app更新弹窗-->
         <activity
             android:name=".AppUpdateDialogActivity"

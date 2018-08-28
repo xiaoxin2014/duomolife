@@ -62,6 +62,7 @@ import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -287,7 +288,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         });
         //        小能客服登录 获取用户信息 登进登出……
         getNetDataInfo();
-//        QyServiceUtils.getQyInstance().loginQyUserInfo(this);
+        QyServiceUtils.getQyInstance().loginQyUserInfo(this);
     }
 
     /**

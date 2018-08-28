@@ -25,7 +25,7 @@ public class QYGlideImageLoader implements UnicornImageLoader {
     private Context context;
 
     public QYGlideImageLoader(Context context) {
-        context = context.getApplicationContext();
+        this.context = context.getApplicationContext();
     }
 
     @Nullable

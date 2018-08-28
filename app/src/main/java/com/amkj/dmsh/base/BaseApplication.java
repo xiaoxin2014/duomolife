@@ -27,6 +27,7 @@ import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
@@ -216,7 +217,7 @@ public class BaseApplication extends Application {
         //        小能客服初始化
         if (isAppMainProcess()) {
             initXNService();
-//            initQYService();
+            initQYService();
             setTotalChanel();
             //      友盟初始化
             youMengInit();
@@ -266,10 +267,10 @@ public class BaseApplication extends Application {
         initWebUrlTransformLocation();
     }
 
-//    private void initQYService() {
-//        QyServiceUtils qyInstance = QyServiceUtils.getQyInstance();
-//        qyInstance.initQyService(getApplicationContext());
-//    }
+    private void initQYService() {
+        QyServiceUtils qyInstance = QyServiceUtils.getQyInstance();
+        qyInstance.initQyService(getApplicationContext());
+    }
 
     private void initLinkMe() {
         if (isDebugTag) {
