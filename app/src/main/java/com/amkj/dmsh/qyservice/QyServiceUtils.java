@@ -117,6 +117,8 @@ public class QyServiceUtils {
                     .setNote(qyProductIndentInfo.getNote())
                     .setAlwaysSend(true)
                     .setUrl(getStrings(qyProductIndentInfo.getUrl()))
+                    .setShow(1)
+                    .setSendByUser(true)
                     .build();
         }
 
