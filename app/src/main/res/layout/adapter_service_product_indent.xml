@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/iv_service_product_indent_image"
+        android:layout_width="120px"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_height="120px"
+        android:scaleType="centerCrop"
+        app:layout_auto_basewidth="height" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/iv_service_product_indent_image"
+        android:layout_marginRight="@dimen/gap_right"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginTop="10px"
+        android:layout_marginBottom="10px"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="28px"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:id="@+id/tv_service_product_indent_no"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:textColor="@color/text_gray_hint_n"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="26px"
+            android:layout_marginTop="15px"
+            android:layout_below="@id/tv_service_product_indent_no"
+            android:id="@+id/tv_service_product_indent_time"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:textColor="@color/text_normal_red"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="28px"
+            android:layout_marginTop="15px"
+            android:layout_below="@id/tv_service_product_indent_time"
+            android:id="@+id/tv_service_product_indent_price"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -1457,8 +1457,9 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 }
                 qyProductIndentInfo.setDesc("订单金额:" + orderDetailBean.getAmount());
                 qyProductIndentInfo.setNote("创建时间:" + orderDetailBean.getCreateTime());
+                qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid="+orderNo);
             }
-            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", null, qyProductIndentInfo);
+            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid="+orderNo, qyProductIndentInfo);
         }
     }
 

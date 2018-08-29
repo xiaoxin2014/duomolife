@@ -13,7 +13,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -53,10 +52,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
+import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
@@ -65,10 +66,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEL;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
-import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 
 ;
 
@@ -375,17 +376,17 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
         } else {
             //未登录跳转登录页
             Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
+            startActivityForResult(intent, IS_LOGIN_CODE);
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != getActivity().RESULT_OK) {
+        if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if ( requestCode == ConstantVariable.IS_LOGIN_CODE) {
+        if ( requestCode == IS_LOGIN_CODE) {
             getLoginStatus();
         }
     }

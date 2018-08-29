@@ -269,7 +269,7 @@ public class BaseApplication extends Application {
 
     private void initQYService() {
         QyServiceUtils qyInstance = QyServiceUtils.getQyInstance();
-        qyInstance.initQyService(getApplicationContext());
+        qyInstance.initQyService(getContext());
     }
 
     private void initLinkMe() {
@@ -726,6 +726,9 @@ public class BaseApplication extends Application {
         //        自定义专区
         webUrlTransform.put("CustomZone.html", "app://QualityCustomTopicActivity");
         webUrlParameterTransform.put("CustomZone.html", getWebUrlParameter("id", "productType", null));
+//        订单详情
+        webUrlTransform.put("order.html", "app://DirectExchangeDetailsActivity");
+        webUrlParameterTransform.put("order.html", getWebUrlParameter("noid", "orderNo", null));
     }
 
     /**
