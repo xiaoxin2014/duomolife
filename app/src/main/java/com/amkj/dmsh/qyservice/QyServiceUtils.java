@@ -118,7 +118,7 @@ public class QyServiceUtils {
                     .setAlwaysSend(true)
                     .setUrl(getStrings(qyProductIndentInfo.getUrl()))
                     .setShow(1)
-                    .setSendByUser(true)
+                    .setSendByUser(false)
                     .build();
         }
 
