@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="88px"
         android:gravity="center_vertical"
-        android:paddingLeft="30px">
+        android:layout_marginLeft="16px">
 
         <include layout="@layout/layout_countdown_time_hours_red" />
     </RelativeLayout>
@@ -23,6 +23,8 @@
         android:background="@color/white"
         android:orientation="horizontal"
         android:paddingBottom="30px"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
         android:paddingTop="30px">
 
 
@@ -30,7 +32,6 @@
             android:id="@+id/img_mine_warm_product"
             android:layout_width="174px"
             android:layout_height="174px"
-            android:layout_marginLeft="24px"
             android:scaleType="centerCrop"
             app:layout_auto_basewidth="height" />
 
@@ -39,7 +40,6 @@
             android:layout_width="match_parent"
             android:layout_height="176px"
             android:layout_gravity="center_vertical"
-            android:paddingRight="@dimen/gap_right"
             android:layout_marginLeft="30px">
 
             <TextView

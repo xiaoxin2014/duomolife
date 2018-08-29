@@ -29,7 +29,6 @@ import java.util.Map;
 import cn.iwgang.countdownview.CountdownView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 
 ;
 
@@ -169,6 +168,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
     @Override
     protected void convert(BaseViewHolderHelper helper, MineWarmBean mineWarmBean) {
         TextView tv_mine_warm_set_status = helper.getView(R.id.tv_mine_warm_set_status);
+        helper.setGone(R.id.ll_communal_count_time,true);
 //        开团状态
         TextView tv_count_time_before_hours = helper.getView(R.id.tv_count_time_before_hours);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_mine_warm_product), mineWarmBean.getPath());

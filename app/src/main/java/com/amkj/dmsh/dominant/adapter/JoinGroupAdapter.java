@@ -162,6 +162,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 break;
             case ConstantVariable.TYPE_2:
                 RecyclerView communal_recycler_wrap = helper.getView(R.id.communal_recycler_wrap);
+                helper.setGone(R.id.ll_communal_count_time,true);
                 communal_recycler_wrap.setNestedScrollingEnabled(false);
                 FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
                 flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
