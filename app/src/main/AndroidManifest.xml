@@ -964,6 +964,7 @@
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
+            android:theme="@style/fullTheme"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -976,6 +977,7 @@
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@style/fullTheme"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
         <!--微信-->
         <activity
