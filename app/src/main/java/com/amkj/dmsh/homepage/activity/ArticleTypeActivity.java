@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -19,10 +18,17 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
+import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.kingja.loadsir.callback.Callback;
+import com.kingja.loadsir.callback.SuccessCallback;
+import com.kingja.loadsir.core.Convertor;
+import com.kingja.loadsir.core.LoadService;
+import com.kingja.loadsir.core.LoadSir;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
@@ -35,10 +41,14 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
+import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 
 ;
@@ -58,12 +68,12 @@ public class ArticleTypeActivity extends BaseActivity {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
+//    @BindView(R.id.communal_load)
+//    View communal_load;
+//    @BindView(R.id.communal_error)
+//    View communal_error;
+//    @BindView(R.id.communal_empty)
+//    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -76,6 +86,7 @@ public class ArticleTypeActivity extends BaseActivity {
     private HomeArticleAdapter homeArticleAdapter;
     private String categoryId;
     private String categoryTitle;
+    private LoadService loadService;
 
     @Override
     protected int getContentView() {
@@ -188,10 +199,29 @@ public class ArticleTypeActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
+        // 重新加载逻辑
+        loadService = LoadSir.getDefault().register(this, new Callback.OnReloadListener() {
+            @Override
+            public void onReload(View v) {
+                // 重新加载逻辑
+                loadData();
+            }
+        }, new Convertor<String>() {
+            @Override
+            public Class<? extends Callback> map(String baseEntity) {
+                Class<? extends Callback> resultCode = NetErrorCallback.class;
+                switch (baseEntity) {
+                    case SUCCESS_CODE:
+                        resultCode = SuccessCallback.class;
+                        break;
+                }
+                return resultCode;
+            }
+        });
     }
 
     private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
+        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             uid = personalInfo.getUid();
         } else {
@@ -200,7 +230,7 @@ public class ArticleTypeActivity extends BaseActivity {
     }
 
     private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
+        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             uid = personalInfo.getUid();
         } else {
@@ -251,6 +281,7 @@ public class ArticleTypeActivity extends BaseActivity {
     @Override
     protected void loadData() {
         if (NetWorkUtils.checkNet(ArticleTypeActivity.this) && !TextUtils.isEmpty(categoryId)) {
+            loadService.showCallback(NetLoadCallback.class);
             String url = BASE_URL + Url.CATE_DOC_LIST;
             Map<String, Object> params = new HashMap<>();
             params.put("currentPage", page);
@@ -261,8 +292,6 @@ public class ArticleTypeActivity extends BaseActivity {
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
                     smart_communal_refresh.finishRefresh();
                     homeArticleAdapter.loadMoreComplete();
                     if (page == 1) {
@@ -271,6 +300,17 @@ public class ArticleTypeActivity extends BaseActivity {
                     Gson gson = new Gson();
                     CommunalArticleEntity categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
                     if (categoryDocBean != null) {
+                        createExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(3000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                loadService.showWithConvertor(categoryDocBean.getCode());
+                            }
+                        });
                         if (categoryDocBean.getCode().equals("01")) {
                             articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
                             if(articleTypeList.size()>0&&TextUtils.isEmpty(articleTypeList.get(0).getCategory_name())){
@@ -290,16 +330,14 @@ public class ArticleTypeActivity extends BaseActivity {
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
                     smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(View.VISIBLE);
+                    loadService.showWithConvertor(ERROR_CODE);
                     homeArticleAdapter.loadMoreComplete();
                     super.onError(ex, isOnCallback);
                 }
             });
         } else {
             smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
+            loadService.showWithConvertor(ERROR_CODE);
             showToast(ArticleTypeActivity.this, R.string.unConnectedNetwork);
         }
     }
@@ -309,12 +347,12 @@ public class ArticleTypeActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        loadData();
-    }
+//    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
+//    void refreshData(View view) {
+//        communal_load.setVisibility(View.VISIBLE);
+//        communal_empty.setVisibility(GONE);
+//        communal_error.setVisibility(GONE);
+//        loadData();
+//    }
 
 }

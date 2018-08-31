@@ -180,10 +180,10 @@ public class QyServiceUtils {
                     .setShow(1)
                     .setSendByUser(false)
                     .build();
-            pageSource.quickEntryList = new ArrayList<>();
-            pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
-            getIndentProductData();
         }
+        pageSource.quickEntryList = new ArrayList<>();
+        pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
+        getIndentProductData();
 
 //        排队设置
         SessionLifeCycleOptions lifeCycleOptions = new SessionLifeCycleOptions();

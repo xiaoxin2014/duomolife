@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,8 +65,6 @@ import com.amkj.dmsh.shopdetails.bean.DirectIndentCountEntity.DirectIndentCountB
 import com.amkj.dmsh.shopdetails.integration.IntegralProductIndentActivity;
 import com.amkj.dmsh.user.activity.UserFansAttentionActivity;
 import com.amkj.dmsh.utils.ImageConverterUtils;
-import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
@@ -179,8 +176,6 @@ public class MineDataFragment extends BaseFragment {
     private QualityTypeBean qualityTypeBean;
     private String avatar;
     private CBViewHolderCreator cbViewHolderCreator;
-    private AlertDialogImage alertDialogImage;
-    private AlertDialog alertImageDialog;
     private QyServiceUtils qyInstance;
 
     @Override
@@ -348,7 +343,6 @@ public class MineDataFragment extends BaseFragment {
             typeMineAdapter.notifyItemChanged(7);
         }
     }
-
     private void setStatusColor() {
         SystemBarHelper.setStatusBarDarkMode(getActivity());
         SystemBarHelper.setPadding(getActivity(), rel_header_mine);
@@ -795,7 +789,6 @@ public class MineDataFragment extends BaseFragment {
             @Override
             public void onFailure(int code, String msg) {
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-                Log.d("淘宝登录", "code:" + code);
                 showToast(getActivity(), msg);
             }
         });

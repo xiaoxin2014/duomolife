@@ -183,4 +183,6 @@
     <string name="product_comment_count">Ta们在说(%1$d)</string>
     <string name="buy_return_integral_total">返%1$d积分</string>
     <string name="invite_partner_register">你的好友 %1$s 邀请你注册多么生活</string>
+    <!--网络提示-->
+    <string name="net_error">当前网络不好，请刷新重试</string>
 </resources>

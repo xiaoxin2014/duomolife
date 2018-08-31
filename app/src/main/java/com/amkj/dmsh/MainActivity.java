@@ -170,8 +170,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     private boolean isChecked;
     private ConstantMethod constantMethod;
     private Map<String, String> pushMap;
-    private AlertDialog alertImageDialog;
-    private AlertDialogImage alertDialogImage;
     private AlertDialogImage alertDialogAdImage;
     private AlertDialog alertImageAdDialog;
 

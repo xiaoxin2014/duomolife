@@ -27,6 +27,8 @@ import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
+import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
@@ -34,6 +36,7 @@ import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.kingja.loadsir.core.LoadSir;
 import com.leon.channel.helper.ChannelReaderUtil;
 import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
@@ -49,7 +52,6 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
-import org.lasque.tusdk.core.TuSdk;
 import org.xutils.x;
 
 import java.io.File;
@@ -221,6 +223,12 @@ public class BaseApplication extends Application {
             setTotalChanel();
             //      友盟初始化
             youMengInit();
+//            try {
+//                TuSdk.enableDebugLog(isDebugTag);
+//                TuSdk.init(getApplicationContext(), "08b501fdf166d42d-02-5dvwp1");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -240,12 +248,6 @@ public class BaseApplication extends Application {
         x.Ext.init(this);
         //shareSDK
         MobSDK.init(this, MobAPPKEY, MobAPPSECRET);
-        try {
-            TuSdk.enableDebugLog(isDebugTag);
-            TuSdk.init(getApplicationContext(), "08b501fdf166d42d-02-5dvwp1");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 //        腾讯移动分析初始化
         // 第三个参数必须为：com.tencent.stat.common.StatConstants.VERSION
@@ -265,6 +267,18 @@ public class BaseApplication extends Application {
 //        LinkedMe 深度链接
         initLinkMe();
         initWebUrlTransformLocation();
+        initLoadSir();
+    }
+
+    /**
+     * 初始化 加载页面
+     */
+    private void initLoadSir() {
+        LoadSir.beginBuilder()
+                .addCallback(new NetErrorCallback())//网络错误
+                .addCallback(new NetLoadCallback())//加载中
+                .setDefaultCallback(NetLoadCallback.class)//设置默认状态页
+                .commit();
     }
 
     private void initQYService() {
@@ -677,9 +691,18 @@ public class BaseApplication extends Application {
         //        自营商品商品详情
         webUrlTransform.put("proprietary.html", "app://ShopScrollDetailsActivity");
         webUrlParameterTransform.put("proprietary.html", getWebUrlParameter("id", "productId", null));
+        //        pc自营商品商品详情
+        webUrlTransform.put("ProductDetails.html", "app://ShopScrollDetailsActivity");
+        webUrlParameterTransform.put("ProductDetails.html", getWebUrlParameter("id", "productId", null));
         //        淘宝商品详情
         webUrlTransform.put("taoBaoGoods.html", "app://ShopTimeScrollDetailsActivity");
         webUrlParameterTransform.put("taoBaoGoods.html", getWebUrlParameter("id", "productId", null));
+        //        pc淘宝商品详情
+        webUrlTransform.put("LimitedBlurb.html", "app://ShopTimeScrollDetailsActivity");
+        webUrlParameterTransform.put("LimitedBlurb.html", getWebUrlParameter("id", "productId", null));
+        //        pc积分商品详情
+        webUrlTransform.put("IntegralGoods.html", "app://IntegralScrollDetailsActivity");
+        webUrlParameterTransform.put("IntegralGoods.html", getWebUrlParameter("id", "productId", null));
         //        文章详情
         webUrlTransform.put("study_detail.html", "app://ArticleOfficialActivity");
         webUrlParameterTransform.put("study_detail.html", getWebUrlParameter("id", "ArtId", null));
@@ -698,12 +721,13 @@ public class BaseApplication extends Application {
         webUrlParameterTransform.put("topic.html", getWebUrlParameter("id", "welfareId", null));
         //        每周优选
         webUrlTransform.put("weekly_optimization.html", "app://QualityWeekOptimizedActivity");
+        //        必买清单
+        webUrlTransform.put("must_buy.html", "app://QualityShopBuyListActivity");
         //        拼团详情页
         webUrlTransform.put("groupDetail.html", "app://QualityGroupShopDetailActivity");
         webUrlParameterTransform.put("groupDetail.html", getWebUrlParameter("id", "gpInfoId", null));
         //        分享拼团详情页
         webUrlTransform.put("groupShare.html", "app://QualityGroupShopDetailActivity?gpInfoId=&gpRecordId=");
-        ;
         webUrlParameterTransform.put("groupShare.html", getWebUrlParameter("id", "gpInfoId",
                 getWebUrlParameter("record", "gpRecordId", null)));
         //        拼团列表
@@ -726,9 +750,12 @@ public class BaseApplication extends Application {
         //        自定义专区
         webUrlTransform.put("CustomZone.html", "app://QualityCustomTopicActivity");
         webUrlParameterTransform.put("CustomZone.html", getWebUrlParameter("id", "productType", null));
-//        订单详情
+        //        订单详情
         webUrlTransform.put("order.html", "app://DirectExchangeDetailsActivity");
         webUrlParameterTransform.put("order.html", getWebUrlParameter("noid", "orderNo", null));
+        //        活动专区
+        webUrlTransform.put("activitySpecial.html", "app://QualityTypeProductActivity");
+        webUrlParameterTransform.put("activitySpecial.html", getWebUrlParameter("id", "activityCode", null));
     }
 
     /**

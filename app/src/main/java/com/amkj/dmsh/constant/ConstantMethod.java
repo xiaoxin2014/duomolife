@@ -3,6 +3,10 @@ package com.amkj.dmsh.constant;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Application;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -1910,7 +1914,7 @@ public class ConstantMethod {
     }
 
     public void getNewUserCouponDialog(Context context) {
-        if (NetWorkUtils.checkNet(context)&&NEW_USER_DIALOG) {
+        if (NetWorkUtils.checkNet(context) && NEW_USER_DIALOG) {
             NEW_USER_DIALOG = false;
             String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
             Map<String, Object> params = new HashMap<>();
@@ -1927,28 +1931,30 @@ public class ConstantMethod {
                             GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                 @Override
                                 public void onSuccess(Bitmap bitmap) {
-                                    AlertDialogImage alertDialogImage = new AlertDialogImage();
-                                    AlertDialog alertImageDialog = alertDialogImage.createAlertDialog(context);
-                                    alertImageDialog.show();
-                                    alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                        @Override
-                                        public void imageClick() {
-                                            Intent intent = new Intent();
-                                            switch (requestStatus.getUserType()) {
-                                                case 1: //新人用户
-                                                    intent.setClass(context, QualityNewUserActivity.class);
-                                                    context.startActivity(intent);
-                                                    break;
+                                    if (isContextExisted(context)) {
+                                        AlertDialogImage alertDialogImage = new AlertDialogImage();
+                                        AlertDialog alertImageDialog = alertDialogImage.createAlertDialog(context);
+                                        alertImageDialog.show();
+                                        alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                                            @Override
+                                            public void imageClick() {
+                                                Intent intent = new Intent();
+                                                switch (requestStatus.getUserType()) {
+                                                    case 1: //新人用户
+                                                        intent.setClass(context, QualityNewUserActivity.class);
+                                                        context.startActivity(intent);
+                                                        break;
 //                                                    领取优惠券
-                                                case 2:
-                                                case 3:
-                                                    getNewUserCoupon(context,requestStatus.getCouponId());
-                                                    break;
+                                                    case 2:
+                                                    case 3:
+                                                        getNewUserCoupon(context, requestStatus.getCouponId());
+                                                        break;
+                                                }
+                                                alertImageDialog.dismiss();
                                             }
-                                            alertImageDialog.dismiss();
-                                        }
-                                    });
-                                    alertDialogImage.setImage(bitmap);
+                                        });
+                                        alertDialogImage.setImage(bitmap);
+                                    }
                                 }
 
                                 @Override
@@ -1996,6 +2002,39 @@ public class ConstantMethod {
             });
 
         }
+    }
+
+    /**
+     * 判断context 是否存活，避免badToken
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isContextExisted(Context context) {
+        return context != null && (context instanceof Activity && !((Activity) context).isFinishing()
+                || context instanceof Service && isServiceExisted(context, context.getClass().getName())
+                || context instanceof Application);
+    }
+
+    private static boolean isServiceExisted(Context context, String className) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager == null) {
+            return false;
+        }
+        List<ActivityManager.RunningServiceInfo> serviceList = activityManager
+                .getRunningServices(Integer.MAX_VALUE);
+        if (!(serviceList.size() > 0)) {
+            return false;
+        }
+        for (int i = 0; i < serviceList.size(); i++) {
+            ActivityManager.RunningServiceInfo serviceInfo = serviceList.get(i);
+            ComponentName serviceName = serviceInfo.service;
+
+            if (serviceName.getClassName().equals(className)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -2457,13 +2496,13 @@ public class ConstantMethod {
                     }
                 }
             }
-            if(!TextUtils.isEmpty(appMarketStore)){
+            if (!TextUtils.isEmpty(appMarketStore)) {
                 try {
                     MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
                 } catch (Exception e) {
                     skipDownStore(context);
                 }
-            }else{
+            } else {
                 skipDownStore(context);
             }
         } catch (Exception e) {
@@ -2473,6 +2512,7 @@ public class ConstantMethod {
 
     /**
      * 跳转应用宝下载中心
+     *
      * @param context
      */
     private static void skipDownStore(Context context) {
@@ -2483,6 +2523,7 @@ public class ConstantMethod {
         intent.setData(content_url);
         context.startActivity(intent);
     }
+
     /**
      * 创建线程定时器
      */

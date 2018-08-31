@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@drawable/net_page_bg"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_communal_net_tint"
+        android:textSize="32px"
+        android:layout_marginTop="30px"
+        android:text="抱歉，出错了"
+        android:textColor="@color/text_login_gray_s"
+        android:gravity="center"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="140px"
+        android:layout_gravity="center"
+        android:layout_marginTop="40px"
+        android:textColor="@color/white"
+        android:text="刷新"
+        android:gravity="center"
+        android:id="@+id/tv_communal_net_refresh"
+        android:textSize="32px"
+        android:background="@drawable/border_cir_four_bg_blue"
+        android:layout_height="55px" />
+</LinearLayout>
