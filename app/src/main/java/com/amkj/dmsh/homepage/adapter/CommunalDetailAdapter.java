@@ -53,7 +53,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.autolayout.utils.AutoUtils;
 import com.zzhoujay.richtext.ImageHolder;
 import com.zzhoujay.richtext.RichText;
@@ -63,7 +62,6 @@ import com.zzhoujay.richtext.callback.OnImageClickListener;
 import com.zzhoujay.richtext.callback.OnUrlClickListener;
 import com.zzhoujay.richtext.callback.SimpleImageFixCallback;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,8 +71,6 @@ import java.util.regex.Pattern;
 
 import cn.jzvd.JZVideoPlayer;
 import emojicon.EmojiconTextView;
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -270,39 +266,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 });
                 break;
             case TYPE_GIF_IMG:
-                final GifImageView gif_iv_communal_img = holder.getView(R.id.gif_iv_communal_img);
                 final ImageView iv_gif_load_image = holder.getView(R.id.iv_gif_load_image);
-                GlideImageLoaderUtil.downOriginalImg(context, detailObjectBean.getPicUrl(), new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
-                    @Override
-                    public void onSuccess(File file) {
-                        iv_gif_load_image.setVisibility(View.GONE);
-                        gif_iv_communal_img.setVisibility(View.VISIBLE);
-                        try {
-                            GifDrawable gifDrawable = new GifDrawable(file);
-                            gif_iv_communal_img.setImageDrawable(gifDrawable);
-                        } catch (Exception e) {
-                            CrashReport.putUserData(context, "imgPath", detailObjectBean.getPicUrl());
-                            iv_gif_load_image.setVisibility(View.VISIBLE);
-                            gif_iv_communal_img.setVisibility(View.GONE);
-                            iv_gif_load_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onStart() {
-                        iv_gif_load_image.setVisibility(View.VISIBLE);
-                        gif_iv_communal_img.setVisibility(View.GONE);
-                        iv_gif_load_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
-                    }
-
-                    @Override
-                    public void onError(Drawable errorDrawable) {
-                        iv_gif_load_image.setVisibility(View.VISIBLE);
-                        gif_iv_communal_img.setVisibility(View.GONE);
-                        iv_gif_load_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
-                    }
-                });
+                GlideImageLoaderUtil.loadGif(context,iv_gif_load_image,detailObjectBean.getPicUrl());
                 break;
             case TYPE_LUCKY_MONEY:
                 holder.setText(R.id.tv_coupon_money_amount, getStrings(detailObjectBean.getName()));

@@ -127,6 +127,7 @@ import q.rorbin.badgeview.QBadgeView;
 import static android.content.Context.MODE_PRIVATE;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.base.BaseApplication.serviceGroupId;
 import static com.amkj.dmsh.base.BaseApplication.webUrlParameterTransform;
 import static com.amkj.dmsh.base.BaseApplication.webUrlTransform;
@@ -1221,18 +1222,23 @@ public class ConstantMethod {
                             boolean hasImgUrl = matcher.find();
                             CommunalDetailObjectBean communalDetailObjectBean;
                             while (hasImgUrl) {
-                                communalDetailObjectBean = new CommunalDetailObjectBean();
                                 String imgUrl = matcher.group();
                                 if (imgUrl.contains(".gif")) {
+                                    communalDetailObjectBean = new CommunalDetailObjectBean();
                                     communalDetailObjectBean.setPicUrl(imgUrl);
                                     communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
+                                    descriptionDetailList.add(communalDetailObjectBean);
                                 } else {
-                                    String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
-                                    communalDetailObjectBean.setContent(imgUrlContent);
-                                    communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                    List<String> imageCropList = getImageCrop(imgUrl, 10000);
+                                    for (String imageUrl : imageCropList) {
+                                        communalDetailObjectBean = new CommunalDetailObjectBean();
+                                        String imgUrlContent = ("<span><img src=\"" + imageUrl + "\" /></span>");
+                                        communalDetailObjectBean.setContent(imgUrlContent);
+                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                        descriptionDetailList.add(communalDetailObjectBean);
+                                    }
                                 }
                                 hasImgUrl = matcher.find();
-                                descriptionDetailList.add(communalDetailObjectBean);
                             }
                         } else {
 //                        正文
@@ -1278,6 +1284,41 @@ public class ConstantMethod {
             }
         }
         return descriptionDetailList;
+    }
+
+    /**
+     * 暂时限制每张图片不能超过4096*4096
+     * 图片大图截取
+     */
+    private static List<String> getImageCrop(String imageUrl, int sizeHeight) {
+        int maxSize = 4096;
+        List<String> imageCropList = new ArrayList<>();
+//        oss图片样式
+//        根据图片大小 获取展示在屏幕的真正大小
+        if (sizeHeight > maxSize) {
+            float scale = AutoUtils.getPercentWidth1px();
+            int imageNormalSize = 2500;
+            int imageCount = (int) (sizeHeight * scale / imageNormalSize);
+            if (imageCount > 0) {
+                imageCount += (scale % maxSize != 0 ? 1 : 0);
+                String ossPrefix = "?x-oss-process=image";
+                String imageNewUrl;
+                if (!imageUrl.contains(ossPrefix)) {
+                    imageNewUrl = imageUrl + ossPrefix;
+                } else {
+                    imageNewUrl = imageUrl;
+                }
+                for (int i = 0; i < imageCount; i++) {
+                    String cropNewUrl = imageNewUrl + String.format(mAppContext.getString(R.string.image_crop_style), imageNormalSize, i);
+                    imageCropList.add(cropNewUrl);
+                }
+            } else {
+                imageCropList.add(imageUrl);
+            }
+        } else {
+            imageCropList.add(imageUrl);
+        }
+        return imageCropList;
     }
 
     /**

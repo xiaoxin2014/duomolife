@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.amkj.dmsh.base.BaseApplication.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 ;
@@ -47,20 +48,19 @@ public class GlideImageLoaderUtil {
         }
     }
 
-    public static void loadImage(Context context, final ImageView iv, String imgUrl, boolean isDouble) {
-        if (null != context) {
-            Glide.with(context.getApplicationContext()).load(getThumbImgUrl(imgUrl, null, isDouble))
+    /**
+     * 加载图片根据控件设置来展示
+     * @param context
+     * @param iv
+     * @param imgUrl
+     */
+    public static void loadImage(Context context, final ImageView iv, String imgUrl) {
+        if (isContextExisted(context)) {
+            Glide.with(context.getApplicationContext()).load(imgUrl)
                     .apply(new RequestOptions().dontAnimate()
-                            .centerCrop()
                             .error(R.drawable.load_loading_image)
                             .diskCacheStrategy(DiskCacheStrategy.DATA))
-                    .transition(withCrossFade())
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                            iv.setImageDrawable(resource);
-                        }
-                    });
+                    .into(iv);
         }
     }
 
@@ -354,11 +354,32 @@ public class GlideImageLoaderUtil {
         }
     }
 
+    /**
+     * 原图加载
+     * @param context
+     * @param imageView
+     * @param imgUrl
+     */
     public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
         if (null != context) {
             Glide.with(context.getApplicationContext()).asBitmap().load(imgUrl)
                     .apply(new RequestOptions().dontAnimate().placeholder(R.drawable.load_loading_image)
                             .error(R.drawable.load_loading_image).override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL))
+                    .into(imageView);
+        }
+    }
+
+    /**
+     * 动图加载
+     * @param context
+     * @param imageView
+     * @param imgUrl
+     */
+    public static void loadGif(final Context context, final ImageView imageView, String imgUrl) {
+        if (null != context) {
+            Glide.with(context.getApplicationContext()).load(imgUrl)
+                    .apply(new RequestOptions().placeholder(R.drawable.load_loading_image)
+                            .error(R.drawable.load_loading_image))
                     .into(imageView);
         }
     }

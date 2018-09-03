@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.Url;
@@ -20,6 +21,9 @@ import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.kingja.loadsir.callback.Callback;
+import com.kingja.loadsir.core.LoadService;
+import com.kingja.loadsir.core.LoadSir;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -42,6 +46,7 @@ public abstract class BaseActivity extends AutoLayoutActivity {
     public KProgressHUD loadHud;
     private BadgeDesktopReceiver badgeDesktopReceiver;
     public TotalPersonalTrajectory totalPersonalTrajectory;
+    public LoadService loadService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +59,17 @@ public abstract class BaseActivity extends AutoLayoutActivity {
                 .setSize((int) (AutoUtils.getPercentWidth1px() * 50), (int) (AutoUtils.getPercentWidth1px() * 50));
 //                .setDimAmount(0.5f)
         initViews();
+
+        // 重新加载逻辑
+        if(isAddLoad()){
+            loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {
+                @Override
+                public void onReload(View v) {
+                    // 重新加载逻辑
+                    loadData();
+                }
+            }, NetLoadUtils.getQyInstance().getLoadSirCover());
+        }
         // 注册当前Activity为订阅者
         EventBus eventBus = EventBus.getDefault();
         eventBus.register(this);
@@ -217,7 +233,7 @@ public abstract class BaseActivity extends AutoLayoutActivity {
             if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
                 if (reason != null) {
-                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)){
+                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
                         getDesktopMesCount();
                     }
                 }
@@ -253,5 +269,21 @@ public abstract class BaseActivity extends AutoLayoutActivity {
         } else {
             ShortcutBadger.removeCount(getApplicationContext());
         }
+    }
+
+    /**
+     * 获取loadView
+     * @return
+     */
+    protected View getLoadView() {
+        return null;
+    }
+
+    /**
+     * 是否默认加载
+     * @return
+     */
+    protected boolean isAddLoad() {
+        return false;
     }
 }

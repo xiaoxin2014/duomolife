@@ -20,7 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -160,7 +159,6 @@ public class ImagePagerActivity extends Activity {
         private LayoutInflater inflater;
         private Context context;
         private ImageSize imageSize;
-        private ImageView smallImageView = null;
 
         public void setImageBeanList(List<ImageBean> imageBeanList) {
             if (imageBeanList != null)
@@ -214,22 +212,22 @@ public class ImagePagerActivity extends Activity {
                         overridePendingTransition(0, 0);
                     }
                 });
-                if (imageSize != null) {
+//                if (imageSize != null) {
                     //预览imageView
-                    smallImageView = new ImageView(context);
-                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(imageSize.getWidth(), imageSize.getHeight());
-                    layoutParams.gravity = Gravity.CENTER;
-                    smallImageView.setLayoutParams(layoutParams);
-                    smallImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    ((FrameLayout) view).addView(smallImageView);
-                } else {
-                    smallImageView = new ImageView(context);
-                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                    layoutParams.gravity = Gravity.CENTER;
-                    smallImageView.setLayoutParams(layoutParams);
-                    smallImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    ((FrameLayout) view).addView(smallImageView);
-                }
+//                    smallImageView = new ImageView(context);
+//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(imageSize.getWidth(), imageSize.getHeight());
+//                    layoutParams.gravity = Gravity.CENTER;
+//                    smallImageView.setLayoutParams(layoutParams);
+//                    smallImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                    ((FrameLayout) view).addView(smallImageView);
+//                } else {
+//                    smallImageView = new ImageView(context);
+//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//                    layoutParams.gravity = Gravity.CENTER;
+//                    smallImageView.setLayoutParams(layoutParams);
+//                    smallImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                    ((FrameLayout) view).addView(smallImageView);
+//                }
 
                 //loading
                 final ProgressBar loading = new ProgressBar(context);

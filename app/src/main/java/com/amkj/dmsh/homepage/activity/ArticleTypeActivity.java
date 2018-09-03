@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
-import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.HomeArticleAdapter;
@@ -18,19 +18,12 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.callback.SuccessCallback;
-import com.kingja.loadsir.core.Convertor;
-import com.kingja.loadsir.core.LoadService;
-import com.kingja.loadsir.core.LoadSir;
 import com.melnykov.fab.FloatingActionButton;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,12 +34,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
@@ -62,18 +55,12 @@ import static com.amkj.dmsh.constant.Url.BASE_URL;
  */
 public class ArticleTypeActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-//    @BindView(R.id.communal_load)
-//    View communal_load;
-//    @BindView(R.id.communal_error)
-//    View communal_error;
-//    @BindView(R.id.communal_empty)
-//    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -81,12 +68,10 @@ public class ArticleTypeActivity extends BaseActivity {
     private int page = 1;
     private int scrollY;
     private float screenHeight;
-    private int uid;
     private List<CommunalArticleBean> articleTypeList = new ArrayList();
     private HomeArticleAdapter homeArticleAdapter;
     private String categoryId;
     private String categoryTitle;
-    private LoadService loadService;
 
     @Override
     protected int getContentView() {
@@ -95,7 +80,6 @@ public class ArticleTypeActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_shared.setVisibility(GONE);
         try {
             Intent intent = getIntent();
@@ -108,7 +92,7 @@ public class ArticleTypeActivity extends BaseActivity {
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             page = 1;
-            loadData();
+            getArticleTypeList();
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArticleTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
@@ -132,7 +116,7 @@ public class ArticleTypeActivity extends BaseActivity {
                 if (articleBean != null) {
                     switch (view.getId()) {
                         case R.id.tv_com_art_collect_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setArticleCollected(articleBean);
                                 articleTypeList.get(position).setCollect(!articleBean.isCollect());
                                 articleTypeList.get(position).setCollect(!articleBean.isCollect() ?
@@ -143,7 +127,7 @@ public class ArticleTypeActivity extends BaseActivity {
                             }
                             break;
                         case R.id.tv_com_art_like_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setArticleLiked(articleBean);
                                 articleTypeList.get(position).setFavor(!articleBean.isFavor());
                                 articleTypeList.get(position).setFavor(articleBean.isFavor() ?
@@ -152,6 +136,8 @@ public class ArticleTypeActivity extends BaseActivity {
                             } else {
                                 getLoginStatus();
                             }
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -162,7 +148,7 @@ public class ArticleTypeActivity extends BaseActivity {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= articleTypeList.size()) {
                     page++;
-                    loadData();
+                    getArticleTypeList();
                 } else {
                     homeArticleAdapter.loadMoreEnd();
                 }
@@ -199,44 +185,24 @@ public class ArticleTypeActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        // 重新加载逻辑
-        loadService = LoadSir.getDefault().register(this, new Callback.OnReloadListener() {
-            @Override
-            public void onReload(View v) {
-                // 重新加载逻辑
-                loadData();
-            }
-        }, new Convertor<String>() {
-            @Override
-            public Class<? extends Callback> map(String baseEntity) {
-                Class<? extends Callback> resultCode = NetErrorCallback.class;
-                switch (baseEntity) {
-                    case SUCCESS_CODE:
-                        resultCode = SuccessCallback.class;
-                        break;
-                }
-                return resultCode;
-            }
-        });
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getLoginStatus() {
         SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
+        if (!personalInfo.isLogin()) {
             //未登录跳转登录页
             Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
+            startActivityForResult(intent, IS_LOGIN_CODE);
         }
     }
 
@@ -247,7 +213,6 @@ public class ArticleTypeActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
             loadData();
         }
     }
@@ -257,7 +222,7 @@ public class ArticleTypeActivity extends BaseActivity {
         String url = BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", articleBean.getId());
         params.put("type", "document");
@@ -270,7 +235,7 @@ public class ArticleTypeActivity extends BaseActivity {
         String url = BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //文章id
         params.put("id", articleBean.getId());
         params.put("favortype", "doc");
@@ -280,79 +245,63 @@ public class ArticleTypeActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(ArticleTypeActivity.this) && !TextUtils.isEmpty(categoryId)) {
-            loadService.showCallback(NetLoadCallback.class);
-            String url = BASE_URL + Url.CATE_DOC_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            if (uid > 0) {
-                params.put("uid", uid);
-            }
-            params.put("categoryid", categoryId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    homeArticleAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        articleTypeList.clear();
-                    }
-                    Gson gson = new Gson();
-                    CommunalArticleEntity categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
-                    if (categoryDocBean != null) {
-                        createExecutor().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(3000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+        loadService.showCallback(NetLoadCallback.class);
+        getArticleTypeList();
+    }
+
+    private void getArticleTypeList() {
+        String url = BASE_URL + Url.CATE_DOC_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        params.put("categoryid", categoryId);
+        NetLoadUtils.getQyInstance().loadNetData(this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        homeArticleAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        CommunalArticleEntity categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
+                        if (categoryDocBean != null) {
+                            if (categoryDocBean.getCode().equals(SUCCESS_CODE)) {
+                                if (page == 1) {
+                                    articleTypeList.clear();
                                 }
-                                loadService.showWithConvertor(categoryDocBean.getCode());
+                                articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
+                                if (articleTypeList.size() > 0
+                                        && TextUtils.isEmpty(articleTypeList.get(0).getCategory_name())) {
+                                    tv_header_titleAll.setText(articleTypeList.get(0).getCategory_name());
+                                }
+                            } else if (!categoryDocBean.getCode().equals(EMPTY_CODE)) {
+                                showToast(ArticleTypeActivity.this, categoryDocBean.getMsg());
                             }
-                        });
-                        if (categoryDocBean.getCode().equals("01")) {
-                            articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
-                            if(articleTypeList.size()>0&&TextUtils.isEmpty(articleTypeList.get(0).getCategory_name())){
-                                tv_header_titleAll.setText(articleTypeList.get(0).getCategory_name());
-                            }
-                        } else if (!categoryDocBean.getCode().equals("02")) {
-                            showToast(ArticleTypeActivity.this, categoryDocBean.getMsg());
-                        }
-                        if (page == 1) {
-                            homeArticleAdapter.setNewData(articleTypeList);
-                        } else {
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
                             homeArticleAdapter.notifyDataSetChanged();
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    loadService.showWithConvertor(ERROR_CODE);
-                    homeArticleAdapter.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            loadService.showWithConvertor(ERROR_CODE);
-            showToast(ArticleTypeActivity.this, R.string.unConnectedNetwork);
-        }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
+                        showToast(ArticleTypeActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
+                        homeArticleAdapter.loadMoreComplete();
+                    }
+                });
     }
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
     }
-
-//    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-//    void refreshData(View view) {
-//        communal_load.setVisibility(View.VISIBLE);
-//        communal_empty.setVisibility(GONE);
-//        communal_error.setVisibility(GONE);
-//        loadData();
-//    }
 
 }

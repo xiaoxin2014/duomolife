@@ -307,3 +307,7 @@ public static final int *;
 #网易七鱼客服
 -dontwarn com.qiyukf.**
 -keep class com.qiyukf.** {*;}
+
+#loadsir
+-dontwarn com.kingja.loadsir.**
+-keep class com.kingja.loadsir.** {*;}

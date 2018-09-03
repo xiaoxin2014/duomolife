@@ -140,6 +140,8 @@ public class BaseApplication extends Application {
     public static Map<String, Map<String, String>> webUrlParameterTransform;
     //
     public static Map<String, Map<String, String>> totalActionMap;
+    //    全局上下文
+    public static Context mAppContext;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -154,6 +156,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         // 调试时，将第三个参数改为true
 //        腾讯hotfix
+        mAppContext = getApplicationContext();
         if (isDebugTag) {
             // 补丁回调接口
             Beta.betaPatchListener = new BetaPatchListener() {
