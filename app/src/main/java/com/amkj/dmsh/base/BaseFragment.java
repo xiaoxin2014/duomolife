@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.kingja.loadsir.callback.Callback;
+import com.kingja.loadsir.core.LoadService;
+import com.kingja.loadsir.core.LoadSir;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -49,6 +52,7 @@ public abstract class BaseFragment extends Fragment {
     //    是否加载过数据
     protected boolean isLoadData = false;
     public TotalPersonalTrajectory totalPersonalTrajectory;
+    public LoadService loadService;
 
     public static <T extends BaseFragment> T newInstance(Class<?> subFragmentCls, Map<String, String> params, Map<String, Object> objectParams) {
         try {
@@ -110,12 +114,23 @@ public abstract class BaseFragment extends Fragment {
                 .setCancellable(false)
                 .setSize((int) (AutoUtils.getPercentWidth1px() * 50), (int) (AutoUtils.getPercentWidth1px() * 50))
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
+        if (isAddLoad()) {
+            // 重新加载逻辑
+            loadService = LoadSir.getDefault().register(view, new Callback.OnReloadListener() {
+                @Override
+                public void onReload(View v) {
+                    // 重新加载逻辑
+                    loadData();
+                }
+            },NetLoadUtils.getQyInstance().getLoadSirCover());
+        }
+
         initViews();
         // 注册当前Fragment为订阅者
         EventBus.getDefault().register(this);
         isInitView = true;
         isCanLoadData();
-        return view;
+        return loadService != null ? loadService.getLoadLayout() : view;
     }
 
     @Override
@@ -176,6 +191,15 @@ public abstract class BaseFragment extends Fragment {
     protected void postOtherResult(@NonNull Object message) {
     }
 
+    /**
+     * 是否默认加载
+     *
+     * @return
+     */
+    protected boolean isAddLoad() {
+        return false;
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -202,6 +226,7 @@ public abstract class BaseFragment extends Fragment {
 //        友盟统计
         MobclickAgent.onPageStart(getClass().getName());
     }
+
     /**
      * 分类 海外直邮活动专区
      *

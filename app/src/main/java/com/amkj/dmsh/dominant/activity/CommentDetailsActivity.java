@@ -16,21 +16,19 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentDetailAdapter;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean.ReplyCommBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -54,8 +52,13 @@ import emojicon.EmojiconEditText;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.R.id.tv_comm_comment_like;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 ;
@@ -86,18 +89,11 @@ public class CommentDetailsActivity extends BaseActivity {
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     //    按下点击位置
     private float locationY;
     private float screenHeight;
-    private int uid;
     private ArticleCommentDetailAdapter articleCommentAdapter;
     private List<ReplyCommBean> commentDetailList = new ArrayList();
     private CommentHeaderView commentHeaderView;
@@ -105,14 +101,15 @@ public class CommentDetailsActivity extends BaseActivity {
     private String commentId;
     private String objId;
     private String commentType;
+    private CommentDetailEntity commentDetailEntity;
 
     @Override
     protected int getContentView() {
         return R.layout.activity_comment_details;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_titleAll.setText("评论");
         tv_header_shared.setVisibility(GONE);
         Intent intent = getIntent();
@@ -130,14 +127,14 @@ public class CommentDetailsActivity extends BaseActivity {
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             page = 1;
-                loadData();
+            getCommentData();
         });
         articleCommentAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
                 if (page * TOTAL_COUNT_TWENTY <= commentDetailList.size()) {
                     page++;
-                    loadData();
+                    getCommentData();
                 } else {
                     articleCommentAdapter.loadMoreEnd();
                 }
@@ -153,7 +150,7 @@ public class CommentDetailsActivity extends BaseActivity {
                 if (replyCommBean != null) {
                     switch (view.getId()) {
                         case tv_comm_comment_like:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 replyCommBean.setFavor(!replyCommBean.isFavor());
                                 int likeNum = replyCommBean.getLike_num();
                                 replyCommBean.setLike_num(replyCommBean.isFavor()
@@ -162,19 +159,19 @@ public class CommentDetailsActivity extends BaseActivity {
                                 articleCommentAdapter.notifyItemChanged(position + adapter.getHeaderLayoutCount());
                                 setCommentLike(replyCommBean.getId());
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(CommentDetailsActivity.this);
                             }
                             break;
                         case R.id.tv_comm_comment_receive:
 //                            打开评论
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 if (View.VISIBLE == ll_input_comment.getVisibility()) {
                                     commentViewVisible(View.GONE, null);
                                 } else {
                                     commentViewVisible(View.VISIBLE, replyCommBean);
                                 }
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(CommentDetailsActivity.this);
                             }
                             break;
                         case R.id.civ_comm_comment_avatar:
@@ -197,7 +194,7 @@ public class CommentDetailsActivity extends BaseActivity {
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             page = 1;
-                loadData();
+            getCommentData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -230,71 +227,67 @@ public class CommentDetailsActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getCommentData();
     }
 
     private void getCommentData() {
-        if (NetWorkUtils.checkNet(CommentDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_COMMENT_DETAILS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("comment_id", commentId);
-            params.put("currentPage", page);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            params.put("comtype", commentType);
-            params.put("obj_id", objId);
-            if (uid > 0) {
-                params.put("uid", uid);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    articleCommentAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        commentDetailList.clear();
-                    }
-                    Gson gson = new Gson();
-                    CommentDetailEntity commentDetailEntity = gson.fromJson(result, CommentDetailEntity.class);
-                    if (commentDetailEntity != null) {
-                        if (commentDetailEntity.getCode().equals("01")) {
-                            commentDetailBean = commentDetailEntity.getCommentDetailBean();
-                            setCommentData(commentDetailBean);
-                        } else if (!commentDetailEntity.getCode().equals("02")) {
-                            if (page == 1) {
-                                communal_error.setVisibility(GONE);
-                            }
-                            showToast(CommentDetailsActivity.this, commentDetailEntity.getMsg());
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    articleCommentAdapter.loadMoreComplete();
-                    if (commentDetailList.size() < 1) {
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(CommentDetailsActivity.this, R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            articleCommentAdapter.loadMoreComplete();
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            articleCommentAdapter.loadMoreComplete();
-            showToast(CommentDetailsActivity.this, R.string.unConnectedNetwork);
+        String url = Url.BASE_URL + Url.Q_COMMENT_DETAILS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("comment_id", commentId);
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("comtype", commentType);
+        params.put("obj_id", objId);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(CommentDetailsActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                articleCommentAdapter.loadMoreComplete();
+                if (page == 1) {
+                    commentDetailList.clear();
+                }
+                Gson gson = new Gson();
+                commentDetailEntity = gson.fromJson(result, CommentDetailEntity.class);
+                if (commentDetailEntity != null) {
+                    if (commentDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        commentDetailBean = commentDetailEntity.getCommentDetailBean();
+                        setCommentData(commentDetailBean);
+                    } else if (!commentDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(CommentDetailsActivity.this, commentDetailEntity.getMsg());
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,commentDetailBean,commentDetailEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                articleCommentAdapter.loadMoreComplete();
+                smart_communal_refresh.finishRefresh();
+                showToast(CommentDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,commentDetailBean,commentDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                articleCommentAdapter.loadMoreComplete();
+                showToast(CommentDetailsActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,commentDetailBean,commentDetailEntity);
+            }
+        });
     }
 
     private void setCommentData(CommentDetailBean commentDetailBean) {
@@ -316,7 +309,7 @@ public class CommentDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //评论id
         params.put("id", id);
         XUtil.Post(url, params, new MyCallBack<String>() {
@@ -360,7 +353,7 @@ public class CommentDetailsActivity extends BaseActivity {
                             communalComment.setMainCommentId(commentDetailBean.getId());
                         }
                         communalComment.setObjId(replyCommBean.getObj_id());
-                        communalComment.setUserId(uid);
+                        communalComment.setUserId(userId);
                         communalComment.setToUid(replyCommBean.getTo_uid());
                         sendComment(communalComment);
                     } else {
@@ -423,46 +416,15 @@ public class CommentDetailsActivity extends BaseActivity {
         constantMethod.setSendComment(CommentDetailsActivity.this, communalComment);
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if(personalInfo.isLogin()){
-            uid = personalInfo.getUid();
-        }else{
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if(personalInfo.isLogin()){
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(GONE);
-        page = 1;
-        loadData();
     }
 
     @OnClick(R.id.tv_life_back)
@@ -490,7 +452,7 @@ public class CommentDetailsActivity extends BaseActivity {
 
         @OnClick(R.id.tv_comm_comment_like)
         void likeComment() {
-            if (uid > 0) {
+            if (userId > 0) {
                 tv_comm_comment_like.setSelected(!tv_comm_comment_like.isSelected());
                 String likeCount = getNumber(tv_comm_comment_like.getText().toString().trim());
                 int likeNum = Integer.parseInt(likeCount);
@@ -498,16 +460,16 @@ public class CommentDetailsActivity extends BaseActivity {
                         ? likeNum + 1 : likeNum - 1 > 0 ? likeNum - 1 : "赞"));
                 setCommentLike(commentDetailBean.getId());
             } else {
-                getLoginStatus();
+                getLoginStatus(CommentDetailsActivity.this);
             }
         }
 
         @OnClick(R.id.tv_comm_comment_receive)
         void receiverComment() {
-            if (uid > 0) {
+            if (userId > 0) {
                 setReceiverComment();
             } else {
-                getLoginStatus();
+                getLoginStatus(CommentDetailsActivity.this);
             }
         }
 
@@ -546,7 +508,7 @@ public class CommentDetailsActivity extends BaseActivity {
     }
 
     private void setReceiverComment() {
-        if (uid > 0) {
+        if (userId > 0) {
             if (View.VISIBLE == ll_input_comment.getVisibility()) {
                 commentViewVisible(View.GONE, null);
             } else {
@@ -560,7 +522,7 @@ public class CommentDetailsActivity extends BaseActivity {
                 commentViewVisible(View.VISIBLE, replyCommBean);
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(CommentDetailsActivity.this);
         }
     }
 

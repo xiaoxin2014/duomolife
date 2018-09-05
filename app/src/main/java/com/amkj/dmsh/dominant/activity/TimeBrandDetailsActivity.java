@@ -21,19 +21,17 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.DMLThemeDetail;
 import com.amkj.dmsh.bean.DMLThemeDetail.ThemeDataBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.DMLTimeDetailEntity;
 import com.amkj.dmsh.dominant.bean.DMLTimeDetailEntity.DMLTimeDetailBean;
 import com.amkj.dmsh.homepage.adapter.DoMoLifeTimeBrandAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -42,7 +40,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
@@ -62,9 +60,13 @@ import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -76,7 +78,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
  */
 public class TimeBrandDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -84,12 +86,6 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     public FloatingActionButton download_btn_communal;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     List<DMLTimeDetailBean> brandProductList = new ArrayList();
     private String brandId;
     private DoMoLifeTimeBrandAdapter duoMoLifeTimeBrandAdapter;
@@ -98,16 +94,17 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     private float screenHeight;
     private DMLThemeDetail dmlThemeDetail;
     private TimeBrandHeaderView timeBrandHeaderView;
-    private int uid;
     private CustomPopWindow mCustomPopWindow;
     private ConstantMethod constantMethod;
+    private ThemeDataBean themeBean;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_refresh_floating_header;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_titleAll.setText("");
         Intent intent = getIntent();
         brandId = intent.getStringExtra("brandId");
@@ -143,8 +140,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         });
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-                loadData();
+            loadData();
         });
         duoMoLifeTimeBrandAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -166,10 +162,10 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     switch (view.getId()) {
                         case R.id.iv_pro_time_warm:
 //                            设置提醒 取消提醒 是否是第一次设置
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 isFirstRemind(dmlTimeDetailBean, (ImageView) view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(TimeBrandDetailsActivity.this);
                             }
                             break;
                     }
@@ -207,13 +203,12 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     private void isFirstRemind(final DMLTimeDetailBean dmlTimeDetailBean, final ImageView view) {
         String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -284,7 +279,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     private void setWarmTime(String number) {
         String url = Url.BASE_URL + Url.TIME_WARM_PRO;
         Map<String, Object> params = new HashMap<>();
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         params.put("longtime", number);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -302,44 +297,12 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         });
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
-            return;
-        } else if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
-    }
-
     private void cancelWarm(int productId, View view) {
         final ImageView imageView = (ImageView) view;
         String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -369,7 +332,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.ADD_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -414,10 +377,21 @@ public class TimeBrandDetailsActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        page = 1;
         //头部信息
         getThemeDetailsData();
         //商品列表
         getRecommendData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getRecommendData() {
@@ -452,11 +426,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                             showToast(TimeBrandDetailsActivity.this, dmlTimeDetailEntity.getMsg());
                         }
                     }
-                    if (page == 1) {
-                        duoMoLifeTimeBrandAdapter.setNewData(brandProductList);
-                    } else {
-                        duoMoLifeTimeBrandAdapter.notifyDataSetChanged();
-                    }
+                    duoMoLifeTimeBrandAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -469,75 +439,54 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         } else {
             smart_communal_refresh.finishRefresh();
             duoMoLifeTimeBrandAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            } else {
-                showToast(this, R.string.unConnectedNetwork);
-            }
+            showToast(this, R.string.unConnectedNetwork);
         }
     }
 
     private void getThemeDetailsData() {
         String url = Url.BASE_URL + Url.H_TIME_BRAND_DETAILS;
-        if (NetWorkUtils.checkNet(TimeBrandDetailsActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", brandId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    duoMoLifeTimeBrandAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    Gson gson = new Gson();
-                    dmlThemeDetail = gson.fromJson(result, DMLThemeDetail.class);
-                    if (dmlThemeDetail != null) {
-                        if (dmlThemeDetail.getCode().equals("01")) {
-                            setData(dmlThemeDetail);
-                        } else if (dmlThemeDetail.getCode().equals("02")) {
-                            if (page == 1) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", brandId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(TimeBrandDetailsActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        duoMoLifeTimeBrandAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        dmlThemeDetail = gson.fromJson(result, DMLThemeDetail.class);
+                        if (dmlThemeDetail != null) {
+                            if (dmlThemeDetail.getCode().equals(SUCCESS_CODE)) {
+                                setData(dmlThemeDetail);
+                            } else if (dmlThemeDetail.getCode().equals(EMPTY_CODE)) {
                                 showToast(TimeBrandDetailsActivity.this, R.string.invalidData);
-                                communal_empty.setVisibility(View.VISIBLE);
+                            } else {
+                                showToast(TimeBrandDetailsActivity.this, dmlThemeDetail.getMsg());
                             }
-                        } else {
-                            if (page == 1) {
-                                communal_error.setVisibility(View.VISIBLE);
-                            }
-                            showToast(TimeBrandDetailsActivity.this, dmlThemeDetail.getMsg());
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    duoMoLifeTimeBrandAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        duoMoLifeTimeBrandAdapter.loadMoreComplete();
+                        showToast(TimeBrandDetailsActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
                     }
-                    showToast(TimeBrandDetailsActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            duoMoLifeTimeBrandAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            } else {
-                showToast(this, R.string.unConnectedNetwork);
-            }
-        }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        duoMoLifeTimeBrandAdapter.loadMoreComplete();
+                        showToast(TimeBrandDetailsActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
+                    }
+                });
     }
 
     private void setData(DMLThemeDetail dMLThemeDetail) {
-        ThemeDataBean themeBean = dMLThemeDetail.getThemeDataBean();
+        themeBean = dMLThemeDetail.getThemeDataBean();
         GlideImageLoaderUtil.loadCenterCrop(TimeBrandDetailsActivity.this, timeBrandHeaderView.img_domolife_headerbg, themeBean.getPicUrl());
         tv_header_titleAll.setText(getStrings(themeBean.getTitle()));
         if (!TextUtils.isEmpty(themeBean.getDiscription())) {
@@ -567,8 +516,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         }
         timeBrandHeaderView.ct_show_time_detail_topic.setTag(dMLThemeDetail);
         setCountTime(dMLThemeDetail, timeBrandHeaderView.ct_show_time_detail_topic);
-        if(!ConstantMethod.isEndOrStartTime(dMLThemeDetail.getCurrentTime()
-                ,dMLThemeDetail.getThemeDataBean().getEndTime())){
+        if (!ConstantMethod.isEndOrStartTime(dMLThemeDetail.getCurrentTime()
+                , dMLThemeDetail.getThemeDataBean().getEndTime())) {
             getConstant();
             constantMethod.createSchedule();
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
@@ -578,8 +527,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     setCountTime(dmlThemeDetail, timeBrandHeaderView.ct_show_time_detail_topic);
                 }
             });
-        }else{
-            if(constantMethod!=null){
+        } else {
+            if (constantMethod != null) {
                 constantMethod.stopSchedule();
             }
         }
@@ -588,7 +537,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     private boolean isTimeStart(DMLThemeDetail dMLThemeDetail) {
         try {
             //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             Date dateStart = formatter.parse(dMLThemeDetail.getThemeDataBean().getStartTime());
             Date dateCurrent;
             if (!TextUtils.isEmpty(dMLThemeDetail.getCurrentTime())) {
@@ -617,7 +566,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 } else {
                     dateCurrent = new Date();
                 }
-                cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime() - dmlThemeDetail.getAddSecond()*1000);
+                cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime() - dmlThemeDetail.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -625,7 +574,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
 //            特惠预告
             try {
                 //格式化开始时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date dateStart = formatter.parse(dMLThemeDetail.getThemeDataBean().getStartTime());
                 Date dateCurrent;
                 if (!TextUtils.isEmpty(dMLThemeDetail.getCurrentTime())) {
@@ -633,28 +582,28 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 } else {
                     dateCurrent = new Date();
                 }
-                cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime() - dmlThemeDetail.getAddSecond()*1000);
+                cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime() - dmlThemeDetail.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        if(!ConstantMethod.isEndOrStartTimeAddSeconds(dMLThemeDetail.getCurrentTime()
-                ,dMLThemeDetail.getThemeDataBean().getEndTime()
-                ,dmlThemeDetail.getAddSecond())){
+        if (!ConstantMethod.isEndOrStartTimeAddSeconds(dMLThemeDetail.getCurrentTime()
+                , dMLThemeDetail.getThemeDataBean().getEndTime()
+                , dmlThemeDetail.getAddSecond())) {
             cv_countdownTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
                 @Override
                 public void onEnd(CountdownView cv) {
                     cv.setOnCountdownEndListener(null);
-                    if(constantMethod!=null){
+                    if (constantMethod != null) {
                         constantMethod.stopSchedule();
                     }
                     page = 1;
                     loadData();
                 }
             });
-        }else{
+        } else {
             cv_countdownTime.setOnCountdownEndListener(null);
-            if(constantMethod!=null){
+            if (constantMethod != null) {
                 constantMethod.stopSchedule();
             }
         }
@@ -709,7 +658,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(constantMethod!=null){
+        if (constantMethod != null) {
             constantMethod.stopSchedule();
             constantMethod.releaseHandlers();
         }

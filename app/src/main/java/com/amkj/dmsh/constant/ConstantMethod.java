@@ -1229,14 +1229,19 @@ public class ConstantMethod {
                                     communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
                                     descriptionDetailList.add(communalDetailObjectBean);
                                 } else {
-                                    List<String> imageCropList = getImageCrop(imgUrl, 10000);
-                                    for (String imageUrl : imageCropList) {
-                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-                                        String imgUrlContent = ("<span><img src=\"" + imageUrl + "\" /></span>");
-                                        communalDetailObjectBean.setContent(imgUrlContent);
-                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-                                        descriptionDetailList.add(communalDetailObjectBean);
-                                    }
+//                                    List<String> imageCropList = getImageCrop(imgUrl, 10000);
+//                                    for (String imageUrl : imageCropList) {
+//                                        communalDetailObjectBean = new CommunalDetailObjectBean();
+//                                        String imgUrlContent = ("<span><img src=\"" + imageUrl + "\" /></span>");
+//                                        communalDetailObjectBean.setContent(imgUrlContent);
+//                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+//                                        descriptionDetailList.add(communalDetailObjectBean);
+//                                    }
+                                    communalDetailObjectBean = new CommunalDetailObjectBean();
+                                    String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
+                                    communalDetailObjectBean.setContent(imgUrlContent);
+                                    communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                    descriptionDetailList.add(communalDetailObjectBean);
                                 }
                                 hasImgUrl = matcher.find();
                             }

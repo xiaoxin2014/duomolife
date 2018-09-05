@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -23,15 +24,15 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.flowlayout.FlowLayout;
 import com.amkj.dmsh.views.flowlayout.TagAdapter;
 import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.google.gson.Gson;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
@@ -65,15 +66,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
  */
 public class DoMoGroupJoinShareActivity extends BaseActivity {
     @BindView(R.id.smart_scroll_communal_refresh)
-    RefreshLayout smart_scroll_communal_refresh;
+    SmartRefreshLayout smart_scroll_communal_refresh;
     @BindView(R.id.communal_recycler_wrap)
     RecyclerView communal_recycler_wrap;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     //    拼团规则
@@ -107,13 +102,22 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         gpRuleDetailsAdapter = new CommunalDetailAdapter(DoMoGroupJoinShareActivity.this, gpRuleList);
         gpRuleDetailsAdapter.addHeaderView(headerView);
         communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
         getGroupShareInfo();
         getCommunalInfo();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_scroll_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getCommunalInfo() {
@@ -144,44 +148,43 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
 
     private void getGroupShareInfo() {
         String url = Url.BASE_URL + Url.GROUP_MINE_SHARE;
-        if (NetWorkUtils.checkNet(DoMoGroupJoinShareActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderNo", orderNo);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    smart_scroll_communal_refresh.finishRefresh();
-                    Gson gson = new Gson();
-                    qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                    if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals("01")) {
-                            setGpDataInfo(qualityGroupShareEntity);
-                        } else if (qualityGroupShareEntity.getCode().equals("02")) {
-                            showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-                        } else {
-                            showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderNo", orderNo);
+        NetLoadUtils.getQyInstance().loadNetDataPost(DoMoGroupJoinShareActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_scroll_communal_refresh.finishRefresh();
+                Gson gson = new Gson();
+                qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
+                if (qualityGroupShareEntity != null) {
+                    if (qualityGroupShareEntity.getCode().equals("01")) {
+                        setGpDataInfo(qualityGroupShareEntity);
+                    } else if (qualityGroupShareEntity.getCode().equals("02")) {
+                        showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
+                    } else {
+                        showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
                     }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
+                }else{
+                    loadService.showCallback(NetErrorCallback.class);
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_scroll_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    showToast(DoMoGroupJoinShareActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_scroll_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_scroll_communal_refresh.finishRefresh();
+                showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_scroll_communal_refresh.finishRefresh();
+                showToast(DoMoGroupJoinShareActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
+            }
+        });
     }
 
     private void setGpDataInfo(final QualityGroupShareEntity qualityGroupShareEntity) {
@@ -351,15 +354,6 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     + "&record=" + qualityGroupShareBean.getGpRecordId());
         }
     }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        loadData();
-    }
-
 
     private void getConstant() {
         if (constantMethod == null) {

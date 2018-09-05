@@ -14,8 +14,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -24,9 +24,6 @@ import com.amkj.dmsh.dominant.bean.QualityGroupEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupEntity.QualityGroupBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -35,7 +32,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,12 +43,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 ;
@@ -65,7 +64,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
  */
 public class QualityGroupShopActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -75,29 +74,23 @@ public class QualityGroupShopActivity extends BaseActivity {
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
     private List<QualityGroupBean> qualityGroupBeanList = new ArrayList();
-    private int uid;
     private QualityGroupShopAdapter qualityGroupShopAdapter;
     private GroupShopHeaderView groupShopHeaderView;
     List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private CBViewHolderCreator cbViewHolderCreator;
+    private QualityGroupEntity qualityGroupEntity;
 
     @Override
     protected int getContentView() {
         return R.layout.activity_quality_group_shop;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("Domo拼团");
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopActivity.this));
@@ -119,8 +112,7 @@ public class QualityGroupShopActivity extends BaseActivity {
         communal_recycler.setAdapter(qualityGroupShopAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-                loadData();
+            loadData();
         });
         qualityGroupShopAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -177,51 +169,34 @@ public class QualityGroupShopActivity extends BaseActivity {
             }
         });
         qualityGroupShopAdapter.openLoadAnimation(null);
-        communal_load.setVisibility(View.VISIBLE);
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
-            return;
-        } else if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
     }
 
     @Override
     protected void loadData() {
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected void getData() {
         getQualityADLoop();
         getOpenGroupShop();
     }
 
     private void getQualityADLoop() {
         String url = Url.BASE_URL + Url.GROUP_SHOP_LOOP_INDEX;
-        Map<String,String> params = new HashMap<>();
-        params.put("vidoShow","1");
+        Map<String, String> params = new HashMap<>();
+        params.put("vidoShow", "1");
         XUtil.Get(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -243,11 +218,11 @@ public class QualityGroupShopActivity extends BaseActivity {
         adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
         if (adBeanList.size() > 0) {
             groupShopHeaderView.rel_communal_banner.setVisibility(View.VISIBLE);
-            if(cbViewHolderCreator ==null){
+            if (cbViewHolderCreator == null) {
                 cbViewHolderCreator = new CBViewHolderCreator() {
                     @Override
                     public Holder createHolder(View itemView) {
-                        return new CommunalAdHolderView(itemView,QualityGroupShopActivity.this,true);
+                        return new CommunalAdHolderView(itemView, QualityGroupShopActivity.this, true);
                     }
 
                     @Override
@@ -256,8 +231,8 @@ public class QualityGroupShopActivity extends BaseActivity {
                     }
                 };
             }
-            groupShopHeaderView.ad_communal_banner.setPages(this,cbViewHolderCreator,adBeanList).setCanLoop(true)
-                    .setPageIndicator(new int[]{R.drawable.unselected_radius,R.drawable.selected_radius})
+            groupShopHeaderView.ad_communal_banner.setPages(this, cbViewHolderCreator, adBeanList).setCanLoop(true)
+                    .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
         } else {
             groupShopHeaderView.rel_communal_banner.setVisibility(View.GONE);
@@ -267,94 +242,79 @@ public class QualityGroupShopActivity extends BaseActivity {
     private void getOpenGroupShop() {
 //        拼团首页
         String url = Url.BASE_URL + Url.GROUP_SHOP_JOIN_INDEX;
-        if (NetWorkUtils.checkNet(QualityGroupShopActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", ConstantVariable.TOTAL_COUNT_TWENTY);
-            //            区分新人团
-            params.put("version", 1);
-            if(userId>0){
-                params.put("uid",userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    qualityGroupShopAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        qualityGroupBeanList.clear();
-                    }
-                    Gson gson = new Gson();
-                    QualityGroupEntity qualityGroupEntity = gson.fromJson(result, QualityGroupEntity.class);
-                    if (qualityGroupEntity != null) {
-                        if (qualityGroupEntity.getCode().equals("01")) {
-                            for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {
-                                QualityGroupBean qualityGroupBean = qualityGroupEntity.getQualityGroupBeanList().get(i);
-                                qualityGroupBean.setCurrentTime(qualityGroupEntity.getCurrentTime());
-                                qualityGroupBeanList.add(qualityGroupBean);
-                            }
-                        } else if (qualityGroupEntity.getCode().equals("02")) {
-                            if (page == 1) {
-                                communal_empty.setVisibility(View.VISIBLE);
-                            }
-                            showToast(QualityGroupShopActivity.this, R.string.unConnectedNetwork);
-                        } else {
-                            showToast(QualityGroupShopActivity.this, qualityGroupEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
-                        qualityGroupShopAdapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityGroupShopAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    showToast(QualityGroupShopActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityGroupShopAdapter.loadMoreComplete();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(QualityGroupShopActivity.this, R.string.unConnectedNetwork);
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", ConstantVariable.TOTAL_COUNT_TWENTY);
+        //            区分新人团
+        params.put("version", 1);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityGroupShopActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityGroupShopAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                qualityGroupEntity = gson.fromJson(result, QualityGroupEntity.class);
+                if (qualityGroupEntity != null) {
+                    if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            qualityGroupBeanList.clear();
+                        }
+                        for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {
+                            QualityGroupBean qualityGroupBean = qualityGroupEntity.getQualityGroupBeanList().get(i);
+                            qualityGroupBean.setCurrentTime(qualityGroupEntity.getCurrentTime());
+                            qualityGroupBeanList.add(qualityGroupBean);
+                        }
+                    } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityGroupShopActivity.this, R.string.unConnectedNetwork);
+                    } else {
+                        showToast(QualityGroupShopActivity.this, qualityGroupEntity.getMsg());
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList, qualityGroupEntity);
+                    qualityGroupShopAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                qualityGroupShopAdapter.loadMoreComplete();
+                showToast(QualityGroupShopActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList,qualityGroupEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityGroupShopAdapter.loadMoreComplete();
+                showToast(QualityGroupShopActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList,qualityGroupEntity);
+            }
+        });
     }
 
     //    我的拼团
     @OnClick(R.id.tv_quality_join_gp_sp)
-    void getMineJoinGroup(View view) {
-        if (uid != 0) {
+    void getMineJoinGroup() {
+        if (userId != 0) {
             Intent intent = new Intent(QualityGroupShopActivity.this, QualityGroupShopMineActivity.class);
             startActivity(intent);
         } else {
-            getLoginStatus();
+            getLoginStatus(QualityGroupShopActivity.this);
         }
     }
 
     //    全部拼团
     @OnClick(R.id.tv_quality_all_gp_sp)
-    void getAllGroup(View view) {
+    void getAllGroup() {
         Intent intent = new Intent(QualityGroupShopActivity.this, QualityGroupShopAllActivity.class);
         startActivity(intent);
     }
 
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
-    }
-
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    void goBack() {
         finish();
     }
 
@@ -363,16 +323,16 @@ public class QualityGroupShopActivity extends BaseActivity {
         if (message.type.equals("refreshGroupShop")) {
             page = 1;
             loadData();
-        }else if(START_AUTO_PAGE_TURN.equals(message.type)){
-            if(adBeanList.size()>0&&groupShopHeaderView.ad_communal_banner!=null
-                    &&!groupShopHeaderView.ad_communal_banner.isTurning()){
+        } else if (START_AUTO_PAGE_TURN.equals(message.type)) {
+            if (adBeanList.size() > 0 && groupShopHeaderView.ad_communal_banner != null
+                    && !groupShopHeaderView.ad_communal_banner.isTurning()) {
                 groupShopHeaderView.ad_communal_banner.setCanScroll(true);
                 groupShopHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                 groupShopHeaderView.ad_communal_banner.setPointViewVisible(true);
             }
-        }else if(STOP_AUTO_PAGE_TURN.equals(message.type)){
-            if(groupShopHeaderView.ad_communal_banner!=null
-                    &&groupShopHeaderView.ad_communal_banner.isTurning()){
+        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
+            if (groupShopHeaderView.ad_communal_banner != null
+                    && groupShopHeaderView.ad_communal_banner.isTurning()) {
                 groupShopHeaderView.ad_communal_banner.setCanScroll(false);
                 groupShopHeaderView.ad_communal_banner.stopTurning();
                 groupShopHeaderView.ad_communal_banner.setPointViewVisible(false);

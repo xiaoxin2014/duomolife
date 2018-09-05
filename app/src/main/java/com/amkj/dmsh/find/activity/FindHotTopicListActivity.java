@@ -9,22 +9,16 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +31,8 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 
@@ -49,20 +44,14 @@ import static com.amkj.dmsh.constant.Url.BASE_URL;
  * created on 2017/11/22
  * class description:发现-热门话题列表
  */
-public class FindHotTopicListActivity extends BaseActivity{
+public class FindHotTopicListActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -70,22 +59,22 @@ public class FindHotTopicListActivity extends BaseActivity{
     private int page = 1;
     private int scrollY;
     private float screenHeight;
-    private int uid;
     private List<FindHotTopicBean> findTopicBeanList = new ArrayList();
     private FindTopicListAdapter findTopicListAdapter;
+    private FindHotTopicEntity findHotTopicEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_communal_header_recycler_refresh;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_shared.setVisibility(GONE);
         tv_header_titleAll.setText("话题");
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-                loadData();
+            loadData();
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(FindHotTopicListActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
@@ -105,9 +94,9 @@ public class FindHotTopicListActivity extends BaseActivity{
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FindHotTopicBean hotTopicBean = (FindHotTopicBean) view.getTag();
-                if(hotTopicBean!=null){
+                if (hotTopicBean != null) {
                     Intent intent = new Intent(FindHotTopicListActivity.this, FindTopicDetailsActivity.class);
-                    intent.putExtra("topicId",String.valueOf(hotTopicBean.getId()));
+                    intent.putExtra("topicId", String.valueOf(hotTopicBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -117,7 +106,7 @@ public class FindHotTopicListActivity extends BaseActivity{
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= findTopicBeanList.size()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     findTopicListAdapter.loadMoreEnd();
                 }
@@ -156,98 +145,67 @@ public class FindHotTopicListActivity extends BaseActivity{
         });
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(FindHotTopicListActivity.this)) {
-            String url = BASE_URL + Url.F_TOPIC_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        findTopicBeanList.clear();
-                    }
-                    Gson gson = new Gson();
-                    FindHotTopicEntity findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
-                    if (findHotTopicEntity != null) {
-                        if (findHotTopicEntity.getCode().equals("01")) {
-                            findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
-                        } else if (!findHotTopicEntity.getCode().equals("02")) {
-                            showToast(FindHotTopicListActivity.this, findHotTopicEntity.getMsg());
-                        }
-                        if (page == 1) {
-                            findTopicListAdapter.setNewData(findTopicBeanList);
-                        } else {
-                            findTopicListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
+        page = 1;
+        getData();
+    }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    findTopicListAdapter.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            findTopicListAdapter.loadMoreComplete();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(FindHotTopicListActivity.this, R.string.unConnectedNetwork);
-        }
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+    @Override
+    protected void getData() {
+        String url = BASE_URL + Url.F_TOPIC_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        NetLoadUtils.getQyInstance().loadNetDataPost(FindHotTopicListActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
+                        if (findHotTopicEntity != null) {
+                            if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                                if (page == 1) {
+                                    findTopicBeanList.clear();
+                                }
+                                findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
+                            } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(FindHotTopicListActivity.this, findHotTopicEntity.getMsg());
+                            }
+                            findTopicListAdapter.notifyDataSetChanged();
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList, findHotTopicEntity);
+                        }
+                    }
+
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreComplete();
+                        showToast(FindHotTopicListActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList, findHotTopicEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList, findHotTopicEntity);
+                    }
+                });
     }
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        loadData();
     }
 }

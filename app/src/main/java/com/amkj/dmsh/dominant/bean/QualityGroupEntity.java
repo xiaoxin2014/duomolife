@@ -1,5 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class QualityGroupEntity {
+public class QualityGroupEntity extends BaseEntity{
 
     /**
      * result : [{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpEndTime":"2017-06-16 00:00:00","gpStartTime":"2017-06-01 00:00:00","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpEndTime":"2017-05-04 00:00:00","gpStartTime":"2017-05-01 00:00:00","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/zE7p3MbArW.jpg","gpEndTime":"2017-06-08 10:17:57","gpStartTime":"2017-06-01 02:06:06","gpSkuId":127,"picUrl":"http://img.domolife.cn/platform/20170225/20170225203425782.jpg","propValueId":"34","productSkuValue":"颜色:米色","gpProductQuantity":123,"gpType":"2人团","price":260,"subtitle":null,"name":"韩国Ifam森林儿童边角架玩具整理架构成3","gpPrice":12.12},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":1,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":12,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpEndTime":"2017-06-16 00:00:00","gpStartTime":"2017-06-01 00:00:00","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3}]
@@ -21,8 +22,6 @@ public class QualityGroupEntity {
      */
 
     private String currentTime;
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<QualityGroupBean> qualityGroupBeanList;
 
@@ -32,22 +31,6 @@ public class QualityGroupEntity {
 
     public void setCurrentTime(String currentTime) {
         this.currentTime = currentTime;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public List<QualityGroupBean> getQualityGroupBeanList() {

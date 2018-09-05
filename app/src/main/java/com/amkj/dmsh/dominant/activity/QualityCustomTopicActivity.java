@@ -15,10 +15,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -26,9 +26,8 @@ import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.adapter.QualityCustomTopicAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -40,7 +39,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,14 +52,16 @@ import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 
@@ -75,7 +76,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
  */
 public class QualityCustomTopicActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -91,12 +92,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
     ImageView iv_img_share;
     @BindView(R.id.tl_quality_bar)
     Toolbar tl_quality_bar;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
@@ -105,11 +100,11 @@ public class QualityCustomTopicActivity extends BaseActivity {
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList();
     private QNewProView qNewProView;
     private Badge badge;
-    private int uid;
     private String productType;
     private String showType;
     private View headerView;
     private CommunalDetailAdapter communalDetailAdapter;
+    private UserLikedProductEntity userLikedProductEntity;
 
     @Override
     protected int getContentView() {
@@ -118,7 +113,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         Intent intent = getIntent();
         productType = intent.getStringExtra("productType");
         showType = intent.getStringExtra("showType");
@@ -132,7 +126,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityCustomTopicActivity.this, 2));
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -230,18 +223,33 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus();
+                        getLoginStatus(QualityCustomTopicActivity.this);
                     }
                 }
             }
         });
         badge = getBadge(QualityCustomTopicActivity.this, fl_header_service);
-        communal_load.setVisibility(View.VISIBLE);
         totalPersonalTrajectory = insertNewTotalData(QualityCustomTopicActivity.this, productType);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected void getData() {
         getCustomCoverDescription();
         getQualityCustomPro();
         getCarCount();
@@ -256,8 +264,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                 && !TextUtils.isEmpty(productType)) {
             Map<String, Object> params = new HashMap<>();
             params.put("productType", productType);
-            if (uid > 0) {
-                params.put("uid", uid);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -321,26 +329,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
         getCarCount();
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -348,81 +336,73 @@ public class QualityCustomTopicActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
             getCarCount();
         }
     }
 
     private void getQualityCustomPro() {
-        if (NetWorkUtils.checkNet(QualityCustomTopicActivity.this)
-                && !TextUtils.isEmpty(productType)) {
-            String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("productType", productType);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityCustomTopicAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        customProList.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (userLikedProductEntity != null) {
-                        if (userLikedProductEntity.getCode().equals("01")) {
-                            for (LikedProductBean likedProductBean : userLikedProductEntity.getLikedProductBeanList()) {
-                                likedProductBean.setItemType(DOUBLE_INTEGRAL_TYPE.equals(showType) ? TYPE_1 : TYPE_0);
-                                customProList.add(likedProductBean);
-                            }
-                            tv_header_titleAll.setText(getStrings(userLikedProductEntity.getZoneName()));
-                        } else if (!userLikedProductEntity.getCode().equals("02")) {
-                            showToast(QualityCustomTopicActivity.this, userLikedProductEntity.getMsg());
-                        }
-                        qualityCustomTopicAdapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityCustomTopicAdapter.loadMoreComplete();
-                    if (page == 1 && qualityCustomTopicAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(QualityCustomTopicActivity.this, R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityCustomTopicAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(QualityCustomTopicActivity.this, R.string.unConnectedNetwork);
+        String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("productType", productType);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityCustomTopicActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityCustomTopicAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (userLikedProductEntity != null) {
+                            if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                if (page == 1) {
+                                    customProList.clear();
+                                }
+                                for (LikedProductBean likedProductBean : userLikedProductEntity.getLikedProductBeanList()) {
+                                    likedProductBean.setItemType(DOUBLE_INTEGRAL_TYPE.equals(showType) ? TYPE_1 : TYPE_0);
+                                    customProList.add(likedProductBean);
+                                }
+                                tv_header_titleAll.setText(getStrings(userLikedProductEntity.getZoneName()));
+                            } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(QualityCustomTopicActivity.this, userLikedProductEntity.getMsg());
+                            }
+                            qualityCustomTopicAdapter.notifyDataSetChanged();
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                        } else {
+                            if (loadService != null) {
+                                loadService.showCallback(NetErrorCallback.class);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityCustomTopicAdapter.loadMoreComplete();
+                        showToast(QualityCustomTopicActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityCustomTopicAdapter.loadMoreComplete();
+                        showToast(QualityCustomTopicActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                    }
+                });
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -478,14 +458,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     , "我在多么生活发现这几样好物，性价比不错，还包邮"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @Override

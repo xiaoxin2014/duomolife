@@ -1,5 +1,6 @@
 package com.amkj.dmsh.find.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +14,7 @@ import java.util.List;
  * class description:帖子详情数据
  */
 
-public class InvitationImgDetailEntity {
+public class InvitationImgDetailEntity extends BaseEntity{
 
     /**
      * result : {"isfront":1,"articletype":2,"flag":false,"isFavor":true,"isCollect":true,"description":"哈哈","avatar":"http://img.domolife.cn/201704191717321905157574.png","pictureList":[{"path":"http://image.domolife.cn/201709071753231022525802.jpg","type":1,"object_id":13182},{"path":"http://image.domolife.cn/201709071753235838434273.jpg","type":1,"object_id":13182},{"path":"http://image.domolife.cn/201709071753231538308090.jpg","type":1,"object_id":13182}],"tagsList":[{"tag_name":"自定义","tag_id":270},{"tag_name":"美白","tag_id":2}],"uid":27928,"path":"http://image.domolife.cn/201709071753231022525802.jpg","view":2,"favor":1,"nickname":"刘小沫","ctime":"2017-09-07 17:53:24","json":[{"productId":4282,"price":"0.01","pictureUrl":"http://img.domolife.cn/platform/20161129/20161129171145742.jpg","id":"146","title":"北鼎K206钻石电热水壶礼盒装"},{"productId":4298,"price":"788.00","pictureUrl":"http://img.domolife.cn/platform/20170225/20170225180427631.jpg","id":"177","title":"韩国Ecleve宝宝四季多功能有机棉婴儿背带腰凳/单凳"},{"productId":4308,"price":"59.00","pictureUrl":"http://img.domolife.cn/platform/826kTFssed.png","id":177,"title":"AutoBot二代车载手机支架"}],"comment":0,"id":13182,"collect":1,"atList":[],"status":1}
@@ -23,8 +24,6 @@ public class InvitationImgDetailEntity {
 
     @SerializedName("result")
     private InvitationImgDetailBean invitationImgDetailBean;
-    private String msg;
-    private String code;
 
     public InvitationImgDetailBean getInvitationImgDetailBean() {
         return invitationImgDetailBean;
@@ -32,22 +31,6 @@ public class InvitationImgDetailEntity {
 
     public void setInvitationImgDetailBean(InvitationImgDetailBean invitationImgDetailBean) {
         this.invitationImgDetailBean = invitationImgDetailBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static class InvitationImgDetailBean {

@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
@@ -19,7 +20,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class DmlSearchDetailEntity {
+public class DmlSearchDetailEntity extends BaseEntity{
 
     /**
      * result : {"isfront":2,"articletype":1,"flag":false,"isFavor":true,"isCollect":false,"description":[{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">现在都提倡环保出行，有很多地方也不好停车，有时候搭乘地铁和公交车反而比开车更方便更快，很多同学都有一张地铁卡，在深圳有深圳通，在香港有八达通，可是却常常面临一个问题就是，不晓得怎么搞的，卡片就搞丢不见了，很是烦恼。所以你可以试试，给你的交通卡或者门禁卡配一个可爱的保护套挂在包里，那么遗失率就会降低很多，哔起来也会更方便喔~！&nbsp;<\/span><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://item.taobao.com/item.htm?spm=a1z0k.6846577.0.0.gSuma3&id=536441842130&_u=t2dmg8j2611\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756530664002276.jpg\" title=\"1487756530664002276.jpg\" alt=\"1.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">这款塑料卡套是日本动漫萌喵主题的，猫奴们的最爱哈~硬质的双面亚克力材质，手感冰凉舒适。卡套背面带有长槽，要拿出卡片时，只要轻轻推移，卡片就会出来~这款卡套和钥匙扣还是配套使用的，一般只能容纳一张公车卡或两张名片的量哦~超量使用可能会卡住哈~<\/span><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://s.click.taobao.com/1IBHA5x\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756537560034913.jpg\" title=\"1487756537560034913.jpg\" alt=\"2.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">LINE家的周边很多，当然少不了卡套了，PU材质也很经久耐用，正反可以各放一张卡片。而且这款的配饰特别多，都是手工制作而成，一大串拿在手里很带感，如果喜欢简单点的也可以自行拆掉。花色的种类很多，可选性相对比较广。<\/span><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\"><br/><\/span><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://s.click.taobao.com/13YGA5x\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756544707074768.jpg\" title=\"1487756544707074768.jpg\" alt=\"3.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">毛毡这种材质多用于DIY的手作品，无论是从色泽还是饱和度来说都是相对较好的，但这种材质唯一不好的地方就是用久了容易起毛。monopoly 家这款可爱笑脸毛毡交通卡包，性价比很高，内里有1个卡位隔层，可以卡片跟零钱，外带拉链封口用起来也更为放心。挂脖绳是高级仿皮材质制成的，这种简约时尚的系绳戴在脖子也不会显得low哈~<\/span><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://item.taobao.com/item.htm?spm=a1z0k.7385961.1997985097.d4918997.7jtJrq&id=544351329510&_u=t2dmg8j26111\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756551701039477.jpg\" title=\"1487756551701039477.jpg\" alt=\"4.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">今年一月才推出的粉色的Melody人形卡套，颜值很高。简单经典的的设计，更是满足了Melody控的少女心。别看图片很小，其实他的规格是有14.3*14.7*0.3cm的，足够可以放下你的公交卡。一个好看的公车卡套，可是会让你挤公车也能心情棒棒哒~<\/span><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://s.click.taobao.com/Sk5GA5x\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756565550005465.jpg\" title=\"1487756565550005465.jpg\" alt=\"5.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">有时候这种简单的调调最容易让人找到共鸣感。波点元素永远是设计师百用不厌的时尚元素，将波点跟清新的浅紫色、粉色相结合，素雅大方，还带有一丝调皮的感觉。挂绳处的设计也毫不马虎，金色的鸡眼孔打磨得光滑质感，配上PU的编织挂绳，整体看上去更有质感。<\/span><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\"><br/><\/span><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://s.click.taobao.com/SuoFA5x\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756576221059813.jpg\" title=\"1487756576221059813.jpg\" alt=\"6.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">这款卡套是走卡通趣味路线的，款式种类也很多，不同的颜色搭配不同的水果图案，看起来十分清爽，很有夏天的感觉。背面的卡位是透明的，日常放置名片或者证件一目了然，方便辨识，不需要抽取确认非常方便哦~<\/span><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://s.click.taobao.com/ovOFA5x\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756597933006869.jpg\" title=\"1487756597933006869.jpg\" alt=\"7.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">之前大火的韩剧《鬼怪》里金高银的同款卡套，不过因为出镜时不是什么名画面估计也没有什么人注意到，金高银在剧中用的是亮橙色的，图片上为同款小企鹅款，小企鹅跟浅棕色的奇妙搭配，出奇的很有质感，带了点可爱的同时也不失大气。就连卡套的挂绳也很好看，上身韩范十足。<\/span><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><a href=\"https://item.taobao.com/item.htm?spm=a1z0k.6846577.0.0.brIVzR&id=37103533689&_u=t2dmg8j26111\" target=\"_self\"><img src=\"http://img.domolife.cn/platfrom/20170222/1487756609573031154.jpg\" title=\"1487756609573031154.jpg\" alt=\"8.jpg\"/><\/a><\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\">这款卡套是Sanrio家hellokitty QUESTINA系列的产品，造型非常特别，一个小小的双肩包造型，有前袋跟后袋，前面的口袋空间较小，适合放置硬币的零钱。书包的大口袋可以放置纸币跟卡片，容量会比一般卡套要大，金色的链子箍在手上也很好看，出门回头率也是杠杆的。说到底，QUESTINA系列的产品除了贵还真没有别的缺点了~<\/span><\/p>"},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\"><br/><\/span><\/p>"},{"type":"goods","content":{"picUrl":"http://image.domolife.cn/platform/20170718/20170718175041425.jpg","marketPrice":"49.00","price":"35.00","name":"可爱河马北极熊苹果手机壳软壳 带支架","newPicUrl":"http://img.domolife.cn/platform/C6ZdcZp8YH1499400239765.jpg","maxPrice":"35.00","id":5964,"itemTypeId":1}},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><span style=\"font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;\"><br/><\/span><\/p>"},{"type":"coupon","content":{"amount":"1.00","count":28,"title":"11月邀请好友规则","totalCount":30,"mode":1,"picUrl":"http://img.domolife.cn/platform/nPRwxWTrKk1499238561156.jpg","newPirUrl":"http://img.domolife.cn/platform/nPRwxWTrKk1499238561156.jpg","useRange":0,"startFee":"3.00","startTime":"2016-11-01 10:51","id":2,"endTime":"2022-11-30 00:00:00","desc":""}},{"type":"text","content":"<p style=\"line-height: 1.5em;\"><br/><\/p>"},{"type":"goods","content":{"picUrl":"http://image.domolife.cn/platform/20170309/20170309110645522.jpg","marketPrice":"49.00","price":"0.10","name":" 火箭宇宙iPhone6手机壳 带支架","newPicUrl":"http://img.domolife.cn/platform/632zwda3sf1499408024196.jpg","maxPrice":"0.10","id":5966,"itemTypeId":1}},{"type":"text","content":"<p><br/><\/p>"}],"avatar":"http://img.domolife.cn/Uploads/app_img/2016-03-31/56fcc8cd4a039.png","title":"谁说主妇不精明 收纳整理样样行","productCount":2,"picture":[],"tags":[],"uid":1,"path":"http://image.domolife.cn/platform/Rpt36SaW531500362574007.jpg","view":1880,"favor":12,"nickname":"domolife","ctime":"2017-02-22 17:50:03","comment":0,"id":9832,"collect":20,"atList":[],"productList":[{"picUrl":"http://image.domolife.cn/platform/20170718/20170718175041425.jpg","marketPrice":"49.00","price":"35.00","name":"可爱河马北极熊苹果手机壳软壳 带支架","newPicUrl":"http://img.domolife.cn/platform/C6ZdcZp8YH1499400239765.jpg","maxPrice":"35.00","id":5964,"itemTypeId":1},{"picUrl":"http://image.domolife.cn/platform/20170309/20170309110645522.jpg","marketPrice":"49.00","price":"0.10","name":" 火箭宇宙iPhone6手机壳 带支架","newPicUrl":"http://img.domolife.cn/platform/632zwda3sf1499408024196.jpg","maxPrice":"0.10","id":5966,"itemTypeId":1}],"status":1}
@@ -29,8 +30,6 @@ public class DmlSearchDetailEntity {
 
     @SerializedName("result")
     private DmlSearchDetailBean dmlSearchDetailBean;
-    private String msg;
-    private String code;
 
     public DmlSearchDetailBean getDmlSearchDetailBean() {
         return dmlSearchDetailBean;
@@ -38,22 +37,6 @@ public class DmlSearchDetailEntity {
 
     public void setDmlSearchDetailBean(DmlSearchDetailBean dmlSearchDetailBean) {
         this.dmlSearchDetailBean = dmlSearchDetailBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static class DmlSearchDetailBean implements Parcelable {

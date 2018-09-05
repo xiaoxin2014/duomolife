@@ -18,6 +18,7 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -197,6 +198,7 @@ public class ArticleTypeActivity extends BaseActivity {
         return true;
     }
 
+
     private void getLoginStatus() {
         SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (!personalInfo.isLogin()) {
@@ -257,7 +259,7 @@ public class ArticleTypeActivity extends BaseActivity {
             params.put("uid", userId);
         }
         params.put("categoryid", categoryId);
-        NetLoadUtils.getQyInstance().loadNetData(this, url
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url
                 , params, new NetLoadUtils.NetLoadListener() {
                     @Override
                     public void onSuccess(String result) {
@@ -280,12 +282,17 @@ public class ArticleTypeActivity extends BaseActivity {
                             }
                             NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
                             homeArticleAdapter.notifyDataSetChanged();
+                        }else{
+                            if(loadService!=null){
+                                loadService.showCallback(NetErrorCallback.class);
+                            }
                         }
                     }
 
                     @Override
                     public void netClose() {
                         smart_communal_refresh.finishRefresh();
+                        homeArticleAdapter.loadMoreComplete();
                         NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
                         showToast(ArticleTypeActivity.this, R.string.unConnectedNetwork);
                     }
@@ -293,8 +300,8 @@ public class ArticleTypeActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable throwable) {
                         smart_communal_refresh.finishRefresh();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
                         homeArticleAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
                     }
                 });
     }

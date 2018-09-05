@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,16 +9,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/10/5.
  */
-public class GoodsCommentEntity {
+public class GoodsCommentEntity extends BaseEntity{
 
     /**
      * result : [{"content":"傻逼","createTime":"2016-09-30 11:26:09","nickname":"Lucci","status":0,"userId":23317,"star":1,"images":"http://p1.so.qhmsg.com/bdr/326__/t01e91f5292c9cbb821.jpg","avatar":"http://img.domolife.cn/test/20160920233958.jpg"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * content : 傻逼
      * createTime : 2016-09-30 11:26:09
@@ -38,22 +36,6 @@ public class GoodsCommentEntity {
 
     public void setEvaluateCount(int evaluateCount) {
         this.evaluateCount = evaluateCount;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public List<GoodsCommentBean> getGoodsComments() {

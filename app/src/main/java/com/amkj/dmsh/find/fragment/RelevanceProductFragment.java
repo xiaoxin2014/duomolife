@@ -40,11 +40,15 @@ import butterknife.BindView;
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.changeRelevanceProduct;
 import static com.amkj.dmsh.constant.ConstantMethod.getEmptyView;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CART_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.COLLECT_PRODUCT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RELEVANCE_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 ;
@@ -65,12 +69,7 @@ public class RelevanceProductFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
+
     private RelevanceProAdapter relevanceProAdapter;
     //    订单条数
     private List<RelevanceProBean> relevanceIndentProList = new ArrayList<>();
@@ -88,7 +87,6 @@ public class RelevanceProductFragment extends BaseFragment {
     private int carProPage = 1;
     //    收藏分页
     private int colProPage = 1;
-    private int uid;
     private List<RelevanceProBean> relevanceProBeanList;
     private String relevanceType;
 
@@ -99,12 +97,12 @@ public class RelevanceProductFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
-        if(TextUtils.isEmpty(relevanceType)){
+        getLoginStatus(RelevanceProductFragment.this);
+        if (TextUtils.isEmpty(relevanceType)) {
             return;
         }
 
-        if(relevanceProBeanList!=null){
+        if (relevanceProBeanList != null) {
             relevanceSelProList.addAll(relevanceProBeanList);
         }
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -141,15 +139,12 @@ public class RelevanceProductFragment extends BaseFragment {
             }
         });
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            indentProPage = 1;
-                carProPage = 1;
-                colProPage = 1;
-                loadData();
+            loadData();
         });
         relevanceProAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                switch (relevanceType){
+                switch (relevanceType) {
                     case COLLECT_PRODUCT:
                         colProPage++;
                         getColProData();
@@ -165,19 +160,7 @@ public class RelevanceProductFragment extends BaseFragment {
                 }
             }
         }, communal_recycler);
-        communal_load.setVisibility(View.VISIBLE);
         relevanceProAdapter.setEmptyView(getEmptyView(getActivity(), "商品"));
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
     }
 
     @Override
@@ -187,7 +170,7 @@ public class RelevanceProductFragment extends BaseFragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
+            loadData();
         }
     }
 
@@ -199,31 +182,35 @@ public class RelevanceProductFragment extends BaseFragment {
             this.relevanceSelProList.clear();
             if (relevanceSelProList != null && relevanceSelProList.size() > 0) {
                 this.relevanceSelProList.addAll(relevanceSelProList);
-                changeRelevanceProduct(relevanceProList,this.relevanceSelProList);
+                changeRelevanceProduct(relevanceProList, this.relevanceSelProList);
             }
         }
     }
 
     @Override
     protected void loadData() {
-        switch (relevanceType){
-                case COLLECT_PRODUCT:
-                    getColProData();
-                    break;
-                case CART_PRODUCT:
-                    getShopCarProData();
-                    break;
-                default:
-                    getDoMoIndentProData();
-                    break;
+        switch (relevanceType) {
+            case COLLECT_PRODUCT:
+                colProPage = 1;
+                getColProData();
+                break;
+            case CART_PRODUCT:
+                carProPage = 1;
+                getShopCarProData();
+                break;
+            default:
+                indentProPage = 1;
+                getDoMoIndentProData();
+                break;
         }
     }
+
     //  订单关联商品
     private void getDoMoIndentProData() {
         if (NetWorkUtils.checkNet(getActivity())) {
             String url = Url.BASE_URL + Url.REL_INDENT_PRO;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             params.put("currentPage", indentProPage);
             params.put("showCount", TOTAL_COUNT_TWENTY);
             XUtil.Post(url, params, new MyCallBack<String>() {
@@ -239,11 +226,11 @@ public class RelevanceProductFragment extends BaseFragment {
                     Gson gson = new Gson();
                     RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
                     if (relevanceProEntity != null) {
-                        if (relevanceProEntity.getCode().equals("01")) {
+                        if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
                             relevanceIndentProList.addAll(relevanceProEntity.getRelevanceProList());
                             relevanceProList.removeAll(relevanceIndentProList);
-                            relevanceProList.addAll(changeRelevanceProduct(relevanceIndentProList,relevanceSelProList));
-                        } else if (relevanceProEntity.getCode().equals("02")) {
+                            relevanceProList.addAll(changeRelevanceProduct(relevanceIndentProList, relevanceSelProList));
+                        } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
                             relevanceProAdapter.loadMoreEnd(false);
                         } else {
                             relevanceProAdapter.loadMoreEnd(false);
@@ -280,21 +267,21 @@ public class RelevanceProductFragment extends BaseFragment {
         if (relevanceProBean.isSelPro()) {
             relevanceSelProList.add(relevanceProBean);
         } else {
-            for (RelevanceProBean selectProductBean:relevanceSelProList) {
-                if(selectProductBean.getId() == relevanceProBean.getId()){
+            for (RelevanceProBean selectProductBean : relevanceSelProList) {
+                if (selectProductBean.getId() == relevanceProBean.getId()) {
                     relevanceSelProList.remove(selectProductBean);
                     break;
                 }
             }
         }
-        EventBus.getDefault().post(new EventMessage("relevanceProduct",relevanceSelProList));
+        EventBus.getDefault().post(new EventMessage("relevanceProduct", relevanceSelProList));
     }
 
     private void getShopCarProData() {
         if (NetWorkUtils.checkNet(getActivity())) {
             String url = Url.BASE_URL + Url.REL_SHOP_CAR_PRO;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             params.put("currentPage", carProPage);
             params.put("showCount", TOTAL_COUNT_TWENTY);
             XUtil.Post(url, params, new MyCallBack<String>() {
@@ -313,8 +300,8 @@ public class RelevanceProductFragment extends BaseFragment {
                         if (relevanceProEntity.getCode().equals("01")) {
                             relevanceCarProList.addAll(relevanceProEntity.getRelevanceProList());
                             relevanceProList.removeAll(relevanceCarProList);
-                            relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList,relevanceSelProList));
-                        }  else if (relevanceProEntity.getCode().equals("02")) {
+                            relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList, relevanceSelProList));
+                        } else if (relevanceProEntity.getCode().equals("02")) {
                             relevanceProAdapter.loadMoreEnd(false);
                         } else {
                             relevanceProAdapter.loadMoreEnd(false);
@@ -346,13 +333,13 @@ public class RelevanceProductFragment extends BaseFragment {
         if (NetWorkUtils.checkNet(getActivity())) {
             String url = Url.BASE_URL + Url.REL_COLLECT_PRO;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             params.put("currentPage", colProPage);
             params.put("showCount", TOTAL_COUNT_TWENTY);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    if(colProPage == 1){
+                    if (colProPage == 1) {
                         relevanceColProList.clear();
                         relevanceProList.clear();
                     }
@@ -365,7 +352,7 @@ public class RelevanceProductFragment extends BaseFragment {
                         if (relevanceProEntity.getCode().equals("01")) {
                             relevanceColProList.addAll(relevanceProEntity.getRelevanceProList());
                             relevanceProList.removeAll(relevanceColProList);
-                            relevanceProList.addAll(changeRelevanceProduct(relevanceColProList,relevanceSelProList));
+                            relevanceProList.addAll(changeRelevanceProduct(relevanceColProList, relevanceSelProList));
                         } else if (relevanceProEntity.getCode().equals("02")) {
                             relevanceProAdapter.loadMoreEnd(false);
                         } else {
@@ -393,7 +380,7 @@ public class RelevanceProductFragment extends BaseFragment {
             relevanceProAdapter.loadMoreComplete();
         }
     }
-    
+
     @Override
     protected void getReqParams(Bundle bundle) {
         relevanceType = bundle.getString(RELEVANCE_TYPE);

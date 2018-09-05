@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 获取通知权限 -->
-    <uses-permission android:name="android.permission.OP_POST_NOTIFICATION"/>
+    <uses-permission android:name="android.permission.OP_POST_NOTIFICATION" />
     <!-- 获取WIFI信息 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!--腾讯bugly-->
@@ -206,7 +206,7 @@
         <!--往期中奖人数-->
         <activity
             android:name=".homepage.activity.IntegralLotteryAwardPersonActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <!--分享赚-->
         <activity
             android:name=".homepage.activity.HomeCouponGetActivity"
@@ -943,18 +943,18 @@
         <activity
             android:name="com.umeng.socialize.media.WBShareCallBackActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/fullTheme"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
-            android:theme="@style/fullTheme"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
+            android:theme="@style/fullTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.sina.weibo.sdk.share.WbShareTransActivity"
-            android:theme="@style/fullTheme"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/fullTheme">
             <intent-filter>
                 <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -964,8 +964,8 @@
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
-            android:theme="@style/fullTheme"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:theme="@style/fullTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -977,14 +977,14 @@
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
-            android:theme="@style/fullTheme"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/fullTheme" />
         <!--微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/fullTheme"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/fullTheme" />
         <!-- 友盟appKey -->
         <meta-data
             android:name="UMENG_APPKEY"
@@ -1001,8 +1001,8 @@
             android:name="com.alipay.sdk.auth.AuthActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="behind" />
+            android:screenOrientation="behind"
+            android:theme="@style/fullTheme" />
         <!-- jPush消息推送 -->
         <receiver
             android:name=".base.JPUshMessageReceiver"
@@ -1024,12 +1024,11 @@
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:theme="@style/fullTheme"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:theme="@style/fullTheme" />
         <!--腾讯bugly-->
         <!--升级策略-->
-        <activity
-            android:name="com.tencent.bugly.beta.ui.BetaActivity"/>
+        <activity android:name="com.tencent.bugly.beta.ui.BetaActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -1069,13 +1068,13 @@
         <activity
             android:name="cn.xiaoneng.activity.ChatActivity"
             android:launchMode="singleTask"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.activity.LeaveMsgActivity"
             android:launchMode="singleTask"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.activity.ShowCameraActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|navigation|layoutDirection|touchscreen|locale|mnc|mcc|fontScale"
@@ -1085,8 +1084,8 @@
         <activity
             android:name="cn.xiaoneng.activity.ShowAlbumActivity"
             android:launchMode="singleTask"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.activity.ValuationActivity"
             android:screenOrientation="portrait"
@@ -1094,25 +1093,25 @@
         <activity
             android:name="cn.xiaoneng.activity.ShowPictureActivity"
             android:launchMode="singleTask"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.activity.XNExplorerActivity"
             android:launchMode="singleTask"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.video.VideoPreviewActivity"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.video.RecordVideoActivity"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <activity
             android:name="cn.xiaoneng.video.XNVideoPlayer"
-            android:theme="@style/fullTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme" />
         <!-- ***************************小能SDK所需要receiver和Service ********************* -->
         <service android:name="cn.xiaoneng.xpush.pushxiaoneng.XPushIMService" />
         <receiver
@@ -1127,13 +1126,12 @@
             </intent-filter>
         </receiver>
         <!-- ***************************小能SDK所需要receiver和Service ********************* -->
-        <activity
-            android:name=".ServiceListenerActivity"/>
+        <activity android:name=".ServiceListenerActivity" />
         <activity
             android:name=".ServiceReceiverActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:noHistory="true"/>
+            android:noHistory="true" />
         <activity
             android:name=".qyservice.QyServiceNotifyReceiver"
             android:excludeFromRecents="true"

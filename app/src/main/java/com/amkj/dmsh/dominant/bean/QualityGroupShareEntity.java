@@ -1,5 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class QualityGroupShareEntity {
+public class QualityGroupShareEntity extends BaseEntity{
 
     /**
      * result : {"leftParticipant":1,"gpCount":12,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpStartTime":"2017-06-21 11:52:48","gpInfoId":1,"productSkuValue":"默认:蓝色","uid":27928,"gpProductQuantity":75,"gpType":"2人团","price":"1098.0","coverImage":"http://img.domolife.cn/platform/3atQYAZQ4X1497410876254.jpeg","gpInfoStartTime":"2017-06-01 00:00:00","gpInfoEndTime":"2017-06-27 00:00:00","quantityStatus":{"quantityStatusMsg":"库存足够，可开团和参团","quantityStatusId":1002},"gpRecordId":"38","images":"http://img.domolife.cn/platform/F4bZMMKEFF1497410875842.jpeg,http://img.domolife.cn/platform/NBCDtS3nBa1497410876188.jpeg,http://img.domolife.cn/platform/3atQYAZQ4X1497410876254.jpeg","productId":4282,"gpProductId":17,"gpEndTime":"2017-06-22 11:52:48","memberCount":2,"gpSkuId":112,"avatar":["http://img.domolife.cn/201704191717321905157574.png"],"skuQuantity":1004,"propValueId":"5","goodsAreaLabel":"拼团","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpPrice":"0.01"}
@@ -24,8 +25,6 @@ public class QualityGroupShareEntity {
     @SerializedName("result")
     private QualityGroupShareBean qualityGroupShareBean;
     private String currentTime;
-    private String msg;
-    private String code;
     private long second;
 
     public QualityGroupShareBean getQualityGroupShareBean() {
@@ -42,22 +41,6 @@ public class QualityGroupShareEntity {
 
     public void setCurrentTime(String currentTime) {
         this.currentTime = currentTime;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public long getSecond() {

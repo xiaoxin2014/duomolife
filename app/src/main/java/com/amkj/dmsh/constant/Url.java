@@ -570,7 +570,7 @@ public class Url {
     //    修改地址
     public static final String EDIT_ADDRESS = "api/user/address/updateUserAddress";
     //    地址列表
-    public static final String ADDRESS_LIST = "api/user/address/getDocumentRemendList?uid=";
+    public static final String ADDRESS_LIST = "api/user/address/getDocumentRemendList";
     //    修改默认地址
     public static final String UPDATE_DEFAULT_ADDRESS = "api/user/address/updateDefaultAddress";
     //    删除地址

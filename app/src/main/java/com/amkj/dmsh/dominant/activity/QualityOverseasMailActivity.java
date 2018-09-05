@@ -18,6 +18,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
@@ -32,9 +33,7 @@ import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -45,9 +44,10 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,14 +59,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -80,18 +83,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 
 public class QualityOverseasMailActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.iv_img_service)
@@ -104,7 +101,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
     private float screenHeight;
     private List<LikedProductBean> typeDetails = new ArrayList();
     private QualityTypeProductAdapter qualityTypeProductAdapter;
-    private int uid;
     private int themePage = 1;
     private int productPage = 1;
     private List<DMLThemeBean> themeList = new ArrayList();
@@ -129,7 +125,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         iv_img_share.setVisibility(View.GONE);
         Intent intent = getIntent();
         categoryType = intent.getStringExtra("categoryType");
@@ -157,10 +152,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                 .create());
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            themePage = 1;
-                productPage = 1;
-                loadData();
-
+            loadData();
         });
         qualityTypeProductAdapter = new QualityTypeProductAdapter(QualityOverseasMailActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
@@ -212,7 +204,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus();
+                        getLoginStatus(QualityOverseasMailActivity.this);
                     }
                 }
             }
@@ -273,7 +265,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
             }
         });
         badge = ConstantMethod.getBadge(QualityOverseasMailActivity.this, fl_header_service);
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     //    海外直邮商品列表
@@ -283,31 +274,28 @@ public class QualityOverseasMailActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("showCount", DEFAULT_TOTAL_COUNT);
             params.put("currentPage", productPage);
-            if(userId>0){
-                params.put("uid",userId);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
                     qualityTypeProductAdapter.loadMoreComplete();
-                    if (productPage == 1) {
-                        //重新加载数据
-                        typeDetails.clear();
-                    }
-                    communal_load.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
                     Gson gson = new Gson();
                     UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
-                        if (likedProductEntity.getCode().equals("01")) {
+                        if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                            if (productPage == 1) {
+                                //重新加载数据
+                                typeDetails.clear();
+                            }
                             typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
                             if (productPage == 1) {
                                 qualityTypeProductAdapter.setNewData(typeDetails);
                             } else {
                                 qualityTypeProductAdapter.notifyDataSetChanged();
                             }
-                        } else if (likedProductEntity.getCode().equals("02")) {
+                        } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                             isLoadProData = false;
                             qualityTypeProductAdapter.loadMoreEnd();
                         } else {
@@ -331,100 +319,95 @@ public class QualityOverseasMailActivity extends BaseActivity {
     //    海外直邮主题商品列表
     private void getOverseasThemeData() {
         String url = Url.BASE_URL + Url.QUALITY_OVERSEAS_THEME;
-        if (NetWorkUtils.checkNet(QualityOverseasMailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", themePage);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("goodsCurrentPage", 1);
-            params.put("goodsShowCount", 8);
-            if(userId>0){
-                params.put("uid",userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    if (themePage == 1) {
-                        themeList.clear();
-                    }
-                    Gson gson = new Gson();
-                    DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
-                    if (dmlTheme != null) {
-                        if (dmlTheme.getCode().equals("01")) {
-                            for (int i = 0; i < dmlTheme.getThemeList().size(); i++) {
-                                DMLThemeBean dmlThemeBean = dmlTheme.getThemeList().get(i);
-                                List<DMLGoodsBean> dmlGoodsBeanList = dmlThemeBean.getGoods();
-                                if (dmlGoodsBeanList != null && dmlGoodsBeanList.size() > 7) {
-                                    DMLGoodsBean dmlGoodsBean = new DMLGoodsBean();
-                                    dmlGoodsBean.setItemType(ConstantVariable.TYPE_1);
-                                    dmlGoodsBean.setId(dmlThemeBean.getId());
-                                    dmlGoodsBeanList.add(dmlGoodsBean);
-                                    dmlThemeBean.setGoods(dmlGoodsBeanList);
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", themePage);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("goodsCurrentPage", 1);
+        params.put("goodsShowCount", 8);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityOverseasMailActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
+                        if (loadService != null) {
+                            loadService.showCallback(SuccessCallback.class);
+                        }
+                        if (dmlTheme != null) {
+                            if (dmlTheme.getCode().equals(SUCCESS_CODE)) {
+                                if (themePage == 1) {
+                                    themeList.clear();
                                 }
-                                themeList.add(dmlThemeBean);
-                            }
-                            if (themePage == 1) {
-                                qualityOsMailHeaderAdapter.setNewData(themeList);
-                            } else {
+                                for (int i = 0; i < dmlTheme.getThemeList().size(); i++) {
+                                    DMLThemeBean dmlThemeBean = dmlTheme.getThemeList().get(i);
+                                    List<DMLGoodsBean> dmlGoodsBeanList = dmlThemeBean.getGoods();
+                                    if (dmlGoodsBeanList != null && dmlGoodsBeanList.size() > 7) {
+                                        DMLGoodsBean dmlGoodsBean = new DMLGoodsBean();
+                                        dmlGoodsBean.setItemType(ConstantVariable.TYPE_1);
+                                        dmlGoodsBean.setId(dmlThemeBean.getId());
+                                        dmlGoodsBeanList.add(dmlGoodsBean);
+                                        dmlThemeBean.setGoods(dmlGoodsBeanList);
+                                    }
+                                    themeList.add(dmlThemeBean);
+                                }
                                 qualityOsMailHeaderAdapter.notifyDataSetChanged();
-                            }
-                        } else if (dmlTheme.getCode().equals("02")) {
-                            isLoadThemeData = false;
-                            if (themePage == 1) {
-                                overseasHeaderView.communal_recycler_wrap.setVisibility(View.GONE);
+                            } else if (dmlTheme.getCode().equals(EMPTY_CODE)) {
+                                isLoadThemeData = false;
+                                if (themePage == 1) {
+                                    overseasHeaderView.communal_recycler_wrap.setVisibility(View.GONE);
+                                } else {
+                                    overseasHeaderView.communal_recycler_wrap.setVisibility(View.VISIBLE);
+                                }
                             } else {
-                                overseasHeaderView.communal_recycler_wrap.setVisibility(View.VISIBLE);
+                                showToast(QualityOverseasMailActivity.this, dmlTheme.getMsg());
                             }
-                        } else {
-                            showToast(QualityOverseasMailActivity.this, dmlTheme.getMsg());
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (themePage == 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+                    @Override
+                    public void netClose() {
+                        if (loadService != null) {
+                            loadService.showCallback(SuccessCallback.class);
+                        }
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityOverseasMailActivity.this, R.string.unConnectedNetwork);
                     }
-                    showToast(QualityOverseasMailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            if (themePage == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            } else {
-                showToast(QualityOverseasMailActivity.this, R.string.unConnectedNetwork);
-            }
-        }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if (loadService != null) {
+                            loadService.showCallback(SuccessCallback.class);
+                        }
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityOverseasMailActivity.this, R.string.invalidData);
+                    }
+                });
     }
+
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if(START_AUTO_PAGE_TURN.equals(message.type)){
-            if(adBeanList.size()>0&&overseasHeaderView.ad_communal_banner!=null&&!overseasHeaderView.ad_communal_banner.isTurning()){
+        if (START_AUTO_PAGE_TURN.equals(message.type)) {
+            if (adBeanList.size() > 0 && overseasHeaderView.ad_communal_banner != null && !overseasHeaderView.ad_communal_banner.isTurning()) {
                 overseasHeaderView.ad_communal_banner.setCanScroll(true);
                 overseasHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                 overseasHeaderView.ad_communal_banner.setPointViewVisible(true);
             }
-        }else if(STOP_AUTO_PAGE_TURN.equals(message.type)){
-            if(overseasHeaderView.ad_communal_banner!=null&&overseasHeaderView.ad_communal_banner.isTurning()){
+        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
+            if (overseasHeaderView.ad_communal_banner != null && overseasHeaderView.ad_communal_banner.isTurning()) {
                 overseasHeaderView.ad_communal_banner.setCanScroll(false);
                 overseasHeaderView.ad_communal_banner.stopTurning();
                 overseasHeaderView.ad_communal_banner.setPointViewVisible(false);
             }
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -432,14 +415,11 @@ public class QualityOverseasMailActivity extends BaseActivity {
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -458,26 +438,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
         }
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -485,15 +445,26 @@ public class QualityOverseasMailActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
+            productPage = 1;
             getOverseasProData();
             getCarCount();
         }
     }
 
     @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
     protected void loadData() {
-        communal_load.setVisibility(View.VISIBLE);
+        themePage = 1;
+        productPage = 1;
         getOverseasThemeData();
         getOverseasProData();
         if (!TextUtils.isEmpty(categoryName) && !TextUtils.isEmpty(categoryId)) {
@@ -507,7 +478,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("categoryType", categoryType);
             params.put("categoryId", categoryId);
-            params.put("vidoShow","1");
+            params.put("vidoShow", "1");
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -519,11 +490,11 @@ public class QualityOverseasMailActivity extends BaseActivity {
                         if (qualityAdLoop.getCode().equals("01")) {
                             adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
                             overseasHeaderView.rel_communal_banner.setVisibility(View.VISIBLE);
-                            if(cbViewHolderCreator ==null){
+                            if (cbViewHolderCreator == null) {
                                 cbViewHolderCreator = new CBViewHolderCreator() {
                                     @Override
                                     public Holder createHolder(View itemView) {
-                                        return new CommunalAdHolderView(itemView,QualityOverseasMailActivity.this,true);
+                                        return new CommunalAdHolderView(itemView, QualityOverseasMailActivity.this, true);
                                     }
 
                                     @Override
@@ -532,8 +503,8 @@ public class QualityOverseasMailActivity extends BaseActivity {
                                     }
                                 };
                             }
-                            overseasHeaderView.ad_communal_banner.setPages(QualityOverseasMailActivity.this,cbViewHolderCreator,adBeanList).setCanLoop(true)
-                                    .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius,R.drawable.selected_radius})
+                            overseasHeaderView.ad_communal_banner.setPages(QualityOverseasMailActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
+                                    .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                         } else {
                             if (adBeanList.size() < 1) {
@@ -561,15 +532,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        productPage = 1;
-        themePage = 1;
-        loadData();
     }
 
     class OverseasHeaderView {

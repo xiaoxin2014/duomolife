@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -31,9 +32,8 @@ import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -41,9 +41,10 @@ import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -57,11 +58,15 @@ import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.R.id.tv_communal_pro_tag;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -70,18 +75,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
  */
 public class DoMoLifeWelfareActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.iv_img_service)
@@ -102,11 +101,10 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     //  打开标签
     @BindView(tv_communal_pro_tag)
     TextView tv_wel_pro_tag;
-    private int page = 1;
     private int scrollY;
     private float screenHeight;
     private QualityTypeProductAdapter qualityTypeProductAdapter;
-    private int uid;
+    private int page = 1;
     private int themePage = 1;
     private int productPage = 1;
     private List<LikedProductBean> typeDetails = new ArrayList();
@@ -115,7 +113,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     //    头部
     private QualityOsMailHeaderAdapter qualityWelfareHeaderAdapter;
     private OverseasHeaderView overseasHeaderView;
-    private String type = "welfare";
     private Badge badge;
     private QualityHistoryAdapter qualityPreviousAdapter;
 
@@ -126,7 +123,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         iv_img_share.setVisibility(View.GONE);
         tv_header_titleAll.setText("多么福利社");
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
@@ -147,9 +143,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 .create());
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-                themePage = 1;
-                productPage = 1;
-                loadData();
+            loadData();
         });
         qualityTypeProductAdapter = new QualityTypeProductAdapter(DoMoLifeWelfareActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
@@ -216,7 +210,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 loadHud.show();
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
                 if (likedProductBean != null) {
-                    if (userId > 0) {
+                    if (ConstantMethod.userId > 0) {
                         switch (view.getId()) {
                             case R.id.iv_pro_add_car:
                                 BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
@@ -236,7 +230,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus();
+                        getLoginStatus(DoMoLifeWelfareActivity.this);
                     }
                 }
             }
@@ -263,7 +257,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                 .setHeaderClickListener(null)
                 .create());
-        qualityWelfareHeaderAdapter = new QualityOsMailHeaderAdapter(DoMoLifeWelfareActivity.this, themeList, type);
+        qualityWelfareHeaderAdapter = new QualityOsMailHeaderAdapter(DoMoLifeWelfareActivity.this, themeList, "welfare");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityWelfareHeaderAdapter);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -299,7 +293,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         badge = ConstantMethod.getBadge(DoMoLifeWelfareActivity.this, fl_header_service);
         //          关闭手势滑动
         dr_communal_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        communal_load.setVisibility(View.VISIBLE);
         totalPersonalTrajectory = insertNewTotalData(DoMoLifeWelfareActivity.this);
     }
 
@@ -314,27 +307,20 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String result) {
                     qualityTypeProductAdapter.loadMoreComplete();
-                    if (productPage == 1) {
-                        //重新加载数据
-                        typeDetails.clear();
-                    }
-                    communal_load.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
                     Gson gson = new Gson();
                     UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
                         if (likedProductEntity.getCode().equals("01")) {
+                            if (productPage == 1) {
+                                //重新加载数据
+                                typeDetails.clear();
+                            }
                             typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
                         } else if (!likedProductEntity.getCode().equals("02")) {
                             showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
                         }
                     }
-                    if (productPage == 1) {
-                        qualityTypeProductAdapter.setNewData(typeDetails);
-                    } else {
-                        qualityTypeProductAdapter.notifyDataSetChanged();
-                    }
+                    qualityTypeProductAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -348,71 +334,59 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     //    福利社主题商品列表
     private void getWelfareThemeData() {
         String url = Url.BASE_URL + Url.H_DML_THEME;
-        if (NetWorkUtils.checkNet(DoMoLifeWelfareActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", themePage);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("goodsCurrentPage", 1);
-            params.put("goodsShowCount", 8);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    if (themePage == 1) {
-                        themeList.clear();
-                    }
-                    Gson gson = new Gson();
-                    DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
-                    if (dmlTheme != null) {
-                        if (dmlTheme.getCode().equals("01")) {
-                            themeList.addAll(dmlTheme.getThemeList());
-                            getWelfareProData();
-                        } else if (dmlTheme.getCode().equals("02")) {
-                            if (themePage == 1) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", themePage);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("goodsCurrentPage", 1);
+        params.put("goodsShowCount", 8);
+        NetLoadUtils.getQyInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
+                        if (dmlTheme != null) {
+                            if (dmlTheme.getCode().equals(SUCCESS_CODE)) {
+                                if (themePage == 1) {
+                                    themeList.clear();
+                                }
+                                themeList.addAll(dmlTheme.getThemeList());
                                 getWelfareProData();
-                                overseasHeaderView.communal_recycler_wrap.setVisibility(View.GONE);
+                            } else if (dmlTheme.getCode().equals(EMPTY_CODE)) {
+                                if (themePage == 1) {
+                                    getWelfareProData();
+                                    overseasHeaderView.communal_recycler_wrap.setVisibility(View.GONE);
+                                }
+                            } else {
+                                showToast(DoMoLifeWelfareActivity.this, dmlTheme.getMsg());
                             }
-                        } else {
-                            if (themePage == 1) {
-                                communal_error.setVisibility(View.VISIBLE);
+                            if(loadService!=null){
+                                loadService.showCallback(SuccessCallback.class);
                             }
-                            showToast(DoMoLifeWelfareActivity.this, dmlTheme.getMsg());
+                            qualityWelfareHeaderAdapter.notifyDataSetChanged();
+                        }else{
+                            if(loadService!=null){
+                                loadService.showCallback(NetErrorCallback.class);
+                            }
                         }
                     }
-                    if (themePage == 1) {
-                        qualityWelfareHeaderAdapter.setNewData(themeList);
-                    } else {
-                        qualityWelfareHeaderAdapter.notifyDataSetChanged();
-                    }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (themePage == 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(DoMoLifeWelfareActivity.this, R.string.unConnectedNetwork);
                     }
-                    showToast(DoMoLifeWelfareActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            if (themePage == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            } else {
-                showToast(DoMoLifeWelfareActivity.this, R.string.unConnectedNetwork);
-            }
-        }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(DoMoLifeWelfareActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     @Override
@@ -422,14 +396,11 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -448,6 +419,9 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 往期福利社
+     */
     private void getPreviousTopic() {
         String url = Url.BASE_URL + Url.H_DML_PREVIOUS_THEME;
         if (NetWorkUtils.checkNet(DoMoLifeWelfareActivity.this)) {
@@ -464,20 +438,11 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     }
                     QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
                     if (qualityHistoryListEntity != null) {
-                        if (qualityHistoryListEntity.getCode().equals("01")) {
+                        if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
                             welfarePreviousList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
                             setHistoryListData();
-                        } else if (qualityHistoryListEntity.getCode().equals("02")) {
-                            showToast(DoMoLifeWelfareActivity.this, R.string.unConnectedNetwork);
-                        } else {
-                            showToast(DoMoLifeWelfareActivity.this, qualityHistoryListEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
                         }
-                        if (page == 1) {
-                            qualityPreviousAdapter.setNewData(welfarePreviousList);
-                        } else {
-                            qualityPreviousAdapter.notifyDataSetChanged();
-                        }
+                        qualityPreviousAdapter.notifyDataSetChanged();
                     }
                 }
             });
@@ -502,43 +467,38 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         tv_communal_pro_title.setText("更多专题");
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-                getWelfareProData();
-                getCarCount();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            productPage = 1;
+            getWelfareProData();
+            getCarCount();
         }
     }
 
     @Override
     protected void loadData() {
+        productPage = 1;
+        themePage = 1;
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+    @Override
+    protected void getData() {
         getWelfareThemeData();
         getPreviousTopic();
     }
@@ -554,15 +514,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-     void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        productPage = 1;
-        themePage = 1;
-        loadData();
-    }
-
     class OverseasHeaderView {
         @BindView(R.id.communal_recycler_wrap)
         RecyclerView communal_recycler_wrap;
@@ -576,10 +527,5 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         } else {
             dr_communal_pro.openDrawer(ll_communal_pro_list);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

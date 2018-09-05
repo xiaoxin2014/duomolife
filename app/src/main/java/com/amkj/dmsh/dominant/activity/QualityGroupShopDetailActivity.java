@@ -27,6 +27,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.CommunalDetailBean;
@@ -49,8 +50,8 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean
 import com.amkj.dmsh.dominant.fragment.GroupCustomerServiceFragment;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
@@ -74,7 +75,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -103,10 +104,13 @@ import cn.xiaoneng.utils.CoreData;
 import static android.view.View.GONE;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 
 ;
@@ -119,7 +123,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
  */
 public class QualityGroupShopDetailActivity extends BaseActivity {
     @BindView(R.id.smart_refresh_ql_sp_details)
-    RefreshLayout smart_refresh_ql_sp_details;
+    SmartRefreshLayout smart_refresh_ql_sp_details;
     @BindView(R.id.banner_ql_gp_sp_details)
     ConvenientBanner banner_ql_gp_sp_details;
     @BindView(R.id.tv_ql_gp_sp_new_detail)
@@ -176,13 +180,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //    单独购买描述
     @BindView(R.id.tv_sp_details_ol_buy)
     TextView tv_sp_details_ol_buy;
-    //
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
 
     private List<GroupShopJoinBean> groupShopJoinList = new ArrayList<>();
     //    拼团规则
@@ -204,7 +201,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private FragmentTransaction transaction;
     private Fragment lastFragment;
     private GroupShopDetailsEntity shopDetailsEntity;
-    private int uid;
     private GroupShopCommunalInfoEntity groupShopCommunalInfoEntity;
     private AlertDialog alertDialog;
     private String gpRecordId;
@@ -213,10 +209,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private String normalJoinGroup = "normalJoinGroup";
     private boolean isPause;
     private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupDetail.html?id=";
-    private String avatar;
     private ConstantMethod constantMethod;
     private CBViewHolderCreator cbViewHolderCreator;
     private boolean invitePartnerJoin;
+    private GroupShopDetailsBean groupShopDetailsBean;
 
     @Override
     protected int getContentView() {
@@ -225,7 +221,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_titleAll.setVisibility(GONE);
         Intent intent = getIntent();
         gpInfoId = intent.getStringExtra("gpInfoId");
@@ -274,10 +269,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     case R.id.tv_eva_count:
                         goodsCommentBean = (GoodsCommentBean) view.getTag();
                         if (goodsCommentBean != null) {
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setProductEvaLike(view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(QualityGroupShopDetailActivity.this);
                             }
                         }
                         break;
@@ -309,7 +304,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             public void onTabReselect(int position) {
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
         Drawable drawable = getResources().getDrawable(R.drawable.clock_time_icon_b);
         drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight()); //设置边界
         tv_pro_time_detail_status.setCompoundDrawables(drawable, null, null, null);
@@ -357,13 +351,23 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         getGroupCommunalInfo();
     }
 
+    @Override
+    protected View getLoadView() {
+        return smart_refresh_ql_sp_details;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void setProductEvaLike(View view) {
         GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
         TextView tv_eva_like = (TextView) view;
         String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
-        params.put("uid", uid);
+        params.put("uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -402,8 +406,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         params.put("showCount", 2);
         params.put("currentPage", 1);
         params.put("id", groupShopDetailsEntity.getProductId());
-        if (uid > 0) {
-            params.put("uid", uid);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -506,8 +510,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             url = Url.BASE_URL + Url.GROUP_SHOP_OPEN_PERSON;
             Map<String, Object> params = new HashMap<>();
             params.put("gpInfoId", gpInfoId);
-            if (uid > 0) {
-                params.put("uid", uid);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -603,45 +607,49 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     private void getGroupShopDetails() {
         String url = Url.BASE_URL + Url.GROUP_SHOP_DETAILS;
-        if (NetWorkUtils.checkNet(QualityGroupShopDetailActivity.this) && !TextUtils.isEmpty(gpInfoId)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("gpInfoId", gpInfoId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    smart_refresh_ql_sp_details.finishRefresh();
-                    Gson gson = new Gson();
-                    shopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
-                    if (shopDetailsEntity != null) {
-                        if (shopDetailsEntity.getCode().equals("01")) {
-                            setGroupShopDetailsData(shopDetailsEntity);
-                            //         获取商品评论列表
-                            getGroupShopComment(shopDetailsEntity.getGroupShopDetailsBean());
-                            //        获取商品详情
-                            getShopDetails(shopDetailsEntity.getGroupShopDetailsBean());
-                        } else if (shopDetailsEntity.getCode().equals("02")) {
-                            showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
-                        } else {
-                            showToast(QualityGroupShopDetailActivity.this, shopDetailsEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("gpInfoId", gpInfoId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityGroupShopDetailActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_refresh_ql_sp_details.finishRefresh();
+                Gson gson = new Gson();
+                shopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
+                if (shopDetailsEntity != null) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        setGroupShopDetailsData(shopDetailsEntity);
+                        //         获取商品评论列表
+                        groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
+                        getGroupShopComment(groupShopDetailsBean);
+                        //        获取商品详情
+                        getShopDetails(groupShopDetailsBean);
+                    } else if (shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
+                    } else {
+                        showToast(QualityGroupShopDetailActivity.this, shopDetailsEntity.getMsg());
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,groupShopDetailsBean,shopDetailsEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_refresh_ql_sp_details.finishRefresh();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_refresh_ql_sp_details.finishRefresh();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_refresh_ql_sp_details.finishRefresh();
+                showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,groupShopDetailsBean,shopDetailsEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_refresh_ql_sp_details.finishRefresh();
+                showToast(QualityGroupShopDetailActivity.this,R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,groupShopDetailsBean,shopDetailsEntity);
+            }
+        });
     }
 
     private void setGroupShopDetailsData(GroupShopDetailsEntity groupShopDetailsEntity) {
@@ -927,7 +935,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //  开团
     @OnClick({R.id.ll_group_buy, R.id.tv_sp_details_join_buy_price, R.id.tv_sp_details_join_count})
     void skipBuy(View view) {
-        if (uid > 0) {
+        if (userId > 0) {
 //            去参团
             if (!TextUtils.isEmpty(gpRecordId) && qualityGroupShareEntity != null
                     && qualityGroupShareEntity.getQualityGroupShareBean() != null) {
@@ -950,7 +958,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 startActivity(intent);
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(QualityGroupShopDetailActivity.this);
         }
     }
 
@@ -990,7 +998,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     private void setVisitorOpenService(GroupShopDetailsBean groupShopDetailsBean) {
         ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.headurl = avatar;
+        if(userId>0){
+            SavePersonalInfoBean personalInfo = getPersonalInfo(this);
+            chatParamsBody.headurl = personalInfo.getAvatar();
+        }
         chatParamsBody.startPageTitle = getStrings("我的拼团：" + groupShopDetailsBean.getName());
         chatParamsBody.startPageUrl = sharePageUrl + groupShopDetailsBean.getGpInfoId();
         ItemParamsBody itemParams = chatParamsBody.itemparams;
@@ -1005,43 +1016,19 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         ConstantMethod.skipXNService(QualityGroupShopDetailActivity.this, chatParamsBody);
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
     public void isCanJoinGroup(final GroupShopJoinBean groupShopjoinBean, final QualityGroupShareEntity qualityGroupShareEntity, final String joinType) {
         String url = Url.BASE_URL + Url.GROUP_SHOP_JOIN_NRE_USER;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("gpInfoId", groupShopjoinBean != null ?
                 groupShopjoinBean.getGpInfoId() : qualityGroupShareEntity.getQualityGroupShareBean().getGpInfoId());
         XUtil.Post(url, params, new MyCallBack<String>() {
@@ -1114,10 +1101,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     GroupShopJoinBean groupShopJoinBean = (GroupShopJoinBean) view.getTag();
                     if (groupShopJoinBean != null && shopDetailsEntity != null) {
-                        if (uid != 0) {
+                        if (userId != 0) {
                             isCanJoinGroup(groupShopJoinBean, null, normalJoinGroup);
                         } else {
-                            getLoginStatus();
+                            getLoginStatus(QualityGroupShopDetailActivity.this);
                         }
                     }
                 }
@@ -1184,12 +1171,5 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         constantMethod.stopSchedule();
         constantMethod.releaseHandlers();
         super.onDestroy();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(GONE);
-        loadData();
     }
 }

@@ -41,6 +41,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.ArticleCommentEntity;
 import com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -55,7 +56,6 @@ import com.amkj.dmsh.find.adapter.AdapterReceiverComment;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity;
@@ -73,7 +73,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -106,12 +106,17 @@ import emojicon.EmojiconEditText;
 import static android.view.View.GONE;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.R.id.tv_send_comment;
+import static com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean.FOOT_EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_SERVICE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
@@ -119,7 +124,7 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 public class ShopTimeScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     //    商品详情
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
@@ -146,12 +151,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     //    底栏按钮
     @BindView(R.id.fl_bottom_layout)
     FrameLayout fl_bottom_layout;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     boolean isStartBuy;
     //    轮播图片视频
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
@@ -162,7 +161,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private int page = 1;
     private AdapterReceiverComment adapterReceiverComment;
     private List<ArticleCommentEntity.ArticleCommentBean> articleCommentList = new ArrayList<>();
-    private int uid;
     private ShopDetailsEntity shopDetailsEntity;
     private String thirdUrl;
     private String thirdId;
@@ -175,7 +173,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private CustomPopWindow mCustomPopWindow;
     private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/taoBaoGoods.html?id=";
     private ShopPropertyBean shopProperty;
-    private String avatar;
     private ConstantMethod constantMethod;
     private CBViewHolderCreator cbViewHolderCreator;
 
@@ -186,7 +183,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
         communal_recycler.setLayoutManager(new LinearLayoutManager(ShopTimeScrollDetailsActivity.this));
@@ -203,7 +199,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         communal_recycler.setAdapter(contentOfficialAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         shopTimeFootView.recycler_shop_time_content_list.setLayoutManager(new LinearLayoutManager(ShopTimeScrollDetailsActivity.this));
@@ -233,13 +228,13 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 skipAliBCWebView(couponBean.getCouponUrl());
                             } else {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(ShopTimeScrollDetailsActivity.this);
                             }
                         }
                         break;
@@ -250,14 +245,14 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (position >= 0) {
-                    if (uid > 0) {
+                    if (userId > 0) {
                         if (View.VISIBLE == ll_input_comment.getVisibility()) {
                             updateEditTextBodyVisible(GONE, articleCommentList.get(position));
                         } else {
                             updateEditTextBodyVisible(View.VISIBLE, articleCommentList.get(position));
                         }
                     } else {
-                        getLoginStatus();
+                        getLoginStatus(ShopTimeScrollDetailsActivity.this);
                     }
                 }
             }
@@ -269,14 +264,14 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     case R.id.tv_receiver_content:
                         ArticleCommentEntity.ArticleCommentBean articleCommentBean = (ArticleCommentEntity.ArticleCommentBean) view.getTag();
                         if (articleCommentBean != null) {
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 if (View.VISIBLE == ll_input_comment.getVisibility()) {
                                     updateEditTextBodyVisible(GONE, articleCommentBean);
                                 } else {
                                     updateEditTextBodyVisible(View.VISIBLE, articleCommentBean);
                                 }
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(ShopTimeScrollDetailsActivity.this);
                             }
                         }
                         break;
@@ -290,10 +285,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     page++;
                     getProductComment();
                 } else {
-                    if (page == 1 && adapterReceiverComment.getItemCount() == 1
-                            && articleCommentList.get(0).getItemType() == ArticleCommentEntity.ArticleCommentBean.FOOT_EMPTY_CODE) {
-                        return;
-                    } else {
+                    if (!(page == 1 && adapterReceiverComment.getItemCount() == 1
+                            && articleCommentList.get(0).getItemType() == FOOT_EMPTY_CODE)) {
                         adapterReceiverComment.loadMoreEnd(false);
                     }
                 }
@@ -331,7 +324,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     public void updateEditTextBodyVisible(int visibility, final ArticleCommentBean commentBean) {
@@ -378,7 +370,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             ShopPropertyBean shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
                             communalComment.setObjId(shopPropertyBean.getId());
                         }
-                        communalComment.setUserId(uid);
+                        communalComment.setUserId(userId);
                         sendComment(communalComment);
                     } else {
                         showToast(ShopTimeScrollDetailsActivity.this, "请正确输入内容");
@@ -441,42 +433,37 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         constantMethod.setSendComment(ShopTimeScrollDetailsActivity.this, communalComment);
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void postEventResult(EventMessage message) {
         String type = message.type;
-        if (type == "showEditView") {
-            getLoginStatus();
-            if (uid > 0) {
-                if (View.VISIBLE == ll_input_comment.getVisibility()) {
-                    updateEditTextBodyVisible(GONE, null);
+        switch (type) {
+            case "showEditView":
+                if (userId > 0) {
+                    if (View.VISIBLE == ll_input_comment.getVisibility()) {
+                        updateEditTextBodyVisible(GONE, null);
+                    } else {
+                        updateEditTextBodyVisible(View.VISIBLE, null);
+                    }
                 } else {
-                    updateEditTextBodyVisible(View.VISIBLE, null);
+                    getLoginStatus(ShopTimeScrollDetailsActivity.this);
                 }
-            }
-        } else if (type == "replyComment") {
-            getLoginStatus();
-            if (uid > 0) {
-                ArticleCommentBean commentBean = (ArticleCommentBean) message.result;
-                if (View.VISIBLE == ll_input_comment.getVisibility()) {
-                    updateEditTextBodyVisible(GONE, commentBean);
+                break;
+            case "replyComment":
+                if (userId > 0) {
+                    ArticleCommentBean commentBean = (ArticleCommentBean) message.result;
+                    if (View.VISIBLE == ll_input_comment.getVisibility()) {
+                        updateEditTextBodyVisible(GONE, commentBean);
+                    } else {
+                        updateEditTextBodyVisible(View.VISIBLE, commentBean);
+                    }
                 } else {
-                    updateEditTextBodyVisible(View.VISIBLE, commentBean);
+                    getLoginStatus(ShopTimeScrollDetailsActivity.this);
                 }
-            }
-        } else if (message.type.equals("serviceSendInfo")) {
-            Ntalker.getExtendInstance().message().sendCustomMsg(2, new String[]{getStrings(shopProperty.getName())
-                    , "￥" + getStrings(shopProperty.getPrice()), getStrings(shopProperty.getPicUrl())});
+                break;
+            case "serviceSendInfo":
+                Ntalker.getExtendInstance().message().sendCustomMsg(2, new String[]{getStrings(shopProperty.getName())
+                        , "￥" + getStrings(shopProperty.getPrice()), getStrings(shopProperty.getPicUrl())});
+                break;
         }
     }
 
@@ -486,9 +473,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
         try {
             UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
             CallbackContext.onActivityResult(requestCode, resultCode, data);
@@ -501,20 +485,21 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         AlibcTradeSDK.destory();
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            uid = 0;
-        }
+    @Override
+    protected void loadData() {
+        page = 1;
+        getHeaderData();
+        getProductComment();
     }
 
     @Override
-    protected void loadData() {
-        getHeaderData();
-        getProductComment();
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     //  评论内容
@@ -524,8 +509,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         params.put("id", productId);
         params.put("currentPage", page);
         params.put("comtype", "goods");
-        if (uid != 0) {
-            params.put("uid", uid);
+        if (userId != 0) {
+            params.put("uid", userId);
         }
         if (NetWorkUtils.checkNet(ShopTimeScrollDetailsActivity.this)) {
             XUtil.Post(url, params, new MyCallBack<String>() {
@@ -547,7 +532,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             if (page == 1 && adapterReceiverComment.getItemCount() - adapterReceiverComment.getHeaderLayoutCount() < 1) {
                                 shopTimeFootView.tv_show_text_all_comment.setText("暂无评论");
                                 articleCommentBean = new ArticleCommentEntity.ArticleCommentBean();
-                                articleCommentBean.setItemType(ArticleCommentEntity.ArticleCommentBean.FOOT_EMPTY_CODE);
+                                articleCommentBean.setItemType(FOOT_EMPTY_CODE);
                                 articleCommentList.add(articleCommentBean);
                             }
                         } else {
@@ -574,61 +559,57 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     //商品详情内容
     private void getHeaderData() {
-        if (NetWorkUtils.checkNet(ShopTimeScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.H_TIME_GOODS_DETAILS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", productId);
-            params.put("userId", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    communal_empty.setVisibility(GONE);
-                    smart_communal_refresh.finishRefresh();
-                    fl_bottom_layout.setVisibility(View.VISIBLE);
-                    Gson gson = new Gson();
-                    shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
-                    if (shopDetailsEntity != null) {
-                        if (shopDetailsEntity.getCode().equals("01")) {
-                            setTimeProductData(shopDetailsEntity);
-                        } else if (shopDetailsEntity.getCode().equals("02")) {
-                            showToast(ShopTimeScrollDetailsActivity.this, R.string.shopOverdue);
-                            communal_empty.setVisibility(View.VISIBLE);
-                        } else {
-                            showToast(ShopTimeScrollDetailsActivity.this, shopDetailsEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
+        String url = Url.BASE_URL + Url.H_TIME_GOODS_DETAILS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        params.put("userId", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(ShopTimeScrollDetailsActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                fl_bottom_layout.setVisibility(View.VISIBLE);
+                Gson gson = new Gson();
+                shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
+                if (shopDetailsEntity != null) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        setTimeProductData(shopDetailsEntity);
+                    } else if (shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(ShopTimeScrollDetailsActivity.this, R.string.shopOverdue);
+                    } else {
+                        showToast(ShopTimeScrollDetailsActivity.this, shopDetailsEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopProperty,shopDetailsEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    showToast(ShopTimeScrollDetailsActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            smart_communal_refresh.finishRefresh();
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                showToast(ShopTimeScrollDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopProperty,shopDetailsEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                showToast(ShopTimeScrollDetailsActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopProperty,shopDetailsEntity);
+            }
+        });
     }
 
     // 点击评论
     @OnClick({R.id.tv_time_details_comment_start})
     void clickComment(View view) {
-        if (uid > 0) {
+        if (userId > 0) {
             if (View.VISIBLE == ll_input_comment.getVisibility()) {
                 updateEditTextBodyVisible(GONE, null);
             } else {
                 updateEditTextBodyVisible(View.VISIBLE, null);
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(ShopTimeScrollDetailsActivity.this);
         }
     }
 
@@ -636,7 +617,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -666,7 +647,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.ADD_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -818,7 +799,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     // 提前预览
     @OnClick({R.id.tv_time_ahead_watch_start})
     void aHeadWatch(View view) {
-        if (uid != 0) {
+        if (userId != 0) {
             skipNewTaoBao();
             if (shopProperty != null) {
                 Properties prop = new Properties();
@@ -827,7 +808,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 StatService.trackCustomKVEvent(this, "timeProAhead", prop);
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(ShopTimeScrollDetailsActivity.this);
         }
     }
 
@@ -836,7 +817,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     void buySetWarm(View view) {
 //        立即购买
         if (isStartBuy) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao();
                 if (shopProperty != null) {
                     Properties prop = new Properties();
@@ -845,17 +826,15 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     StatService.trackCustomKVEvent(this, "timeProBuy", prop);
                 }
             } else {
-                getLoginStatus();
+                getLoginStatus(ShopTimeScrollDetailsActivity.this);
             }
         } else {
-            if (uid != 0) {
-                if (shopDetailsEntity.getShopPropertyBean() != null) {
+            if (shopDetailsEntity.getShopPropertyBean() != null) {
+                if (userId != 0) {
                     isFirstRemind(shopDetailsEntity);
                 } else {
-                    return;
+                    getLoginStatus(ShopTimeScrollDetailsActivity.this);
                 }
-            } else {
-                getLoginStatus();
             }
         }
     }
@@ -870,7 +849,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private void isFirstRemind(final ShopDetailsEntity shopDetailsEntity) {
         String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -944,7 +923,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private void setWarmTime(String number) {
         String url = Url.BASE_URL + Url.TIME_WARM_PRO;
         Map<String, Object> params = new HashMap<>();
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         params.put("longtime", number);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -994,7 +973,11 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         itemParams.goods_image = getStrings(shopPropertyBean.getPicUrl());
         itemParams.goods_price = getStrings(shopPropertyBean.getPrice());
         itemParams.goods_url = sharePageUrl + shopPropertyBean.getId();
-        chatParamsBody.headurl = avatar;
+
+        if(userId>0){
+            SavePersonalInfoBean personalInfo = getPersonalInfo(ShopTimeScrollDetailsActivity.this);
+            chatParamsBody.headurl = personalInfo.getAvatar();
+        }
         ConstantMethod.skipXNService(ShopTimeScrollDetailsActivity.this, chatParamsBody);
     }
 
@@ -1049,7 +1032,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 @Override
                 public void onEnd(CountdownView cv) {
                     cv.setOnCountdownEndListener(null);
-                    page = 1;
                     loadData();
                 }
             });
@@ -1148,13 +1130,13 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     public void skipAliBCWebView(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(ShopTimeScrollDetailsActivity.this);
             }
         } else {
             showToast(ShopTimeScrollDetailsActivity.this, "地址缺失");
@@ -1310,15 +1292,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 break;
         }
         return false;
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        page = 1;
-        loadData();
     }
 
     private void getConstant() {

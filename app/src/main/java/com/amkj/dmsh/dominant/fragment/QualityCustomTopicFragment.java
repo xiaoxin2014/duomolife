@@ -14,17 +14,15 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -36,7 +34,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -47,16 +45,15 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
 ;
@@ -70,18 +67,12 @@ import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
  */
 public class QualityCustomTopicFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
@@ -89,10 +80,10 @@ public class QualityCustomTopicFragment extends BaseFragment {
     private List<LikedProductBean> customProList = new ArrayList();
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList();
     private QNewProView qNewProView;
-    private int uid;
     private String productType;
     private View headerView;
     private CommunalDetailAdapter communalDetailAdapter;
+    private UserLikedProductEntity userLikedProductEntity;
 
     @Override
     protected int getContentView() {
@@ -101,10 +92,8 @@ public class QualityCustomTopicFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -202,19 +191,24 @@ public class QualityCustomTopicFragment extends BaseFragment {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus();
+                        getLoginStatus(QualityCustomTopicFragment.this);
                     }
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
-        totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(),this.getClass().getSimpleName(),productType);
+        totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), productType);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getCustomCoverDescription();
         getQualityCustomPro();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     /**
@@ -226,8 +220,8 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 && !TextUtils.isEmpty(productType)) {
             Map<String, Object> params = new HashMap<>();
             params.put("productType", productType);
-            if (uid > 0) {
-                params.put("uid", uid);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -285,96 +279,52 @@ public class QualityCustomTopicFragment extends BaseFragment {
         }
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
     private void getQualityCustomPro() {
-        if (NetWorkUtils.checkNet(getActivity())
-                && !TextUtils.isEmpty(productType)) {
-            String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("productType", productType);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        customProList.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (userLikedProductEntity != null) {
-                        if (userLikedProductEntity.getCode().equals("01")) {
-                            customProList.addAll(userLikedProductEntity.getLikedProductBeanList());
-                        } else if (!userLikedProductEntity.getCode().equals("02")) {
-                            showToast(getActivity(), userLikedProductEntity.getMsg());
-                        }
-                        if (page == 1) {
-                            qualityTypeProductAdapter.setNewData(customProList);
-                        } else {
-                            qualityTypeProductAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (page == 1 && qualityTypeProductAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(getActivity(), R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(getActivity(), R.string.unConnectedNetwork);
+        String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("productType", productType);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (userLikedProductEntity != null) {
+                    if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            customProList.clear();
+                        }
+                        customProList.addAll(userLikedProductEntity.getLikedProductBeanList());
+                    } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), userLikedProductEntity.getMsg());
+                    }
+                    qualityTypeProductAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
+                }
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
+            }
+        });
     }
 
     class QNewProView {
@@ -396,14 +346,6 @@ public class QualityCustomTopicFragment extends BaseFragment {
     @Override
     protected void getReqParams(Bundle bundle) {
         productType = bundle.getString("productType");
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
 }

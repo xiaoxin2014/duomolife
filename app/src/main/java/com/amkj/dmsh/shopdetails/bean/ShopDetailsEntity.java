@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
@@ -15,7 +16,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.replaceBlank;
 /**
  * Created by atd48 on 2016/10/4.
  */
-public class ShopDetailsEntity {
+public class ShopDetailsEntity extends BaseEntity{
 
     /**
      * tags : [{"id":1,"name":"24小时发货"},{"id":2,"name":"正品保证"},{"id":3,"name":"海外直邮"},{"id":4,"name":"30天退货"}]
@@ -54,9 +55,6 @@ public class ShopDetailsEntity {
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     private String currentTime;
 
     public ShopPropertyBean getShopPropertyBean() {
@@ -65,22 +63,6 @@ public class ShopDetailsEntity {
 
     public void setShopPropertyBean(ShopPropertyBean shopPropertyBean) {
         this.shopPropertyBean = shopPropertyBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public String getCurrentTime() {

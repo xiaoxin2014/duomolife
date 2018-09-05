@@ -13,26 +13,24 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,12 +41,16 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -61,7 +63,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class QualityTypeHotSaleProActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -77,19 +79,13 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     ImageView iv_img_share;
     @BindView(R.id.fl_header_service)
     FrameLayout fl_header_service;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
     private List<LikedProductBean> typeDetails = new ArrayList();
     private QualityTypeProductAdapter qualityTypeProductAdapter;
-    private int uid;
     private Badge badge;
+    private UserLikedProductEntity typeProductBean;
 
     @Override
     protected int getContentView() {
@@ -98,7 +94,6 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         iv_img_share.setVisibility(View.GONE);
         tv_header_titleAll.setText("热销单品");
         tl_quality_bar.setSelected(true);
@@ -116,8 +111,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                 .create());
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-            getQualityTypePro();
+            loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -196,12 +190,12 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus();
+                        getLoginStatus(QualityTypeHotSaleProActivity.this);
                     }
                 }
             }
         });
-        badge = ConstantMethod.getBadge(QualityTypeHotSaleProActivity.this, fl_header_service);
+        badge = getBadge(QualityTypeHotSaleProActivity.this, fl_header_service);
         totalPersonalTrajectory = insertNewTotalData(QualityTypeHotSaleProActivity.this);
     }
 
@@ -211,24 +205,14 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         getCarCount();
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override
@@ -238,15 +222,13 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-            getQualityTypePro();
-            getCarCount();
+            loadData();
         }
     }
 
     @Override
     protected void loadData() {
-        communal_load.setVisibility(View.VISIBLE);
+        page = 1;
         getQualityTypePro();
         getCarCount();
     }
@@ -259,70 +241,59 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        if (NetWorkUtils.checkNet(QualityTypeHotSaleProActivity.this)) {
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        typeDetails.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity typeBean = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (typeBean != null) {
-                        if (typeBean.getCode().equals("01")) {
-                            typeDetails.addAll(typeBean.getLikedProductBeanList());
-                        } else if (typeBean.getCode().equals("02")) {
-                            qualityTypeProductAdapter.loadMoreEnd();
-                        } else {
-                            qualityTypeProductAdapter.loadMoreEnd();
-                            showToast(QualityTypeHotSaleProActivity.this, typeBean.getMsg());
-
-                        }
-                        if (page == 1) {
-                            qualityTypeProductAdapter.setNewData(typeDetails);
-                        } else {
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeHotSaleProActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        typeProductBean = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (typeProductBean != null) {
+                            if (typeProductBean.getCode().equals(SUCCESS_CODE)) {
+                                if (page == 1) {
+                                    typeDetails.clear();
+                                }
+                                typeDetails.addAll(typeProductBean.getLikedProductBeanList());
+                            } else if (typeProductBean.getCode().equals(EMPTY_CODE)) {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                            } else {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                                showToast(QualityTypeHotSaleProActivity.this, typeProductBean.getMsg());
+                            }
                             qualityTypeProductAdapter.notifyDataSetChanged();
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,typeProductBean);
+                        } else {
+                            if (loadService != null) {
+                                loadService.showCallback(NetErrorCallback.class);
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (page == 1 && qualityTypeProductAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(QualityTypeHotSaleProActivity.this, R.string.invalidData);
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityTypeHotSaleProActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,typeProductBean);
                     }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(QualityTypeHotSaleProActivity.this, R.string.unConnectedNetwork);
-        }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityTypeHotSaleProActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,typeProductBean);
+                    }
+                });
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -342,26 +313,13 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     }
 
     @OnClick(R.id.iv_img_service)
-    void skipShopCar(View view) {
+    void skipShopCar() {
         Intent intent = new Intent(QualityTypeHotSaleProActivity.this, ShopCarActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    void goBack() {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

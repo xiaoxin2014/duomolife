@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -21,12 +22,8 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.inteface.MyProgressCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
@@ -37,11 +34,13 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
-import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -51,25 +50,19 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 public class RecommendSuperFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private List<InvitationDetailBean> invitationSearchList = new ArrayList();
     private int page = 1;
     private PullUserInvitationAdapter adapterInvitationAdapter;
     private String type = "recommend";
-    private int uid;
+    private InvitationDetailEntity invitationDetailEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_recycler_loading;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
-        type = "recommend";
         communal_recycler.setBackgroundColor(getResources().getColor(R.color.white));
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
@@ -130,25 +123,29 @@ public class RecommendSuperFragment extends BaseFragment {
                 if (invitationDetailBean != null) {
                     switch (view.getId()) {
                         case R.id.tv_com_art_collect_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 loadHud.show();
                                 setArticleCollect(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(RecommendSuperFragment.this);
                             }
                             break;
                         case R.id.tv_com_art_like_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setArticleLiked(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(RecommendSuperFragment.this);
                             }
                             break;
                     }
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     //    文章收藏
@@ -157,7 +154,7 @@ public class RecommendSuperFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
@@ -189,7 +186,7 @@ public class RecommendSuperFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
@@ -209,117 +206,63 @@ public class RecommendSuperFragment extends BaseFragment {
         setUserVisibleHint(true);
         super.onActivityCreated(savedInstanceState);
     }
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        isLoginStatus();
-    }
 
     @Override
     protected void loadData() {
+        page = 1;
+        getRecommendData();
+
+    }
+
+    private void getRecommendData() {
         String url = Url.BASE_URL + Url.FIND_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("isFllow", "recommend");
-        if (uid != 0) {
-            params.put("fuid", uid);
+        if (userId != 0) {
+            params.put("fuid", userId);
         }
 //        v3.1.3 1 文章帖子
         params.put("version", 1);
-        if (NetWorkUtils.isConnectedByState(getActivity())) {
-            XUtil.Post(url, params, new MyProgressCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    adapterInvitationAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        invitationSearchList.clear();
-                    }
-                    Gson gson = new Gson();
-                    InvitationDetailEntity invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                    if (invitationDetailEntity != null) {
-                        if (invitationDetailEntity.getCode().equals("01")) {
-                            invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                        } else if (!invitationDetailEntity.getCode().equals("02")) {
-                            showToast(getActivity(), invitationDetailEntity.getMsg());
-                        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                adapterInvitationAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                if (invitationDetailEntity != null) {
+                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         if (page == 1) {
-                            adapterInvitationAdapter.setNewData(invitationSearchList);
-                        } else {
-                            adapterInvitationAdapter.notifyDataSetChanged();
+                            invitationSearchList.clear();
                         }
+                        invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
+                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), invitationDetailEntity.getMsg());
                     }
+                    adapterInvitationAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList, invitationDetailEntity);
                 }
+            }
 
-                @Override
-                public void onStarted() {
-                    if (page == 1 && adapterInvitationAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.VISIBLE);
-                        communal_error.setVisibility(View.GONE);
-                    }
-                }
+            @Override
+            public void netClose() {
+                adapterInvitationAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList, invitationDetailEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (page == 1 && adapterInvitationAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    }
-                    adapterInvitationAdapter.loadMoreComplete();
-                }
-            });
-        } else {
-            adapterInvitationAdapter.loadMoreComplete();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
+            @Override
+            public void onError(Throwable throwable) {
+                adapterInvitationAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList, invitationDetailEntity);
+            }
+        });
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("refreshFindData")) {
             page = (int) message.result;
-            loadData();
+            getRecommendData();
         }
     }
 }

@@ -14,20 +14,18 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.ChildProductTypeAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -50,10 +48,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegers;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
@@ -63,9 +61,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
@@ -84,13 +84,6 @@ public class QualityNormalFragment extends BaseFragment {
     RefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    //    滚动至顶部
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private List<LikedProductBean> typeDetails = new ArrayList();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -99,11 +92,11 @@ public class QualityNormalFragment extends BaseFragment {
     private QualityTypeBean qualityTypeBeanChange;
     //    子分类
     private List<QualityTypeBean> childTypeList = new ArrayList<>();
-    private int uid;
     private View headerAdView;
     private View childTypeHeaderView;
     private ChildProductTypeAdapter childProductTypeAdapter;
     private CBViewHolderCreator cbViewHolderCreator;
+    private UserLikedProductEntity likedProductEntity;
 
     @Override
     protected int getContentView() {
@@ -112,7 +105,6 @@ public class QualityNormalFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -126,7 +118,6 @@ public class QualityNormalFragment extends BaseFragment {
                 .create());
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
 
@@ -169,32 +160,11 @@ public class QualityNormalFragment extends BaseFragment {
                     }
                 } else {
                     loadHud.dismiss();
-                    getLoginStatus();
+                    getLoginStatus(QualityNormalFragment.this);
                 }
             }
         });
-        totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(),this.getClass().getSimpleName(),String.valueOf(qualityTypeBeanChange.getId()));
-        communal_load.setVisibility(View.VISIBLE);
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
+        totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), String.valueOf(qualityTypeBeanChange.getId()));
     }
 
     @Override
@@ -204,20 +174,25 @@ public class QualityNormalFragment extends BaseFragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
             getQualityTypePro();
         }
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         if (qualityTypeBeanChange != null) {
             getAdTypeData();
             getChildrenType();
             getQualityTypePro();
         } else {
-            communal_load.setVisibility(View.GONE);
+            NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
         }
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getAdTypeData() {
@@ -250,7 +225,7 @@ public class QualityNormalFragment extends BaseFragment {
                                     }
                                 };
                             }
-                            qTypeView.ad_communal_banner.setPages(getActivity(),cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+                            qTypeView.ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
                                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                         }
@@ -298,78 +273,66 @@ public class QualityNormalFragment extends BaseFragment {
     }
 
     private void getQualityTypePro() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.Q_PRODUCT_TYPE_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            if (!TextUtils.isEmpty(qualityTypeBeanChange.getChildCategory())) {
-                params.put("id", qualityTypeBeanChange.getChildCategory());
-                params.put("pid", qualityTypeBeanChange.getId());
-            } else {
-                params.put("id", qualityTypeBeanChange.getId());
-                params.put("pid", 0);
-            }
-            params.put("orderTypeId", "1");
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        typeDetails.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity typeBean = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (typeBean != null) {
-                        if (typeBean.getCode().equals("01")) {
-                            typeDetails.addAll(typeBean.getLikedProductBeanList());
-                        } else if (typeBean.getCode().equals("02")) {
-                            qualityTypeProductAdapter.loadMoreEnd();
-                        } else {
-                            showToast(getActivity(), typeBean.getMsg());
-                        }
-                        if (page == 1) {
-                            qualityTypeProductAdapter.setNewData(typeDetails);
-                        } else {
-                            qualityTypeProductAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    if (page == 1 && qualityTypeProductAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(getActivity(), R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
+        String url = Url.BASE_URL + Url.Q_PRODUCT_TYPE_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        if (!TextUtils.isEmpty(qualityTypeBeanChange.getChildCategory())) {
+            params.put("id", qualityTypeBeanChange.getChildCategory());
+            params.put("pid", qualityTypeBeanChange.getId());
         } else {
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(getActivity(), R.string.unConnectedNetwork);
+            params.put("id", qualityTypeBeanChange.getId());
+            params.put("pid", 0);
         }
+        params.put("orderTypeId", "1");
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                if (page == 1) {
+                    typeDetails.clear();
+                }
+                Gson gson = new Gson();
+                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProductEntity != null) {
+                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                    } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        qualityTypeProductAdapter.loadMoreEnd();
+                    } else {
+                        showToast(getActivity(), likedProductEntity.getMsg());
+                    }
+                    qualityTypeProductAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+                }
+            }
+
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(getActivity(), R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+            }
+        });
     }
 
     class QTypeView {
@@ -482,8 +445,6 @@ public class QualityNormalFragment extends BaseFragment {
             qualityTypeBeanChange.setId(getIntegers(bundle.getString(CATEGORY_ID)));
             qualityTypeBeanChange.setType(getIntegers(bundle.getString(CATEGORY_TYPE)));
             qualityTypeBeanChange.setName(getStrings(bundle.getString(CATEGORY_NAME)));
-        } else {
-            return;
         }
     }
 
@@ -518,14 +479,6 @@ public class QualityNormalFragment extends BaseFragment {
             communal_recycler.scrollToPosition(mVisibleCount);
         }
         communal_recycler.smoothScrollToPosition(0);
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @Override

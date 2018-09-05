@@ -7,7 +7,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -20,12 +19,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
@@ -33,9 +32,8 @@ import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity.QNewProTimeShaftBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -50,7 +48,7 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -63,15 +61,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -84,7 +85,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
  */
 public class QualityNewProActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -118,13 +119,13 @@ public class QualityNewProActivity extends BaseActivity {
     private String timeShaftDay;
     private QNewProView qNewProView;
     private Badge badge;
-    private int uid;
     private CustomPopWindow mCustomPopWindow;
     private View indentPopWindow;
     private PopupWindowView popupWindowView;
     private TimeShaftAdapter timeShaftAdapter;
     private View headerView;
     private CBViewHolderCreator cbViewHolderCreator;
+    private UserLikedProductEntity likedProductEntity;
 
     @Override
     protected int getContentView() {
@@ -133,7 +134,6 @@ public class QualityNewProActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         iv_img_share.setVisibility(View.GONE);
         tv_header_titleAll.setText("新品发布");
         tl_quality_bar.setSelected(true);
@@ -146,7 +146,6 @@ public class QualityNewProActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityNewProActivity.this, 2));
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -244,7 +243,7 @@ public class QualityNewProActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus();
+                        getLoginStatus(QualityNewProActivity.this);
                     }
                 }
             }
@@ -259,9 +258,18 @@ public class QualityNewProActivity extends BaseActivity {
         communal_load.setVisibility(View.VISIBLE);
         totalPersonalTrajectory = insertNewTotalData(QualityNewProActivity.this);
     }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
 
     @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+    @Override
     protected void loadData() {
+        page = 1;
         getNewProShaft();
         getNewProAd();
         getCarCount();
@@ -270,8 +278,8 @@ public class QualityNewProActivity extends BaseActivity {
     private void getNewProAd() {
         String url = Url.BASE_URL + Url.Q_NEW_PRO_AD;
         if (NetWorkUtils.checkNet(QualityNewProActivity.this)) {
-            Map<String,Object> params = new HashMap<>();
-            params.put("vidoShow","1");
+            Map<String, Object> params = new HashMap<>();
+            params.put("vidoShow", "1");
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -282,11 +290,11 @@ public class QualityNewProActivity extends BaseActivity {
                     if (qualityAdLoop != null) {
                         if (qualityAdLoop.getCode().equals("01")) {
                             adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
-                            if(cbViewHolderCreator ==null){
+                            if (cbViewHolderCreator == null) {
                                 cbViewHolderCreator = new CBViewHolderCreator() {
                                     @Override
                                     public Holder createHolder(View itemView) {
-                                        return new CommunalAdHolderView(itemView,QualityNewProActivity.this,true);
+                                        return new CommunalAdHolderView(itemView, QualityNewProActivity.this, true);
                                     }
 
                                     @Override
@@ -295,8 +303,8 @@ public class QualityNewProActivity extends BaseActivity {
                                     }
                                 };
                             }
-                            qNewProView.ad_communal_banner.setPages(QualityNewProActivity.this,cbViewHolderCreator,adBeanList).setCanLoop(true)
-                                    .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius,R.drawable.selected_radius})
+                            qNewProView.ad_communal_banner.setPages(QualityNewProActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
+                                    .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                         }
                         qualityTypeProductAdapter.removeAllFooterView();
@@ -360,26 +368,6 @@ public class QualityNewProActivity extends BaseActivity {
         getCarCount();
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -387,91 +375,82 @@ public class QualityNewProActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
+            page = 1;
             getQualityNewPro();
             getCarCount();
         }
     }
 
     private void getQualityNewPro() {
-        if (NetWorkUtils.checkNet(QualityNewProActivity.this) && !TextUtils.isEmpty(timeShaftDay)) {
-            String url = Url.BASE_URL + Url.Q_NEW_PRO_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("newReleaseDay", timeShaftDay);
-            params.put("currentPage", page);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            if(userId>0){
-                params.put("uid",userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        newProList.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity typeBean = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (typeBean != null) {
-                        if (typeBean.getCode().equals("01")) {
-                            newProList.addAll(typeBean.getLikedProductBeanList());
-                        } else if (!typeBean.getCode().equals("02")) {
-                            showToast(QualityNewProActivity.this, typeBean.getMsg());
-                        }
-                        if (page == 1) {
-                            qualityTypeProductAdapter.setNewData(newProList);
-                        } else {
-                            qualityTypeProductAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (page == 1 && qualityTypeProductAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(QualityNewProActivity.this, R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(QualityNewProActivity.this, R.string.unConnectedNetwork);
+        String url = Url.BASE_URL + Url.Q_NEW_PRO_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("newReleaseDay", timeShaftDay);
+        params.put("currentPage", page);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityNewProActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                communal_load.setVisibility(View.GONE);
+                communal_error.setVisibility(View.GONE);
+                Gson gson = new Gson();
+                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProductEntity != null) {
+                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            newProList.clear();
+                        }
+                        newProList.addAll(likedProductEntity.getLikedProductBeanList());
+                    } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityNewProActivity.this, likedProductEntity.getMsg());
+                    }
+                    qualityTypeProductAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(QualityNewProActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(QualityNewProActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
+            }
+        });
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityNewProActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -519,14 +498,6 @@ public class QualityNewProActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     class PopupWindowView {
@@ -587,20 +558,15 @@ public class QualityNewProActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && qNewProView.ad_communal_banner!=null&&!qNewProView.ad_communal_banner.isTurning()) {
+            if (adBeanList.size() > 0 && qNewProView.ad_communal_banner != null && !qNewProView.ad_communal_banner.isTurning()) {
                 qNewProView.ad_communal_banner.setCanScroll(true);
                 qNewProView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                 qNewProView.ad_communal_banner.setPointViewVisible(true);
             }
         } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (qNewProView.ad_communal_banner!=null&&qNewProView.ad_communal_banner.isTurning()) {
+            if (qNewProView.ad_communal_banner != null && qNewProView.ad_communal_banner.isTurning()) {
                 qNewProView.ad_communal_banner.setCanScroll(false);
                 qNewProView.ad_communal_banner.stopTurning();
                 qNewProView.ad_communal_banner.setPointViewVisible(false);

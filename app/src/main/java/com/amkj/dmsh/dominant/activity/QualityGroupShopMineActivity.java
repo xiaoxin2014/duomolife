@@ -10,28 +10,25 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -44,11 +41,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 ;
@@ -61,18 +61,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
  */
 public class QualityGroupShopMineActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -82,13 +76,13 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     private float screenHeight;
     private List<QualityGroupMineBean> qualityGroupMineList = new ArrayList<>();
     private QualityGroupMineAdapter qualityGroupMineAdapter;
-    private int uid;
     private String payWay;
     private CustomPopWindow mCustomPopWindow;
     private QualityGroupMineBean qualityGroupMineBean;
     private QualityCreateWeChatPayIndentBean qualityWeChatIndent;
     private QualityCreateAliPayIndentBean qualityAliPayIndent;
     private boolean isOnPause;
+    private QualityGroupMineEntity qualityGroupMineEntity;
 
     @Override
     protected int getContentView() {
@@ -97,12 +91,10 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
         tv_header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("我的拼团");
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopMineActivity.this));
@@ -113,7 +105,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             public void onLoadMoreRequested() {
                 if (page * TOTAL_COUNT_TWENTY <= qualityGroupMineList.size()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     qualityGroupMineAdapter.loadMoreEnd();
                     qualityGroupMineAdapter.setEnableLoadMore(false);
@@ -172,7 +164,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                             switch (qualityGroupMineBean.getGpStatus()) {
                                 case 3:
                                 case 4:
-                                    if (uid > 0) {
+                                    if (userId > 0) {
                                         View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null);
                                         AutoUtils.autoSize(indentPopWindow);
                                         PopupWindowView popupWindowView = new PopupWindowView();
@@ -183,7 +175,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                                                 .setBgDarkAlpha(0.7f) // 控制亮度
                                                 .create().showAtLocation((View) communal_recycler.getParent(), Gravity.CENTER, 0, 0);
                                     } else {
-                                        getLoginStatus();
+                                        getLoginStatus(QualityGroupShopMineActivity.this);
                                     }
                                     break;
                                 case 1:
@@ -196,9 +188,9 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 //                            intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
 //                            startActivity(intent);
                             Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
-                            intent.putExtra("gpInfoId",String.valueOf(qualityGroupMineBean.getGpInfoId()));
-                            intent.putExtra("gpRecordId",String.valueOf(qualityGroupMineBean.getGpRecordId()));
-                            intent.putExtra("invitePartnerJoin",true);
+                            intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
+                            intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
+                            intent.putExtra("invitePartnerJoin", true);
                             startActivity(intent);
                             break;
                     }
@@ -235,7 +227,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         if (qualityGroupMineBean != null) {
             Map<String, Object> params = new HashMap<>();
             params.put("no", qualityGroupMineBean.getOrderNo());
-            params.put("userId", uid);
+            params.put("userId", userId);
             params.put("buyType", payWay);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -362,105 +354,86 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 //        }
 //    }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                finish();
-            } else {
-                return;
-            }
-        } else if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.GROUP_MINE_INDENT;
-        if (NetWorkUtils.checkNet(QualityGroupShopMineActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            params.put("uid", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    qualityGroupMineAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        qualityGroupMineList.clear();
-                    }
-                    Gson gson = new Gson();
-                    QualityGroupMineEntity qualityGroupMineEntity = gson.fromJson(result, QualityGroupMineEntity.class);
-                    if (qualityGroupMineEntity != null) {
-                        if (qualityGroupMineEntity.getCode().equals("01")) {
-                            for (int i = 0; i < qualityGroupMineEntity.getQualityGroupMineBeanList().size(); i++) {
-                                QualityGroupMineBean qualityGroupMineBean = qualityGroupMineEntity.getQualityGroupMineBeanList().get(i);
-                                qualityGroupMineBean.setGpStatusMsg(qualityGroupMineEntity.getStatus()
-                                        .get(String.valueOf(qualityGroupMineBean.getGpStatus())));
-                                qualityGroupMineList.add(qualityGroupMineBean);
-                            }
-                        } else if (!qualityGroupMineEntity.getCode().equals("02")) {
-                            showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
-                        if (page == 1) {
-                            qualityGroupMineAdapter.setNewData(qualityGroupMineList);
-                        } else {
-                            qualityGroupMineAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    qualityGroupMineAdapter.loadMoreComplete();
-                    showToast(QualityGroupShopMineActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            qualityGroupMineAdapter.loadMoreComplete();
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
-        }
+        page = 1;
+        getData();
+    }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        isOnPause = true;
+    protected boolean isAddLoad() {
+        return true;
+    }
+    @Override
+    protected void getData() {
+        String url = Url.BASE_URL + Url.GROUP_MINE_INDENT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("uid", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityGroupMineAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                qualityGroupMineEntity = gson.fromJson(result, QualityGroupMineEntity.class);
+                if (qualityGroupMineEntity != null) {
+                    if (page == 1) {
+                        qualityGroupMineList.clear();
+                    }
+                    if (qualityGroupMineEntity.getCode().equals(SUCCESS_CODE)) {
+                        for (int i = 0; i < qualityGroupMineEntity.getQualityGroupMineBeanList().size(); i++) {
+                            QualityGroupMineBean qualityGroupMineBean = qualityGroupMineEntity.getQualityGroupMineBeanList().get(i);
+                            qualityGroupMineBean.setGpStatusMsg(qualityGroupMineEntity.getStatus()
+                                    .get(String.valueOf(qualityGroupMineBean.getGpStatus())));
+                            qualityGroupMineList.add(qualityGroupMineBean);
+                        }
+                    } else if (!qualityGroupMineEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
+                    }
+                    qualityGroupMineAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                qualityGroupMineAdapter.loadMoreComplete();
+                smart_communal_refresh.finishRefresh();
+                showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityGroupMineAdapter.loadMoreComplete();
+                showToast(QualityGroupShopMineActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        page = 1;
         loadData();
-        isOnPause = false;
     }
 
     class PopupWindowView {
@@ -493,16 +466,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
-    }
-
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    void goBack() {
         finish();
     }
 }

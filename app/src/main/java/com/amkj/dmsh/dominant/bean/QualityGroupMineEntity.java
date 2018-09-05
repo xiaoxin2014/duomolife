@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Map;
  * class description:请输入类描述
  */
 
-public class QualityGroupMineEntity {
+public class QualityGroupMineEntity extends BaseEntity{
 
     /**
      * result : [{"gpRecordId":30,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"2017-06-20 19:46:06","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":27928,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":32,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"2017-06-20 19:58:52","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":34626,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":27928,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":30,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":27928,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":32,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":34626,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":27928,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":33,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"2017-06-20 20:15:40","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":27928,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":33,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":27928,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":34,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"2017-06-20 20:36:16","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":34626,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":34,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团中，还差1人","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":34626,"gpPrice":"0.01","gpStatus":1},{"gpRecordId":35,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpProductId":17,"productId":4282,"payTime":"2017-06-21 10:50:15","gpSkuId":112,"gpInfoId":1,"gpCreateUserId":27928,"propValueId":"5","productSkuValue":"默认:蓝色","gpStatusMsg":"拼团成功，请等待发货","price":"1098.0","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpParticipant":34626,"gpPrice":"0.01","gpStatus":2},{"gpRecordId":36,"gpPicUrl":"http://img.domolife.cn/platform/XPNthK5KMp.jpg","gpProductId":20,"productId":5965,"payTime":"2017-06-21 11:30:11","gpSkuId":757,"gpInfoId":3,"gpCreateUserId":27928,"propValueId":"335,322","productSkuValue":"默认:夕染,规格:iPhone6s","gpStatusMsg":"拼团中，还差1人","price":"0.01","subtitle":null,"name":"夕染彩绘全包硅胶防摔苹果手机壳  带支架","gpParticipant":0,"gpPrice":"0.1","gpStatus":1}]
@@ -27,8 +28,6 @@ public class QualityGroupMineEntity {
      */
 
     private String currentTime;
-    private String msg;
-    private String code;
     private String second;
     private Map<String, String> status;
     @SerializedName("result")
@@ -40,22 +39,6 @@ public class QualityGroupMineEntity {
 
     public void setCurrentTime(String currentTime) {
         this.currentTime = currentTime;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getSecond() {

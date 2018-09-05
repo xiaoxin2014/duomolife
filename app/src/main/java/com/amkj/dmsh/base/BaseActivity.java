@@ -58,8 +58,6 @@ public abstract class BaseActivity extends AutoLayoutActivity {
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setSize((int) (AutoUtils.getPercentWidth1px() * 50), (int) (AutoUtils.getPercentWidth1px() * 50));
 //                .setDimAmount(0.5f)
-        initViews();
-
         // 重新加载逻辑
         if(isAddLoad()){
             loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {
@@ -70,6 +68,8 @@ public abstract class BaseActivity extends AutoLayoutActivity {
                 }
             }, NetLoadUtils.getQyInstance().getLoadSirCover());
         }
+        initViews();
+
         // 注册当前Activity为订阅者
         EventBus eventBus = EventBus.getDefault();
         eventBus.register(this);
@@ -211,8 +211,24 @@ public abstract class BaseActivity extends AutoLayoutActivity {
     protected abstract int getContentView();
 
     protected abstract void initViews();
+    /**
+     * 获取loadView
+     * @return
+     */
+    protected View getLoadView(){
+        return null;
+    }
+    /**
+     * 是否默认加载
+     * @return
+     */
+    protected boolean isAddLoad(){
+        return false;
+    }
 
     protected abstract void loadData();
+//    获取数据
+    protected void getData(){}
 
     @Override
     protected void onDestroy() {
@@ -269,21 +285,5 @@ public abstract class BaseActivity extends AutoLayoutActivity {
         } else {
             ShortcutBadger.removeCount(getApplicationContext());
         }
-    }
-
-    /**
-     * 获取loadView
-     * @return
-     */
-    protected View getLoadView() {
-        return null;
-    }
-
-    /**
-     * 是否默认加载
-     * @return
-     */
-    protected boolean isAddLoad() {
-        return false;
     }
 }

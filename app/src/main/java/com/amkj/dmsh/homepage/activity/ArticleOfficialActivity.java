@@ -33,6 +33,7 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
@@ -53,8 +54,7 @@ import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.Pro
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -67,7 +67,7 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -88,9 +88,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getUniqueId;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
@@ -99,7 +98,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
@@ -114,7 +115,7 @@ import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
  */
 public class ArticleOfficialActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     @BindView(R.id.tl_normal_bar)
@@ -169,7 +170,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     private List<ProductListBean> searchProductList = new ArrayList();
 
     private ArticleCommentAdapter adapterArticleComment;
-    private int uid;
     private String artId;
     private CoverTitleView coverTitleView;
     private CommunalDetailAdapter communalDescripAdapter;
@@ -180,6 +180,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     private float locationY;
     private CommentCountView commentCountView;
     private View commentHeaderView;
+    private DmlSearchDetailEntity dmlSearchDetailEntity;
 
     @Override
     protected int getContentView() {
@@ -188,8 +189,6 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getUniqueId(ArticleOfficialActivity.this);
-        isLoginStatus();
         toolbar.setSelected(true);
         tv_header_titleAll.setText("");
         Intent intent = getIntent();
@@ -227,7 +226,7 @@ public class ArticleOfficialActivity extends BaseActivity {
             if (dmlSearchCommentBean != null) {
                 switch (view.getId()) {
                     case R.id.tv_comm_comment_like:
-                        if (uid > 0) {
+                        if (userId > 0) {
                             dmlSearchCommentBean.setFavor(!dmlSearchCommentBean.isFavor());
                             int likeNum = dmlSearchCommentBean.getLike_num();
                             dmlSearchCommentBean.setLike_num(dmlSearchCommentBean.isFavor()
@@ -236,19 +235,19 @@ public class ArticleOfficialActivity extends BaseActivity {
                             adapterArticleComment.notifyItemChanged(position + adapterArticleComment.getHeaderLayoutCount());
                             setCommentLike(dmlSearchCommentBean);
                         } else {
-                            getLoginStatus();
+                            getLoginStatus(ArticleOfficialActivity.this);
                         }
                         break;
                     case R.id.tv_comm_comment_receive:
 //                            打开评论
-                        if (uid > 0) {
+                        if (userId > 0) {
                             if (VISIBLE == ll_input_comment.getVisibility()) {
                                 commentViewVisible(GONE, dmlSearchCommentBean);
                             } else {
                                 commentViewVisible(VISIBLE, dmlSearchCommentBean);
                             }
                         } else {
-                            getLoginStatus();
+                            getLoginStatus(ArticleOfficialActivity.this);
                         }
                         break;
                     case R.id.civ_comm_comment_avatar:
@@ -318,7 +317,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                     int couponId = (int) view.getTag(R.id.iv_avatar_tag);
                     int type = (int) view.getTag(R.id.iv_type_tag);
                     if (couponId > 0) {
-                        if (uid != 0) {
+                        if (userId != 0) {
                             if (type == TYPE_COUPON) {
                                 getDirectCoupon(couponId);
                             } else if (type == TYPE_COUPON_PACKAGE) {
@@ -328,7 +327,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            getLoginStatus();
+                            getLoginStatus(ArticleOfficialActivity.this);
                         }
                     }
                     break;
@@ -350,13 +349,13 @@ public class ArticleOfficialActivity extends BaseActivity {
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
-                        if (uid != 0) {
+                        if (userId != 0) {
                             skipAliBCWebView(couponBean.getCouponUrl());
                         } else {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            getLoginStatus();
+                            getLoginStatus(ArticleOfficialActivity.this);
                         }
                     }
                     break;
@@ -372,7 +371,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                             constantMethod.addShopCarGetSku(ArticleOfficialActivity.this, baseAddCarProInfoBean, loadHud);
                         } else {
                             loadHud.dismiss();
-                            getLoginStatus();
+                            getLoginStatus(ArticleOfficialActivity.this);
                         }
                     }
                     break;
@@ -410,26 +409,6 @@ public class ArticleOfficialActivity extends BaseActivity {
         tv_publish_comment.setText(R.string.comment_article_hint);
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -437,14 +416,24 @@ public class ArticleOfficialActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
             loadData();
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
     protected void loadData() {
+        page = 1;
         getArticleData();
         getArticleComment();
     }
@@ -455,8 +444,8 @@ public class ArticleOfficialActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("id", artId);
             params.put("currentPage", page);
-            if (uid > 0) {
-                params.put("uid", uid);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             params.put("showCount", DEFAULT_TOTAL_COUNT);
             params.put("replyCurrentPage", 1);
@@ -482,11 +471,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                             adapterArticleComment.addHeaderView(commentHeaderView);
                             commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
                         }
-                        if (page == 1) {
-                            adapterArticleComment.setNewData(articleCommentList);
-                        } else {
-                            adapterArticleComment.notifyDataSetChanged();
-                        }
+                        adapterArticleComment.notifyDataSetChanged();
                     }
                 }
 
@@ -501,49 +486,50 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
     private void getArticleData() {
-        if (NetWorkUtils.checkNet(ArticleOfficialActivity.this)) {
-            String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", artId);
-            if (uid > 0) {
-                params.put("fuid", uid);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    descripDetailList.clear();
-                    Gson gson = new Gson();
-                    DmlSearchDetailEntity dmlSearchDetailEntity = gson.fromJson(result, DmlSearchDetailEntity.class);
-                    if (dmlSearchDetailEntity != null) {
-                        if (dmlSearchDetailEntity.getCode().equals("01")) {
-                            dmlSearchDetailBean = dmlSearchDetailEntity.getDmlSearchDetailBean();
-                            setSearchData(dmlSearchDetailBean);
-                        } else if (!dmlSearchDetailEntity.getCode().equals("02")) {
-                            showToast(ArticleOfficialActivity.this, dmlSearchDetailEntity.getMsg());
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    if (descripDetailList.size() < 1) {
-                        communal_load.setVisibility(GONE);
-                        communal_error.setVisibility(VISIBLE);
-                    } else {
-                        showToast(ArticleOfficialActivity.this, R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            showToast(ArticleOfficialActivity.this, R.string.unConnectedNetwork);
+        String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", artId);
+        if (userId > 0) {
+            params.put("fuid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(ArticleOfficialActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                communal_load.setVisibility(GONE);
+                communal_error.setVisibility(GONE);
+                descripDetailList.clear();
+                Gson gson = new Gson();
+                dmlSearchDetailEntity = gson.fromJson(result, DmlSearchDetailEntity.class);
+                if (dmlSearchDetailEntity != null) {
+                    if (dmlSearchDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        dmlSearchDetailBean = dmlSearchDetailEntity.getDmlSearchDetailBean();
+                        setSearchData(dmlSearchDetailBean);
+                    } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(ArticleOfficialActivity.this, dmlSearchDetailEntity.getMsg());
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean, dmlSearchDetailEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                showToast(ArticleOfficialActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                showToast(ArticleOfficialActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+            }
+        });
     }
 
     private void setSearchData(DmlSearchDetailBean dmlSearchDetailBean) {
@@ -651,7 +637,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     private void getDirectCoupon(int id) {
         String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("couponId", id);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -683,7 +669,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     private void getDirectCouponPackage(int couponId) {
         String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
-        params.put("uId", uid);
+        params.put("uId", userId);
         params.put("cpId", couponId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -714,13 +700,13 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     public void skipAliBCWebView(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(ArticleOfficialActivity.this);
             }
         } else {
             showToast(ArticleOfficialActivity.this, "地址缺失");
@@ -785,7 +771,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
         XUtil.Post(url, params, new MyCallBack<String>() {
@@ -805,7 +791,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //关注id
         params.put("id", dmlSearchDetailBean.getId());
         params.put("favortype", "doc");
@@ -836,7 +822,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", dmlSearchDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
@@ -921,7 +907,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                                 ? dmlSearchCommentBean.getMainContentId() : dmlSearchCommentBean.getId());
                     }
                     communalComment.setObjId(dmlSearchDetailBean.getId());
-                    communalComment.setUserId(uid);
+                    communalComment.setUserId(userId);
                     communalComment.setToUid(dmlSearchDetailBean.getUid());
                     sendComment(communalComment);
                 } else {
@@ -955,7 +941,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     //    页面分享
     @OnClick(R.id.tv_header_shared)
-    void sendShare(View view) {
+    void sendShare() {
         setShareData();
     }
 
@@ -966,7 +952,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                     , getStrings(dmlSearchDetailBean.getTitle())
                     , getStrings(dmlSearchDetailBean.getDigest())
                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
-                    + dmlSearchDetailBean.getId() + (uid > 0 ? "&sid=" + uid : "")));
+                    + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")));
             umShareAction.setOnShareSuccessListener(() ->
                     addArticleShareCount(dmlSearchDetailBean.getId())
             );
@@ -980,14 +966,14 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
-        if (uid > 0) {
+        if (userId > 0) {
             if (VISIBLE == ll_input_comment.getVisibility()) {
                 commentViewVisible(GONE, null);
             } else {
                 commentViewVisible(VISIBLE, null);
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(ArticleOfficialActivity.this);
         }
     }
 
@@ -995,10 +981,10 @@ public class ArticleOfficialActivity extends BaseActivity {
     @OnClick(R.id.tv_article_bottom_like)
     void likeArticle(View view) {
         if (dmlSearchDetailBean != null) {
-            if (uid > 0) {
+            if (userId > 0) {
                 setArticleLike();
             } else {
-                getLoginStatus();
+                getLoginStatus(ArticleOfficialActivity.this);
             }
         }
     }
@@ -1007,11 +993,11 @@ public class ArticleOfficialActivity extends BaseActivity {
     @OnClick(R.id.tv_article_bottom_collect)
     void collectArticle(View view) {
         if (dmlSearchDetailBean != null) {
-            if (uid > 0) {
+            if (userId > 0) {
                 loadHud.show();
                 setArticleCollect();
             } else {
-                getLoginStatus();
+                getLoginStatus(ArticleOfficialActivity.this);
             }
         }
     }
@@ -1089,7 +1075,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         }
 
         @OnClick(R.id.tv_article_label)
-        void skipArticleLabel(View view) {
+        void skipArticleLabel() {
             if (dmlSearchDetailBean.getCategory_id() > 0
                     && !TextUtils.isEmpty(dmlSearchDetailBean.getCategory_title())) {
                 Intent intent = new Intent(ArticleOfficialActivity.this, ArticleTypeActivity.class);

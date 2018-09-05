@@ -15,15 +15,11 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.adapter.FindPagerAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
 import com.amkj.dmsh.find.bean.FindTopicDetailEntity;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.utils.AppBarStateChangeListener;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -44,9 +40,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.JZVideoPlayer;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.utils.AppBarStateChangeListener.State.COLLAPSED;
 
@@ -91,7 +90,6 @@ public class FindTopicDetailsActivity extends BaseActivity {
     private FindPagerAdapter findPagerAdapter;
     public static final String TOPIC_TYPE = "topic";
     private String topicId;
-    private int uid;
     private FindHotTopicBean findHotTopicBean;
 
     @Override
@@ -102,7 +100,6 @@ public class FindTopicDetailsActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_header_shared.setVisibility(View.GONE);
-        isLoginStatus();
         Intent intent = getIntent();
         topicId = intent.getStringExtra("topicId");
         if (TextUtils.isEmpty(topicId)) {
@@ -129,6 +126,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
                 tv_find_release_topic.setBackground(drawable);
             }
         });
+
         ab_find_topic_layout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state, int scrollY) {
@@ -145,8 +143,8 @@ public class FindTopicDetailsActivity extends BaseActivity {
             String url = BASE_URL + Url.F_TOPIC_DES;
             Map<String, Object> params = new HashMap<>();
             params.put("id", topicId);
-            if (uid > 0) {
-                params.put("uid", uid);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -155,12 +153,12 @@ public class FindTopicDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     FindTopicDetailEntity findHotTopicEntity = gson.fromJson(result, FindTopicDetailEntity.class);
                     if (findHotTopicEntity != null) {
-                        if (findHotTopicEntity.getCode().equals("01")) {
+                        if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                             findHotTopicBean = findHotTopicEntity.getFindHotTopicBean();
                             if (findHotTopicBean != null) {
                                 setTopicData(findHotTopicBean);
                             }
-                        } else if (!findHotTopicEntity.getCode().equals("02")) {
+                        } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(FindTopicDetailsActivity.this, findHotTopicEntity.getMsg());
                         }
                     }
@@ -184,7 +182,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_TOPIC_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", findHotTopicBean.getId());
         params.put("type", "findtopic");
@@ -243,44 +241,13 @@ public class FindTopicDetailsActivity extends BaseActivity {
         smart_refresh_find.finishRefresh();
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(FindTopicDetailsActivity.this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    void goBack() {
         finish();
     }
 
     @OnClick(R.id.tv_find_release_topic)
-    void releaseInvitation(View view) {
+    void releaseInvitation() {
         if (findHotTopicBean != null) {
             Intent intent = new Intent(FindTopicDetailsActivity.this, ReleaseImgArticleActivity.class);
             intent.putExtra("topicId", String.valueOf(topicId));
@@ -291,12 +258,12 @@ public class FindTopicDetailsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_find_topic_collect)
-    void collectTopic(View view) {
+    void collectTopic() {
         if (findHotTopicBean != null) {
-            if (uid > 0) {
+            if (userId > 0) {
                 getCollectTopic();
             } else {
-                getLoginStatus();
+                getLoginStatus(FindTopicDetailsActivity.this);
             }
         }
     }

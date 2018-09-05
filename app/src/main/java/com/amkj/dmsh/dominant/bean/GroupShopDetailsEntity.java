@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -12,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  * class description:请输入类描述
  */
 
-public class GroupShopDetailsEntity {
+public class GroupShopDetailsEntity extends BaseEntity{
 
     /**
      * result : {"gpCount":12,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpStartTime":"2017-06-01 00:00:00","gpCreateStatus":"还差一人成团","gpInfoId":1,"productSkuValue":"默认:蓝色","gpProductQuantity":123,"gpType":"2人团","price":"1098.0","coverImage":"http://img.domolife.cn/platform/F4bZMMKEFF1497410875842.jpeg","quantityStatus":{"quantityStatusMsg":"库存足够，可开团和参团","quantityStatusId":1002},"images":"http://img.domolife.cn/platform/F4bZMMKEFF1497410875842.jpeg,http://img.domolife.cn/platform/NBCDtS3nBa1497410876188.jpeg,http://img.domolife.cn/platform/3atQYAZQ4X1497410876254.jpeg","productId":4282,"gpProductId":17,"gpEndTime":"2017-06-09 00:00:00","gpSkuId":112,"skuQuantity":998,"propValueId":"5","goodsAreaLabel":"拼团","subtitle":"","name":"北鼎K206钻石电热水壶礼盒装","gpPrice":"12.0"}
@@ -24,8 +25,6 @@ public class GroupShopDetailsEntity {
     @SerializedName("result")
     private GroupShopDetailsBean groupShopDetailsBean;
     private String currentTime;
-    private String msg;
-    private String code;
     private long second;
 
     public GroupShopDetailsBean getGroupShopDetailsBean() {
@@ -42,22 +41,6 @@ public class GroupShopDetailsEntity {
 
     public void setCurrentTime(String currentTime) {
         this.currentTime = currentTime;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public long getSecond() {

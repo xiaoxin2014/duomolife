@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -25,8 +26,6 @@ import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity;
 import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity.QualityHomeTypeBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -51,18 +50,18 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
 ;
@@ -78,12 +77,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
     RefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<QualityHomeTypeBean> typeBeanArrayList = new ArrayList<>();
@@ -92,7 +85,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private QualityTypeAreaNewAdapter qualityTypeAreaAdapter;
     private QualityTypeAreaNewAdapter qualityTypeCenterAdapter;
     private QualityGoodNewProAdapter qualityGoodNewProAdapter;
-    private int uid;
     private QualityTypeView qualityTypeView;
     private CBViewHolderCreator cbViewHolderCreator;
 
@@ -103,12 +95,10 @@ public class QualityDefaultNewFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         communal_recycler.setLayoutManager(gridLayoutManager);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
 //        好物
@@ -154,7 +144,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                         break;
                     case "ad":
                         CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) attribute;
-                        setSkipPath(getActivity(),getStrings(communalADActivityBean.getAndroidLink()),false);
+                        setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
                         break;
                 }
 
@@ -180,20 +170,25 @@ public class QualityDefaultNewFragment extends BaseFragment {
                     }
                 } else {
                     loadHud.dismiss();
-                    getLoginStatus();
+                    getLoginStatus(QualityDefaultNewFragment.this);
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName());
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getAdLoop();
         getHomeIndexType();
         getCenterType();
         getGoodsPro();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getAdLoop() {
@@ -303,59 +298,53 @@ public class QualityDefaultNewFragment extends BaseFragment {
 
     private void getGoodsPro() {
         String url = Url.BASE_URL + Url.QUALITY_SHOP_GOODS_PRO;
-        if (NetWorkUtils.checkNet(getActivity())) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("version", 1);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    qualityGoodNewProAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        goodsProList.clear();
-                    }
-                    MultiTypeJsonParser<Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<Attribute>()
-                            .registerTypeElementName("objectType")
-                            .registerTargetClass(Attribute.class)
-                            .registerTypeElementValueWithClassType("product", LikedProductBean.class)
-                            .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
-                            .build();
-                    QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
-                    if (qualityGoodProductEntity != null) {
-                        if (qualityGoodProductEntity.getCode().equals("01")) {
-                            goodsProList.addAll(qualityGoodProductEntity.getGoodProductList());
-                        } else if (qualityGoodProductEntity.getCode().equals("02")) {
-                            qualityGoodNewProAdapter.loadMoreEnd();
-                        } else {
-                            qualityGoodNewProAdapter.loadMoreEnd();
-                            showToast(getActivity(), qualityGoodProductEntity.getMsg());
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("version", 1);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityGoodNewProAdapter.loadMoreComplete();
+                MultiTypeJsonParser<Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<Attribute>()
+                        .registerTypeElementName("objectType")
+                        .registerTargetClass(Attribute.class)
+                        .registerTypeElementValueWithClassType("product", LikedProductBean.class)
+                        .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
+                        .build();
+                QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
+                if (qualityGoodProductEntity != null) {
+                    if (qualityGoodProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            goodsProList.clear();
                         }
-                    }
-                    if (page == 1) {
-                        qualityGoodNewProAdapter.setNewData(goodsProList);
+                        goodsProList.addAll(qualityGoodProductEntity.getGoodProductList());
+                    } else if (qualityGoodProductEntity.getCode().equals(EMPTY_CODE)) {
+                        qualityGoodNewProAdapter.loadMoreEnd();
                     } else {
-                        qualityGoodNewProAdapter.notifyDataSetChanged();
+                        qualityGoodNewProAdapter.loadMoreEnd();
+                        showToast(getActivity(), qualityGoodProductEntity.getMsg());
                     }
-
                 }
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                qualityGoodNewProAdapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityGoodNewProAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityGoodNewProAdapter.loadMoreComplete();
-            showToast(getActivity(), R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                qualityGoodNewProAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityGoodNewProAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+        });
     }
 
     private void getCenterType() {
@@ -367,7 +356,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                 Gson gson = new Gson();
                 QualityHomeTypeEntity homeTypeEntity = gson.fromJson(result, QualityHomeTypeEntity.class);
                 if (homeTypeEntity != null) {
-                    if (homeTypeEntity.getCode().equals("01")) {
+                    if (homeTypeEntity.getCode().equals(SUCCESS_CODE)) {
                         typeBeanCenterList.clear();
                         for (int i = 0; i < homeTypeEntity.getQualityHomeTypeList().size(); i++) {
                             QualityHomeTypeBean qualityHomeTypeBean = homeTypeEntity.getQualityHomeTypeList().get(i);
@@ -425,7 +414,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                                 }
                             }
                         });
-                    } else if (!homeTypeEntity.getCode().equals("02")) {
+                    } else if (!homeTypeEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), homeTypeEntity.getMsg());
                     }
                 }
@@ -469,37 +458,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
         });
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
     class QualityTypeView {
         @BindView(R.id.communal_recycler_wrap)
         RecyclerView communal_recycler_wrap;
@@ -527,14 +485,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
                     .setHeaderClickListener(null)
                     .create());
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @Override

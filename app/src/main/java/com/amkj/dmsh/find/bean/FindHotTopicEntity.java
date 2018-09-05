@@ -1,5 +1,6 @@
 package com.amkj.dmsh.find.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,38 +13,19 @@ import java.util.List;
  * class description:发现 - 热门话题
  */
 
-public class FindHotTopicEntity {
+public class FindHotTopicEntity extends BaseEntity{
 
     /**
      * result : [{"img_url":"http://image.domolife.cn/platform/sF8YYfFwxA1511248274657.jpg","istop":0,"participants_number":0,"id":1,"title":"剁手双十二","content":"千万好礼等你来"}]
      * msg : 请求成功
      * code : 01
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<FindHotTopicBean> hotTopicList;
 
     public static FindHotTopicEntity objectFromData(String str) {
 
         return new Gson().fromJson(str, FindHotTopicEntity.class);
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public List<FindHotTopicBean> getHotTopicList() {

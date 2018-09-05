@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -29,8 +30,6 @@ import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TagBe
 import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TopTagListBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
@@ -41,7 +40,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,10 +51,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -68,7 +71,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class FindTagDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -78,13 +81,6 @@ public class FindTagDetailsActivity extends BaseActivity {
     TextView tv_header_title;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
-    private int uid;
     private int page = 1;
     private int scrollY = 0;
     private float screenHeight;
@@ -98,6 +94,7 @@ public class FindTagDetailsActivity extends BaseActivity {
     private TagRelProAdapter tagRelProAdapter;
     private List<TopTagListBean> topTagList = new ArrayList<>();
     private TagDetailHorizontalAdapter tagDetailHorizontalAdapter;
+    private InvitationDetailEntity invitationDetailEntity;
 
     @Override
     protected int getContentView() {
@@ -106,7 +103,6 @@ public class FindTagDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_shared.setVisibility(View.GONE);
         try {
             Intent intent = getIntent();
@@ -119,8 +115,7 @@ public class FindTagDetailsActivity extends BaseActivity {
             finish();
         }
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-                loadData();
+            loadData();
         });
         communal_recycler.setBackgroundColor(getResources().getColor(R.color.white));
         communal_recycler.setLayoutManager(new LinearLayoutManager(FindTagDetailsActivity.this));
@@ -188,18 +183,18 @@ public class FindTagDetailsActivity extends BaseActivity {
                 if (invitationDetailBean != null) {
                     switch (view.getId()) {
                         case R.id.tv_com_art_collect_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 loadHud.show();
                                 setArticleCollect(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(FindTagDetailsActivity.this);
                             }
                             break;
                         case R.id.tv_com_art_like_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setArticleLiked(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(FindTagDetailsActivity.this);
                             }
                             break;
                     }
@@ -237,65 +232,72 @@ public class FindTagDetailsActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getRelevanceTagList();
         getRelevanceTagOtherInfo();
     }
 
-    private void getRelevanceTagList() {
-        if (NetWorkUtils.checkNet(FindTagDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.FIND_RELEVANCE_TAG;
-            Map<String, Object> params = new HashMap<>();
-            if (uid > 0) {
-                params.put("fuid", uid);
-            }
-            params.put("currentPage", page);
-            params.put("tagId", tagId);
-            params.put("version", 1);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitationAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        invitationSearchList.clear();
-                    }
-                    Gson gson = new Gson();
-                    InvitationDetailEntity invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                    if (invitationDetailEntity != null) {
-                        if (invitationDetailEntity.getCode().equals("01")) {
-                            invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                        } else if (!invitationDetailEntity.getCode().equals("02")) {
-                            showToast(FindTagDetailsActivity.this, invitationDetailEntity.getMsg());
-                        }
-                        if (page == 1) {
-                            adapterInvitationAdapter.setNewData(invitationSearchList);
-                        } else {
-                            adapterInvitationAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitationAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    showToast(FindTagDetailsActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            adapterInvitationAdapter.loadMoreComplete();
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    private void getRelevanceTagList() {
+        String url = Url.BASE_URL + Url.FIND_RELEVANCE_TAG;
+        Map<String, Object> params = new HashMap<>();
+        if (userId > 0) {
+            params.put("fuid", userId);
         }
+        params.put("currentPage", page);
+        params.put("tagId", tagId);
+        params.put("version", 1);
+        NetLoadUtils.getQyInstance().loadNetDataPost(FindTagDetailsActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                adapterInvitationAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                if (invitationDetailEntity != null) {
+                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            invitationSearchList.clear();
+                        }
+                        invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
+                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(FindTagDetailsActivity.this, invitationDetailEntity.getMsg());
+                    }
+                    adapterInvitationAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                }
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                adapterInvitationAdapter.loadMoreComplete();
+                showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                adapterInvitationAdapter.loadMoreComplete();
+                showToast(FindTagDetailsActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+        });
     }
 
     /**
@@ -357,36 +359,16 @@ public class FindTagDetailsActivity extends BaseActivity {
             } else {
                 tagHeaderView.rel_tag_info.setVisibility(View.GONE);
             }
-            if(relevanceTagInfoBean.getTopTagList()!=null&&relevanceTagInfoBean.getTopTagList().size()>0){
+            if (relevanceTagInfoBean.getTopTagList() != null && relevanceTagInfoBean.getTopTagList().size() > 0) {
                 tagHeaderView.rv_tag_detail.setVisibility(View.VISIBLE);
                 topTagList.clear();
                 topTagList.addAll(relevanceTagInfoBean.getTopTagList());
                 tagDetailHorizontalAdapter.notifyDataSetChanged();
-            }else{
+            } else {
                 tagHeaderView.rv_tag_detail.setVisibility(View.GONE);
             }
         } else {
             tagHeaderView.ll_tag_info.setVisibility(View.GONE);
-        }
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
         }
     }
 
@@ -397,7 +379,6 @@ public class FindTagDetailsActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
             loadData();
         }
     }
@@ -408,7 +389,7 @@ public class FindTagDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
@@ -440,7 +421,7 @@ public class FindTagDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
@@ -470,25 +451,6 @@ public class FindTagDetailsActivity extends BaseActivity {
                     , ""
                     , "");
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     class TagHeaderView {
@@ -536,18 +498,17 @@ public class FindTagDetailsActivity extends BaseActivity {
                     }
                 }
             });
-            rv_tag_detail.setLayoutManager(new LinearLayoutManager(FindTagDetailsActivity.this,LinearLayoutManager.HORIZONTAL,false));
+            rv_tag_detail.setLayoutManager(new LinearLayoutManager(FindTagDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false));
             tagDetailHorizontalAdapter = new TagDetailHorizontalAdapter(topTagList);
             rv_tag_detail.setAdapter(tagDetailHorizontalAdapter);
             tagDetailHorizontalAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     TopTagListBean topTagListBean = (TopTagListBean) view.getTag();
-                    if(topTagListBean!=null){
+                    if (topTagListBean != null) {
                         tagId = String.valueOf(topTagListBean.getId());
-                        page = 1;
                         loadData();
-                        communal_load.setVisibility(View.VISIBLE);
+                        NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
                     }
                 }
             });

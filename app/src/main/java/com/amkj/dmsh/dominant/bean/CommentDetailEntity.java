@@ -1,5 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class CommentDetailEntity {
+public class CommentDetailEntity extends BaseEntity{
 
     /**
      * result : {"like_num":1,"obj_id":9769,"isFavor":false,"avatar":"http://q.qlogo.cn/qqapp/1105138467/10A168AD00FC6BF32AD94988B337C848/100","replyCommList":[{"like_num":1,"obj_id":9769,"isFavor":false,"avatar":"http://img.domolife.cn/test/20161223092818.jpg","content":"在我的里面，点击私人助手联系","is_reply":1,"reply_uid":29436,"uid":113,"is_at":0,"to_uid":0,"nickname":"多么生活","ctime":"02-21","isReplyMain":true,"id":3138,"nickname1":"1376326****","atList":[]},{"like_num":0,"obj_id":9769,"isFavor":false,"avatar":"http://img.domolife.cn/test/20161223092818.jpg","content":"可以联系一下app的私人秘书给你处理下哈","is_reply":1,"reply_uid":29436,"uid":113,"is_at":0,"to_uid":0,"nickname":"多么生活","ctime":"02-23","isReplyMain":true,"id":3153,"nickname1":"1376326****","atList":[]},{"like_num":0,"obj_id":9769,"isFavor":false,"avatar":"http://img.domolife.cn/test/20161223092818.jpg","content":"好的，不好意思","is_reply":1,"reply_uid":29436,"uid":113,"is_at":0,"to_uid":0,"nickname":"多么生活","ctime":"02-24","isReplyMain":true,"id":3165,"nickname1":"1376326****","atList":[]},{"like_num":0,"obj_id":9769,"isFavor":false,"avatar":"http://q.qlogo.cn/qqapp/1105138467/605725B499344A11B43786FE9156EC32/100","content":"直接联系app的私人秘书给你处理哈","is_reply":1,"reply_uid":29436,"uid":24599,"is_at":1,"to_uid":1,"nickname":"｀繼續___:。","ctime":"02-25","isReplyMain":true,"id":3174,"nickname1":"1376326****","atList":[]}],"content":"想问一下买了东西想换货找哪位，在哪找","is_reply":0,"uid":29436,"is_at":1,"to_uid":1,"nickname":"1376326****","ctime":"02-18","id":3125,"atList":[]}
@@ -21,8 +22,6 @@ public class CommentDetailEntity {
 
     @SerializedName("result")
     private CommentDetailBean commentDetailBean;
-    private String msg;
-    private String code;
 
     public CommentDetailBean getCommentDetailBean() {
         return commentDetailBean;
@@ -30,22 +29,6 @@ public class CommentDetailEntity {
 
     public void setCommentDetailBean(CommentDetailBean commentDetailBean) {
         this.commentDetailBean = commentDetailBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static class CommentDetailBean {

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -27,6 +28,7 @@ import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity.CouponGiftBean;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -36,7 +38,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
@@ -69,7 +72,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
  */
 public class QualityNewUserActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -83,12 +86,6 @@ public class QualityNewUserActivity extends BaseActivity {
     FrameLayout fl_header_service;
     @BindView(R.id.iv_img_share)
     ImageView iv_img_share;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int scrollY;
     private float screenHeight;
     private List<QualityNewUserShopBean> qualityNewUserShopList = new ArrayList();
@@ -100,6 +97,7 @@ public class QualityNewUserActivity extends BaseActivity {
     private View qNewUserCoverView;
     private String newUserImgUrl;
     private NewUserCouponAdapter newUserCouponAdapter;
+    private QualityNewUserShopEntity qualityNewUserShopEntity;
 
     @Override
     protected int getContentView() {
@@ -220,10 +218,17 @@ public class QualityNewUserActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
 
     @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+    @Override
     protected void loadData() {
-        communal_load.setVisibility(View.VISIBLE);
         getQualityTypePro();
         getNewUserCouponProduct();
         getCoverImg();
@@ -259,57 +264,56 @@ public class QualityNewUserActivity extends BaseActivity {
     }
 
     private void getQualityTypePro() {
-        if (NetWorkUtils.checkNet(QualityNewUserActivity.this)) {
-            String url = Url.BASE_URL + Url.QUALITY_NEW_USER_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", 1);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityNewUserShopAdapter.loadMoreComplete();
-                    qualityNewUserShopList.clear();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    Gson gson = new Gson();
-                    QualityNewUserShopEntity qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
-                    if (qualityNewUserShopEntity != null) {
-                        if (qualityNewUserShopEntity.getCode().equals("01")) {
-                            qualityNewUserShopList.addAll(qualityNewUserShopEntity.getQualityNewUserShopList());
-                        } else if (!qualityNewUserShopEntity.getCode().equals("02")) {
-                            showToast(QualityNewUserActivity.this, qualityNewUserShopEntity.getMsg());
-                        }
-                        if (qualityNewUserCouponList.size() > 0) {
-                            qualityNewUserShopList.addAll(qualityNewUserCouponList);
-                            qualityNewUserShopAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityNewUserShopAdapter.loadMoreComplete();
-                    if (qualityNewUserShopList.size() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(QualityNewUserActivity.this, R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityNewUserShopAdapter.loadMoreComplete();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
+        String url = Url.BASE_URL + Url.QUALITY_NEW_USER_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", 1);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityNewUserActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityNewUserShopAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
+                if (qualityNewUserShopEntity != null) {
+                    if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
+                        qualityNewUserShopList.clear();
+                        qualityNewUserShopList.addAll(qualityNewUserShopEntity.getQualityNewUserShopList());
+                    } else if (!qualityNewUserShopEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityNewUserActivity.this, qualityNewUserShopEntity.getMsg());
+                    }
+                    if (qualityNewUserCouponList.size() > 0) {
+                        qualityNewUserShopList.addAll(qualityNewUserCouponList);
+                        qualityNewUserShopAdapter.notifyDataSetChanged();
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                qualityNewUserShopAdapter.loadMoreComplete();
+                showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityNewUserShopAdapter.loadMoreComplete();
+                showToast(QualityNewUserActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
+            }
+        });
     }
 
     /**
@@ -452,13 +456,6 @@ public class QualityNewUserActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     //    页面分享

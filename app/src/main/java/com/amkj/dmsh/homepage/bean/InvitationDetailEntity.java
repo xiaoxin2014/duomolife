@@ -3,6 +3,7 @@ package com.amkj.dmsh.homepage.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 import com.amkj.dmsh.homepage.bean.InvitationOfficialEntity.InvitationArticleBean.DescriptionBean;
@@ -12,16 +13,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/8/30.
  */
-public class InvitationDetailEntity {
+public class InvitationDetailEntity extends BaseEntity{
 
     /**
      * result : [{"tags":[{"tag_name":"ee","tag_id":44},{"tag_name":"ff","tag_id":45},{"tag_name":"防嗮","tag_id":1},{"tag_name":"美白","tag_id":2},{"tag_name":"时尚","tag_id":3}],"uid":23326,"nickname":"15070840241","avatar":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","articletype":2,"ctime":"3天9小时40分","picture":[{"object_id":4066,"path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","type":1},{"object_id":4066,"path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","type":1}],"id":4066,"flag":false,"isFavor":false,"description":"王宝强于8月14日凌晨1点提出对马蓉的离婚申请http://baidu.com/2015-11-28/565920e403df4.jpg","path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","favor":0,"view":0,"comment":0},{"tags":[{"tag_name":"川菜","tag_id":42},{"tag_name":"粤菜","tag_id":43},{"tag_name":"防嗮","tag_id":1},{"tag_name":"美白","tag_id":2},{"tag_name":"时尚","tag_id":3}],"uid":23326,"nickname":"15070840241","avatar":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","articletype":4,"ctime":"3天9小时48分","picture":[{"object_id":4065,"path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","type":1},{"object_id":4065,"path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","type":1}],"id":4065,"flag":false,"isFavor":false,"description":"向你们推荐一款精品美食http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","favor":1,"view":0,"comment":0},{"tags":[{"tag_name":"爬山","tag_id":40},{"tag_name":"运动","tag_id":41},{"tag_name":"防嗮","tag_id":1},{"tag_name":"美白","tag_id":2},{"tag_name":"时尚","tag_id":3}],"uid":23326,"nickname":"15070840241","avatar":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","articletype":1,"ctime":"3天10小时3分","picture":[],"id":4064,"title":"个人游玩","flag":false,"isFavor":false,"description":"去黄山游玩http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","path":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","favor":1,"view":0,"comment":0}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * tags : [{"tag_name":"ee","tag_id":44},{"tag_name":"ff","tag_id":45},{"tag_name":"防嗮","tag_id":1},{"tag_name":"美白","tag_id":2},{"tag_name":"时尚","tag_id":3}]
      * uid : 23326
@@ -42,22 +40,6 @@ public class InvitationDetailEntity {
 
     @SerializedName("result")
     private List<InvitationDetailBean> invitationSearchList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<InvitationDetailBean> getInvitationSearchList() {
         return invitationSearchList;

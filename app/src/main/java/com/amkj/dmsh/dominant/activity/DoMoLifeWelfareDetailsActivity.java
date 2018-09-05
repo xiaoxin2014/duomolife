@@ -31,12 +31,12 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -51,9 +51,8 @@ import com.amkj.dmsh.dominant.bean.QualityWefEntity.QualityWefBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -65,7 +64,7 @@ import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -73,8 +72,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,6 +85,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.R.id.ll_communal_pro_list;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -97,6 +95,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
@@ -105,7 +106,7 @@ import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
 
 public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     @BindView(R.id.tv_header_title)
@@ -114,12 +115,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     ImageView iv_img_service;
     @BindView(R.id.fl_header_service)
     FrameLayout fl_header_service;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //    滑动布局
     @BindView(R.id.dr_welfare_detail_pro)
     DrawerLayout dr_welfare_detail_pro;
@@ -161,7 +156,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     private List<DmlSearchCommentBean> articleCommentList = new ArrayList<>();
     private String welfareId;
     private int page = 1;
-    private int uid;
     private WelfareHeaderView welfareHeaderView;
     private CommunalDetailAdapter communalWelfareDetailAdapter;
     private Badge badge;
@@ -171,6 +165,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     private View commentHeaderView;
     private float locationY;
     private CommentCountView commentCountView;
+    private DmlSearchCommentEntity dmlSearchCommentEntity;
+    private QualityWefEntity qualityWefEntity;
 
     @Override
     protected int getContentView() {
@@ -218,7 +214,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             if (dmlSearchCommentBean != null) {
                 switch (view.getId()) {
                     case R.id.tv_comm_comment_like:
-                        if (uid > 0) {
+                        if (userId > 0) {
                             dmlSearchCommentBean.setFavor(!dmlSearchCommentBean.isFavor());
                             int likeNum = dmlSearchCommentBean.getLike_num();
                             dmlSearchCommentBean.setLike_num(dmlSearchCommentBean.isFavor()
@@ -227,19 +223,19 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                             adapterTopicComment.notifyItemChanged(position + adapterTopicComment.getHeaderLayoutCount());
                             setCommentLike(dmlSearchCommentBean);
                         } else {
-                            getLoginStatus();
+                            getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
                         }
                         break;
                     case R.id.tv_comm_comment_receive:
 //                            打开评论
-                        if (uid > 0) {
+                        if (userId > 0) {
                             if (VISIBLE == ll_input_comment.getVisibility()) {
                                 commentViewVisible(GONE, dmlSearchCommentBean);
                             } else {
                                 commentViewVisible(VISIBLE, dmlSearchCommentBean);
                             }
                         } else {
-                            getLoginStatus();
+                            getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
                         }
                         break;
                     case R.id.civ_comm_comment_avatar:
@@ -296,7 +292,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             }
         });
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         communalWelfareDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -310,7 +305,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                         int couponId = (int) view.getTag(R.id.iv_avatar_tag);
                         int type = (int) view.getTag(R.id.iv_type_tag);
                         if (couponId > 0) {
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 if (type == TYPE_COUPON) {
                                     getDirectCoupon(couponId);
                                 } else if (type == TYPE_COUPON_PACKAGE) {
@@ -320,7 +315,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
                             }
                         }
                         break;
@@ -344,13 +339,13 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 skipAliBCWebView(couponBean.getCouponUrl());
                             } else {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
                             }
                         }
                         break;
@@ -373,7 +368,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 });
                             } else {
                                 loadHud.dismiss();
-                                getLoginStatus();
+                                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
                             }
                         }
                         break;
@@ -398,7 +393,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         //          关闭手势滑动
         dr_welfare_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
         badge = getBadge(DoMoLifeWelfareDetailsActivity.this, fl_header_service);
-        communal_load.setVisibility(View.VISIBLE);
         totalPersonalTrajectory = insertNewTotalData(DoMoLifeWelfareDetailsActivity.this, welfareId);
         tv_publish_comment.setText(R.string.comment_article_hint);
     }
@@ -406,72 +400,66 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     @Override
     protected void loadData() {
         //头部信息
+        page = 1;
         getThemeDetailsData();
         getCarCount();
         getTopicComment();
     }
 
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void getThemeDetailsData() {
         String url = Url.BASE_URL + Url.H_DML_THEME_DETAIL;
-        if (NetWorkUtils.checkNet(DoMoLifeWelfareDetailsActivity.this) && !TextUtils.isEmpty(welfareId)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", welfareId);
-            params.put("is_up", 1);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_empty.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    Gson gson = new Gson();
-                    QualityWefEntity qualityWefEntity = gson.fromJson(result, QualityWefEntity.class);
-                    if (qualityWefEntity != null) {
-                        if (qualityWefEntity.getCode().equals("01")) {
-                            qualityWefBean = qualityWefEntity.getQualityWefBean();
-                            setData(qualityWefBean);
-                        } else if (qualityWefEntity.getCode().equals("02")) {
-                            if (page == 1) {
-                                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
-                                communal_empty.setVisibility(View.VISIBLE);
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", welfareId);
+        params.put("is_up", 1);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(DoMoLifeWelfareDetailsActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        Gson gson = new Gson();
+                        qualityWefEntity = gson.fromJson(result, QualityWefEntity.class);
+                        if (qualityWefEntity != null) {
+                            if (qualityWefEntity.getCode().equals(SUCCESS_CODE)) {
+                                qualityWefBean = qualityWefEntity.getQualityWefBean();
+                                setData(qualityWefBean);
+                            } else if (!qualityWefEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
                             }
-                        } else {
-                            if (page == 1) {
-                                communal_error.setVisibility(View.VISIBLE);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
+                        }else{
+                            if(loadService!=null){
+                                loadService.showCallback(NetErrorCallback.class);
                             }
-                            showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_empty.setVisibility(GONE);
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    if (page == 1) {
-                        communal_load.setVisibility(GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
                     }
-                    showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            if (page == 1) {
-                communal_load.setVisibility(GONE);
-                communal_empty.setVisibility(GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            } else {
-                showToast(this, R.string.unConnectedNetwork);
-            }
-        }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
+                    }
+                });
     }
 
 
@@ -547,7 +535,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     private void getDirectCoupon(int id) {
         String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("couponId", id);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -579,7 +567,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     private void getDirectCouponPackage(int couponId) {
         String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
-        params.put("uId", uid);
+        params.put("uId", userId);
         params.put("cpId", couponId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -610,13 +598,13 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
     public void skipAliBCWebView(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
             }
         } else {
             showToast(DoMoLifeWelfareDetailsActivity.this, "地址缺失");
@@ -678,8 +666,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("id", welfareId);
             params.put("currentPage", page);
-            if (uid > 0) {
-                params.put("uid", uid);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
             params.put("showCount", DEFAULT_TOTAL_COUNT);
             params.put("replyCurrentPage", 1);
@@ -689,15 +677,15 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String result) {
                     adapterTopicComment.loadMoreComplete();
-                    if (page == 1) {
-                        articleCommentList.clear();
-                    }
                     Gson gson = new Gson();
-                    DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
+                    dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
                     if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals("01")) {
+                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                            if (page == 1) {
+                                articleCommentList.clear();
+                            }
                             articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals("02")) {
+                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoLifeWelfareDetailsActivity.this, dmlSearchCommentEntity.getMsg());
                         }
                         adapterTopicComment.removeHeaderView(commentHeaderView);
@@ -705,18 +693,13 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                             adapterTopicComment.addHeaderView(commentHeaderView);
                             commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
                         }
-                        if (page == 1) {
-                            adapterTopicComment.setNewData(articleCommentList);
-                        } else {
-                            adapterTopicComment.notifyDataSetChanged();
-                        }
+                        adapterTopicComment.notifyDataSetChanged();
                     }
                 }
 
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
                     adapterTopicComment.loadMoreComplete();
-                    showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
                     super.onError(ex, isOnCallback);
                 }
             });
@@ -724,14 +707,11 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -756,34 +736,13 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         getCarCount();
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
+        if (requestCode == IS_LOGIN_CODE) {
             loadData();
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
@@ -791,7 +750,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
     //    页面分享
     @OnClick(R.id.iv_img_share)
-    void sendShare(View view) {
+    void sendShare() {
         setShareData();
     }
 
@@ -802,7 +761,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     , qualityWefBean.getTitle()
                     , ""
                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
-                    + qualityWefBean.getId() + (uid > 0 ? "&sid=" + uid : "")));
+                    + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")));
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
@@ -813,30 +772,21 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    void goBack() {
         finish();
     }
 
     @OnClick(R.id.iv_img_service)
-    void skipShopCar(View view) {
+    void skipShopCar() {
         Intent intent = new Intent(DoMoLifeWelfareDetailsActivity.this, ShopCarActivity.class);
         startActivity(intent);
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        page = 1;
-        loadData();
     }
 
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
         String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
         XUtil.Post(url, params, new MyCallBack<String>() {
@@ -850,16 +800,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 super.onError(ex, isOnCallback);
             }
         });
-    }
-
-    private String getNumber(String content) {
-        String regex = "[0-9]\\d*\\.?\\d*";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(content);
-        while (m.find()) {
-            return m.group();
-        }
-        return "0";
     }
 
     //发送评论
@@ -928,7 +868,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 ? dmlSearchCommentBean.getMainContentId() : dmlSearchCommentBean.getId());
                     }
                     communalComment.setObjId(qualityWefBean.getId());
-                    communalComment.setUserId(uid);
+                    communalComment.setUserId(userId);
                     sendComment(communalComment);
                 } else {
                     showToast(DoMoLifeWelfareDetailsActivity.this, "请正确输入内容");
@@ -1023,10 +963,10 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
-        if (uid > 0) {
+        if (userId > 0) {
             setPublishComment();
         } else {
-            getLoginStatus();
+            getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
         }
     }
 

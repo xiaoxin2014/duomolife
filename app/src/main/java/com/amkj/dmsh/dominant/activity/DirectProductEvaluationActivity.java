@@ -9,22 +9,19 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,9 +31,13 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -51,20 +52,14 @@ public class DirectProductEvaluationActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private List<GoodsCommentBean> goodsComments = new ArrayList();
     private int page = 1;
     private DirectEvaluationAdapter directEvaluationAdapter;
     private String productId;
-    private int uid;
+    private GoodsCommentEntity goodsCommentEntity;
 
     @Override
     protected int getContentView() {
@@ -73,7 +68,6 @@ public class DirectProductEvaluationActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
         tv_header_titleAll.setText("全部评价");
@@ -94,9 +88,9 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         directEvaluationAdapter = new DirectEvaluationAdapter(DirectProductEvaluationActivity.this, goodsComments);
         communal_recycler.setAdapter(directEvaluationAdapter);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-           page = 1;
-                loadData();
-                directEvaluationAdapter.loadMoreEnd(true);
+            page = 1;
+            getEvaluationData();
+            directEvaluationAdapter.loadMoreEnd(true);
         });
         directEvaluationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -113,10 +107,10 @@ public class DirectProductEvaluationActivity extends BaseActivity {
                     case R.id.tv_eva_count:
                         goodsCommentBean = (GoodsCommentBean) view.getTag();
                         if (goodsCommentBean != null) {
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setProductEvaLike(view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(DirectProductEvaluationActivity.this);
                             }
                         }
                         break;
@@ -124,93 +118,86 @@ public class DirectProductEvaluationActivity extends BaseActivity {
 
             }
         });
-        directEvaluationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener(){
+        directEvaluationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= directEvaluationAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getEvaluationData();
                 } else {
                     directEvaluationAdapter.loadMoreComplete();
                     directEvaluationAdapter.loadMoreEnd(false);
                 }
             }
         }, communal_recycler);
-        communal_load.setVisibility(View.VISIBLE);
+    }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
     @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+    @Override
     protected void loadData() {
+        page = 1;
+        getEvaluationData();
+    }
+
+    private void getEvaluationData() {
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", DEFAULT_TOTAL_COUNT);
         params.put("currentPage", page);
         params.put("id", productId);
-        if (uid > 0) {
-            params.put("uid", uid);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
-        if (NetWorkUtils.checkNet(DirectProductEvaluationActivity.this)) {
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (page == 1) {
-                        goodsComments.clear();
-                    }
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    directEvaluationAdapter.loadMoreComplete();
-                    Gson gson = new Gson();
-                    GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
-                    if (goodsCommentEntity != null) {
-                        if (goodsCommentEntity.getCode().equals("01")) {
-                            goodsComments.addAll(goodsCommentEntity.getGoodsComments());
-                            tv_header_titleAll.setText("全部评价(" + goodsCommentEntity.getEvaluateCount() + ")");
-                        } else if (!goodsCommentEntity.getCode().equals("02")) {
-                            showToast(DirectProductEvaluationActivity.this, goodsCommentEntity.getMsg());
-                        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(DirectProductEvaluationActivity.this, url
+                , params
+                , new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                directEvaluationAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
+                if (goodsCommentEntity != null) {
+                    if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         if (page == 1) {
-                            directEvaluationAdapter.setNewData(goodsComments);
-                        } else {
-                            directEvaluationAdapter.notifyDataSetChanged();
+                            goodsComments.clear();
                         }
+                        goodsComments.addAll(goodsCommentEntity.getGoodsComments());
+                        tv_header_titleAll.setText("全部评价(" + goodsCommentEntity.getEvaluateCount() + ")");
+                    } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DirectProductEvaluationActivity.this, goodsCommentEntity.getMsg());
+                    }
+                    directEvaluationAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,goodsComments, goodsCommentEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    directEvaluationAdapter.loadMoreComplete();
-                    communal_error.setVisibility(View.VISIBLE);
-                    smart_communal_refresh.finishRefresh();
-                    showToast(DirectProductEvaluationActivity.this, +R.string.unConnectedNetwork);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            showToast(DirectProductEvaluationActivity.this, +R.string.unConnectedNetwork);
-            directEvaluationAdapter.loadMoreComplete();
-        }
-    }
+            @Override
+            public void netClose() {
+                directEvaluationAdapter.loadMoreComplete();
+                smart_communal_refresh.finishRefresh();
+                showToast(DirectProductEvaluationActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,goodsComments,goodsCommentEntity);
+            }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        }else{
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                directEvaluationAdapter.loadMoreComplete();
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,goodsComments,goodsCommentEntity);
+            }
+        });
     }
 
     @Override
@@ -219,11 +206,8 @@ public class DirectProductEvaluationActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
     }
 
@@ -233,32 +217,14 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
-        params.put("uid", uid);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
-        });
+        params.put("uid", userId);
+        XUtil.Post(url, params, null);
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData() {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
     }
-
-
 }

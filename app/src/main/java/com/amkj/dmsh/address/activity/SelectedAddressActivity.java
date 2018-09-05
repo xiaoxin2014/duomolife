@@ -11,16 +11,17 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.adapter.SelectedAddressAdapter;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.shopdetails.integration.bean.AddressAllList;
-import com.amkj.dmsh.shopdetails.integration.bean.AddressAllList.AddressAllBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
+import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
+import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,9 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -42,14 +46,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
  */
 public class SelectedAddressActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
-    TextView tv_header_titleAll;
+    TextView tvHeaderTitle;
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    private List<AddressAllBean> addressAllBeanList = new ArrayList<>();
+    private List<AddressListBean> addressAllBeanList = new ArrayList<>();
     private SelectedAddressAdapter selectedAddressAdapter;
     private int CREATE_ADDRESS_REQ = 103;
     private int EDIT_ADDRESS_REQ = 104;
@@ -58,6 +62,7 @@ public class SelectedAddressActivity extends BaseActivity {
     private boolean isShowDel = true;
     private int addressId;
     private AlertDialog dialog;
+    private AddressListEntity addressListEntity;
 
     @Override
     protected int getContentView() {
@@ -67,7 +72,7 @@ public class SelectedAddressActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        tv_header_titleAll.setText("选择地址");
+        tvHeaderTitle.setText("选择地址");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("新增");
         Intent intent = getIntent();
@@ -94,13 +99,13 @@ public class SelectedAddressActivity extends BaseActivity {
             loadData();
         });
         selectedAddressAdapter.setOnItemClickListener((adapter, view, position) -> {
-            AddressAllBean addressAllBean = (AddressAllBean) view.getTag();
+            AddressListBean addressAllBean = (AddressListBean) view.getTag();
             if (addressAllBean != null && !isMineSkip) {
                 goBackAddress(addressAllBean.getId());
             }
         });
         selectedAddressAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            final AddressAllBean addressAllBean = (AddressAllBean) view.getTag();
+            final AddressListBean addressAllBean = (AddressListBean) view.getTag();
             if (addressAllBean != null) {
                 switch (view.getId()) {
                     case R.id.cb_address_selected_item:
@@ -146,6 +151,17 @@ public class SelectedAddressActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     //  新增地址
 
     @OnClick(R.id.tv_header_shared)
@@ -157,7 +173,7 @@ public class SelectedAddressActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
+            if (requestCode == IS_LOGIN_CODE) {
                 finish();
             } else {
                 return;
@@ -207,35 +223,51 @@ public class SelectedAddressActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.ADDRESS_LIST + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        String url = Url.BASE_URL + Url.ADDRESS_LIST;
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 selectedAddressAdapter.loadMoreComplete();
                 Gson gson = new Gson();
-                addressAllBeanList.clear();
-                AddressAllList addressAllList = gson.fromJson(result, AddressAllList.class);
-                if (addressAllList != null) {
-                    if (addressAllList.getCode().equals("01")) {
-                        addressAllBeanList.addAll(addressAllList.getAddressAllBeanList());
+                addressListEntity = gson.fromJson(result, AddressListEntity.class);
+                if (addressListEntity != null) {
+                    if (addressListEntity.getCode().equals(SUCCESS_CODE)) {
+                        addressAllBeanList.clear();
+                        addressAllBeanList.addAll(addressListEntity.getAddressAllBeanList());
                         selectedAddressAdapter.notifyDataSetChanged();
-                    } else if (!addressAllList.getCode().equals("02")) {
-                        showToast(SelectedAddressActivity.this, addressAllList.getMsg());
+                    } else if (!addressListEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(SelectedAddressActivity.this, addressListEntity.getMsg());
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
                     }
                 }
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 selectedAddressAdapter.loadMoreComplete();
+                showToast(SelectedAddressActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                selectedAddressAdapter.loadMoreComplete();
+                showToast(SelectedAddressActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
             }
         });
     }
 
-    private void upDateDefaultAddress(final AddressAllBean addressAllBean) {
+    private void upDateDefaultAddress(final AddressListBean addressAllBean) {
         String url = Url.BASE_URL + Url.UPDATE_DEFAULT_ADDRESS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", addressAllBean.getId());

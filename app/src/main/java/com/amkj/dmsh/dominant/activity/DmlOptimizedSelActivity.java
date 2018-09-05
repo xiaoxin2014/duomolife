@@ -11,23 +11,21 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.DmlOptimizedSelAdapter;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity.DmlOptimizedSelBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -43,6 +41,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -55,7 +55,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
  */
 public class DmlOptimizedSelActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -69,19 +69,13 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     FrameLayout fl_header_service;
     @BindView(R.id.iv_img_share)
     ImageView iv_img_share;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
-    private int uid;
     private Badge badge;
     private List<DmlOptimizedSelBean> dmlOptimizedSelList = new ArrayList<>();
     private DmlOptimizedSelAdapter dmlOptimizedSelAdapter;
+    private DmlOptimizedSelEntity optimizedSelEntity;
 
     @Override
     protected int getContentView() {
@@ -90,7 +84,6 @@ public class DmlOptimizedSelActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         iv_img_share.setVisibility(View.GONE);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         tv_header_titleAll.setText("");
@@ -134,93 +127,91 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                 }
             }
         });
-        download_btn_communal.setOnClickListener((v)->{
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
+        download_btn_communal.setOnClickListener((v) -> {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+            int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
+                    - linearLayoutManager.findFirstVisibleItemPosition() + 1;
+            if (firstVisibleItemPosition > mVisibleCount) {
+                communal_recycler.scrollToPosition(mVisibleCount);
+            }
+            communal_recycler.smoothScrollToPosition(0);
         });
         badge = ConstantMethod.getBadge(DmlOptimizedSelActivity.this, fl_header_service);
-        communal_load.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override
     protected void loadData() {
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected void getData() {
         getOptimizedData();
         getCarCount();
     }
 
     private void getOptimizedData() {
-        if (NetWorkUtils.checkNet(DmlOptimizedSelActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_DML_OPTIMIZED_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            if(userId>0){
-                params.put("uid",userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    dmlOptimizedSelAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        dmlOptimizedSelList.clear();
-                    }
-                    Gson gson = new Gson();
-                    DmlOptimizedSelEntity optimizedSelEntity = gson.fromJson(result, DmlOptimizedSelEntity.class);
-                    if (optimizedSelEntity != null) {
-                        if (optimizedSelEntity.getCode().equals("01")) {
-                            tv_header_titleAll.setText(getStrings(optimizedSelEntity.getTitle()));
-                            dmlOptimizedSelList.addAll(optimizedSelEntity.getDmlOptimizedSelList());
-                        } else if (!optimizedSelEntity.getCode().equals("02")) {
-                            showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
-                        }
+        String url = Url.BASE_URL + Url.Q_DML_OPTIMIZED_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(DmlOptimizedSelActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                dmlOptimizedSelAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                optimizedSelEntity = gson.fromJson(result, DmlOptimizedSelEntity.class);
+                if (optimizedSelEntity != null) {
+                    if (optimizedSelEntity.getCode().equals(SUCCESS_CODE)) {
                         if (page == 1) {
-                            dmlOptimizedSelAdapter.setNewData(dmlOptimizedSelList);
-                        } else {
-                            dmlOptimizedSelAdapter.notifyDataSetChanged();
+                            dmlOptimizedSelList.clear();
                         }
+                        tv_header_titleAll.setText(getStrings(optimizedSelEntity.getTitle()));
+                        dmlOptimizedSelList.addAll(optimizedSelEntity.getDmlOptimizedSelList());
+                    } else if (!optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
+                    dmlOptimizedSelAdapter.notifyDataSetChanged();
+                }else{
+                    if(loadService!=null){
+                        loadService.showCallback(NetErrorCallback.class);
                     }
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    dmlOptimizedSelAdapter.loadMoreComplete();
-                    if (page == 1 && dmlOptimizedSelList.size() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    } else {
-                        showToast(DmlOptimizedSelActivity.this, R.string.invalidData);
-                    }
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            dmlOptimizedSelAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
             }
-            showToast(DmlOptimizedSelActivity.this, R.string.unConnectedNetwork);
-        }
-    }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                dmlOptimizedSelAdapter.loadMoreComplete();
+                showToast(DmlOptimizedSelActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                dmlOptimizedSelAdapter.loadMoreComplete();
+                showToast(DmlOptimizedSelActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
+            }
+        });
     }
 
     @Override
@@ -230,14 +221,11 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
-        }
-        if (uid > 0) {
+        if (userId > 0) {
             //购物车数量展示
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -256,28 +244,12 @@ public class DmlOptimizedSelActivity extends BaseActivity {
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
         try {
             UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         } catch (Exception e) {
@@ -294,14 +266,6 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     void skipService(View view) {
         Intent intent = new Intent(DmlOptimizedSelActivity.this, ShopCarActivity.class);
         startActivity(intent);
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @Override
