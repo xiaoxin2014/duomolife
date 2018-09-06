@@ -32,6 +32,7 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
@@ -92,6 +93,7 @@ import cn.xiaoneng.utils.CoreData;
 
 import static android.app.Activity.RESULT_OK;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -541,18 +543,26 @@ public class MineDataFragment extends BaseFragment {
     }
 
     private void getNetDataInfo() {
-        String url = Url.BASE_URL + Url.MINE_PAGE + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                getUserDataInfo(result, false);
-            }
+        String url = Url.BASE_URL + Url.MINE_PAGE;
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        getUserDataInfo(result, false);
+                    }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-            }
-        });
+                    @Override
+                    public void netClose() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+                });
     }
 
     //    我的模块 广告

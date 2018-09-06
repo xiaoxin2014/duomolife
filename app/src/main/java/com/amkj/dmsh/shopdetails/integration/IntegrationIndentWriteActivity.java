@@ -413,7 +413,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                     showToast(IntegrationIndentWriteActivity.this, qualityWeChatIndent.getResult().getMsg());
                                 }
                             }else {
-                                showToast(IntegrationIndentWriteActivity.this, qualityWeChatIndent.getMsg());
+                                showToast(IntegrationIndentWriteActivity.this, qualityWeChatIndent.getResult()==null?
+                                        qualityWeChatIndent.getMsg():qualityWeChatIndent.getResult().getMsg());
                             }
                         }
                     } else {
@@ -433,7 +434,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                     skipDirectIndent();
                                 }
                             } else {
-                                showToast(IntegrationIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                                showToast(IntegrationIndentWriteActivity.this, qualityAliPayIndent.getResult() == null
+                                        ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                             }
                         }
                     }
@@ -449,7 +451,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                 showToast(IntegrationIndentWriteActivity.this,"创建订单失败，请重新提交订单");
                             }
                         }else{
-                            showToast(IntegrationIndentWriteActivity.this, createIntegralIndentInfo.getMsg());
+                            showToast(IntegrationIndentWriteActivity.this, createIntegralIndentInfo.getIntegrationIndentBean()==null?
+                            createIntegralIndentInfo.getMsg():createIntegralIndentInfo.getIntegrationIndentBean().getMsg());
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 package com.amkj.dmsh.message.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,34 +12,15 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class MessageCommentEntity {
+public class MessageCommentEntity extends BaseEntity{
 
     /**
      * result : [{"obj_id":4066,"sex":0,"description":"大麦若叶大采购","content":"我从自行车自行车走","is_reply":1,"reply_uid":23327,"uid":23317,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c85c10e133.jpg","is_at":0,"obj":"doc","to_uid":12327,"ctime":"2016-10-24 09:56:37","nickname2":"糖糖妞儿","id":2620,"nickname1":"13815430077","atList":[],"status":1},{"obj_id":4066,"sex":0,"description":"大麦若叶大采购","content":"我从自行车自行车走","is_reply":1,"reply_uid":23327,"uid":23317,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c85c10e133.jpg","is_at":0,"obj":"doc","to_uid":12327,"ctime":"2016-10-24 09:54:55","nickname2":"糖糖妞儿","id":2619,"nickname1":"13815430077","atList":[],"status":1},{"obj_id":4066,"sex":0,"description":"大麦若叶大采购","content":"男子女子呢","is_reply":1,"reply_uid":23327,"uid":23317,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c85c10e133.jpg","is_at":0,"obj":"doc","to_uid":12327,"ctime":"2016-10-24 09:50:40","nickname2":"糖糖妞儿","id":2617,"nickname1":"13815430077","atList":[],"status":1},{"obj_id":4055,"sex":2,"description":"皇后卸妆水","avatar":"http://wx.qlogo.cn/mmopen/ajNVdqHZLLDOJUQiaOur6JVpC2aGrMkxJ98HvGDwOSpxIQDRdM1dzVCdwEGcDy7zt09Qib82J7OvUfoBwfSxoyCg/0","content":"哇，我发现新大陆了。","is_reply":1,"reply_uid":23327,"uid":23328,"at_uid":"23328,111","path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c762e49090.JPG","is_at":1,"obj":"doc","to_uid":13017,"ctime":"2016-09-14 15:16:27","nickname2":"糖糖妞儿","id":2507,"nickname1":"coco","atList":[{"uid":"23328","nickname":"coco"},{"uid":"111","nickname":"Ben"}],"status":1},{"obj_id":4055,"sex":2,"description":"皇后卸妆水","avatar":"http://wx.qlogo.cn/mmopen/Q3auHgzwzM6MiaI9898MpRnickZUtjQgHYiaQdJ2sfCHtbCTRIzoJrPIbicRzdeztQmF1YfXRNz4NtUzJtqyobjSDq2pgXRPj91kWEK58HDXia6o/0","content":"谢谢你的评论","is_reply":1,"reply_uid":23327,"uid":23326,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c762e49090.JPG","is_at":0,"obj":"doc","to_uid":13017,"ctime":"2016-09-14 15:13:38","nickname2":"糖糖妞儿","id":2506,"nickname1":"薇伊","atList":[],"status":1}]
      * msg : 请求成功
      * code : 01
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<MessageCommentBean> messageCommentList;
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public List<MessageCommentBean> getMessageCommentList() {
         return messageCommentList;

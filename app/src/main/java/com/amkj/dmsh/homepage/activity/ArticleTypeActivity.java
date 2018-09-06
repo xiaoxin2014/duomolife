@@ -19,7 +19,6 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
-import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -92,8 +91,7 @@ public class ArticleTypeActivity extends BaseActivity {
         tv_header_titleAll.setText(getStrings(categoryTitle));
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-            getArticleTypeList();
+            loadData();
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArticleTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
@@ -247,7 +245,7 @@ public class ArticleTypeActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        loadService.showCallback(NetLoadCallback.class);
+        page = 1;
         getArticleTypeList();
     }
 

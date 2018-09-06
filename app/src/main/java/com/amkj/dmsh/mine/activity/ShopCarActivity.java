@@ -20,6 +20,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -29,7 +30,6 @@ import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
 import com.amkj.dmsh.mine.bean.EvenBusTransmitObject;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
@@ -51,7 +51,7 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,11 +68,15 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.R.id.ll_communal_settlement;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_CAR;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
@@ -110,7 +114,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     CheckBox check_box_all_del;
 
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
 
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
@@ -122,16 +126,9 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     public RelativeLayout rel_shop_car_bottom;
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int cartPage = 1;
     private boolean isEditStatus;
-    private int uid;
     private List<CartInfoBean> shopGoodsList = new ArrayList<>();
     private List<LikedProductBean> cartProRecommendList = new ArrayList<>();
     private ShopCarGoodsAdapter shopCarGoodsAdapter;
@@ -152,7 +149,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("购物车");
         header_shared.setCompoundDrawables(null, null, null, null);
@@ -173,15 +170,13 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             scrollY = 0;
-            page = 1;
-            cartPage = 1;
             loadData();
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
             if (page * TOTAL_COUNT_TWENTY <= shopGoodsList.size()) {
                 page++;
                 getShopCarProInfo();
-            }else{
+            } else {
                 shopCarGoodsAdapter.setEnableLoadMore(false);
             }
         }, communal_recycler);
@@ -252,7 +247,6 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
         recommendHeaderView = new RecommendHeaderView();
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     private void skipProDetail(CartInfoBean cartInfoBean) {
@@ -323,8 +317,8 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
             Map<String, Object> params = new HashMap<>();
             params.put("showCount", TOTAL_COUNT_FORTY);
             params.put("currentPage", oldCartInfoBean.getCurrentPage());
-            params.put("userId", uid);
-            params.put("version","v3.1.5");
+            params.put("userId", userId);
+            params.put("version", "v3.1.5");
             if (NetWorkUtils.checkNet(this)) {
                 XUtil.Post(url, params, new MyCallBack<String>() {
                     @Override
@@ -407,123 +401,128 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
 
     @Override
     protected void loadData() {
+        page = 1;
+        cartPage = 1;
         getShopCarProInfo();
     }
 
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void getShopCarProInfo() {
+
         String url = Url.BASE_URL + Url.MINE_SHOP_CAR_GOODS;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_FORTY);
         params.put("currentPage", page);
-        params.put("userId", uid);
-        params.put("version","v3.1.5");
-        if (NetWorkUtils.checkNet(this)) {
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    if (page == 1) {
-                        shopGoodsList.clear();
-                    }
-                    smart_communal_refresh.finishRefresh();
-                    shopCarGoodsAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    Gson gson = new Gson();
-                    ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
-                    if (shopCarNewInfoEntity != null) {
-                        if (shopCarNewInfoEntity.getCode().equals("01")) {
-                            rel_shop_car_bottom.setVisibility(View.VISIBLE);
-                            for (int i = 0; i < shopCarNewInfoEntity.getShopCarNewInfoList().size(); i++) {
-                                ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);
-                                for (int j = 0; j < shopCarNewInfoBean.getCartInfoBeanList().size(); j++) {
-                                    CartInfoBean cartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(j);
-                                    cartInfoBean.setOldPosition(i);
-                                    cartInfoBean.setCurrentPage(page);
-                                    if (shopCarNewInfoBean.getActivityInfoBean() != null) {
-                                        ActivityInfoBean activityInfoBean = shopCarNewInfoBean.getActivityInfoBean();
-                                        if (j == 0) {
-//                                            是否显示活动消息
-                                            ActivityInfoBean activityInfo = new ActivityInfoBean();
-                                            activityInfo.setActivityCode(activityInfoBean.getActivityCode());
-                                            activityInfo.setShowActInfo(1);
-                                            activityInfo.setActivityRule(activityInfoBean.getActivityRule());
-                                            activityInfo.setLimitBuy(activityInfoBean.getLimitBuy());
-                                            activityInfo.setActivityTag(activityInfoBean.getActivityTag());
-                                            activityInfo.setActivityType(activityInfoBean.getActivityType());
-                                            cartInfoBean.setActivityInfoData(activityInfo);
-                                        } else {
-                                            activityInfoBean.setShowActInfo(0);
-                                            cartInfoBean.setActivityInfoData(activityInfoBean);
-                                        }
-                                    }
-                                    if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
-                                            && cartInfoBean.getSaleSku().getQuantity() > 0) {
-                                        cartInfoBean.setSelected(true);
-                                    } else {
-                                        cartInfoBean.setSelected(false);
-                                    }
-                                    if (shopGoodsList.size() > 0) {
-                                        cartInfoBean.setCurrentPosition(shopGoodsList.size());
-                                    }
-                                    shopGoodsList.add(cartInfoBean);
-                                }
-                                if (shopCarNewInfoBean.getActivityInfoBean() != null && shopGoodsList.size() > 0
-                                        && shopCarNewInfoEntity.getShopCarNewInfoList().size() > i + 1) {
-                                    CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
-                                    cartInfoBean.setShowLine(1);
-                                }
-                            }
-                            ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
-                            updatePrice(shopCarNewInfoEntity);
-                            isEditStatus = true;
-                            setEditStatus();
-                        } else if (!shopCarNewInfoEntity.getCode().equals("02")) {
-                            showToast(ShopCarActivity.this, shopCarNewInfoEntity.getMsg());
-                        }
-                        if (shopGoodsList.size() < 1) {
-                            rel_shop_car_bottom.setVisibility(View.GONE);
-                        } else {
-                            rel_shop_car_bottom.setVisibility(View.VISIBLE);
-                        }
+        params.put("userId", userId);
+        params.put("version", "v3.1.5");
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                smart_communal_refresh.finishRefresh();
+                shopCarGoodsAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
+                if (shopCarNewInfoEntity != null) {
+                    if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         if (page == 1) {
-                            shopCarGoodsAdapter.setNewData(shopGoodsList);
-                        } else {
-                            shopCarGoodsAdapter.notifyDataSetChanged();
+                            shopGoodsList.clear();
                         }
-                        setCartCount();
+                        rel_shop_car_bottom.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < shopCarNewInfoEntity.getShopCarNewInfoList().size(); i++) {
+                            ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);
+                            for (int j = 0; j < shopCarNewInfoBean.getCartInfoBeanList().size(); j++) {
+                                CartInfoBean cartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(j);
+                                cartInfoBean.setOldPosition(i);
+                                cartInfoBean.setCurrentPage(page);
+                                if (shopCarNewInfoBean.getActivityInfoBean() != null) {
+                                    ActivityInfoBean activityInfoBean = shopCarNewInfoBean.getActivityInfoBean();
+                                    if (j == 0) {
+//                                            是否显示活动消息
+                                        ActivityInfoBean activityInfo = new ActivityInfoBean();
+                                        activityInfo.setActivityCode(activityInfoBean.getActivityCode());
+                                        activityInfo.setShowActInfo(1);
+                                        activityInfo.setActivityRule(activityInfoBean.getActivityRule());
+                                        activityInfo.setLimitBuy(activityInfoBean.getLimitBuy());
+                                        activityInfo.setActivityTag(activityInfoBean.getActivityTag());
+                                        activityInfo.setActivityType(activityInfoBean.getActivityType());
+                                        cartInfoBean.setActivityInfoData(activityInfo);
+                                    } else {
+                                        activityInfoBean.setShowActInfo(0);
+                                        cartInfoBean.setActivityInfoData(activityInfoBean);
+                                    }
+                                }
+                                if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
+                                        && cartInfoBean.getSaleSku().getQuantity() > 0) {
+                                    cartInfoBean.setSelected(true);
+                                } else {
+                                    cartInfoBean.setSelected(false);
+                                }
+                                if (shopGoodsList.size() > 0) {
+                                    cartInfoBean.setCurrentPosition(shopGoodsList.size());
+                                }
+                                shopGoodsList.add(cartInfoBean);
+                            }
+                            if (shopCarNewInfoBean.getActivityInfoBean() != null && shopGoodsList.size() > 0
+                                    && shopCarNewInfoEntity.getShopCarNewInfoList().size() > i + 1) {
+                                CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
+                                cartInfoBean.setShowLine(1);
+                            }
+                        }
+                        ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
+                        updatePrice(shopCarNewInfoEntity);
+                        isEditStatus = true;
+                        setEditStatus();
+                    } else if (!shopCarNewInfoEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(ShopCarActivity.this, shopCarNewInfoEntity.getMsg());
                     }
                     if (shopGoodsList.size() < 1) {
-                        shopCarGoodsAdapter.setEmptyView(R.layout.adapter_car_pro_empty, communal_recycler);
-                        shopCarGoodsAdapter.setHeaderFooterEmpty(false, true);
-                        getCartRecommendEmpty();
-                    } else if (shopGoodsList.size() < page * TOTAL_COUNT_FORTY) {
-                        getCartRecommend();
+                        rel_shop_car_bottom.setVisibility(View.GONE);
+                    } else {
+                        rel_shop_car_bottom.setVisibility(View.VISIBLE);
                     }
+                    shopCarGoodsAdapter.notifyDataSetChanged();
+                    setCartCount();
                 }
+                if (shopGoodsList.size() < 1) {
+                    shopCarGoodsAdapter.setEmptyView(R.layout.adapter_car_pro_empty, communal_recycler);
+                    shopCarGoodsAdapter.setHeaderFooterEmpty(false, true);
+                    getCartRecommendEmpty();
+                } else if (shopGoodsList.size() < page * TOTAL_COUNT_FORTY) {
+                    getCartRecommend();
+                }
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    shopCarGoodsAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    rel_shop_car_bottom.setVisibility(View.GONE);
-                    showToast(ShopCarActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            communal_load.setVisibility(View.GONE);
-            communal_empty.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            rel_shop_car_bottom.setVisibility(View.GONE);
-            showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                shopCarGoodsAdapter.loadMoreComplete();
+                rel_shop_car_bottom.setVisibility(View.GONE);
+                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                shopCarGoodsAdapter.loadMoreComplete();
+                rel_shop_car_bottom.setVisibility(View.GONE);
+                showToast(ShopCarActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+        });
     }
 
     /**
@@ -533,7 +532,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
         if (NetWorkUtils.checkNet(ShopCarActivity.this)) {
             String url = Url.BASE_URL + Url.SHOP_CART_RECOMMEND_EMPTY_GOODS;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -544,7 +543,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
                         if (likedProduct.getCode().equals("01")) {
                             cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
                             if (cartProRecommendList.size() > 0) {
-                                if(cartHeaderView.getParent()==null){
+                                if (cartHeaderView.getParent() == null) {
                                     shopCarGoodsAdapter.addFooterView(cartHeaderView);
                                 }
                                 recommendHeaderView.tv_pro_title.setText("-商品推荐-");
@@ -571,7 +570,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
         if (NetWorkUtils.checkNet(ShopCarActivity.this)) {
             String url = Url.BASE_URL + Url.MINE_SHOP_CAR_RECOMMEND_GOODS;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -626,35 +625,20 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     protected void onResume() {
         super.onResume();
         if (isOnPause) {
-            page = 1;
             loadData();
         }
         isOnPause = false;
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
                 finish();
-            } else {
-                return;
             }
-        } else if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
+            return;
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     //  结算商品
@@ -664,7 +648,6 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
         if (settlementGoods != null && settlementGoods.size() > 0) {
 //            结算商品 跳转订单填写
             Intent intent = new Intent(ShopCarActivity.this, DirectIndentWriteActivity.class);
-            intent.putExtra("uid", uid);
             intent.putParcelableArrayListExtra("productDate", (ArrayList<? extends Parcelable>) settlementGoods);
             startActivity(intent);
         } else {
@@ -724,21 +707,33 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     }
 
     private void delSelGoods() {
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_DEL_CAR + uid + "&ids=" + carIds;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_DEL_CAR;
+        Map<String,Object> params = new HashMap<>();
+        params.put("userId",userId);
+        params.put("ids",carIds);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
-                        page = 1;
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         setEditStatus();
                         loadData();
-                    } else {
+                    } else if(!status.getCode().equals(EMPTY_CODE)){
                         showToast(ShopCarActivity.this, status.getMsg());
                     }
                 }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -796,8 +791,8 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
         skuDialog.refreshView(shopProperty);
         skuDialog.show();
         skuDialog.getGoodsSKu(shopCarGoodsSku -> {
-            if (shopCarGoodsSku != null && (shopCarGoodsSku.getSaleSkuId() != shopProperty.getSkuId()||
-                    shopCarGoodsSku.getCount()!=shopProperty.getOldCount())) {
+            if (shopCarGoodsSku != null && (shopCarGoodsSku.getSaleSkuId() != shopProperty.getSkuId() ||
+                    shopCarGoodsSku.getCount() != shopProperty.getOldCount())) {
                 changeGoodsSku(shopProperty.getId(), shopCarGoodsSku, cartInfoBean);
             }
         });
@@ -807,7 +802,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
         //商品属性修改
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_CHANGE_CAR;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("count", shopCarGoodsSku.getCount() < 1 ? cartInfoBean.getCount() : shopCarGoodsSku.getCount());
         params.put("productId", productId);
         params.put("saleSkuId", shopCarGoodsSku.getSaleSkuId());
@@ -872,8 +867,8 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
                 }
             }
             params.put("cartProductInfo", jsonArray.toString().trim());
-            params.put("userId", uid);
-            params.put("version","v3.1.5");
+            params.put("userId", userId);
+            params.put("version", "v3.1.5");
             XUtil.Post(Url.BASE_URL + Url.PRO_SETTLE_PRICE, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -899,15 +894,6 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
                 }
             });
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     public class RecommendHeaderView {
@@ -945,7 +931,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
                             intent.setClass(ShopCarActivity.this, IntegralScrollDetailsActivity.class);
                             break;
                     }
-                    if(likedProduct!=null&&!TextUtils.isEmpty(likedProduct.getRecommendFlag())){
+                    if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getRecommendFlag())) {
                         intent.putExtra("recommendFlag", likedProduct.getRecommendFlag());
                     }
                     intent.putExtra("productId", String.valueOf(likedProductBean.getId()));

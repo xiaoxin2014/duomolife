@@ -10,15 +10,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAwardAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardEntity.LotteryInfoListBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -54,19 +53,14 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
 
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
-
     private IntegralLotteryAwardAdapter integralLotteryAwardAdapter;
     private List<LotteryInfoListBean> lotteryInfoListBeanList = new ArrayList<>();
+    private boolean isOnPause;
+    private IntegralLotteryAwardEntity integralLotteryAwardEntity;
 
     @Override
     protected int getContentView() {
@@ -109,63 +103,76 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-                getIntegralLotteryAwardData();
+                loadData();
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        getIntegralLotteryAwardData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getIntegralLotteryAwardData();
+        if(isOnPause){
+            getIntegralLotteryAwardData();
+            isOnPause = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isOnPause = true;
     }
 
     private void getIntegralLotteryAwardData() {
         if (userId > 0) {
-            if (NetWorkUtils.checkNet(MineIntegralLotteryAwardActivity.this)) {
-                String url = BASE_URL + H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD;
-                Map<String, Object> params = new HashMap<>();
-                params.put("uid", userId);
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        smart_communal_refresh.finishRefresh();
-                        communal_load.setVisibility(View.GONE);
-                        communal_empty.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.GONE);
-                        lotteryInfoListBeanList.clear();
-                        Gson gson = new Gson();
-                        IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
-                        if (integralLotteryAwardEntity != null) {
-                            if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
-                                lotteryInfoListBeanList.addAll(integralLotteryAwardEntity.getLotteryInfoList());
-                                integralLotteryAwardAdapter.notifyDataSetChanged();
-                            } else {
-                                communal_error.setVisibility(View.VISIBLE);
-                                smart_communal_refresh.finishRefresh();
-                                showToast(MineIntegralLotteryAwardActivity.this, integralLotteryAwardEntity.getMsg());
-                            }
+            String url = BASE_URL + H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(MineIntegralLotteryAwardActivity.this, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    lotteryInfoListBeanList.clear();
+                    Gson gson = new Gson();
+                    integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
+                    if (integralLotteryAwardEntity != null) {
+                        if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
+                            lotteryInfoListBeanList.addAll(integralLotteryAwardEntity.getLotteryInfoList());
+                            integralLotteryAwardAdapter.notifyDataSetChanged();
+                        } else {
+                            smart_communal_refresh.finishRefresh();
+                            showToast(MineIntegralLotteryAwardActivity.this, integralLotteryAwardEntity.getMsg());
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                     }
+                }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        super.onError(ex, isOnCallback);
-                        communal_error.setVisibility(View.VISIBLE);
-                        smart_communal_refresh.finishRefresh();
-                    }
-                });
-            } else {
-                smart_communal_refresh.finishRefresh();
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.VISIBLE);
-                showToast(MineIntegralLotteryAwardActivity.this, R.string.unConnectedNetwork);
-            }
+                @Override
+                public void netClose() {
+                    smart_communal_refresh.finishRefresh();
+                    showToast(MineIntegralLotteryAwardActivity.this, R.string.unConnectedNetwork);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    smart_communal_refresh.finishRefresh();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
+                }
+            });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
         }
     }
 
@@ -184,13 +191,5 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 }

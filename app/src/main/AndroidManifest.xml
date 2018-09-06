@@ -804,9 +804,6 @@
             android:name=".mine.activity.SettingPersonalNameActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".mine.activity.SettingFeelNote"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".mine.activity.MineLoginActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -898,9 +895,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".shopdetails.activity.IndentSearchDetailsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".shopdetails.activity.IndentInvoiceDownCheckActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".shopdetails.activity.IndentDrawUpInvoiceActivity"

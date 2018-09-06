@@ -11,9 +11,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.adapter.RelevanceProductStatusAdapter;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.flyco.tablayout.SlidingTabLayout;
@@ -27,10 +24,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.selRelevanceProduct;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 ;
 
@@ -52,7 +48,6 @@ public class RelevanceProListActivity extends BaseActivity {
 
     //    选择条数
     private List<RelevanceProBean> relevanceSelProList = new ArrayList<>();
-    private int uid;
 
     @Override
     protected int getContentView() {
@@ -61,7 +56,7 @@ public class RelevanceProListActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("关联商品");
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setVisibility(View.VISIBLE);
@@ -102,28 +97,13 @@ public class RelevanceProListActivity extends BaseActivity {
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
     }
 
     @Override

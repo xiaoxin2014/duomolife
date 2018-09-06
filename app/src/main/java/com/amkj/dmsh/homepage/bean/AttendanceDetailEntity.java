@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * version 3.1.5
  * class description:签到详情
  */
-public class AttendanceDetailEntity {
+public class AttendanceDetailEntity extends BaseEntity{
 
     /**
      * code : 01
@@ -25,9 +26,6 @@ public class AttendanceDetailEntity {
      * remind : false
      * sign : false
      */
-
-    private String code;
-    private String msg;
     private int score;
     private int totalNum;
     private int conNum;
@@ -45,22 +43,6 @@ public class AttendanceDetailEntity {
 
     public void setSysTime(String sysTime) {
         this.sysTime = sysTime;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public int getScore() {

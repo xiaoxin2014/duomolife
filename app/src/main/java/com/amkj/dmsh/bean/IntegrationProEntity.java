@@ -1,5 +1,6 @@
 package com.amkj.dmsh.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,16 +9,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/9/12.
  */
-public class IntegrationProEntity {
+public class IntegrationProEntity extends BaseEntity{
 
     /**
      * result : [{"id":11,"integralPrice":22600,"marketPrice":"18.80","picUrl":"/Uploads/goods_img/2016-04-28/5721c9a35318a.jpg","name":"韩国正品进口ROMANE可爱韩国传统系列黑色0.38圆珠笔","subtitle":"韩国正品进口ROMANE可爱韩国传统系列黑色0.38圆珠笔","quantity":0},{"id":9,"integralPrice":26100,"marketPrice":"21.80","picUrl":"/Uploads/goods_img/2016-04-26/571f244f202e0.jpg","name":"韩国文具chachap逼真牛奶便签本Milk Memo 300页 8款","subtitle":"","quantity":0},{"id":12,"integralPrice":38400,"marketPrice":"32.00","picUrl":"/Uploads/goods_img/2016-04-28/5721c9df1bfcf.jpg","name":"Tonze/天际 DZG-W405E蒸蛋器蒸蛋机迷你蒸蛋器 ","subtitle":"Tonze/天际 DZG-W405E蒸蛋器蒸蛋机迷你蒸蛋器 ","quantity":0},{"id":5,"integralPrice":47900,"marketPrice":"39.90","picUrl":"/Uploads/goods_img/2016-04-26/571f13ad9fbd9.jpg","name":"川宁 洋甘菊茶包 洋甘菊花茶","subtitle":"","quantity":0},{"id":7,"integralPrice":58800,"marketPrice":"49.00","picUrl":"/Uploads/goods_img/2016-04-26/571f1523acdc9.jpg","name":"日本代购迪士尼萌宠侧档DC-71","subtitle":"","quantity":0},{"id":34,"integralPrice":63600,"marketPrice":"53.00","picUrl":"/Uploads/goods_img/2016-04-06/5704a8db984fc.jpg","name":"儿童收纳系列动物造型抱枕靠垫玩具卡通玩偶","subtitle":"儿童收纳系列动物造型抱枕靠垫玩具卡通玩偶","quantity":0},{"id":19,"integralPrice":83400,"marketPrice":"139.00","picUrl":"/Uploads/goods_img/2016-04-28/5721cd2f37320.jpg","name":"Kirkland Signature 科克兰stretch-tite 保鲜膜(单个发货)","subtitle":"Kirkland Signature 科克兰stretch-tite 保鲜膜(单个发货)","quantity":0},{"id":36,"integralPrice":84000,"marketPrice":"70.00","picUrl":"http://o6wxayr69.bkt.clouddn.com/2016-07-08_577f6fdf603c2.jpg","name":"Tanana塑料随手杯成人吸管杯","subtitle":"Tanana塑料随手杯成人吸管杯","quantity":0},{"id":8,"integralPrice":91200,"marketPrice":"76.00","picUrl":"/Uploads/goods_img/2016-04-26/571f225a362a2.jpg","name":"加拿大Umbra Buddy 伙伴餐巾纸座","subtitle":"","quantity":0},{"id":27,"integralPrice":93600,"marketPrice":"78.00","picUrl":"http://o6wxayr69.bkt.clouddn.com/2016-06-28_5772269a583a1.jpg","name":"韩国Let's diet光疗美肤帽美白遮阳帽","subtitle":"","quantity":0}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * id : 11
      * integralPrice : 22600
@@ -30,22 +28,6 @@ public class IntegrationProEntity {
 
     @SerializedName("result")
     private List<IntegrationBean> integrationList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<IntegrationBean> getIntegrationList() {
         return integrationList;

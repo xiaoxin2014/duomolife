@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -17,16 +18,13 @@ import java.util.List;
  * class description:关联商品
  */
 
-public class RelevanceProEntity implements Parcelable {
+public class RelevanceProEntity extends BaseEntity implements Parcelable{
 
     /**
      * result : [{"productId":4308,"price":23,"pictureUrl":"http://img.domolife.cn/platform/826kTFssed.png","id":176,"title":"AutoBot二代车载手机支架"},{"productId":6052,"price":35,"pictureUrl":"http://img.domolife.cn/platform/20170313/20170313164644929.jpg","id":801,"title":"Frosch柠檬浓缩洗洁精750ml"}]
      * msg : 请求成功
      * code : 01
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<RelevanceProBean> relevanceProList;
     //        订单需要
@@ -34,22 +32,6 @@ public class RelevanceProEntity implements Parcelable {
 
     public static RelevanceProEntity objectFromData(String str) {
         return new Gson().fromJson(str, RelevanceProEntity.class);
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public List<RelevanceProBean> getRelevanceProList() {

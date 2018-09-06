@@ -151,7 +151,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -177,7 +177,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -185,6 +185,56 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         loadService.showWithConvertor(SUCCESS_CODE);
                     } else if (resultClass != null) {
                         loadService.showWithConvertor(resultClass.getCode());
+                    } else {
+                        loadService.showWithConvertor(ERROR_CODE);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 单数据
+     * @param loadService
+     * @param resultClass
+     */
+    public void showLoadSir(LoadService loadService,E resultClass) {
+        if (loadService != null) {
+            createExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (resultClass != null) {
+                        loadService.showWithConvertor(resultClass.getCode());
+                    } else {
+                        loadService.showWithConvertor(ERROR_CODE);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 返回码
+     * @param loadService
+     * @param code
+     */
+    public void showLoadSir(LoadService loadService,String code) {
+        if (loadService != null) {
+            createExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (!TextUtils.isEmpty(code)) {
+                        loadService.showWithConvertor(code);
                     } else {
                         loadService.showWithConvertor(ERROR_CODE);
                     }

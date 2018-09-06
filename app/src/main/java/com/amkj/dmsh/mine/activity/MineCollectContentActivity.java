@@ -17,7 +17,7 @@ import butterknife.OnClick;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/8/10
- * class description:请输入类描述
+ * class description:我的收藏
  */
 public class MineCollectContentActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)

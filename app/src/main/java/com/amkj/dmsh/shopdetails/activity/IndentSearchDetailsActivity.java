@@ -16,12 +16,11 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
@@ -36,7 +35,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,22 +52,26 @@ import cn.xiaoneng.coreapi.ItemParamsBody;
 import cn.xiaoneng.utils.CoreData;
 
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
+import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEL;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
-import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -86,7 +89,7 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
     @BindView(R.id.tv_indent_title)
     TextView tv_indent_title;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -94,7 +97,6 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
     public FloatingActionButton download_btn_communal;
     List<OrderListBean> orderListBeanList = new ArrayList();
     private int page = 1;
-    private int uid;
     private DoMoIndentListAdapter doMoIndentListAdapter;
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private AlertView cancelOrderDialog;
@@ -106,14 +108,16 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
     private int scrollY = 0;
     private float screenHeight;
     private String searchKey;
-    private String avatar;
+    private InquiryOrderEntry inquiryOrderEntry;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_indent_search_details;
     }
+
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         iv_indent_more.setSelected(true);
         iv_indent_search.setVisibility(View.GONE);
         tv_indent_title.setText("订单");
@@ -134,16 +138,15 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         communal_recycler.setAdapter(doMoIndentListAdapter);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             scrollY = 0;
-                page = 1;
-                loadData();
-                doMoIndentListAdapter.loadMoreEnd(true);
+            loadData();
+            doMoIndentListAdapter.loadMoreEnd(true);
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= doMoIndentListAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
@@ -203,7 +206,6 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                     case BUY_AGAIN:
 //                        再次购买
                         intent.setClass(IndentSearchDetailsActivity.this, DirectIndentWriteActivity.class);
-                        intent.putExtra("uid", uid);
                         intent.putExtra("orderNo", orderListBean.getNo());
                         startActivity(intent);
                         break;
@@ -282,7 +284,7 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                     //                        晒单赢积分
                     case BASK_READER:
                         intent.setClass(IndentSearchDetailsActivity.this, ReleaseImgArticleActivity.class);
-                        intent.putExtra("orderNo",orderListBean.getNo());
+                        intent.putExtra("orderNo", orderListBean.getNo());
                         startActivity(intent);
                         break;
                     case DEL:
@@ -302,48 +304,29 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         });
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
     @Override
     protected void loadData() {
-//        订单搜索
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected void getData() {
+        //        订单搜索
         String url = Url.BASE_URL + Url.INDENT_SEARCH;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
-        params.put("showCount", 10);
+        params.put("userId", userId);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
         params.put("currentPage", page);
 //        3 组合赠品兼容
         params.put("version", 3);
         params.put("productName", getStrings(searchKey));
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
                 Gson gson = new Gson();
-                if (page == 1) {
-                    orderListBeanList.clear();
-                }
                 String code = "";
                 String msg = "";
                 try {
@@ -353,8 +336,11 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (code.equals("01")) {
-                    InquiryOrderEntry inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
+                if (code.equals(SUCCESS_CODE)) {
+                    if (page == 1) {
+                        orderListBeanList.clear();
+                    }
+                    inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
                     if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
                         for (int i = 0; i < orderInquiryDateEntry.getOrderList().size(); i++) {
@@ -364,23 +350,39 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                     }
                     INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
-                } else if (!code.equals("02")) {
+                } else if (!code.equals(EMPTY_CODE)) {
                     showToast(IndentSearchDetailsActivity.this, msg);
                 }
-                if (page == 1) {
-                    doMoIndentListAdapter.setNewData(orderListBeanList);
-                } else {
-                    doMoIndentListAdapter.notifyDataSetChanged();
-                }
+                doMoIndentListAdapter.notifyDataSetChanged();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                super.onError(ex, isOnCallback);
+                showToast(mAppContext,R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                doMoIndentListAdapter.loadMoreComplete();
+                showToast(mAppContext,R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
             }
         });
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
     //  订单删除
@@ -388,7 +390,7 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         String url = Url.BASE_URL + Url.Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -422,8 +424,8 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
-        params.put("userId", uid);
-        params.put("orderProductId",/*orderBean.getId()*/0);
+        params.put("userId", userId);
+        params.put("orderProductId",0);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -447,7 +449,7 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -503,7 +505,9 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
         itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
         itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        chatParamsBody.headurl = avatar;
+        if(userId>0){
+            chatParamsBody.headurl = getPersonalInfo(mAppContext).getAvatar();
+        }
         skipXNService(IndentSearchDetailsActivity.this, chatParamsBody);
     }
 

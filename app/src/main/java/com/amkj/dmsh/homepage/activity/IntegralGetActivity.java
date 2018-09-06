@@ -10,16 +10,15 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.IntegralGetAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralGetEntity;
 import com.amkj.dmsh.homepage.bean.IntegralGetEntity.IntegralGetBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -53,20 +52,15 @@ public class IntegralGetActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     @BindView(R.id.fl_integral_get_hint)
     FrameLayout fl_integral_get_hint;
-
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private IntegralGetAdapter integralGetAdapter;
     private List<IntegralGetBean> integralGetBeanList = new ArrayList<>();
+    private boolean isOnPause;
+    private IntegralGetEntity attendanceDetailEntity;
 
     @Override
     protected int getContentView() {
@@ -95,75 +89,93 @@ public class IntegralGetActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 IntegralGetBean integralGetBean = (IntegralGetBean) view.getTag();
-                if(integralGetBean!=null&&integralGetBean.getButtonFlag()==0){
-                    setSkipPath(IntegralGetActivity.this,integralGetBean.getAndroidLink(),false);
+                if (integralGetBean != null && integralGetBean.getButtonFlag() == 0) {
+                    setSkipPath(IntegralGetActivity.this, integralGetBean.getAndroidLink(), false);
                 }
             }
         });
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-                getIntegralGetData();
+                loadData();
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        getIntegralGetData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getIntegralGetData();
+        if (isOnPause) {
+            loadData();
+            isOnPause = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isOnPause = true;
     }
 
     private void getIntegralGetData() {
-        if(userId>0){
-            if (NetWorkUtils.checkNet(IntegralGetActivity.this)) {
-                String url = Url.BASE_URL + Url.H_ATTENDANCE_GET;
-                Map<String, Object> params = new HashMap<>();
-                params.put("uid", userId);
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        smart_communal_refresh.finishRefresh();
-                        communal_load.setVisibility(View.GONE);
-                        communal_empty.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.GONE);
-                        integralGetBeanList.clear();
-                        Gson gson = new Gson();
-                        IntegralGetEntity attendanceDetailEntity = gson.fromJson(result, IntegralGetEntity.class);
-                        if (attendanceDetailEntity != null) {
-                            if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
-                                integralGetBeanList.addAll(attendanceDetailEntity.getIntegralGetList());
-                                integralGetAdapter.notifyDataSetChanged();
-                                fl_integral_get_hint.setVisibility(View.VISIBLE);
-                            }else{
-                                communal_error.setVisibility(View.VISIBLE);
-                                smart_communal_refresh.finishRefresh();
-                                fl_integral_get_hint.setVisibility(View.GONE);
-                                showToast(IntegralGetActivity.this,attendanceDetailEntity.getMsg());
-                            }
+        if (userId > 0) {
+            String url = Url.BASE_URL + Url.H_ATTENDANCE_GET;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(IntegralGetActivity.this, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    integralGetBeanList.clear();
+                    Gson gson = new Gson();
+                    attendanceDetailEntity = gson.fromJson(result, IntegralGetEntity.class);
+                    if (attendanceDetailEntity != null) {
+                        if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
+                            integralGetBeanList.addAll(attendanceDetailEntity.getIntegralGetList());
+                            integralGetAdapter.notifyDataSetChanged();
+                            fl_integral_get_hint.setVisibility(View.VISIBLE);
+                        } else {
+                            smart_communal_refresh.finishRefresh();
+                            fl_integral_get_hint.setVisibility(View.GONE);
+                            showToast(IntegralGetActivity.this, attendanceDetailEntity.getMsg());
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
                     }
+                }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        super.onError(ex, isOnCallback);
-                        communal_error.setVisibility(View.VISIBLE);
-                        smart_communal_refresh.finishRefresh();
-                        fl_integral_get_hint.setVisibility(View.GONE);
-                    }
-                });
-            }else{
-                smart_communal_refresh.finishRefresh();
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.VISIBLE);
-                fl_integral_get_hint.setVisibility(View.GONE);
-                showToast(IntegralGetActivity.this, R.string.unConnectedNetwork);
-            }
+                @Override
+                public void netClose() {
+                    smart_communal_refresh.finishRefresh();
+                    fl_integral_get_hint.setVisibility(View.GONE);
+                    showToast(IntegralGetActivity.this, R.string.unConnectedNetwork);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    smart_communal_refresh.finishRefresh();
+                    fl_integral_get_hint.setVisibility(View.GONE);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
+                }
+            });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -175,20 +187,12 @@ public class IntegralGetActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getIntegralGetData();
+            loadData();
         }
     }
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 }

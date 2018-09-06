@@ -41,6 +41,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -99,7 +100,7 @@ import com.google.gson.GsonBuilder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -131,6 +132,7 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
@@ -143,12 +145,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_SERVICE_URL;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_TOPIC;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
@@ -171,7 +175,7 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
  */
 public class ShopScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_ql_sp_pro_details)
-    RefreshLayout smart_ql_sp_pro_details;
+    SmartRefreshLayout smart_ql_sp_pro_details;
     @BindView(R.id.banner_ql_sp_pro_details)
     ConvenientBanner banner_ql_sp_pro_details;
     @BindView(R.id.tv_group_product)
@@ -277,13 +281,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @BindView(R.id.scroll_pro)
     NestedScrollView scroll_pro;
-
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
+    @BindView(R.id.fl_product_details)
+    FrameLayout fl_product_details;
     //    赠品信息
     private List<PresentProductInfoBean> presentProductInfoBeans = new ArrayList<>();
     //    domo推荐
@@ -586,7 +585,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_product_share_tint.setVisibility(GONE);
         }
         badge = getBadge(ShopScrollDetailsActivity.this, fl_header_service);
-        communal_load.setVisibility(VISIBLE);
         insertNewTotalData();
     }
 
@@ -621,6 +619,16 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             getServiceData(productId);
             getCarCount();
         }
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return fl_product_details;
     }
 
     /**
@@ -746,55 +754,48 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void getShopProDetails() {
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS;
-        if (NetWorkUtils.checkNet(ShopScrollDetailsActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", productId);
-            if (!TextUtils.isEmpty(recommendFlag)) {
-                params.put("recommendFlag", recommendFlag);
-            }
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    smart_ql_sp_pro_details.finishRefresh();
-                    Gson gson = new GsonBuilder().create();
-                    shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
-                    if (shopDetailsEntity != null) {
-                        if (shopDetailsEntity.getCode().equals("01")) {
-                            shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
-                            getShopProComment(shopPropertyBean);
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        if (!TextUtils.isEmpty(recommendFlag)) {
+            params.put("recommendFlag", recommendFlag);
+        }
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_ql_sp_pro_details.finishRefresh();
+                Gson gson = new GsonBuilder().create();
+                shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
+                if (shopDetailsEntity != null) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
+                        getShopProComment(shopPropertyBean);
 //                            getShopService(shopPropertyBean);
-                            getRecommendData();
-                            setProData(shopPropertyBean);
-                        } else if (shopDetailsEntity.getCode().equals("02")) {
-                            showToast(ShopScrollDetailsActivity.this, R.string.shopOverdue);
-                            communal_empty.setVisibility(VISIBLE);
-                        } else {
-                            showToast(ShopScrollDetailsActivity.this, shopDetailsEntity.getMsg());
-                            communal_error.setVisibility(VISIBLE);
-                        }
+                        getRecommendData();
+                        setProData(shopPropertyBean);
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(ShopScrollDetailsActivity.this, shopDetailsEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopDetailsEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(VISIBLE);
-                    smart_ql_sp_pro_details.finishRefresh();
-                    showToast(ShopScrollDetailsActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_ql_sp_pro_details.finishRefresh();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(VISIBLE);
-            showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_ql_sp_pro_details.finishRefresh();
+                showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopDetailsEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_ql_sp_pro_details.finishRefresh();
+                showToast(ShopScrollDetailsActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopDetailsEntity);
+            }
+        });
     }
 
     private void getRecommendData() {
@@ -1856,7 +1857,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case 1:
-                communal_load.setVisibility(VISIBLE);
+                NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
                 productId = String.valueOf(shopRecommendHotTopicBean.getId());
                 recommendType = RECOMMEND_PRODUCT;
                 setTotalData();
@@ -2238,13 +2239,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             intent.putExtra("gpInfoId", String.valueOf(shopPropertyBean.getGpInfoId()));
             startActivity(intent);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(VISIBLE);
-        communal_error.setVisibility(GONE);
-        loadData();
     }
 
     private void getConstant() {

@@ -13,20 +13,18 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineHabitTypeAdapter;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity.HabitTypeBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,9 +36,13 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -52,18 +54,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class PersonalHabitActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.tv_header_title)
@@ -75,14 +71,16 @@ public class PersonalHabitActivity extends BaseActivity {
     RelativeLayout rel_habit_type;
     private MineHabitTypeAdapter mineHabitTypeAdapter;
     private List<HabitTypeBean> habitTypeBeanList = new ArrayList<>();
-    private int uid;
+    private HabitTypeEntity habitTypeEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_mine_habit_type;
     }
+
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_shared.setVisibility(GONE);
         tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("选择兴趣类别");
@@ -94,7 +92,7 @@ public class PersonalHabitActivity extends BaseActivity {
         communal_recycler.setAdapter(mineHabitTypeAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-                loadData();
+            loadData();
         });
         mineHabitTypeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -118,68 +116,65 @@ public class PersonalHabitActivity extends BaseActivity {
     @Override
     protected void loadData() {
         String url = Url.BASE_URL + Url.MINE_HABIT_TYPE;
-        if (NetWorkUtils.checkNet(PersonalHabitActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    habitTypeBeanList.clear();
-                    Gson gson = new Gson();
-                    HabitTypeEntity habitTypeEntity = gson.fromJson(result, HabitTypeEntity.class);
-                    if (habitTypeEntity != null) {
-                        if (habitTypeEntity.getCode().equals("01")) {
-                            rel_habit_type.setVisibility(VISIBLE);
-                            habitTypeBeanList.addAll(habitTypeEntity.getHabitTypeBeanList());
-                            mineHabitTypeAdapter.setNewData(habitTypeBeanList);
-                        } else if (!habitTypeEntity.getCode().equals("02")) {
-                            rel_habit_type.setVisibility(GONE);
-                            showToast(PersonalHabitActivity.this, habitTypeEntity.getMsg());
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                habitTypeBeanList.clear();
+                Gson gson = new Gson();
+                habitTypeEntity = gson.fromJson(result, HabitTypeEntity.class);
+                if (habitTypeEntity != null) {
+                    if (habitTypeEntity.getCode().equals(SUCCESS_CODE)) {
+                        rel_habit_type.setVisibility(VISIBLE);
+                        habitTypeBeanList.addAll(habitTypeEntity.getHabitTypeBeanList());
+                        mineHabitTypeAdapter.setNewData(habitTypeBeanList);
+                    } else if (!habitTypeEntity.getCode().equals(EMPTY_CODE)) {
+                        rel_habit_type.setVisibility(GONE);
+                        showToast(PersonalHabitActivity.this, habitTypeEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    rel_habit_type.setVisibility(GONE);
-                    showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            mineHabitTypeAdapter.loadMoreComplete();
-            showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                mineHabitTypeAdapter.loadMoreComplete();
+                showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,habitTypeEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                rel_habit_type.setVisibility(GONE);
+                smart_communal_refresh.finishRefresh();
+                showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,habitTypeEntity);
+            }
+        });
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 finish();
-            } else {
-                return;
             }
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
     }
 
     //    确定
@@ -211,7 +206,7 @@ public class PersonalHabitActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.CHANGE_USER_HABIT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("interest_ids", habitTag);
         XUtil.Post(url, params, new MyCallBack<String>() {

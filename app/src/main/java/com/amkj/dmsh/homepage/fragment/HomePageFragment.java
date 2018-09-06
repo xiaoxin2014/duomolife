@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -20,6 +21,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CategoryTypeEntity;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
@@ -67,16 +69,18 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.leolin.shortcutbadger.ShortcutBadger;
 import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getUnReadServiceMessage;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
@@ -360,30 +364,40 @@ public class HomePageFragment extends BaseFragment {
     private void getMessageWarm() {
         isLoginStatus();
         if (uid > 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS + uid;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                    if (messageTotalEntity != null) {
-                        if (messageTotalEntity.getCode().equals("01")) {
-                            MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                            if (badge != null) {
-                                int total = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                        + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                        + messageTotalBean.getCommOffifialTotal();
-                                badge.setBadgeNumber(total+getUnReadServiceMessage());
+            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext,url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                            if (messageTotalEntity != null) {
+                                if (messageTotalEntity.getCode().equals("01")) {
+                                    MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
+                                    int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
+                                            + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
+                                            + messageTotalBean.getCommOffifialTotal();
+                                    if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
+                                        ShortcutBadger.applyCount(mAppContext, totalCount);
+                                    }
+                                }
                             }
                         }
-                    }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
+                        @Override
+                        public void netClose() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            ShortcutBadger.removeCount(mAppContext);
+                        }
+                    });
+        }else{
+            ShortcutBadger.removeCount(mAppContext);
         }
     }
 

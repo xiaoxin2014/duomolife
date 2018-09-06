@@ -9,22 +9,19 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MesPushTypeSetAdapter;
 import com.amkj.dmsh.mine.bean.MesPushTypeEntity;
 import com.amkj.dmsh.mine.bean.MesPushTypeEntity.MesPushTypeBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +32,13 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -50,25 +52,19 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class MessagePushTypeActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    private int uid;
     private List<MesPushTypeBean> mesPushTypeList = new ArrayList<>();
     private MesPushTypeSetAdapter mesPushTypeSetAdapter;
+    private MesPushTypeEntity mesPushTypeEntity;
 
     @Override
     protected int getContentView() {
@@ -77,13 +73,12 @@ public class MessagePushTypeActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_shared.setVisibility(GONE);
         tv_header_titleAll.setText("消息推送");
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
-
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MessagePushTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
@@ -109,19 +104,6 @@ public class MessagePushTypeActivity extends BaseActivity {
             }
         });
         communal_recycler.setAdapter(mesPushTypeSetAdapter);
-        communal_load.setVisibility(View.VISIBLE);
-    }
-
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
     }
 
     @Override
@@ -129,16 +111,12 @@ public class MessagePushTypeActivity extends BaseActivity {
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 finish();
-            } else {
-                return;
             }
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
     }
 
@@ -146,7 +124,7 @@ public class MessagePushTypeActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.MINE_MES_PUSH_SWITCH;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         StringBuffer stringBuffer = new StringBuffer();
         for (MesPushTypeBean mesPushTypeBean : mesPushTypeList) {
             if (mesPushTypeOldBean.getId() == mesPushTypeBean.getId()) {
@@ -188,61 +166,60 @@ public class MessagePushTypeActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(MessagePushTypeActivity.this)) {
-            String url = Url.BASE_URL + Url.MINE_MES_PUSH_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(GONE);
-                    mesPushTypeList.clear();
-                    Gson gson = new Gson();
-                    MesPushTypeEntity mesPushTypeEntity = gson.fromJson(result, MesPushTypeEntity.class);
-                    if (mesPushTypeEntity != null) {
-                        if (mesPushTypeEntity.getCode().equals("01")) {
-                            for (MesPushTypeBean mesPushTypeBean : mesPushTypeEntity.getMesPushTypeBeanList()) {
-                                if (mesPushTypeBean.getStatus() == 1) {
-                                    mesPushTypeList.add(mesPushTypeBean);
-                                }
+        String url = Url.BASE_URL + Url.MINE_MES_PUSH_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                Gson gson = new Gson();
+                mesPushTypeEntity = gson.fromJson(result, MesPushTypeEntity.class);
+                if (mesPushTypeEntity != null) {
+                    if (mesPushTypeEntity.getCode().equals(SUCCESS_CODE)) {
+                        mesPushTypeList.clear();
+                        for (MesPushTypeBean mesPushTypeBean : mesPushTypeEntity.getMesPushTypeBeanList()) {
+                            if (mesPushTypeBean.getStatus() == 1) {
+                                mesPushTypeList.add(mesPushTypeBean);
                             }
-                            mesPushTypeSetAdapter.setNewData(mesPushTypeList);
-                        } else if (!mesPushTypeEntity.getCode().equals("02")) {
-                            showToast(MessagePushTypeActivity.this, mesPushTypeEntity.getMsg());
                         }
+                        mesPushTypeSetAdapter.setNewData(mesPushTypeList);
+                    } else if (!mesPushTypeEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(MessagePushTypeActivity.this, mesPushTypeEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,mesPushTypeList,mesPushTypeEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    showToast(MessagePushTypeActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(MessagePushTypeActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                showToast(MessagePushTypeActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,mesPushTypeList,mesPushTypeEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                showToast(MessagePushTypeActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,mesPushTypeList,mesPushTypeEntity);
+            }
+        });
     }
 
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        loadData();
     }
 
 }

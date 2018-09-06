@@ -8,14 +8,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
@@ -26,8 +24,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 ;
@@ -51,7 +52,6 @@ public class PersonalRealNameActivity extends BaseActivity {
     //    身份证号码
     @BindView(R.id.et_per_real_id_card)
     EditText et_per_real_id_card;
-    private int uid;
 
     @Override
     protected int getContentView() {
@@ -63,55 +63,61 @@ public class PersonalRealNameActivity extends BaseActivity {
         tv_header_titleAll.setText("实名信息");
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setText("完成");
-        getLoginStatus();
+        getLoginStatus(this);
     }
 
     @Override
     protected void loadData() {
-        if (uid > 0) {
-            if (NetWorkUtils.checkNet(PersonalRealNameActivity.this)) {
-                String url = Url.BASE_URL + Url.MINE_PAGE + uid;
-                XUtil.Get(url, null, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
-                        if (communalUserInfoEntity != null) {
-                            if (communalUserInfoEntity.getCode().equals("01")) {
-                                CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
-                                setPersonalData(communalUserInfoBean);
-                            } else if (!communalUserInfoEntity.getCode().equals("02")) {
-                                showToast(PersonalRealNameActivity.this, communalUserInfoEntity.getMsg());
+        if (userId > 0) {
+            String url = Url.BASE_URL + Url.MINE_PAGE;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+                            if (communalUserInfoEntity != null) {
+                                if (communalUserInfoEntity.getCode().equals("01")) {
+                                    CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
+                                    setPersonalData(communalUserInfoBean);
+                                } else if (!communalUserInfoEntity.getCode().equals("02")) {
+                                    showToast(PersonalRealNameActivity.this, communalUserInfoEntity.getMsg());
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        super.onError(ex, isOnCallback);
-                    }
-                });
-            }
+                        @Override
+                        public void netClose() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+
+                        }
+                    });
         }
     }
 
     /**
-     *修改真实信息
+     * 修改真实信息
      */
     private void changeRealName() {
         String realName = et_per_real_name.getText().toString().trim();
         String idCard = et_per_real_id_card.getText().toString().trim();
-        if(!TextUtils.isEmpty(realName)&&!TextUtils.isEmpty(idCard)){
-            if (uid > 0) {
+        if (!TextUtils.isEmpty(realName) && !TextUtils.isEmpty(idCard)) {
+            if (userId > 0) {
                 if (loadHud != null) {
                     loadHud.show();
                 }
                 if (NetWorkUtils.checkNet(PersonalRealNameActivity.this)) {
                     String url = Url.BASE_URL + Url.MINE_RESET_REAL_NAME;
-                    Map<String,Object> params = new HashMap<>();
-                    params.put("uid",uid);
-                    params.put("idcard",idCard);
-                    params.put("realName",realName);
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("uid", userId);
+                    params.put("idcard", idCard);
+                    params.put("realName", realName);
                     XUtil.Post(url, params, new MyCallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
@@ -122,7 +128,7 @@ public class PersonalRealNameActivity extends BaseActivity {
                             RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                             if (requestStatus != null) {
                                 if (requestStatus.getCode().equals("01")) {
-                                    showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess),"修改"));
+                                    showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
                                     finish();
                                 } else {
                                     showToast(PersonalRealNameActivity.this, requestStatus.getMsg());
@@ -140,9 +146,9 @@ public class PersonalRealNameActivity extends BaseActivity {
                     });
                 }
             }
-        }else if(TextUtils.isEmpty(realName)){
+        } else if (TextUtils.isEmpty(realName)) {
             showToast(PersonalRealNameActivity.this, "请输入收货人姓名");
-        }else{
+        } else {
             showToast(PersonalRealNameActivity.this, "请输入收货人身份证号码");
         }
 
@@ -159,28 +165,15 @@ public class PersonalRealNameActivity extends BaseActivity {
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
     }
 

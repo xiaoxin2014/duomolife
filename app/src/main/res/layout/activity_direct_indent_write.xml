@@ -2,26 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
     android:background="@color/white"
+    android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
+
     <include layout="@layout/activity_domolife_header" />
-    <FrameLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:id="@+id/ll_indent_details"
+        android:orientation="vertical">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="0px">
-                <include layout="@layout/layout_communal_recycler"/>
-            </RelativeLayout>
-            <include layout="@layout/layout_indent_write_commit" />
-        </LinearLayout>
-        <include layout="@layout/communal_loading_empty_error"/>
-    </FrameLayout>
+            android:layout_height="0px"
+            android:layout_weight="1">
+
+            <include layout="@layout/layout_communal_recycler" />
+        </RelativeLayout>
+
+        <include layout="@layout/layout_indent_write_commit" />
+    </LinearLayout>
+
 </LinearLayout>

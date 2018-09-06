@@ -54,7 +54,6 @@ import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.Pro
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -124,12 +123,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //  滑动界面
     @BindView(R.id.dl_art_detail_pro)
     DrawerLayout dl_art_detail_pro;
@@ -399,12 +392,10 @@ public class ArticleOfficialActivity extends BaseActivity {
         });
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         //          关闭手势滑动
         dl_art_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        communal_load.setVisibility(VISIBLE);
         totalPersonalTrajectory = insertNewTotalData(ArticleOfficialActivity.this, artId);
         tv_publish_comment.setText(R.string.comment_article_hint);
     }
@@ -496,8 +487,6 @@ public class ArticleOfficialActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                communal_load.setVisibility(GONE);
-                communal_error.setVisibility(GONE);
                 descripDetailList.clear();
                 Gson gson = new Gson();
                 dmlSearchDetailEntity = gson.fromJson(result, DmlSearchDetailEntity.class);
@@ -509,10 +498,6 @@ public class ArticleOfficialActivity extends BaseActivity {
                         showToast(ArticleOfficialActivity.this, dmlSearchDetailEntity.getMsg());
                     }
                     NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean, dmlSearchDetailEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
             }
 
@@ -1010,14 +995,6 @@ public class ArticleOfficialActivity extends BaseActivity {
         } else {
             dl_art_detail_pro.openDrawer(ll_communal_pro_list);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    public void refreshData() {
-        communal_load.setVisibility(VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        loadData();
     }
 
     @Override

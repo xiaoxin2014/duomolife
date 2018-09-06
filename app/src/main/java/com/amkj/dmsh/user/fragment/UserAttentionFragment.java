@@ -12,14 +12,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -31,13 +29,15 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -53,27 +53,22 @@ public class UserAttentionFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private List<UserAttentionFansBean> attentionFansList = new ArrayList();
     private int uid;
     private SearchDetailsUserAdapter detailsUserAdapter;
-    private int mid;
     private int page = 1;
     private int scrollY = 0;
     private float screenHeight;
     private String type = "attention";
+    private UserAttentionFansEntity userAttentionFansEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_recycler_floating_loading;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         detailsUserAdapter = new SearchDetailsUserAdapter(getActivity(), attentionFansList, type);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
@@ -92,7 +87,7 @@ public class UserAttentionFragment extends BaseFragment {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= attentionFansList.size()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     detailsUserAdapter.loadMoreEnd();
                 }
@@ -143,63 +138,61 @@ public class UserAttentionFragment extends BaseFragment {
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            mid = personalInfo.getUid();
-        } else {
-            mid = 0;
-        }
     }
 
     @Override
     protected void loadData() {
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    private void getData() {
         String url = Url.BASE_URL + Url.MINE_ATTENTION;
         Map<String, Object> params = new HashMap<>();
 //            查看用户ID
         params.put("uid", uid);
-        if (mid != 0) {
-            params.put("fuid", mid);
+        if (userId != 0) {
+            params.put("fuid", userId);
         }
         params.put("currentPage", page);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                detailsUserAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                if (page == 1) {
-                    attentionFansList.clear();
-                }
-                Gson gson = new Gson();
-                UserAttentionFansEntity userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
-                if (userAttentionFansEntity != null) {
-                    if (userAttentionFansEntity.getCode().equals("01")) {
-                        attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
-                    } else if (!userAttentionFansEntity.getCode().equals("02")) {
-                        showToast(getActivity(), userAttentionFansEntity.getMsg());
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        detailsUserAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
+                        if (userAttentionFansEntity != null) {
+                            if (userAttentionFansEntity.getCode().equals(SUCCESS_CODE)) {
+                                if (page == 1) {
+                                    attentionFansList.clear();
+                                }
+                                attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
+                            } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), userAttentionFansEntity.getMsg());
+                            }
+                        }
+                        detailsUserAdapter.notifyDataSetChanged();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
                     }
-                }
-                if (page == 1) {
-                    detailsUserAdapter.setNewData(attentionFansList);
-                } else {
-                    detailsUserAdapter.notifyDataSetChanged();
-                }
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                detailsUserAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                super.onError(ex, isOnCallback);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        detailsUserAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        detailsUserAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+                    }
+                });
     }
 
     @Override
@@ -208,8 +201,7 @@ public class UserAttentionFragment extends BaseFragment {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE && resultCode == RESULT_OK) {
-            isLoginStatus();
+        if (requestCode == IS_LOGIN_CODE) {
             loadData();
         }
     }
@@ -218,12 +210,11 @@ public class UserAttentionFragment extends BaseFragment {
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("attentionRefresh")) {
             if (message.result.equals("refresh")) {
-                page = 1;
                 loadData();
             }
         } else if (message.type.equals("refreshMineData")) {
             page = (int) message.result;
-            loadData();
+            getData();
         }
     }
 
@@ -233,14 +224,5 @@ public class UserAttentionFragment extends BaseFragment {
         if (!TextUtils.isEmpty(userId)) {
             uid = Integer.parseInt(userId);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 }

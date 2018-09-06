@@ -4,19 +4,17 @@ package com.amkj.dmsh.mine.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class UserAttentionFansEntity {
+public class UserAttentionFansEntity extends BaseEntity{
     /**
      * result : [{"fnickname":"ZG9tb2xpZmU=","buid":116,"fuid":1,"bnickname":"5aSa5LmI55Sf5rS7"},{"fnickname":"ZG9tb2xpZmU=","buid":114,"fuid":1,"bnickname":"8J+Ym+WmruWPr/CfmIs="},{"fnickname":"ZG9tb2xpZmU=","buid":5347,"fuid":1,"bnickname":"bGFsYWxh"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * fnickname : ZG9tb2xpZmU=
      * buid : 116
@@ -26,22 +24,6 @@ public class UserAttentionFansEntity {
 
     @SerializedName("result")
     private List<UserAttentionFansBean> userAttentionFansList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<UserAttentionFansBean> getUserAttentionFansList() {
         return userAttentionFansList;

@@ -9,15 +9,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -37,8 +36,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
@@ -83,6 +85,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     private UMShareAPI mShareAPI;
     private boolean isBindWeChat = false;
     private CommunalUserInfoEntity.CommunalUserInfoBean minaData;
+    private OtherAccountBindEntity otherAccountBindEntity;
 
     @Override
     protected int getContentView() {
@@ -91,7 +94,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_share.setVisibility(View.INVISIBLE);
         tv_header_titleAll.setText("账户安全");
     }
@@ -103,9 +106,17 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         getOtherAccountData();
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void getCurrentAccountData() {
-        String url = Url.BASE_URL + Url.MINE_PAGE + uid;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        String url = Url.BASE_URL + Url.MINE_PAGE;
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -121,8 +132,13 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(this, "onError:", ex);
+            public void netClose() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
             }
         });
     }
@@ -142,11 +158,12 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         String url = Url.BASE_URL + Url.MINE_SYNC_LOGIN;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", uid);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                OtherAccountBindEntity otherAccountBindEntity = gson.fromJson(result, OtherAccountBindEntity.class);
+                otherAccountBindEntity = gson.fromJson(result, OtherAccountBindEntity.class);
                 if (otherAccountBindEntity != null) {
                     if (otherAccountBindEntity.getCode().equals("01")) {
                         setAccountData(otherAccountBindEntity.getOtherAccountBindInfo());
@@ -156,11 +173,19 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
                         showToast(AccountSafeActivity.this, otherAccountBindEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,otherAccountBindEntity);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("AppDataActivity", "onError: " + ex);
+            public void netClose() {
+                showToast(mAppContext,R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,otherAccountBindEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(mAppContext,R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,otherAccountBindEntity);
             }
         });
     }
@@ -224,8 +249,6 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
                 intent.setClass(AccountSafeActivity.this, BindingMobileActivity.class);
             }
             startActivity(intent);
-        } else {
-            return;
         }
     }
 
@@ -367,18 +390,6 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
             showToast(getApplicationContext(), "授权取消");
         }
     };
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -387,7 +398,6 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case IS_LOGIN_CODE:
-                getLoginStatus();
                 loadData();
                 break;
         }

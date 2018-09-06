@@ -26,6 +26,7 @@ import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -33,8 +34,6 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
@@ -49,7 +48,6 @@ import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.MoneyRef
 import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.WaitDeliveryRefundReasonBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.google.gson.Gson;
@@ -77,13 +75,17 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
 
 ;
@@ -202,7 +204,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         proList.clear();
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
@@ -303,62 +305,74 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
         getApplyRefund();
     }
 
+    @Override
+    protected View getLoadView() {
+        return sv_layout_refund;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void getApplyRefund() {
-        sv_layout_refund.setVisibility(View.GONE);
         String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND;
-        if (NetWorkUtils.checkNet(DirectApplyRefundActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", refundBean.getOrderNo());
-            params.put("userId", uid);
-            try {
-                JSONArray jsonArray = new JSONArray();
-                JSONObject jsonObject;
-                for (int i = 0; i < refundBean.getDirectRefundProList().size(); i++) {
-                    DirectRefundProBean directRefundProBean = refundBean.getDirectRefundProList().get(i);
-                    jsonObject = new JSONObject();
-                    jsonObject.put("id", directRefundProBean.getId());
-                    jsonObject.put("orderProductId", directRefundProBean.getOrderProductId());
-                    jsonObject.put("count", directRefundProBean.getCount());
-                    jsonArray.put(jsonObject);
-                }
-                params.put("goods", jsonArray.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", refundBean.getOrderNo());
+        params.put("userId", uid);
+        try {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject;
+            for (int i = 0; i < refundBean.getDirectRefundProList().size(); i++) {
+                DirectRefundProBean directRefundProBean = refundBean.getDirectRefundProList().get(i);
+                jsonObject = new JSONObject();
+                jsonObject.put("id", directRefundProBean.getId());
+                jsonObject.put("orderProductId", directRefundProBean.getOrderProductId());
+                jsonObject.put("count", directRefundProBean.getCount());
+                jsonArray.put(jsonObject);
             }
-            params.put("type", refundBean.getType());
-            if (refundBean.getType() == 1) {
-                params.put("refundPrice", refundBean.getRefundPrice());
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RefundApplyEntity refundApplyEntity = gson.fromJson(result, RefundApplyEntity.class);
-                    if (refundApplyEntity != null) {
-                        if (refundApplyEntity.getCode().equals("01")) {
-                            sv_layout_refund.setVisibility(View.VISIBLE);
-                            tv_submit_apply_refund.setVisibility(View.VISIBLE);
-                            refundApplyBean = refundApplyEntity.getRefundApplyBean();
-                            setRefundApplyData(refundApplyBean);
-                        } else if (refundApplyEntity.getCode().equals("02")) {
-                            showToast(DirectApplyRefundActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DirectApplyRefundActivity.this, refundApplyEntity.getMsg());
-                        }
+            params.put("goods", jsonArray.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.put("type", refundBean.getType());
+        if (refundBean.getType() == 1) {
+            params.put("refundPrice", refundBean.getRefundPrice());
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RefundApplyEntity refundApplyEntity = gson.fromJson(result, RefundApplyEntity.class);
+                if (refundApplyEntity != null) {
+                    if (refundApplyEntity.getCode().equals(SUCCESS_CODE)) {
+                        sv_layout_refund.setVisibility(View.VISIBLE);
+                        tv_submit_apply_refund.setVisibility(View.VISIBLE);
+                        refundApplyBean = refundApplyEntity.getRefundApplyBean();
+                        setRefundApplyData(refundApplyBean);
+                    } else if (refundApplyEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DirectApplyRefundActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DirectApplyRefundActivity.this, refundApplyEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    sv_layout_refund.setVisibility(View.GONE);
-                    showToast(DirectApplyRefundActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            sv_layout_refund.setVisibility(View.GONE);
-            showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                sv_layout_refund.setVisibility(View.GONE);
+                showToast(DirectApplyRefundActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                sv_layout_refund.setVisibility(View.GONE);
+                showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+        });
     }
 
     private void setRefundApplyData(RefundApplyBean refundApplyBean) {
@@ -410,17 +424,6 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -428,8 +431,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
+            if (requestCode == IS_LOGIN_CODE) {
                 loadData();
             } else if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
                 List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
@@ -457,7 +459,6 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                 getAddressDetails();
             } else if (requestCode == REQUEST_PERMISSIONS) {
                 showToast(this, "请到应用管理授予权限");
-                return;
             }
         }
     }

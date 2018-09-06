@@ -38,6 +38,7 @@ import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.MainNavEntity;
@@ -107,6 +108,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getCurrentTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
@@ -760,25 +762,36 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
      */
     private void getDesktopMesCount() {
         if (userId > 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS + userId;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                    if (messageTotalEntity != null) {
-                        if (messageTotalEntity.getCode().equals("01")) {
-                            MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                            int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                    + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                    + messageTotalBean.getCommOffifialTotal();
-                            if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
-                                ShortcutBadger.applyCount(getApplicationContext(), totalCount);
+            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext,url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                            if (messageTotalEntity != null) {
+                                if (messageTotalEntity.getCode().equals("01")) {
+                                    MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
+                                    int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
+                                            + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
+                                            + messageTotalBean.getCommOffifialTotal();
+                                    if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
+                                        ShortcutBadger.applyCount(mAppContext, totalCount);
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-            });
+
+                        @Override
+                        public void netClose() {}
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            ShortcutBadger.removeCount(mAppContext);
+                        }
+                    });
         } else {
             ShortcutBadger.removeCount(getApplicationContext());
         }

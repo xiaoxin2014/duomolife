@@ -25,6 +25,7 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -34,8 +35,6 @@ import com.amkj.dmsh.dominant.activity.QualityGroupShopMineActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.SaleSkuBean;
@@ -61,7 +60,6 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.google.gson.Gson;
@@ -87,17 +85,20 @@ import butterknife.OnClick;
 import cn.xiaoneng.uiapi.Ntalker;
 
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PROPRIETOR_PRODUCT;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 import static com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity.INDENT_DETAILS_TYPE;
 
@@ -114,22 +115,17 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     TextView header_shared;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
+    @BindView(R.id.ll_indent_details)
+    LinearLayout ll_indent_details;
     //结算
     @BindView(R.id.tv_indent_write_commit)
     TextView tv_indent_write_commit;
     //    商品结算金额
     @BindView(R.id.tv_indent_total_price)
     TextView tv_indent_total_price;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private boolean isFirst = true;
     private int addressId;
     private String type = "";
-    private int uid;
     private PullHeaderView pullHeaderView;
     private PullFootView pullFootView;
     private final int NEW_CRE_ADDRESS_REQ = 101;
@@ -181,7 +177,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         isOversea = false;
         tv_header_titleAll.setText("订单填写");
         header_shared.setVisibility(View.INVISIBLE);
@@ -282,7 +278,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
         indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
         pullFootView.rv_indent_write_info.setAdapter(indentDiscountAdapter);
-        communal_load.setVisibility(VISIBLE);
     }
 
     //  再次购买，获取商品信息
@@ -298,13 +293,10 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     productInfoList.clear();
                 }
                 discountBeanList.clear();
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
                 Gson gson = new Gson();
                 DirectReBuyGoods directReBuyGoods = gson.fromJson(result, DirectReBuyGoods.class);
                 if (directReBuyGoods != null) {
-                    if (directReBuyGoods.getCode().equals("01")) {
+                    if (directReBuyGoods.getCode().equals(SUCCESS_CODE)) {
                         List<ReBuyGoodsBean> reBuyGoodsBeanList = directReBuyGoods.getReBuyGoodsBean();
                         for (int i = 0; i < reBuyGoodsBeanList.size(); i++) {
                             ReBuyGoodsBean reBuyGoodsBean = reBuyGoodsBeanList.get(i);
@@ -316,15 +308,9 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                         }
                         loadHud.show();
                         getIndentDiscounts(false);
-                    } else if (directReBuyGoods.getCode().equals("02")) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_empty.setVisibility(View.GONE);
-                        communal_error.setVisibility(VISIBLE);
+                    } else if (directReBuyGoods.getCode().equals(EMPTY_CODE)) {
                         showToast(DirectIndentWriteActivity.this, R.string.invalidData);
                     } else {
-                        communal_load.setVisibility(View.GONE);
-                        communal_empty.setVisibility(View.GONE);
-                        communal_error.setVisibility(VISIBLE);
                         showToast(DirectIndentWriteActivity.this, directReBuyGoods.getMsg());
                     }
                 }
@@ -332,9 +318,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(VISIBLE);
                 showToast(DirectIndentWriteActivity.this, R.string.invalidData);
                 super.onError(ex, isOnCallback);
             }
@@ -381,7 +364,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                 showToast(this, "商品选择错误");
             }
         } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
-            if (uid > 0) {
+            if (userId > 0) {
                 if (addressId != 0) {
                     tv_indent_write_commit.setEnabled(false);
                     if (pullFootView.rb_checked_weChat_pay.isChecked() && !pullFootView.rb_checked_aliPay.isChecked()) {
@@ -406,7 +389,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     showToast(this, "收货地址为空");
                 }
             } else {
-                getLoginStatus();
+                getLoginStatus(this);
             }
         }
     }
@@ -431,7 +414,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         String url = Url.BASE_URL + Url.Q_CREATE_GROUP_INDENT;
         Map<String, Object> params = new HashMap<>();
         //用户ID
-        params.put("userId", uid);
+        params.put("userId", userId);
         //用户地址
         params.put("userAddressId", addressId);
 //        拼团订单状态 开团 1 拼团 2
@@ -509,7 +492,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         String url = Url.BASE_URL + Url.Q_PAYMENT_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", !TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo);
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("buyType", payWay);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -558,7 +541,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         String url = Url.BASE_URL + Url.Q_CREATE_INDENT;
         Map<String, Object> params = new HashMap<>();
         //用户ID
-        params.put("userId", uid);
+        params.put("userId", userId);
         //用户地址
         params.put("userAddressId", addressId);
         //订单信息
@@ -1040,36 +1023,36 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(this)) {
-            communal_load.setVisibility(View.GONE);
-            communal_empty.setVisibility(View.GONE);
-            communal_error.setVisibility(View.GONE);
-            if (type.equals(INDENT_W_TYPE)) {
-                if (isFirst) {
-                    getDefaultAddress();
-                } else {
-                    getAddressDetails();
-                }
-            } else if (type.equals(INDENT_GROUP_SHOP)) {
-                pullFootView.ll_layout_coupon.setVisibility(View.GONE);
-                if (isFirst) {
-                    getDefaultAddress();
-                } else {
-                    getAddressDetails();
-                }
-            }
-            //            再次购买
-            if (orderNo != null) {
-                getOrderData();
+        if (type.equals(INDENT_W_TYPE)) {
+            if (isFirst) {
+                getDefaultAddress();
             } else {
-                getIndentDiscounts(false);
+                getAddressDetails();
             }
-        } else {
-            showToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
-            communal_load.setVisibility(View.GONE);
-            communal_empty.setVisibility(View.GONE);
-            communal_error.setVisibility(VISIBLE);
+        } else if (type.equals(INDENT_GROUP_SHOP)) {
+            pullFootView.ll_layout_coupon.setVisibility(View.GONE);
+            if (isFirst) {
+                getDefaultAddress();
+            } else {
+                getAddressDetails();
+            }
         }
+        //            再次购买
+        if (orderNo != null) {
+            getOrderData();
+        } else {
+            getIndentDiscounts(false);
+        }
+    }
+
+    @Override
+    protected View getLoadView() {
+        return ll_indent_details;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     /**
@@ -1080,7 +1063,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             //优惠详情信息
             String url = Url.BASE_URL + Url.INDENT_DISCOUNTS_INFO;
             Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
+            params.put("userId", userId);
             if (addressId > 0) {
                 params.put("addressId", addressId);
             }
@@ -1107,25 +1090,34 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                 }
             }
             params.put("version", "v3.1.5");
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
                 @Override
                 public void onSuccess(String result) {
                     loadHud.dismiss();
                     Gson gson = new Gson();
                     indentDiscountsEntity = gson.fromJson(result, IndentDiscountsEntity.class);
                     if (indentDiscountsEntity != null) {
-                        if (indentDiscountsEntity.getCode().equals("01")) {
+                        if (indentDiscountsEntity.getCode().equals(SUCCESS_CODE)) {
                             setDiscountsInfo(indentDiscountsEntity.getIndentDiscountsBean());
                         }
                     }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void netClose() {
                     loadHud.dismiss();
-                    super.onError(ex, isOnCallback);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    loadHud.dismiss();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
                 }
             });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
         }
     }
 
@@ -1272,7 +1264,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     }
 
     private void getDefaultAddress() {
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + uid;
+        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
         XUtil.Get(url, null, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -1331,17 +1323,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -1364,13 +1345,10 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     isFirst = false;
                     getAddressDetails();
                     break;
-                case IS_LOGIN_CODE:
-                    getLoginStatus();
-                    break;
                 case DIRECT_COUPON_REQ:
                     //            获取优惠券
                     couponId = data.getIntExtra("couponId", 0);
-                    int couponAmount = data.getIntExtra("couponAmount",0);
+                    int couponAmount = data.getIntExtra("couponAmount", 0);
                     if (couponId < 1) {
                         pullFootView.tv_direct_product_favorable.setEnabled(true);
                         pullFootView.tv_direct_product_favorable.setSelected(false);
@@ -1512,7 +1490,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         @OnClick(R.id.tv_lv_top)
         void skipNewAddress(View view) {
             Intent intent = new Intent(DirectIndentWriteActivity.this, SelectedAddressActivity.class);
-            intent.putExtra("uid", uid);
             intent.putExtra("hasDefaultAddress", false);
             startActivityForResult(intent, NEW_CRE_ADDRESS_REQ);
         }
@@ -1523,7 +1500,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             if (TextUtils.isEmpty(orderCreateNo)) {
                 if (type.equals(INDENT_W_TYPE) || type.equals(INDENT_GROUP_SHOP)) {
                     Intent intent = new Intent(DirectIndentWriteActivity.this, SelectedAddressActivity.class);
-                    intent.putExtra("uid", uid);
                     intent.putExtra("addressId", addressId);
                     intent.putExtra("hasDefaultAddress", true);
                     startActivityForResult(intent, SEL_ADDRESS_REQ);

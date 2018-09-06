@@ -1,5 +1,6 @@
 package com.amkj.dmsh.message.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,34 +12,15 @@ import java.util.List;
  * class description:交易订单
  */
 
-public class MessageIndentEntity {
+public class MessageIndentEntity extends BaseEntity{
 
     /**
      * result : [{"m_title":"订单已发货","m_uid":34650,"m_obj":"cX34650X2027X1500021714662","ctime":"2017-08-01 10:00:53.314","json":{"orderId":"2777","productId":"5965","product_img_url":"http://image.domolife.cn/platform/20170309/20170309103021763.jpg"},"m_type":15,"m_content":"夕染彩绘全包硅胶防摔苹果手机壳  带支架","m_id":578068},{"m_title":"订单已发货","m_uid":34650,"m_obj":"cX34650X2027X1500022327535","ctime":"2017-07-31 11:58:03.897","json":{"orderId":"2779","productId":"5965","product_img_url":"http://image.domolife.cn/platform/20170309/20170309103021763.jpg"},"m_type":15,"m_content":"夕染彩绘全包硅胶防摔苹果手机壳  带支架","m_id":578064}]
      * msg : 请求成功
      * code : 01
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<MessageIndentBean> messageIndentList;
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public List<MessageIndentBean> getMessageIndentList() {
         return messageIndentList;

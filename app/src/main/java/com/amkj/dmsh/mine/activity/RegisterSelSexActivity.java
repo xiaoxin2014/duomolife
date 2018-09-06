@@ -16,7 +16,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -31,13 +30,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
 
 ;
@@ -63,8 +61,6 @@ public class RegisterSelSexActivity extends BaseActivity {
     EditText et_register_name;
     @BindView(R.id.tv_register_data_confirm)
     TextView tv_register_data_confirm;
-    private int uid;
-    private int screenHeight;
 
     @Override
     protected int getContentView() {
@@ -73,9 +69,9 @@ public class RegisterSelSexActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         BaseApplication app = (BaseApplication) getApplication();
-        screenHeight = app.getScreenHeight();
+        int screenHeight = app.getScreenHeight();
         Drawable[] compoundMaleDrawables = rb_register_sex_male.getCompoundDrawables();
         Drawable[] compoundFemaleDrawables = rb_register_sex_female.getCompoundDrawables();
         if (compoundMaleDrawables.length > 0) {
@@ -117,28 +113,13 @@ public class RegisterSelSexActivity extends BaseActivity {
     protected void loadData() {
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-        }
     }
 
     @OnClick(R.id.tv_register_data_confirm)
@@ -157,7 +138,7 @@ public class RegisterSelSexActivity extends BaseActivity {
             }
             String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             params.put("sex", sexSelector);
             params.put("nickname", nickName);
             XUtil.Post(url, params, new MyCallBack<String>() {

@@ -9,6 +9,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:id="@+id/fl_personal_info"
         android:layout_height="match_parent">
 
         <ScrollView

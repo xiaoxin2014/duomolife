@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.google.gson.annotations.SerializedName;
@@ -17,7 +18,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class IndentDiscountsEntity {
+public class IndentDiscountsEntity extends BaseEntity{
 
     /**
      * result : {"sumDiscountPrice":62,"priceInfo":[{"color":"#000000","totalPrice":725.6,"name":"商品总额","totalPriceName":"￥725.60"},{"color":"#000000","totalPrice":40,"name":"立减","totalPriceName":"-￥40.0"},{"color":"#000000","totalPrice":5,"name":"满30减5","totalPriceName":"-￥5.0"},{"color":"#000000","totalPrice":12,"name":"满2件8.0折","totalPriceName":"-￥12.0"},{"color":"#000000","totalPrice":0,"name":"运费","totalPriceName":"￥0.00"},{"color":"#FF0033","totalPrice":62,"name":"合计优惠","totalPriceName":"-￥62.00"},{"color":"#FF0033","totalPrice":663.6,"name":"实付：","totalPriceName":"￥663.60"}],"totalPrice":663.6,"userCouponInfo":{"amount":5,"create_time":"2017-10-17 20:03:48","product_coupon_id":75,"end_time":"2017-10-27 23:59:59","device_type":1,"merchant_id":"3c48836a3e8c4da3b4900e91675e1e6a","title":"shaw的测试优惠券","type":"活动","is_coupon_refund":0,"mode":1,"start_time":"2017-10-17 20:03:48","start_fee":10,"product_ids":"0","bgColor":"#FDF4F4","user_id":34650,"use_range":0,"modeBgColor":"#FFB9B8","id":957141,"status":0,"desc":"shaw的测试优惠券"},"totalDeliveryPrice":0,"productInfo":[{"activityProductInfo":[{"skuName":"颜色:粉色","activityCode":null,"picUrl":"http://image.domolife.cn/platform/2JTHNNpxNp1504497089096.jpg","imgId":105033,"price":"98.00","name":"【上新】日本寇吉特美臀坐垫","count":3,"id":9234,"newPrice":"98.00","saleSkuId":2341},{"skuName":"默认:默认","activityCode":null,"picUrl":"http://image.domolife.cn/platform/kiRdDmxfKR1504265432368.jpg","imgId":104902,"price":"28.00","name":"【独家定制】多么生活小清新随手杯","count":1,"id":9229,"newPrice":"28.00","saleSkuId":2339},{"skuName":"默认:默认","activityCode":null,"picUrl":"http://image.domolife.cn/platform/kiRdDmxfKR1504265432368.jpg","imgId":104902,"price":"28.00","name":"【独家定制】多么生活小清新随手杯","count":1,"id":9229,"newPrice":"28.00","saleSkuId":2339}],"activityInfo":{"activityCode":"MJ1507773048","activityRuleDetail":"1、双11爆炸来袭\r\n2、双11爆炸来袭\r\n3、双11爆炸来袭","activityTag":"满减","activityType":0,"activityRule":"满10.0减2.0;满20.0减4.0;满30.0减5.0;满200.0减8.0"}},{"activityInfo":{"activityCode":"MJ1507773048","activityRuleDetail":"1、双11爆炸来袭\r\n2、双11爆炸来袭\r\n3、双11爆炸来袭","activityTag":"满减","activityType":0,"activityRule":"满10.0减2.0;满20.0减4.0;满30.0减5.0;满200.0减8.0"},"activityProductInfo":[{"skuName":"颜色:四层","activityCode":"MJ1507773048","picUrl":"http://image.domolife.cn/platform/CR2nbhsJXc.jpg","imgId":54827,"price":"45.00","name":"FaSoLa冰箱冷冻饺子收纳盒","count":2,"id":4283,"newPrice":"45.00","saleSkuId":114},{"skuName":"颜色:四层","activityCode":"MJ1507773048","picUrl":"http://image.domolife.cn/platform/CR2nbhsJXc.jpg","imgId":54827,"price":"45.00","name":"FaSoLa冰箱冷冻饺子收纳盒","count":2,"id":4283,"newPrice":"45.00","saleSkuId":114}]},{"activityInfo":{"activityCode":"ZK1507788859","activityRuleDetail":"123","activityTag":"折扣","activityType":1,"activityRule":"满2件8.0折;满6件4.0折"},"activityProductInfo":[{"skuName":"颜色:薄款奶白色","activityCode":"ZK1507788859","picUrl":"http://image.domolife.cn/platform/Z4aT6cEhKA.jpg","imgId":55116,"price":"9.80","name":"FaSoLa粘贴式马桶垫马桶坐垫马桶贴","count":1,"id":4319,"newPrice":"9.80","saleSkuId":213},{"skuName":"颜色:薄款绿色","activityCode":"ZK1507788859","picUrl":"http://image.domolife.cn/platform/eFnAkeyw6j.jpg","imgId":55115,"price":"9.80","name":"FaSoLa粘贴式马桶垫马桶坐垫马桶贴","count":1,"id":4319,"newPrice":"9.80","saleSkuId":212},{"skuName":"颜色:蓝色","activityCode":"ZK1507788859","picUrl":"http://image.domolife.cn/platform/YeHFBhfA7C.jpg","imgId":55169,"price":"49.00","name":"FaSoLa厨房置物架碗碟沥水架","count":1,"id":4326,"newPrice":"49.00","saleSkuId":230}]},{"activityInfo":{"activityCode":"XSG1507789611","activityRuleDetail":"123","activityTag":"限时购","activityType":3,"activityRule":""},"activityProductInfo":[{"skuName":"颜色:黄色","activityCode":"XSG1507789611","picUrl":"http://image.domolife.cn/platform/JeeYeXfFPa.jpg","imgId":55374,"price":"9.00","name":"日本FaSoLa 抗菌菜板","count":3,"id":4352,"newPrice":"9.00","saleSkuId":283},{"skuName":"颜色:粉色","activityCode":"XSG1507789611","picUrl":"http://image.domolife.cn/platform/CtZeSHJDPT.jpg","imgId":55367,"price":"8.00","name":"日本FaSoLa 抗菌菜板","count":1,"id":4352,"newPrice":"8.00","saleSkuId":282}]},{"activityInfo":{"activityCode":"LJ1507778006","activityRuleDetail":"立减震撼来袭立减震撼来袭","activityTag":"立减震撼来","activityType":2,"activityRule":"立减20.0"},"activityProductInfo":[{"skuName":"容量:10KG","activityCode":"LJ1507778006","picUrl":"http://image.domolife.cn/platform/s78nhsEdYT.jpg","imgId":55184,"price":"46.00","name":"爱丽思米桶滑盖式","count":2,"id":4328,"newPrice":"46.00","saleSkuId":236}]}]}
@@ -27,8 +28,6 @@ public class IndentDiscountsEntity {
 
     @SerializedName("result")
     private IndentDiscountsBean indentDiscountsBean;
-    private String code;
-    private String msg;
 
     public IndentDiscountsBean getIndentDiscountsBean() {
         return indentDiscountsBean;
@@ -36,22 +35,6 @@ public class IndentDiscountsEntity {
 
     public void setIndentDiscountsBean(IndentDiscountsBean indentDiscountsBean) {
         this.indentDiscountsBean = indentDiscountsBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class IndentDiscountsBean {

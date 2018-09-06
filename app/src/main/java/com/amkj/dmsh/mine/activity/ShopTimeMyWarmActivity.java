@@ -13,22 +13,20 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.mine.adapter.ShopTimeMyWarmAdapter;
 import com.amkj.dmsh.mine.bean.MineWarmEntity;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,9 +36,14 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -54,33 +57,29 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private List<MineWarmBean> mineWarmBeanList = new ArrayList();
     private int page = 1;
-    private int uid;
     private ShopTimeMyWarmAdapter shopTimeMyWarmAdapter;
     private int scrollY = 0;
     private float screenHeight;
     private boolean isOnPause;
     private String timeWarm;
+    private MineWarmEntity mineWarmEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_refresh_floating_header;
     }
+
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("秒杀提醒");
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setText("提醒时间");
@@ -99,19 +98,15 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         communal_recycler.setAdapter(shopTimeMyWarmAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-
-                //                滚动距离置0
-                scrollY = 0;
-                page = 1;
-                loadData();
-
+            scrollY = 0;
+            loadData();
         });
         shopTimeMyWarmAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= shopTimeMyWarmAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getWarmTimeShop();
                 } else {
                     shopTimeMyWarmAdapter.loadMoreEnd();
                 }
@@ -174,21 +169,20 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
             }
             communal_recycler.smoothScrollToPosition(0);
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     private void cancelWarm(int productId) {
         String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                     } else {
                         showToast(ShopTimeMyWarmActivity.this, status.getMsg());
@@ -200,71 +194,76 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        page = 1;
         getWarmTimeShop();
         getWarmTime();
     }
 
-    private void getWarmTimeShop() {
-        String url = Url.BASE_URL + Url.MINE_WARM + uid + "&currentPage=" + page;
-        if (NetWorkUtils.checkNet(ShopTimeMyWarmActivity.this)) {
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    shopTimeMyWarmAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        mineWarmBeanList.clear();
-                    }
-                    Gson gson = new Gson();
-                    MineWarmEntity mineWarmEntity = gson.fromJson(result, MineWarmEntity.class);
-                    if (mineWarmEntity != null) {
-                        if (mineWarmEntity.getCode().equals("01")) {
-                            if (!TextUtils.isEmpty(mineWarmEntity.getCurrentTime())) {
-                                for (int i = 0; i < mineWarmEntity.getMineWarmList().size(); i++) {
-                                    MineWarmBean mineWarmBean = mineWarmEntity.getMineWarmList().get(i);
-                                    mineWarmBean.setCurrentTime(mineWarmEntity.getCurrentTime());
-                                    mineWarmBeanList.add(mineWarmBean);
-                                }
-                            } else {
-                                mineWarmBeanList.addAll(mineWarmEntity.getMineWarmList());
-                            }
-                            tv_header_titleAll.setText("秒杀提醒(" + mineWarmEntity.getCount() + ")");
-                        } else if (!mineWarmEntity.getCode().equals("02")) {
-                            showToast(ShopTimeMyWarmActivity.this, mineWarmEntity.getMsg());
-                        }
-                        if (page == 1) {
-                            shopTimeMyWarmAdapter.setNewData(mineWarmBeanList);
-                        } else {
-                            shopTimeMyWarmAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (page == 1 && shopTimeMyWarmAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    private void getWarmTimeShop() {
+        String url = Url.BASE_URL + Url.MINE_WARM ;
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        params.put("currentPage",page);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                shopTimeMyWarmAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                mineWarmEntity = gson.fromJson(result, MineWarmEntity.class);
+                if (mineWarmEntity != null) {
+                    if (mineWarmEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            mineWarmBeanList.clear();
+                        }
+                        if (!TextUtils.isEmpty(mineWarmEntity.getCurrentTime())) {
+                            for (int i = 0; i < mineWarmEntity.getMineWarmList().size(); i++) {
+                                MineWarmBean mineWarmBean = mineWarmEntity.getMineWarmList().get(i);
+                                mineWarmBean.setCurrentTime(mineWarmEntity.getCurrentTime());
+                                mineWarmBeanList.add(mineWarmBean);
+                            }
+                        } else {
+                            mineWarmBeanList.addAll(mineWarmEntity.getMineWarmList());
+                        }
+                        tv_header_titleAll.setText("秒杀提醒(" + mineWarmEntity.getCount() + ")");
+                    } else if (!mineWarmEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(ShopTimeMyWarmActivity.this, mineWarmEntity.getMsg());
                     }
-                    smart_communal_refresh.finishRefresh();
-                    shopTimeMyWarmAdapter.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
+                    shopTimeMyWarmAdapter.notifyDataSetChanged();
                 }
-            });
-        } else {
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            smart_communal_refresh.finishRefresh();
-            shopTimeMyWarmAdapter.loadMoreComplete();
-        }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,mineWarmBeanList, mineWarmEntity);
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                shopTimeMyWarmAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,mineWarmBeanList, mineWarmEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                shopTimeMyWarmAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,mineWarmBeanList, mineWarmEntity);
+            }
+        });
     }
 
     private void getWarmTime() {
         String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -289,19 +288,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("refreshTimeShop")) {
-            page = 1;
             loadData();
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
         }
     }
 
@@ -309,13 +296,11 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
     }
 
@@ -328,7 +313,6 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     @Override
     protected void onResume() {
         if (isOnPause) {
-            page = 1;
             loadData();
             isOnPause = false;
         }
@@ -346,14 +330,4 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         intent.putExtra("warmTime", !TextUtils.isEmpty(timeWarm) ? timeWarm : "3");
         startActivity(intent);
     }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
-    }
-
 }

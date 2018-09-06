@@ -10,20 +10,16 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,11 +29,13 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 ;
@@ -58,20 +56,15 @@ public class CouponProductActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //    商品列表
     private List<LikedProductBean> couponProductList = new ArrayList();
     private int page = 1;
     private String userCouponId;
     private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private UserLikedProductEntity likedProductEntity;
 
     @Override
     protected int getContentView() {
@@ -90,7 +83,6 @@ public class CouponProductActivity extends BaseActivity {
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         communal_recycler.setLayoutManager(new GridLayoutManager(CouponProductActivity.this, 2));
@@ -136,7 +128,7 @@ public class CouponProductActivity extends BaseActivity {
                     }
                 } else {
                     loadHud.dismiss();
-                    getLoginStatus();
+                    getLoginStatus(this);
                 }
             }
         });
@@ -144,83 +136,65 @@ public class CouponProductActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        page = 1;
         getCouponProductData();
     }
 
     private void getCouponProductData() {
-        if (NetWorkUtils.checkNet(CouponProductActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_COUPON_PRODUCT_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            params.put("user_coupon_id", userCouponId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        couponProductList.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity typeBean = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (typeBean != null) {
-                        if (typeBean.getCode().equals("01")) {
-                            couponProductList.addAll(typeBean.getLikedProductBeanList());
-                        } else if (typeBean.getCode().equals("02")) {
-                            qualityTypeProductAdapter.loadMoreEnd();
-                        } else {
-                            qualityTypeProductAdapter.loadMoreEnd();
-                            showToast(CouponProductActivity.this, typeBean.getMsg());
+        String url = Url.BASE_URL + Url.Q_COUPON_PRODUCT_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("user_coupon_id", userCouponId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProductEntity != null) {
+                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            couponProductList.clear();
                         }
-                        qualityTypeProductAdapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    if (page == 1 && qualityTypeProductAdapter.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+                        couponProductList.addAll(likedProductEntity.getLikedProductBeanList());
+                    } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        qualityTypeProductAdapter.loadMoreEnd();
                     } else {
-                        showToast(CouponProductActivity.this, R.string.invalidData);
+                        qualityTypeProductAdapter.loadMoreEnd();
+                        showToast(CouponProductActivity.this, likedProductEntity.getMsg());
                     }
-                    super.onError(ex, isOnCallback);
+                    qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-            });
-        } else {
-            if (loadHud != null) {
-                loadHud.dismiss();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponProductList,likedProductEntity);
             }
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            communal_load.setVisibility(View.GONE);
-            if (page == 1) {
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(CouponProductActivity.this, R.string.unConnectedNetwork);
-        }
-    }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            userId = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(CouponProductActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponProductList,likedProductEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(CouponProductActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponProductList,likedProductEntity);
+            }
+        });
     }
 
     @Override
@@ -229,17 +203,6 @@ public class CouponProductActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData() {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @OnClick(R.id.tv_life_back)

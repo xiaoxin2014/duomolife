@@ -6,24 +6,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.MineBabyEntity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -49,9 +48,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 ;
@@ -79,13 +80,8 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
     TextView tv_per_data_baby_info;
     @BindView(R.id.tv_per_data_habit)
     TextView tv_per_data_habit;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
-    private int uid;
+    @BindView(R.id.fl_personal_info)
+    FrameLayout fl_personal_info;
     private final String[] SEX = new String[]{"女神", "男神"};
     private final String[] BABY_SEX = new String[]{"小公主", "小王子"};
     private final String NAME = "name";
@@ -98,6 +94,7 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
     private boolean isOnPause;
     private TimePickerView nowBabyTime;
     private AlertView birthAlert;
+    private CommunalUserInfoEntity communalUserInfoEntity;
 
     @Override
     protected int getContentView() {
@@ -106,10 +103,9 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("个人信息");
         header_shared.setVisibility(View.GONE);
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -117,45 +113,57 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
         getDataInfo();
     }
 
-    private void getDataInfo() {
-        if (uid > 0) {
-            String url = Url.BASE_URL + Url.MINE_PAGE + uid;
-            if (NetWorkUtils.checkNet(PersonalDataActivity.this)) {
-                XUtil.Get(url, null, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.GONE);
-                        Gson gson = new Gson();
-                        CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
-                        if (communalUserInfoEntity != null) {
-                            if (communalUserInfoEntity.getCode().equals("01")) {
-                                communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
-                                setPersonalData(communalUserInfoBean);
-                            } else if (!communalUserInfoEntity.getCode().equals("02")) {
-                                showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
-                            }
-                        }
-                    }
+    @Override
+    protected View getLoadView() {
+        return fl_personal_info;
+    }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                        super.onError(ex, isOnCallback);
-                    }
-                });
-            } else {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    private void getDataInfo() {
+        if (userId > 0) {
+            String url = Url.BASE_URL + Url.MINE_PAGE;
+            Map<String,Object> params = new HashMap<>();
+            params.put("uid",userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+                            if (communalUserInfoEntity != null) {
+                                if (communalUserInfoEntity.getCode().equals("01")) {
+                                    communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
+                                    setPersonalData(communalUserInfoBean);
+                                } else if (!communalUserInfoEntity.getCode().equals("02")) {
+                                    showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
+                                }
+                            }
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
+                        }
+
+                        @Override
+                        public void netClose() {
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
+                        }
+                    });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
         }
     }
 
     private void changePersonalData(final String type, final String date) {
         String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         switch (type) {
             case "SexSelector":
                 params.put("sex", sexSelector);
@@ -240,35 +248,22 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            } else if (requestCode == NAME_RES_CODE) {
-                String newName = data.getStringExtra(NAME);
-                if (nowName.equals(newName)) {
-                    return;
-                } else {
-                    tv_per_data_name.setText(newName);
-                    showToast(this, "修改完成");
-                }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
+        } else if (requestCode == NAME_RES_CODE) {
+            String newName = data.getStringExtra(NAME);
+            if (nowName.equals(newName)) {
+                return;
+            } else {
+                tv_per_data_name.setText(newName);
+                showToast(this, "修改完成");
             }
         }
     }
@@ -328,7 +323,6 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
         //获取昵称
         Intent intent = new Intent(PersonalDataActivity.this, SettingPersonalNameActivity.class);
         intent.putExtra(NAME, nowName);
-        intent.putExtra("uid", uid);
         startActivityForResult(intent, NAME_RES_CODE);
     }
 
@@ -472,14 +466,6 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,38 +13,19 @@ import java.util.List;
  * class description:消息推送
  */
 
-public class MesPushTypeEntity {
+public class MesPushTypeEntity extends BaseEntity{
 
     /**
      * result : [{"isOpen":1,"name":"评论","id":1,"status":1},{"isOpen":1,"name":"赞","id":2,"status":1},{"isOpen":1,"name":"系统通知","id":3,"status":1},{"isOpen":1,"name":"签到","id":4,"status":0},{"isOpen":1,"name":"秒杀提醒","id":5,"status":0},{"isOpen":1,"name":"默认开启","id":6,"status":0},{"isOpen":1,"name":"活动通知","id":7,"status":1},{"isOpen":1,"name":"订单消息","id":8,"status":1},{"isOpen":1,"name":"购物车降价提醒","id":9,"status":1}]
      * msg : 请求成功
      * code : 01
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<MesPushTypeBean> mesPushTypeBeanList;
 
     public static MesPushTypeEntity objectFromData(String str) {
 
         return new Gson().fromJson(str, MesPushTypeEntity.class);
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public List<MesPushTypeBean> getMesPushTypeBeanList() {

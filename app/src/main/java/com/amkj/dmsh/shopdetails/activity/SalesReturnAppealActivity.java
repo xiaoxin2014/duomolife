@@ -24,8 +24,6 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
@@ -54,10 +52,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
 
 ;
@@ -101,7 +99,6 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
     private ArrayList<String> mSelectPath = new ArrayList<>();
     private AlertView dialog;
     private String orderNo;
-    private int uid;
     private AlertView commitDialog;
     private GoodsBean goodsBean;
     private int adapterPosition;
@@ -115,20 +112,18 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("退货申诉");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setTextColor(getResources().getColor(R.color.textColor_blue));
         header_shared.setText("提交");
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
-        uid = intent.getIntExtra("uid", 0);
         goodsBean = intent.getParcelableExtra("goodsBean");
         if (dataPath != null) {
             dataPath.clear();
             dataPath.add(ConstantVariable.DEFAULT_ADD_IMG);
         }
-        getLoginStatus();
         BaseApplication app = (BaseApplication) getApplication();
         if (app.getScreenWidth() >= AutoUtils.getPercentWidthSizeBigger(600)) {
             rv_sale_return_img.setLayoutManager(new GridLayoutManager(SalesReturnAppealActivity.this, 5));
@@ -184,17 +179,6 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         setData();
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     private void setData() {
         if (goodsBean != null) {
             GlideImageLoaderUtil.loadCenterCrop(SalesReturnAppealActivity.this, img_direct_indent_product, goodsBean.getPicUrl());
@@ -237,8 +221,6 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         } else if (requestCode == REQUEST_PERMISSIONS) {
             showToast(this, "请到应用管理授予权限");
             return;
-        } else if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
         }
     }
 
@@ -368,7 +350,7 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         String url = Url.BASE_URL + Url.Q_INDENT_REFUND;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("goods", new Gson().toJson(list));
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override

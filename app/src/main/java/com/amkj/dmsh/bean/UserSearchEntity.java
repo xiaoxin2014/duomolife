@@ -1,5 +1,6 @@
 package com.amkj.dmsh.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,16 +8,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/9/5.
  */
-public class UserSearchEntity {
+public class UserSearchEntity extends BaseEntity{
 
     /**
      * result : [{"uid":22119,"flag":false,"nickname":"sweetyylalala","avatar":"http://tva3.sinaimg.cn/crop.55.0.917.917.50/69cbbc90jw8f2lo4gli8sj20yi0yiq69.jpg"},{"uid":21022,"flag":false,"nickname":"我爱宝宝lalala","avatar":"http://tva4.sinaimg.cn/crop.0.0.640.640.50/d2d311f9jw8ekp1a78dh0j20hs0hswgb.jpg"},{"uid":15167,"flag":false,"nickname":"ff6lala","avatar":"http://wx.qlogo.cn/mmopen/ibDlLrzLjoRxEnUvYHMvd7wZcn21upgUjdsiaJrbxh6lVQiblhFicyrYhrQN6TcI5DmplxcYsgLMErIpNvBWBCooJMAA29TFjd69/0"},{"uid":12256,"flag":false,"nickname":"lala","avatar":"http://wx.qlogo.cn/mmopen/2w6cr0jibJ6oeHuCdu14sDkStOicM1YZwMnU1TWOV3D2iaseNtEucctgJFWibGk4O4eAOrrBUUyV5GcxQbibTh0B2ZwWicc0nCSWrl/0"},{"uid":5347,"flag":false,"nickname":"lalala","avatar":"http://wx.qlogo.cn/mmopen/2w6cr0jibJ6qC9Tw6ibVoPXEjFRPXYFbbyYLYDyc75H2VJrVThiapsk2qYd2yxibjSibCwCnE2dd9IwjWDzBicFcZ9MU5JED3MFqicV/0"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * uid : 22119
      * flag : false
@@ -26,22 +24,6 @@ public class UserSearchEntity {
 
     @SerializedName("result")
     private List<UserSearchBean> userSearchList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<UserSearchBean> getUserSearchList() {
         return userSearchList;

@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -180,6 +181,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //    单独购买描述
     @BindView(R.id.tv_sp_details_ol_buy)
     TextView tv_sp_details_ol_buy;
+    @BindView(R.id.fl_group_product)
+    FrameLayout fl_group_product;
 
     private List<GroupShopJoinBean> groupShopJoinList = new ArrayList<>();
     //    拼团规则
@@ -353,7 +356,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected View getLoadView() {
-        return smart_refresh_ql_sp_details;
+        return fl_group_product;
     }
 
     @Override

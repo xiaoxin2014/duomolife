@@ -13,6 +13,7 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -115,6 +116,11 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
     }
 
     @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
     protected void loadData() {
         if (userId > 0) {
             getIntegralLotteryAward();
@@ -130,33 +136,38 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
      * 积分夺宝领取
      */
     private void getIntegralLotteryAward() {
-        if (NetWorkUtils.checkNet(this)) {
-            String url = BASE_URL + Url.H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_INFO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("activityId", activityId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardGetEntity.class);
-                    if (integralLotteryAwardEntity != null) {
-                        if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
-                            setLotteryAwardData(integralLotteryAwardEntity);
-                        } else {
-                            showToast(IntegralLotteryAwardGetActivity.this, integralLotteryAwardEntity.getMsg());
+        String url = BASE_URL + Url.H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_INFO;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("activityId", activityId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(IntegralLotteryAwardGetActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardGetEntity.class);
+                        if (integralLotteryAwardEntity != null) {
+                            if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
+                                setLotteryAwardData(integralLotteryAwardEntity);
+                            } else {
+                                showToast(IntegralLotteryAwardGetActivity.this, integralLotteryAwardEntity.getMsg());
+                            }
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
-        }
+                    @Override
+                    public void netClose() {
+                        showToast(IntegralLotteryAwardGetActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
+                    }
+                });
     }
 
     /**

@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * Created by atd48 on 2016/11/1.
  */
-public class DirectReturnRecordEntity {
+public class DirectReturnRecordEntity extends BaseEntity{
 
     @SerializedName("result")
     private DirectReturnRecordBean directReturnRecordBean;
@@ -21,31 +22,12 @@ public class DirectReturnRecordEntity {
      * msg : 请求成功
      */
 
-    private String code;
-    private String msg;
-
     public DirectReturnRecordBean getDirectReturnRecordBean() {
         return directReturnRecordBean;
     }
 
     public void setDirectReturnRecordBean(DirectReturnRecordBean directReturnRecordBean) {
         this.directReturnRecordBean = directReturnRecordBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class DirectReturnRecordBean {

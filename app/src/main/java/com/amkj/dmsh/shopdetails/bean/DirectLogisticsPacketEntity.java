@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/10/31.
  */
-public class DirectLogisticsPacketEntity {
+public class DirectLogisticsPacketEntity extends BaseEntity{
 
     /**
      * expressNo : 70141107146139
@@ -22,31 +23,12 @@ public class DirectLogisticsPacketEntity {
      * msg : 请求成功
      */
 
-    private String code;
-    private String msg;
-
     public DirectLogisticsPacketBean getDirectLogisticsPacketBean() {
         return directLogisticsPacketBean;
     }
 
     public void setDirectLogisticsPacketBean(DirectLogisticsPacketBean directLogisticsPacketBean) {
         this.directLogisticsPacketBean = directLogisticsPacketBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class DirectLogisticsPacketBean {

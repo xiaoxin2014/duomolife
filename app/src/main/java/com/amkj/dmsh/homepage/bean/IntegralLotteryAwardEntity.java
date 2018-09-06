@@ -1,5 +1,7 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
+
 import java.util.List;
 
 /**
@@ -9,7 +11,7 @@ import java.util.List;
  * version 3.1.5
  * class description:积分夺宝奖励
  */
-public class IntegralLotteryAwardEntity {
+public class IntegralLotteryAwardEntity extends BaseEntity{
 
     /**
      * code : 01
@@ -17,27 +19,8 @@ public class IntegralLotteryAwardEntity {
      * sysTime : 2018-07-30 12:02:13
      * lotteryInfoList : [{"id":2,"activityCode":"2018072101","activityStatus":"1","activityId":2,"image":"http://image.domolife.cn/platform/TCsSKc6nkc1532154235910.png","prizeName":"我是已结束的抽奖","status":3,"statusStr":"已兑奖"}]
      */
-
-    private String code;
-    private String msg;
     private String sysTime;
     private List<LotteryInfoListBean> lotteryInfoList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public String getSysTime() {
         return sysTime;

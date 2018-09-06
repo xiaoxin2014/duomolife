@@ -10,14 +10,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.SpecialTopicAdapter;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -29,10 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -50,23 +49,20 @@ public class SpecialDetailsFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
 
     private List<TopicSpecialBean> specialSearList = new ArrayList<>();
-    int page = 1;
+    private int page = 1;
     private String keyWord;
     private int scrollY = 0;
     private SpecialTopicAdapter specialTopicAdapter;
     private float screenHeight;
+    private TopicSpecialEntity topicSpecialEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_smart_refresh_recycler_float_loading;
     }
+
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -83,8 +79,7 @@ public class SpecialDetailsFragment extends BaseFragment {
         communal_recycler.setAdapter(specialTopicAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-           page = 1;
-                loadData();
+            loadData();
         });
         specialTopicAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -128,15 +123,19 @@ public class SpecialDetailsFragment extends BaseFragment {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     //设置显示
 
     @Override
     protected void loadData() {
-        communal_load.setVisibility(View.VISIBLE);
+        page = 1;
         getSpecialData();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override
@@ -144,9 +143,8 @@ public class SpecialDetailsFragment extends BaseFragment {
         if (message.type.equals("search1")) {
             String resultText = (String) message.result;
             if (!resultText.equals(keyWord)) {
-                page = 1;
                 keyWord = resultText;
-                getSpecialData();
+                loadData();
             }
         }
     }
@@ -154,61 +152,46 @@ public class SpecialDetailsFragment extends BaseFragment {
     private void getSpecialData() {
         if (!TextUtils.isEmpty(keyWord)) {
             String url = Url.BASE_URL + Url.H_HOT_SEARCH_SPECIAL;
-            if (NetWorkUtils.checkNet(getActivity())) {
-                Map<String, Object> params = new HashMap<>();
-                params.put("keyword", keyWord);
-                params.put("currentPage", page);
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        smart_communal_refresh.finishRefresh();
-                        specialTopicAdapter.loadMoreComplete();
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.GONE);
-                        if (page == 1) {
-                            specialSearList.clear();
-                        }
-                        Gson gson = new Gson();
-                        TopicSpecialEntity topicSpecialEntity = gson.fromJson(result, TopicSpecialEntity.class);
-                        if (topicSpecialEntity != null) {
-                            if (topicSpecialEntity.getCode().equals("01")) {
-                                specialSearList.addAll(topicSpecialEntity.getTopicSpecialBeanList());
-                            } else if (!topicSpecialEntity.getCode().equals("02")) {
-                                showToast(getActivity(), topicSpecialEntity.getMsg());
-                            }
+            Map<String, Object> params = new HashMap<>();
+            params.put("keyword", keyWord);
+            params.put("currentPage", page);
+            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    specialTopicAdapter.loadMoreComplete();
+                    Gson gson = new Gson();
+                    topicSpecialEntity = gson.fromJson(result, TopicSpecialEntity.class);
+                    if (topicSpecialEntity != null) {
+                        if (topicSpecialEntity.getCode().equals(SUCCESS_CODE)) {
                             if (page == 1) {
-                                specialTopicAdapter.setNewData(specialSearList);
-                            } else {
-                                specialTopicAdapter.notifyDataSetChanged();
+                                specialSearList.clear();
                             }
+                            specialSearList.addAll(topicSpecialEntity.getTopicSpecialBeanList());
+                        } else if (!topicSpecialEntity.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), topicSpecialEntity.getMsg());
                         }
+                        specialTopicAdapter.notifyDataSetChanged();
                     }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+                }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        if (page == 1 && specialSearList.size() < 1) {
-                            communal_load.setVisibility(View.GONE);
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
-                        smart_communal_refresh.finishRefresh();
-                        specialTopicAdapter.loadMoreComplete();
-                        super.onError(ex, isOnCallback);
-                    }
-                });
-            } else {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-                smart_communal_refresh.finishRefresh();
-                specialTopicAdapter.loadMoreComplete();
-            }
+                @Override
+                public void netClose() {
+                    smart_communal_refresh.finishRefresh();
+                    specialTopicAdapter.loadMoreComplete();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    smart_communal_refresh.finishRefresh();
+                    specialTopicAdapter.loadMoreComplete();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+                }
+            });
+        } else {
+            NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 }

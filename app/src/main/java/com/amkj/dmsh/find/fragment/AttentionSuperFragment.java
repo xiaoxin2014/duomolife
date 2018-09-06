@@ -39,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
@@ -229,26 +230,30 @@ public class AttentionSuperFragment extends BaseFragment {
                                         invitationSearchList.clear();
                                     }
                                     invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                                }else {
+                                }else if(!EMPTY_CODE.equals(invitationDetailEntity.getCode())){
                                     showToast(getActivity(), invitationDetailEntity.getMsg());
                                 }
                                 adapterInvitationAdapter.notifyDataSetChanged();
                             }
+                            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         }
 
                         @Override
                         public void netClose() {
                             adapterInvitationAdapter.loadMoreComplete();
                             showToast(getActivity(), R.string.unConnectedNetwork);
+                            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         }
 
                         @Override
                         public void onError(Throwable throwable) {
                             adapterInvitationAdapter.loadMoreComplete();
+                            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         }
                     });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
         }
-
     }
 
     @Override

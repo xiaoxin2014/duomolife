@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -46,13 +47,12 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity.IntegralOrderDetailBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
@@ -69,6 +69,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -76,6 +77,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
@@ -86,6 +88,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_APPLY;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_FEEDBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.VIRTUAL_COUPON;
 
 /**
@@ -98,15 +101,9 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //    积分订单
     @BindView(R.id.ll_indent_bottom)
     LinearLayout ll_indent_bottom;
@@ -129,6 +126,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
     private CustomPopWindow mCustomPopWindow;
     private String payWay;
     private boolean isOnPause;
+    private IntegralOrderDetailEntity integralOrderDetailEntity;
 
     @Override
     protected int getContentView() {
@@ -183,63 +181,69 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
         indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
         rvFootView.rv_integral_indent_price.setAdapter(indentDiscountAdapter);
         ll_indent_bottom.setVisibility(View.GONE);
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
         String url = Url.BASE_URL + Url.INDENT_INTEGRAL_DETAILS;
-        if (NetWorkUtils.checkNet(IntegExchangeDetailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", indentNum);
-            params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    String code = "";
-                    String msg = "";
-                    try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        code = (String) jsonObject.get("code");
-                        msg = (String) jsonObject.get("msg");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (code.equals("01")) {
-                        Gson gson = new Gson();
-                        IntegralOrderDetailEntity integralOrderDetailEntity = gson.fromJson(result, IntegralOrderDetailEntity.class);
-                        if (integralOrderDetailEntity != null) {
-                            IntegralOrderDetailBean integralOrderDetailBean = integralOrderDetailEntity.getIntegralOrderDetailBean();
-                            if (integralOrderDetailBean != null) {
-                                INDENT_PRO_STATUS = integralOrderDetailBean.getStatus();
-                                setIntegralIndentData(integralOrderDetailBean);
-                            }
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", indentNum);
+        params.put("userId", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                String code = "";
+                String msg = "";
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    code = (String) jsonObject.get("code");
+                    msg = (String) jsonObject.get("msg");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (code.equals(SUCCESS_CODE)) {
+                    Gson gson = new Gson();
+                    integralOrderDetailEntity = gson.fromJson(result, IntegralOrderDetailEntity.class);
+                    if (integralOrderDetailEntity != null) {
+                        IntegralOrderDetailBean integralOrderDetailBean = integralOrderDetailEntity.getIntegralOrderDetailBean();
+                        if (integralOrderDetailBean != null) {
+                            INDENT_PRO_STATUS = integralOrderDetailBean.getStatus();
+                            setIntegralIndentData(integralOrderDetailBean);
                         }
-                    } else if (code.equals("02")) {
-                        showToast(IntegExchangeDetailActivity.this, R.string.shopOverdue);
-                    } else {
-                        showToast(IntegExchangeDetailActivity.this, msg);
-                        communal_error.setVisibility(View.VISIBLE);
                     }
+                } else if (code.equals(EMPTY_CODE)) {
+                    showToast(IntegExchangeDetailActivity.this, R.string.shopOverdue);
+                } else {
+                    showToast(IntegExchangeDetailActivity.this, msg);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    smart_communal_refresh.finishRefresh();
-                    showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,integralOrderDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,integralOrderDetailEntity);
+            }
+        });
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void setIntegralIndentData(IntegralOrderDetailBean indentInfoBean) {
@@ -547,14 +551,6 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
                 super.onError(ex, isOnCallback);
             }
         });
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     @Override

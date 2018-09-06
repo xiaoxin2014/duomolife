@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
+import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -120,6 +121,7 @@ public abstract class BaseFragment extends Fragment {
                 @Override
                 public void onReload(View v) {
                     // 重新加载逻辑
+                    loadService.showCallback(NetLoadCallback.class);
                     loadData();
                 }
             },NetLoadUtils.getQyInstance().getLoadSirCover());

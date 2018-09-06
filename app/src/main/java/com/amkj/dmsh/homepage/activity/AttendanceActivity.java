@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -55,6 +56,7 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -104,15 +106,9 @@ public class AttendanceActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private IntegrationRecyclerAdapter integrationRecyclerAdapter;
     //    积分商品
     private List<IntegrationBean> integrationBeanList = new ArrayList();
@@ -139,6 +135,7 @@ public class AttendanceActivity extends BaseActivity {
     private AlertRuleDialogHelper alertLotteryRuleDialogHelper;
     private AlertRuleDialogHelper alertIntegralRuleDialogHelper;
     private AlertDialogHelper alertDialogHelper;
+    private AttendanceDetailEntity attendanceDetailEntity;
 
     @Override
     protected int getContentView() {
@@ -220,7 +217,6 @@ public class AttendanceActivity extends BaseActivity {
                 loadData();
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -230,6 +226,8 @@ public class AttendanceActivity extends BaseActivity {
             getAttendanceDetail();
 //        积分夺宝
             getIntegralLottery();
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -249,6 +247,16 @@ public class AttendanceActivity extends BaseActivity {
         getDoubleIntegration();
     }
 
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
 
     /**
      * 夺宝规则
@@ -352,39 +360,37 @@ public class AttendanceActivity extends BaseActivity {
      * 签到详情
      */
     private void getAttendanceDetail() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            String url = BASE_URL + Url.H_ATTENDANCE_DETAIL;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    Gson gson = new Gson();
-                    AttendanceDetailEntity attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
-                    if (attendanceDetailEntity != null
-                            && SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
-                        setAttendanceDetail(attendanceDetailEntity);
-                        loadWaitData();
-                    }
+        String url = BASE_URL + Url.H_ATTENDANCE_DETAIL;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(AttendanceActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                Gson gson = new Gson();
+                attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
+                if (attendanceDetailEntity != null
+                        && SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
+                    setAttendanceDetail(attendanceDetailEntity);
+                    loadWaitData();
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,attendanceDetailEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                    communal_error.setVisibility(View.VISIBLE);
-                    smart_communal_refresh.finishRefresh();
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            communal_empty.setVisibility(View.VISIBLE);
-            showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,attendanceDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,attendanceDetailEntity);
+            }
+        });
     }
 
     private void setAttendanceDetail(AttendanceDetailEntity attendanceDetailEntity) {
@@ -931,14 +937,6 @@ public class AttendanceActivity extends BaseActivity {
                     , "多么生活精选全球好物，买对就是省钱~新人特价专享1折起！"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData() {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     @Override

@@ -14,10 +14,9 @@ import android.view.View;
 
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -32,6 +31,9 @@ import com.zhy.autolayout.utils.AutoUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import cn.jzvd.JZVideoPlayer;
@@ -59,11 +61,12 @@ public abstract class BaseActivity extends AutoLayoutActivity {
                 .setSize((int) (AutoUtils.getPercentWidth1px() * 50), (int) (AutoUtils.getPercentWidth1px() * 50));
 //                .setDimAmount(0.5f)
         // 重新加载逻辑
-        if(isAddLoad()){
+        if (isAddLoad()) {
             loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {
                 @Override
                 public void onReload(View v) {
                     // 重新加载逻辑
+                    loadService.showCallback(NetLoadCallback.class);
                     loadData();
                 }
             }, NetLoadUtils.getQyInstance().getLoadSirCover());
@@ -211,24 +214,30 @@ public abstract class BaseActivity extends AutoLayoutActivity {
     protected abstract int getContentView();
 
     protected abstract void initViews();
+
     /**
      * 获取loadView
+     *
      * @return
      */
-    protected View getLoadView(){
+    protected View getLoadView() {
         return null;
     }
+
     /**
      * 是否默认加载
+     *
      * @return
      */
-    protected boolean isAddLoad(){
+    protected boolean isAddLoad() {
         return false;
     }
 
     protected abstract void loadData();
-//    获取数据
-    protected void getData(){}
+
+    //    获取数据
+    protected void getData() {
+    }
 
     @Override
     protected void onDestroy() {
@@ -263,27 +272,38 @@ public abstract class BaseActivity extends AutoLayoutActivity {
      */
     private void getDesktopMesCount() {
         if (userId > 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS + userId;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                    if (messageTotalEntity != null) {
-                        if (messageTotalEntity.getCode().equals("01")) {
-                            MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                            int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                    + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                    + messageTotalBean.getCommOffifialTotal();
-                            if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
-                                ShortcutBadger.applyCount(getApplicationContext(), totalCount);
+            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(this, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                            if (messageTotalEntity != null) {
+                                if (messageTotalEntity.getCode().equals("01")) {
+                                    MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
+                                    int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
+                                            + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
+                                            + messageTotalBean.getCommOffifialTotal();
+                                    if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
+                                        ShortcutBadger.applyCount(getApplicationContext(), totalCount);
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-            });
-        } else {
-            ShortcutBadger.removeCount(getApplicationContext());
+
+                        @Override
+                        public void netClose() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            ShortcutBadger.removeCount(getApplicationContext());
+                        }
+                    });
         }
     }
 }

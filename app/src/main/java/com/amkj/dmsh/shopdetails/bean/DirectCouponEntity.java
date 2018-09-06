@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -15,34 +16,15 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class DirectCouponEntity {
+public class DirectCouponEntity extends BaseEntity{
 
     /**
      * result : [{"amount":300,"id":1,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":100,"type":"活动"},{"amount":300,"id":2,"status":0,"endTime":"2022-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 10:51","startFee":100,"type":"新注册用户"},{"amount":500,"id":3,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"邀请好友"},{"amount":100,"id":4,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":100,"id":5,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":100,"id":6,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":100,"id":7,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":500,"id":8,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"新注册用户"},{"amount":500,"id":9,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"新注册用户"},{"amount":500,"id":10,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"新注册用户"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     @SerializedName("result")
     private List<DirectCouponBean> directCouponBeanList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<DirectCouponBean> getDirectCouponBeanList() {
         return directCouponBeanList;

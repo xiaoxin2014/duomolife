@@ -23,9 +23,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -37,8 +37,6 @@ import com.amkj.dmsh.homepage.bean.ShowTimeNewHoriHelperBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.SpringSaleBean;
 import com.amkj.dmsh.homepage.bean.TimeShowNewHoriEntity;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -63,9 +61,12 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.timeFormatSwitch;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
@@ -88,12 +89,6 @@ public class SpringSaleFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //    商品总数
     private List<SpringSaleBean> saleTimeTotalList = new ArrayList();
     //    限时特惠商品排序
@@ -113,10 +108,10 @@ public class SpringSaleFragment extends BaseFragment {
     private SpringSaleRecyclerAdapterNew springSaleRecyclerAdapter;
     private TimeShowNewHoriEntity foreShow;
     private int dayTimePage = 1;
-    private int uid;
     private CustomPopWindow mCustomPopWindow;
     private long delayTime = 5000;
     private String showTime;
+    private TimeForeShowEntity timeForeShowEntity;
 
     @Override
     protected int getContentView() {
@@ -125,7 +120,6 @@ public class SpringSaleFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         springSaleRecyclerAdapter = new SpringSaleRecyclerAdapterNew(getActivity(), saleTimeTotalList);
         springSaleRecyclerAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
@@ -178,10 +172,10 @@ public class SpringSaleFragment extends BaseFragment {
                     switch (view.getId()) {
                         case R.id.iv_pro_time_warm:
 //                            设置提醒 取消提醒 是否是第一次设置
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 isFirstRemind(springSaleBean, (ImageView) view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(SpringSaleFragment.this);
                             }
                             break;
                     }
@@ -190,11 +184,9 @@ public class SpringSaleFragment extends BaseFragment {
         });
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-                dayTimePage = 1;
-                loadData();
+            loadData();
 //                刷新时间轴
-                EventBus.getDefault().post(new EventMessage(TIME_REFRESH,currentRecordTime));
+            EventBus.getDefault().post(new EventMessage(TIME_REFRESH, currentRecordTime));
         });
         springSaleRecyclerAdapter.setEnableLoadMore(false);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -229,44 +221,12 @@ public class SpringSaleFragment extends BaseFragment {
             }
         });
         springSaleRecyclerAdapter.openLoadAnimation(null);
-        communal_load.setVisibility(View.VISIBLE);
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
     }
 
     private void isFirstRemind(final SpringSaleBean springSaleBean, final ImageView view) {
         String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -337,7 +297,7 @@ public class SpringSaleFragment extends BaseFragment {
     private void setWarmTime(String number) {
         String url = Url.BASE_URL + Url.TIME_WARM_PRO;
         Map<String, Object> params = new HashMap<>();
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         params.put("longtime", number);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -358,10 +318,19 @@ public class SpringSaleFragment extends BaseFragment {
     @Override
     protected void loadData() {
         if (!TextUtils.isEmpty(showTime)) {
+            page = 1;
+            dayTimePage = 1;
             getHoriDefaultProduct();
             getTopicData();
             getProductData();
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
         }
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getHoriDefaultProduct() {
@@ -414,27 +383,26 @@ public class SpringSaleFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("searchDate", showTime);
-        if (uid != 0) {
-            params.put("uid", uid);
+        if (userId != 0) {
+            params.put("uid", userId);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 springSaleRecyclerAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                if (page == 1) {
-                    //重新加载数据
-                    saleTimeTotalList.clear();
-                    currentRecordTime = "";
-                    saleTimeTotalSortList.clear();
-                }
                 Gson gson = new Gson();
-                TimeForeShowEntity foreShow = gson.fromJson(result, TimeForeShowEntity.class);
-                if (foreShow != null) {
-                    if (foreShow.getCode().equals("01")) {
-                        saleTimeTotalSortList.addAll(foreShow.getSpringSales());
+                timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+                if (timeForeShowEntity != null) {
+                    if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            //重新加载数据
+                            saleTimeTotalList.clear();
+                            currentRecordTime = "";
+                            saleTimeTotalSortList.clear();
+                        }
+                        saleTimeTotalSortList.addAll(timeForeShowEntity.getSpringSales());
                         //        获取时间排序范围
                         Collections.sort(saleTimeTotalSortList, new Comparator<SpringSaleBean>() {
                             @Override
@@ -446,8 +414,8 @@ public class SpringSaleFragment extends BaseFragment {
                         });
                         for (int i = 0; i < saleTimeTotalSortList.size(); i++) {
                             SpringSaleBean springSaleBean = saleTimeTotalSortList.get(i);
-                            if (!TextUtils.isEmpty(foreShow.getCurrentTime())) {
-                                springSaleBean.setCurrentTime(foreShow.getCurrentTime());
+                            if (!TextUtils.isEmpty(timeForeShowEntity.getCurrentTime())) {
+                                springSaleBean.setCurrentTime(timeForeShowEntity.getCurrentTime());
                             }
                             if (i == 0 && page == 1 && TextUtils.isEmpty(currentRecordTime)
                                     || !currentRecordTime.equals(springSaleBean.getStartTime())) {
@@ -465,31 +433,31 @@ public class SpringSaleFragment extends BaseFragment {
                     } else {
                         smart_communal_refresh.finishRefresh();
                         springSaleRecyclerAdapter.loadMoreComplete();
-                        if (!foreShow.getCode().equals("02")) {
-                            showToast(getActivity(), foreShow.getMsg());
+                        if (!timeForeShowEntity.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), timeForeShowEntity.getMsg());
                         }
                     }
-                    if (page == 1) {
-                        springSaleRecyclerAdapter.setNewData(saleTimeTotalList);
-                    } else {
-                        springSaleRecyclerAdapter.notifyDataSetChanged();
-                    }
+                    springSaleRecyclerAdapter.notifyDataSetChanged();
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,saleTimeTotalList,timeForeShowEntity);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 springSaleRecyclerAdapter.loadMoreComplete();
-                if (page == 1 && springSaleRecyclerAdapter.getItemCount() < 1) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                } else {
-                    showToast(getActivity(), R.string.unConnectedNetwork);
-                }
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,saleTimeTotalList,timeForeShowEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                springSaleRecyclerAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,saleTimeTotalList,timeForeShowEntity);
             }
         });
-
     }
 
     private void getProductHoriData(final ShowTimeNewHoriHelperBean showTimeNewHoriHelperBean) {
@@ -541,7 +509,7 @@ public class SpringSaleFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -571,7 +539,7 @@ public class SpringSaleFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.ADD_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
-        params.put("m_uid", uid);
+        params.put("m_uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -760,7 +728,7 @@ public class SpringSaleFragment extends BaseFragment {
     };
 
     private void smoothNextPage() {
-        int currentPosition = 0;
+        int currentPosition;
         try {
             currentPosition = foreShowHeaderView.lrv_fore_show_time.getActualCurrentPosition();
             if (currentPosition == saleTimeTopicList.size() - 1) {
@@ -835,7 +803,7 @@ public class SpringSaleFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        handler.removeCallbacksAndMessages(null);
+        new ConstantMethod().releaseHandlers();
         super.onDestroyView();
     }
 }

@@ -1,11 +1,12 @@
 package com.amkj.dmsh.message.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by atd48 on 2016/9/9.
  */
-public class MessageTotalEntity {
+public class MessageTotalEntity extends BaseEntity{
 
     /**
      * result : {"focusTotal":0,"commentTotal":0,"smTotal":0,"commOffifialTotal":0,"favorTotal":0,"orderTotal":0,"likeTotal":1}
@@ -15,8 +16,6 @@ public class MessageTotalEntity {
 
     @SerializedName("result")
     private MessageTotalBean messageTotalBean;
-    private String msg;
-    private String code;
 
     public MessageTotalBean getMessageTotalBean() {
         return messageTotalBean;
@@ -24,22 +23,6 @@ public class MessageTotalEntity {
 
     public void setMessageTotalBean(MessageTotalBean messageTotalBean) {
         this.messageTotalBean = messageTotalBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static class MessageTotalBean {

@@ -11,13 +11,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.IntegralDetailAdapter;
 import com.amkj.dmsh.message.bean.IntegrationDetailsEntity;
 import com.amkj.dmsh.message.bean.IntegrationDetailsEntity.IntegrationDetailsBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -27,6 +25,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -40,10 +39,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
@@ -63,20 +62,14 @@ public class IntegralDetailActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private IntegralDetailChart integralDetailChart;
     private int page;
     private IntegralDetailAdapter integralDetailAdapter;
     private List<IntegrationDetailsBean> integrationDetailsList = new ArrayList();
+    private IntegrationDetailsEntity integrationDetailsEntity;
 
     @Override
     protected int getContentView() {
@@ -91,13 +84,12 @@ public class IntegralDetailActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new LinearLayoutManager(IntegralDetailActivity.this));
         integralDetailAdapter = new IntegralDetailAdapter(integrationDetailsList);
         communal_recycler.setAdapter(integralDetailAdapter);
-        View view = LayoutInflater.from(IntegralDetailActivity.this).inflate(R.layout.layout_integral_detail_total, null,false);
+        View view = LayoutInflater.from(IntegralDetailActivity.this).inflate(R.layout.layout_integral_detail_total, null, false);
         integralDetailChart = new IntegralDetailChart();
         ButterKnife.bind(integralDetailChart, view);
         integralDetailChart.initViews();
         integralDetailAdapter.addHeaderView(view);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         integralDetailAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -120,67 +112,79 @@ public class IntegralDetailActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-                getIntegralDetailData();
+                loadData();
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getIntegralDetailData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getIntegralDetailData() {
         if (userId > 0) {
-            if (NetWorkUtils.isConnectedByState(IntegralDetailActivity.this)) {
-                Map<String, Object> params = new HashMap<>();
-                params.put("uid", userId);
-                params.put("currentPage", page);
-                params.put("showCount", TOTAL_COUNT_FORTY);
-                String url = Url.BASE_URL + Url.H_ATTENDANCE_INTEGRAl_DETAIL;
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        smart_communal_refresh.finishRefresh();
-                        integralDetailAdapter.loadMoreComplete();
-                        communal_load.setVisibility(GONE);
-                        communal_error.setVisibility(GONE);
-                        if (page == 1) {
-                            integrationDetailsList.clear();
-                        }
-                        Gson gson = new Gson();
-                        IntegrationDetailsEntity integrationDetailsEntity = gson.fromJson(result, IntegrationDetailsEntity.class);
-                        if (integrationDetailsEntity != null) {
-                            if (SUCCESS_CODE.equals(integrationDetailsEntity.getCode())) {
-                                integrationDetailsList.addAll(integrationDetailsEntity.getIntegrationDetailsList());
-                                integralDetailChart.tv_integral_detail_score.setText(String.valueOf(integrationDetailsEntity.getNowScore()));
-                                setIntegralDetailData(integrationDetailsEntity);
-                            } else {
-                                if (!integrationDetailsEntity.getCode().equals("02")) {
-                                    showToast(IntegralDetailActivity.this, integrationDetailsEntity.getMsg());
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            params.put("currentPage", page);
+            params.put("showCount", TOTAL_COUNT_FORTY);
+            String url = Url.BASE_URL + Url.H_ATTENDANCE_INTEGRAl_DETAIL;
+            NetLoadUtils.getQyInstance().loadNetDataPost(IntegralDetailActivity.this, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            smart_communal_refresh.finishRefresh();
+                            integralDetailAdapter.loadMoreComplete();
+                            Gson gson = new Gson();
+                            integrationDetailsEntity = gson.fromJson(result, IntegrationDetailsEntity.class);
+                            if (integrationDetailsEntity != null) {
+                                if (SUCCESS_CODE.equals(integrationDetailsEntity.getCode())) {
+                                    if (page == 1) {
+                                        integrationDetailsList.clear();
+                                    }
+                                    integrationDetailsList.addAll(integrationDetailsEntity.getIntegrationDetailsList());
+                                    integralDetailChart.tv_integral_detail_score.setText(String.valueOf(integrationDetailsEntity.getNowScore()));
+                                    setIntegralDetailData(integrationDetailsEntity);
+                                } else {
+                                    if (!integrationDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                                        showToast(IntegralDetailActivity.this, integrationDetailsEntity.getMsg());
+                                    }
+                                    integralDetailAdapter.loadMoreEnd();
                                 }
-                                integralDetailAdapter.loadMoreEnd();
                             }
+                            integralDetailAdapter.notifyDataSetChanged();
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
                         }
-                        integralDetailAdapter.notifyDataSetChanged();
-                    }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        smart_communal_refresh.finishRefresh();
-                        integralDetailAdapter.loadMoreComplete();
-                        communal_error.setVisibility(View.VISIBLE);
-                        showToast(IntegralDetailActivity.this, R.string.invalidData);
-                        super.onError(ex, isOnCallback);
-                    }
-                });
-            } else {
-                smart_communal_refresh.finishRefresh();
-                integralDetailAdapter.loadMoreComplete();
-                communal_error.setVisibility(View.VISIBLE);
-                showToast(this, R.string.unConnectedNetwork);
-            }
+                        @Override
+                        public void netClose() {
+                            smart_communal_refresh.finishRefresh();
+                            integralDetailAdapter.loadMoreComplete();
+                            showToast(IntegralDetailActivity.this, R.string.unConnectedNetwork);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            smart_communal_refresh.finishRefresh();
+                            integralDetailAdapter.loadMoreComplete();
+                            showToast(IntegralDetailActivity.this, R.string.invalidData);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
+                        }
+                    });
+        } else {
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -199,14 +203,6 @@ public class IntegralDetailActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     public class IntegralDetailChart {
@@ -235,15 +231,15 @@ public class IntegralDetailActivity extends BaseActivity {
             legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
             legend.setOrientation(Legend.LegendOrientation.VERTICAL);
             legend.setForm(Legend.LegendForm.SQUARE); //设置图例的形状
-            legend.setFormSize(10);					  //设置图例的大小
-            legend.setFormToTextSpace(13);			  //设置每个图例实体中标签和形状之间的间距
+            legend.setFormSize(10);                      //设置图例的大小
+            legend.setFormToTextSpace(13);              //设置每个图例实体中标签和形状之间的间距
 //            legend.set
             legend.setDrawInside(false);
 //            legend.setWordWrapEnabled(true);			  //设置图列换行(注意使用影响性能,仅适用legend位于图表下面)
 //            legend.setXEntrySpace(10f);				  //设置图例实体之间延X轴的间距（setOrientation = HORIZONTAL有效）
-            legend.setYEntrySpace(8f);				  //设置图例实体之间延Y轴的间距（setOrientation = VERTICAL 有效）
-            legend.setYOffset(0f);					  //设置比例块Y轴偏移量
-            legend.setTextSize(12);					  //设置图例标签文本的大小
+            legend.setYEntrySpace(8f);                  //设置图例实体之间延Y轴的间距（setOrientation = VERTICAL 有效）
+            legend.setYOffset(0f);                      //设置比例块Y轴偏移量
+            legend.setTextSize(12);                      //设置图例标签文本的大小
             legend.setTextColor(Color.parseColor("#666666"));//设置图例标签文本的颜色
         }
     }
@@ -256,26 +252,26 @@ public class IntegralDetailActivity extends BaseActivity {
     private void setIntegralDetailData(IntegrationDetailsEntity integrationDetailsEntity) {
         ArrayList<PieEntry> pieEntryList = new ArrayList<>();
         ArrayList<Integer> colors = new ArrayList<>();
-        float totalScore = integrationDetailsEntity.getShopScore()+integrationDetailsEntity.getSignScore()
-                +integrationDetailsEntity.getTaskScore()+integrationDetailsEntity.getOtherScore();
+        float totalScore = integrationDetailsEntity.getShopScore() + integrationDetailsEntity.getSignScore()
+                + integrationDetailsEntity.getTaskScore() + integrationDetailsEntity.getOtherScore();
         PieEntry pieEntry;
         int colorValue;
         for (int i = 0; i < 4; i++) {
             switch (i) {
                 case 0:
-                    pieEntry = new PieEntry(integrationDetailsEntity.getShopScore()/totalScore*100, "购物");
+                    pieEntry = new PieEntry(integrationDetailsEntity.getShopScore() / totalScore * 100, "购物");
                     colorValue = Color.parseColor("#f4cc6e");
                     break;
                 case 1:
-                    pieEntry = new PieEntry(integrationDetailsEntity.getSignScore()/totalScore*100, "签到");
+                    pieEntry = new PieEntry(integrationDetailsEntity.getSignScore() / totalScore * 100, "签到");
                     colorValue = Color.parseColor("#f99c76");
                     break;
                 case 2:
-                    pieEntry = new PieEntry(integrationDetailsEntity.getTaskScore()/totalScore*100, "任务");
+                    pieEntry = new PieEntry(integrationDetailsEntity.getTaskScore() / totalScore * 100, "任务");
                     colorValue = Color.parseColor("#acf5ef");
                     break;
                 default:
-                    pieEntry = new PieEntry(integrationDetailsEntity.getOtherScore()/totalScore*100, "其它");
+                    pieEntry = new PieEntry(integrationDetailsEntity.getOtherScore() / totalScore * 100, "其它");
                     colorValue = Color.parseColor("#5ad5d9");
                     break;
             }

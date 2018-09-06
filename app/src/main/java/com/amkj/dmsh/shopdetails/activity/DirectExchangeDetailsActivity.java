@@ -30,9 +30,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -40,8 +40,6 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -78,7 +76,7 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
@@ -104,16 +102,19 @@ import cn.xiaoneng.uiapi.Ntalker;
 
 import static android.view.View.GONE;
 import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.DEL;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PROPRIETOR_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
@@ -127,6 +128,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRO_INVOICE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 
 /**
@@ -141,7 +143,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
     @BindView(R.id.iv_indent_search)
     ImageView iv_indent_search;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     @BindView(R.id.communal_load)
@@ -164,7 +166,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
     //    订单号
     private String orderNo;
     private OrderDetailBean orderDetailBean;
-    private int uid;
     private List<OrderProductInfoBean> goodsBeanList = new ArrayList<>();
     private List<DirectAppraisePassBean> directAppraisePassBeanList = new ArrayList<>();
     //    订单价格优惠列表
@@ -180,7 +181,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
     private IndentInfoDetailEntity infoDetailEntity;
     private IndentDiscountAdapter indentDiscountAdapter;
     private boolean isOnPause;
-    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/proprietary.html?id=";
     private AlertDialog alertDialog;
     private String avatar;
     private RuleDialogView ruleDialog;
@@ -193,7 +193,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         iv_indent_search.setVisibility(GONE);
         tb_indent_bar.setSelected(true);
         tv_indent_title.setText("订单详情");
@@ -401,96 +401,83 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             }
         });
     }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(DirectExchangeDetailsActivity.this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
     }
 
     @Override
     protected void loadData() {
         ll_indent_detail_bottom.setVisibility(GONE);
         String url = Url.BASE_URL + Url.Q_INDENT_DETAILS;
-        if (NetWorkUtils.checkNet(DirectExchangeDetailsActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", orderNo);
-            //        版本号控制 3 组合商品赠品
-            params.put("version", 3);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    directProductListAdapter.loadMoreComplete();
-                    String code = "";
-                    String msg = "";
-                    try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        code = (String) jsonObject.get("code");
-                        msg = (String) jsonObject.get("msg");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (code.equals("01")) {
-                        Gson gson = new Gson();
-                        infoDetailEntity = gson.fromJson(result, IndentInfoDetailEntity.class);
-                        if (infoDetailEntity != null) {
-                            INDENT_PRO_STATUS = infoDetailEntity.getIndentInfoDetailBean().getStatus();
-                            setIndentData(infoDetailEntity);
-                        }
-                    } else if (code.equals("02")) {
-                        closeLoading();
-                        ll_indent_detail_bottom.setVisibility(GONE);
-                        showToast(DirectExchangeDetailsActivity.this, R.string.invalidData);
-                    } else {
-                        closeLoading();
-                        ll_indent_detail_bottom.setVisibility(GONE);
-                        showToast(DirectExchangeDetailsActivity.this, msg);
-                    }
-                    communal_recycler.smoothScrollToPosition(0);
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", orderNo);
+        //        版本号控制 3 组合商品赠品
+        params.put("version", 3);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                directProductListAdapter.loadMoreComplete();
+                String code = "";
+                String msg = "";
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    code = (String) jsonObject.get("code");
+                    msg = (String) jsonObject.get("msg");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    directProductListAdapter.loadMoreComplete();
-                    communal_load.setVisibility(GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    communal_empty.setVisibility(GONE);
+                if (code.equals(SUCCESS_CODE)) {
+                    Gson gson = new Gson();
+                    infoDetailEntity = gson.fromJson(result, IndentInfoDetailEntity.class);
+                    if (infoDetailEntity != null) {
+                        INDENT_PRO_STATUS = infoDetailEntity.getIndentInfoDetailBean().getStatus();
+                        setIndentData(infoDetailEntity);
+                    }
+                } else if (code.equals(EMPTY_CODE)) {
                     ll_indent_detail_bottom.setVisibility(GONE);
                     showToast(DirectExchangeDetailsActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
+                } else {
+                    ll_indent_detail_bottom.setVisibility(GONE);
+                    showToast(DirectExchangeDetailsActivity.this, msg);
                 }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            directProductListAdapter.loadMoreComplete();
-            communal_load.setVisibility(GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            ll_indent_detail_bottom.setVisibility(GONE);
-        }
+                communal_recycler.smoothScrollToPosition(0);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,infoDetailEntity);
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                directProductListAdapter.loadMoreComplete();
+                ll_indent_detail_bottom.setVisibility(GONE);
+                showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,infoDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                directProductListAdapter.loadMoreComplete();
+                ll_indent_detail_bottom.setVisibility(GONE);
+                showToast(DirectExchangeDetailsActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,infoDetailEntity);
+            }
+        });
     }
 
-    private void closeLoading() {
-        communal_load.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void setIndentData(IndentInfoDetailEntity infoDetailEntity) {
@@ -500,9 +487,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         statusCode = orderDetailBean.getStatus();
         if (statusCode == -24) {
             getRefundPrice();
-        } else {
-            setRefundToPrice(View.GONE);
-            closeLoading();
         }
         goodsBeanList.clear();
         for (int i = 0; i < orderDetailBean.getGoodDetails().size(); i++) {
@@ -602,11 +586,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             String url = Url.BASE_URL + Url.Q_INDENT_DETAIL_REFUND;
             Map<String, Object> params = new HashMap<>();
             params.put("no", orderNo);
-            params.put("userId", uid);
+            params.put("userId", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    closeLoading();
                     String code = "";
                     String msg = "";
                     try {
@@ -642,13 +625,11 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
                     setRefundToPrice(View.GONE);
-                    closeLoading();
                     super.onError(ex, isOnCallback);
                 }
             });
         } else {
             setRefundToPrice(View.GONE);
-            closeLoading();
         }
     }
 
@@ -1266,7 +1247,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("orderProductId", 0);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -1291,7 +1272,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        params.put("userId", uid);
+        params.put("userId", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -1315,7 +1296,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         String url = Url.BASE_URL + Url.Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        params.put("userId", uid);
+        params.put("userId", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {

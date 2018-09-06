@@ -12,15 +12,13 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.shopdetails.adapter.DirectLogisticsAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsPacketEntity.DirectLogisticsPacketBean.LogisticsEntity.LogisticsBean.ListBean;
 import com.amkj.dmsh.shopdetails.bean.DirectRepairLogisticsEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectRepairLogisticsEntity.DirectRepairLogisticsBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +29,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 
 /**
@@ -50,20 +51,15 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private DirectLogisticsHeadView dirLogisticHeadView;
     private DirectLogisticsAdapter directLogisticsAdapter;
     private List<ListBean> logisticsBeanList = new ArrayList<>();
     private String orderProductId;
     private String orderRefundProductId;
+    private DirectRepairLogisticsEntity directLogisticsEntity;
 
     @Override
     protected int getContentView() {
@@ -93,43 +89,54 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
         directLogisticsAdapter.addHeaderView(headerView);
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectRepairLogisticDetailsActivity.this));
         communal_recycler.setAdapter(directLogisticsAdapter);
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(DirectRepairLogisticDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_LOGISTIC;
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderRefundProductId", orderRefundProductId);
-            params.put("orderProductId", orderProductId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    logisticsBeanList.clear();
-                    DirectRepairLogisticsEntity directLogisticsEntity = DirectRepairLogisticsEntity.objectFromData(result);
-                    if (directLogisticsEntity != null) {
-                        if (directLogisticsEntity.getCode().equals("01")) {
-                            setRepairLogisticsData(directLogisticsEntity.getDirectRepairLogisticsBean());
-                        } else {
-                            showToast(DirectRepairLogisticDetailsActivity.this, directLogisticsEntity.getMsg());
-                        }
+        String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_LOGISTIC;
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderRefundProductId", orderRefundProductId);
+        params.put("orderProductId", orderProductId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                logisticsBeanList.clear();
+                directLogisticsEntity = DirectRepairLogisticsEntity.objectFromData(result);
+                if (directLogisticsEntity != null) {
+                    if (directLogisticsEntity.getCode().equals(SUCCESS_CODE)) {
+                        setRepairLogisticsData(directLogisticsEntity.getDirectRepairLogisticsBean());
+                    } else if(!directLogisticsEntity.getCode().equals(EMPTY_CODE)){
+                        showToast(DirectRepairLogisticDetailsActivity.this, directLogisticsEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    showToast(DirectRepairLogisticDetailsActivity.this, R.string.invalidData);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                showToast(DirectRepairLogisticDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                showToast(DirectRepairLogisticDetailsActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+            }
+        });
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
     }
 
     private void setRepairLogisticsData(DirectRepairLogisticsBean directRepairLogisticsBean) {
@@ -155,14 +162,6 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
         public void initViews() {
             communal_recycler_wrap.setVisibility(View.GONE);
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     @OnClick(R.id.tv_indent_back)

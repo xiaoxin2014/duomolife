@@ -3,6 +3,7 @@ package com.amkj.dmsh.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/9/26.
  */
-public class CommunalUserInfoEntity implements Parcelable {
+public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
     /**
      * is_sign : 0
@@ -40,31 +41,12 @@ public class CommunalUserInfoEntity implements Parcelable {
      * msg : 请求成功
      */
 
-    private String code;
-    private String msg;
-
     public CommunalUserInfoBean getCommunalUserInfoBean() {
         return communalUserInfoBean;
     }
 
     public void setCommunalUserInfoBean(CommunalUserInfoBean communalUserInfoBean) {
         this.communalUserInfoBean = communalUserInfoBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class CommunalUserInfoBean implements Parcelable {
@@ -640,8 +622,6 @@ public class CommunalUserInfoEntity implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(this.communalUserInfoBean, flags);
-        dest.writeString(this.code);
-        dest.writeString(this.msg);
     }
 
     public CommunalUserInfoEntity() {
@@ -649,8 +629,6 @@ public class CommunalUserInfoEntity implements Parcelable {
 
     protected CommunalUserInfoEntity(Parcel in) {
         this.communalUserInfoBean = in.readParcelable(CommunalUserInfoBean.class.getClassLoader());
-        this.code = in.readString();
-        this.msg = in.readString();
     }
 
     public static final Creator<CommunalUserInfoEntity> CREATOR = new Creator<CommunalUserInfoEntity>() {

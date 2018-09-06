@@ -11,19 +11,16 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +30,19 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
 public class UserFansAttentionActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -51,28 +52,23 @@ public class UserFansAttentionActivity extends BaseActivity {
     TextView header_shared;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private List<UserAttentionFansBean> attentionFansList = new ArrayList();
     private int uid;
     private SearchDetailsUserAdapter detailsUserAdapter;
     private String type;
     private String fromPage;
-    private int mid;
     private int page = 1;
     private int scrollY = 0;
     private float screenHeight;
+    private UserAttentionFansEntity userAttentionFansEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_refresh_floating_header;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
 //        产看的用户Id
@@ -110,7 +106,7 @@ public class UserFansAttentionActivity extends BaseActivity {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= detailsUserAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     detailsUserAdapter.loadMoreEnd();
                 }
@@ -118,9 +114,7 @@ public class UserFansAttentionActivity extends BaseActivity {
         }, communal_recycler);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-
-                page = 1;
-                loadData();
+            loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -175,11 +169,26 @@ public class UserFansAttentionActivity extends BaseActivity {
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
+        getData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected void getData() {
         String url;
         if ("fans".equals(type)) {
             url = Url.BASE_URL + Url.MINE_FANS;
@@ -190,61 +199,50 @@ public class UserFansAttentionActivity extends BaseActivity {
 //            查看用户ID
         params.put("uid", uid);
         if (type.equals("fans")) {
-            if (mid != 0) {
-                params.put("buid", mid);
+            if (userId != 0) {
+                params.put("buid", userId);
             }
         } else {
-            if (mid != 0) {
-                params.put("fuid", mid);
+            if (userId != 0) {
+                params.put("fuid", userId);
             }
         }
         params.put("currentPage", page);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                if (page == 1) {
-                    attentionFansList.clear();
-                }
                 Gson gson = new Gson();
-                UserAttentionFansEntity userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
+                userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
                 if (userAttentionFansEntity != null) {
-                    if (userAttentionFansEntity.getCode().equals("01")) {
+                    if (userAttentionFansEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            attentionFansList.clear();
+                        }
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
-                    } else if (!userAttentionFansEntity.getCode().equals("02")) {
+                    } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(UserFansAttentionActivity.this, userAttentionFansEntity.getMsg());
                     }
                 }
-                if (page == 1) {
-                    detailsUserAdapter.setNewData(attentionFansList);
-                } else {
-                    detailsUserAdapter.notifyDataSetChanged();
-                }
+                detailsUserAdapter.notifyDataSetChanged();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                super.onError(ex, isOnCallback);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                detailsUserAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
             }
         });
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            mid = personalInfo.getUid();
-        } else {
-            mid = 0;
-        }
     }
 
     @Override
@@ -253,11 +251,8 @@ public class UserFansAttentionActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                isLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
     }
 
@@ -265,7 +260,6 @@ public class UserFansAttentionActivity extends BaseActivity {
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("attentionRefresh")) {
             if (message.result.equals("refresh")) {
-                page = 1;
                 loadData();
             }
         }
@@ -274,15 +268,6 @@ public class UserFansAttentionActivity extends BaseActivity {
     @OnClick({R.id.tv_life_back})
     void goBack(View view) {
         finish();
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
 

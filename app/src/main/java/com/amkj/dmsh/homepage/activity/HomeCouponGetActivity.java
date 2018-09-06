@@ -23,11 +23,11 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -35,21 +35,18 @@ import com.amkj.dmsh.dominant.adapter.QualityProTitleAdapter;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalDescriptionEntity;
 import com.amkj.dmsh.homepage.bean.CommunalDescriptionEntity.CommunalDescriptionBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,10 +57,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
@@ -80,7 +82,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPO
  */
 public class HomeCouponGetActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -90,12 +92,6 @@ public class HomeCouponGetActivity extends BaseActivity {
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
@@ -105,7 +101,6 @@ public class HomeCouponGetActivity extends BaseActivity {
     private ShopRecommendView shopRecommendView;
     private CommunalDetailAdapter communalDetailAdapter;
     private List<CommunalDetailObjectBean> couponDescriptionList = new ArrayList();
-    private int uid;
     private CommunalDescriptionBean communalDescriptionBean;
     private RecommendGoodView recommendGoodView;
     private UserLikedProductEntity likedProductEntity;
@@ -114,15 +109,14 @@ public class HomeCouponGetActivity extends BaseActivity {
     protected int getContentView() {
         return R.layout.activity_home_coupon;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_titleAll.setText("领券中心");
         communal_recycler.setLayoutManager(new GridLayoutManager(HomeCouponGetActivity.this, 2));
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-                loadData();
+            loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -182,7 +176,7 @@ public class HomeCouponGetActivity extends BaseActivity {
             public void onLoadMoreRequested() {
                 if (page * TOTAL_COUNT_TWENTY <= likedProductBeanList.size()) {
                     page++;
-                    loadData();
+                    getCouponData();
                 } else {
                     couponProTitleAdapter.loadMoreEnd();
                     couponProTitleAdapter.setEnableLoadMore(false);
@@ -201,7 +195,7 @@ public class HomeCouponGetActivity extends BaseActivity {
                         int couponId = (int) view.getTag(R.id.iv_avatar_tag);
                         int type = (int) view.getTag(R.id.iv_type_tag);
                         if (couponId > 0) {
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 if (type == TYPE_COUPON) {
                                     getDirectCoupon(couponId);
                                 } else if (type == TYPE_COUPON_PACKAGE) {
@@ -211,7 +205,7 @@ public class HomeCouponGetActivity extends BaseActivity {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(HomeCouponGetActivity.this);
                             }
                         }
                         break;
@@ -233,13 +227,13 @@ public class HomeCouponGetActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 skipAliBCWebView(couponBean.getCouponUrl());
                             } else {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(HomeCouponGetActivity.this);
                             }
                         }
                         break;
@@ -255,7 +249,7 @@ public class HomeCouponGetActivity extends BaseActivity {
                                 constantMethod.addShopCarGetSku(HomeCouponGetActivity.this, baseAddCarProInfoBean, loadHud);
                             } else {
                                 loadHud.dismiss();
-                                getLoginStatus();
+                                getLoginStatus(HomeCouponGetActivity.this);
                             }
                         }
                         break;
@@ -270,7 +264,7 @@ public class HomeCouponGetActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
                 if (communalDetailBean != null) {
-                    ConstantMethod.skipProductUrl(HomeCouponGetActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
+                    skipProductUrl(HomeCouponGetActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                 }
             }
         });
@@ -281,19 +275,29 @@ public class HomeCouponGetActivity extends BaseActivity {
                 if (likedProductBean != null) {
                     Intent intent = new Intent(HomeCouponGetActivity.this, ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    if(likedProductEntity!=null&&!TextUtils.isEmpty(likedProductEntity.getRecommendFlag())){
+                    if (likedProductEntity != null && !TextUtils.isEmpty(likedProductEntity.getRecommendFlag())) {
                         intent.putExtra("recommendFlag", likedProductEntity.getRecommendFlag());
                     }
                     startActivity(intent);
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getCouponData();
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void getCouponData() {
@@ -305,7 +309,7 @@ public class HomeCouponGetActivity extends BaseActivity {
                 Gson gson = new Gson();
                 CommunalDescriptionEntity shopDetailsEntity = gson.fromJson(result, CommunalDescriptionEntity.class);
                 if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals("01")) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         communalDescriptionBean = shopDetailsEntity.getCommunalDescriptionBean();
                         List<CommunalDetailBean> descriptionBeanList = communalDescriptionBean.getDescriptionList();
                         if (descriptionBeanList != null) {
@@ -313,76 +317,68 @@ public class HomeCouponGetActivity extends BaseActivity {
                             couponDescriptionList.addAll(ConstantMethod.getDetailsDataList(descriptionBeanList));
                         }
                         getCouponProData(communalDescriptionBean.getId());
-                    } else if (!shopDetailsEntity.getCode().equals("02")) {
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(HomeCouponGetActivity.this, shopDetailsEntity.getMsg());
-                        communal_error.setVisibility(View.VISIBLE);
                     }
                     communalDetailAdapter.setNewData(couponDescriptionList);
                 }
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
+                NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
             }
         });
     }
 
     private void getCouponProData(int id) {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_DOMO_RECOM;
-        if (NetWorkUtils.checkNet(HomeCouponGetActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("reminder_id", id);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    couponProTitleAdapter.loadMoreComplete();
-                    Gson gson = new Gson();
-                    if (page == 1) {
-                        likedProductBeanList.clear();
-                    }
-                    likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (likedProductEntity != null) {
-                        if (likedProductEntity.getCode().equals("01")) {
-                            likedProductBeanList.addAll(likedProductEntity.getLikedProductBeanList());
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("reminder_id", id);
+        NetLoadUtils.getQyInstance().loadNetDataPost(HomeCouponGetActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                couponProTitleAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProductEntity != null) {
+                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            likedProductBeanList.clear();
                         }
-                    }
-                    if (likedProductBeanList.size() > 0) {
-                        recommendGoodView.tv_pro_title.setVisibility(View.VISIBLE);
-                    }
-                    if (page == 1) {
-                        couponProTitleAdapter.setNewData(likedProductBeanList);
-                    } else {
-                        couponProTitleAdapter.notifyDataSetChanged();
+                        likedProductBeanList.addAll(likedProductEntity.getLikedProductBeanList());
                     }
                 }
+                if (likedProductBeanList.size() > 0) {
+                    recommendGoodView.tv_pro_title.setVisibility(View.VISIBLE);
+                }
+                couponProTitleAdapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    communal_error.setVisibility(View.VISIBLE);
-                    couponProTitleAdapter.loadMoreComplete();
-                    couponProTitleAdapter.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            couponProTitleAdapter.loadMoreComplete();
-        }
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                couponProTitleAdapter.loadMoreComplete();
+                showToast(HomeCouponGetActivity.this,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                couponProTitleAdapter.loadMoreComplete();
+            }
+        });
     }
 
     private void getDirectCoupon(int id) {
         String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("couponId", id);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -414,7 +410,7 @@ public class HomeCouponGetActivity extends BaseActivity {
     private void getDirectCouponPackage(int couponId) {
         String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
-        params.put("uId", uid);
+        params.put("uId", userId);
         params.put("cpId", couponId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -445,13 +441,13 @@ public class HomeCouponGetActivity extends BaseActivity {
 
     public void skipAliBCWebView(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(HomeCouponGetActivity.this);
             }
         } else {
             showToast(HomeCouponGetActivity.this, "地址缺失");
@@ -507,38 +503,16 @@ public class HomeCouponGetActivity extends BaseActivity {
         });
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
+
     }
 
     class ShopRecommendView {
@@ -554,22 +528,16 @@ public class HomeCouponGetActivity extends BaseActivity {
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
         }
     }
+
     public class RecommendGoodView {
         @BindView(R.id.tv_pro_title)
         TextView tv_pro_title;
+
         @OnClick(R.id.tv_coupon_center_look)
         void lookCoupon() {
             Intent intent = new Intent(HomeCouponGetActivity.this, DirectMyCouponActivity.class);
             startActivity(intent);
         }
-    }
-    //    http://www.domolife.cn/m/template/home/couponCenter.html
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @OnClick(R.id.tv_life_back)

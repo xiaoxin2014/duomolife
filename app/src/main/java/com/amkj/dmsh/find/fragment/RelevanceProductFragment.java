@@ -12,21 +12,16 @@ import android.widget.CheckBox;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.adapter.RelevanceProAdapter;
 import com.amkj.dmsh.release.bean.RelevanceProEntity;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -63,7 +58,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 public class RelevanceProductFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -89,6 +84,7 @@ public class RelevanceProductFragment extends BaseFragment {
     private int colProPage = 1;
     private List<RelevanceProBean> relevanceProBeanList;
     private String relevanceType;
+    private RelevanceProEntity relevanceProEntity;
 
     @Override
     protected int getContentView() {
@@ -205,61 +201,63 @@ public class RelevanceProductFragment extends BaseFragment {
         }
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     //  订单关联商品
     private void getDoMoIndentProData() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.REL_INDENT_PRO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("currentPage", indentProPage);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    relevanceProAdapter.loadMoreComplete();
-                    if (indentProPage == 1) {
-                        relevanceProList.clear();
-                        relevanceIndentProList.clear();
-                    }
-                    Gson gson = new Gson();
-                    RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
-                    if (relevanceProEntity != null) {
-                        if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
-                            relevanceIndentProList.addAll(relevanceProEntity.getRelevanceProList());
-                            relevanceProList.removeAll(relevanceIndentProList);
-                            relevanceProList.addAll(changeRelevanceProduct(relevanceIndentProList, relevanceSelProList));
-                        } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
-                            relevanceProAdapter.loadMoreEnd(false);
-                        } else {
-                            relevanceProAdapter.loadMoreEnd(false);
-                            showToast(getActivity(), relevanceProEntity.getMsg());
-                        }
-                        if (indentProPage == 1) {
-                            relevanceProAdapter.setNewData(relevanceProList);
-                        } else {
+        String url = Url.BASE_URL + Url.REL_INDENT_PRO;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("currentPage", indentProPage);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
+                        if (relevanceProEntity != null) {
+                            if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
+                                if (indentProPage == 1) {
+                                    relevanceProList.clear();
+                                    relevanceIndentProList.clear();
+                                }
+                                relevanceIndentProList.addAll(relevanceProEntity.getRelevanceProList());
+                                relevanceProList.removeAll(relevanceIndentProList);
+                                relevanceProList.addAll(changeRelevanceProduct(relevanceIndentProList, relevanceSelProList));
+                            } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
+                                relevanceProAdapter.loadMoreEnd(false);
+                            } else {
+                                relevanceProAdapter.loadMoreEnd(false);
+                                showToast(getActivity(), relevanceProEntity.getMsg());
+                            }
                             relevanceProAdapter.notifyDataSetChanged();
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    relevanceProAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    relevanceProAdapter.loadMoreEnd(false);
-                    showToast(getActivity(), R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            relevanceProAdapter.loadMoreComplete();
-            relevanceProAdapter.loadMoreEnd(false);
-        }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreComplete();
+                        relevanceProAdapter.loadMoreEnd(false);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreComplete();
+                        relevanceProAdapter.loadMoreEnd(false);
+                        showToast(getActivity(), R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
+                });
     }
 
     //      取消或添加选择
@@ -278,107 +276,110 @@ public class RelevanceProductFragment extends BaseFragment {
     }
 
     private void getShopCarProData() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.REL_SHOP_CAR_PRO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("currentPage", carProPage);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    relevanceProAdapter.loadMoreComplete();
-                    if (carProPage == 1) {
-                        relevanceCarProList.clear();
-                        relevanceProList.clear();
-                    }
-                    Gson gson = new Gson();
-                    RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
-                    if (relevanceProEntity != null) {
-                        if (relevanceProEntity.getCode().equals("01")) {
-                            relevanceCarProList.addAll(relevanceProEntity.getRelevanceProList());
-                            relevanceProList.removeAll(relevanceCarProList);
-                            relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList, relevanceSelProList));
-                        } else if (relevanceProEntity.getCode().equals("02")) {
-                            relevanceProAdapter.loadMoreEnd(false);
-                        } else {
-                            relevanceProAdapter.loadMoreEnd(false);
-                            showToast(getActivity(), relevanceProEntity.getMsg());
+        String url = Url.BASE_URL + Url.REL_SHOP_CAR_PRO;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("currentPage", carProPage);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                relevanceProAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
+                if (relevanceProEntity != null) {
+                    if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (carProPage == 1) {
+                            relevanceCarProList.clear();
+                            relevanceProList.clear();
                         }
-                        relevanceProAdapter.notifyDataSetChanged();
+                        relevanceCarProList.addAll(relevanceProEntity.getRelevanceProList());
+                        relevanceProList.removeAll(relevanceCarProList);
+                        relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList, relevanceSelProList));
+                    } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
+                        relevanceProAdapter.loadMoreEnd(false);
+                    } else {
+                        relevanceProAdapter.loadMoreEnd(false);
+                        showToast(getActivity(), relevanceProEntity.getMsg());
                     }
+                    relevanceProAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    relevanceProAdapter.loadMoreComplete();
-                    relevanceProAdapter.loadMoreEnd(false);
-                    communal_load.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    showToast(getActivity(), R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            relevanceProAdapter.loadMoreComplete();
-            relevanceProAdapter.loadMoreEnd(false);
-            communal_load.setVisibility(View.GONE);
-            smart_communal_refresh.finishRefresh();
-        }
+            @Override
+            public void netClose() {
+                relevanceProAdapter.loadMoreComplete();
+                relevanceProAdapter.loadMoreEnd(false);
+                smart_communal_refresh.finishRefresh();
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                relevanceProAdapter.loadMoreComplete();
+                relevanceProAdapter.loadMoreEnd(false);
+                smart_communal_refresh.finishRefresh();
+                showToast(getActivity(), R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+            }
+        });
     }
 
     private void getColProData() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.REL_COLLECT_PRO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("currentPage", colProPage);
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (colProPage == 1) {
-                        relevanceColProList.clear();
-                        relevanceProList.clear();
-                    }
-                    relevanceProAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    Gson gson = new Gson();
-                    RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
-                    if (relevanceProEntity != null) {
-                        if (relevanceProEntity.getCode().equals("01")) {
-                            relevanceColProList.addAll(relevanceProEntity.getRelevanceProList());
-                            relevanceProList.removeAll(relevanceColProList);
-                            relevanceProList.addAll(changeRelevanceProduct(relevanceColProList, relevanceSelProList));
-                        } else if (relevanceProEntity.getCode().equals("02")) {
-                            relevanceProAdapter.loadMoreEnd(false);
-                        } else {
-                            relevanceProAdapter.loadMoreEnd(false);
-                            showToast(getActivity(), relevanceProEntity.getMsg());
+        String url = Url.BASE_URL + Url.REL_COLLECT_PRO;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("currentPage", colProPage);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                relevanceProAdapter.loadMoreComplete();
+                smart_communal_refresh.finishRefresh();
+                Gson gson = new Gson();
+                RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
+                if (relevanceProEntity != null) {
+                    if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (colProPage == 1) {
+                            relevanceColProList.clear();
+                            relevanceProList.clear();
                         }
-                        relevanceProAdapter.notifyDataSetChanged();
+                        relevanceColProList.addAll(relevanceProEntity.getRelevanceProList());
+                        relevanceProList.removeAll(relevanceColProList);
+                        relevanceProList.addAll(changeRelevanceProduct(relevanceColProList, relevanceSelProList));
+                    } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
+                        relevanceProAdapter.loadMoreEnd(false);
+                    } else {
+                        relevanceProAdapter.loadMoreEnd(false);
+                        showToast(getActivity(), relevanceProEntity.getMsg());
                     }
+                    relevanceProAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    relevanceProAdapter.loadMoreEnd(false);
-                    communal_load.setVisibility(View.GONE);
-                    smart_communal_refresh.finishRefresh();
-                    relevanceProAdapter.loadMoreComplete();
-                    showToast(getActivity(), R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            relevanceProAdapter.loadMoreEnd(false);
-            communal_load.setVisibility(View.GONE);
-            smart_communal_refresh.finishRefresh();
-            relevanceProAdapter.loadMoreComplete();
-        }
+            @Override
+            public void netClose() {
+                relevanceProAdapter.loadMoreEnd(false);
+                smart_communal_refresh.finishRefresh();
+                relevanceProAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                relevanceProAdapter.loadMoreEnd(false);
+                smart_communal_refresh.finishRefresh();
+                relevanceProAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+            }
+        });
     }
 
     @Override

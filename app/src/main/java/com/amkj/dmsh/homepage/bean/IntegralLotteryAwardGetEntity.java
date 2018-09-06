@@ -1,5 +1,7 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -7,7 +9,7 @@ package com.amkj.dmsh.homepage.bean;
  * version 3.1.5
  * class description:积分夺宝领取
  */
-public class IntegralLotteryAwardGetEntity {
+public class IntegralLotteryAwardGetEntity extends BaseEntity{
 
     /**
      * code : 01
@@ -29,31 +31,12 @@ public class IntegralLotteryAwardGetEntity {
      * addressId : 0
      * statusStr : 已兑奖
      */
-
-    private String code;
-    private String msg;
     private int id;
     private String activityCode;
     private int activityId;
     private String image;
     private String prizeName;
     private int status;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public int getId() {
         return id;

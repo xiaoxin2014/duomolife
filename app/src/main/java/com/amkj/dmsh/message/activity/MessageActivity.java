@@ -10,40 +10,36 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.message.adapter.MessageListAdapter;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.uiapi.Ntalker;
-import cn.xiaoneng.uiapi.OnChatmsgListener;
-import q.rorbin.badgeview.Badge;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getUnReadServiceMessage;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipInitDataXNService;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -59,7 +55,6 @@ public class MessageActivity extends BaseActivity {
     FrameLayout fl_service;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    private int uid;
     private MessageListAdapter messageListAdapter;
 
     private List<QualityTypeBean> messageList = new ArrayList();
@@ -68,8 +63,7 @@ public class MessageActivity extends BaseActivity {
 
     private final String[] typePic = {"mes_logis_icon", "mes_notify_icon", "mes_hot_icon", "mes_comment_icon", "mes_like_icon"};
     private boolean isOnPause;
-    private Badge badge;
-    private String avatar;
+    private MessageTotalEntity messageTotalEntity;
 
     @Override
     protected int getContentView() {
@@ -78,7 +72,7 @@ public class MessageActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(MessageActivity.this);
         iv_indent_search.setVisibility(View.GONE);
         tv_indent_title.setText("消息");
         QualityTypeBean qualityTypeBean;
@@ -134,7 +128,6 @@ public class MessageActivity extends BaseActivity {
                 }
             }
         });
-        badge = getBadge(MessageActivity.this, fl_service, (int)(AutoUtils.getPercentWidth1px()*15),(int)(AutoUtils.getPercentWidth1px()*15));
     }
 
     @OnClick(R.id.tv_indent_back)
@@ -144,9 +137,17 @@ public class MessageActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if (uid != 0) {
-            getMessageTotal();
-        }
+        getMessageTotal();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return communal_recycler;
     }
 
     @Override
@@ -155,7 +156,6 @@ public class MessageActivity extends BaseActivity {
             isOnPause = false;
             loadData();
         }
-        badge.setBadgeNumber(getUnReadServiceMessage());
         super.onResume();
     }
 
@@ -167,30 +167,41 @@ public class MessageActivity extends BaseActivity {
 
     // 消息统计数目
     private void getMessageTotal() {
-        String url = Url.BASE_URL + Url.H_MES_STATISTICS + uid;
-        XUtil.Get(url, null, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                if (messageTotalEntity != null) {
-                    if (messageTotalEntity.getCode().equals("01")) {
-                        setMessageTotalData(messageTotalEntity.getMessageTotalBean());
-                    } else {
-                        if (messageTotalEntity.getCode().equals("02")) {
-                            return;
-                        } else {
-                            showToast(MessageActivity.this, messageTotalEntity.getMsg());
+        if (userId != 0) {
+            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(this, url
+                    , params, new NetLoadUtils.NetLoadListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                            if (messageTotalEntity != null) {
+                                if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
+                                    setMessageTotalData(messageTotalEntity.getMessageTotalBean());
+                                } else if (!messageTotalEntity.getCode().equals(EMPTY_CODE)) {
+                                    showToast(MessageActivity.this, messageTotalEntity.getMsg());
+                                }
+                            }
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
                         }
-                    }
-                }
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(MessageActivity.this, "网络错误，请刷新试试");
-            }
-        });
+                        @Override
+                        public void netClose() {
+                            showToast(MessageActivity.this, R.string.unConnectedNetwork);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            showToast(MessageActivity.this, R.string.unConnectedNetwork);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
+                        }
+                    });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
+        }
     }
 
     private void setMessageTotalData(MessageTotalBean messageTotalBean) {
@@ -222,64 +233,18 @@ public class MessageActivity extends BaseActivity {
         messageListAdapter.setNewData(messageList);
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 finish();
-            } else {
-                return;
             }
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
-    }
-
-    private void getUnReadMessage() {
-        if (uid != 0) {
-            //传递用户信息
-            getServiceCount();
-            Ntalker.getExtendInstance().message().setOnChatmsgListener(new OnChatmsgListener() {
-                @Override
-                public void onChatMsg(boolean isSelfMsg, String settingId, String username, String msgContent, long msgTime, boolean isUnread, int unReadCount, String uIcon) {
-                    if (isUnread) {
-                        getServiceCount();
-                    }
-                }
-            });
-        }
-    }
-
-    private void getServiceCount() {
-        List<Map<String, Object>> list = Ntalker.getExtendInstance().conversation().getList();
-        int mesCount = 0;
-        if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                boolean isUnread = (boolean) list.get(i).get("isunread");
-                if (isUnread) {
-                    int messageCount = (int) list.get(i).get("messagecount");
-                    mesCount += messageCount;
-                }
-            }
-        }
-        badge.setBadgeNumber(mesCount);
     }
 
     @OnClick(R.id.iv_indent_service)
@@ -287,7 +252,10 @@ public class MessageActivity extends BaseActivity {
         ChatParamsBody chatParamsBody = new ChatParamsBody();
         chatParamsBody.startPageTitle = getStrings("通知消息");
         chatParamsBody.startPageUrl = DEFAULT_SERVICE_PAGE_URL;
-        chatParamsBody.headurl = avatar;
+        if (userId > 0) {
+            SavePersonalInfoBean personalInfo = getPersonalInfo(MessageActivity.this);
+            chatParamsBody.headurl = personalInfo.getAvatar();
+        }
         skipInitDataXNService(MessageActivity.this, chatParamsBody);
     }
 }

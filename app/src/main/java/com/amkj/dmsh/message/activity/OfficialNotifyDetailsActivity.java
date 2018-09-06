@@ -24,18 +24,16 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.message.bean.OfficialNotifyEntity;
 import com.amkj.dmsh.message.bean.OfficialNotifyEntity.OfficialNotifyParseBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
@@ -44,7 +42,7 @@ import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,10 +53,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
+import static com.amkj.dmsh.constant.ConstantMethod.totalOfficialProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
@@ -77,33 +80,27 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
     TextView tv_header_shared;
     //主：评论列表
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_official_details;
+    SmartRefreshLayout smart_official_details;
     //    文章详情
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int scrollY;
     private float screenHeight;
     private String notifyId;
     private CommunalDetailAdapter contentOfficialAdapter;
     private List<CommunalDetailObjectBean> itemBodyList = new ArrayList<>();
-    private int uid;
     private CoverTitleView coverTitleView;
+    private OfficialNotifyEntity officialNotifyEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_message_official_notify;
     }
     @Override
     protected void initViews() {
-        isLoginStatus();
         tv_header_title.setText("");
         tv_header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
@@ -123,8 +120,8 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
                 if (communalDetailBean != null) {
-                    ConstantMethod.skipProductUrl(OfficialNotifyDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    ConstantMethod.totalOfficialProNum(communalDetailBean.getId(), notifyId);
+                    skipProductUrl(OfficialNotifyDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
+                    totalOfficialProNum(communalDetailBean.getId(), notifyId);
                 }
             }
         });
@@ -139,7 +136,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                         int couponId = (int) view.getTag(R.id.iv_avatar_tag);
                         int type = (int) view.getTag(R.id.iv_type_tag);
                         if (couponId > 0) {
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 if (type == TYPE_COUPON) {
                                     getDirectCoupon(couponId);
                                 } else if (type == TYPE_COUPON_PACKAGE) {
@@ -149,7 +146,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(OfficialNotifyDetailsActivity.this);
                             }
                         }
                         break;
@@ -160,7 +157,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                                 Intent intent = new Intent(OfficialNotifyDetailsActivity.this, ShopScrollDetailsActivity.class);
                                 intent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
                                 startActivity(intent);
-                                ConstantMethod.totalOfficialProNum(detailObjectBean.getId(), notifyId);
+                                totalOfficialProNum(detailObjectBean.getId(), notifyId);
                             }
                         }
                         loadHud.dismiss();
@@ -172,13 +169,13 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 skipAliBCWebView(couponBean.getCouponUrl());
                             } else {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(OfficialNotifyDetailsActivity.this);
                             }
                         }
                         break;
@@ -194,7 +191,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                                 constantMethod.addShopCarGetSku(OfficialNotifyDetailsActivity.this, baseAddCarProInfoBean, loadHud);
                             } else {
                                 loadHud.dismiss();
-                                getLoginStatus();
+                                getLoginStatus(OfficialNotifyDetailsActivity.this);
                             }
                         }
                         break;
@@ -242,7 +239,6 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -255,21 +251,18 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.H_MES_OFFICIAL_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", notifyId);
-        if (uid > 0) {
-            params.put("uid", uid);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_official_details.finishRefresh();
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                itemBodyList.clear();
                 Gson gson = new Gson();
-                OfficialNotifyEntity officialNotifyEntity = gson.fromJson(result, OfficialNotifyEntity.class);
+                officialNotifyEntity = gson.fromJson(result, OfficialNotifyEntity.class);
                 if (officialNotifyEntity != null) {
-                    if (officialNotifyEntity.getCode().equals("01")) {
+                    if (officialNotifyEntity.getCode().equals(SUCCESS_CODE)) {
+                        itemBodyList.clear();
                         OfficialNotifyParseBean officialNotifyParseBean = officialNotifyEntity.getOfficialNotifyParseBean();
                         tv_header_title.setText(getStrings(officialNotifyParseBean.getTitle()));
                         setMessageOfficialHeader(officialNotifyEntity.getOfficialNotifyParseBean());
@@ -278,25 +271,37 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                             itemBodyList.clear();
                             itemBodyList.addAll(ConstantMethod.getDetailsDataList(contentBeanList));
                         }
-                    } else if (officialNotifyEntity.getCode().equals("02")) {
-                        showToast(OfficialNotifyDetailsActivity.this, R.string.invalidData);
-                    } else {
+                    } else if (!officialNotifyEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(OfficialNotifyDetailsActivity.this, officialNotifyEntity.getMsg());
                     }
                     contentOfficialAdapter.setNewData(itemBodyList);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,itemBodyList,officialNotifyEntity);
                 }
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                communal_load.setVisibility(View.GONE);
-                communal_empty.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
+            public void netClose() {
                 smart_official_details.finishRefresh();
                 showToast(OfficialNotifyDetailsActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,itemBodyList,officialNotifyEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_official_details.finishRefresh();
+                showToast(OfficialNotifyDetailsActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,itemBodyList,officialNotifyEntity);
             }
         });
+    }
+    @Override
+    protected View getLoadView() {
+        return smart_official_details;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void setMessageOfficialHeader(OfficialNotifyParseBean officialNotifyParseBean) {
@@ -314,7 +319,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
     private void getDirectCoupon(int id) {
         String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("couponId", id);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -346,7 +351,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
     private void getDirectCouponPackage(int couponId) {
         String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
-        params.put("uId", uid);
+        params.put("uId", userId);
         params.put("cpId", couponId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -377,13 +382,13 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
 
     public void skipAliBCWebView(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(OfficialNotifyDetailsActivity.this);
             }
         } else {
             showToast(OfficialNotifyDetailsActivity.this, "地址缺失");
@@ -439,45 +444,6 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
 //                showToast(ShopTimeScrollDetailsActivity.this, msg);
             }
         });
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     class CoverTitleView {

@@ -14,11 +14,8 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean;
@@ -26,11 +23,10 @@ import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBea
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity.IndentInvoiceBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,9 +41,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -66,24 +65,17 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private List goodsBeanList = new ArrayList<>();
     private DirectProductListAdapter directProductListAdapter;
     public static final String INDENT_INVOICE = "directInvoiceGoods";
     private LvHeaderView lvHeaderView;
     private LvFootView lvFootView;
-    private int uid;
     private OrderDetailBean orderDetailBean;
     private boolean isOnPause;
-    private AlertView downDialog;
+    private IndentInvoiceEntity indentInvoiceEntity;
 
     @Override
     protected int getContentView() {
@@ -92,7 +84,6 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("发票详情");
         header_shared.setVisibility(View.INVISIBLE);
@@ -123,7 +114,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         directProductListAdapter.setEnableLoadMore(false);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
-                directProductListAdapter.setEnableLoadMore(false);
+            directProductListAdapter.setEnableLoadMore(false);
         });
         communal_recycler.setAdapter(directProductListAdapter);
         directProductListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -140,7 +131,6 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         if (orderDetailBean != null) {
             setOrderDetailBean(orderDetailBean);
         }
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     private void setOrderDetailBean(OrderDetailBean orderDetailBean) {
@@ -167,15 +157,6 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         directProductListAdapter.setNewData(goodsBeanList);
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
     @Override
     protected void loadData() {
         String url = Url.BASE_URL + Url.INVOICE_DETAIL;
@@ -184,11 +165,9 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         if (orderDetailBean != null) {
             params.put("no", orderDetailBean.getNo());
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
                 smart_communal_refresh.finishRefresh();
                 String code = "";
                 String msg = "";
@@ -199,24 +178,41 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (code.equals("01")) {
+                if (code.equals(SUCCESS_CODE)) {
                     Gson gson = new Gson();
-                    IndentInvoiceEntity indentInvoiceEntity = gson.fromJson(result, IndentInvoiceEntity.class);
+                    indentInvoiceEntity = gson.fromJson(result, IndentInvoiceEntity.class);
                     setInvoiceInfo(indentInvoiceEntity.getIndentInvoiceBean());
-                } else if (!code.equals("02")) {
+                } else if (!code.equals(EMPTY_CODE)) {
                     showToast(DirectIndentInvoiceActivity.this, msg);
                 }
-                directProductListAdapter.setNewData(goodsBeanList);
+                directProductListAdapter.notifyDataSetChanged();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, indentInvoiceEntity);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
-                communal_error.setVisibility(View.VISIBLE);
                 showToast(DirectIndentInvoiceActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, indentInvoiceEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                showToast(DirectIndentInvoiceActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, indentInvoiceEntity);
             }
         });
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     private void setInvoiceInfo(IndentInvoiceBean indentInvoiceBean) {
@@ -317,91 +313,6 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
             }
         }
     }
-
-//    private void downInvoiceImg(final String invoiceImg) {
-//        String invoiceSavePath = Environment.getExternalStorageDirectory().getPath() + "/DownInvoice";
-//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-//            createFilePath(invoiceSavePath);
-//        }
-//        if (!TextUtils.isEmpty(invoiceImg)) {
-//            invoiceSavePath = invoiceSavePath + "/" + invoiceImg.substring(invoiceImg.lastIndexOf("/"));
-//            if (fileIsExist(invoiceSavePath)) {
-//                final String finalInvoiceSavePath = invoiceSavePath;
-//                AlertSettingBean alertSettingBean = new AlertSettingBean();
-//                AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-//                alertData.setCancelStr("取消");
-//                alertData.setDetermineStr("下载");
-//                alertData.setFirstDet(false);
-//                alertData.setMsg("文件已存在是否重新下载");
-//                alertSettingBean.setStyle(AlertView.Style.Alert);
-//                alertSettingBean.setAlertData(alertData);
-//                downDialog = new AlertView(alertSettingBean, this, new OnAlertItemClickListener() {
-//                    @Override
-//                    public void onAlertItemClick(Object o, int position) {
-//                        if (o.equals(downDialog) && position != AlertView.CANCELPOSITION) {
-//                            loadHud.show();
-//                            downLoadFile(invoiceImg, finalInvoiceSavePath);
-//                        } else {
-//                            loadHud.dismiss();
-//                        }
-//                    }
-//                });
-//                downDialog.setCancelable(false);
-//                downDialog.show();
-//            } else {
-//                downLoadFile(invoiceImg, invoiceSavePath);
-//            }
-//        } else {
-//            showToast(this, "数据错误,请联系客服");
-//        }
-//    }
-//
-//    private void downLoadFile(String invoiceImg, String invoiceSavePath) {
-//        XUtil.DownLoadFile(invoiceImg, invoiceSavePath, new MyProgressCallBack<File>() {
-//            @Override
-//            public void onStarted() {
-////                    showToast(IndentInvoiceDownCheckActivity.this, "正在下载");
-//            }
-//
-//            @Override
-//            public void onSuccess(final File result) {
-//                loadHud.dismiss();
-//                Snackbar.make(getWindow().getDecorView(), "发票保存路径为：" + result.getAbsolutePath(), Snackbar.LENGTH_LONG)
-//                        .setAction("查看目录", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                File file = new File(result.getAbsolutePath());
-////获取父目录
-//                                File parentFile = new File(file.getParent());
-//                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//                                intent.setDataAndType(Uri.fromFile(parentFile), "*/*");
-//                                intent.addCategory(Intent.CATEGORY_OPENABLE);
-//                                startActivity(intent);
-//                            }
-//                        }).show();
-//            }
-//
-//            @Override
-//            public void onError(Throwable ex, boolean isOnCallback) {
-//                loadHud.dismiss();
-//                showToast(DirectIndentInvoiceActivity.this, "下载失败");
-//            }
-//        });
-//    }
-//
-//    //判断文件是否存在
-//    private boolean fileIsExist(String invoiceSavePath) {
-//        File file = new File(invoiceSavePath);
-//        return file.exists();
-//    }
-//
-//    //创建文件夹
-//    private void createFilePath(String savePath) {
-//        File destDir = new File(savePath);
-//        if (!destDir.exists()) {
-//            destDir.mkdirs();
-//        }
-//    }
 
     @Override
     protected void onPause() {

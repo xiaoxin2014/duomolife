@@ -1,5 +1,6 @@
 package com.amkj.dmsh.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/8/30.
  */
-public class ArticleCommentEntity {
+public class ArticleCommentEntity extends BaseEntity{
 
 
     /**
@@ -16,9 +17,6 @@ public class ArticleCommentEntity {
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * content : 快来看啊
      * uid : 23291
@@ -35,22 +33,6 @@ public class ArticleCommentEntity {
 
     @SerializedName("result")
     private List<ArticleCommentBean> articleCommentList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<ArticleCommentBean> getArticleCommentList() {
         return articleCommentList;

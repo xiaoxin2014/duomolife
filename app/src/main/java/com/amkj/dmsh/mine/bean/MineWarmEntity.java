@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,16 +8,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/10/20.
  */
-public class MineWarmEntity {
+public class MineWarmEntity extends BaseEntity{
 
     /**
      * result : [{"id":10,"title":"Bamboo Kids天然竹子材质宝宝婴儿餐具","price":"0.00","market_price":"168.00","status":2,"end_time":"2017-10-15 16:10:14","path":"/Uploads/goods_img/2016-04-28/5721c90eb5674.jpg","subtitle":"Bamboo Kids天然竹子材质宝宝婴儿餐具","start_time":"1970-01-01 08:00:00","ptime":"1970-01-01 07:30:00"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     private String currentTime;
     private int count;
     /**
@@ -34,22 +32,6 @@ public class MineWarmEntity {
 
     @SerializedName("result")
     private List<MineWarmBean> MineWarmList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public int getCount() {
         return count;

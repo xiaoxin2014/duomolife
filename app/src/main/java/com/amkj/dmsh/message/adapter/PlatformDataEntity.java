@@ -1,5 +1,6 @@
 package com.amkj.dmsh.message.adapter;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +14,7 @@ import java.util.List;
  * version 3.1.3
  * class description:平台通知数据
  */
-public class PlatformDataEntity {
+public class PlatformDataEntity extends BaseEntity{
 
     /**
      * platformDataBean : {"m_uid":87889,"utime":"2018-05-14 18:27:22.735","m_status":true,"ctime":"2018-05-14 18:27:22.735","description":[{"type":"text","content":"<p>平台通知平台通知平台通知<\/p>"},{"type":"text","content":"<p>平台通知<\/p>"},{"type":"text","content":"<p><br/><\/p>"},{"type":"text","content":"<p><br/><\/p>"}],"m_type":9999,"m_content":"平台通知平台通知平台通知","ptime":"2018-05-14 18:27:22.735","m_id":2943812}
@@ -22,8 +23,6 @@ public class PlatformDataEntity {
      */
     @SerializedName("result")
     private PlatformDataBean platformDataBean;
-    private String msg;
-    private String code;
 
     public static PlatformDataEntity objectFromData(String str) {
 
@@ -36,22 +35,6 @@ public class PlatformDataEntity {
 
     public void setPlatformDataBean(PlatformDataBean platformDataBean) {
         this.platformDataBean = platformDataBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static class PlatformDataBean {

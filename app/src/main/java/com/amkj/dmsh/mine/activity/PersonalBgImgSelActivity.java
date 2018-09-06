@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -20,12 +21,10 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.PersonalBgImgSelAdapter;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity.MineBgImgBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -34,7 +33,7 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yanzhenjie.permission.Permission;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -47,9 +46,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 ;
 
@@ -62,28 +62,21 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertItemClickListener {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    //    滚动至顶部
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
-    private int uid;
     private PersonalBgImgSelAdapter personalBgImgSelAdapter;
     private List<MineBgImgBean> mineBgImgBeanList = new ArrayList<>();
     private AlertView openImg;
     private int coverImgWidth;
     private int coverImgHeight;
+    private MineBgImgEntity mineBgImgEntity;
 
     @Override
     protected int getContentView() {
@@ -92,7 +85,7 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tl_normal_bar.setSelected(true);
         tv_header_shared.setVisibility(GONE);
         communal_recycler.setLayoutManager(new GridLayoutManager(PersonalBgImgSelActivity.this, 3));
@@ -100,9 +93,7 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
         communal_recycler.setAdapter(personalBgImgSelAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-
-                loadData();
-
+            loadData();
         });
         personalBgImgSelAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -137,7 +128,7 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
         if (!TextUtils.isEmpty(imgUrl)) {
             String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             params.put("bgimg_url", imgUrl);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -177,42 +168,54 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
     @Override
     protected void loadData() {
         String url = Url.BASE_URL + Url.MINE_BG_IMG_LIST;
-        if (NetWorkUtils.checkNet(PersonalBgImgSelActivity.this)) {
-            XUtil.Post(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    mineBgImgBeanList.clear();
-                    Gson gson = new Gson();
-                    MineBgImgEntity mineBgImgEntity = gson.fromJson(result, MineBgImgEntity.class);
-                    if (mineBgImgEntity != null) {
-                        if (mineBgImgEntity.getCode().equals("01")) {
-                            mineBgImgBeanList.addAll(mineBgImgEntity.getMineBgImgList());
-                            MineBgImgBean mineBgImgBean = new MineBgImgBean();
-                            mineBgImgBean.setBgimg_url(ConstantVariable.BASE_RESOURCE_DRAW + R.drawable.plus_icon_nor);
-                            mineBgImgBeanList.add(mineBgImgBean);
-                        } else if (!mineBgImgEntity.getCode().equals("02")) {
-                            showToast(PersonalBgImgSelActivity.this, mineBgImgEntity.getMsg());
-                        }
-                        setBgImg();
-                        personalBgImgSelAdapter.setNewData(mineBgImgBeanList);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, null, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                mineBgImgBeanList.clear();
+                Gson gson = new Gson();
+                mineBgImgEntity = gson.fromJson(result, MineBgImgEntity.class);
+                if (mineBgImgEntity != null) {
+                    if (mineBgImgEntity.getCode().equals("01")) {
+                        mineBgImgBeanList.addAll(mineBgImgEntity.getMineBgImgList());
+                        MineBgImgBean mineBgImgBean = new MineBgImgBean();
+                        mineBgImgBean.setBgimg_url(ConstantVariable.BASE_RESOURCE_DRAW + R.drawable.plus_icon_nor);
+                        mineBgImgBeanList.add(mineBgImgBean);
+                    } else if (!mineBgImgEntity.getCode().equals("02")) {
+                        showToast(PersonalBgImgSelActivity.this, mineBgImgEntity.getMsg());
                     }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
                     setBgImg();
-                    smart_communal_refresh.finishRefresh();
-                    communal_error.setVisibility(View.VISIBLE);
-                    showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
+                    personalBgImgSelAdapter.setNewData(mineBgImgBeanList);
                 }
-            });
-        } else {
-            setBgImg();
-            smart_communal_refresh.finishRefresh();
-            communal_load.setVisibility(GONE);
-            showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
-        }
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void netClose() {
+                setBgImg();
+                smart_communal_refresh.finishRefresh();
+                showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                setBgImg();
+                smart_communal_refresh.finishRefresh();
+                showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+        });
+    }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     public void setBgImg() {
@@ -223,55 +226,31 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
                 finish();
-            } else {
-                return;
             }
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-            } else if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
-                try {
-                    List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
-                    if (localMediaList != null && localMediaList.size() > 0) {
-                        LocalMediaC localMedia = localMediaList.get(0);
-                        if (localMedia != null && !TextUtils.isEmpty(localMedia.getPath()) && localMedia.isCut()) {
-                            String cutPath = localMedia.getCutPath();
-                            if (!TextUtils.isEmpty(cutPath)) {
-                                setCoverImg(cutPath);
-                            }
+        if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
+            try {
+                List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
+                if (localMediaList != null && localMediaList.size() > 0) {
+                    LocalMediaC localMedia = localMediaList.get(0);
+                    if (localMedia != null && !TextUtils.isEmpty(localMedia.getPath()) && localMedia.isCut()) {
+                        String cutPath = localMedia.getCutPath();
+                        if (!TextUtils.isEmpty(cutPath)) {
+                            setCoverImg(cutPath);
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     @OnClick(R.id.tv_life_back)

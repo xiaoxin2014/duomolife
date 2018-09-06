@@ -1,5 +1,6 @@
 package com.amkj.dmsh.message.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * class description:积分明细
  */
 
-public class IntegrationDetailsEntity {
+public class IntegrationDetailsEntity extends BaseEntity{
 
     /**
      * result : [{"score":5,"ctime":"2017-08-22 14:31:40.0","id":715,"type":4,"title":"签到","content":"签到获得5积分"},{"score":10,"ctime":"2017-08-22 14:30:41.0","id":714,"type":4,"title":"签到","content":"签到获得10积分"},{"score":10,"ctime":"2017-08-22 14:27:59.0","id":713,"type":4,"title":"签到","content":"签到获得10积分"},{"score":5,"ctime":"2017-08-22 14:26:36.0","id":712,"type":4,"title":"签到","content":"签到获得5积分"},{"score":5,"ctime":"2017-08-22 09:58:12.0","id":702,"type":4,"title":"签到","content":"签到获得5积分"},{"score":-10,"ctime":"2017-08-21 15:45:43.0","id":689,"type":-3,"title":"积分抽奖","content":"积分抽奖扣减10积分"},{"score":50,"ctime":"2017-08-21 15:45:16.0","id":687,"type":6,"title":"抽奖","content":"抽奖获得50积分"},{"score":5,"ctime":"2017-08-21 09:59:34.0","id":646,"type":4,"title":"签到","content":"签到获得5积分"},{"score":5,"ctime":"2017-08-21 09:50:09.0","id":645,"type":4,"title":"签到","content":"签到获得5积分"},{"score":30,"ctime":"2017-08-12 11:58:38.0","id":540,"type":6,"title":"抽奖","content":"抽奖获得30积分"}]
@@ -19,9 +20,6 @@ public class IntegrationDetailsEntity {
      * code : 01
      * totalScore : 987654256
      */
-
-    private String msg;
-    private String code;
     private int totalScore;
     /**
      * nowScore : 995
@@ -39,22 +37,6 @@ public class IntegrationDetailsEntity {
 
     @SerializedName("result")
     private List<IntegrationDetailsBean> integrationDetailsList;
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public int getTotalScore() {
         return totalScore;

@@ -12,8 +12,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -22,9 +22,6 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -37,13 +34,17 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -57,20 +58,15 @@ public class UserInvitationFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private PullUserInvitationAdapter adapterInvitationAdapter;
     private List<InvitationDetailBean> invitationDetailList = new ArrayList();
     private int scrollY = 0;
     private int page = 1;
-    private int mid;
     private float screenHeight;
     private String type = "likedInvitation";
-    private String userId;
+    private String uid;
+    private InvitationDetailEntity invitationDetailEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_recycler_floating_loading;
@@ -78,7 +74,6 @@ public class UserInvitationFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapterInvitationAdapter = new PullUserInvitationAdapter(getActivity(), invitationDetailList, type);
         communal_recycler.setAdapter(adapterInvitationAdapter);
@@ -120,18 +115,18 @@ public class UserInvitationFragment extends BaseFragment {
                 if (invitationDetailBean != null) {
                     switch (view.getId()) {
                         case R.id.tv_com_art_collect_count:
-                            if (mid > 0) {
+                            if (userId > 0) {
                                 loadHud.show();
                                 setArticleCollect(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(UserInvitationFragment.this);
                             }
                             break;
                         case R.id.tv_com_art_like_count:
-                            if (mid > 0) {
+                            if (userId > 0) {
                                 setArticleLiked(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(UserInvitationFragment.this);
                             }
                             break;
                     }
@@ -173,72 +168,69 @@ public class UserInvitationFragment extends BaseFragment {
         adapterInvitationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if(invitationDetailList.size()>=page*DEFAULT_TOTAL_COUNT){
+                if (invitationDetailList.size() >= page * DEFAULT_TOTAL_COUNT) {
                     page++;
                     getInvitationList();
-                }else{
+                } else {
                     adapterInvitationAdapter.loadMoreEnd();
                 }
             }
-        },communal_recycler);
-        communal_load.setVisibility(View.VISIBLE);
+        }, communal_recycler);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getInvitationList();
     }
 
-    private void getInvitationList() {
-        if (NetWorkUtils.isConnectedByState(getActivity())) {
-            String url = Url.BASE_URL + Url.USER_INVITATION_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("uid", userId);
-            params.put("version", 1);
-            if (mid > 0) {
-                params.put("myUid", mid);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    adapterInvitationAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        invitationDetailList.clear();
-                    }
-                    Gson gson = new Gson();
-                    InvitationDetailEntity invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                    if (invitationDetailEntity != null) {
-                        if (invitationDetailEntity.getCode().equals("01")) {
-                            invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
-                        } else if (!invitationDetailEntity.getCode().equals("02")) {
-                            showToast(getActivity(), invitationDetailEntity.getMsg());
-                        }
-                        if (page == 1) {
-                            adapterInvitationAdapter.setNewData(invitationDetailList);
-                        } else {
-                            adapterInvitationAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (page == 1 && invitationDetailList.size() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    }
-                    adapterInvitationAdapter.loadMoreComplete();
-                }
-            });
-        } else {
-            adapterInvitationAdapter.loadMoreComplete();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
+    private void getInvitationList() {
+        String url = Url.BASE_URL + Url.USER_INVITATION_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("uid", uid);
+        params.put("version", 1);
+        if (userId > 0) {
+            params.put("myUid", userId);
         }
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                adapterInvitationAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                if (invitationDetailEntity != null) {
+                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            invitationDetailList.clear();
+                        }
+                        invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
+                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), invitationDetailEntity.getMsg());
+                    }
+                    adapterInvitationAdapter.notifyDataSetChanged();
+                }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailEntity);
+            }
+
+            @Override
+            public void netClose() {
+                adapterInvitationAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                adapterInvitationAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailEntity);
+            }
+        });
     }
 
     //    文章收藏
@@ -247,7 +239,7 @@ public class UserInvitationFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", mid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
@@ -279,7 +271,7 @@ public class UserInvitationFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", mid);
+        params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
@@ -292,56 +284,27 @@ public class UserInvitationFragment extends BaseFragment {
         tv_like.setText(getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            mid = personalInfo.getUid();
-        } else {
-            mid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            mid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
+        if (requestCode == IS_LOGIN_CODE) {
             loadData();
         }
     }
 
     @Override
     protected void getReqParams(Bundle bundle) {
-        userId = bundle.getString("userId");
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
+        uid = bundle.getString("userId");
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("refreshMineData")) {
             page = (int) message.result;
-            loadData();
+            getInvitationList();
         }
     }
 }

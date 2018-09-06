@@ -147,7 +147,7 @@ public class Url {
     //限时特惠详情
     public static final String H_TIME_GOODS_DETAILS = "api/goods/flashSale/getGoods";
     //消息统计
-    public static final String H_MES_STATISTICS = "api/message/messageTotal?uid=";
+    public static final String H_MES_STATISTICS = "api/message/messageTotal";
     //app最后登录时间
     public static final String H_LOGIN_LAST_TIME = "api/my/updateLastLogin";
     //    新人优惠弹窗
@@ -175,7 +175,7 @@ public class Url {
     //     评论消息
     public static final String H_MES_COMMENT = "api/message/commentMessageList";
     //     消息赞
-    public static final String H_MES_LIKED = "api/message/favorMessageList?to_uid=";
+    public static final String H_MES_LIKED = "api/message/favorMessageList";
     //    积分规则
     public static final String H_ATT_INTEG = "api/reminder/getSnigInfo";
     //    发现广告图
@@ -184,7 +184,7 @@ public class Url {
      * 我的
      */
     //我的首页
-    public static final String MINE_PAGE = "api/my/getPersonalData?uid=";
+    public static final String MINE_PAGE = "api/my/getPersonalData";
     //    查询信息
     public static final String MINE_PAGE_POST = "api/my/getPersonalData";
     //    我 广告
@@ -194,7 +194,7 @@ public class Url {
     //我的关注
     public static final String MINE_ATTENTION = "api/my/getMyFllow";
     //我的提醒列表
-    public static final String MINE_WARM = "api/my/remind/myRemindList?uid=";
+    public static final String MINE_WARM = "api/my/remind/myRemindList";
     //取消提醒
     public static final String CANCEL_MINE_WARM = "api/my/remind/deleteMyRemind";
     //设置提醒
@@ -413,7 +413,7 @@ public class Url {
     //购物车修改 新版
     public static final String Q_SHOP_DETAILS_CHANGE_CAR = "api/goods/cart/changeNew";
     //购物车删除
-    public static final String Q_SHOP_DETAILS_DEL_CAR = "api/goods/cart/del?userId=";
+    public static final String Q_SHOP_DETAILS_DEL_CAR = "api/goods/cart/del";
     //获取商品属性
     public static final String Q_SHOP_DETAILS_GET_SKU_CAR = "api/goods/cart/getSaleSku";
     //优惠券展示 新版

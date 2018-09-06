@@ -12,19 +12,17 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.CouponProductActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,10 +31,14 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -50,25 +52,19 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 
 public class DirectMyCouponFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private String couponStatus;
     private List<DirectCouponBean> couponList = new ArrayList();
     private int page = 1;
     private DirectMyCouponAdapter directMyCouponAdapter;
-    private int uid;
     private int scrollY;
     private float screenHeight;
+    private DirectCouponEntity directCouponEntity;
 
     @Override
     protected int getContentView() {
@@ -77,10 +73,10 @@ public class DirectMyCouponFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        if(TextUtils.isEmpty(couponStatus)){
+        if (TextUtils.isEmpty(couponStatus)) {
             return;
         }
-        getLoginStatus();
+        getLoginStatus(this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -92,13 +88,12 @@ public class DirectMyCouponFragment extends BaseFragment {
                 // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                 .setHeaderClickListener(null)
                 .create());
-        directMyCouponAdapter = new DirectMyCouponAdapter(couponList,"checkCoupon");
+        directMyCouponAdapter = new DirectMyCouponAdapter(couponList, "checkCoupon");
         communal_recycler.setAdapter(directMyCouponAdapter);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-                //                滚动距离置0
-                scrollY = 0;
-                page = 1;
-                loadData();
+            //                滚动距离置0
+            scrollY = 0;
+            loadData();
 
         });
         directMyCouponAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -106,7 +101,7 @@ public class DirectMyCouponFragment extends BaseFragment {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= directMyCouponAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    checkCoupon();
                 } else {
                     directMyCouponAdapter.loadMoreEnd();
                 }
@@ -116,13 +111,13 @@ public class DirectMyCouponFragment extends BaseFragment {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 DirectCouponBean directCouponBean = (DirectCouponBean) view.getTag();
-                if(directCouponBean!=null&&!TextUtils.isEmpty(directCouponBean.getBeOverdue())
-                        && "0".equals(directCouponBean.getBeOverdue())){
-                    if(directCouponBean.getUse_range() == 0){
-                        setSkipPath(getActivity(),directCouponBean.getAndroid_link(),false);
-                    }else{
-                        Intent intent = new Intent(getActivity(),CouponProductActivity.class);
-                        intent.putExtra("userCouponId",String.valueOf(directCouponBean.getId()));
+                if (directCouponBean != null && !TextUtils.isEmpty(directCouponBean.getBeOverdue())
+                        && "0".equals(directCouponBean.getBeOverdue())) {
+                    if (directCouponBean.getUse_range() == 0) {
+                        setSkipPath(getActivity(), directCouponBean.getAndroid_link(), false);
+                    } else {
+                        Intent intent = new Intent(getActivity(), CouponProductActivity.class);
+                        intent.putExtra("userCouponId", String.valueOf(directCouponBean.getId()));
                         startActivity(intent);
                     }
                 }
@@ -159,72 +154,66 @@ public class DirectMyCouponFragment extends BaseFragment {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        }
     }
 
     private void checkCoupon() {
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COUPON;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("currentPage", page);
-        params.put("type",couponStatus);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        params.put("type", couponStatus);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 directMyCouponAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
-                if (page == 1) {
-                    couponList.clear();
-                }
                 Gson gson = new Gson();
-                DirectCouponEntity directCouponEntity = gson.fromJson(result, DirectCouponEntity.class);
+                directCouponEntity = gson.fromJson(result, DirectCouponEntity.class);
                 if (directCouponEntity != null) {
-                    if (directCouponEntity.getCode().equals("01")) {
-                        couponList.addAll(directCouponEntity.getDirectCouponBeanList());
+                    if (directCouponEntity.getCode().equals(SUCCESS_CODE)) {
                         if (page == 1) {
-                            directMyCouponAdapter.setNewData(couponList);
-                        } else {
-                            directMyCouponAdapter.notifyDataSetChanged();
+                            couponList.clear();
                         }
-                    } else if (!directCouponEntity.getCode().equals("02")) {
+                        couponList.addAll(directCouponEntity.getDirectCouponBeanList());
+                        directMyCouponAdapter.notifyDataSetChanged();
+                    } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), directCouponEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList, directCouponEntity);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                if (page == 1 && directMyCouponAdapter.getItemCount() < 1) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                }
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 directMyCouponAdapter.loadMoreComplete();
-                super.onError(ex, isOnCallback);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList, directCouponEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                directMyCouponAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList, directCouponEntity);
             }
         });
     }
 
     @Override
     protected void loadData() {
-        if (uid > 0) {
-            checkCoupon();
-        }
+        page = 1;
+        checkCoupon();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if(message.type.equals("refresh")){
-            getLoginStatus();
+        if (message.type.equals("refresh")) {
+            getLoginStatus(this);
             loadData();
         }
     }

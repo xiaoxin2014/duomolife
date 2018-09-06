@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -10,16 +11,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/9/26.
  */
-public class OtherAccountBindEntity {
+public class OtherAccountBindEntity extends BaseEntity{
 
     /**
      * result : [{"uid":23295,"nickname":"5ZCR6Ziz","status":1,"openid":"oQpWFuM7j0ZtiK_54qFTfnF3_-Lc","avatar":"http://img.domolife.cn/201610092231454897863841.png","type":"wechat","mobile":"13751077044"},{"uid":23295,"nickname":"5aSp6L6w5Zyw5bCY","status":1,"openid":"2645533022","avatar":"http://img.domolife.cn/201610101437397598888634.png","type":"sina","mobile":"13751077044"},{"uid":23295,"nickname":"5aSp6L6w5Zyw5bCY","status":1,"openid":"2645533022","avatar":"http://img.domolife.cn/201610101437397598888634.png","type":"sina","mobile":"13751077044"},{"uid":23295,"nickname":"5ZCR6Ziz","status":1,"openid":"5218733487305B449300A937E5AE112E","avatar":"http://img.domolife.cn/201610101439128235753662.png","type":"qq","mobile":"13751077044"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * uid : 23295
      * nickname : 5ZCR6Ziz
@@ -32,22 +30,6 @@ public class OtherAccountBindEntity {
 
     @SerializedName("result")
     private List<OtherAccountBindInfo> otherAccountBindInfo;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<OtherAccountBindInfo> getOtherAccountBindInfo() {
         return otherAccountBindInfo;

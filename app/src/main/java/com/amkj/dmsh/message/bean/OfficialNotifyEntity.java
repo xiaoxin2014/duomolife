@@ -1,5 +1,6 @@
 package com.amkj.dmsh.message.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class OfficialNotifyEntity {
+public class OfficialNotifyEntity extends BaseEntity{
 
     /**
      * result : {"contentBeanList":[{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">多么福利社元旦放假通知<\/span><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><br/><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">嘿，你好啊，不知道大家做好挥别2016，迎接2017的准备了吗？<\/span><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><br/><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">节日将至，祝大家元旦快乐呀！希望此刻在屏幕前的你在新的一年里能获得更多的正能量与好运气，一起期待这个崭新的2017会给予我们怎样的惊喜。<\/span><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><br/><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">在全新的2017篇章里，多么生活也会继续带领大家买买买，给大家提供更为优质的购物体验！<\/span><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><br/><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">给大家送出新年祝福的同时，在这里还有个温馨提醒~<\/span><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><br/><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">按照国家法定节假日的安排，元旦假期为12.31-1.2，所以在未来的这三天内，多么福利社只接单不发货喔，良品还是可以照常拍下，1.3号恢复正常发货~还请大家多担待嘿嘿。<\/span><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><br/><\/p>","type":"text"},{"contentBeanList":"<p style=\"white-space: normal;\"><span style=\"color: rgb(63, 63, 63);\">那么，我们2017年见咯！<\/span><\/p>","type":"text"},{"contentBeanList":"<p><br/><\/p>","type":"text"}],"id":3,"title":"点开有惊喜","cover_url":"http://img.domolife.cn/platform/sjHk2wdsys.jpg","status":0,"create_time":"2016-11-09 18:05:06"}
@@ -22,8 +23,6 @@ public class OfficialNotifyEntity {
 
     @SerializedName("result")
     private OfficialNotifyParseBean officialNotifyParseBean;
-    private String code;
-    private String msg;
 
     public OfficialNotifyParseBean getOfficialNotifyParseBean() {
         return officialNotifyParseBean;
@@ -31,22 +30,6 @@ public class OfficialNotifyEntity {
 
     public void setOfficialNotifyParseBean(OfficialNotifyParseBean officialNotifyParseBean) {
         this.officialNotifyParseBean = officialNotifyParseBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class OfficialNotifyParseBean {

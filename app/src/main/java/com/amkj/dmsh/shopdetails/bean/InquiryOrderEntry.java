@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,11 +13,9 @@ import java.util.Map;
 /**
  * Created by atd48 on 2016/10/28.
  */
-public class InquiryOrderEntry {
+public class InquiryOrderEntry extends BaseEntity{
     @SerializedName("result")
     private OrderInquiryDateEntry orderInquiryDateEntry;
-    private String code;
-    private String msg;
 
     public OrderInquiryDateEntry getOrderInquiryDateEntry() {
         return orderInquiryDateEntry;
@@ -24,22 +23,6 @@ public class InquiryOrderEntry {
 
     public void setOrderInquiryDateEntry(OrderInquiryDateEntry orderInquiryDateEntry) {
         this.orderInquiryDateEntry = orderInquiryDateEntry;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class OrderInquiryDateEntry {

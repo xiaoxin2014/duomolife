@@ -13,6 +13,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -46,8 +46,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_SEARCH;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
@@ -68,12 +70,6 @@ public class SearchDetailsProductFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //    搜索商品
     private List<LikedProductBean> productSearList = new ArrayList<>();
     //    商品推荐
@@ -120,7 +116,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                         intent.setClass(getActivity(), IntegralScrollDetailsActivity.class);
                         break;
                 }
-                if(likedProduct!=null&&!TextUtils.isEmpty(likedProduct.getRecommendFlag())){
+                if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getRecommendFlag())) {
                     intent.putExtra("recommendFlag", likedProduct.getRecommendFlag());
                 }
                 intent.putExtra(RECOMMEND_TYPE, RECOMMEND_SEARCH);
@@ -158,7 +154,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
         adapterProduct.setOnLoadMoreListener(() -> {
             if (page * DEFAULT_TOTAL_COUNT <= productSearList.size()) {
                 page++;
-                loadData();
+                getDetailsProduct();
             } else {
                 adapterProduct.setEnableLoadMore(false);
             }
@@ -166,7 +162,6 @@ public class SearchDetailsProductFragment extends BaseFragment {
         communal_recycler.setAdapter(adapterProduct);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -197,14 +192,19 @@ public class SearchDetailsProductFragment extends BaseFragment {
             }
             communal_recycler.smoothScrollToPosition(0);
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     //设置显示
 
     @Override
     protected void loadData() {
+        page = 1;
         getDetailsProduct();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override
@@ -230,62 +230,55 @@ public class SearchDetailsProductFragment extends BaseFragment {
     private void getDetailsProduct() {
         if (!TextUtils.isEmpty(data)) {
             String url = Url.BASE_URL + Url.H_HOT_SEARCH_PRODUCT;
-            if (NetWorkUtils.checkNet(getActivity())) {
-                Map<String, Object> params = new HashMap<>();
-                params.put("keyword", data);
-                params.put("currentPage", page);
-                params.put("searchType", 1);
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        smart_communal_refresh.finishRefresh();
-                        adapterProduct.loadMoreComplete();
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.GONE);
-                        if (page == 1) {
-                            productSearList.clear();
-                        }
-                        Gson gson = new Gson();
-                        likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                        if (likedProduct != null) {
-                            if (likedProduct.getCode().equals("01")) {
-                                productSearList.addAll(likedProduct.getLikedProductBeanList());
-                            } else if (!likedProduct.getCode().equals("02")) {
-                                showToast(getActivity(), likedProduct.getMsg());
-                            }
-                            setEmptyUI();
+            Map<String, Object> params = new HashMap<>();
+            params.put("keyword", data);
+            params.put("currentPage", page);
+            params.put("searchType", 1);
+            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    adapterProduct.loadMoreComplete();
+                    Gson gson = new Gson();
+                    likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+                    if (likedProduct != null) {
+                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                             if (page == 1) {
-                                adapterProduct.setNewData(productSearList);
-                            } else {
-                                adapterProduct.notifyDataSetChanged();
+                                productSearList.clear();
                             }
-                            /**
-                             * 限定条件，推荐只能被调用一次
-                             */
-                            if (DEFAULT_TOTAL_COUNT * page > productSearList.size()
-                                    && proRecommendList.size() < 1) {
-                                getSameTypeProData();
-                            }
+                            productSearList.addAll(likedProduct.getLikedProductBeanList());
+                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), likedProduct.getMsg());
+                        }
+                        setEmptyUI();
+                        adapterProduct.notifyDataSetChanged();
+                        /**
+                         * 限定条件，推荐只能被调用一次
+                         */
+                        if (DEFAULT_TOTAL_COUNT * page > productSearList.size()
+                                && proRecommendList.size() < 1) {
+                            getSameTypeProData();
                         }
                     }
+                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        if (page == 1 && adapterProduct.getItemCount() < 1) {
-                            communal_load.setVisibility(View.GONE);
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
-                        smart_communal_refresh.finishRefresh();
-                        adapterProduct.loadMoreComplete();
-                        super.onError(ex, isOnCallback);
-                    }
-                });
-            } else {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-                smart_communal_refresh.finishRefresh();
-                adapterProduct.loadMoreComplete();
-            }
+                @Override
+                public void netClose() {
+                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    smart_communal_refresh.finishRefresh();
+                    adapterProduct.loadMoreComplete();
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    smart_communal_refresh.finishRefresh();
+                    adapterProduct.loadMoreComplete();
+                }
+            });
+        }else{
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -357,24 +350,11 @@ public class SearchDetailsProductFragment extends BaseFragment {
 
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
-                    if (page == 1 && adapterProduct.getItemCount() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
-                    }
                     smart_communal_refresh.finishRefresh();
                     adapterProduct.loadMoreComplete();
                     super.onError(ex, isOnCallback);
                 }
             });
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        communal_load.setVisibility(View.VISIBLE);
-        page = 1;
-        loadData();
     }
 }

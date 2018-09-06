@@ -15,7 +15,6 @@ import com.amkj.dmsh.homepage.adapter.TimeShowPagerAdapter;
 import com.amkj.dmsh.homepage.bean.TabDoubleEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowEntity.TimeShowBean;
-import com.amkj.dmsh.utils.LoadDataDialog;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.flyco.tablayout.SlidingTabLayoutDouble;
 import com.flyco.tablayout.listener.CustomTabDoubleEntity;
@@ -56,7 +55,6 @@ public class TimeShowNewActivity extends BaseActivity {
     private List<TimeShowBean> timeShowBeanList = new ArrayList<>();
     private List<CustomTabDoubleEntity> customTabDoubleList = new ArrayList<>();
     private float screenWidth;
-    private LoadDataDialog loadDataDialog;
 
     @Override
     protected int getContentView() {

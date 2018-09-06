@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
  * class description:请输入类描述
  */
 
-public class IndentInvoiceEntity {
+public class IndentInvoiceEntity extends BaseEntity{
 
     /**
      * result : {"invoice":{"imgUrl":"http://img.domolife.cn/platform/M6wBbjNxbX.png","amount":0,"orderNo":"cX27863X4763X1492755883425","id":7,"title":"测试","type":1,"content":"明细","status":2},"type":{"1":"电子发票","2":"纸质发票 "},"status":{"0":"未开","1":"待开","2":"已开 "}}
@@ -21,8 +22,6 @@ public class IndentInvoiceEntity {
 
     @SerializedName("result")
     private IndentInvoiceBean indentInvoiceBean;
-    private String msg;
-    private String code;
 
     public IndentInvoiceBean getIndentInvoiceBean() {
         return indentInvoiceBean;
@@ -30,22 +29,6 @@ public class IndentInvoiceEntity {
 
     public void setIndentInvoiceBean(IndentInvoiceBean indentInvoiceBean) {
         this.indentInvoiceBean = indentInvoiceBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public static class IndentInvoiceBean {

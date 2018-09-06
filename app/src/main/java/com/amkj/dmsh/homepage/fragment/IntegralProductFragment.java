@@ -9,18 +9,16 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.IntegralProductAdapter;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +28,8 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 
@@ -42,20 +42,14 @@ import static com.amkj.dmsh.constant.Url.BASE_URL;
  */
 public class IntegralProductFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    //    滚动至顶部
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     private int page = 1;
     private String integralType;
     private List<IntegrationBean> integrationBeanList = new ArrayList();
     private IntegralProductAdapter integralProductAdapter;
+    private IntegrationProEntity integrationProEntity;
 
     @Override
     protected int getContentView() {
@@ -95,62 +89,71 @@ public class IntegralProductFragment extends BaseFragment {
             @Override
             public void onLoadMoreRequested() {
                 page++;
-                loadData();
+                getIntegralData();
             }
         }, communal_recycler);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
+        });
+    }
+
+    private void getIntegralData() {
+        String url = BASE_URL + Url.H_INTEGRAL_PRODUCT_FILTRATE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("currentPage", page);
+//            积分类型.-1为全部,0为纯积分,1为积分+金钱
+        params.put("integralType", integralType);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                smart_communal_refresh.finishRefresh();
+                integralProductAdapter.loadMoreComplete();
+                integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
+                if (integrationProEntity != null) {
+                    if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            integrationBeanList.clear();
+                        }
+                        integrationBeanList.addAll(integrationProEntity.getIntegrationList());
+                    } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), integrationProEntity.getMsg());
+                    } else {
+                        integralProductAdapter.loadMoreEnd();
+                    }
+                }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,integrationBeanList, integrationProEntity);
+                integralProductAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                integralProductAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,integrationBeanList, integrationProEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                integralProductAdapter.loadMoreComplete();
+                showToast(getActivity(), R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,integrationBeanList, integrationProEntity);
+            }
         });
     }
 
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = BASE_URL + Url.H_INTEGRAL_PRODUCT_FILTRATE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("showCount", TOTAL_COUNT_TWENTY);
-            params.put("currentPage", page);
-//            积分类型.-1为全部,0为纯积分,1为积分+金钱
-            params.put("integralType", integralType);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    if (page == 1) {
-                        integrationBeanList.clear();
-                    }
-                    smart_communal_refresh.finishRefresh();
-                    integralProductAdapter.loadMoreComplete();
-                    IntegrationProEntity integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
-                    if (integrationProEntity != null) {
-                        if (integrationProEntity.getCode().equals("01")) {
-                            integrationBeanList.addAll(integrationProEntity.getIntegrationList());
-                        } else if (!integrationProEntity.getCode().equals("02")) {
-                            showToast(getActivity(), integrationProEntity.getMsg());
-                        } else {
-                            integralProductAdapter.loadMoreEnd();
-                        }
-                    }
-                    integralProductAdapter.notifyDataSetChanged();
-                }
+        page = 1;
+        getIntegralData();
+    }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    integralProductAdapter.loadMoreComplete();
-                    showToast(getActivity(), R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            integralProductAdapter.loadMoreComplete();
-            if (page == 1) {
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
-            }
-            showToast(getActivity(), R.string.unConnectedNetwork);
-        }
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 
     @Override

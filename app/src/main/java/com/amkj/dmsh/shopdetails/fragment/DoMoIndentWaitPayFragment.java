@@ -9,12 +9,10 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -27,7 +25,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,15 +36,17 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
-import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -56,35 +56,31 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY;
  */
 public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertItemClickListener {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
     List<OrderListBean> orderListBeanList = new ArrayList();
     //根据type类型分类DuomoIndentPayFragment
     private int page = 1;
-    private int uid;
     private AlertView cancelOrderDialog;
     private OrderListBean orderBean;
     private boolean isOnPause;
     private DoMoIndentListAdapter doMoIndentListAdapter;
     private int scrollY = 0;
     private float screenHeight;
+    private InquiryOrderEntry inquiryOrderEntry;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_smart_refresh_recycler_float_loading;
     }
+
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -100,17 +96,16 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
         communal_recycler.setAdapter(doMoIndentListAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-                //                滚动距离置0
-                scrollY = 0;
-                page = 1;
-                loadData();
+            //                滚动距离置0
+            scrollY = 0;
+            loadData();
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= doMoIndentListAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getWaitPayData();
                 } else {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
@@ -188,29 +183,33 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
 
     @Override
     protected void loadData() {
+        page = 1;
+        getWaitPayData();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    private void getWaitPayData() {
         String url = Url.BASE_URL + Url.Q_INQUIRY_WAIT_PAY;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
-        params.put("showCount", 10);
+        params.put("userId", userId);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
         params.put("currentPage", page);
         //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
                 doMoIndentListAdapter.loadMoreComplete();
-                if (page == 1) {
-                    orderListBeanList.clear();
-                }
                 String code = "";
                 String msg = "";
                 try {
@@ -220,9 +219,12 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (code.equals("01")) {
+                if (code.equals(SUCCESS_CODE)) {
                     Gson gson = new Gson();
-                    InquiryOrderEntry inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
+                    if (page == 1) {
+                        orderListBeanList.clear();
+                    }
+                    inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
                     if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
                         for (int i = 0; i < orderInquiryDateEntry.getOrderList().size(); i++) {
@@ -232,47 +234,27 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
                     }
                     INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
-                } else if (!code.equals("02")) {
+                } else if (!code.equals(EMPTY_CODE)) {
                     showToast(getActivity(), msg);
                 }
-                if (page == 1) {
-                    doMoIndentListAdapter.setNewData(orderListBeanList);
-                } else {
-                    doMoIndentListAdapter.notifyDataSetChanged();
-                }
+                doMoIndentListAdapter.notifyDataSetChanged();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 smart_communal_refresh.finishRefresh();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
                 doMoIndentListAdapter.loadMoreComplete();
-                super.onError(ex, isOnCallback);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                doMoIndentListAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
             }
         });
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
     }
 
     //  取消订单
@@ -280,7 +262,7 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
         String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -317,13 +299,5 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
         if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION) {
             cancelOrder();
         }
-    }
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page=1;
-        loadData();
     }
 }

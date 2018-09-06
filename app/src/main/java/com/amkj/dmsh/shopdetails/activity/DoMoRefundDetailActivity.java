@@ -22,13 +22,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
@@ -62,18 +61,23 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.xiaoneng.coreapi.ChatParamsBody;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipInitDataXNService;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -161,12 +165,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     TextView tv_refund_logistic_sel;
     @BindView(R.id.wv_communal_one)
     WheelView wv_communal_one;
-
-
     private String no;
     private String orderProductId;
     private String orderRefundProductId;
-    private int uid;
     private final int CANCEL_APPLY = 1;
     private final int EDIT_APPLY = 2;
     //   维修查看物流
@@ -188,8 +189,8 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     private String refundType;
     private RefundTypeAdapter refundTypeAdapter;
     private RefundDetailBean refundDetailBean;
-    private String avatar;
     private String repairAddress;
+    private RefundDetailEntity refundDetailEntity;
 
     @Override
     protected int getContentView() {
@@ -198,7 +199,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         iv_indent_search.setVisibility(View.GONE);
         sv_layout_refund_detail.setVisibility(View.GONE);
         tv_refund_logistic.setText(LOGISTIC_C);
@@ -233,26 +234,14 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         communal_recycler_wrap.setNestedScrollingEnabled(false);
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            avatar = personalInfo.getAvatar();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
             loadData();
         }
     }
@@ -269,84 +258,98 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         }
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return sv_layout_refund_detail;
+    }
+
     private void getRepairDetailData() {
         String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_DETAIL;
-        if (NetWorkUtils.checkNet(DoMoRefundDetailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderRefundProductId", orderRefundProductId);
-            params.put("orderProductId", orderProductId);
-            params.put("userId", uid);
-            params.put("no", no);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RefundDetailEntity refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
-                    if (refundDetailEntity != null) {
-                        if (refundDetailEntity.getCode().equals("01")) {
-                            sv_layout_refund_detail.setVisibility(View.VISIBLE);
-                            refundDetailBean = refundDetailEntity.getRefundDetailBean();
-                            if (refundDetailEntity.getStatus() != null) {
-                                INDENT_PRO_STATUS = refundDetailEntity.getStatus();
-                            }
-                            setRefundDetailData(refundDetailBean);
-                        } else if (refundDetailEntity.getCode().equals("02")) {
-                            showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderRefundProductId", orderRefundProductId);
+        params.put("orderProductId", orderProductId);
+        params.put("userId", userId);
+        params.put("no", no);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
+                if (refundDetailEntity != null) {
+                    if (refundDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        sv_layout_refund_detail.setVisibility(View.VISIBLE);
+                        refundDetailBean = refundDetailEntity.getRefundDetailBean();
+                        if (refundDetailEntity.getStatus() != null) {
+                            INDENT_PRO_STATUS = refundDetailEntity.getStatus();
                         }
+                        setRefundDetailData(refundDetailBean);
+                    } else if (refundDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    sv_layout_refund_detail.setVisibility(View.GONE);
-                    showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            showToast(this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+            }
+        });
     }
 
     private void getRefundDetailData() {
         String url = Url.BASE_URL + Url.Q_INDENT_REFUND_DETAIL;
-        if (NetWorkUtils.checkNet(DoMoRefundDetailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", no);
-            params.put("orderProductId", orderProductId);
-            params.put("orderRefundProductId", orderRefundProductId);
-            params.put("userId", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RefundDetailEntity refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
-                    if (refundDetailEntity != null) {
-                        if (refundDetailEntity.getCode().equals("01")) {
-                            sv_layout_refund_detail.setVisibility(View.VISIBLE);
-                            refundDetailBean = refundDetailEntity.getRefundDetailBean();
-                            refundDetailBean.setCurrentTime(refundDetailEntity.getCurrentTime());
-                            setRefundDetailData(refundDetailBean);
-                        } else if (refundDetailEntity.getCode().equals("02")) {
-                            showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", no);
+        params.put("orderProductId", orderProductId);
+        params.put("orderRefundProductId", orderRefundProductId);
+        params.put("userId", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
+                if (refundDetailEntity != null) {
+                    if (refundDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        sv_layout_refund_detail.setVisibility(View.VISIBLE);
+                        refundDetailBean = refundDetailEntity.getRefundDetailBean();
+                        refundDetailBean.setCurrentTime(refundDetailEntity.getCurrentTime());
+                        setRefundDetailData(refundDetailBean);
+                    } else if (refundDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    sv_layout_refund_detail.setVisibility(View.GONE);
-                    showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            showToast(this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+            }
+        });
     }
 
     //    取消申请
@@ -830,7 +833,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
             params.put("no", no);
             params.put("orderProductId", orderProductId);
             params.put("orderRefundProductId", orderRefundProductId);
-            params.put("userId", uid);
+            params.put("userId", userId);
             params.put("expressCompany", logistic);
             params.put("expressNo", logisticNo);
             XUtil.Post(url, params, new MyCallBack<String>() {
@@ -1008,8 +1011,8 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         if (refundDetailBean != null) {
             chatParamsBody.erpParam = getStrings(refundDetailBean.getNo());
         }
-        if (uid > 0) {
-            chatParamsBody.headurl = avatar;
+        if (userId > 0) {
+            chatParamsBody.headurl = getPersonalInfo(mAppContext).getAvatar();
         }
         skipInitDataXNService(DoMoRefundDetailActivity.this, chatParamsBody);
     }

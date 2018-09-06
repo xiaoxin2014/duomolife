@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.CommunalDetailBean;
@@ -59,7 +60,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -79,6 +80,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import emojicon.EmojiconTextView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -91,7 +93,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
-import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
@@ -100,7 +101,7 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 public class IntegralScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_integral_details)
-    RefreshLayout smart_integral_details;
+    SmartRefreshLayout smart_integral_details;
     @BindView(R.id.ll_integral_detail_product)
     LinearLayout ll_integral_detail_product;
     @BindView(R.id.scroll_integral_product_header)
@@ -120,13 +121,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     //    我要兑换
     @BindView(R.id.tv_integral_product_exchange)
     TextView tv_integral_product_exchange;
-
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     /**
      * 商品评论
      */
@@ -170,6 +164,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     FrameLayout flHeaderService;
     @BindView(R.id.iv_img_share)
     ImageView ivImgShare;
+    @BindView(R.id.fl_integral_product)
+    FrameLayout fl_integral_product;
 
     private String productId;
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
@@ -185,6 +181,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     private GoodsCommentBean goodsCommentBean;
     private IntegralPopWindows integralPopWindows;
     private SimpleSkuDialog simpleSkuDialog;
+    private IntegralProductInfoEntity productInfoEntity;
 
     @Override
     protected int getContentView() {
@@ -236,7 +233,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 }
             }
         });
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     private void scrollLocation(int position) {
@@ -256,57 +252,59 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         getIntegralComment();
     }
 
+    @Override
+    protected View getLoadView() {
+        return fl_integral_product;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
 
     /**
      * 商品详情内容
      */
     private void getIntegrationData() {
-        if (NetWorkUtils.checkNet(IntegralScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.H_INTEGRAL_DETAILS_GOODS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", productId);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    communal_empty.setVisibility(View.GONE);
-                    smart_integral_details.finishRefresh();
-                    Gson gson = new Gson();
-                    IntegralProductInfoEntity productInfoEntity = gson.fromJson(result, IntegralProductInfoEntity.class);
-                    if (productInfoEntity != null) {
-                        if (productInfoEntity.getCode().equals("01")) {
-                            productInfoBean = productInfoEntity.getIntegralProductInfoBean();
-                            setIntegralProductData(productInfoBean);
-                        } else if (productInfoEntity.getCode().equals("02")) {
-                            showToast(IntegralScrollDetailsActivity.this, R.string.shopOverdue);
-                            communal_empty.setVisibility(View.VISIBLE);
-                        } else {
-                            showToast(IntegralScrollDetailsActivity.this, productInfoEntity.getMsg());
-                            communal_error.setVisibility(View.VISIBLE);
-                        }
+        String url = Url.BASE_URL + Url.H_INTEGRAL_DETAILS_GOODS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_integral_details.finishRefresh();
+                Gson gson = new Gson();
+                productInfoEntity = gson.fromJson(result, IntegralProductInfoEntity.class);
+                if (productInfoEntity != null) {
+                    if (productInfoEntity.getCode().equals("01")) {
+                        productInfoBean = productInfoEntity.getIntegralProductInfoBean();
+                        setIntegralProductData(productInfoBean);
+                    } else if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        showToast(IntegralScrollDetailsActivity.this, R.string.shopOverdue);
+                    } else {
+                        showToast(IntegralScrollDetailsActivity.this, productInfoEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,productInfoEntity);
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_integral_details.finishRefresh();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.VISIBLE);
-                    communal_empty.setVisibility(View.GONE);
-                    showToast(IntegralScrollDetailsActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            smart_integral_details.finishRefresh();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-            showToast(this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void netClose() {
+                smart_integral_details.finishRefresh();
+                showToast(IntegralScrollDetailsActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,productInfoEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_integral_details.finishRefresh();
+                showToast(IntegralScrollDetailsActivity.this, R.string.connectedFaile);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,productInfoEntity);
+            }
+        });
     }
 
     private void getIntegralComment() {
@@ -618,22 +616,35 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     private void getIntegration() {
-        String url = Url.BASE_URL + MINE_PAGE + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                UserPagerInfoEntity pagerInfoBean = gson.fromJson(result, UserPagerInfoEntity.class);
-                if (pagerInfoBean != null) {
-                    if (pagerInfoBean.getCode().equals("01")) {
-                        personalScore = pagerInfoBean.getUserInfo().getScore();
-                        getExchangeScore(personalScore);
-                    } else if (!pagerInfoBean.getCode().equals("02")) {
-                        showToast(IntegralScrollDetailsActivity.this, pagerInfoBean.getMsg());
+        String url = Url.BASE_URL + Url.MINE_PAGE;
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        UserPagerInfoEntity pagerInfoBean = gson.fromJson(result, UserPagerInfoEntity.class);
+                        if (pagerInfoBean != null) {
+                            if (pagerInfoBean.getCode().equals("01")) {
+                                personalScore = pagerInfoBean.getUserInfo().getScore();
+                                getExchangeScore(personalScore);
+                            } else if (!pagerInfoBean.getCode().equals("02")) {
+                                showToast(IntegralScrollDetailsActivity.this, pagerInfoBean.getMsg());
+                            }
+                        }
                     }
-                }
-            }
-        });
+
+                    @Override
+                    public void netClose() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+                });
     }
 
     private void getExchangeScore(int personalScore) {
@@ -686,14 +697,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         bundle.putParcelable("integralProduct", shopCarGoodsSku);
         intent.putExtras(bundle);
         startActivity(intent);
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        loadData();
     }
 
     private void setEvaImages(RecyclerView rvProductEva, String images) {

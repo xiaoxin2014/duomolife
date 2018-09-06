@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -19,17 +20,15 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,9 +38,14 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -54,7 +58,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class MineInvitationListActivity extends BaseActivity implements OnAlertItemClickListener {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -64,13 +68,6 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
     TextView header_shared;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
-    private int uid;
     private int page = 1;
     private int scrollY = 0;
     private float screenHeight;
@@ -79,19 +76,21 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
     private String type = "帖子";
     private AlertView delArticleDialog;
     private InvitationDetailBean invitationDetailBean;
+    private InvitationDetailEntity invitationDetailEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.layout_communal_refresh_floating_header;
     }
+
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         header_shared.setVisibility(View.INVISIBLE);
         tv_header_titleAll.setText("我的帖子");
         communal_recycler.setLayoutManager(new LinearLayoutManager(MineInvitationListActivity.this));
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-                page = 1;
-                loadData();
+            loadData();
         });
         adapterInvitationAdapter = new PullUserInvitationAdapter(MineInvitationListActivity.this, invitationDetailList, type);
         communal_recycler.setAdapter(adapterInvitationAdapter);
@@ -133,18 +132,18 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
                 if (invitationDetailBean != null) {
                     switch (view.getId()) {
                         case R.id.tv_com_art_collect_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 loadHud.show();
                                 setArticleCollect(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(MineInvitationListActivity.this);
                             }
                             break;
                         case R.id.tv_com_art_like_count:
-                            if (uid > 0) {
+                            if (userId > 0) {
                                 setArticleLiked(invitationDetailBean, view);
                             } else {
-                                getLoginStatus();
+                                getLoginStatus(MineInvitationListActivity.this);
                             }
                             break;
 //                        删除帖子
@@ -200,72 +199,74 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
         adapterInvitationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if(invitationDetailList.size()>=page*DEFAULT_TOTAL_COUNT){
+                if (invitationDetailList.size() >= page * DEFAULT_TOTAL_COUNT) {
                     page++;
                     getMyInvitationData();
-                }else{
+                } else {
                     adapterInvitationAdapter.loadMoreEnd();
                 }
             }
-        },communal_recycler);
-        communal_load.setVisibility(View.VISIBLE);
+        }, communal_recycler);
     }
 
     @Override
     protected void loadData() {
+        page = 1;
         getMyInvitationData();
     }
 
-    private void getMyInvitationData() {
-        if (NetWorkUtils.isConnectedByState(MineInvitationListActivity.this)) {
-            String url = Url.BASE_URL + Url.MINE_INVITATION_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("uid", uid);
-            params.put("version", 1);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitationAdapter.loadMoreComplete();
-                    communal_load.setVisibility(View.GONE);
-                    communal_error.setVisibility(View.GONE);
-                    if (page == 1) {
-                        invitationDetailList.clear();
-                    }
-                    Gson gson = new Gson();
-                    InvitationDetailEntity invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                    if (invitationDetailEntity != null) {
-                        if (invitationDetailEntity.getCode().equals("01")) {
-                            invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
-                        } else if (!invitationDetailEntity.getCode().equals("02")) {
-                            showToast(MineInvitationListActivity.this, invitationDetailEntity.getMsg());
-                        }
-                        if (page == 1) {
-                            adapterInvitationAdapter.setNewData(invitationDetailList);
-                        } else {
-                            adapterInvitationAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (page == 1 && invitationDetailList.size() < 1) {
-                        communal_load.setVisibility(View.GONE);
-                        communal_error.setVisibility(View.VISIBLE);
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    private void getMyInvitationData() {
+        String url = Url.BASE_URL + Url.MINE_INVITATION_LIST;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("uid", userId);
+        params.put("version", 1);
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                adapterInvitationAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                if (invitationDetailEntity != null) {
+                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (page == 1) {
+                            invitationDetailList.clear();
+                        }
+                        invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
+                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(MineInvitationListActivity.this, invitationDetailEntity.getMsg());
                     }
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitationAdapter.loadMoreComplete();
+                    adapterInvitationAdapter.notifyDataSetChanged();
                 }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            adapterInvitationAdapter.loadMoreComplete();
-            communal_load.setVisibility(View.GONE);
-            communal_error.setVisibility(View.VISIBLE);
-        }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                adapterInvitationAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                adapterInvitationAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+            }
+        });
     }
 
     //    文章收藏
@@ -274,7 +275,7 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
         String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("uid", uid);
+        params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
@@ -306,7 +307,7 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
         String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
-        params.put("tuid", uid);
+        params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
@@ -323,7 +324,7 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
         String url = Url.BASE_URL + Url.MINE_INVITATION_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", invitationDetailBean.getId());
-        params.put("uid", uid);
+        params.put("uid", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -342,38 +343,16 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
         });
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(View.GONE);
-        communal_error.setVisibility(View.GONE);
-        page = 1;
-        loadData();
     }
 
     @OnClick(R.id.tv_life_back)
@@ -387,5 +366,4 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
             delArticle();
         }
     }
-
 }

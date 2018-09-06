@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,34 +12,15 @@ import java.util.List;
  * class description:兴趣类型
  */
 
-public class HabitTypeEntity {
+public class HabitTypeEntity extends BaseEntity{
 
     /**
      * result : [{"isOpen":0,"interest_name":"打球","id":1},{"isOpen":0,"interest_name":"看书","id":2},{"isOpen":0,"interest_name":"打豆豆","id":3}]
      * msg : 返回空值
      * code : 02
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<HabitTypeBean> habitTypeBeanList;
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public List<HabitTypeBean> getHabitTypeBeanList() {
         return habitTypeBeanList;

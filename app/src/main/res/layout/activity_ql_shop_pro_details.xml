@@ -12,6 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/fl_product_details"
         android:layout_below="@+id/tl_quality_bar"
         android:focusableInTouchMode="true">
 

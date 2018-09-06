@@ -11,7 +11,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -24,9 +23,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import emojicon.EmojiconEditTextClean;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 ;
@@ -47,7 +47,6 @@ public class SettingPersonalNameActivity extends BaseActivity {
     private final String NAME = "name";
     private final int maxLength = 20;
     private final int maxByteLength = 60;
-    private int uid;
     private int textRemainLength;
 
     @Override
@@ -57,7 +56,7 @@ public class SettingPersonalNameActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("修改昵称");
         header_shared.setText("保存");
         header_shared.setCompoundDrawables(null, null, null, null);
@@ -72,26 +71,16 @@ public class SettingPersonalNameActivity extends BaseActivity {
         setEtFilter(edit_personal_name);
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
+
     }
 
     @Override
@@ -131,7 +120,7 @@ public class SettingPersonalNameActivity extends BaseActivity {
     private void getData(String name) {
         String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("nickname", name);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override

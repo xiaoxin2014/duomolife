@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,34 +12,15 @@ import java.util.List;
  * version 3.1.5
  * class description:积分获取
  */
-public class IntegralGetEntity {
+public class IntegralGetEntity extends BaseEntity{
 
     /**
      * code : 01
      * msg : 请求成功
      * result : [{"id":2,"title":"购买积分获取","image":"http://image.domolife.cn/platform/fmrrzxyZYP1531800028260.png","iosLink":"app://DMLGoodsProductsInfoViewController?goodsId=32","androidLink":"app://ShopScrollDetailsActivity?productId=32","webLink":"http://www.domolife.cn/m/template/common/proprietary.html?id=32","webPcLink":"http://www.domolife.cn/template/common/proprietary.html?id=32","description":"1块钱10积分","content":"购物消费","button":"去购买"},{"id":3,"title":"搜索是是是","image":"http://image.domolife.cn/platform/RY27xxSSmh1532161165287.png","iosLink":"app://DMLDiscoverViewController","androidLink":"app://http://whatUrl12","webLink":"http://whatUrl","webPcLink":"http://whatUrl123","description":"1分/1评论","content":"晒单对我","button":"去评论"}]
      */
-
-    private String code;
-    private String msg;
     @SerializedName("result")
     private List<IntegralGetBean> integralGetList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<IntegralGetBean> getIntegralGetList() {
         return integralGetList;

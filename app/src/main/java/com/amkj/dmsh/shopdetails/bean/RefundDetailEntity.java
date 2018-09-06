@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -17,7 +18,7 @@ import java.util.Map;
  * class description:退款详情
  */
 
-public class RefundDetailEntity {
+public class RefundDetailEntity extends BaseEntity{
 
     /**
      * refundDetailBean : {"orderRefundProductId":98,"no":"cX34650X2027X1502250184598","reason":"不想要了","noticeMsg":"商品退款将原路返回至支付账户，请注意查收","saleSkuValue":"颜色:灰色","count":1,"orderProductId":1691,"refundType":"退货退款","picUrl":"http://image.domolife.cn/platform/20170422/20170422103859051.jpg","refundNo":"rX34650X1502259958582","createTime":"2017-08-09 14:25:59","statusName":"退款成功 ","name":"Nuna Zaaz儿童餐椅","refundPrice":"0.01","orderRefundId":301}
@@ -26,8 +27,6 @@ public class RefundDetailEntity {
      */
     @SerializedName("result")
     private RefundDetailBean refundDetailBean;
-    private String msg;
-    private String code;
     private String currentTime;
     private Map<String,String> status;
 
@@ -37,22 +36,6 @@ public class RefundDetailEntity {
 
     public void setRefundDetailBean(RefundDetailBean refundDetailBean) {
         this.refundDetailBean = refundDetailBean;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getCurrentTime() {
