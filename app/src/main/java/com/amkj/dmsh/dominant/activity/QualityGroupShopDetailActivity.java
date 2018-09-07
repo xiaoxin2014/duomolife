@@ -1056,6 +1056,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             groupShopDetailsBean.setGpStatus(2);
                             groupShopDetailsBean.setGpRecordId(Integer.parseInt(qualityGroupShareBean.getGpRecordId()));
                             groupShopDetailsBean.setProductId(qualityGroupShareBean.getProductId());
+                            groupShopDetailsBean.setGpProductId(qualityGroupShareBean.getGpProductId());
                             groupShopDetailsBean.setGpInfoId(qualityGroupShareBean.getGpInfoId());
                             groupShopDetailsBean.setProductSkuValue(qualityGroupShareBean.getProductSkuValue());
                             groupShopDetailsBean.setGpSkuId(qualityGroupShareBean.getGpSkuId());

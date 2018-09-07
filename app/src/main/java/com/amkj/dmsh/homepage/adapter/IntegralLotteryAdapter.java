@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -155,15 +156,18 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                         prizeText = "抱歉，本期您未中奖";
                     }
                     helper.rel_integral_lottery_prize.addView(helper.endLose);
+                    helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.removeAllViews();
+                    helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.notify();
                     if(previousInfoBean.getWinList()!=null){
-                        helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.removeAllViews();
                         helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.setVisibility(View.VISIBLE);
                         for (WinListBean winListBean : previousInfoBean.getWinList()) {
                             helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
                         }
                     }else{
                         helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.setVisibility(View.GONE);
+
                     }
+                    Log.d(TAG, "setIntegralLottery: " + previousInfoBean.getPrizeName() + "\tCount:"+ helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.getChildCount());
                     if (previousInfoBean.getLotteryCode() == null || previousInfoBean.getLotteryCode().size() < 1) {
                         helper.integralLotteryEndLoseHelper.tv_integral_lottery_mine_code.setVisibility(View.GONE);
                     } else {
@@ -179,6 +183,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                     for (WinListBean winListBean : previousInfoBean.getWinList()) {
                         helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
                     }
+                    Log.d(TAG, "setIntegralLottery: " + previousInfoBean.getPrizeName() + "\tCount:"+ helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.getChildCount());
                     helper.integralLotteryEndPrizeHelper.ll_lottery_end_prize.setTag(previousInfoBean);
                 }
             } else if (cTime.getTime() >= sTime.getTime()) { //进行中

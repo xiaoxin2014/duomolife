@@ -242,6 +242,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             });
         }
     }
+
     public void showLoadSirSuccess(LoadService loadService){
         if(loadService!=null){
             loadService.showCallback(SuccessCallback.class);

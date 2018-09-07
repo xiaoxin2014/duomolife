@@ -17,7 +17,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.HotSearchTagEntity;
 import com.amkj.dmsh.bean.HotSearchTagEntity.HotSearchTagBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
@@ -38,6 +37,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
@@ -135,7 +135,7 @@ public class HomePageSearchActivity extends BaseActivity {
             public boolean onTagClick(View view, int position, FlowLayout parent) {
                 HotSearchTagBean hotSearchTagBean = hotSearchList.get(position);
                 if (!TextUtils.isEmpty(hotSearchTagBean.getAndroid_link())) {
-                    ConstantMethod.setSkipPath(HomePageSearchActivity.this, hotSearchTagBean.getAndroid_link(), false);
+                    setSkipPath(HomePageSearchActivity.this, hotSearchTagBean.getAndroid_link(), false);
                 } else {
                     getTagResult(hotSearchTagBean.getTag_name());
                 }
