@@ -146,12 +146,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.ll_indent_detail_bottom)
     LinearLayout ll_indent_detail_bottom;
     //    底栏灰色
@@ -182,7 +176,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
     private IndentDiscountAdapter indentDiscountAdapter;
     private boolean isOnPause;
     private AlertDialog alertDialog;
-    private String avatar;
     private RuleDialogView ruleDialog;
     private ConstantMethod constantMethod;
 
@@ -300,7 +293,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         lvFootView.rv_indent_details.setLayoutManager(new LinearLayoutManager(DirectExchangeDetailsActivity.this));
         indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
         lvFootView.rv_indent_details.setAdapter(indentDiscountAdapter);
-        communal_load.setVisibility(View.VISIBLE);
     }
 
     private void requestRefundData(final OrderProductInfoBean orderProductInfoBean) {
@@ -1454,14 +1446,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 Manifest.permission.CAMERA
         };
         getExtendInstance().ntalkerSystem().requestPermissions(this, permissions);
-    }
-
-    @OnClick({R.id.rel_communal_error, R.id.communal_empty})
-    void refreshData(View view) {
-        communal_load.setVisibility(View.VISIBLE);
-        communal_empty.setVisibility(GONE);
-        communal_error.setVisibility(GONE);
-        loadData();
     }
 
     class PopupWindowView {
