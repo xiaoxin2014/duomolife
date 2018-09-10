@@ -74,10 +74,12 @@ import emojicon.EmojiconTextView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
+import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.NORTEXT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_AUDIO;
@@ -108,8 +110,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     private final int screenOriginalWidth;
     private final KProgressHUD loadHud;
     private final float density;
-    //    匹配是否是图片链接 匹配a标签
-    private String regexATextUrl = "<a href=['\"]?(.*?)['\"]?";
     //    换行
     private String br = "<br/>";
     //    换行字体样式
@@ -343,10 +343,26 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
                     isImageTag = imgIsFind.find();
                     if (isImageTag) {
-                        String stringContent = imgIsFind.group();
-                        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
-                        while (matcher.find()) {
-                            content = matcher.group();
+                        //                    匹配网址
+                        Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
+                        boolean isImageUrl = aMatcher.find();
+                        if(isImageUrl){
+                            //                    匹配网址
+                            String tbUrlImgValue = "";
+                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
+                            while (matcher.find()) {
+                                tbUrlImgValue = matcher.group();
+                                if (matcher.find()) {
+                                    content = matcher.group();
+                                }
+                            }
+                            iv_communal_image.setTag(R.id.iv_two_tag, tbUrlImgValue);
+                        }else{
+                            String stringContent = imgIsFind.group();
+                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
+                            while (matcher.find()) {
+                                content = matcher.group();
+                            }
                         }
                         rel_communal_image.setVisibility(View.VISIBLE);
                         iv_communal_image.setVisibility(View.VISIBLE);
@@ -387,22 +403,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 layoutParams.height = -2;
                                 tv_content_type.setLayoutParams(layoutParams);
                             }
-                            //                    匹配网址
-                            String tbUrlImgValue = "";
-                            String urlImgKey = "";
-                            Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
-                            while (aMatcher.find()) {
-                                Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
-                                while (matcher.find()) {
-                                    tbUrlImgValue = matcher.group();
-                                    if (matcher.find()) {
-                                        urlImgKey = matcher.group();
-                                    }
-                                }
-                            }
-                            if (!TextUtils.isEmpty(tbUrlImgValue) && !TextUtils.isEmpty(urlImgKey)) {
-                                urlMap.put(urlImgKey, tbUrlImgValue);
-                            }
+
 //                匹配字体大小
                             List<String> fontSizeValue = getStyleValue(content, content.indexOf(font_size));
                             if (fontSizeValue != null && fontSizeValue.size() > 0) {
@@ -525,11 +526,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 .urlClick(new OnUrlClickListener() {
                                     @Override
                                     public boolean urlClicked(String url) {
-//                     网页地址
-                                        Intent intent = new Intent();
-                                        intent.setClass(context, DoMoLifeCommunalActivity.class);
-                                        intent.putExtra("loadUrl", url);
-                                        context.startActivity(intent);
+                                        setSkipPath(context,url,false);
                                         return true;
                                     }
                                 }).into(tv_content_type);
@@ -699,7 +696,10 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     @Override
     public void onClick(View v) {
         String imageUrl = (String) v.getTag(R.id.iv_tag);
-        if (imageUrl != null) {
+        String imageUrlUrl = (String) v.getTag(R.id.iv_two_tag);
+        if(!TextUtils.isEmpty(imageUrlUrl)){
+            setSkipPath(context,imageUrlUrl,false);
+        }else if (!TextUtils.isEmpty(imageUrl)) {
             List<ImageBean> imageBeanList = new ArrayList<>();
             ImageBean imageBean = new ImageBean();
             imageBean.setPicUrl(imageUrl);

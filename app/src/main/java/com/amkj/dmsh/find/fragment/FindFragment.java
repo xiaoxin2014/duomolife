@@ -85,8 +85,8 @@ public class FindFragment extends BaseFragment {
     @BindView(R.id.ll_find_header)
     public LinearLayout ll_find_header;
     //    发现广告位
-    @BindView(R.id.rel_communal_banner)
-    public RelativeLayout rel_communal_banner;
+    @BindView(R.id.rel_find_ad)
+    public RelativeLayout rel_find_ad;
     @BindView(R.id.ad_communal_banner)
     public ConvenientBanner ad_communal_banner;
     //    热门话题
@@ -359,8 +359,6 @@ public class FindFragment extends BaseFragment {
                     } else {
                         getADJsonData(result);
                     }
-                } else {
-//                    rel_find_ad.setVisibility(View.GONE);
                 }
             }
         });
@@ -420,9 +418,8 @@ public class FindFragment extends BaseFragment {
         CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
         if (adActivityEntity != null) {
             if (adActivityEntity.getCode().equals("01")) {
-                if (adActivityEntity.getCode().equals("01")) {
                     adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
-                    rel_communal_banner.setVisibility(View.VISIBLE);
+                    rel_find_ad.setVisibility(View.VISIBLE);
                     if (cbViewHolderCreator == null) {
                         cbViewHolderCreator = new CBViewHolderCreator() {
                             @Override
@@ -439,12 +436,12 @@ public class FindFragment extends BaseFragment {
                     ad_communal_banner.setPages(getActivity(),cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
                             .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                             .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                } else if (!adActivityEntity.getCode().equals("02")) {
-                    showToast(getActivity(), adActivityEntity.getMsg());
-                    rel_communal_banner.setVisibility(View.GONE);
-                } else {
-                    rel_communal_banner.setVisibility(View.GONE);
-                }
+
+            } else if (!adActivityEntity.getCode().equals("02")) {
+                showToast(getActivity(), adActivityEntity.getMsg());
+                rel_find_ad.setVisibility(View.GONE);
+            } else {
+                rel_find_ad.setVisibility(View.GONE);
             }
         }
     }

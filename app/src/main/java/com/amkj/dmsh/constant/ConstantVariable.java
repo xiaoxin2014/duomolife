@@ -136,6 +136,8 @@ public class ConstantVariable {
     public static String REGEX_URL = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)";
     //    图片识别
     public static final String IMG_REGEX_TAG = "<img.*src=(.*?)[^>]*?>";
+    //    匹配是否是图片链接 匹配a标签
+    public static final String regexATextUrl = "<a [\\s\\S]*?href=\"[\\s\\S]*?\"[\\s\\S]*?>";
     //    数字
     public static final String REGEX_NUM = "[+|-]*\\d+(\\.\\d+)?";
     //

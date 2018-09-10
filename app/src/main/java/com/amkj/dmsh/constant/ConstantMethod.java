@@ -143,6 +143,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
+import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_DELETE;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
@@ -1218,17 +1219,25 @@ public class ConstantMethod {
                         if (isImageTag) {
                             detailObjectBean = null;
                             String stringContent = imgIsFind.group();
-                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
-                            boolean hasImgUrl = matcher.find();
+                            //                    匹配网址
+                            Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
                             CommunalDetailObjectBean communalDetailObjectBean;
-                            while (hasImgUrl) {
-                                String imgUrl = matcher.group();
-                                if (imgUrl.contains(".gif")) {
-                                    communalDetailObjectBean = new CommunalDetailObjectBean();
-                                    communalDetailObjectBean.setPicUrl(imgUrl);
-                                    communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
-                                    descriptionDetailList.add(communalDetailObjectBean);
-                                } else {
+                            if(aMatcher.find()){
+                                communalDetailObjectBean = new CommunalDetailObjectBean();
+                                communalDetailObjectBean.setContent(content);
+                                communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                descriptionDetailList.add(communalDetailObjectBean);
+                            }else{
+                                Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
+                                boolean hasImgUrl = matcher.find();
+                                while (hasImgUrl) {
+                                    String imgUrl = matcher.group();
+                                    if (imgUrl.contains(".gif")) {
+                                        communalDetailObjectBean = new CommunalDetailObjectBean();
+                                        communalDetailObjectBean.setPicUrl(imgUrl);
+                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
+                                        descriptionDetailList.add(communalDetailObjectBean);
+                                    }else {
 //                                    List<String> imageCropList = getImageCrop(imgUrl, 10000);
 //                                    for (String imageUrl : imageCropList) {
 //                                        communalDetailObjectBean = new CommunalDetailObjectBean();
@@ -1237,13 +1246,14 @@ public class ConstantMethod {
 //                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
 //                                        descriptionDetailList.add(communalDetailObjectBean);
 //                                    }
-                                    communalDetailObjectBean = new CommunalDetailObjectBean();
-                                    String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
-                                    communalDetailObjectBean.setContent(imgUrlContent);
-                                    communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-                                    descriptionDetailList.add(communalDetailObjectBean);
+                                        communalDetailObjectBean = new CommunalDetailObjectBean();
+                                        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
+                                        communalDetailObjectBean.setContent(imgUrlContent);
+                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                        descriptionDetailList.add(communalDetailObjectBean);
+                                    }
+                                    hasImgUrl = matcher.find();
                                 }
-                                hasImgUrl = matcher.find();
                             }
                         } else {
 //                        正文
