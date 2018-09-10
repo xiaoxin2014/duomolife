@@ -167,13 +167,13 @@ public class DirectMyCouponFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 directMyCouponAdapter.loadMoreComplete();
+                if (page == 1) {
+                    couponList.clear();
+                }
                 Gson gson = new Gson();
                 directCouponEntity = gson.fromJson(result, DirectCouponEntity.class);
                 if (directCouponEntity != null) {
                     if (directCouponEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            couponList.clear();
-                        }
                         couponList.addAll(directCouponEntity.getDirectCouponBeanList());
                         directMyCouponAdapter.notifyDataSetChanged();
                     } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {

@@ -497,8 +497,8 @@ public class ArticleOfficialActivity extends BaseActivity {
                     } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ArticleOfficialActivity.this, dmlSearchDetailEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean, dmlSearchDetailEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean, dmlSearchDetailEntity);
             }
 
             @Override

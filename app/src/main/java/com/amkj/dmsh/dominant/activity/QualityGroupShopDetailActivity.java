@@ -52,7 +52,6 @@ import com.amkj.dmsh.dominant.fragment.GroupCustomerServiceFragment;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
@@ -631,12 +630,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     } else {
                         showToast(QualityGroupShopDetailActivity.this, shopDetailsEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,groupShopDetailsBean,shopDetailsEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,groupShopDetailsBean,shopDetailsEntity);
             }
 
             @Override

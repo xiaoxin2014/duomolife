@@ -194,13 +194,13 @@ public class MessageIndentActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 messageIndentAdapter.loadMoreComplete();
+                if (page == 1) {
+                    messageArticleList.clear();
+                }
                 Gson gson = new Gson();
                 messageOfficialEntity = gson.fromJson(result, MessageIndentEntity.class);
                 if (messageOfficialEntity != null) {
                     if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            messageArticleList.clear();
-                        }
                         messageArticleList.addAll(messageOfficialEntity.getMessageIndentList());
                     } else if (!messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(MessageIndentActivity.this, messageOfficialEntity.getMsg());

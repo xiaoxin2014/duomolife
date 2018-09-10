@@ -166,13 +166,13 @@ public class UserFansFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 detailsUserAdapter.loadMoreComplete();
+                if (page == 1) {
+                    attentionFansList.clear();
+                }
                 Gson gson = new Gson();
                 userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
                 if (userAttentionFansEntity != null) {
                     if (userAttentionFansEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            attentionFansList.clear();
-                        }
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
                     } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), userAttentionFansEntity.getMsg());

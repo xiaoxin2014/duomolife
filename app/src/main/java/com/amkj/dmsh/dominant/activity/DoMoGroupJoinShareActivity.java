@@ -24,7 +24,6 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -165,10 +164,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     } else {
                         showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
-                }else{
-                    loadService.showCallback(NetErrorCallback.class);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
             }
 
             @Override

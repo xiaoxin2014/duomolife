@@ -33,7 +33,6 @@ import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity.QNewProTimeShaftBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -397,24 +396,20 @@ public class QualityNewProActivity extends BaseActivity {
                 qualityTypeProductAdapter.loadMoreComplete();
                 communal_load.setVisibility(View.GONE);
                 communal_error.setVisibility(View.GONE);
+                if (page == 1) {
+                    newProList.clear();
+                }
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            newProList.clear();
-                        }
                         newProList.addAll(likedProductEntity.getLikedProductBeanList());
                     } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityNewProActivity.this, likedProductEntity.getMsg());
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
             }
 
             @Override

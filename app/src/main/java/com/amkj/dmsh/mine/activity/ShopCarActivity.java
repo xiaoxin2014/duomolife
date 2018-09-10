@@ -432,13 +432,13 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
                 }
                 smart_communal_refresh.finishRefresh();
                 shopCarGoodsAdapter.loadMoreComplete();
+                if (page == 1) {
+                    shopGoodsList.clear();
+                }
                 Gson gson = new Gson();
                 ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
                 if (shopCarNewInfoEntity != null) {
                     if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            shopGoodsList.clear();
-                        }
                         rel_shop_car_bottom.setVisibility(View.VISIBLE);
                         for (int i = 0; i < shopCarNewInfoEntity.getShopCarNewInfoList().size(); i++) {
                             ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);

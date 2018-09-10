@@ -44,7 +44,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -281,20 +280,16 @@ public class QualityOverseasMailActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String result) {
                     qualityTypeProductAdapter.loadMoreComplete();
+                    if (productPage == 1) {
+                        //重新加载数据
+                        typeDetails.clear();
+                    }
                     Gson gson = new Gson();
                     UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
                         if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (productPage == 1) {
-                                //重新加载数据
-                                typeDetails.clear();
-                            }
                             typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
-                            if (productPage == 1) {
-                                qualityTypeProductAdapter.setNewData(typeDetails);
-                            } else {
-                                qualityTypeProductAdapter.notifyDataSetChanged();
-                            }
+                            qualityTypeProductAdapter.notifyDataSetChanged();
                         } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                             isLoadProData = false;
                             qualityTypeProductAdapter.loadMoreEnd();
@@ -333,16 +328,14 @@ public class QualityOverseasMailActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
+                        if (themePage == 1) {
+                            themeList.clear();
+                        }
                         Gson gson = new Gson();
                         DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
-                        if (loadService != null) {
-                            loadService.showCallback(SuccessCallback.class);
-                        }
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         if (dmlTheme != null) {
                             if (dmlTheme.getCode().equals(SUCCESS_CODE)) {
-                                if (themePage == 1) {
-                                    themeList.clear();
-                                }
                                 for (int i = 0; i < dmlTheme.getThemeList().size(); i++) {
                                     DMLThemeBean dmlThemeBean = dmlTheme.getThemeList().get(i);
                                     List<DMLGoodsBean> dmlGoodsBeanList = dmlThemeBean.getGoods();
@@ -371,9 +364,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
 
                     @Override
                     public void netClose() {
-                        if (loadService != null) {
-                            loadService.showCallback(SuccessCallback.class);
-                        }
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityOverseasMailActivity.this, R.string.unConnectedNetwork);
@@ -381,9 +372,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        if (loadService != null) {
-                            loadService.showCallback(SuccessCallback.class);
-                        }
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityOverseasMailActivity.this, R.string.invalidData);

@@ -155,8 +155,8 @@ public class IntegralGetActivity extends BaseActivity {
                             fl_integral_get_hint.setVisibility(View.GONE);
                             showToast(IntegralGetActivity.this, attendanceDetailEntity.getMsg());
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
                     }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
                 }
 
                 @Override

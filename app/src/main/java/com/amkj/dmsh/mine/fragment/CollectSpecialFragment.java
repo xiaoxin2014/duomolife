@@ -172,13 +172,13 @@ public class CollectSpecialFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 topicListAdapter.loadMoreComplete();
+                if (page == 1) {
+                    topicBeanList.clear();
+                }
                 Gson gson = new Gson();
                 topicDetailEntity = gson.fromJson(result, TopicSpecialEntity.class);
                 if (topicDetailEntity != null) {
                     if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            topicBeanList.clear();
-                        }
                         topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());
                     } else if (!topicDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), topicDetailEntity.getMsg());

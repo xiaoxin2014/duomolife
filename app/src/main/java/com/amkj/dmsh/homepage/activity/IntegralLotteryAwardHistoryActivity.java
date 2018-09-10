@@ -170,8 +170,8 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
                             smart_communal_refresh.finishRefresh();
                             showToast(IntegralLotteryAwardHistoryActivity.this, integralLotteryAwardEntity.getMsg());
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                     }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                 }
 
                 @Override

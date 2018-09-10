@@ -336,10 +336,10 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
                     if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
@@ -354,7 +354,7 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                     showToast(IndentSearchDetailsActivity.this, msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
             }
 
             @Override

@@ -219,11 +219,11 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
                     Gson gson = new Gson();
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
                     if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {

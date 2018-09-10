@@ -9,13 +9,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
+import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
+import com.kingja.loadsir.core.Transport;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -124,9 +128,42 @@ public abstract class BaseFragment extends Fragment {
                     loadService.showCallback(NetLoadCallback.class);
                     loadData();
                 }
-            },NetLoadUtils.getQyInstance().getLoadSirCover());
+            }, NetLoadUtils.getQyInstance().getLoadSirCover());
+            String hintText;
+            switch (getClass().getSimpleName()) {
+                case "DoMoIndentDeliveredFragment":
+                case "DoMoIndentWaitAppraiseFragment":
+                case "DoMoIndentWaitPayFragment":
+                case "DoMoIndentWaitSendFragment":
+                case "DoMoSalesReturnRecordFragment":
+                case "DoMoSalesReturnReplyFragment":
+                case "DuMoIndentAllFragment":
+                    hintText = "你还没有订单\n赶快买买买";
+                    break;
+                case "IntegralIndentFragment":
+                    hintText = "你还没有积分订单\n赶快买买买";
+                    break;
+                case "DirectMyCouponFragment":
+                    hintText = "你的优惠券空空如也";
+                    break;
+                case "CollectInvitationFragment":
+                case "CollectSpecialFragment":
+                case "CollectTopicFragment":
+                    hintText = "你还没有收藏内容\n赶快去收藏";
+                    break;
+                default:
+                    hintText = "暂无数据，稍后重试";
+                    break;
+            }
+            String finalHintText = hintText;
+            loadService.setCallBack(NetEmptyCallback.class, new Transport() {
+                @Override
+                public void order(Context context, View view) {
+                    TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
+                    tv_communal_net_tint.setText(finalHintText);
+                }
+            });
         }
-
         initViews();
         // 注册当前Fragment为订阅者
         EventBus.getDefault().register(this);

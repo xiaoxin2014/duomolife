@@ -210,10 +210,10 @@ public class DoMoIndentDeliveredFragment extends BaseFragment implements OnAlert
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     Gson gson = new Gson();
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
@@ -222,7 +222,7 @@ public class DoMoIndentDeliveredFragment extends BaseFragment implements OnAlert
                     showToast(getActivity(), msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
             }
 
             @Override

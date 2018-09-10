@@ -215,14 +215,14 @@ public class MessageLikedActivity extends BaseActivity {
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();
                             messageCommunalAdapter.loadMoreComplete();
+                            if (page == 1) {
+                                articleCommentList.clear();
+                            }
                             Gson gson = new Gson();
                             //赞
                             articleCommentEntity = gson.fromJson(result, ArticleCommentEntity.class);
                             if (articleCommentEntity != null) {
                                 if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                                    if (page == 1) {
-                                        articleCommentList.clear();
-                                    }
                                     articleCommentList.addAll(articleCommentEntity.getArticleCommentList());
                                 } else if (!articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                                     showToast(MessageLikedActivity.this, articleCommentEntity.getMsg());

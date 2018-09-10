@@ -146,6 +146,11 @@ public class CollectTopicFragment extends BaseFragment {
         getInvitationList();
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void getInvitationList() {
         String url = Url.BASE_URL + Url.COLLECT_TOPIC;
         Map<String, Object> params = new HashMap<>();
@@ -157,13 +162,13 @@ public class CollectTopicFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 findTopicListAdapter.loadMoreComplete();
+                if (page == 1) {
+                    findTopicBeanList.clear();
+                }
                 Gson gson = new Gson();
                 findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
                 if (findHotTopicEntity != null) {
                     if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            findTopicBeanList.clear();
-                        }
                         findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
                     } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), findHotTopicEntity.getMsg());

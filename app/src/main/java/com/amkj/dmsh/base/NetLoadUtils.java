@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -17,7 +18,7 @@ import com.kingja.loadsir.core.LoadService;
 import java.util.List;
 import java.util.Map;
 
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -147,23 +148,13 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void showLoadSir(LoadService loadService, List<T> list, E resultClass) {
         if (loadService != null) {
-            createExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (list != null && list.size() > 0) {
-                        loadService.showWithConvertor(SUCCESS_CODE);
-                    } else if (resultClass != null) {
-                        loadService.showWithConvertor(resultClass.getCode());
-                    } else {
-                        loadService.showWithConvertor(ERROR_CODE);
-                    }
-                }
-            });
+            if (list != null && list.size() > 0) {
+                loadService.showWithConvertor(SUCCESS_CODE);
+            } else if (resultClass != null) {
+                loadService.showWithConvertor(resultClass.getCode());
+            } else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
         }
     }
 
@@ -173,93 +164,66 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void showLoadSir(LoadService loadService, T resultBean, E resultClass) {
         if (loadService != null) {
-            createExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (resultBean != null) {
-                        loadService.showWithConvertor(SUCCESS_CODE);
-                    } else if (resultClass != null) {
-                        loadService.showWithConvertor(resultClass.getCode());
-                    } else {
-                        loadService.showWithConvertor(ERROR_CODE);
-                    }
-                }
-            });
+            if (resultBean != null) {
+                loadService.showWithConvertor(SUCCESS_CODE);
+            } else if (resultClass != null) {
+                loadService.showWithConvertor(resultClass.getCode());
+            } else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
         }
     }
 
     /**
      * 单数据
+     *
      * @param loadService
      * @param resultClass
      */
-    public void showLoadSir(LoadService loadService,E resultClass) {
+    public void showLoadSir(LoadService loadService, E resultClass) {
         if (loadService != null) {
-            createExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (resultClass != null) {
-                        loadService.showWithConvertor(resultClass.getCode());
-                    } else {
-                        loadService.showWithConvertor(ERROR_CODE);
-                    }
-                }
-            });
+            if (resultClass != null) {
+                loadService.showWithConvertor(resultClass.getCode());
+            } else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
         }
     }
 
     /**
      * 返回码
+     *
      * @param loadService
      * @param code
      */
-    public void showLoadSir(LoadService loadService,String code) {
+    public void showLoadSir(LoadService loadService, String code) {
         if (loadService != null) {
-            createExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (!TextUtils.isEmpty(code)) {
-                        loadService.showWithConvertor(code);
-                    } else {
-                        loadService.showWithConvertor(ERROR_CODE);
-                    }
-                }
-            });
+            if (!TextUtils.isEmpty(code)) {
+                loadService.showWithConvertor(code);
+            } else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
         }
     }
 
-    public void showLoadSirSuccess(LoadService loadService){
-        if(loadService!=null){
+    public void showLoadSirSuccess(LoadService loadService) {
+        if (loadService != null) {
             loadService.showCallback(SuccessCallback.class);
         }
     }
 
-    public void showLoadSirLoadFailed(LoadService loadService){
-        if(loadService!=null){
+    public void showLoadSirLoadFailed(LoadService loadService) {
+        if (loadService != null) {
             loadService.showCallback(NetErrorCallback.class);
         }
     }
 
-    public void showLoadSirLoading(LoadService loadService){
-        if(loadService!=null){
+    public void showLoadSirLoading(LoadService loadService) {
+        if (loadService != null) {
             loadService.showCallback(NetLoadCallback.class);
         }
     }
+
     /**
      * 配置数据 展示异常界面
      *
@@ -274,6 +238,9 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                     switch (baseEntity) {
                         case SUCCESS_CODE:
                             resultCode = SuccessCallback.class;
+                            break;
+                        case EMPTY_CODE:
+                            resultCode = NetEmptyCallback.class;
                             break;
                         default:
                             break;

@@ -197,13 +197,13 @@ public class MessageSysMesActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         messageNotifyAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            messageNotifyList.clear();
+                        }
                         Gson gson = new Gson();
                         messageOfficialEntity = gson.fromJson(result, MessageNotifyEntity.class);
                         if (messageOfficialEntity != null) {
                             if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
-                                if (page == 1) {
-                                    messageNotifyList.clear();
-                                }
                                 messageNotifyList.addAll(messageOfficialEntity.getMessageNotifyList());
                             } else if (!messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(MessageSysMesActivity.this, messageOfficialEntity.getMsg());

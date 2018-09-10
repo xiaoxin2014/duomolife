@@ -619,13 +619,13 @@ public class QualityTypeProductActivity extends BaseActivity {
                 }
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
+                if (page == 1) {
+                    typeDetails.clear();
+                }
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            typeDetails.clear();
-                        }
                         typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
                     } else {
                         qualityTypeProductAdapter.loadMoreEnd();
@@ -638,8 +638,8 @@ public class QualityTypeProductActivity extends BaseActivity {
                     } else {
                         qualityTypeProductAdapter.notifyDataSetChanged();
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
             }
 
             @Override

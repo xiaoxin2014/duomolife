@@ -33,7 +33,6 @@ import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -307,16 +306,16 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String result) {
                     qualityTypeProductAdapter.loadMoreComplete();
+                    if (productPage == 1) {
+                        //重新加载数据
+                        typeDetails.clear();
+                    }
                     Gson gson = new Gson();
                     UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
-                        if (likedProductEntity.getCode().equals("01")) {
-                            if (productPage == 1) {
-                                //重新加载数据
-                                typeDetails.clear();
-                            }
+                        if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                             typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
-                        } else if (!likedProductEntity.getCode().equals("02")) {
+                        } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
                         }
                     }
@@ -345,13 +344,13 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
+                        if (themePage == 1) {
+                            themeList.clear();
+                        }
                         Gson gson = new Gson();
                         DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
                         if (dmlTheme != null) {
                             if (dmlTheme.getCode().equals(SUCCESS_CODE)) {
-                                if (themePage == 1) {
-                                    themeList.clear();
-                                }
                                 themeList.addAll(dmlTheme.getThemeList());
                                 getWelfareProData();
                             } else if (dmlTheme.getCode().equals(EMPTY_CODE)) {
@@ -362,15 +361,9 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                             } else {
                                 showToast(DoMoLifeWelfareActivity.this, dmlTheme.getMsg());
                             }
-                            if(loadService!=null){
-                                loadService.showCallback(SuccessCallback.class);
-                            }
                             qualityWelfareHeaderAdapter.notifyDataSetChanged();
-                        }else{
-                            if(loadService!=null){
-                                loadService.showCallback(NetErrorCallback.class);
-                            }
                         }
+                        loadService.showCallback(SuccessCallback.class);
                     }
 
                     @Override

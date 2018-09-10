@@ -154,8 +154,8 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
                             smart_communal_refresh.finishRefresh();
                             showToast(MineIntegralLotteryAwardActivity.this, integralLotteryAwardEntity.getMsg());
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                     }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                 }
 
                 @Override

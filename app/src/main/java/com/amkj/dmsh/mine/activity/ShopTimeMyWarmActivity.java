@@ -219,13 +219,13 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 shopTimeMyWarmAdapter.loadMoreComplete();
+                if (page == 1) {
+                    mineWarmBeanList.clear();
+                }
                 Gson gson = new Gson();
                 mineWarmEntity = gson.fromJson(result, MineWarmEntity.class);
                 if (mineWarmEntity != null) {
                     if (mineWarmEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            mineWarmBeanList.clear();
-                        }
                         if (!TextUtils.isEmpty(mineWarmEntity.getCurrentTime())) {
                             for (int i = 0; i < mineWarmEntity.getMineWarmList().size(); i++) {
                                 MineWarmBean mineWarmBean = mineWarmEntity.getMineWarmList().get(i);

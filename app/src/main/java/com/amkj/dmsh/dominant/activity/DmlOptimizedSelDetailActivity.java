@@ -41,7 +41,6 @@ import com.amkj.dmsh.dominant.bean.DmlOptimizedSelDetailEntity.DmlOptimizedSelDe
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.ProductListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
@@ -322,12 +321,8 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                             } else if (!optimizedSelDetailEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(DmlOptimizedSelDetailActivity.this, optimizedSelDetailEntity.getMsg());
                             }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,optDetailsList, optimizedSelDetailEntity);
-                        }else{
-                            if(loadService!=null){
-                                loadService.showCallback(NetErrorCallback.class);
-                            }
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,optDetailsList, optimizedSelDetailEntity);
                     }
 
                     @Override

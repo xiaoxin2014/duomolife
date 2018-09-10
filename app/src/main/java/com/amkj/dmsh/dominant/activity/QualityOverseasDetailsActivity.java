@@ -38,7 +38,6 @@ import com.amkj.dmsh.dominant.bean.QualityShopDescripEntity;
 import com.amkj.dmsh.dominant.bean.QualityShopDescripEntity.QualityShopDescBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -412,24 +411,20 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 Gson gson = new Gson();
+                if (page == 1) {
+                    //重新加载数据
+                    proDetailList.clear();
+                }
                 userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (userLikedProductEntity != null) {
                     if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            //重新加载数据
-                            proDetailList.clear();
-                        }
                         proDetailList.addAll(userLikedProductEntity.getLikedProductBeanList());
                     } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityOverseasDetailsActivity.this, userLikedProductEntity.getMsg());
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,proDetailList,userLikedProductEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,proDetailList,userLikedProductEntity);
             }
 
             @Override

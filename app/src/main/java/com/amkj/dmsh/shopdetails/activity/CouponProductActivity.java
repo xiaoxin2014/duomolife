@@ -154,13 +154,13 @@ public class CouponProductActivity extends BaseActivity {
                 }
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
+                if (page == 1) {
+                    couponProductList.clear();
+                }
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            couponProductList.clear();
-                        }
                         couponProductList.addAll(likedProductEntity.getLikedProductBeanList());
                     } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         qualityTypeProductAdapter.loadMoreEnd();

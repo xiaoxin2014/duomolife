@@ -330,10 +330,10 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
                     if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {

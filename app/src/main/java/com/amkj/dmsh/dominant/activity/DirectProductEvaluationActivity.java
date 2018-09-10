@@ -13,7 +13,6 @@ import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
@@ -162,25 +161,21 @@ public class DirectProductEvaluationActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 directEvaluationAdapter.loadMoreComplete();
+                if (page == 1) {
+                    goodsComments.clear();
+                }
                 Gson gson = new Gson();
                 goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            goodsComments.clear();
-                        }
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
                         tv_header_titleAll.setText("全部评价(" + goodsCommentEntity.getEvaluateCount() + ")");
                     } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(DirectProductEvaluationActivity.this, goodsCommentEntity.getMsg());
                     }
                     directEvaluationAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,goodsComments, goodsCommentEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,goodsComments, goodsCommentEntity);
             }
 
             @Override

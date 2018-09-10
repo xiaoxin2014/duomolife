@@ -171,20 +171,20 @@ public class FindHotTopicListActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         findTopicListAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            findTopicBeanList.clear();
+                        }
                         Gson gson = new Gson();
                         findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
                         if (findHotTopicEntity != null) {
                             if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                                if (page == 1) {
-                                    findTopicBeanList.clear();
-                                }
                                 findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
                             } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(FindHotTopicListActivity.this, findHotTopicEntity.getMsg());
                             }
                             findTopicListAdapter.notifyDataSetChanged();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList, findHotTopicEntity);
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList, findHotTopicEntity);
                     }
 
                     @Override

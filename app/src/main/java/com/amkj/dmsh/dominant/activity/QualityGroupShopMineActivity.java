@@ -17,7 +17,6 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
@@ -387,12 +386,12 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 qualityGroupMineAdapter.loadMoreComplete();
+                if (page == 1) {
+                    qualityGroupMineList.clear();
+                }
                 Gson gson = new Gson();
                 qualityGroupMineEntity = gson.fromJson(result, QualityGroupMineEntity.class);
                 if (qualityGroupMineEntity != null) {
-                    if (page == 1) {
-                        qualityGroupMineList.clear();
-                    }
                     if (qualityGroupMineEntity.getCode().equals(SUCCESS_CODE)) {
                         for (int i = 0; i < qualityGroupMineEntity.getQualityGroupMineBeanList().size(); i++) {
                             QualityGroupMineBean qualityGroupMineBean = qualityGroupMineEntity.getQualityGroupMineBeanList().get(i);
@@ -404,12 +403,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                         showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
                     }
                     qualityGroupMineAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
             }
 
             @Override

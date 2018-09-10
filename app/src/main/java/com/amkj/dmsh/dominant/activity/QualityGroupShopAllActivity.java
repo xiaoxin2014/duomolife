@@ -170,13 +170,13 @@ public class QualityGroupShopAllActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 qualityGroupShopAdapter.loadMoreComplete();
+                if (page == 1) {
+                    qualityGroupBeanList.clear();
+                }
                 Gson gson = new Gson();
                 qualityGroupEntity = gson.fromJson(result, QualityGroupEntity.class);
                 if (qualityGroupEntity != null) {
                     if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            qualityGroupBeanList.clear();
-                        }
                         for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {
                             QualityGroupBean qualityGroupBean = qualityGroupEntity.getQualityGroupBeanList().get(i);
                             qualityGroupBean.setCurrentTime(qualityGroupEntity.getCurrentTime());
@@ -188,8 +188,8 @@ public class QualityGroupShopAllActivity extends BaseActivity {
                         showToast(QualityGroupShopAllActivity.this, qualityGroupEntity.getMsg());
                     }
                     qualityGroupShopAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList, qualityGroupEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList, qualityGroupEntity);
             }
 
             @Override

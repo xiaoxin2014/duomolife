@@ -538,11 +538,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         } else {
                             showToast(ShopTimeScrollDetailsActivity.this, articleCommentEntity.getMsg());
                         }
-                        if (page == 1) {
-                            adapterReceiverComment.setNewData(articleCommentList);
-                        } else {
                             adapterReceiverComment.notifyDataSetChanged();
-                        }
                     }
 
                 }

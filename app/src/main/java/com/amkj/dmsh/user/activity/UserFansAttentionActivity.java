@@ -1,5 +1,6 @@
 package com.amkj.dmsh.user.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +17,10 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
+import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.kingja.loadsir.core.Transport;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -169,6 +172,16 @@ public class UserFansAttentionActivity extends BaseActivity {
                 }
             }
         });
+        if(loadService!=null){
+            loadService.setCallBack(NetEmptyCallback.class, new Transport() {
+                @Override
+                public void order(Context context, View view) {
+                    TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
+                    tv_communal_net_tint.setText("attention".equals(type)?"你还没有关注Ta人\n赶快去围观各位千手观音吧"
+                            :"还没有人关注你\n赶快去吸引粉丝吧");
+                }
+            });
+        }
     }
 
     @Override
@@ -213,13 +226,13 @@ public class UserFansAttentionActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
+                if (page == 1) {
+                    attentionFansList.clear();
+                }
                 Gson gson = new Gson();
                 userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
                 if (userAttentionFansEntity != null) {
                     if (userAttentionFansEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            attentionFansList.clear();
-                        }
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
                     } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(UserFansAttentionActivity.this, userAttentionFansEntity.getMsg());

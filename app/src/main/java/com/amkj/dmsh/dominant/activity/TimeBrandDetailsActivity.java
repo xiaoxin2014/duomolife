@@ -463,8 +463,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                             } else {
                                 showToast(TimeBrandDetailsActivity.this, dmlThemeDetail.getMsg());
                             }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
                     }
 
                     @Override

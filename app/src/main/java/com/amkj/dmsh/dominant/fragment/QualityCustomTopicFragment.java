@@ -293,20 +293,20 @@ public class QualityCustomTopicFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
+                if (page == 1) {
+                    customProList.clear();
+                }
                 Gson gson = new Gson();
                 userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (userLikedProductEntity != null) {
                     if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            customProList.clear();
-                        }
                         customProList.addAll(userLikedProductEntity.getLikedProductBeanList());
                     } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), userLikedProductEntity.getMsg());
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
             }
 
             @Override

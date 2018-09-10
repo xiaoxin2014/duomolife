@@ -279,6 +279,5 @@ public class DirectCouponGetActivity extends BaseActivity {
         } else{
             NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
         }
-
     }
 }

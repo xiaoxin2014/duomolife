@@ -239,13 +239,13 @@ public class SearchDetailsProductFragment extends BaseFragment {
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
                     adapterProduct.loadMoreComplete();
+                    if (page == 1) {
+                        productSearList.clear();
+                    }
                     Gson gson = new Gson();
                     likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProduct != null) {
                         if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                            if (page == 1) {
-                                productSearList.clear();
-                            }
                             productSearList.addAll(likedProduct.getLikedProductBeanList());
                         } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), likedProduct.getMsg());

@@ -21,7 +21,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -247,13 +246,13 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            typeDetails.clear();
+                        }
                         Gson gson = new Gson();
                         typeProductBean = gson.fromJson(result, UserLikedProductEntity.class);
                         if (typeProductBean != null) {
                             if (typeProductBean.getCode().equals(SUCCESS_CODE)) {
-                                if (page == 1) {
-                                    typeDetails.clear();
-                                }
                                 typeDetails.addAll(typeProductBean.getLikedProductBeanList());
                             } else if (typeProductBean.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
@@ -262,12 +261,8 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                                 showToast(QualityTypeHotSaleProActivity.this, typeProductBean.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,typeProductBean);
-                        } else {
-                            if (loadService != null) {
-                                loadService.showCallback(NetErrorCallback.class);
-                            }
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,typeProductBean);
                     }
 
                     @Override

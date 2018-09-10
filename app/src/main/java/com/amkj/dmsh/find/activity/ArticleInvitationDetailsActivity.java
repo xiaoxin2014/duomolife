@@ -51,7 +51,6 @@ import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean.R
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity;
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -188,7 +187,6 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
                 //                滚动距离置0
                 scrollY = 0;
-                page = 1;
                 loadData();
         });
         adapterArticleComment.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -898,12 +896,8 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 } else {
                     showToast(ArticleInvitationDetailsActivity.this, dmlSearchDetailEntity.getMsg());
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
-            }else{
-                if(loadService!=null){
-                    loadService.showCallback(NetErrorCallback.class);
-                }
             }
+            NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
         }
     }
 

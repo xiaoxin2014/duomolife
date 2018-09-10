@@ -188,10 +188,10 @@ public class DoMoSalesReturnRecordFragment extends BaseFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     Gson gson = new Gson();
                     returnRecordEntity = gson.fromJson(result, DirectReturnRecordEntity.class);
                     orderListBeanList.addAll(returnRecordEntity.getDirectReturnRecordBean().getOrderList());

@@ -110,12 +110,12 @@ public class IntegralProductFragment extends BaseFragment {
                 Gson gson = new Gson();
                 smart_communal_refresh.finishRefresh();
                 integralProductAdapter.loadMoreComplete();
+                if (page == 1) {
+                    integrationBeanList.clear();
+                }
                 integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
                 if (integrationProEntity != null) {
                     if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            integrationBeanList.clear();
-                        }
                         integrationBeanList.addAll(integrationProEntity.getIntegrationList());
                     } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), integrationProEntity.getMsg());

@@ -146,13 +146,13 @@ public class IntegralDetailActivity extends BaseActivity {
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();
                             integralDetailAdapter.loadMoreComplete();
+                            if (page == 1) {
+                                integrationDetailsList.clear();
+                            }
                             Gson gson = new Gson();
                             integrationDetailsEntity = gson.fromJson(result, IntegrationDetailsEntity.class);
                             if (integrationDetailsEntity != null) {
                                 if (SUCCESS_CODE.equals(integrationDetailsEntity.getCode())) {
-                                    if (page == 1) {
-                                        integrationDetailsList.clear();
-                                    }
                                     integrationDetailsList.addAll(integrationDetailsEntity.getIntegrationDetailsList());
                                     integralDetailChart.tv_integral_detail_score.setText(String.valueOf(integrationDetailsEntity.getNowScore()));
                                     setIntegralDetailData(integrationDetailsEntity);

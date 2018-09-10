@@ -52,7 +52,6 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -438,12 +437,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                             } else if (!qualityWefEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
                             }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
-                        }else{
-                            if(loadService!=null){
-                                loadService.showCallback(NetErrorCallback.class);
-                            }
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
                     }
 
                     @Override
@@ -677,13 +672,13 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String result) {
                     adapterTopicComment.loadMoreComplete();
+                    if (page == 1) {
+                        articleCommentList.clear();
+                    }
                     Gson gson = new Gson();
                     dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
                     if (dmlSearchCommentEntity != null) {
                         if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (page == 1) {
-                                articleCommentList.clear();
-                            }
                             articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
                         } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoLifeWelfareDetailsActivity.this, dmlSearchCommentEntity.getMsg());

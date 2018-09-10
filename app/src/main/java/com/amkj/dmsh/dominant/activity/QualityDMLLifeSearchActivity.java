@@ -25,7 +25,6 @@ import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
@@ -43,6 +42,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -143,7 +143,6 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
         });
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
             loadData();
             scrollY = 0;
 
@@ -151,9 +150,9 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
         recyclerArticleAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * 10 <= recyclerArticleAdapter.getItemCount()) {
+                if (page * DEFAULT_TOTAL_COUNT <= recyclerArticleAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     recyclerArticleAdapter.loadMoreEnd();
                 }
@@ -260,25 +259,21 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 recyclerArticleAdapter.loadMoreComplete();
+                if (page == 1) {
+                    communalArtList.clear();
+                }
                 Gson gson = new Gson();
                 communalArticleEntity = gson.fromJson(result, CommunalArticleEntity.class);
                 if (communalArticleEntity != null) {
                     if (communalArticleEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            communalArtList.clear();
-                        }
                         tv_header_titleAll.setText(getStrings(communalArticleEntity.getTitle()));
                         communalArtList.addAll(communalArticleEntity.getCommunalArticleList());
                     } else if (!communalArticleEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityDMLLifeSearchActivity.this, communalArticleEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,communalArtList,communalArticleEntity);
                     recyclerArticleAdapter.notifyDataSetChanged();
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(SuccessCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,communalArtList,communalArticleEntity);
             }
 
             @Override

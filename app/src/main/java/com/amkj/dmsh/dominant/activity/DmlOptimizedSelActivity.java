@@ -20,7 +20,6 @@ import com.amkj.dmsh.dominant.adapter.DmlOptimizedSelAdapter;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity.DmlOptimizedSelBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -175,25 +174,21 @@ public class DmlOptimizedSelActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 dmlOptimizedSelAdapter.loadMoreComplete();
+                if (page == 1) {
+                    dmlOptimizedSelList.clear();
+                }
                 Gson gson = new Gson();
                 optimizedSelEntity = gson.fromJson(result, DmlOptimizedSelEntity.class);
                 if (optimizedSelEntity != null) {
                     if (optimizedSelEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            dmlOptimizedSelList.clear();
-                        }
                         tv_header_titleAll.setText(getStrings(optimizedSelEntity.getTitle()));
                         dmlOptimizedSelList.addAll(optimizedSelEntity.getDmlOptimizedSelList());
                     } else if (!optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
                     dmlOptimizedSelAdapter.notifyDataSetChanged();
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
             }
 
             @Override

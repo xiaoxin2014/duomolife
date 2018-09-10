@@ -160,13 +160,13 @@ public class SpecialDetailsFragment extends BaseFragment {
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
                     specialTopicAdapter.loadMoreComplete();
+                    if (page == 1) {
+                        specialSearList.clear();
+                    }
                     Gson gson = new Gson();
                     topicSpecialEntity = gson.fromJson(result, TopicSpecialEntity.class);
                     if (topicSpecialEntity != null) {
                         if (topicSpecialEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (page == 1) {
-                                specialSearList.clear();
-                            }
                             specialSearList.addAll(topicSpecialEntity.getTopicSpecialBeanList());
                         } else if (!topicSpecialEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), topicSpecialEntity.getMsg());

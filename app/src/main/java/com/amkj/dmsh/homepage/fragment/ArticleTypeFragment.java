@@ -180,20 +180,20 @@ public class ArticleTypeFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 homeArticleAdapter.loadMoreComplete();
+                if (page == 1) {
+                    articleTypeList.clear();
+                }
                 Gson gson = new Gson();
                 categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
                 if (categoryDocBean != null) {
                     if (categoryDocBean.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            articleTypeList.clear();
-                        }
                         articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
                     } else if (!categoryDocBean.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), categoryDocBean.getMsg());
                     }
                     homeArticleAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,articleTypeList,categoryDocBean);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,articleTypeList,categoryDocBean);
             }
 
             @Override

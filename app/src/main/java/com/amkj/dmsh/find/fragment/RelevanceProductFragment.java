@@ -219,14 +219,14 @@ public class RelevanceProductFragment extends BaseFragment {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         relevanceProAdapter.loadMoreComplete();
+                        if (indentProPage == 1) {
+                            relevanceProList.clear();
+                            relevanceIndentProList.clear();
+                        }
                         Gson gson = new Gson();
                         relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
                         if (relevanceProEntity != null) {
                             if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
-                                if (indentProPage == 1) {
-                                    relevanceProList.clear();
-                                    relevanceIndentProList.clear();
-                                }
                                 relevanceIndentProList.addAll(relevanceProEntity.getRelevanceProList());
                                 relevanceProList.removeAll(relevanceIndentProList);
                                 relevanceProList.addAll(changeRelevanceProduct(relevanceIndentProList, relevanceSelProList));
@@ -237,8 +237,8 @@ public class RelevanceProductFragment extends BaseFragment {
                                 showToast(getActivity(), relevanceProEntity.getMsg());
                             }
                             relevanceProAdapter.notifyDataSetChanged();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
 
                     @Override
@@ -286,14 +286,14 @@ public class RelevanceProductFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 relevanceProAdapter.loadMoreComplete();
+                if (carProPage == 1) {
+                    relevanceCarProList.clear();
+                    relevanceProList.clear();
+                }
                 Gson gson = new Gson();
                 relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
                 if (relevanceProEntity != null) {
                     if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (carProPage == 1) {
-                            relevanceCarProList.clear();
-                            relevanceProList.clear();
-                        }
                         relevanceCarProList.addAll(relevanceProEntity.getRelevanceProList());
                         relevanceProList.removeAll(relevanceCarProList);
                         relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList, relevanceSelProList));
@@ -304,8 +304,8 @@ public class RelevanceProductFragment extends BaseFragment {
                         showToast(getActivity(), relevanceProEntity.getMsg());
                     }
                     relevanceProAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
             }
 
             @Override
@@ -340,14 +340,14 @@ public class RelevanceProductFragment extends BaseFragment {
             public void onSuccess(String result) {
                 relevanceProAdapter.loadMoreComplete();
                 smart_communal_refresh.finishRefresh();
+                if (colProPage == 1) {
+                    relevanceColProList.clear();
+                    relevanceProList.clear();
+                }
                 Gson gson = new Gson();
                 RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
                 if (relevanceProEntity != null) {
                     if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (colProPage == 1) {
-                            relevanceColProList.clear();
-                            relevanceProList.clear();
-                        }
                         relevanceColProList.addAll(relevanceProEntity.getRelevanceProList());
                         relevanceProList.removeAll(relevanceColProList);
                         relevanceProList.addAll(changeRelevanceProduct(relevanceColProList, relevanceSelProList));
@@ -358,8 +358,8 @@ public class RelevanceProductFragment extends BaseFragment {
                         showToast(getActivity(), relevanceProEntity.getMsg());
                     }
                     relevanceProAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
             }
 
             @Override

@@ -108,7 +108,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= doMoIndentListAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getWaitSendData();
                 } else {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
@@ -217,10 +217,10 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     Gson gson = new Gson();
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
                     INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();

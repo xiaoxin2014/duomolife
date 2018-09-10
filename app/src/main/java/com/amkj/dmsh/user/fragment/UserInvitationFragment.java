@@ -203,13 +203,13 @@ public class UserInvitationFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 adapterInvitationAdapter.loadMoreComplete();
+                if (page == 1) {
+                    invitationDetailList.clear();
+                }
                 Gson gson = new Gson();
                 invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
                 if (invitationDetailEntity != null) {
                     if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            invitationDetailList.clear();
-                        }
                         invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
                     } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), invitationDetailEntity.getMsg());

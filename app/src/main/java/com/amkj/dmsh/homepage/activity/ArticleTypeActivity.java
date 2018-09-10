@@ -18,7 +18,6 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -263,13 +262,13 @@ public class ArticleTypeActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         homeArticleAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            articleTypeList.clear();
+                        }
                         Gson gson = new Gson();
                         CommunalArticleEntity categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
                         if (categoryDocBean != null) {
                             if (categoryDocBean.getCode().equals(SUCCESS_CODE)) {
-                                if (page == 1) {
-                                    articleTypeList.clear();
-                                }
                                 articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
                                 if (articleTypeList.size() > 0
                                         && TextUtils.isEmpty(articleTypeList.get(0).getCategory_name())) {
@@ -278,13 +277,9 @@ public class ArticleTypeActivity extends BaseActivity {
                             } else if (!categoryDocBean.getCode().equals(EMPTY_CODE)) {
                                 showToast(ArticleTypeActivity.this, categoryDocBean.getMsg());
                             }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
                             homeArticleAdapter.notifyDataSetChanged();
-                        }else{
-                            if(loadService!=null){
-                                loadService.showCallback(NetErrorCallback.class);
-                            }
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
                     }
 
                     @Override

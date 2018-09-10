@@ -25,7 +25,6 @@ import com.amkj.dmsh.dominant.adapter.ArticleCommentDetailAdapter;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean.ReplyCommBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
@@ -193,8 +192,7 @@ public class CommentDetailsActivity extends BaseActivity {
         });
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-            getCommentData();
+            loadData();
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -264,12 +262,8 @@ public class CommentDetailsActivity extends BaseActivity {
                     } else if (!commentDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(CommentDetailsActivity.this, commentDetailEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,commentDetailBean,commentDetailEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,commentDetailBean,commentDetailEntity);
             }
 
             @Override

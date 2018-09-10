@@ -11,11 +11,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.TextView;
 
+import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
+import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
@@ -23,6 +26,7 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
+import com.kingja.loadsir.core.Transport;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -70,6 +74,35 @@ public abstract class BaseActivity extends AutoLayoutActivity {
                     loadData();
                 }
             }, NetLoadUtils.getQyInstance().getLoadSirCover());
+            String hintText;
+            switch (getClass().getSimpleName()) {
+                case "ShopScrollDetailsActivity":
+                case "IntegralScrollDetailsActivity":
+                case "ShopTimeScrollDetailsActivity":
+                case "QualityGroupShopDetailActivity":
+                    hintText = "暂时没有商品哦";
+                    break;
+                case "MineInvitationListActivity":
+                    hintText = "你还没有发过帖子\n赶快去发布优质内容吧";
+                    break;
+                case "ShopTimeMyWarmActivity":
+                    hintText = "你还没有设置提醒";
+                    break;
+                case "MineCollectProductActivity":
+                    hintText = "你还没有收藏商品\n赶快去收藏";
+                    break;
+                default:
+                    hintText = "暂无数据，稍后重试";
+                    break;
+            }
+            String finalHintText = hintText;
+            loadService.setCallBack(NetEmptyCallback.class, new Transport() {
+                @Override
+                public void order(Context context, View view) {
+                    TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
+                    tv_communal_net_tint.setText(finalHintText);
+                }
+            });
         }
         initViews();
 

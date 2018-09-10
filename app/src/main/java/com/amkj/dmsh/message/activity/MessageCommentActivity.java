@@ -259,13 +259,13 @@ public class MessageCommentActivity extends BaseActivity {
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
                     messageCommunalAdapter.loadMoreComplete();
+                    if (page == 1) {
+                        commentList.clear();
+                    }
                     Gson gson = new Gson();
                     articleCommentEntity = gson.fromJson(result, MessageCommentEntity.class);
                     if (articleCommentEntity != null) {
                         if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (page == 1) {
-                                commentList.clear();
-                            }
                             commentList.addAll(articleCommentEntity.getMessageCommentList());
                         } else if (!articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(MessageCommentActivity.this, articleCommentEntity.getMsg());

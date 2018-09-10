@@ -27,7 +27,6 @@ import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.adapter.QualityCustomTopicAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -355,13 +354,13 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         qualityCustomTopicAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            customProList.clear();
+                        }
                         Gson gson = new Gson();
                         userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                if (page == 1) {
-                                    customProList.clear();
-                                }
                                 for (LikedProductBean likedProductBean : userLikedProductEntity.getLikedProductBeanList()) {
                                     likedProductBean.setItemType(DOUBLE_INTEGRAL_TYPE.equals(showType) ? TYPE_1 : TYPE_0);
                                     customProList.add(likedProductBean);
@@ -371,12 +370,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                                 showToast(QualityCustomTopicActivity.this, userLikedProductEntity.getMsg());
                             }
                             qualityCustomTopicAdapter.notifyDataSetChanged();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
-                        } else {
-                            if (loadService != null) {
-                                loadService.showCallback(NetErrorCallback.class);
-                            }
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
                     }
 
                     @Override

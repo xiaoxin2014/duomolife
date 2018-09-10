@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,35 +12,16 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class CollectProEntity {
+public class CollectProEntity extends BaseEntity{
 
     /**
      * result : [{"productId":6256,"price":59,"priceTag":"","id":902,"name":"三顿半  自家拼配意式黑熊 8包装"},{"productId":4407,"price":109,"priceTag":"","id":391,"name":"英国JOSEPH  JOSEPH C型单手皂液器"},{"productId":5699,"price":358,"priceTag":"","id":643,"name":"商务男女拉杠行李箱"},{"productId":4316,"price":22,"priceTag":"","id":190,"name":"日本FaSoLa文胸洗衣袋网袋洗内衣"},{"productId":5991,"price":9.5,"priceTag":"降了￥24.5元","id":773,"name":"可爱卡通可妮兔防滑鼠标垫创意个性办公垫子"}]
      * msg : 请求成功
      * code : 01
      */
-
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<CollectProBean> collectProList;
     private int count;
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public List<CollectProBean> getCollectProList() {
         return collectProList;

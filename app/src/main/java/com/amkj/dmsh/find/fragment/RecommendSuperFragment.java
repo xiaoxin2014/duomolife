@@ -82,7 +82,7 @@ public class RecommendSuperFragment extends BaseFragment {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= adapterInvitationAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getRecommendData();
                 } else {
                     adapterInvitationAdapter.loadMoreEnd();
                 }
@@ -228,20 +228,20 @@ public class RecommendSuperFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 adapterInvitationAdapter.loadMoreComplete();
+                if (page == 1) {
+                    invitationSearchList.clear();
+                }
                 Gson gson = new Gson();
                 invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
                 if (invitationDetailEntity != null) {
                     if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            invitationSearchList.clear();
-                        }
                         invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
                     } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), invitationDetailEntity.getMsg());
                     }
                     adapterInvitationAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList, invitationDetailEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList, invitationDetailEntity);
             }
 
             @Override

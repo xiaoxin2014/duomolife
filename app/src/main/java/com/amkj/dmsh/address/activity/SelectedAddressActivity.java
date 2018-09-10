@@ -15,7 +15,6 @@ import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -241,12 +240,8 @@ public class SelectedAddressActivity extends BaseActivity {
                     } else if (!addressListEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(SelectedAddressActivity.this, addressListEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
             }
 
             @Override

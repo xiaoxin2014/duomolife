@@ -27,6 +27,7 @@ import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -52,6 +53,7 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
+import org.lasque.tusdk.core.TuSdk;
 import org.xutils.x;
 
 import java.io.File;
@@ -226,12 +228,12 @@ public class BaseApplication extends Application {
             setTotalChanel();
             //      友盟初始化
             youMengInit();
-//            try {
-//                TuSdk.enableDebugLog(isDebugTag);
-//                TuSdk.init(getApplicationContext(), "08b501fdf166d42d-02-5dvwp1");
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            try {
+                TuSdk.enableDebugLog(isDebugTag);
+                TuSdk.init(getApplicationContext(), "08b501fdf166d42d-02-5dvwp1");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -280,6 +282,7 @@ public class BaseApplication extends Application {
         LoadSir.beginBuilder()
                 .addCallback(new NetErrorCallback())//网络错误
                 .addCallback(new NetLoadCallback())//加载中
+                .addCallback(new NetEmptyCallback())//空值
                 .setDefaultCallback(NetLoadCallback.class)//设置默认状态页
                 .commit();
     }

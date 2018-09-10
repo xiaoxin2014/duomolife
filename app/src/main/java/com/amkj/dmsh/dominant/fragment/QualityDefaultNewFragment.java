@@ -307,6 +307,9 @@ public class QualityDefaultNewFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 qualityGoodNewProAdapter.loadMoreComplete();
+                if (page == 1) {
+                    goodsProList.clear();
+                }
                 MultiTypeJsonParser<Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<Attribute>()
                         .registerTypeElementName("objectType")
                         .registerTargetClass(Attribute.class)
@@ -316,9 +319,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
                 QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
                 if (qualityGoodProductEntity != null) {
                     if (qualityGoodProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            goodsProList.clear();
-                        }
                         goodsProList.addAll(qualityGoodProductEntity.getGoodProductList());
                     } else if (qualityGoodProductEntity.getCode().equals(EMPTY_CODE)) {
                         qualityGoodNewProAdapter.loadMoreEnd();

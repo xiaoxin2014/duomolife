@@ -439,7 +439,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                     showToast(DirectExchangeDetailsActivity.this, msg);
                 }
                 communal_recycler.smoothScrollToPosition(0);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,infoDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
             }
 
             @Override

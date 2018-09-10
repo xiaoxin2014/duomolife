@@ -189,13 +189,13 @@ public class SearchDetailsUserFragment extends BaseFragment {
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();
                             userRecyclerAdapter.loadMoreComplete();
+                            if (page == 1) {
+                                userAttentionFansList.clear();
+                            }
                             Gson gson = new Gson();
                             userSearchEntity = gson.fromJson(result, UserSearchEntity.class);
                             if (userSearchEntity != null) {
                                 if (userSearchEntity.getCode().equals(SUCCESS_CODE)) {
-                                    if (page == 1) {
-                                        userAttentionFansList.clear();
-                                    }
                                     List<UserSearchBean> userSearchList = userSearchEntity.getUserSearchList();
                                     UserAttentionFansBean userAttentionFansBean;
                                     for (int i = 0; i < userSearchList.size(); i++) {
@@ -210,9 +210,9 @@ public class SearchDetailsUserFragment extends BaseFragment {
                                 } else if (!userSearchEntity.getCode().equals(EMPTY_CODE)) {
                                     showToast(getActivity(), userSearchEntity.getMsg());
                                 }
-                                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansList,userSearchEntity);
                                 userRecyclerAdapter.notifyDataSetChanged();
                             }
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansList,userSearchEntity);
                         }
 
                         @Override

@@ -233,11 +233,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     if (likedProductEntity != null) {
                         if (likedProductEntity.getCode().equals("01")) {
                             typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
-                            if (productPage == 1) {
-                                qualityTypeProductAdapter.setNewData(typeDetails);
-                            } else {
-                                qualityTypeProductAdapter.notifyDataSetChanged();
-                            }
+                            qualityTypeProductAdapter.notifyDataSetChanged();
                         } else if (likedProductEntity.getCode().equals("02")) {
                             isLoadProData = false;
                             qualityTypeProductAdapter.loadMoreEnd();
@@ -305,8 +301,8 @@ public class QualityOverseasMailFragment extends BaseFragment {
                                 showToast(getActivity(), dmlThemeEntity.getMsg());
                             }
                             addRemoveHeaderView(themeList);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,themeList,dmlThemeEntity);
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, themeList, dmlThemeEntity);
                     }
 
                     @Override
@@ -314,7 +310,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeList,dmlThemeEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, themeList, dmlThemeEntity);
                     }
 
                     @Override
@@ -323,7 +319,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                         qualityTypeProductAdapter.loadMoreComplete();
                         addRemoveHeaderView(themeList);
                         showToast(getActivity(), R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeList,dmlThemeEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, themeList, dmlThemeEntity);
                     }
                 });
     }

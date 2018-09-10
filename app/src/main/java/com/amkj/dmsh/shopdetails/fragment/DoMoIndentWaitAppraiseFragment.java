@@ -235,6 +235,11 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment implements OnAl
         getWaitAppraiseData();
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
     private void getWaitAppraiseData() {
         String url = Url.BASE_URL + Url.Q_INQUIRY_FINISH;
         Map<String, Object> params = new HashMap<>();
@@ -258,19 +263,19 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment implements OnAl
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        if (page == 1) {
+                            orderListBeanList.clear();
+                        }
                         if (code.equals(SUCCESS_CODE)) {
                             Gson gson = new Gson();
                             inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
-                            if (page == 1) {
-                                orderListBeanList.clear();
-                            }
                             INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
                             orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                         } else if (!code.equals(EMPTY_CODE)) {
                             showToast(getActivity(), msg);
                         }
                         doMoIndentListAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
                     }
 
                     @Override

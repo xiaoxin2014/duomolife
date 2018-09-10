@@ -392,16 +392,16 @@ public class SpringSaleFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 springSaleRecyclerAdapter.loadMoreComplete();
+                if (page == 1) {
+                    //重新加载数据
+                    saleTimeTotalList.clear();
+                    currentRecordTime = "";
+                    saleTimeTotalSortList.clear();
+                }
                 Gson gson = new Gson();
                 timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
                 if (timeForeShowEntity != null) {
                     if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            //重新加载数据
-                            saleTimeTotalList.clear();
-                            currentRecordTime = "";
-                            saleTimeTotalSortList.clear();
-                        }
                         saleTimeTotalSortList.addAll(timeForeShowEntity.getSpringSales());
                         //        获取时间排序范围
                         Collections.sort(saleTimeTotalSortList, new Comparator<SpringSaleBean>() {

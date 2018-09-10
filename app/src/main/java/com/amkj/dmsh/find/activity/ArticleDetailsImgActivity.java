@@ -43,7 +43,6 @@ import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
@@ -940,12 +939,8 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                         showToast(ArticleDetailsImgActivity.this, invitationDetailEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailBean,invitationDetailEntity);
-            }else{
-                if(loadService!=null){
-                    loadService.showCallback(NetErrorCallback.class);
-                }
             }
+            NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailBean,invitationDetailEntity);
         }
     }
 

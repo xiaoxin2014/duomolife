@@ -45,7 +45,6 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
@@ -425,13 +424,13 @@ public class QualityShopBuyListActivity extends BaseActivity {
             public void onSuccess(String result) {
                 qualityBuyListAdapter.loadMoreComplete();
                 smart_communal_refresh.finishRefresh();
+                if (page == 1) {
+                    qualityBuyListBeanList.clear();
+                }
                 Gson gson = new Gson();
                 qualityBuyListEntity = gson.fromJson(result, QualityBuyListEntity.class);
                 if (qualityBuyListEntity != null) {
                     if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            qualityBuyListBeanList.clear();
-                        }
                         qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                     } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
@@ -439,12 +438,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                         showToast(QualityShopBuyListActivity.this, qualityBuyListEntity.getMsg());
                     }
                     qualityBuyListAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
             }
 
             @Override

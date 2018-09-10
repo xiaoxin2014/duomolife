@@ -141,7 +141,7 @@ public class FindTagDetailsActivity extends BaseActivity {
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= adapterInvitationAdapter.getItemCount()) {
                     page++;
-                    loadData();
+                    getData();
                 } else {
                     adapterInvitationAdapter.loadMoreEnd();
                 }
@@ -237,6 +237,11 @@ public class FindTagDetailsActivity extends BaseActivity {
     @Override
     protected void loadData() {
         page = 1;
+        getData();
+    }
+
+    @Override
+    protected void getData() {
         getRelevanceTagList();
         getRelevanceTagOtherInfo();
     }
@@ -262,42 +267,42 @@ public class FindTagDetailsActivity extends BaseActivity {
         params.put("version", 1);
         NetLoadUtils.getQyInstance().loadNetDataPost(FindTagDetailsActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                Gson gson = new Gson();
-                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                if (invitationDetailEntity != null) {
-                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitationAdapter.loadMoreComplete();
                         if (page == 1) {
                             invitationSearchList.clear();
                         }
-                        invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(FindTagDetailsActivity.this, invitationDetailEntity.getMsg());
+                        Gson gson = new Gson();
+                        invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                        if (invitationDetailEntity != null) {
+                            if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                                invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
+                            } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(FindTagDetailsActivity.this, invitationDetailEntity.getMsg());
+                            }
+                            adapterInvitationAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
-                    adapterInvitationAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                }
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitationAdapter.loadMoreComplete();
+                        showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                showToast(FindTagDetailsActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitationAdapter.loadMoreComplete();
+                        showToast(FindTagDetailsActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    }
+                });
     }
 
     /**
@@ -327,11 +332,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                         } else if (!relevanceTagInfoEntity.getCode().equals("02")) {
                             showToast(FindTagDetailsActivity.this, relevanceTagInfoEntity.getMsg());
                         }
-                        if (page == 1) {
-                            tagRelProAdapter.setNewData(relevanceProList);
-                        } else {
-                            tagRelProAdapter.notifyDataSetChanged();
-                        }
+                        tagRelProAdapter.notifyDataSetChanged();
                     }
                 }
 

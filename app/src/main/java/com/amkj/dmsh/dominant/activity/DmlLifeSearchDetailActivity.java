@@ -450,7 +450,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        page=1;
+        page = 1;
         getData();
     }
 
@@ -500,11 +500,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                             adapterArticleComment.addHeaderView(commentHeaderView);
                             commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
                         }
-                        if (page == 1) {
-                            adapterArticleComment.setNewData(articleCommentList);
-                        } else {
-                            adapterArticleComment.notifyDataSetChanged();
-                        }
+                        adapterArticleComment.notifyDataSetChanged();
                     }
                 }
 
@@ -540,22 +536,22 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(DmlLifeSearchDetailActivity.this, dmlSearchDetailEntity.getMsg());
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,descripDetailList, dmlSearchDetailEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
             }
 
             @Override
             public void netClose() {
                 showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
                 smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,descripDetailList, dmlSearchDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 showToast(DmlLifeSearchDetailActivity.this, R.string.invalidData);
                 smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,descripDetailList, dmlSearchDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
             }
         });
     }

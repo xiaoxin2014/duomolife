@@ -186,7 +186,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
                     showToast(DirectIndentInvoiceActivity.this, msg);
                 }
                 directProductListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, indentInvoiceEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
             }
 
             @Override

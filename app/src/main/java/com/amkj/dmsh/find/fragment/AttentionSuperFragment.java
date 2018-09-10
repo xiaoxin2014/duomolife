@@ -222,13 +222,13 @@ public class AttentionSuperFragment extends BaseFragment {
                         @Override
                         public void onSuccess(String result) {
                             adapterInvitationAdapter.loadMoreComplete();
+                            if (page == 1) {
+                                invitationSearchList.clear();
+                            }
                             Gson gson = new Gson();
                             invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
                             if (invitationDetailEntity != null) {
                                 if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                                    if (page == 1) {
-                                        invitationSearchList.clear();
-                                    }
                                     invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
                                 }else if(!EMPTY_CODE.equals(invitationDetailEntity.getCode())){
                                     showToast(getActivity(), invitationDetailEntity.getMsg());

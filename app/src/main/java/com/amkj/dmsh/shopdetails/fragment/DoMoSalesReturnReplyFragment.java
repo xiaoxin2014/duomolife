@@ -205,10 +205,10 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 if (code.equals(SUCCESS_CODE)) {
-                    if (page == 1) {
-                        orderListBeanList.clear();
-                    }
                     Gson gson = new Gson();
                     inquiryOrderEntry = gson.fromJson(result, DirectReturnRecordEntity.class);
                     INDENT_PRO_STATUS = inquiryOrderEntry.getDirectReturnRecordBean().getStatus();

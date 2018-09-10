@@ -28,7 +28,6 @@ import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity.CouponGiftBean;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
-import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -290,12 +289,8 @@ public class QualityNewUserActivity extends BaseActivity {
                         qualityNewUserShopList.addAll(qualityNewUserCouponList);
                         qualityNewUserShopAdapter.notifyDataSetChanged();
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
-                }else{
-                    if(loadService!=null){
-                        loadService.showCallback(NetErrorCallback.class);
-                    }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
             }
 
             @Override

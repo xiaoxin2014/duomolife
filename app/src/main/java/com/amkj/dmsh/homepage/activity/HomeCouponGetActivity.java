@@ -344,13 +344,13 @@ public class HomeCouponGetActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 couponProTitleAdapter.loadMoreComplete();
+                if (page == 1) {
+                    likedProductBeanList.clear();
+                }
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            likedProductBeanList.clear();
-                        }
                         likedProductBeanList.addAll(likedProductEntity.getLikedProductBeanList());
                     }
                 }

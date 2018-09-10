@@ -307,8 +307,8 @@ public class QualityNormalFragment extends BaseFragment {
                         showToast(getActivity(), likedProductEntity.getMsg());
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
 
             @Override
@@ -319,7 +319,7 @@ public class QualityNormalFragment extends BaseFragment {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
 
             @Override
@@ -330,7 +330,7 @@ public class QualityNormalFragment extends BaseFragment {
                     loadHud.dismiss();
                 }
                 showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
         });
     }

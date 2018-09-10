@@ -80,6 +80,7 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
     private boolean isEditStatus;
     private AlertView dlDelGoods;
     private StringBuffer productIds;
+    private CollectProEntity collectProEntity;
 
     @Override
     protected int getContentView() {
@@ -204,13 +205,13 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 mineCollectProAdapter.loadMoreComplete();
+                if (page == 1) {
+                    collectProList.clear();
+                }
                 Gson gson = new Gson();
-                CollectProEntity collectProEntity = gson.fromJson(result, CollectProEntity.class);
+                collectProEntity = gson.fromJson(result, CollectProEntity.class);
                 if (collectProEntity != null) {
                     if (collectProEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            collectProList.clear();
-                        }
                         collectProList.addAll(collectProEntity.getCollectProList());
                         tv_header_titleAll.setText("收藏商品(" + collectProEntity.getCount() + ")");
                     } else if (!collectProEntity.getCode().equals("02")) {
@@ -219,7 +220,7 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
                     mineCollectProAdapter.notifyDataSetChanged();
                 }
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,collectProList, collectProEntity);
             }
 
             @Override
@@ -227,7 +228,7 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
                 smart_communal_refresh.finishRefresh();
                 mineCollectProAdapter.loadMoreComplete();
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,collectProList,collectProEntity);
             }
 
             @Override
@@ -235,7 +236,7 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
                 smart_communal_refresh.finishRefresh();
                 mineCollectProAdapter.loadMoreComplete();
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,collectProList,collectProEntity);
             }
         });
     }

@@ -368,13 +368,13 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         qualityBuyListAdapter.loadMoreComplete();
                         smart_communal_refresh.finishRefresh();
+                        if (page == 1) {
+                            qualityBuyListBeanList.clear();
+                        }
                         Gson gson = new Gson();
                         qualityBuyListEntity = gson.fromJson(result, QualityBuyListEntity.class);
                         if (qualityBuyListEntity != null) {
                             if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
-                                if (page == 1) {
-                                    qualityBuyListBeanList.clear();
-                                }
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(QualityWeekOptimizedActivity.this, R.string.unConnectedNetwork);
@@ -382,8 +382,8 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                                 showToast(QualityWeekOptimizedActivity.this, qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
                         }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
                     }
 
                     @Override

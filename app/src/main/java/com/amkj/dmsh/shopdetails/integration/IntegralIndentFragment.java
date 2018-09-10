@@ -127,7 +127,7 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
             public void onLoadMoreRequested() {
                 if (page * DEFAULT_TOTAL_COUNT <= orderListBeanList.size()) {
                     page++;
-                    loadData();
+                    getIntegralIndentList();
                 } else {
                     integralIndentListAdapter.loadMoreEnd();
                 }
@@ -353,10 +353,10 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    if (page == 1) {
+                        orderListBeanList.clear();
+                    }
                     if (code.equals(SUCCESS_CODE)) {
-                        if (page == 1) {
-                            orderListBeanList.clear();
-                        }
                         IntegralIndentOrderEntity indentOrderEntity = gson.fromJson(result, IntegralIndentOrderEntity.class);
                         INDENT_PRO_STATUS = indentOrderEntity.getIntegralIndentOrderBean().getStatus();
                         orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
