@@ -36,17 +36,14 @@ android {
             try {
                 keyAlias 'com.amkj.dmsh'
                 keyPassword 'comtmkj'
-                storeFile file('C:/Users/atd48/Desktop/917555f39de315ae75eff6a621b59b47.keystore')
+//                storeFile file('C:/Users/atd48/Desktop/917555f39de315ae75eff6a621b59b47.keystore')
+                storeFile file('917555f39de315ae75eff6a621b59b47.keystore')
                 storePassword 'comtmkj'
                 v1SigningEnabled true
                 v2SigningEnabled true
             } catch (ex) {
                 throw new InvalidUserDataException(ex.toString())
             }
-            keyAlias 'com.amkj.dmsh'
-            keyPassword 'comtmkj'
-            storeFile file('C:/Users/atd48/Desktop/917555f39de315ae75eff6a621b59b47.keystore')
-            storePassword 'comtmkj'
         }
     }
     // 构建类型
@@ -72,9 +69,9 @@ android {
 /*直接编译生成多渠道包*/
 channel {
     //指定渠道文件
-    channelFile = file("D:/domolife3/channel.txt")
+    channelFile = rootProject.file("channel.txt")
     //多渠道包的输出目录，默认为new File(project.buildDir,"channel")
-    baseOutputDir = new File(project.buildDir, "releasechannel")
+    baseOutputDir = new File(project.buildDir, "channel")
     //多渠道包的命名规则，默认为：${appName}-${versionName}-${versionCode}-${flavorName}-${buildType}
     apkNameFormat = '${appName}-${versionName}-${versionCode}-${flavorName}-${buildType}'
     //快速模式：生成渠道包时不进行校验（速度可以提升10倍以上，默认为false）
@@ -87,7 +84,7 @@ channel {
 
 rebuildChannel {
     //指定渠道文件
-    channelFile = file("D:/domolife/channel.txt")
+    channelFile = rootProject.file("channel.txt")
 //    baseDebugApk = 已有Debug APK
 //    baseReleaseApk = file("C:/jiagu/output/13751077044/domolife3.0.8.apk")
     baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.1.5.2.apk")

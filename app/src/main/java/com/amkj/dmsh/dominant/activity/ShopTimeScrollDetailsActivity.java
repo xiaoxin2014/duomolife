@@ -31,7 +31,6 @@ import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
 import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
 import com.alibaba.baichuan.android.trade.page.AlibcPage;
 import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.alipay.AliPayResult;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
@@ -1139,8 +1138,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
 //                showToast(context, "获取详情成功");
                 Log.d("商品详情", "onTradeSuccess: ");
-                AliPayResult payResult = alibcTradeResult.payResult;
-                List<String> paySuccessOrders = payResult.paySuccessOrders;
             }
 
             @Override
