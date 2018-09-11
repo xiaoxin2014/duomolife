@@ -1,12 +1,10 @@
 package com.amkj.dmsh;
 
-import android.app.AppOpsManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,7 +15,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -90,9 +87,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -117,7 +111,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrEndTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.isSameTimeDay;
-import static com.amkj.dmsh.constant.ConstantMethod.loginXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -179,8 +172,8 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     protected void postEventResult(@NonNull EventMessage message) {
         if ("skipMinePage".equals(message.type)) {
             changePage(ConstantVariable.MAIN_MINE, null);
-        }else if(message.type.equals("loginShowDialog")){
-            if(constantMethod==null){
+        } else if (message.type.equals("loginShowDialog")) {
+            if (constantMethod == null) {
                 constantMethod = new ConstantMethod();
             }
             constantMethod.getNewUserCouponDialog(MainActivity.this);
@@ -286,9 +279,8 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 }
             }
         });
-        //        小能客服登录 获取用户信息 登进登出……
+        //        七鱼客服登录 获取用户信息 登进登出……
         getNetDataInfo();
-        QyServiceUtils.getQyInstance().loginQyUserInfo(this);
     }
 
     /**
@@ -330,38 +322,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 alertDialogHelper.show();
             }
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public boolean isNotificationEnable(Context context){
-        AppOpsManager mAppOps = (AppOpsManager) context.getSystemService(APP_OPS_SERVICE);
-        ApplicationInfo appInfo = context.getApplicationInfo();
-        String pkg = context.getApplicationContext().getPackageName();
-        int uid = appInfo.uid;
-        Class appOpsClass = null;
-        try {
-            appOpsClass = Class.forName(AppOpsManager.class.getName());
-            Method checkOpNoThrowMethod = appOpsClass.getMethod("checkOpNoThrow", Integer.TYPE, Integer.TYPE,
-                    String.class);
-            Field opPostNotificationValue = appOpsClass.getDeclaredField("OP_POST_NOTIFICATION");
-
-
-            int value = (Integer) opPostNotificationValue.get(Integer.class);
-            return ((Integer) checkOpNoThrowMethod.invoke(mAppOps, value, uid, pkg) == AppOpsManager.MODE_ALLOWED);
-
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
 
@@ -456,18 +416,12 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         edit.apply();
     }
 
-    private void loginClassXNService(CommunalUserInfoBean communalUserInfoBean) {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(MainActivity.this);
-        if (personalInfo.isLogin()) {
-            if (TextUtils.isEmpty(personalInfo.getNickName())) {
-                loginXNService(MainActivity.this
-                        , communalUserInfoBean.getUid()
-                        , getStrings(communalUserInfoBean.getNickname())
-                        , getStrings(communalUserInfoBean.getMobile()));
-            } else {
-                loginXNService(MainActivity.this, personalInfo.getUid(), personalInfo.getNickName(), personalInfo.getPhoneNum());
-            }
-        }
+    private void loginClassQYService(CommunalUserInfoBean communalUserInfoBean) {
+        QyServiceUtils.getQyInstance().loginQyUserInfo(MainActivity.this
+                , communalUserInfoBean.getUid()
+                , getStrings(communalUserInfoBean.getNickname())
+                , getStrings(communalUserInfoBean.getMobile())
+                , communalUserInfoBean.getAvatar());
     }
 
     private void skipDefaultNum(int i) {
@@ -765,7 +719,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
             String url = Url.BASE_URL + Url.H_MES_STATISTICS;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext,url
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                     , params, new NetLoadUtils.NetLoadListener() {
                         @Override
                         public void onSuccess(String result) {
@@ -785,7 +739,8 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                         }
 
                         @Override
-                        public void netClose() {}
+                        public void netClose() {
+                        }
 
                         @Override
                         public void onError(Throwable throwable) {
@@ -825,7 +780,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                     if (minePageData != null) {
                         CommunalUserInfoBean communalUserInfoBean = minePageData.getCommunalUserInfoBean();
                         if (minePageData.getCode().equals("01")) {
-                            loginClassXNService(communalUserInfoBean);
+                            loginClassQYService(communalUserInfoBean);
                             getLoginStatusTime();
 //                            上传设备信息
                             setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
@@ -1114,7 +1069,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 if (communalADActivityEntity != null) {
                     if (communalADActivityEntity.getCode().equals("01")) {
                         List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
-                        if(communalADActivityBeanList!=null&&communalADActivityBeanList.size()>0){
+                        if (communalADActivityBeanList != null && communalADActivityBeanList.size() > 0) {
                             CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
                             SharedPreferences sp = getSharedPreferences("ADDialog", MODE_PRIVATE);
                             String createTime = sp.getString("createTime", "0");

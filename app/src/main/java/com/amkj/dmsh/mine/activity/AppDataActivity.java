@@ -39,7 +39,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.uiapi.Ntalker;
 
 import static com.amkj.dmsh.constant.ConstantMethod.NEW_USER_DIALOG;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
@@ -202,7 +201,6 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
             edit.putBoolean("isLogin", false);
             edit.putInt("uid", 0);
             edit.apply();
-            Ntalker.getBaseInstance().logout();
             showToast(this, "注销成功");
             exitNewTaoBaoAccount();
 //            exitOldTaoBaoAccount();

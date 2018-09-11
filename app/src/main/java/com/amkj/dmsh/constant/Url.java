@@ -77,7 +77,7 @@ public class Url {
     public static final String H_OSS_CONFIG = "api/oss/getDetail";
     //    地址配置版本
     public static final String H_ADDRESS_VERSION = "api/area/getVersion";
-    //    小能客服获取
+    //    七鱼客服获取
     public static final String XN_SERVICE = "api/xiaoneng/getReceptionGroups";
     //    底栏导航
     public static final String H_BOTTOM_ICON = "api/appindex/getAppIndexConfig";

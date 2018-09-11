@@ -32,6 +32,8 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
+import com.amkj.dmsh.qyservice.QyProductIndentInfo;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
@@ -73,9 +75,6 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
-import cn.xiaoneng.utils.CoreData;
 import de.hdodenhof.circleimageview.CircleImageView;
 import emojicon.EmojiconTextView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
@@ -87,7 +86,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
@@ -767,16 +765,31 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.iv_img_service)
     void foundService() {
-        if (productInfoBean != null) {
-            ChatParamsBody chatParamsBody = new ChatParamsBody();
-            chatParamsBody.startPageTitle = getStrings("积分商品详情：" + productInfoBean.getName());
-            chatParamsBody.startPageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId();
-            ItemParamsBody itemParams = chatParamsBody.itemparams;
-            itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-            itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-            itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-            skipXNService(IntegralScrollDetailsActivity.this, chatParamsBody);
+        skipServiceDataInfo(productInfoBean);
+
+    }
+    //    七鱼客服
+    private void skipServiceDataInfo(IntegralProductInfoBean integralProductInfoBean) {
+        QyProductIndentInfo qyProductIndentInfo = null;
+        String sourceTitle = "";
+        String sourceUrl = "";
+        if (integralProductInfoBean != null) {
+            qyProductIndentInfo = new QyProductIndentInfo();
+            sourceUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId();;
+            sourceTitle = "积分商品详情：" + productInfoBean.getName();
+            qyProductIndentInfo.setUrl(sourceUrl);
+            qyProductIndentInfo.setTitle(getStrings(integralProductInfoBean.getName()));
+            qyProductIndentInfo.setPicUrl(getStrings(integralProductInfoBean.getPicUrl()));
+            String priceName;
+            if (productInfoBean.getIntegralType() == 0) {
+                priceName = String.format(getResources().getString(R.string.integral_indent_product_price), productInfoBean.getIntegralPrice());
+            } else {
+                priceName = String.format(getResources().getString(R.string.integral_product_and_price)
+                        , productInfoBean.getIntegralPrice(), getStrings(productInfoBean.getMoneyPrice()));
+            }
+            qyProductIndentInfo.setNote(priceName);
         }
+        QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }
 
     @OnClick(R.id.iv_img_share)

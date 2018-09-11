@@ -279,7 +279,6 @@ dependencies {
     implementation project(':pinneditem')
     implementation project(':countdowntime')
     implementation project(':Emoj')
-    implementation project(':xiaonengChatUI')
     implementation project(':TuSDKUIDefault')
     implementation project(':TextView-LinkBuilder')
     implementation project(':Luban')

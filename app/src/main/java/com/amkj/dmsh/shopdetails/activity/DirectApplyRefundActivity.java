@@ -81,6 +81,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
@@ -165,7 +166,6 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     TextView tv_submit_apply_refund;
     @BindView(R.id.sv_layout_refund)
     NestedScrollView sv_layout_refund;
-    private int uid;
     private List<String> refundReasonList = new ArrayList<>();
     //    退款类型--》原因
     private Map<String, Integer> refundReasonMap = new HashMap<>();
@@ -319,7 +319,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
         String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND;
         Map<String, Object> params = new HashMap<>();
         params.put("no", refundBean.getOrderNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         try {
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject;
@@ -497,7 +497,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
      * 获取默认地址
      */
     private void getDefaultAddress() {
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + uid;
+        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
         XUtil.Get(url, null, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -560,7 +560,6 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     @OnClick(R.id.tv_lv_top)
     void skipNewAddress(View view) {
         Intent intent = new Intent(DirectApplyRefundActivity.this, SelectedAddressActivity.class);
-        intent.putExtra("uid", uid);
         intent.putExtra("hasDefaultAddress", false);
         startActivityForResult(intent, SEL_ADDRESS_REQ);
     }
@@ -569,7 +568,6 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     @OnClick({R.id.ll_indent_address_default})
     void skipAddressList(View view) {
         Intent intent = new Intent(DirectApplyRefundActivity.this, SelectedAddressActivity.class);
-        intent.putExtra("uid", uid);
         intent.putExtra("addressId", addressId);
         intent.putExtra("hasDefaultAddress", true);
         startActivityForResult(intent, SEL_ADDRESS_REQ);
@@ -716,7 +714,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
             , final DirectRefundProBean directRefundProBean) {
         String url = Url.BASE_URL + Url.Q_INDENT_REFUND_REPAIR_SUB;
         params.put("no", refundBean.getOrderNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", directRefundProBean.getId());
@@ -781,7 +779,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
         if (!cancelRefund) {
             url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND_SUB;
             params.put("no", refundBean.getOrderNo());
-            params.put("userId", uid);
+            params.put("userId", userId);
             params.put("version", 3);
             try {
                 JSONObject jsonObject = new JSONObject();
@@ -857,7 +855,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     private void cancelIndent(DirectApplyRefundBean refundBean, Map<String, Object> params) {
         String url = Url.BASE_URL + Url.Q_CANCEL_INDENT_REFUND;
         params.put("no", refundBean.getOrderNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         if (!TextUtils.isEmpty(refundBean.getContent())) {
             params.put("msg", refundBean.getContent());
         }

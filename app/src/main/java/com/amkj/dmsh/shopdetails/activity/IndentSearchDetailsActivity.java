@@ -1,9 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,10 +15,10 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
@@ -47,17 +44,11 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
-import cn.xiaoneng.utils.CoreData;
 
-import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
@@ -488,38 +479,12 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
 
     @OnClick(R.id.iv_indent_service)
     void openPopWindows(View view) {
-        conversation();
-    }
-
-    //启动美洽客服，登录
-    private void conversation() {
-        requestPermissions();
         setVisitorOpenService();
     }
 
     private void setVisitorOpenService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("订单搜索");
-        chatParamsBody.startPageUrl = ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
-        ItemParamsBody itemParams = chatParamsBody.itemparams;
-        itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-        itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        if(userId>0){
-            chatParamsBody.headurl = getPersonalInfo(mAppContext).getAvatar();
-        }
-        skipXNService(IndentSearchDetailsActivity.this, chatParamsBody);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestPermissions() {
-        String[] permissions = {
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        };
-        getExtendInstance().ntalkerSystem().requestPermissions(IndentSearchDetailsActivity.this, permissions);
+        QyServiceUtils.getQyInstance()
+                .openQyServiceChat(IndentSearchDetailsActivity.this
+                        , "订单搜索","");
     }
 }

@@ -140,18 +140,10 @@ public class ConstantVariable {
     public static final String regexATextUrl = "<a [\\s\\S]*?href=\"[\\s\\S]*?\"[\\s\\S]*?>";
     //    数字
     public static final String REGEX_NUM = "[+|-]*\\d+(\\.\\d+)?";
-    //
-    public static final String DEFAULT_SERVICE_PAGE_URL = "http://domolifeAndroid.com";
     //    订单商品状态
     public static Map<String, String> INDENT_PRO_STATUS;
     //    购物车活动状态
     public static Map<String, String> CAR_PRO_STATUS;
-    /**
-     * 小能客服咨询页面
-     */
-    public static final String BASE_SERVICE_URL = "http://app.domolife.";
-    //    小能客服消息广播
-    public static final String BROADCAST_RECEIVER_XN_SERVICE = "cn.broadcast.message.service";
     /**
      * 三方授权登录
      */

@@ -32,6 +32,7 @@ public class LotteryAwardPersonAdapter extends BaseQuickAdapter<WinListBean,Base
     protected void convert(BaseViewHolderHelper helper, WinListBean winListBean) {
         GlideImageLoaderUtil.loadRoundImg(context,helper.getView(R.id.iv_lottery_award_person),winListBean.getAvatar(), AutoUtils.getPercentWidthSize(40),R.drawable.default_ava_img);
         helper.setText(R.id.tv_lottery_award_person_name,getStrings(winListBean.getNickName()))
-                .setText(R.id.tv_lottery_award_person_code,getStrings(winListBean.getWinningCode()));
+                .setText(R.id.tv_lottery_award_person_code,getStrings(winListBean.getWinningCode()))
+                .itemView.setTag(winListBean);
     }
 }

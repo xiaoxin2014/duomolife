@@ -29,6 +29,8 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.qyservice.QyProductIndentInfo;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -59,18 +61,14 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
 
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipInitDataXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -294,19 +292,19 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                         showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void netClose() {
                 showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
         });
     }
@@ -335,19 +333,19 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                         showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void netClose() {
                 showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,refundDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
         });
     }
@@ -475,17 +473,17 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         GlideImageLoaderUtil.loadCenterCrop(DoMoRefundDetailActivity.this, iv_direct_indent_pro, refundDetailBean.getPicUrl());
         tv_direct_indent_pro_name.setText(getStrings(refundDetailBean.getName()));
         String priceName;
-        if(refundDetailBean.getIntegralPrice()>0){
+        if (refundDetailBean.getIntegralPrice() > 0) {
             float moneyPrice = getFloatNumber(refundDetailBean.getPrice());
-            if(moneyPrice>0){
+            if (moneyPrice > 0) {
                 priceName = String.format(getResources().getString(R.string.integral_product_and_price)
-                        ,refundDetailBean.getIntegralPrice(),getStrings(refundDetailBean.getPrice()));
-            }else{
+                        , refundDetailBean.getIntegralPrice(), getStrings(refundDetailBean.getPrice()));
+            } else {
                 priceName = String.format(getResources().getString(R.string.integral_indent_product_price)
-                        ,refundDetailBean.getIntegralPrice());
+                        , refundDetailBean.getIntegralPrice());
             }
-        }else{
-            priceName = getStringsChNPrice(DoMoRefundDetailActivity.this,refundDetailBean.getPrice());
+        } else {
+            priceName = getStringsChNPrice(DoMoRefundDetailActivity.this, refundDetailBean.getPrice());
         }
         tv_direct_indent_pro_price.setText(priceName);
         tv_direct_indent_pro_sku.setText(getStrings(refundDetailBean.getSaleSkuValue()));
@@ -641,17 +639,17 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                 refundTypeBeans.add(new RefundTypeBean(refundTypes[0], getStrings(refundDetailBean.getRefundType())));
                 refundTypeBeans.add(new RefundTypeBean(refundTypes[1], getStrings(refundDetailBean.getReason())));
                 String priceName;
-                if(refundDetailBean.getRefundIntegralPrice()>0){
+                if (refundDetailBean.getRefundIntegralPrice() > 0) {
                     float moneyPrice = getFloatNumber(refundDetailBean.getRefundPrice());
-                    if(moneyPrice>0){
+                    if (moneyPrice > 0) {
                         priceName = String.format(getResources().getString(R.string.integral_product_and_price)
-                                ,refundDetailBean.getRefundIntegralPrice(),getStrings(refundDetailBean.getRefundPrice()));
-                    }else{
+                                , refundDetailBean.getRefundIntegralPrice(), getStrings(refundDetailBean.getRefundPrice()));
+                    } else {
                         priceName = String.format(getResources().getString(R.string.integral_indent_product_price)
-                                ,refundDetailBean.getRefundIntegralPrice());
+                                , refundDetailBean.getRefundIntegralPrice());
                     }
-                }else{
-                    priceName = getStringsChNPrice(DoMoRefundDetailActivity.this,refundDetailBean.getRefundPrice());
+                } else {
+                    priceName = getStringsChNPrice(DoMoRefundDetailActivity.this, refundDetailBean.getRefundPrice());
                 }
                 refundTypeBeans.add(new RefundTypeBean(refundTypes[2], priceName));
                 refundTypeBeans.add(new RefundTypeBean(refundTypes[3], getStrings(refundDetailBean.getCreateTime())));
@@ -916,7 +914,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     //    复制收货地址
     @OnClick(R.id.tv_copy_text)
     void copyNo(View view) {
-        if(!TextUtils.isEmpty(repairAddress)){
+        if (!TextUtils.isEmpty(repairAddress)) {
             ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Label", repairAddress);
             cmb.setPrimaryClip(mClipData);
@@ -1005,15 +1003,15 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
 
     @OnClick(R.id.iv_indent_service)
     void skipService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("退款售后详情");
-        chatParamsBody.startPageUrl = DEFAULT_SERVICE_PAGE_URL;
+        QyProductIndentInfo qyProductIndentInfo = null;
         if (refundDetailBean != null) {
-            chatParamsBody.erpParam = getStrings(refundDetailBean.getNo());
+            qyProductIndentInfo = new QyProductIndentInfo();
+            qyProductIndentInfo.setTitle(refundDetailBean.getName());
+            qyProductIndentInfo.setPicUrl(getStrings(refundDetailBean.getPicUrl()));
+            qyProductIndentInfo.setDesc(INDENT_PRO_STATUS.get(String.valueOf(refundDetailBean.getStatus())));
+            qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn),refundDetailBean.getPrice()));
+            qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + refundDetailBean.getNo());
         }
-        if (userId > 0) {
-            chatParamsBody.headurl = getPersonalInfo(mAppContext).getAvatar();
-        }
-        skipInitDataXNService(DoMoRefundDetailActivity.this, chatParamsBody);
+        QyServiceUtils.getQyInstance().openQyServiceChat(this, "退款售后详情", "", qyProductIndentInfo);
     }
 }

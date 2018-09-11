@@ -47,7 +47,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUniqueId;
-import static com.amkj.dmsh.constant.ConstantMethod.loginXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
@@ -204,10 +203,7 @@ public class RegisterAccountActivity extends BaseActivity {
                         MobclickAgent.onProfileSignIn(String.valueOf(registerUserInfoBean.getUid()));
                         //                            绑定JPush
                         bindJPush(registerUserInfoBean.getUid());
-//                        小能客服登录
-                        loginXNService(RegisterAccountActivity.this, registerUserInfoBean.getUid()
-                                , getStrings(registerUserInfoBean.getNickname())
-                                , getStrings(registerUserInfoBean.getMobile()));
+//                        七鱼客服登录
                         QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this,registerUserInfoBean.getUid(),registerUserInfoBean.getNickname(),registerUserInfoBean.getMobile(),registerUserInfoBean.getAvatar());
                         Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                         startActivity(intent);

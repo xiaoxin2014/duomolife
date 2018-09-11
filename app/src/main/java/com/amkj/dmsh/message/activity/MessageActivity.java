@@ -16,7 +16,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageListAdapter;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
@@ -28,15 +28,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipInitDataXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -249,13 +244,8 @@ public class MessageActivity extends BaseActivity {
 
     @OnClick(R.id.iv_indent_service)
     void skipService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("通知消息");
-        chatParamsBody.startPageUrl = DEFAULT_SERVICE_PAGE_URL;
-        if (userId > 0) {
-            SavePersonalInfoBean personalInfo = getPersonalInfo(MessageActivity.this);
-            chatParamsBody.headurl = personalInfo.getAvatar();
-        }
-        skipInitDataXNService(MessageActivity.this, chatParamsBody);
+        QyServiceUtils.getQyInstance()
+                .openQyServiceChat(MessageActivity.this
+                        , "通知消息","");
     }
 }

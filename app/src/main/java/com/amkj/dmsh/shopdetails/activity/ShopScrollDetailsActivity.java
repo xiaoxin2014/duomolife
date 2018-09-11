@@ -1,15 +1,11 @@
 package com.amkj.dmsh.shopdetails.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,7 +36,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseApplication;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -123,28 +118,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
-import cn.xiaoneng.uiapi.Ntalker;
-import cn.xiaoneng.utils.CoreData;
 import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.BASE_SERVICE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
@@ -1146,15 +1133,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         communalDetailAdapter.notifyDataSetChanged();
         ctb_qt_pro_details.setCurrentTab(0);
         scroll_pro.scrollTo(0, 0);
-        /**
-         * 商品详情页轨迹标准接口
-         * @param title 商品详情页的名字
-         * @param url 商品详情页的url
-         * @param sellerid 商户id
-         * @param ref 上一页url
-         * @return
-         */
-        Ntalker.getBaseInstance().startAction_goodsList(getStrings(shopProperty.getName()), sharePageUrl + shopProperty.getId(), "", "");
     }
 
     private void setReplenishmentNotice() {
@@ -1576,11 +1554,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    //    小能客服
-    private void getDataInfo() {
-//        requestPermissions();
-//        //传递用户信息
-//        setVisitorOpenService();
+    //    七鱼客服
+    private void skipServiceDataInfo() {
         QyProductIndentInfo qyProductIndentInfo = null;
         if (shopPropertyBean != null) {
             qyProductIndentInfo = new QyProductIndentInfo();
@@ -1590,26 +1565,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             qyProductIndentInfo.setDesc(getStrings(shopPropertyBean.getActivityTag()));
             qyProductIndentInfo.setNote("￥" + shopPropertyBean.getPrice());
         }
-        QyServiceUtils.getQyInstance().openQyServiceChat(this, "商品详情", sharePageUrl + productId, qyProductIndentInfo);
-    }
-
-    private void setVisitorOpenService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageUrl = BASE_SERVICE_URL + "pro_details";
-        ItemParamsBody itemParams = chatParamsBody.itemparams;
-        itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-        itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        if (shopPropertyBean != null) {
-            chatParamsBody.startPageTitle = getStrings("自营商品详情：" + shopPropertyBean.getName());
-            itemParams.goods_id = String.valueOf(shopPropertyBean.getId());
-            itemParams.goods_name = getStrings(shopPropertyBean.getName());
-            itemParams.goods_image = getStrings(shopPropertyBean.getPicUrl());
-            itemParams.goods_price = getStrings(shopPropertyBean.getPrice());
-            itemParams.goods_url = sharePageUrl + shopPropertyBean.getId();
-            chatParamsBody.headurl = getPersonalInfo(ShopScrollDetailsActivity.this).getAvatar();
-        }
-        skipXNService(ShopScrollDetailsActivity.this, chatParamsBody);
+        QyServiceUtils.getQyInstance().openQyServiceChat(this, "自营商品详情", sharePageUrl + productId, qyProductIndentInfo);
     }
 
     private void addGoodsToCar() {
@@ -2121,19 +2077,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //  客服
     @OnClick(R.id.tv_sp_details_service)
     void skipService(View view) {
-        getDataInfo();
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestPermissions() {
-        String[] permissions = {
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        };
-        getExtendInstance().ntalkerSystem().requestPermissions(this, permissions);
+        skipServiceDataInfo();
     }
 
     //    加入购物车
@@ -2209,14 +2153,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     void skipShopCar(View view) {
         Intent intent = new Intent(ShopScrollDetailsActivity.this, ShopCarActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("serviceSendInfo")) {
-            Ntalker.getExtendInstance().message().sendCustomMsg(2, new String[]{getStrings(shopPropertyBean.getName())
-                    , "￥" + getStrings(shopPropertyBean.getPrice()), getStrings(shopPropertyBean.getPicUrl())});
-        }
     }
 
     @OnClick(R.id.iv_img_share)

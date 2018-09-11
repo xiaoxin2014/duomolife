@@ -23,6 +23,7 @@ public class NetEmptyCallback extends Callback {
     @Override
     protected void onViewCreate(Context context, View view) {
         view.findViewById(R.id.tv_communal_net_refresh).setVisibility(View.GONE);
+        view.findViewById(R.id.tv_communal_net_reason).setVisibility(View.GONE);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.amkj.dmsh.qyservice;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,12 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.dominant.activity.QualityNewProActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -37,6 +37,7 @@ import com.qiyukf.unicorn.api.YSFOptions;
 import com.qiyukf.unicorn.api.YSFUserInfo;
 import com.qiyukf.unicorn.api.lifecycle.SessionLifeCycleOptions;
 import com.qiyukf.unicorn.api.msg.MessageService;
+import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,13 +48,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -71,6 +70,8 @@ public class QyServiceUtils {
     private UnreadCountChangeListener listener;
     private List<OrderListBean> orderListBeanList = new ArrayList<>();
     private ProductIndentHelper productIndentHelper;
+    private YSFOptions ysfOptions;
+    private UICustomization uiCustomization;
 
     private QyServiceUtils() {
     }
@@ -95,32 +96,61 @@ public class QyServiceUtils {
     }
 
     private YSFOptions QyOptions() {
-        YSFOptions options = new YSFOptions();
+        getYsOptions();
+        getUICustomization();
         StatusBarNotificationConfig statusBarNotificationConfig = new StatusBarNotificationConfig();
 //        配置七鱼点击通知栏
         statusBarNotificationConfig.notificationEntrance = QyServiceNotifyReceiver.class;
-        options.statusBarNotificationConfig = statusBarNotificationConfig;
+        ysfOptions.statusBarNotificationConfig = statusBarNotificationConfig;
         //        链接点击设置
-        options.onMessageItemClickListener = new OnMessageItemClickListener() {
+        ysfOptions.onMessageItemClickListener = new OnMessageItemClickListener() {
             @Override
             public void onURLClicked(Context context, String url) {
                 setSkipPath(context, url, false);
             }
         };
 //        快捷入口点击
-        options.quickEntryListener = new QuickEntryListener() {
+        ysfOptions.quickEntryListener = new QuickEntryListener() {
             @Override
             public void onClick(Context context, String shopId, QuickEntry quickEntry) {
-                showToast(context, quickEntry.getName());
                 if (quickEntry.getId() == 1) {
-                    createProductIndentDialog(context);
+                    if(orderListBeanList.size()>0){
+                        createProductIndentDialog(context);
+                    }else{
+                        showToast(context,"暂无订单数据");
+                    }
+                } else if (quickEntry.getId() == 2) {
+                    Intent intent = new Intent(context, QualityNewProActivity.class);
+                    context.startActivity(intent);
                 }
             }
         };
-        UICustomization uiCustomization = new UICustomization();
         uiCustomization.hideKeyboardOnEnterConsult = true;
-        options.uiCustomization = uiCustomization;
-        return options;
+        uiCustomization.avatarShape = 0;
+        ysfOptions.uiCustomization = uiCustomization;
+        return ysfOptions;
+    }
+
+    /**
+     * 获取七鱼配置
+     *
+     * @return
+     */
+    private void getYsOptions() {
+        if (ysfOptions == null) {
+            ysfOptions = new YSFOptions();
+        }
+    }
+
+    /**
+     * 获取自定义布局
+     *
+     * @return
+     */
+    private void getUICustomization() {
+        if (uiCustomization == null) {
+            uiCustomization = new UICustomization();
+        }
     }
 
     /**
@@ -182,7 +212,10 @@ public class QyServiceUtils {
                     .build();
         }
         pageSource.quickEntryList = new ArrayList<>();
-        pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
+        if (userId > 0) {
+            pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
+        }
+        pageSource.quickEntryList.add(new QuickEntry(2, "新品发布", ""));
         getIndentProductData();
 
 //        排队设置
@@ -243,18 +276,6 @@ public class QyServiceUtils {
         Unicorn.clearCache();
     }
 
-    /**
-     * 设置用户信息
-     */
-    public void loginQyUserInfo(Context context) {
-        if (userId > 0) {
-            SavePersonalInfoBean personalInfo = getPersonalInfo(context);
-            loginQyUserInfo(context, userId, personalInfo.getNickName(), personalInfo.getPhoneNum(), personalInfo.getAvatar());
-        } else {
-            Unicorn.logout();
-        }
-    }
-
     public void loginQyUserInfo(Context context, int userId, String nickName, String mobile, String avatar) {
         if (userId > 0) {
             String osVersion = Build.VERSION.RELEASE;
@@ -272,8 +293,9 @@ public class QyServiceUtils {
             array.put(userInfoDataItem("mobile_model", mobileModel, 2, "手机型号", null));
             userInfo.data = array.toString();
             Unicorn.setUserInfo(userInfo);
+            uiCustomization.rightAvatar = avatar;
         } else {
-            Unicorn.logout();
+            logoutQyUser();
         }
     }
 
@@ -302,6 +324,7 @@ public class QyServiceUtils {
      * 注销用户
      */
     public void logoutQyUser() {
+        uiCustomization.rightAvatar = "";
         Unicorn.logout();
     }
 
@@ -310,12 +333,21 @@ public class QyServiceUtils {
         private final AlertDialog imageAlertDialog;
 
         public ProductIndentHelper(Context context) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.Theme_AppCompat_Dialog);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.service_dialog_theme);
             View view = LayoutInflater.from(context).inflate(R.layout.layout_communal_recycler, null, false);
             RecyclerView communal_recycler = view.findViewById(R.id.communal_recycler);
             communal_recycler.setLayoutManager(new LinearLayoutManager(context));
             productIndentAdapter = new ProductIndentAdapter(context, orderListBeanList);
             communal_recycler.setAdapter(productIndentAdapter);
+            View indentHeaderView = LayoutInflater.from(context).inflate(R.layout.dialog_service_indent_header,null,false);
+            AutoUtils.auto(indentHeaderView);
+            ImageView iv_close_dialog = indentHeaderView.findViewById(R.id.iv_close_dialog);
+            iv_close_dialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
             communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_gray_f_two_px)
@@ -326,22 +358,25 @@ public class QyServiceUtils {
                     // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                     .setHeaderClickListener(null)
                     .create());
+            productIndentAdapter.addHeaderView(indentHeaderView);
             productIndentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     OrderListBean orderListBean = (OrderListBean) view.getTag();
                     if (orderListBean != null) {
-                        String picUrl = null;
+                        String picUrl = "";
+                        String title = "";
                         if (orderListBean.getGoods() != null && orderListBean.getGoods().size() > 0) {
                             OrderListBean.GoodsBean goodsBean = orderListBean.getGoods().get(0);
                             picUrl = goodsBean.getPicUrl();
+                            title = goodsBean.getName();
                         }
                         ProductDetail productDetail = new ProductDetail.Builder()
                                 .setPicture(picUrl)
-                                .setTitle("订 单 号：" + orderListBean.getNo())
+                                .setTitle(title)
                                 .setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderListBean.getNo())
-                                .setDesc("订单金额：￥" + orderListBean.getAmount())
-                                .setNote("创建时间：" + orderListBean.getCreateTime())
+                                .setDesc(INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())))
+                                .setNote(String.format(context.getResources().getString(R.string.money_price_chn),orderListBean.getAmount()))
                                 .setShow(1)
                                 .setSendByUser(false)
                                 .build();
@@ -358,8 +393,7 @@ public class QyServiceUtils {
                 window.setBackgroundDrawableResource(R.color.translucence);
                 WindowManager.LayoutParams params = window.getAttributes();
                 params.width = WindowManager.LayoutParams.MATCH_PARENT;
-                BaseApplication app = (BaseApplication) ((Activity) context).getApplication();
-                params.height = (int) (app.getScreenHeight() * 0.6);
+                params.height = AutoUtils.getPercentHeightSize(700);
                 window.setGravity(Gravity.BOTTOM);
                 window.setAttributes(params);
                 window.setContentView(view);
@@ -384,7 +418,7 @@ public class QyServiceUtils {
         String url = Url.BASE_URL + Url.Q_INQUIRY_ALL_ORDER;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", 5);
         params.put("currentPage", 1);
         params.put("orderType", "currency");
 //        版本号控制 3 组合商品赠品
@@ -415,4 +449,5 @@ public class QyServiceUtils {
             }
         });
     }
+
 }

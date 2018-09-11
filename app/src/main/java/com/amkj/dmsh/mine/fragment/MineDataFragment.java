@@ -1,10 +1,7 @@
 package com.amkj.dmsh.mine.fragment;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -87,23 +84,16 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
-import cn.xiaoneng.utils.CoreData;
 
 import static android.app.Activity.RESULT_OK;
-import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getUnReadServiceMessage;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
-import static com.amkj.dmsh.constant.ConstantVariable.BASE_SERVICE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 
@@ -355,7 +345,6 @@ public class MineDataFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getLoginStatus();
-//        getUnReadMessage();
         getDuoMeIndentDataCount();
         getMineAd();
     }
@@ -425,35 +414,6 @@ public class MineDataFragment extends BaseFragment {
     private void conversation() {
         QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
         qyServiceUtils.openQyServiceChat(getActivity(), "首页-我的");
-    }
-
-//    private void conversation() {
-//        requestPermissions();
-//        setVisitorOpenService();
-//    }
-
-    private void setVisitorOpenService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("主页-我");
-        chatParamsBody.startPageUrl = BASE_SERVICE_URL + "mine_service";
-        ItemParamsBody itemParams = chatParamsBody.itemparams;
-        itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-        itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        chatParamsBody.headurl = avatar;
-        skipXNService(getActivity(), chatParamsBody);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestPermissions() {
-        String[] permissions = {
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        };
-        getExtendInstance().ntalkerSystem().requestPermissions(getActivity(), permissions);
     }
 
     @Override
@@ -802,39 +762,6 @@ public class MineDataFragment extends BaseFragment {
                 showToast(getActivity(), msg);
             }
         });
-    }
-
-    //    private void getUnReadMessage() {
-//        int mesCount = getUnReadServiceMessage();
-//        if (mineTypeList.size() > 7) {
-//            if (mesCount > 0) {
-//                mineTypeList.get(7).setType(mesCount);
-//            } else {
-//                mineTypeList.get(7).setType(0);
-//            }
-//            getActivity().runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    typeMineAdapter.notifyItemChanged(7);
-//                }
-//            });
-//        }
-//    }
-    private void getUnReadMessage() {
-        int mesCount = getUnReadServiceMessage();
-        if (mineTypeList.size() > 7) {
-            if (mesCount > 0) {
-                mineTypeList.get(7).setType(mesCount);
-            } else {
-                mineTypeList.get(7).setType(0);
-            }
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    typeMineAdapter.notifyItemChanged(7);
-                }
-            });
-        }
     }
 
     @Override

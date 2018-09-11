@@ -1,13 +1,10 @@
 package com.amkj.dmsh.shopdetails.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -98,10 +95,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import cn.iwgang.countdownview.CountdownView;
-import cn.xiaoneng.uiapi.Ntalker;
 
 import static android.view.View.GONE;
-import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -1030,12 +1025,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         if (message.type.equals("indentDetailsRefresh")) {
             lvHeaderView.rel_indent_time_count.setVisibility(GONE);
             loadData();
-        } else if (message.type.equals("serviceSendInfo")) {
-            IndentInfoDetailBean indentInfoDetailBean = infoDetailEntity.getIndentInfoDetailBean();
-            OrderDetailBean orderDetailBean = indentInfoDetailBean.getOrderDetailBean();
-            Ntalker.getExtendInstance().message().sendCustomMsg(2, new String[]{"订 单 号:" + getStrings(orderDetailBean.getNo())
-                    , "创建时间:" + getStrings(orderDetailBean.getCreateTime()), "订单件数:" + String.valueOf(goodsBeanList.size()),
-                    "订单金额: ￥" + getStrings(orderDetailBean.getAmount()), getStrings(goodsBeanList.get(0).getPicUrl())});
         }
     }
 
@@ -1398,54 +1387,21 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         if (infoDetailEntity != null) {
             IndentInfoDetailBean indentInfoDetailBean = infoDetailEntity.getIndentInfoDetailBean();
             OrderDetailBean orderDetailBean = indentInfoDetailBean.getOrderDetailBean();
-//            ChatParamsBody chatParamsBody = new ChatParamsBody();
-//            chatParamsBody.startPageTitle = "订单号:" + orderDetailBean.getNo();
-//            /**
-//             * 待支付详情
-//             */
-//            if (orderDetailBean.getStatus() == 0) {
-//                chatParamsBody.startPageUrl = BASE_SERVICE_URL + "indent_detail_no_pay";
-//            } else {
-//                chatParamsBody.startPageUrl = BASE_SERVICE_URL + "indent_detail_other";
-//            }
-//            chatParamsBody.erpParam = getStrings(orderDetailBean.getNo());
-//            chatParamsBody.headurl = avatar;
-//            ItemParamsBody itemParams = chatParamsBody.itemparams;
-//            itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-//            itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-//            itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-//            if (goodsBeanList.size() > 0) {
-//                itemParams.goods_image = getStrings(goodsBeanList.get(0).getPicUrl());
-//                itemParams.goods_url = sharePageUrl + goodsBeanList.get(0).getId();
-//            }
-//            itemParams.goods_name = "订 单 号:" + getStrings(orderDetailBean.getNo());
-//            itemParams.goods_price = "创建时间:" + getStrings(orderDetailBean.getCreateTime());
-//            skipInitDataXNService(DirectExchangeDetailsActivity.this, chatParamsBody);
             QyProductIndentInfo qyProductIndentInfo = null;
             if (orderDetailBean != null) {
                 qyProductIndentInfo = new QyProductIndentInfo();
-                qyProductIndentInfo.setTitle("订 单 号:"+orderDetailBean.getNo());
                 if (goodsBeanList.size() > 0) {
+                    qyProductIndentInfo.setTitle(getStrings(goodsBeanList.get(0).getName()));
                     qyProductIndentInfo.setPicUrl(getStrings(goodsBeanList.get(0).getPicUrl()));
                 }
-                qyProductIndentInfo.setDesc("订单金额:" + orderDetailBean.getAmount());
-                qyProductIndentInfo.setNote("创建时间:" + orderDetailBean.getCreateTime());
+                qyProductIndentInfo.setDesc(INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())));
+                qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn),orderDetailBean.getAmount()));
                 qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid="+orderNo);
             }
             QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid="+orderNo, qyProductIndentInfo);
+        }else {
+            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid="+orderNo, null);
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestPermissions() {
-        String[] permissions = {
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        };
-        getExtendInstance().ntalkerSystem().requestPermissions(this, permissions);
     }
 
     class PopupWindowView {

@@ -12,12 +12,17 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.homepage.adapter.LotteryAwardPersonAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinListBean;
+import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 /**
  * @author LGuiPeng
@@ -58,7 +63,7 @@ public class IntegralLotteryAwardPersonActivity extends BaseActivity {
             return;
         }
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
-        lotteryAwardPersonAdapter = new LotteryAwardPersonAdapter(this,winListBeanList);
+        lotteryAwardPersonAdapter = new LotteryAwardPersonAdapter(this, winListBeanList);
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
@@ -70,10 +75,27 @@ public class IntegralLotteryAwardPersonActivity extends BaseActivity {
                 .setHeaderClickListener(null)
                 .create());
         communal_recycler.setAdapter(lotteryAwardPersonAdapter);
+        lotteryAwardPersonAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                WinListBean winListBean = (WinListBean) view.getTag();
+                if (winListBean != null && winListBean.getUid() > 0 ) {
+                    if(winListBean.getUid() != userId){
+                        Intent intent = new Intent(IntegralLotteryAwardPersonActivity.this, UserPagerActivity.class);
+                        intent.putExtra("userId", String.valueOf(winListBean.getUid()));
+                        startActivity(intent);
+                    }else{
+                        showToast(IntegralLotteryAwardPersonActivity.this,"恭喜你，已中奖");
+                    }
+                }
+            }
+        });
     }
 
     @Override
-    protected void loadData() {}
+    protected void loadData() {
+    }
+
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();

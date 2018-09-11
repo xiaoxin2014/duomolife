@@ -10,7 +10,7 @@ import android.text.TextUtils;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 
 import org.json.JSONException;
@@ -21,15 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
-import cn.xiaoneng.coreapi.ChatParamsBody;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.totalPushMessage;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 
 ;
@@ -98,14 +94,8 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                     constantMethod.clickTotalPush(pushType, objId);
                 }
                 if (!TextUtils.isEmpty(pushType) && "999".equals(pushType)) { //跳转客服
-                    ChatParamsBody chatParamsBody = new ChatParamsBody();
-                    chatParamsBody.startPageTitle = getStrings(mContent);
-                    chatParamsBody.startPageUrl = DEFAULT_SERVICE_PAGE_URL;
-                    SavePersonalInfoBean personalInfo = getPersonalInfo(context);
-                    if (personalInfo.isLogin()) {
-                        chatParamsBody.headurl = personalInfo.getAvatar();
-                    }
-                    skipXNService(context, chatParamsBody);
+                    QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+                    qyServiceUtils.openQyServiceChat(context, "推送-客服通知-"+getStrings(mContent),"");
                 } else {
                     setSkipPath(context, json.getString("androidLink"), false);
                 }

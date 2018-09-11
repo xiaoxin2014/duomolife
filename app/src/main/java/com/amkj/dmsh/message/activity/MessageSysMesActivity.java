@@ -14,7 +14,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageNotifyAdapter;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -27,17 +27,13 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -91,14 +87,8 @@ public class MessageSysMesActivity extends BaseActivity {
                 if (messageNotifyBean != null) {
                     switch (getStrings(messageNotifyBean.getObj())) {
                         case "csnotice":
-                            ChatParamsBody chatParamsBody = new ChatParamsBody();
-                            chatParamsBody.startPageTitle = getStrings(messageNotifyBean.getM_content());
-                            chatParamsBody.startPageUrl = DEFAULT_SERVICE_PAGE_URL;
-                            SavePersonalInfoBean personalInfo = getPersonalInfo(MessageSysMesActivity.this);
-                            if (personalInfo.isLogin()) {
-                                chatParamsBody.headurl = personalInfo.getAvatar();
-                            }
-                            skipXNService(MessageSysMesActivity.this, chatParamsBody);
+                            QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+                            qyServiceUtils.openQyServiceChat(MessageSysMesActivity.this, "系统消息："+getStrings(messageNotifyBean.getM_content()),"");
                             break;
                         default:
                             setSkipPath(MessageSysMesActivity.this, messageNotifyBean.getAndroidLink(), false);

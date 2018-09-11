@@ -344,7 +344,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     }
 
     /**
-     * 小能客服记录轨迹
+     * 七鱼客服记录轨迹
      */
 //    private void recordPaySuc() {
 //        if (qualityGroupMineBean != null) {

@@ -198,6 +198,7 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
             private String winningCode;
             private String nickName;
             private String avatar;
+            private int uid;
 
             public String getWinningCode() {
                 return winningCode;
@@ -223,6 +224,16 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
                 this.avatar = avatar;
             }
 
+            public int getUid() {
+                return uid;
+            }
+
+            public void setUid(int uid) {
+                this.uid = uid;
+            }
+
+            public WinListBean() {
+            }
 
             @Override
             public int describeContents() {
@@ -234,15 +245,14 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
                 dest.writeString(this.winningCode);
                 dest.writeString(this.nickName);
                 dest.writeString(this.avatar);
-            }
-
-            public WinListBean() {
+                dest.writeInt(this.uid);
             }
 
             protected WinListBean(Parcel in) {
                 this.winningCode = in.readString();
                 this.nickName = in.readString();
                 this.avatar = in.readString();
+                this.uid = in.readInt();
             }
 
             public static final Creator<WinListBean> CREATOR = new Creator<WinListBean>() {

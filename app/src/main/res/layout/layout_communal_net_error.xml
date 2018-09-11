@@ -19,6 +19,16 @@
         android:gravity="center"
         android:layout_height="wrap_content" />
     <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="24px"
+        android:textSize="28px"
+        android:gravity="center"
+        android:id="@+id/tv_communal_net_reason"
+        android:textColor="@color/text_gray_hint_n"
+        android:lineSpacingExtra="@dimen/dimen_8dp"
+        android:text="@string/load_data_failed"
+        android:layout_height="wrap_content" />
+    <TextView
         android:layout_width="140px"
         android:layout_gravity="center"
         android:layout_marginTop="40px"

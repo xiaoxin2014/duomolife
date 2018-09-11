@@ -46,7 +46,6 @@ import cn.smssdk.SMSSDK;
 import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.loginXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
@@ -272,10 +271,6 @@ public class BindingMobileActivity extends BaseActivity {
                             MobclickAgent.onProfileSignIn(String.valueOf(communalUserInfo.getUid()));
                             //                            绑定JPush
                             bindJPush(communalUserInfo.getUid());
-//小能客服登录
-                            loginXNService(BindingMobileActivity.this,communalUserInfo.getUid()
-                                    , getStrings(communalUserInfo.getNickname())
-                                    ,getStrings(communalUserInfo.getMobile()));
                             QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this,communalUserInfo.getUid(),communalUserInfo.getNickname(),communalUserInfo.getMobile(),communalUserInfo.getAvatar());
                             showToast(BindingMobileActivity.this, "绑定成功");
                             Intent intent = new Intent(BindingMobileActivity.this,RegisterSelSexActivity.class);

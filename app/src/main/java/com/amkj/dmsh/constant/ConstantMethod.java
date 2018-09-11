@@ -1,7 +1,5 @@
 package com.amkj.dmsh.constant;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -49,10 +47,8 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.ServiceListenerActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.bean.XNServiceDataEntity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
@@ -80,7 +76,6 @@ import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -94,7 +89,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,19 +110,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.uiapi.Ntalker;
-import cn.xiaoneng.uiapi.OnChatmsgListener;
-import cn.xiaoneng.uiapi.OnMsgUrlClickListener;
-import cn.xiaoneng.utils.CoreData;
 import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
-import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
-import static com.amkj.dmsh.base.BaseApplication.serviceGroupId;
 import static com.amkj.dmsh.base.BaseApplication.webUrlParameterTransform;
 import static com.amkj.dmsh.base.BaseApplication.webUrlTransform;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
@@ -1486,189 +1473,6 @@ public class ConstantMethod {
      */
     public void setAddOnCarListener(OnAddCarListener onAddCarListener) {
         this.onAddCarListener = onAddCarListener;
-    }
-
-    /**
-     * 访问客服
-     *
-     * @param context
-     * @param chatParamsBody
-     */
-    public static void skipInitDataXNService(Context context, ChatParamsBody chatParamsBody) {
-        requestPermissions(context);
-        skipXNService(context, chatParamsBody);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private static void requestPermissions(Context context) {
-        String[] permissions = {
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        };
-        getExtendInstance().ntalkerSystem().requestPermissions((Activity) context, permissions);
-    }
-
-    /**
-     * 跳转客服
-     *
-     * @param context
-     * @param chatParamsBody
-     */
-    public static void skipXNService(final Context context, final ChatParamsBody chatParamsBody) {
-        if (NetWorkUtils.isConnectedByState(context)) {
-            String url = Url.BASE_URL + Url.XN_SERVICE;
-            XUtil.Post(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    XNServiceDataEntity xnServiceDataEntity = XNServiceDataEntity.objectFromData(result);
-                    if (xnServiceDataEntity != null && SUCCESS_CODE.equals(xnServiceDataEntity.getCode())
-                            && xnServiceDataEntity.getServiceDataList() != null
-                            && xnServiceDataEntity.getServiceDataList().size() > 0) {
-                        setServiceDate(context, xnServiceDataEntity, chatParamsBody);
-                    } else {
-                        getDefaultService(context, chatParamsBody);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    getDefaultService(context, chatParamsBody);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
-    }
-
-    private static void setServiceDate(Context context, XNServiceDataEntity xnServiceDataEntity, ChatParamsBody chatParamsBody) {
-        Calendar calendar = Calendar.getInstance();
-        if (!TextUtils.isEmpty(xnServiceDataEntity.getServer_time())) {
-            try {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date currentDate = simpleDateFormat.parse(xnServiceDataEntity.getServer_time());
-                calendar.setTime(currentDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        int week = calendar.get(Calendar.DAY_OF_WEEK);
-        int i = calendar.get(Calendar.HOUR_OF_DAY);
-        boolean isCheckConfirm = false;
-        String serviceId = "";
-        reach:
-        for (XNServiceDataEntity.XNServiceDataBean xnServiceDataBean : xnServiceDataEntity.getServiceDataList()) {
-            String weeks = xnServiceDataBean.getWeeks();
-//                    比对星期
-            if (!TextUtils.isEmpty(weeks) && weeks.contains(String.valueOf(week))) {
-//                        比对时间
-                if (!TextUtils.isEmpty(xnServiceDataBean.getBegin_time())
-                        && !TextUtils.isEmpty(xnServiceDataBean.getEnd_time())) {
-                    if (getDataFormatHour(xnServiceDataBean.getBegin_time()) <= i
-                            && i <= getDataFormatHour(xnServiceDataBean.getEnd_time())
-                            && !TextUtils.isEmpty(xnServiceDataBean.getXn_id())) {
-                        isCheckConfirm = true;
-                        serviceId = xnServiceDataBean.getXn_id();
-                        break reach;
-                    }
-                }
-            }
-        }
-        if (isCheckConfirm && !TextUtils.isEmpty(serviceId)) {
-            try {
-                chatParamsBody.clickurltoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-                Ntalker.getExtendInstance().message().setOnMsgUrlClickListener(new OnMsgUrlClickListener() {
-                    @Override
-                    public void onClickUrlorEmailorNumber(int contentType, String s) {
-                        setSkipPath(context, s, false);
-                    }
-                });
-                Ntalker.getBaseInstance().startChat(context.getApplicationContext()
-                        , serviceId, "蝗虫团购", chatParamsBody, ServiceListenerActivity.class);
-
-            } catch (Exception e) {
-                CrashReport.setUserId(String.valueOf(userId));
-                CrashReport.postCatchedException(e);
-            }
-        } else {
-            getDefaultService(context, chatParamsBody);
-        }
-    }
-
-
-    private static void getDefaultService(Context context, ChatParamsBody chatParamsBody) {
-        try {
-            chatParamsBody.clickurltoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-            Ntalker.getExtendInstance().message().setOnMsgUrlClickListener(new OnMsgUrlClickListener() {
-                @Override
-                public void onClickUrlorEmailorNumber(int contentType, String s) {
-                    setSkipPath(context, s, false);
-                }
-            });
-            Ntalker.getBaseInstance().startChat(context.getApplicationContext()
-                    , serviceGroupId, "蝗虫团购", chatParamsBody, ServiceListenerActivity.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            CrashReport.setUserId(String.valueOf(userId));
-            CrashReport.postCatchedException(e);
-        }
-    }
-
-    /**
-     * 普通登录
-     *
-     * @param context
-     * @param uid
-     * @param nickName
-     * @param phone
-     */
-    public static void loginXNService(Context context, int uid, String nickName, String phone) {
-        loginXNService(context, uid, nickName, phone, 0);
-    }
-
-    /**
-     * 等级登录
-     *
-     * @param context
-     * @param uid
-     * @param nickName
-     * @param phone
-     * @param level
-     */
-    public static void loginXNService(Context context, int uid, String nickName, String phone, int level) {
-        Ntalker.getBaseInstance().login(String.valueOf(uid), getStrings(nickName)
-                + " " + phone + " " + getVersionName(context), level);
-    }
-
-    public static int getUnReadServiceMessage() {
-        final int[] mesCount = {getMesCount()};
-        if (userId != 0) {
-            //传递用户信息
-            Ntalker.getExtendInstance().message().setOnChatmsgListener(new OnChatmsgListener() {
-                @Override
-                public void onChatMsg(boolean isSelfMsg, String settingId, String username, String msgContent, long msgTime, boolean isUnread, int unReadCount, String uIcon) {
-                    if (isUnread) {
-                        mesCount[0] = getMesCount();
-                    }
-                }
-            });
-        }
-        return mesCount[0];
-    }
-
-    private static int getMesCount() {
-        List<Map<String, Object>> list = Ntalker.getExtendInstance().conversation().getList();
-        int mesCount = 0;
-        if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                if ((boolean) list.get(i).get("isunread")) {
-                    int messageCount = (int) list.get(i).get("messagecount");
-                    mesCount += messageCount;
-                }
-            }
-        }
-        return mesCount;
     }
 
     /**

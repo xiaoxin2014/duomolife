@@ -82,7 +82,6 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.xiaoneng.uiapi.Ntalker;
 
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
@@ -684,19 +683,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     }
 
     private void recordIndentTrack(String orderNo) {
-        /**
-         * 订单页轨迹标准接口
-         * @param title 商品页的名字
-         * @param url 商品页的url
-         * @param sellerid 商户id
-         * @param ref 上一页url
-         * @param orderid 订单id
-         * @param orderprice 订单价格
-         * @return
-         */
-        Ntalker.getBaseInstance().startAction_order("订单创建", "", "多么生活", ""
-                , getStrings(orderNo)
-                , getStrings(ConstantMethod.getNumber(tv_indent_total_price.getText().toString().trim())));
         if (totalPersonalTrajectory != null) {
             Map<String, String> totalMap = new HashMap<>();
             totalMap.put("order_no", orderNo);

@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 
 
 /**
@@ -31,13 +32,15 @@ public class ProductIndentAdapter extends BaseQuickAdapter<OrderListBean, BaseVi
 
     @Override
     protected void convert(BaseViewHolderHelper helper, OrderListBean orderListBean) {
+        String name = "";
         if (orderListBean.getGoods() != null && orderListBean.getGoods().size() > 0) {
             GoodsBean goodsBean = orderListBean.getGoods().get(0);
             GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_service_product_indent_image), getStrings(goodsBean.getPicUrl()));
+            name = goodsBean.getName();
         }
-        helper.setText(R.id.tv_service_product_indent_no, "订 单 号：" + orderListBean.getNo())
-                .setText(R.id.tv_service_product_indent_price, "订单金额：￥" + orderListBean.getAmount())
-                .setText(R.id.tv_service_product_indent_time, "创建时间：" + orderListBean.getCreateTime())
+        helper.setText(R.id.tv_service_product_indent_name, name)
+                .setText(R.id.tv_service_product_indent_price,"订单金额 ￥" + orderListBean.getAmount())
+                .setText(R.id.tv_service_product_indent_status, INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())))
                 .itemView.setTag(orderListBean);
     }
 }

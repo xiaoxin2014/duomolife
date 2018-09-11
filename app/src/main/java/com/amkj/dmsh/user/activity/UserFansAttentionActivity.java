@@ -56,10 +56,8 @@ public class UserFansAttentionActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     private List<UserAttentionFansBean> attentionFansList = new ArrayList();
-    private int uid;
     private SearchDetailsUserAdapter detailsUserAdapter;
     private String type;
-    private String fromPage;
     private int page = 1;
     private int scrollY = 0;
     private float screenHeight;
@@ -74,22 +72,11 @@ public class UserFansAttentionActivity extends BaseActivity {
     protected void initViews() {
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
-//        产看的用户Id
-        uid = intent.getIntExtra("uid", 0);
         type = intent.getStringExtra("type");
-        fromPage = intent.getStringExtra("fromPage");
-        if (fromPage != null && fromPage.equals("mine")) {
-            if ("fans".equals(type)) {
-                tv_header_titleAll.setText("我的粉丝");
-            } else {
-                tv_header_titleAll.setText("我的关注");
-            }
+        if ("fans".equals(type)) {
+            tv_header_titleAll.setText("我的粉丝");
         } else {
-            if ("fans".equals(type)) {
-                tv_header_titleAll.setText("Ta的粉丝");
-            } else {
-                tv_header_titleAll.setText("Ta的关注");
-            }
+            tv_header_titleAll.setText("我的关注");
         }
         detailsUserAdapter = new SearchDetailsUserAdapter(UserFansAttentionActivity.this, attentionFansList, type);
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -157,13 +144,13 @@ public class UserFansAttentionActivity extends BaseActivity {
                 if (userAttentionFansBean != null) {
                     Intent intent = new Intent();
                     if (type.equals("attention")) {
-                        if (uid > 0 && uid != userAttentionFansBean.getBuid()) {
+                        if (userId > 0 && userId != userAttentionFansBean.getBuid()) {
                             intent.setClass(UserFansAttentionActivity.this, UserPagerActivity.class);
                             intent.putExtra("userId", String.valueOf(userAttentionFansBean.getBuid()));
                             startActivity(intent);
                         }
                     } else {
-                        if (uid > 0 && uid != userAttentionFansBean.getFuid()) {
+                        if (userId > 0 && userId != userAttentionFansBean.getFuid()) {
                             intent.setClass(UserFansAttentionActivity.this, UserPagerActivity.class);
                             intent.putExtra("userId", String.valueOf(userAttentionFansBean.getFuid()));
                             startActivity(intent);
@@ -172,13 +159,13 @@ public class UserFansAttentionActivity extends BaseActivity {
                 }
             }
         });
-        if(loadService!=null){
+        if (loadService != null) {
             loadService.setCallBack(NetEmptyCallback.class, new Transport() {
                 @Override
                 public void order(Context context, View view) {
                     TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
-                    tv_communal_net_tint.setText("attention".equals(type)?"你还没有关注Ta人\n赶快去围观各位千手观音吧"
-                            :"还没有人关注你\n赶快去吸引粉丝吧");
+                    tv_communal_net_tint.setText("attention".equals(type) ? "你还没有关注Ta人\n赶快去围观各位千手观音吧"
+                            : "还没有人关注你\n赶快去吸引粉丝吧");
                 }
             });
         }
@@ -203,23 +190,21 @@ public class UserFansAttentionActivity extends BaseActivity {
     @Override
     protected void getData() {
         String url;
+        Map<String, Object> params = new HashMap<>();
         if ("fans".equals(type)) {
             url = Url.BASE_URL + Url.MINE_FANS;
-        } else {
-            url = Url.BASE_URL + Url.MINE_ATTENTION;
-        }
-        Map<String, Object> params = new HashMap<>();
-//            查看用户ID
-        params.put("uid", uid);
-        if (type.equals("fans")) {
-            if (userId != 0) {
+            if(userId>0){
                 params.put("buid", userId);
             }
         } else {
-            if (userId != 0) {
+            url = Url.BASE_URL + Url.MINE_ATTENTION;
+            if(userId>0){
                 params.put("fuid", userId);
             }
         }
+//            查看用户ID
+        params.put("uid", userId);
+
         params.put("currentPage", page);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
@@ -239,21 +224,21 @@ public class UserFansAttentionActivity extends BaseActivity {
                     }
                 }
                 detailsUserAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansEntity);
             }
         });
     }

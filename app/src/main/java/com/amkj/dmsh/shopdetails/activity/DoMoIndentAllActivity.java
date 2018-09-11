@@ -11,6 +11,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentPagerAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -18,12 +19,8 @@ import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.skipInitDataXNService;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_SERVICE_PAGE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 
@@ -130,12 +127,8 @@ public class DoMoIndentAllActivity extends BaseActivity {
 
     @OnClick(R.id.iv_indent_service)
     void skipService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("订单列表");
-        chatParamsBody.startPageUrl = DEFAULT_SERVICE_PAGE_URL;
-        if(uid>0){
-            chatParamsBody.headurl = avatar;
-        }
-        skipInitDataXNService(DoMoIndentAllActivity.this,chatParamsBody);
+        QyServiceUtils.getQyInstance()
+                .openQyServiceChat(DoMoIndentAllActivity.this
+                        , "订单列表","");
     }
 }

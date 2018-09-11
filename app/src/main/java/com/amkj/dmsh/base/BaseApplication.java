@@ -20,7 +20,6 @@ import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
-import com.amkj.dmsh.ServiceReceiverActivity;
 import com.amkj.dmsh.address.bean.AddressInfo;
 import com.amkj.dmsh.address.bean.AddressInfo.AddressBean;
 import com.amkj.dmsh.address.bean.CityModel;
@@ -69,9 +68,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
-import cn.xiaoneng.uiapi.EPlusFunctionType;
-import cn.xiaoneng.uiapi.Ntalker;
-import cn.xiaoneng.xpush.XPush;
 
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -88,10 +84,6 @@ public class BaseApplication extends Application {
     public static String BUGLY_APP_ID = "385d38aeeb";
     public OSSCredentialProvider credentialProvider;
     public static String BUCKET_NAME = "domolifes";
-    //    小能客服企业id
-    public static String enterpriseId = "kf_10060";
-    public static String serviceSDKId = "A352D54A-8D8F-4FC8-9557-39E5CB6AD5F8";
-    public static String serviceGroupId = "kf_10060_1509076165253";
     public static String OSS_URL;
     public ClientConfiguration conf;
     /**
@@ -221,9 +213,8 @@ public class BaseApplication extends Application {
             new Url(getApplicationContext(), selectServer);
         }
         initNewAliBaiC();
-        //        小能客服初始化
         if (isAppMainProcess()) {
-            initXNService();
+            //        七鱼客服初始化
             initQYService();
             setTotalChanel();
             //      友盟初始化
@@ -345,30 +336,6 @@ public class BaseApplication extends Application {
             e.printStackTrace();
         }
         return "";
-    }
-
-    /**
-     * 初始化小能客服
-     */
-    private void initXNService() {
-        int resultCode = Ntalker.getBaseInstance().initSDK(this, enterpriseId, serviceSDKId);
-        if (resultCode == 0) {
-            Ntalker.getExtendInstance().extensionArea().removeAll();//首先先调用删除所有功能的接口，然后依次添加功能
-            Ntalker.getExtendInstance().extensionArea().addPlusFunction(EPlusFunctionType.DEFAULT_PICTRUE);
-            Ntalker.getExtendInstance().extensionArea().addPlusFunction(EPlusFunctionType.DEFAULT_CAMERA);
-            Ntalker.getExtendInstance().extensionArea().addPlusFunction(EPlusFunctionType.DEFAULT_VIDEO);
-            Ntalker.getExtendInstance().extensionArea().addPlusFunction(EPlusFunctionType.DEFAULT_EVALUATE);
-            /**
-             * @param context
-             * @param Activity 点击通知栏跳转到的activity类
-             */
-            XPush.setNotificationClickToActivity(this, ServiceReceiverActivity.class);
-            /**
-             * @param context
-             * @param iconResId 通知栏显示的图标，传0为app图标
-             */
-            XPush.setNotificationShowIconId(this, 0);
-        }
     }
 
     private void initNewAliBaiC() {

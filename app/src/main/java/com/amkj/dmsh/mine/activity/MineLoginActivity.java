@@ -56,7 +56,6 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.base.BaseApplication.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.loginXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -210,11 +209,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 //                            绑定JPush
         bindJPush(communalUserInfoBean.getUid());
-        //小能客服登录
-        loginXNService(this, communalUserInfoBean.getUid()
-                , getStrings(communalUserInfoBean.getNickname())
-                , getStrings(communalUserInfoBean.getMobile()));
-        QyServiceUtils.getQyInstance().loginQyUserInfo(this,communalUserInfoBean.getUid(),communalUserInfoBean.getNickname(),communalUserInfoBean.getMobile(),communalUserInfoBean.getAvatar());
+        QyServiceUtils.getQyInstance().loginQyUserInfo(this, communalUserInfoBean.getUid(), communalUserInfoBean.getNickname(), communalUserInfoBean.getMobile(), communalUserInfoBean.getAvatar());
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
         Intent data = new Intent();
@@ -418,11 +413,8 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                             }
                             savePersonalInfo.setLogin(true);
                             savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
-//                        小能客服登录
-                            loginXNService(MineLoginActivity.this, otherAccountBean.getUid()
-                                    , getStrings(otherAccountBean.getNickname())
-                                    , "");
-
+//                        七鱼客服登录
+                            QyServiceUtils.getQyInstance().loginQyUserInfo(MineLoginActivity.this, otherAccountBean.getUid(), otherAccountBean.getNickname(), "", otherAccountBean.getAvatar());
 //                            跳转传递信息
                             Intent data = new Intent();
                             Bundle bundle = new Bundle();

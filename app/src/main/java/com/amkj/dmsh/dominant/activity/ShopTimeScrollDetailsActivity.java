@@ -1,9 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.IdRes;
@@ -34,6 +31,7 @@ import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
 import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
 import com.alibaba.baichuan.android.trade.page.AlibcPage;
 import com.alibaba.baichuan.trade.biz.AlibcConstants;
+import com.alibaba.baichuan.trade.biz.alipay.AliPayResult;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
@@ -56,7 +54,8 @@ import com.amkj.dmsh.find.adapter.AdapterReceiverComment;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyProductIndentInfo;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean;
@@ -97,23 +96,16 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
-import cn.xiaoneng.uiapi.Ntalker;
-import cn.xiaoneng.utils.CoreData;
 import emojicon.EmojiconEditText;
 
 import static android.view.View.GONE;
-import static cn.xiaoneng.uiapi.Ntalker.getExtendInstance;
 import static com.amkj.dmsh.R.id.tv_send_comment;
 import static com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean.FOOT_EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.BASE_SERVICE_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -459,10 +451,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 } else {
                     getLoginStatus(ShopTimeScrollDetailsActivity.this);
                 }
-                break;
-            case "serviceSendInfo":
-                Ntalker.getExtendInstance().message().sendCustomMsg(2, new String[]{getStrings(shopProperty.getName())
-                        , "￥" + getStrings(shopProperty.getPrice()), getStrings(shopProperty.getPicUrl())});
                 break;
         }
     }
@@ -837,9 +825,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.tv_time_details_service)
     void foundService(View view) {
-        if (shopDetailsEntity != null) {
-            getDataInfo(shopDetailsEntity);
-        }
+        skipServiceDataInfo(shopDetailsEntity);
     }
 
     private void isFirstRemind(final ShopDetailsEntity shopDetailsEntity) {
@@ -936,47 +922,23 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
         });
     }
-
-    //    小能客服
-    private void getDataInfo(ShopDetailsEntity shopDetailsEntity) {
-        requestPermissions();
-        setVisitorOpenService(shopDetailsEntity);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestPermissions() {
-        String[] permissions = {
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        };
-        getExtendInstance().ntalkerSystem().requestPermissions(this, permissions);
-    }
-
-    private void setVisitorOpenService(ShopDetailsEntity shopDetailsEntity) {
-        ShopPropertyBean shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = getStrings("限时特惠详情：" + shopPropertyBean.getName());
-        chatParamsBody.startPageUrl = BASE_SERVICE_URL + "pro_time_detail";
-        ItemParamsBody itemParams = chatParamsBody.itemparams;
-        itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-        itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.goods_id = String.valueOf(shopPropertyBean.getId());
-        itemParams.goods_name = getStrings(shopPropertyBean.getName());
-        itemParams.goods_image = getStrings(shopPropertyBean.getPicUrl());
-        itemParams.goods_price = getStrings(shopPropertyBean.getPrice());
-        itemParams.goods_url = sharePageUrl + shopPropertyBean.getId();
-
-        if(userId>0){
-            SavePersonalInfoBean personalInfo = getPersonalInfo(ShopTimeScrollDetailsActivity.this);
-            chatParamsBody.headurl = personalInfo.getAvatar();
+    //    七鱼客服
+    private void skipServiceDataInfo(ShopDetailsEntity shopDetailsEntity) {
+        QyProductIndentInfo qyProductIndentInfo = null;
+        String sourceTitle = "";
+        String sourceUrl = "";
+        if (shopDetailsEntity != null) {
+            ShopPropertyBean shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
+            qyProductIndentInfo = new QyProductIndentInfo();
+            sourceUrl = sharePageUrl + shopPropertyBean.getId();
+            sourceTitle = "限时特惠详情：" + shopPropertyBean.getName();
+            qyProductIndentInfo.setUrl(sourceUrl);
+            qyProductIndentInfo.setTitle(getStrings(shopPropertyBean.getName()));
+            qyProductIndentInfo.setPicUrl(getStrings(shopPropertyBean.getPicUrl()));
+            qyProductIndentInfo.setNote("￥" + getStrings(shopPropertyBean.getPrice()));
         }
-        ConstantMethod.skipXNService(ShopTimeScrollDetailsActivity.this, chatParamsBody);
+        QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }
-
     public void setCountTime() {
         //格式化结束时间
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -1177,6 +1139,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
 //                showToast(context, "获取详情成功");
                 Log.d("商品详情", "onTradeSuccess: ");
+                AliPayResult payResult = alibcTradeResult.payResult;
+                List<String> paySuccessOrders = payResult.paySuccessOrders;
             }
 
             @Override

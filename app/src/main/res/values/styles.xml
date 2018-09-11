@@ -206,27 +206,6 @@
         <item name="android:windowAnimationStyle">@style/Anim_scale</item>
     </style>
 
-    <style name="valuationdialog" parent="@android:style/Theme.Dialog">
-
-        <!-- 去黑边 -->
-        <item name="android:windowFrame">@null</item>
-        <!-- 设置是否可滑动 -->
-        <item name="android:windowIsFloating">true</item>
-        <!-- 设置是否透明 -->
-        <item name="android:windowIsTranslucent">true</item>
-        <!-- 无标题 -->
-        <item name="android:windowNoTitle">true</item>
-        <!-- 背景 -->
-        <item name="android:background">@null</item>
-        <!-- 窗口背景 -->
-        <item name="android:windowBackground">@drawable/valuationshape</item>
-        <!-- 是否变暗 -->
-        <item name="android:backgroundDimEnabled">true</item>
-        <!-- 点击空白部分activity不消失 -->
-        <item name="android:windowCloseOnTouchOutside">false</item>
-    </style>
-    <!--小能客服style-->
-
     <!--图片选择样式——》新浪微博样式，注意每一项都不能少-->
     <style name="picture.sina.style" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -292,8 +271,16 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="service_dialog_theme" parent="Theme.AppCompat.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
     </style>
 </resources>

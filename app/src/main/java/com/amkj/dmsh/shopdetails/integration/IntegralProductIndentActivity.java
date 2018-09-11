@@ -9,17 +9,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.xiaoneng.coreapi.ChatParamsBody;
-import cn.xiaoneng.coreapi.ItemParamsBody;
-import cn.xiaoneng.utils.CoreData;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.skipXNService;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
@@ -73,14 +70,9 @@ public class IntegralProductIndentActivity extends BaseActivity {
 
     @OnClick(R.id.iv_indent_service)
     void foundService() {
-        ChatParamsBody chatParamsBody = new ChatParamsBody();
-        chatParamsBody.startPageTitle = "积分订单列表";
-        chatParamsBody.startPageUrl = "http://";
-        ItemParamsBody itemParams = chatParamsBody.itemparams;
-        itemParams.clicktoshow_type = CoreData.CLICK_TO_APP_COMPONENT;
-        itemParams.appgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        itemParams.clientgoodsinfo_type = CoreData.SHOW_GOODS_BY_ID;
-        skipXNService(this, chatParamsBody);
+        QyServiceUtils.getQyInstance()
+                .openQyServiceChat(this
+                        , "积分订单列表","");
     }
 
     @Override
