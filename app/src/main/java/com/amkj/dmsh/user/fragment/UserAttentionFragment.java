@@ -54,7 +54,7 @@ public class UserAttentionFragment extends BaseFragment {
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
     private List<UserAttentionFansBean> attentionFansList = new ArrayList();
-    private int uid;
+    private int lookUserId;
     private SearchDetailsUserAdapter detailsUserAdapter;
     private int page = 1;
     private int scrollY = 0;
@@ -130,7 +130,7 @@ public class UserAttentionFragment extends BaseFragment {
                 UserAttentionFansBean userAttentionFansBean = (UserAttentionFansBean) view.getTag();
                 if (userAttentionFansBean != null) {
                     Intent intent = new Intent();
-                    if (uid > 0 && uid != userAttentionFansBean.getBuid()) {
+                    if (userId != userAttentionFansBean.getBuid()) {
                         intent.setClass(getActivity(), UserPagerActivity.class);
                         intent.putExtra("userId", String.valueOf(userAttentionFansBean.getBuid()));
                         startActivity(intent);
@@ -155,7 +155,7 @@ public class UserAttentionFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.MINE_ATTENTION;
         Map<String, Object> params = new HashMap<>();
 //            查看用户ID
-        params.put("uid", uid);
+        params.put("uid", lookUserId);
         if (userId != 0) {
             params.put("fuid", userId);
         }
@@ -222,7 +222,7 @@ public class UserAttentionFragment extends BaseFragment {
     protected void getReqParams(Bundle bundle) {
         String userId = bundle.getString("userId");
         if (!TextUtils.isEmpty(userId)) {
-            uid = Integer.parseInt(userId);
+            lookUserId = Integer.parseInt(userId);
         }
     }
 }

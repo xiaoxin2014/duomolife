@@ -152,6 +152,7 @@ public abstract class BaseFragment extends Fragment {
                     hintText = "你还没有收藏内容\n赶快去收藏";
                     break;
                 case "IntegralProductFragment":
+                case "SpringSaleFragment":
                     hintText = "暂时没有商品哦";
                     break;
                 default:

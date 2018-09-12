@@ -144,13 +144,13 @@ public class UserFansAttentionActivity extends BaseActivity {
                 if (userAttentionFansBean != null) {
                     Intent intent = new Intent();
                     if (type.equals("attention")) {
-                        if (userId > 0 && userId != userAttentionFansBean.getBuid()) {
+                        if (userId != userAttentionFansBean.getBuid()) {
                             intent.setClass(UserFansAttentionActivity.this, UserPagerActivity.class);
                             intent.putExtra("userId", String.valueOf(userAttentionFansBean.getBuid()));
                             startActivity(intent);
                         }
                     } else {
-                        if (userId > 0 && userId != userAttentionFansBean.getFuid()) {
+                        if (userId != userAttentionFansBean.getFuid()) {
                             intent.setClass(UserFansAttentionActivity.this, UserPagerActivity.class);
                             intent.putExtra("userId", String.valueOf(userAttentionFansBean.getFuid()));
                             startActivity(intent);
