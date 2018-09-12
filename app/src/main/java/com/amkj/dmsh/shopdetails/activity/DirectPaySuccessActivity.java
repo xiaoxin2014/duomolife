@@ -56,6 +56,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_INTEGRAL_PRODUCT;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PAY_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
@@ -105,7 +106,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
         tl_normal_bar.setSelected(true);
         Intent intent = getIntent();
         indentNo = intent.getStringExtra("indentNo");
-        indentProductType = intent.getStringExtra("INDENT_PRODUCT_TYPE");
+        indentProductType = intent.getStringExtra(INDENT_PRODUCT_TYPE);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             getRecommendProductData();
         });
