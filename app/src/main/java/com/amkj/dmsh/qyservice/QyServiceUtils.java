@@ -114,10 +114,10 @@ public class QyServiceUtils {
             @Override
             public void onClick(Context context, String shopId, QuickEntry quickEntry) {
                 if (quickEntry.getId() == 1) {
-                    if(orderListBeanList.size()>0){
+                    if (orderListBeanList.size() > 0) {
                         createProductIndentDialog(context);
-                    }else{
-                        showToast(context,"暂无订单数据");
+                    } else {
+                        showToast(context, "暂无订单数据");
                     }
                 } else if (quickEntry.getId() == 2) {
                     Intent intent = new Intent(context, QualityNewProActivity.class);
@@ -277,6 +277,7 @@ public class QyServiceUtils {
     }
 
     public void loginQyUserInfo(Context context, int userId, String nickName, String mobile, String avatar) {
+        logoutQyUser();
         if (userId > 0) {
             String osVersion = Build.VERSION.RELEASE;
 //        手机型号
@@ -294,8 +295,6 @@ public class QyServiceUtils {
             userInfo.data = array.toString();
             Unicorn.setUserInfo(userInfo);
             uiCustomization.rightAvatar = avatar;
-        } else {
-            logoutQyUser();
         }
     }
 
@@ -339,7 +338,7 @@ public class QyServiceUtils {
             communal_recycler.setLayoutManager(new LinearLayoutManager(context));
             productIndentAdapter = new ProductIndentAdapter(context, orderListBeanList);
             communal_recycler.setAdapter(productIndentAdapter);
-            View indentHeaderView = LayoutInflater.from(context).inflate(R.layout.dialog_service_indent_header,null,false);
+            View indentHeaderView = LayoutInflater.from(context).inflate(R.layout.dialog_service_indent_header, null, false);
             AutoUtils.auto(indentHeaderView);
             ImageView iv_close_dialog = indentHeaderView.findViewById(R.id.iv_close_dialog);
             iv_close_dialog.setOnClickListener(new View.OnClickListener() {
@@ -376,7 +375,7 @@ public class QyServiceUtils {
                                 .setTitle(title)
                                 .setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderListBean.getNo())
                                 .setDesc(INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())))
-                                .setNote(String.format(context.getResources().getString(R.string.money_price_chn),orderListBean.getAmount()))
+                                .setNote(String.format(context.getResources().getString(R.string.money_price_chn), orderListBean.getAmount()))
                                 .setShow(1)
                                 .setSendByUser(false)
                                 .build();
