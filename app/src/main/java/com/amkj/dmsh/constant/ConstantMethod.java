@@ -2341,7 +2341,7 @@ public class ConstantMethod {
     /**
      * 获取应用市场
      */
-    public static void getMarketApp(Context context) {
+    public static void getMarketApp(Context context,String hintText) {
         //        获取已安装应用商店的包名列表
         try {
             List<PackageInfo> packageInfo = context.getPackageManager().getInstalledPackages(0);
@@ -2360,13 +2360,19 @@ public class ConstantMethod {
                 try {
                     MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
                 } catch (Exception e) {
-                    skipDownStore(context);
+                    emptyMarketApp(context, hintText);
                 }
-            } else {
-                skipDownStore(context);
+            }else{
+                emptyMarketApp(context, hintText);
             }
         } catch (Exception e) {
-            skipDownStore(context);
+            emptyMarketApp(context, hintText);
+        }
+    }
+
+    private static void emptyMarketApp(Context context, String hintText) {
+        if(!TextUtils.isEmpty(hintText)){
+            showToast(context,hintText);
         }
     }
 

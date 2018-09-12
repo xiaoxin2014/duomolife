@@ -301,7 +301,7 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     //    给个好评  跳转app商店
     @OnClick(R.id.tv_setting_good)
     void skipShop(View view) {
-        getMarketApp(AppDataActivity.this);
+        getMarketApp(AppDataActivity.this,"本机应用商店暂未上线哦，小主会努力呢~");
     }
 
     //    意见反馈

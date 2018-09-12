@@ -94,7 +94,7 @@ public class AppUpdateUtils {
                                      */
                                     UpgradeInfo upgradeInfo = Beta.getUpgradeInfo();
                                     if (upgradeInfo == null) {
-                                        getMarketApp(context);
+                                        getMarketApp(context,"暂无更多更新，稍晚留意新版本~");
                                     } else {
                                         Beta.checkUpgrade();
                                     }

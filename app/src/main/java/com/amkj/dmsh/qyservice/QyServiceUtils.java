@@ -72,6 +72,7 @@ public class QyServiceUtils {
     private ProductIndentHelper productIndentHelper;
     private YSFOptions ysfOptions;
     private UICustomization uiCustomization;
+    private final String qyAppKey = "ef251a87b903f9fd6938caafbdf0a9de";
 
     private QyServiceUtils() {
     }
@@ -91,8 +92,7 @@ public class QyServiceUtils {
      * 初始化网易七鱼
      */
     public void initQyService(Context context) {
-        String appKey = "ef251a87b903f9fd6938caafbdf0a9de";
-        isQyInit = Unicorn.init(context, appKey, QyOptions(), new QYGlideImageLoader(context.getApplicationContext()));
+        isQyInit = Unicorn.init(context, qyAppKey, QyOptions(), new QYGlideImageLoader(context.getApplicationContext()));
     }
 
     private YSFOptions QyOptions() {
