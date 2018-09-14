@@ -6,7 +6,9 @@
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:id="@+id/rel_goods_layout"
-        android:layout_height="344px"
+        android:layout_height="360px"
+        android:padding="1px"
+        android:background="@drawable/border_rect_four_gray_c_one_bg_white"
         app:layout_auto_basewidth="height">
         <ImageView
             android:id="@+id/img_springSale_product"
@@ -22,29 +24,29 @@
             android:layout_height="172px" />
     </RelativeLayout>
     <TextView
-        android:paddingLeft="12px"
-        android:paddingRight="12px"
+        android:layout_marginLeft="12px"
+        android:layout_marginRight="12px"
         android:id="@+id/tv_springSale_introduce"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="18px"
+        android:layout_width="match_parent"
+        android:layout_marginTop="16px"
         android:layout_height="wrap_content"
         android:lines="2"
         android:ellipsize="end"
         android:layout_below="@id/rel_goods_layout"
-        android:gravity="center_vertical|left"
+        android:gravity="center_vertical"
         android:text="电热蚊香一体器"
-        android:textColor="#333333"
-        android:lineSpacingExtra="@dimen/dimen_3_dp"
+        android:textColor="@color/text_black_t"
+        android:lineSpacingExtra="@dimen/dimen_7_dp"
         android:textSize="24px" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12px"
-        android:paddingRight="12px"
+        android:layout_marginLeft="12px"
+        android:layout_marginRight="12px"
         android:gravity="center_vertical"
         android:layout_below="@id/tv_springSale_introduce"
         android:orientation="horizontal"
-        android:paddingTop="10px">
+        android:layout_marginTop="30px">
 
         <TextView
             android:id="@+id/tv_product_duomolife_price"
@@ -52,18 +54,8 @@
             android:layout_height="match_parent"
             android:text="$666.00"
             android:gravity="center_vertical"
-            android:textColor="#ff6065"
+            android:textColor="@color/text_normal_red"
             android:textSize="28px" />
-
-        <TextView
-            android:id="@+id/tv_product_original_price"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|center"
-            android:layout_weight="1"
-            android:text="$999.00"
-            android:textColor="@color/text_gray_hint_n"
-            android:textSize="24px" />
         <ImageView
             android:layout_width="44px"
             android:padding="5px"

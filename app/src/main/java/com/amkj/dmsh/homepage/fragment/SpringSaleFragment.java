@@ -12,15 +12,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
@@ -30,21 +27,16 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
-import com.amkj.dmsh.homepage.adapter.LoopForeShowTimeAdapter;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
-import com.amkj.dmsh.homepage.adapter.SpringSaleSlidAdapter;
-import com.amkj.dmsh.homepage.bean.ShowTimeNewHoriHelperBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.SpringSaleBean;
-import com.amkj.dmsh.homepage.bean.TimeShowNewHoriEntity;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.lsjwzh.widget.recyclerviewpager.LoopRecyclerViewPager;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,7 +60,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 
@@ -83,7 +74,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
  */
 public class SpringSaleFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -93,21 +84,11 @@ public class SpringSaleFragment extends BaseFragment {
     private List<SpringSaleBean> saleTimeTotalList = new ArrayList();
     //    限时特惠商品排序
     private List<SpringSaleBean> saleTimeTotalSortList = new ArrayList();
-    //    轮播主题
-    private List<SpringSaleBean> saleTimeTopicList = new ArrayList();
-    //    滑动商品
-    private List<ShowTimeNewHoriHelperBean> saleTimeHoriProductList = new ArrayList();
     private int page = 1;
     private int scrollY;
-    private float screenHeight;
     //    当前时间
     private String currentRecordTime = "";
-    private ForeShowHeaderView foreShowHeaderView;
-    private LoopForeShowTimeAdapter loopForeShowTimeAdapter;
-    private SpringSaleSlidAdapter springSaleSlidAdapter;
     private SpringSaleRecyclerAdapterNew springSaleRecyclerAdapter;
-    private TimeShowNewHoriEntity foreShow;
-    private int dayTimePage = 1;
     private CustomPopWindow mCustomPopWindow;
     private long delayTime = 5000;
     private String showTime;
@@ -128,11 +109,6 @@ public class SpringSaleFragment extends BaseFragment {
                 return (saleTimeTotalList.get(position).getItemType() == TYPE_0) ? 1 : gridLayoutManager.getSpanCount();
             }
         });
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_show_time_header, (ViewGroup) communal_recycler.getParent(), false);
-        foreShowHeaderView = new ForeShowHeaderView();
-        ButterKnife.bind(foreShowHeaderView, view);
-        springSaleRecyclerAdapter.addHeaderView(view);
-        foreShowHeaderView.initView();
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_product)
@@ -195,15 +171,6 @@ public class SpringSaleFragment extends BaseFragment {
                 scrollY += dy;
                 if (!recyclerView.canScrollVertically(-1)) {
                     scrollY = 0;
-                }
-                if (screenHeight == 0) {
-                    BaseApplication app = (BaseApplication) getActivity().getApplication();
-                    screenHeight = app.getScreenHeight();
-                }
-                if (scrollY >= screenHeight) {
-                    download_btn_communal.setVisibility(View.VISIBLE);
-                } else {
-                    download_btn_communal.setVisibility(View.GONE);
                 }
             }
         });
@@ -319,9 +286,6 @@ public class SpringSaleFragment extends BaseFragment {
     protected void loadData() {
         if (!TextUtils.isEmpty(showTime)) {
             page = 1;
-            dayTimePage = 1;
-            getHoriDefaultProduct();
-            getTopicData();
             getProductData();
         }else{
             NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
@@ -331,51 +295,6 @@ public class SpringSaleFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
-    }
-
-    private void getHoriDefaultProduct() {
-//        横向滑动
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_DEFAULT_NEW;
-        Map<String, Object> params = new HashMap<>();
-        params.put("showCount", TOTAL_COUNT_TWENTY);
-        params.put("currentPage", 1);
-        params.put("searchDate", showTime);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                saleTimeHoriProductList.clear();
-                foreShow = gson.fromJson(result, TimeShowNewHoriEntity.class);
-                if (foreShow != null) {
-                    if (foreShow.getCode().equals("01")) {
-                        for (int i = 0; i < foreShow.getStartHours().size(); i++) {
-                            ArrayList<SpringSaleBean> showTimeGoodsBeanList = foreShow.getGoods().get(foreShow.getStartHours().get(i));
-                            if (showTimeGoodsBeanList != null && showTimeGoodsBeanList.size() > 0) {
-                                ShowTimeNewHoriHelperBean showTimeNewHoriHelperBean = new ShowTimeNewHoriHelperBean();
-                                showTimeNewHoriHelperBean.setPageIndex(1);
-                                if (showTimeGoodsBeanList.size() < TOTAL_COUNT_TWENTY) {
-                                    showTimeNewHoriHelperBean.setLoadMore(false);
-                                } else {
-                                    showTimeNewHoriHelperBean.setLoadMore(true);
-                                }
-                                showTimeNewHoriHelperBean.setDayTime(showTime);
-                                showTimeNewHoriHelperBean.setTimeNumber(foreShow.getStartHours().get(i));
-                                showTimeNewHoriHelperBean.setShowTimeGoods(showTimeGoodsBeanList);
-                                saleTimeHoriProductList.add(showTimeNewHoriHelperBean);
-                            }
-                        }
-                    } else if (!foreShow.getCode().equals("02")) {
-                        showToast(getActivity(), foreShow.getMsg());
-                    }
-                    springSaleSlidAdapter.setNewData(saleTimeHoriProductList);
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-        });
     }
 
     private void getProductData() {
@@ -460,50 +379,6 @@ public class SpringSaleFragment extends BaseFragment {
         });
     }
 
-    private void getProductHoriData(final ShowTimeNewHoriHelperBean showTimeNewHoriHelperBean) {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_N_NEW;
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", dayTimePage);
-        params.put("showCount", TOTAL_COUNT_TWENTY);
-        params.put("searchDate", showTime);
-        params.put("searchHour", showTimeNewHoriHelperBean.getTimeNumber());
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                TimeForeShowEntity foreShowBean = gson.fromJson(result, TimeForeShowEntity.class);
-                if (foreShowBean != null) {
-                    if (foreShowBean.getCode().equals("01")) {
-                        for (int i = 0; i < foreShow.getStartHours().size(); i++) {
-                            if (foreShow.getStartHours().get(i).equals(showTimeNewHoriHelperBean.getTimeNumber())) {
-                                ShowTimeNewHoriHelperBean showTimeNewHoriHelperBean = saleTimeHoriProductList.get(i);
-                                showTimeNewHoriHelperBean.setPageIndex(dayTimePage);
-                                if (foreShowBean.getSpringSales().size() < TOTAL_COUNT_TWENTY) {
-                                    showTimeNewHoriHelperBean.setLoadMore(false);
-                                } else {
-                                    showTimeNewHoriHelperBean.setLoadMore(true);
-                                }
-                                showTimeNewHoriHelperBean.setTimeNumber(foreShow.getStartHours().get(i));
-                                showTimeNewHoriHelperBean.getShowTimeGoods().addAll(foreShowBean.getSpringSales());
-                                saleTimeHoriProductList.set(i, showTimeNewHoriHelperBean);
-                            }
-                        }
-                        springSaleSlidAdapter.isRefresh = true;
-                        springSaleSlidAdapter.notifyDataSetChanged();
-                    } else if (!foreShowBean.getCode().equals("02")) {
-                        springSaleSlidAdapter.isRefresh = false;
-                        showToast(getActivity(), foreShowBean.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-        });
-    }
-
     private void cancelWarm(int productId, View view) {
         final ImageView imageView = (ImageView) view;
         String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
@@ -566,178 +441,9 @@ public class SpringSaleFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("loadMore")) {
-            ShowTimeNewHoriHelperBean showTimeNewHoriHelperBean = (ShowTimeNewHoriHelperBean) message.result;
-            int page = showTimeNewHoriHelperBean.getPageIndex() + 1;
-            if (showTimeNewHoriHelperBean.getDayTime().equals(showTime) && page != dayTimePage) {
-                dayTimePage = showTimeNewHoriHelperBean.getPageIndex() + 1;
-                getProductHoriData(showTimeNewHoriHelperBean);
-            } else {
-                springSaleSlidAdapter.isRefresh = false;
-            }
-        } else if (message.type.equals("onTimeTopic")) {
-            getTopicData();
-        } else if (message.type.equals("onTime")) {
+        if (message.type.equals("onTime")) {
             page = 1;
             getProductData();
-        }
-    }
-
-    private void getTopicData() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_TOPIC;
-        Map<String, Object> params = new HashMap<>();
-        params.put("searchDate", showTime);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                TimeForeShowEntity foreShow = gson.fromJson(result, TimeForeShowEntity.class);
-                if (foreShow != null) {
-                    if (foreShow.getCode().equals("01")) {
-                        saleTimeTopicList.clear();
-                        for (int i = 0; i < foreShow.getSpringSales().size(); i++) {
-                            SpringSaleBean springSaleBean = foreShow.getSpringSales().get(i);
-                            if (!TextUtils.isEmpty(foreShow.getCurrentTime())) {
-                                springSaleBean.setCurrentTime(foreShow.getCurrentTime());
-                            }
-                            saleTimeTopicList.add(springSaleBean);
-                        }
-                        setTopicData(saleTimeTopicList);
-                    } else {
-                        foreShowHeaderView.lrv_fore_show_time.setVisibility(View.GONE);
-                    }
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    private void setTopicData(List<SpringSaleBean> saleTimeTopicList) {
-        foreShowHeaderView.lrv_fore_show_time.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        loopForeShowTimeAdapter = new LoopForeShowTimeAdapter(getActivity(), saleTimeTopicList);
-        foreShowHeaderView.lrv_fore_show_time.setAdapter(loopForeShowTimeAdapter);
-        foreShowHeaderView.lrv_fore_show_time.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int scrollState) {
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int i, int i2) {
-                try {
-                    int childCount = foreShowHeaderView.lrv_fore_show_time.getChildCount();
-                    int width = foreShowHeaderView.lrv_fore_show_time.getChildAt(0).getWidth();
-                    int padding = (foreShowHeaderView.lrv_fore_show_time.getWidth() - width) / 2;
-                    for (int j = 0; j < childCount; j++) {
-                        View v = recyclerView.getChildAt(j);
-                        if (v.getLeft() <= padding) {
-                            v.setScaleY(1f);
-                            v.setScaleX(0.974f);
-                        } else {
-                            v.setScaleY(1f);
-                            v.setScaleX(0.974f);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        foreShowHeaderView.lrv_fore_show_time.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (foreShowHeaderView.lrv_fore_show_time.getChildCount() < 3) {
-                    if (foreShowHeaderView.lrv_fore_show_time.getChildAt(1) != null) {
-                        if (foreShowHeaderView.lrv_fore_show_time.getCurrentPosition() == 0) {
-                            View v1 = foreShowHeaderView.lrv_fore_show_time.getChildAt(1);
-                            v1.setScaleY(1f);
-                            v1.setScaleX(0.974f);
-                        } else {
-                            View v1 = foreShowHeaderView.lrv_fore_show_time.getChildAt(0);
-                            v1.setScaleY(1f);
-                            v1.setScaleX(0.974f);
-                        }
-                    }
-                } else {
-                    if (foreShowHeaderView.lrv_fore_show_time.getChildAt(0) != null) {
-                        View v0 = foreShowHeaderView.lrv_fore_show_time.getChildAt(0);
-                        v0.setScaleY(1f);
-                        v0.setScaleX(0.974f);
-                    }
-                    if (foreShowHeaderView.lrv_fore_show_time.getChildAt(2) != null) {
-                        View v2 = foreShowHeaderView.lrv_fore_show_time.getChildAt(2);
-                        v2.setScaleY(1f);
-                        v2.setScaleX(0.974f);
-                    }
-                }
-            }
-        });
-        loopForeShowTimeAdapter.setOnItemClickListener(new LoopForeShowTimeAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(View view) {
-                SpringSaleBean springSaleBean = (SpringSaleBean) view.getTag();
-                Intent intent = new Intent();
-                if (springSaleBean != null) {
-                    if (springSaleBean.getTopic() != null) {
-                        intent.setClass(getActivity(), TimeBrandDetailsActivity.class);
-                        intent.putExtra("brandId", String.valueOf(springSaleBean.getTopic().getId()));
-                    } else {
-                        intent.setClass(getActivity(), ShopTimeScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(springSaleBean.getId()));
-                    }
-                    startActivity(intent);
-                }
-            }
-        });
-        startAutoPlay();
-        foreShowHeaderView.lrv_fore_show_time.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
-                        || action == MotionEvent.ACTION_OUTSIDE) {
-                    startAutoPlay();
-                } else if (action == MotionEvent.ACTION_DOWN) {
-                    stopAutoPlay();
-                }
-                return false;
-            }
-        });
-    }
-
-    public void startAutoPlay() {
-        handler.removeCallbacks(task);
-        handler.postDelayed(task, delayTime);
-    }
-
-    public void stopAutoPlay() {
-        handler.removeCallbacks(task);
-    }
-
-    private final Runnable task = new Runnable() {
-        @Override
-        public void run() {
-            if (saleTimeTopicList.size() > 1) {
-                handler.postDelayed(task, delayTime);
-                smoothNextPage();
-            }
-        }
-    };
-
-    private void smoothNextPage() {
-        int currentPosition;
-        try {
-            currentPosition = foreShowHeaderView.lrv_fore_show_time.getActualCurrentPosition();
-            if (currentPosition == saleTimeTopicList.size() - 1) {
-                foreShowHeaderView.lrv_fore_show_time.smoothScrollToPosition(0);
-            } else {
-                foreShowHeaderView.lrv_fore_show_time.smoothScrollToPosition(currentPosition + 1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -748,40 +454,6 @@ public class SpringSaleFragment extends BaseFragment {
             showTime = (String) bundle.get("show_time");
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    class ForeShowHeaderView {
-        @BindView(R.id.lrv_fore_show_time)
-        LoopRecyclerViewPager lrv_fore_show_time;
-        @BindView(R.id.communal_recycler_wrap)
-        RecyclerView communal_recycler_wrap;
-
-        public void initView() {
-//            滑动商品
-            communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
-            springSaleSlidAdapter = new SpringSaleSlidAdapter(getActivity(), saleTimeHoriProductList);
-            communal_recycler_wrap.setAdapter(springSaleSlidAdapter);
-            lrv_fore_show_time.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
-                @Override
-                public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-                    super.onTouchEvent(rv, e);
-                }
-
-                @Override
-                public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                    lrv_fore_show_time.getParent().requestDisallowInterceptTouchEvent(true);
-                    Message message = new Message();
-                    message.arg1 = 2;
-                    handler.sendMessageDelayed(message, 500);
-                    return super.onInterceptTouchEvent(rv, e);
-                }
-
-                @Override
-                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-                    super.onRequestDisallowInterceptTouchEvent(disallowIntercept);
-                }
-            });
         }
     }
 

@@ -1,10 +1,8 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.text.TextUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.BaseViewHolderHelper;
@@ -44,9 +42,6 @@ public class DoMoLifeTimeBrandAdapter extends BaseQuickAdapter<DMLTimeDetailBean
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_springSale_product), dmlTimeDetailBean.getPicUrl());
         helper.setText(R.id.tv_product_duomolife_price, "￥" + dmlTimeDetailBean.getPrice());
         helper.setText(R.id.tv_springSale_introduce, getStrings(dmlTimeDetailBean.getName()));
-        TextView tv_product_original_price = helper.getView(R.id.tv_product_original_price);
-        tv_product_original_price.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        tv_product_original_price.setText("￥" + dmlTimeDetailBean.getMarketPrice());
         if (isTimeStart(dmlTimeDetailBean)) {
             helper.setGone(R.id.iv_pro_time_warm, false);
         } else {

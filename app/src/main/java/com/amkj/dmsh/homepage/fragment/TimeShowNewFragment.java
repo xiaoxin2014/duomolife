@@ -4,25 +4,21 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.TimeShowPagerAdapter;
-import com.amkj.dmsh.homepage.bean.TabDoubleEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowEntity.TimeShowBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
-import com.flyco.tablayout.SlidingTabLayoutDouble;
-import com.flyco.tablayout.listener.CustomTabDoubleEntity;
 import com.google.gson.Gson;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +29,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
+
+;
 
 
 /**
@@ -53,17 +52,17 @@ public class TimeShowNewFragment extends BaseFragment {
     LinearLayout ll_spr_sale;
     @BindView(R.id.vp_show_time)
     ViewPager vp_show_time;
-    @BindView(R.id.std_time_shaft)
-    SlidingTabLayoutDouble std_time_shaft;
+    @BindView(R.id.rp_time_spring)
+    RadioGroup rp_time_spring;
 
     private List<TimeShowBean> timeShowBeanList = new ArrayList<>();
-    private List<CustomTabDoubleEntity> customTabDoubleList = new ArrayList<>();
     private float screenWidth;
 
     @Override
     protected int getContentView() {
         return R.layout.fragment_time_show_shaft_new;
     }
+
     @Override
     protected void initViews() {
         setStatusColor();
@@ -74,9 +73,16 @@ public class TimeShowNewFragment extends BaseFragment {
             BaseApplication app = (BaseApplication) getActivity().getApplication();
             screenWidth = app.getScreenWidth() / 5f;
         }
-        std_time_shaft.setTabWidth(screenWidth);
-        std_time_shaft.setTextsize(AutoUtils.getPercentHeightSize(30));
-        std_time_shaft.setSubTextsize(AutoUtils.getPercentHeightSize(22));
+        rp_time_spring.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rb_time_spring_open_group) {
+                    vp_show_time.setCurrentItem(0);
+                } else {
+                    vp_show_time.setCurrentItem(1);
+                }
+            }
+        });
     }
 
     private void setStatusColor() {
@@ -124,69 +130,54 @@ public class TimeShowNewFragment extends BaseFragment {
     }
 
     private void setTimeLoadError() {
-        if(timeShowBeanList.size()<1){
+        if (timeShowBeanList.size() < 1) {
             showToast(getActivity(), R.string.unConnectedNetwork);
         }
     }
 
     private void setTimeShaft(TimeShowEntity timeShowEntity) {
-        if(timeShowBeanList.size()>0){
+        if (timeShowBeanList.size() > 0) {
             boolean isRefresh = false;
-            if(timeShowBeanList.size() == timeShowEntity.getTimeShowBeanList().size()){
+            if (timeShowBeanList.size() == timeShowEntity.getTimeShowBeanList().size()) {
                 for (int i = 0; i < timeShowEntity.getTimeShowBeanList().size(); i++) {
                     TimeShowBean timeShowBean = timeShowEntity.getTimeShowBeanList().get(i);
                     TimeShowBean timeShowOldBean = timeShowBeanList.get(i);
-                    if(!timeShowBean.getDate().equals(timeShowOldBean.getDate())
-                            ||timeShowBean.getType() != timeShowOldBean.getType()){
+                    if (!timeShowBean.getDate().equals(timeShowOldBean.getDate())
+                            || timeShowBean.getType() != timeShowOldBean.getType()) {
                         isRefresh = true;
                         break;
                     }
                 }
             }
-            if(isRefresh){
+            if (isRefresh) {
                 setTimeShaftIndex(timeShowEntity);
             }
-        }else{
+        } else {
             setTimeShaftIndex(timeShowEntity);
         }
     }
 
     private void setTimeShaftIndex(TimeShowEntity timeShowEntity) {
         timeShowBeanList.clear();
-        customTabDoubleList.clear();
-        int index = 0;
-        TabDoubleEntity tabDoubleEntity;
-        for (int i = 0; i < timeShowEntity.getTimeShowBeanList().size(); i++) {
-            TimeShowBean timeShowBean = timeShowEntity.getTimeShowBeanList().get(i);
-            if (timeShowBean.getType() == 1) {
-                index = i;
-            }
-            timeShowBeanList.add(timeShowBean);
-            tabDoubleEntity = new TabDoubleEntity();
-            tabDoubleEntity.setTabTitle(timeShowBean.getName());
-            tabDoubleEntity.setTabSubTitle(timeShowBean.getType() == 2 ? "即将开始" : "抢购中");
-            customTabDoubleList.add(tabDoubleEntity);
+        timeShowBeanList.addAll(timeShowEntity.getTimeShowBeanList());
+        if (timeShowBeanList.size() > 0) {
+            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList);
+            vp_show_time.setAdapter(timeShowPagerAdapter);
+            vp_show_time.setCurrentItem(0);
         }
-        TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList);
-        vp_show_time.setAdapter(timeShowPagerAdapter);
-        std_time_shaft.setTabWidth(screenWidth);
-        std_time_shaft.setTextsize(AutoUtils.getPercentHeightSize(30));
-        std_time_shaft.setSubTextsize(AutoUtils.getPercentHeightSize(22));
-        std_time_shaft.setViewPager(vp_show_time, customTabDoubleList);
-        vp_show_time.setCurrentItem(index);
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if(message.type.equals(TIME_REFRESH)){
+        if (message.type.equals(TIME_REFRESH)) {
             loadData();
         }
     }
 
     @OnClick(R.id.ll_spr_sale)
-    public void refreshTimeShaft(){
-        if(timeShowBeanList.size()<1){
-            if(loadHud!=null){
+    public void refreshTimeShaft() {
+        if (timeShowBeanList.size() < 1) {
+            if (loadHud != null) {
                 loadHud.show();
             }
             getTimeShaft();

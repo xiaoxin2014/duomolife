@@ -37,16 +37,21 @@ import com.qiyukf.unicorn.api.YSFOptions;
 import com.qiyukf.unicorn.api.YSFUserInfo;
 import com.qiyukf.unicorn.api.lifecycle.SessionLifeCycleOptions;
 import com.qiyukf.unicorn.api.msg.MessageService;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
@@ -73,6 +78,7 @@ public class QyServiceUtils {
     private YSFOptions ysfOptions;
     private UICustomization uiCustomization;
     private final String qyAppKey = "ef251a87b903f9fd6938caafbdf0a9de";
+    private final String qySerectKey = "1280d1127f99ac5ad360e79561a390b9";
 
     private QyServiceUtils() {
     }
@@ -327,6 +333,111 @@ public class QyServiceUtils {
         Unicorn.logout();
     }
 
+    /**
+     * 上传订单数据
+     *
+     * @param indentJson 订单数据
+     */
+    public void upIndentData(Context context, String indentJson, String currentTime) {
+//        String url = "https://qiyukf.com/openapi/order/upload";
+//        long lTime = getDateMilliSecondSystemTime(currentTime) / 1000;
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("appKey", qyAppKey);
+//        params.put("time", lTime);
+//        params.put("checksum", encodeMd5(qySerectKey,toMD5(encrypt(indentJson, qySerectKey)).toLowerCase(),String.valueOf(lTime)));
+//        NetLoadUtils.getQyInstance().loadNetDataPost(context, url, params, new NetLoadUtils.NetLoadListener() {
+//            @Override
+//            public void onSuccess(String result) {
+//                int code = 0;
+//                String msg = "";
+//                try {
+//                    JSONObject jsonObject = new JSONObject(result);
+//                    code = jsonObject.getInt("code");
+//                    msg = (String) jsonObject.get("message");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                showToast(context, code + msg);
+//            }
+//
+//            @Override
+//            public void netClose() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable throwable) {
+//                showToast(context, "订单上传失败");
+//            }
+//        });
+    }
+
+    /**
+     * 使用AES算法对content加密
+     *
+     * @param content    待加密的内容
+     * @param encryptKey 加密密钥
+     * @return 加密后的byte[]
+     */
+    public static String encrypt(String content, String encryptKey) {
+        try {
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.setSeed(encryptKey.getBytes());
+            kgen.init(128, random);
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(kgen.generateKey().getEncoded(), "AES"));
+            return byteArr2HexStr(cipher.doFinal(content.getBytes("utf-8")));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 将byte数组转换为16进制值的字符串
+     *
+     * @param b 需要转换的byte数组
+     * @return 转换后的字符串
+     */
+    private static String byteArr2HexStr(byte[] b) {
+        int length = b.length;
+        StringBuffer sb = new StringBuffer(length * 2);
+        for (int i = 0; i < length; i++) {
+            int temp = b[i];
+            while (temp < 0) {
+                temp = temp + 256;
+            }
+            if (temp < 16) {
+                sb.append("0");
+            }
+            sb.append(Integer.toString(temp, 16));
+        }
+        return sb.toString();
+    }
+
+    private final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+    private String encodeMd5(String appSecret, String nonce, String time) {
+        String content = appSecret + nonce + time;
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("sha1");
+            messageDigest.update(content.getBytes());
+            return getFormattedText(messageDigest.digest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getFormattedText(byte[] bytes) {
+        int len = bytes.length;
+        StringBuilder buf = new StringBuilder(len * 2);
+        for (int j = 0; j < len; j++) {
+            buf.append(HEX_DIGITS[(bytes[j] >> 4) & 0x0f]);
+            buf.append(HEX_DIGITS[bytes[j] & 0x0f]);
+        }
+        return buf.toString();
+    }
+
     class ProductIndentHelper {
         private ProductIndentAdapter productIndentAdapter;
         private final AlertDialog imageAlertDialog;
@@ -339,7 +450,7 @@ public class QyServiceUtils {
             productIndentAdapter = new ProductIndentAdapter(context, orderListBeanList);
             communal_recycler.setAdapter(productIndentAdapter);
             View indentHeaderView = LayoutInflater.from(context).inflate(R.layout.dialog_service_indent_header, null, false);
-            AutoUtils.auto(indentHeaderView);
+//            AutoUtils.auto(indentHeaderView);
             ImageView iv_close_dialog = indentHeaderView.findViewById(R.id.iv_close_dialog);
             iv_close_dialog.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -392,7 +503,7 @@ public class QyServiceUtils {
                 window.setBackgroundDrawableResource(R.color.translucence);
                 WindowManager.LayoutParams params = window.getAttributes();
                 params.width = WindowManager.LayoutParams.MATCH_PARENT;
-                params.height = AutoUtils.getPercentHeightSize(700);
+//                params.height = AutoUtils.getPercentHeightSize(700);
                 window.setGravity(Gravity.BOTTOM);
                 window.setAttributes(params);
                 window.setContentView(view);

@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,10 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.qyservice.ServiceIndentInfoEntity;
+import com.amkj.dmsh.qyservice.ServiceIndentInfoEntity.ServiceIndentInfoBean;
+import com.amkj.dmsh.qyservice.ServiceIndentInfoEntity.ServiceIndentInfoBean.ServiceOrderInfoBean;
 import com.amkj.dmsh.shopdetails.integration.IntegExchangeDetailActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -37,6 +42,10 @@ import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +59,7 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
+import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecondSystemTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -58,8 +68,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_INTEGRAL_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PAY_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -195,6 +207,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
     protected void loadData() {
         getRecommendProductData();
         getPaySucAd();
+        getIndentInfo();
     }
 
     @Override
@@ -296,6 +309,63 @@ public class DirectPaySuccessActivity extends BaseActivity {
         });
     }
 
+    /**
+     *
+     */
+    private void getIndentInfo() {
+        String url;
+        Map<String, Object> params = new HashMap<>();
+        if (INDENT_INTEGRAL_PRODUCT.equals(indentProductType)) {
+            url = Url.BASE_URL + Url.INDENT_INTEGRAL_DETAILS;
+            params.put("no", indentNo);
+            params.put("userId", userId);
+        } else{
+            url = Url.BASE_URL + Url.Q_INDENT_DETAILS;
+            params.put("no", indentNo);
+            //        版本号控制 3 组合商品赠品
+            params.put("version", 3);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                ServiceIndentInfoEntity serviceIndentInfoEntity = gson.fromJson(result, ServiceIndentInfoEntity.class);
+                if(serviceIndentInfoEntity!=null
+                        &&serviceIndentInfoEntity.getCode().equals(SUCCESS_CODE)){
+                    ServiceIndentInfoBean serviceIndentInfoBean = serviceIndentInfoEntity.getServiceIndentInfoBean();
+                    if(serviceIndentInfoBean!=null){
+                        ServiceOrderInfoBean serviceOrderInfoBean = serviceIndentInfoBean.getServiceOrderInfoBean();
+                        if(serviceOrderInfoBean!=null){
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("orderId",serviceOrderInfoBean.getNo());
+                                jsonObject.put("uid",userId);
+                                jsonObject.put("orderTime",getDateMilliSecondSystemTime(serviceOrderInfoBean.getCreateTime()));
+                                jsonObject.put("payTime",getDateMilliSecondSystemTime(serviceOrderInfoBean.getPayTime()));
+                                jsonObject.put("amount",serviceOrderInfoBean.getPayAmount());
+                                JSONArray jsonArray = new JSONArray();
+                                QyServiceUtils.getQyInstance().upIndentData(DirectPaySuccessActivity.this
+                                        ,jsonArray.put(jsonObject).toString()
+                                        ,serviceIndentInfoEntity.getSystemTime());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.d("异常", "onError: " + throwable.getMessage());
+            }
+        });
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -338,7 +408,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
             Intent intent = new Intent(DirectPaySuccessActivity.this, MainActivity.class);
             intent.putExtra("isSkipPage", "1");
             intent.putExtra("indexShowLight", "1");
-            intent.putExtra("type", "quality");
+            intent.putExtra("type", MAIN_QUALITY);
             startActivity(intent);
             finish();
         }
