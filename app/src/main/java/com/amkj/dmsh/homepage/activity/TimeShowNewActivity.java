@@ -16,10 +16,8 @@ import com.amkj.dmsh.homepage.bean.TabDoubleEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowEntity.TimeShowBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.flyco.tablayout.SlidingTabLayoutDouble;
 import com.flyco.tablayout.listener.CustomTabDoubleEntity;
 import com.google.gson.Gson;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,8 +47,6 @@ public class TimeShowNewActivity extends BaseActivity {
     TextView tv_header_shared;
     @BindView(R.id.tv_header_title)
     TextView tv_header_title;
-    @BindView(R.id.std_time_shaft)
-    SlidingTabLayoutDouble std_time_shaft;
 
     private List<TimeShowBean> timeShowBeanList = new ArrayList<>();
     private List<CustomTabDoubleEntity> customTabDoubleList = new ArrayList<>();
@@ -145,10 +141,6 @@ public class TimeShowNewActivity extends BaseActivity {
             BaseApplication app = (BaseApplication) getApplication();
             screenWidth = app.getScreenWidth() / 5f;
         }
-        std_time_shaft.setTabWidth(screenWidth);
-        std_time_shaft.setTextsize(AutoUtils.getPercentHeightSize(30));
-        std_time_shaft.setSubTextsize(AutoUtils.getPercentHeightSize(22));
-        std_time_shaft.setViewPager(vp_show_time, customTabDoubleList);
         vp_show_time.setCurrentItem(index);
     }
 
