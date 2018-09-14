@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="19px"
             android:gravity="center_vertical"
-            android:id="@+id/tv_spring_hori_time"
+            android:id="@+id/tv_spring_time_shaft"
             android:layout_height="match_parent" />
     </RelativeLayout>
     <include layout="@layout/layout_communal_recycler_wrap"/>

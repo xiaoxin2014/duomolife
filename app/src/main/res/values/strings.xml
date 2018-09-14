@@ -188,4 +188,7 @@
     <!--图片裁切格式-->
     <string name="image_crop_style">/indexcrop,y_%1$d,i_%2$d</string>
     <string name="load_data_failed">可能原因\n·网络信号弱，换个wifi试一试~\n·系统出错，技术小哥正在抢修</string>
+    <!--限时特惠-->
+    <string name="time_week_text">- %1$s -</string>
+    <string name="time_product_clock_new">%1$s点上新</string>
 </resources>

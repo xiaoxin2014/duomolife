@@ -1,5 +1,7 @@
 package com.amkj.dmsh.base;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -8,13 +10,14 @@ package com.amkj.dmsh.base;
  * class description:服务器时间基类实体
  */
 public class BaseTimeEntity extends BaseEntity{
-    private String sysTime;
+    @SerializedName(value = "sysTime",alternate = "currentTime")
+    private String systemTime;
 
-    public String getSysTime() {
-        return sysTime;
+    public String getSystemTime() {
+        return systemTime;
     }
 
-    public void setSysTime(String sysTime) {
-        this.sysTime = sysTime;
+    public void setSystemTime(String systemTime) {
+        this.systemTime = systemTime;
     }
 }

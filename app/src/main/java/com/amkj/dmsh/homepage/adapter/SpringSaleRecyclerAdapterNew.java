@@ -6,7 +6,6 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.BaseViewHolderHelper;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.SpringSaleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -18,6 +17,9 @@ import cn.iwgang.countdownview.CountdownView;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 
 ;
 
@@ -33,15 +35,16 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Spri
     public SpringSaleRecyclerAdapterNew(Context context, List<SpringSaleBean> saleTimeTotalList) {
         super(saleTimeTotalList);
         this.context = context;
-        addItemType(ConstantVariable.TYPE_0, R.layout.adapter_promotion_pro_item);
-        addItemType(ConstantVariable.TYPE_1, R.layout.adapter_promotion_foreshow_date_header);
+        addItemType(TYPE_0, R.layout.adapter_promotion_pro_item);
+        addItemType(TYPE_1, R.layout.adapter_promotion_foreshow_topic);
+        addItemType(TYPE_2, R.layout.adapter_promotion_foreshow_date_header);
     }
 
     @Override
     protected void convert(BaseViewHolderHelper helper, SpringSaleBean springSaleBean) {
         switch (helper.getItemViewType()) {
 //            单品
-            case ConstantVariable.TYPE_0:
+            case TYPE_0:
                 if (springSaleBean.getQuantity() < 1) {
                     helper.setGone(R.id.img_spring_sale_tag_out, true);
                 } else {
@@ -50,9 +53,9 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Spri
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_springSale_product), springSaleBean.getPicUrl());
                 if (!TextUtils.isEmpty(springSaleBean.getMaxPrice())
                         && getFloatNumber(springSaleBean.getPrice()) < getFloatNumber(springSaleBean.getMaxPrice())) {
-                    helper.setText(R.id.tv_product_duomolife_price, getStringsChNPrice(context,springSaleBean.getPrice()) + "+");
+                    helper.setText(R.id.tv_product_duomolife_price, getStringsChNPrice(context, springSaleBean.getPrice()) + "+");
                 } else {
-                    helper.setText(R.id.tv_product_duomolife_price, getStringsChNPrice(context,springSaleBean.getPrice()));
+                    helper.setText(R.id.tv_product_duomolife_price, getStringsChNPrice(context, springSaleBean.getPrice()));
                 }
                 helper.setText(R.id.tv_springSale_introduce, getStrings(springSaleBean.getName()));
 
@@ -68,10 +71,12 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Spri
                 helper.itemView.setTag(springSaleBean);
                 break;
 //            品牌团
-            case ConstantVariable.TYPE_1:
+            case TYPE_1:
                 helper.setIsRecyclable(false);
                 CountdownView ct_time_communal_show_bg = helper.getView(R.id.ct_time_communal_show_bg);
                 springSaleBean.setTimeObject(ct_time_communal_show_bg);
+                break;
+            case TYPE_2:
                 break;
         }
     }

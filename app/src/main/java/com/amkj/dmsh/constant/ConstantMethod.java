@@ -545,15 +545,15 @@ public class ConstantMethod {
     }
 
     public static Badge getBadge(Context context, View view) {
-        return getBadge(context, view, (int) (AutoUtils.getPercentWidth1px() * 15), (int) (AutoUtils.getPercentWidth1px() * 20));
+        return getBadge(context, view, AutoUtils.getPercentWidthSize(15), AutoUtils.getPercentWidthSize( 20));
     }
 
     public static Badge getBadge(Context context, View view, int offsetX, int offsetY) {
         Badge badge = new QBadgeView(context).bindTarget(view);
         badge.setBadgeGravity(Gravity.END | Gravity.TOP);
         badge.setGravityOffset(offsetX, offsetY, false);
-        badge.setBadgePadding(AutoUtils.getPercentWidth1px() * 3, false);
-        badge.setBadgeTextSize(AutoUtils.getPercentWidth1px() * 18, false);
+        badge.setBadgePadding(AutoUtils.getPercentWidthSize(3), false);
+        badge.setBadgeTextSize(AutoUtils.getPercentWidthSize(18), false);
         badge.setBadgeBackgroundColor(context.getResources().getColor(R.color.text_normal_red));
         return badge;
     }
@@ -2102,6 +2102,26 @@ public class ConstantMethod {
     }
 
     /**
+     * 获取毫秒 空值为当前默认时间
+     * @param time
+     * @return
+     */
+    public static long getDateMilliSecondSystemTime(String time) {
+        if (!TextUtils.isEmpty(time)) {
+            try {
+                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                Date date = timeReceiveFormat.parse(time);
+                return date.getTime();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Date().getTime();
+            }
+        } else {
+            return new Date().getTime();
+        }
+    }
+
+    /**
      * 判断是否是同一年份
      *
      * @param t1
@@ -2341,7 +2361,7 @@ public class ConstantMethod {
     /**
      * 获取应用市场
      */
-    public static void getMarketApp(Context context,String hintText) {
+    public static void getMarketApp(Context context) {
         //        获取已安装应用商店的包名列表
         try {
             List<PackageInfo> packageInfo = context.getPackageManager().getInstalledPackages(0);
@@ -2360,19 +2380,13 @@ public class ConstantMethod {
                 try {
                     MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
                 } catch (Exception e) {
-                    emptyMarketApp(context, hintText);
+                    skipDownStore(context);
                 }
-            }else{
-                emptyMarketApp(context, hintText);
+            } else {
+                skipDownStore(context);
             }
         } catch (Exception e) {
-            emptyMarketApp(context, hintText);
-        }
-    }
-
-    private static void emptyMarketApp(Context context, String hintText) {
-        if(!TextUtils.isEmpty(hintText)){
-            showToast(context,hintText);
+            skipDownStore(context);
         }
     }
 

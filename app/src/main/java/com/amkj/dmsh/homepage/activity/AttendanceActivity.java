@@ -484,7 +484,7 @@ public class AttendanceActivity extends BaseActivity {
                             int lotteryStatus = 0;//0 已结束 1 待开始 2 进行中
                             for (int i = 0; i < integralLotteryList.size(); i++) {
                                 PreviousInfoBean previousInfoBean = integralLotteryList.get(i);
-                                previousInfoBean.setmCurrentTime(integralLotteryEntity.getSysTime());
+                                previousInfoBean.setmCurrentTime(integralLotteryEntity.getSystemTime());
                                 if (integralLotteryList.size() >= 2) {
                                     if (lotteryStatus < 2 && isEndOrStartTime(previousInfoBean.getmCurrentTime(), previousInfoBean.getStartTime())
                                             && isEndOrStartTime(previousInfoBean.getEndTime(), previousInfoBean.getmCurrentTime())) {

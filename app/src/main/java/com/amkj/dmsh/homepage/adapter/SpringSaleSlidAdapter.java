@@ -43,7 +43,7 @@ public class SpringSaleSlidAdapter extends BaseQuickAdapter<ShowTimeNewHoriHelpe
         springSaleBeanList.addAll(showTimeNewHoriHelperBean.getShowTimeGoods());
         final SpringSaleHorizonAdapter springSaleHoriAdapter = (SpringSaleHorizonAdapter) helper.communal_recycler_wrap.getAdapter();
         springSaleHoriAdapter.setNewData(springSaleBeanList);
-        helper.setText(R.id.tv_spring_hori_time, showTimeNewHoriHelperBean.getTimeNumber() + "点上新");
+        helper.setText(R.id.tv_spring_time_shaft, showTimeNewHoriHelperBean.getTimeNumber() + "点上新");
         springSaleHoriAdapter.setOnItemClickListener((adapter, view, position) -> {
             SpringSaleBean springSaleBean = (SpringSaleBean) view.getTag();
             if (springSaleBean != null) {
