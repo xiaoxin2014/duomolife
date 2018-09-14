@@ -27,7 +27,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.qyservice.ServiceIndentInfoEntity;
 import com.amkj.dmsh.qyservice.ServiceIndentInfoEntity.ServiceIndentInfoBean;
 import com.amkj.dmsh.qyservice.ServiceIndentInfoEntity.ServiceIndentInfoBean.ServiceOrderInfoBean;
@@ -43,7 +42,6 @@ import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,7 +57,6 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
-import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecondSystemTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -340,13 +337,13 @@ public class DirectPaySuccessActivity extends BaseActivity {
                             try {
                                 jsonObject.put("orderId",serviceOrderInfoBean.getNo());
                                 jsonObject.put("uid",userId);
-                                jsonObject.put("orderTime",getDateMilliSecondSystemTime(serviceOrderInfoBean.getCreateTime()));
-                                jsonObject.put("payTime",getDateMilliSecondSystemTime(serviceOrderInfoBean.getPayTime()));
-                                jsonObject.put("amount",serviceOrderInfoBean.getPayAmount());
-                                JSONArray jsonArray = new JSONArray();
-                                QyServiceUtils.getQyInstance().upIndentData(DirectPaySuccessActivity.this
-                                        ,jsonArray.put(jsonObject).toString()
-                                        ,serviceIndentInfoEntity.getSystemTime());
+//                                jsonObject.put("orderTime",getDateMilliSecondSystemTime(serviceOrderInfoBean.getCreateTime()));
+//                                jsonObject.put("payTime",getDateMilliSecondSystemTime(serviceOrderInfoBean.getPayTime()));
+//                                jsonObject.put("amount",serviceOrderInfoBean.getPayAmount());
+//                                JSONArray jsonArray = new JSONArray();
+//                                QyServiceUtils.getQyInstance().upIndentData(DirectPaySuccessActivity.this
+//                                        ,jsonArray.put(jsonObject).toString()
+//                                        ,serviceIndentInfoEntity.getSystemTime());
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
