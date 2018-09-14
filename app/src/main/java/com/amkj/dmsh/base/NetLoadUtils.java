@@ -223,6 +223,11 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             loadService.showCallback(NetLoadCallback.class);
         }
     }
+    public void showLoadSirEmpty(LoadService loadService) {
+        if (loadService != null) {
+            loadService.showCallback(NetEmptyCallback.class);
+        }
+    }
 
     /**
      * 配置数据 展示异常界面

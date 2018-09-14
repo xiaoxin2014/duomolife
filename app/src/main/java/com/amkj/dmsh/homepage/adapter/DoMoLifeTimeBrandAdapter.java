@@ -39,15 +39,15 @@ public class DoMoLifeTimeBrandAdapter extends BaseQuickAdapter<DMLTimeDetailBean
         } else {
             helper.setGone(R.id.img_spring_sale_tag_out, false);
         }
-        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_springSale_product), dmlTimeDetailBean.getPicUrl());
-        helper.setText(R.id.tv_product_duomolife_price, "￥" + dmlTimeDetailBean.getPrice());
+        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_springSale_product_image), dmlTimeDetailBean.getPicUrl());
+        helper.setText(R.id.tv_product_promotion_price, "￥" + dmlTimeDetailBean.getPrice());
         helper.setText(R.id.tv_springSale_introduce, getStrings(dmlTimeDetailBean.getName()));
-        if (isTimeStart(dmlTimeDetailBean)) {
-            helper.setGone(R.id.iv_pro_time_warm, false);
-        } else {
-            helper.setGone(R.id.iv_pro_time_warm, true);
-        }
-        helper.addOnClickListener(R.id.iv_pro_time_warm).setTag(R.id.iv_pro_time_warm, dmlTimeDetailBean);
+//        if (isTimeStart(dmlTimeDetailBean)) {
+//            helper.setGone(R.id.iv_pro_time_warm, false);
+//        } else {
+//            helper.setGone(R.id.iv_pro_time_warm, true);
+//        }
+//        helper.addOnClickListener(R.id.iv_pro_time_warm).setTag(R.id.iv_pro_time_warm, dmlTimeDetailBean);
         helper.itemView.setTag(dmlTimeDetailBean);
     }
 

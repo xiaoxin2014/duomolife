@@ -60,7 +60,6 @@ import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -153,25 +152,25 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 }
             }
         }, communal_recycler);
-        duoMoLifeTimeBrandAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                //跳转自营商品详情
-                DMLTimeDetailBean dmlTimeDetailBean = (DMLTimeDetailBean) view.getTag();
-                if (dmlTimeDetailBean != null) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_time_warm:
-//                            设置提醒 取消提醒 是否是第一次设置
-                            if (userId != 0) {
-                                isFirstRemind(dmlTimeDetailBean, (ImageView) view);
-                            } else {
-                                getLoginStatus(TimeBrandDetailsActivity.this);
-                            }
-                            break;
-                    }
-                }
-            }
-        });
+//        duoMoLifeTimeBrandAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+//            @Override
+//            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+//                //跳转自营商品详情
+//                DMLTimeDetailBean dmlTimeDetailBean = (DMLTimeDetailBean) view.getTag();
+//                if (dmlTimeDetailBean != null) {
+//                    switch (view.getId()) {
+//                        case R.id.iv_pro_time_warm:
+////                            设置提醒 取消提醒 是否是第一次设置
+//                            if (userId != 0) {
+//                                isFirstRemind(dmlTimeDetailBean, (ImageView) view);
+//                            } else {
+//                                getLoginStatus(TimeBrandDetailsActivity.this);
+//                            }
+//                            break;
+//                    }
+//                }
+//            }
+//        });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

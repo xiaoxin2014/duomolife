@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="32px"
+        android:text="Top团品推荐"
+        android:gravity="center"
+        android:id="@+id/tv_foreshow_promotion_title"
+        android:textColor="@color/text_black_t"
+        android:layout_height="100px" />
+</RelativeLayout>

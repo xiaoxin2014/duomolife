@@ -22,7 +22,7 @@ import java.util.Map;
  */
 
 public class TimeShowPagerAdapter extends FragmentPagerAdapter {
-    private final List<TimeShowBean> timeShowBeanList = new ArrayList<>();
+    private List<TimeShowBean> timeShowBeanList;
     private final List<TimeShowBean> timeShowBeanWaitList = new ArrayList<>();
     private final List<TimeShowBean> timeShowBeanOpeningList = new ArrayList<>();
     private Map<String, Object> params = new HashMap<>();
@@ -30,10 +30,20 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
     public TimeShowPagerAdapter(FragmentManager fm, List<TimeShowBean> timeShowBeanList) {
         super(fm);
         for (TimeShowBean timeShowBean : timeShowBeanList) {
-            if (timeShowBean.getType() > 1) {
-                timeShowBeanWaitList.add(timeShowBean);
+            if (timeShowBean.getHourShaft() != null && timeShowBean.getHourShaft().length > 0) {
+                if (timeShowBean.getType() > 1) {
+                    timeShowBeanWaitList.add(timeShowBean);
+                } else {
+                    timeShowBeanOpeningList.add(timeShowBean);
+                }
             } else {
-                timeShowBeanOpeningList.add(timeShowBean);
+                if (timeShowBean.getType() > 1) {
+                    timeShowBean.setHourShaft(new String[]{"10", "20"});
+                    timeShowBeanWaitList.add(timeShowBean);
+                } else {
+                    timeShowBean.setHourShaft(new String[]{"10", "20"});
+                    timeShowBeanOpeningList.add(timeShowBean);
+                }
             }
         }
     }
@@ -41,7 +51,7 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         params.clear();
-        timeShowBeanList.clear();
+        timeShowBeanList = new ArrayList<>();
         if (position == 0) {
             timeShowBeanList.addAll(timeShowBeanOpeningList);
         } else {

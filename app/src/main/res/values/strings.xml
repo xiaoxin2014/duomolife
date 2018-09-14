@@ -191,4 +191,5 @@
     <!--限时特惠-->
     <string name="time_week_text">- %1$s -</string>
     <string name="time_product_clock_new">%1$s点上新</string>
+    <string name="time_join_group_count">%1$s人已参与</string>
 </resources>

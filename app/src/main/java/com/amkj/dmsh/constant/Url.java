@@ -289,7 +289,8 @@ public class Url {
     //    限时特惠单品上新
     public static final String TIME_SHOW_PRO_DEFAULT_NEW = "api/goods/flashSale/getNewFlashSaleGoodsListByFirst";
     //    单品团所有商品 (根据品牌团排序)
-    public static final String TIME_SHOW_PRO_ALL_SHAFT = "api/goods/flashSale/getNewFlashSaleTopicAndGoodsWithTopicOrder";
+//    public static final String TIME_SHOW_PRO_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleTopicAndGoodsWithTopicOrder";
+    public static final String TIME_SHOW_PRO_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
     //    是否设置过提醒
     public static final String TIME_SHOW_PRO_WARM = "api/my/remind/getHadRemind";
     //    设置提醒时间

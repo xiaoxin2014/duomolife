@@ -89,7 +89,11 @@ public abstract class BaseFragment extends Fragment {
             } else if (objectParams != null && objectParams.size() > 0) {
                 for (String key : objectParams.keySet()) {
                     Object value = objectParams.get(key);
-                    bundle.putParcelable(key, (Parcelable) value);
+                    if (value instanceof List) {
+                        bundle.putParcelableArrayList(key, (ArrayList<? extends Parcelable>) value);
+                    } else {
+                        bundle.putParcelable(key, (Parcelable) value);
+                    }
                 }
             }
             fragment.setArguments(bundle);

@@ -46,7 +46,7 @@
         android:paddingTop="10px"
         android:paddingBottom="10px">
         <TextView
-            android:id="@+id/tv_product_duomolife_price"
+            android:id="@+id/tv_product_promotion_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_red_color"

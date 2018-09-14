@@ -70,7 +70,16 @@ public class TimeShowEntity {
 
         private String date;
         private String name;
+        private String[] hourShaft;
         private int type;
+
+        public String[] getHourShaft() {
+            return hourShaft;
+        }
+
+        public void setHourShaft(String[] hourShaft) {
+            this.hourShaft = hourShaft;
+        }
 
         public String getDate() {
             return date;
@@ -96,6 +105,9 @@ public class TimeShowEntity {
             this.type = type;
         }
 
+        public TimeShowBean() {
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -105,15 +117,14 @@ public class TimeShowEntity {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(this.date);
             dest.writeString(this.name);
+            dest.writeStringArray(this.hourShaft);
             dest.writeInt(this.type);
-        }
-
-        public TimeShowBean() {
         }
 
         protected TimeShowBean(Parcel in) {
             this.date = in.readString();
             this.name = in.readString();
+            this.hourShaft = in.createStringArray();
             this.type = in.readInt();
         }
 

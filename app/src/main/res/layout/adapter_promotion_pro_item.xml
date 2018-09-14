@@ -11,7 +11,7 @@
         android:background="@drawable/border_rect_four_gray_c_one_bg_white"
         app:layout_auto_basewidth="height">
         <ImageView
-            android:id="@+id/img_springSale_product"
+            android:id="@+id/img_springSale_product_image"
             android:layout_width="match_parent"
             android:scaleType="centerCrop"
             android:layout_height="match_parent" />
@@ -46,22 +46,39 @@
         android:gravity="center_vertical"
         android:layout_below="@id/tv_springSale_introduce"
         android:orientation="horizontal"
-        android:layout_marginTop="30px">
+        android:layout_marginTop="30px"
+        android:layout_marginBottom="38px">
 
         <TextView
-            android:id="@+id/tv_product_duomolife_price"
+            android:id="@+id/tv_product_promotion_price"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="$666.00"
             android:gravity="center_vertical"
             android:textColor="@color/text_normal_red"
             android:textSize="28px" />
-        <ImageView
+        <!--<ImageView
             android:layout_width="44px"
             android:padding="5px"
             android:id="@+id/iv_pro_time_warm"
             android:visibility="gone"
             android:src="@drawable/sel_time_warm"
-            android:layout_height="44px" />
+            android:layout_height="44px" />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="22px"
+            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:paddingLeft="15px"
+            android:paddingRight="15px"
+            android:paddingTop="4px"
+            android:paddingBottom="4px"
+            android:id="@+id/tv_product_promotion_join_count"
+            android:visibility="gone"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:layout_marginLeft="16px"
+            android:background="@drawable/border_circle_4_yellow"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </RelativeLayout>
