@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.MinePassword;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
@@ -33,7 +35,9 @@ import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 
 ;
 
@@ -60,6 +64,7 @@ public class FoundPasswordActivity extends BaseActivity {
     private String phoneNumber;
     private String password;
     private CountDownHelper countDownHelper;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -198,7 +203,11 @@ public class FoundPasswordActivity extends BaseActivity {
                         //重置密码成功
                         finish();
                     } else {
-                        showToast(FoundPasswordActivity.this, minePassword.getMsg());
+                        if(EMPTY_CODE.equals(minePassword.getCode())){
+                            showException(getResources().getString(R.string.date_exception_hint));
+                        }else{
+                            showException(minePassword.getMsg());
+                        }
                     }
                 }
             }
@@ -209,10 +218,29 @@ public class FoundPasswordActivity extends BaseActivity {
                     loadHud.dismiss();
                 }
                 super.onError(ex, isOnCallback);
+                showException(getResources().getString(R.string.date_exception_hint));
             }
         });
     }
-
+    /**
+     * 展示后台数据异常
+     *
+     * @param exceptionMsg
+     */
+    private void showException(String exceptionMsg) {
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(FoundPasswordActivity.this)
+                    .setTitle("重要提示")
+                    .setSingleButton(true)
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getStrings(exceptionMsg))
+                    .setMsgTextGravity(Gravity.CENTER);
+        } else {
+            alertDialogHelper.setMsg(getStrings(exceptionMsg));
+        }
+        edit_get_code.getText().clear();
+        alertDialogHelper.show();
+    }
     @OnClick(R.id.iv_blue_back)
     void goBack(View view) {
         finish();
@@ -232,10 +260,5 @@ public class FoundPasswordActivity extends BaseActivity {
             countDownHelper = CountDownHelper.getTimerInstance();
         }
         countDownHelper.setSmsCountDown(tv_bind_send_code);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

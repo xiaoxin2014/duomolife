@@ -3,20 +3,19 @@ package com.amkj.dmsh.homepage.activity;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.TimeShowPagerAdapter;
-import com.amkj.dmsh.homepage.bean.TabDoubleEntity;
-import com.amkj.dmsh.homepage.bean.TimeShowEntity;
-import com.amkj.dmsh.homepage.bean.TimeShowEntity.TimeShowBean;
+import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity;
+import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.flyco.tablayout.listener.CustomTabDoubleEntity;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -41,16 +40,18 @@ import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
  * class description:新版限时特惠
  */
 public class TimeShowNewActivity extends BaseActivity {
-    @BindView(R.id.vp_show_time)
-    ViewPager vp_show_time;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
     @BindView(R.id.tv_header_title)
     TextView tv_header_title;
+    @BindView(R.id.ll_spr_sale)
+    LinearLayout ll_spr_sale;
+    @BindView(R.id.vp_show_time)
+    ViewPager vp_show_time;
+    @BindView(R.id.rp_time_spring)
+    RadioGroup rp_time_spring;
 
-    private List<TimeShowBean> timeShowBeanList = new ArrayList<>();
-    private List<CustomTabDoubleEntity> customTabDoubleList = new ArrayList<>();
-    private float screenWidth;
+    private List<TimeShowShaftBean> timeShowBeanList = new ArrayList();
 
     @Override
     protected int getContentView() {
@@ -60,6 +61,16 @@ public class TimeShowNewActivity extends BaseActivity {
     protected void initViews() {
         tv_header_shared.setVisibility(View.GONE);
         tv_header_title.setText("限时特惠");
+        rp_time_spring.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rb_time_spring_open_group) {
+                    vp_show_time.setCurrentItem(0);
+                } else {
+                    vp_show_time.setCurrentItem(1);
+                }
+            }
+        });
     }
 
     @Override
@@ -86,7 +97,7 @@ public class TimeShowNewActivity extends BaseActivity {
                 }
                 if (code.equals("01")) {
                     Gson gson = new Gson();
-                    TimeShowEntity timeShowEntity = gson.fromJson(result, TimeShowEntity.class);
+                    TimeShowShaftEntity timeShowEntity = gson.fromJson(result, TimeShowShaftEntity.class);
                     if (timeShowEntity != null) {
                         setTimeShaft(timeShowEntity);
                     }
@@ -97,51 +108,36 @@ public class TimeShowNewActivity extends BaseActivity {
         });
     }
 
-    private void setTimeShaft(TimeShowEntity timeShowEntity) {
-        if(timeShowBeanList.size()>0){
+    private void setTimeShaft(TimeShowShaftEntity timeShowEntity) {
+        if (timeShowBeanList.size() > 0) {
             boolean isRefresh = false;
-            if(timeShowBeanList.size() == timeShowEntity.getTimeShowBeanList().size()){
-                for (int i = 0; i < timeShowEntity.getTimeShowBeanList().size(); i++) {
-                    TimeShowBean timeShowBean = timeShowEntity.getTimeShowBeanList().get(i);
-                    TimeShowBean timeShowOldBean = timeShowBeanList.get(i);
-                    if(!timeShowBean.getDate().equals(timeShowOldBean.getDate())
-                            ||timeShowBean.getType() != timeShowOldBean.getType()){
+            if (timeShowBeanList.size() == timeShowEntity.getTimeShowShaftList().size()) {
+                for (int i = 0; i < timeShowEntity.getTimeShowShaftList().size(); i++) {
+                    TimeShowShaftBean timeShowBean = timeShowEntity.getTimeShowShaftList().get(i);
+                    TimeShowShaftBean timeShowOldBean = timeShowBeanList.get(i);
+                    if (!timeShowBean.getDate().equals(timeShowOldBean.getDate())
+                            || timeShowBean.getType() != timeShowOldBean.getType()) {
                         isRefresh = true;
                         break;
                     }
                 }
             }
-            if(isRefresh){
+            if (isRefresh) {
                 setTimeShaftIndex(timeShowEntity);
             }
-        }else{
+        } else {
             setTimeShaftIndex(timeShowEntity);
         }
     }
 
-    private void setTimeShaftIndex(TimeShowEntity timeShowEntity) {
+    private void setTimeShaftIndex(TimeShowShaftEntity timeShowEntity) {
         timeShowBeanList.clear();
-        customTabDoubleList.clear();
-        int index = 0;
-        TabDoubleEntity tabDoubleEntity;
-        for (int i = 0; i < timeShowEntity.getTimeShowBeanList().size(); i++) {
-            TimeShowBean timeShowBean = timeShowEntity.getTimeShowBeanList().get(i);
-            if (timeShowBean.getType() == 1) {
-                index = i;
-            }
-            timeShowBeanList.add(timeShowBean);
-            tabDoubleEntity = new TabDoubleEntity();
-            tabDoubleEntity.setTabTitle(timeShowBean.getName());
-            tabDoubleEntity.setTabSubTitle(timeShowBean.getType() == 2 ? "即将开始" : "抢购中");
-            customTabDoubleList.add(tabDoubleEntity);
+        timeShowBeanList.addAll(timeShowEntity.getTimeShowShaftList());
+        if (timeShowBeanList.size() > 0) {
+            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList);
+            vp_show_time.setAdapter(timeShowPagerAdapter);
+            vp_show_time.setCurrentItem(0);
         }
-        TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList);
-        vp_show_time.setAdapter(timeShowPagerAdapter);
-        if (screenWidth == 0) {
-            BaseApplication app = (BaseApplication) getApplication();
-            screenWidth = app.getScreenWidth() / 5f;
-        }
-        vp_show_time.setCurrentItem(index);
     }
 
     @Override

@@ -281,15 +281,8 @@ public class Url {
     public static final String H_TIME_BRAND_DETAILS_REC = "api/goods/flashSale/topic/getGoods";
     //    限时特惠 新
 //    限时特惠时间轴
-    public static final String TIME_SHOW_SHAFT = "api/goods/flashSale/getTimeAxis";
-    //    限时特惠轮播主题团
-    public static final String TIME_SHOW_TOPIC = "api/goods/flashSale/getNewFlashSaleTopic";
-    //    限时特惠商品上新翻页
-    public static final String TIME_SHOW_PRO_N_NEW = "api/goods/flashSale/getNewFlashSaleGoods";
-    //    限时特惠单品上新
-    public static final String TIME_SHOW_PRO_DEFAULT_NEW = "api/goods/flashSale/getNewFlashSaleGoodsListByFirst";
-    //    单品团所有商品 (根据品牌团排序)
-//    public static final String TIME_SHOW_PRO_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleTopicAndGoodsWithTopicOrder";
+    public static final String TIME_SHOW_SHAFT = "api/goods/flashSale/getTimeAxisV2";
+//    限时特惠 商品列表
     public static final String TIME_SHOW_PRO_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
     //    是否设置过提醒
     public static final String TIME_SHOW_PRO_WARM = "api/my/remind/getHadRemind";

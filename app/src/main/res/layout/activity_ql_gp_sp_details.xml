@@ -181,6 +181,6 @@
             <include layout="@layout/layout_ql_gp_sp_details_bottom" />
         </LinearLayout>
 
-        <include layout="@layout/communal_loading_empty_error" />
+
     </FrameLayout>
 </LinearLayout>

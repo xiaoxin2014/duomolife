@@ -1,14 +1,11 @@
 package com.amkj.dmsh.mine;
 
-import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
-
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * 倒计时Button帮助类
@@ -19,14 +16,21 @@ import java.util.concurrent.ScheduledExecutorService;
 public class CountDownHelper {
     private static int remain = 0;
     private ConstantMethod constantMethod;
-    private static ScheduledExecutorService schedule;
+    private static CountDownHelper countDownHelper;
 
     private CountDownHelper() {
     }
 
     //    单例模式
     public static CountDownHelper getTimerInstance() {
-        return new CountDownHelper();
+        if (countDownHelper == null) {
+            synchronized (CountDownHelper.class) {
+                if (countDownHelper == null) {
+                    countDownHelper = new CountDownHelper();
+                }
+            }
+        }
+        return countDownHelper;
     }
 
 
@@ -51,14 +55,13 @@ public class CountDownHelper {
      * @param textView
      * @param defaultString 默认展示
      */
-    @SuppressLint("StringFormatInvalid")
     private void startCountDownTimer(@NonNull TextView textView, String defaultString) {
         if (remain > 0) {
             textView.setEnabled(false);
             textView.setText(String.format(textView.getResources().getString(R.string.wait_msg), remain));
             if(constantMethod==null){
                 constantMethod = new ConstantMethod();
-                schedule = constantMethod.createSchedule();
+                constantMethod.createSchedule();
             }
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
                 @Override

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,6 +38,7 @@ import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
@@ -60,9 +62,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.umeng.socialize.bean.SHARE_MEDIA.QQ;
 import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
@@ -113,6 +117,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
     private int REQUEST_PERM = 100;
     private boolean isPhoneLogin;
     private CountDownHelper countDownHelper;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -482,8 +487,9 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals("01")) {
-                            if (requestStatus.getResult() != null) {
-                                if (requestStatus.getResult().getResultCode().equals("01")) {
+                            RequestStatus.Result resultData = requestStatus.getResult();
+                            if ( resultData!= null) {
+                                if (resultData.getResultCode().equals(SUCCESS_CODE)) {
                                     showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
                                     tv_login_send_code.setVisibility(View.VISIBLE);
                                     reg_login_code_gif_view.setVisibility(View.GONE);
@@ -492,11 +498,19 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                                     }
                                     countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
                                 } else {
-                                    showToast(MineLoginActivity.this, requestStatus.getResult().getResultMsg());
+                                    if(EMPTY_CODE.equals(resultData.getCode())){
+                                        showException(getResources().getString(R.string.date_exception_hint));
+                                    }else{
+                                        showException(resultData.getMsg());
+                                    }
                                 }
                             }
                         } else {
-                            showToast(MineLoginActivity.this, requestStatus.getMsg());
+                            if(EMPTY_CODE.equals(requestStatus.getCode())){
+                                showException(getResources().getString(R.string.date_exception_hint));
+                            }else{
+                                showException(requestStatus.getMsg());
+                            }
                         }
                     }
                 }
@@ -504,13 +518,31 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
                     loadHud.dismiss();
-                    showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                    showException(getResources().getString(R.string.date_exception_hint));
                 }
             });
         } else {
             showToast(this, R.string.unConnectedNetwork);
             loadHud.dismiss();
         }
+    }
+    /**
+     * 展示后台数据异常
+     *
+     * @param exceptionMsg
+     */
+    private void showException(String exceptionMsg) {
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(MineLoginActivity.this)
+                    .setTitle("重要提示")
+                    .setSingleButton(true)
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getStrings(exceptionMsg))
+                    .setMsgTextGravity(Gravity.CENTER);
+        } else {
+            alertDialogHelper.setMsg(getStrings(exceptionMsg));
+        }
+        alertDialogHelper.show();
     }
 
     private void checkPhoneCode(String phoneNumber, String smsCode) {
@@ -535,11 +567,19 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                                     communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
                                     loginSuccessSetData(communalUserInfoEntity);
                                 } else {
-                                    showToast(MineLoginActivity.this, loginPhoneCodeBean.getResultMsg());
+                                    if(EMPTY_CODE.equals(loginPhoneCodeBean.getResultCode())){
+                                        showException(getResources().getString(R.string.date_exception_hint));
+                                    }else{
+                                        showException(loginPhoneCodeBean.getResultMsg());
+                                    }
                                 }
                             }
                         } else {
-                            showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                            if(EMPTY_CODE.equals(loginPhoneCodeEntity.getCode())){
+                                showException(getResources().getString(R.string.date_exception_hint));
+                            }else{
+                                showException(loginPhoneCodeEntity.getMsg());
+                            }
                         }
                     }
                 }
@@ -547,7 +587,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
                     loadHud.dismiss();
-                    showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                    showException(getResources().getString(R.string.date_exception_hint));
                 }
             });
         } else {

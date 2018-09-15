@@ -5,5 +5,4 @@
     android:background="@color/white">
     <include layout= "@layout/layout_communal_refresh_recycler_base"/>
     <include layout="@layout/layout_communal_floating" />
-    <include layout="@layout/communal_loading_empty_error" />
 </FrameLayout>

@@ -132,7 +132,7 @@
                                 <TextView
                                     android:id="@+id/tv_login_send_code"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="100px"
                                     android:layout_gravity="center"
                                     android:clickable="true"
                                     android:gravity="center_vertical"
@@ -142,8 +142,8 @@
 
                                 <ProgressBar
                                     android:id="@+id/reg_login_code_gif_view"
-                                    android:layout_width="40px"
-                                    android:layout_height="40px"
+                                    android:layout_width="60px"
+                                    android:layout_height="60px"
                                     android:layout_gravity="center"
                                     android:indeterminateBehavior="repeat"
                                     android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"

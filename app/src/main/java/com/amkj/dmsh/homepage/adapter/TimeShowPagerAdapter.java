@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.homepage.bean.TimeShowEntity.TimeShowBean;
+import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.homepage.fragment.SpringSaleFragment;
 
 import java.util.ArrayList;
@@ -22,15 +22,16 @@ import java.util.Map;
  */
 
 public class TimeShowPagerAdapter extends FragmentPagerAdapter {
-    private List<TimeShowBean> timeShowBeanList;
-    private final List<TimeShowBean> timeShowBeanWaitList = new ArrayList<>();
-    private final List<TimeShowBean> timeShowBeanOpeningList = new ArrayList<>();
+    private List<TimeShowShaftBean> timeShowBeanList;
+    private final List<TimeShowShaftBean> timeShowBeanWaitList = new ArrayList<>();
+    private final List<TimeShowShaftBean> timeShowBeanOpeningList = new ArrayList<>();
     private Map<String, Object> params = new HashMap<>();
 
-    public TimeShowPagerAdapter(FragmentManager fm, List<TimeShowBean> timeShowBeanList) {
+    public TimeShowPagerAdapter(FragmentManager fm, List<TimeShowShaftBean> timeShowBeanList) {
         super(fm);
-        for (TimeShowBean timeShowBean : timeShowBeanList) {
-            if (timeShowBean.getHourShaft() != null && timeShowBean.getHourShaft().length > 0) {
+        for (TimeShowShaftBean timeShowBean : timeShowBeanList) {
+            if (timeShowBean.getHourShaft() != null
+                    && timeShowBean.getHourShaft().length > 0) {
                 if (timeShowBean.getType() > 1) {
                     timeShowBeanWaitList.add(timeShowBean);
                 } else {

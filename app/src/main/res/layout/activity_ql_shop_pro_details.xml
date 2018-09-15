@@ -313,7 +313,7 @@
             <include layout="@layout/layout_shop_details_bottom" />
         </LinearLayout>
 
-        <include layout="@layout/communal_loading_empty_error" />
+
     </FrameLayout>
 
     <TextView

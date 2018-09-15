@@ -30,7 +30,7 @@
             </RelativeLayout>
         </LinearLayout>
         <include layout="@layout/layout_slide_menu_tag"/>
-        <include layout="@layout/communal_loading_empty_error"/>
+
     </FrameLayout>
     <include layout="@layout/layout_slid_draw_pro"/>
 </android.support.v4.widget.DrawerLayout>

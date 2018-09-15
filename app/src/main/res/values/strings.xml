@@ -46,6 +46,7 @@
     <string name="sug_hint_text">请写下您对Domolife的感受及需要解决的问题，我们将及时为您解决，努力提供更优质的服务</string>
     <string name="add_img">添加图片</string>
     <string name="do_failed">操作失败，请重试</string>
+    <string name="date_exception_hint">数据异常，请截图联系客服！</string>
     <string name="shop_goods_overdue">该商品已失效</string>
     <string name="direct_eva_hint">你的支持是我们的动力，你的宝贵意见是我们改进的方向，感谢你支持多么生活！</string>
     <string name="invoice_title">请输入发票抬头</string>
@@ -189,7 +190,6 @@
     <string name="image_crop_style">/indexcrop,y_%1$d,i_%2$d</string>
     <string name="load_data_failed">可能原因\n·网络信号弱，换个wifi试一试~\n·系统出错，技术小哥正在抢修</string>
     <!--限时特惠-->
-    <string name="time_week_text">- %1$s -</string>
     <string name="time_product_clock_new">%1$s点上新</string>
     <string name="time_join_group_count">%1$s人已参与</string>
 </resources>

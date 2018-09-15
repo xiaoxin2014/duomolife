@@ -97,4 +97,5 @@
     <color name="yellow_bg_fsae">#F6A800</color>
     <color name="bg_black_one_a">#1a000000</color>
     <color name="bg_gray_fa">#fafafa</color>
+    <color name="bg_trans_80_ffs_pink">#ccff6d79</color>
 </resources>

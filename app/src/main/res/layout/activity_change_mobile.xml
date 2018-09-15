@@ -54,12 +54,12 @@
                 android:layout_gravity="center"
                 android:id="@+id/tv_change_send_code"
                 android:textColor="@color/selector_font_blue_hint_gray"
-                android:layout_height="wrap_content"/>
+                android:layout_height="100px"/>
             <ProgressBar
                 android:id="@+id/reg_change_code_gif_view"
-                android:layout_width="40px"
+                android:layout_width="60px"
                 android:paddingRight="@dimen/gap_right"
-                android:layout_height="40px"
+                android:layout_height="60px"
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"

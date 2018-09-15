@@ -8,14 +8,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.TimeShowPagerAdapter;
-import com.amkj.dmsh.homepage.bean.TimeShowEntity;
-import com.amkj.dmsh.homepage.bean.TimeShowEntity.TimeShowBean;
+import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity;
+import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
@@ -55,8 +54,7 @@ public class TimeShowNewFragment extends BaseFragment {
     @BindView(R.id.rp_time_spring)
     RadioGroup rp_time_spring;
 
-    private List<TimeShowBean> timeShowBeanList = new ArrayList<>();
-    private float screenWidth;
+    private List<TimeShowShaftBean> timeShowBeanList = new ArrayList<>();
 
     @Override
     protected int getContentView() {
@@ -69,10 +67,6 @@ public class TimeShowNewFragment extends BaseFragment {
         tv_life_back.setVisibility(View.GONE);
         tv_header_shared.setVisibility(View.GONE);
         tv_header_title.setText("限时特惠");
-        if (screenWidth == 0) {
-            BaseApplication app = (BaseApplication) getActivity().getApplication();
-            screenWidth = app.getScreenWidth() / 5f;
-        }
         rp_time_spring.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -111,7 +105,7 @@ public class TimeShowNewFragment extends BaseFragment {
                 }
                 if (code.equals("01")) {
                     Gson gson = new Gson();
-                    TimeShowEntity timeShowEntity = gson.fromJson(result, TimeShowEntity.class);
+                    TimeShowShaftEntity timeShowEntity = gson.fromJson(result, TimeShowShaftEntity.class);
                     if (timeShowEntity != null) {
                         setTimeShaft(timeShowEntity);
                     }
@@ -135,13 +129,13 @@ public class TimeShowNewFragment extends BaseFragment {
         }
     }
 
-    private void setTimeShaft(TimeShowEntity timeShowEntity) {
+    private void setTimeShaft(TimeShowShaftEntity timeShowEntity) {
         if (timeShowBeanList.size() > 0) {
             boolean isRefresh = false;
-            if (timeShowBeanList.size() == timeShowEntity.getTimeShowBeanList().size()) {
-                for (int i = 0; i < timeShowEntity.getTimeShowBeanList().size(); i++) {
-                    TimeShowBean timeShowBean = timeShowEntity.getTimeShowBeanList().get(i);
-                    TimeShowBean timeShowOldBean = timeShowBeanList.get(i);
+            if (timeShowBeanList.size() == timeShowEntity.getTimeShowShaftList().size()) {
+                for (int i = 0; i < timeShowEntity.getTimeShowShaftList().size(); i++) {
+                    TimeShowShaftBean timeShowBean = timeShowEntity.getTimeShowShaftList().get(i);
+                    TimeShowShaftBean timeShowOldBean = timeShowBeanList.get(i);
                     if (!timeShowBean.getDate().equals(timeShowOldBean.getDate())
                             || timeShowBean.getType() != timeShowOldBean.getType()) {
                         isRefresh = true;
@@ -157,9 +151,9 @@ public class TimeShowNewFragment extends BaseFragment {
         }
     }
 
-    private void setTimeShaftIndex(TimeShowEntity timeShowEntity) {
+    private void setTimeShaftIndex(TimeShowShaftEntity timeShowEntity) {
         timeShowBeanList.clear();
-        timeShowBeanList.addAll(timeShowEntity.getTimeShowBeanList());
+        timeShowBeanList.addAll(timeShowEntity.getTimeShowShaftList());
         if (timeShowBeanList.size() > 0) {
             TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList);
             vp_show_time.setAdapter(timeShowPagerAdapter);

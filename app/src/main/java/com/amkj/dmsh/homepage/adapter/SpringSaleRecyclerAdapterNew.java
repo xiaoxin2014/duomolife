@@ -80,12 +80,13 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Base
             case TYPE_1:
                 TimeTopicBean timeTopicBean = (TimeTopicBean) productTopicBean;
                 GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_time_spring_topic_image), getStrings(timeTopicBean.getPicUrl()));
-                helper.setText(R.id.tv_time_spring_topic_name, getStrings(timeTopicBean.getTitle())).itemView.setTag(timeTopicBean);
+                helper.setText(R.id.tv_time_spring_topic_name, getStrings(timeTopicBean.getTitle()))
+                        .itemView.setTag(timeTopicBean);
                 break;
             case TYPE_2:
                 TimeShaftBean timeShaftBean = (TimeShaftBean) productTopicBean;
-                helper.setGone(R.id.tv_foreShow_product_time_week, !TextUtils.isEmpty(timeShaftBean.getTimeDayWeek()))
-                        .setText(R.id.tv_foreShow_product_time_week, getStrings(timeShaftBean.getTimeDayWeek()))
+                helper.setGone(R.id.ll_show_time_product_week, !TextUtils.isEmpty(timeShaftBean.getTimeDayWeek()))
+                        .setText(R.id.tv_foreShow_product_time_week, timeShaftBean.getTimeDayWeek())
                         .setText(R.id.tv_spring_time_shaft, String.format(context.getResources().getString(R.string.time_product_clock_new), getStrings(timeShaftBean.getTimeDayHour())));
                 break;
         }

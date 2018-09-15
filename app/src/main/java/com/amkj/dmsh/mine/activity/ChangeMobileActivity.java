@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -16,8 +17,8 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
@@ -34,6 +35,7 @@ import cn.smssdk.SMSSDK;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 
 ;
 
@@ -67,6 +69,7 @@ public class ChangeMobileActivity extends BaseActivity {
     private int uid;
     private String phoneNumber;
     private CountDownHelper countDownHelper;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -208,21 +211,43 @@ public class ChangeMobileActivity extends BaseActivity {
                         showToast(ChangeMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        showToast(ChangeMobileActivity.this, requestStatus.getMsg());
+                        if (EMPTY_CODE.equals(requestStatus.getCode())) {
+                            showException(getResources().getString(R.string.date_exception_hint));
+                        } else {
+                            showException(requestStatus.getMsg());
+                        }
                     }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("AppDataActivity", "onError: " + ex);
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+                showException(getResources().getString(R.string.date_exception_hint));
             }
         });
     }
-
+    /**
+     * 展示后台数据异常
+     *
+     * @param exceptionMsg
+     */
+    private void showException(String exceptionMsg) {
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(ChangeMobileActivity.this)
+                    .setTitle("重要提示")
+                    .setSingleButton(true)
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getStrings(exceptionMsg))
+                    .setMsgTextGravity(Gravity.CENTER);
+        } else {
+            alertDialogHelper.setMsg(getStrings(exceptionMsg));
+        }
+        edit_cm_get_code.getText().clear();
+        alertDialogHelper.show();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -245,10 +270,5 @@ public class ChangeMobileActivity extends BaseActivity {
             countDownHelper = CountDownHelper.getTimerInstance();
         }
         countDownHelper.setSmsCountDown(tv_change_send_code);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

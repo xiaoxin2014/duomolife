@@ -7,5 +7,5 @@
     android:background="@color/white">
     <include layout="@layout/layout_communal_recycler" />
     <include layout="@layout/layout_communal_floating" />
-    <include layout="@layout/communal_loading_empty_error" />
+
 </FrameLayout>

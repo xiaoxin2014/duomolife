@@ -7,6 +7,7 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.tencent.stat.StatConfig;
@@ -48,6 +50,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 
 ;
@@ -102,22 +105,24 @@ public class BindingMobileActivity extends BaseActivity {
     private int uid;
     private String newPassword;
     private CountDownHelper countDownHelper;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
         return R.layout.activity_binding_mobile;
     }
+
     @Override
     protected void initViews() {
         tv_blue_title.setText("绑定手机号");
         iv_blue_close.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        if(bundle==null){
+        if (bundle == null) {
             return;
         }
         otherAccountBindInfo = bundle.getParcelable("info");
-        if(otherAccountBindInfo!=null){
+        if (otherAccountBindInfo != null) {
             isBindMobile = otherAccountBindInfo.isMobile_verification();
             uid = otherAccountBindInfo.getUid();
         }
@@ -191,7 +196,7 @@ public class BindingMobileActivity extends BaseActivity {
                     tv_bind_send_code.setVisibility(View.VISIBLE);
                     reg_bind_code_gif_view.setVisibility(View.GONE);
                     showToast(BindingMobileActivity.this, R.string.GetSmsCodeSuccess);
-                    if(countDownHelper == null){
+                    if (countDownHelper == null) {
                         countDownHelper = CountDownHelper.getTimerInstance();
                     }
                     countDownHelper.setSmsCountDown(tv_bind_send_code, getResources().getString(R.string.send_sms), 60);
@@ -208,11 +213,11 @@ public class BindingMobileActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode(BindingMobileActivity.this,status);
+                    disposeMessageCode(BindingMobileActivity.this, status);
                 } catch (Exception e) {
                     showToast(BindingMobileActivity.this, R.string.unConnectedNetwork);
                 }
-            }else{
+            } else {
                 showToast(BindingMobileActivity.this, R.string.do_failed);
             }
             return false;
@@ -230,8 +235,8 @@ public class BindingMobileActivity extends BaseActivity {
                 params.put("uid", uid);
             }
             params.put("openid", otherAccountBindInfo.getOpenid());
-            if(OTHER_WECHAT.equals(otherAccountBindInfo.getType())){
-                params.put("unionid",otherAccountBindInfo.getUnionId());
+            if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
+                params.put("unionid", otherAccountBindInfo.getUnionId());
             }
             params.put("type", otherAccountBindInfo.getType());
             params.put("nickname", otherAccountBindInfo.getNickname());
@@ -258,26 +263,30 @@ public class BindingMobileActivity extends BaseActivity {
                             savePersonalInfoBean.setPhoneNum(getStrings(communalUserInfo.getMobile()));
                             savePersonalInfoBean.setUid(communalUserInfo.getUid());
                             savePersonalInfoBean.setLogin(true);
-                            if(otherAccountBindInfo !=null){
+                            if (otherAccountBindInfo != null) {
                                 savePersonalInfoBean.setOpenId(getStrings(otherAccountBindInfo.getOpenid()));
                                 savePersonalInfoBean.setLoginType(getStrings(otherAccountBindInfo.getType()));
                                 if (OTHER_WECHAT.equals(getStrings(otherAccountBindInfo.getType()))) {
                                     savePersonalInfoBean.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                                 }
                             }
-                            savePersonalInfoCache(BindingMobileActivity.this,savePersonalInfoBean);
+                            savePersonalInfoCache(BindingMobileActivity.this, savePersonalInfoBean);
                             StatConfig.setCustomUserId(BindingMobileActivity.this, String.valueOf(communalUserInfo.getUid()));
                             //        友盟统计
                             MobclickAgent.onProfileSignIn(String.valueOf(communalUserInfo.getUid()));
                             //                            绑定JPush
                             bindJPush(communalUserInfo.getUid());
-                            QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this,communalUserInfo.getUid(),communalUserInfo.getNickname(),communalUserInfo.getMobile(),communalUserInfo.getAvatar());
+                            QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this, communalUserInfo.getUid(), communalUserInfo.getNickname(), communalUserInfo.getMobile(), communalUserInfo.getAvatar());
                             showToast(BindingMobileActivity.this, "绑定成功");
-                            Intent intent = new Intent(BindingMobileActivity.this,RegisterSelSexActivity.class);
+                            Intent intent = new Intent(BindingMobileActivity.this, RegisterSelSexActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            showToast(BindingMobileActivity.this, communalUserInfoEntity.getMsg());
+                            if (EMPTY_CODE.equals(communalUserInfoEntity.getCode())) {
+                                showException(getResources().getString(R.string.date_exception_hint));
+                            } else {
+                                showException(communalUserInfoEntity.getMsg());
+                            }
                         }
                     }
                 }
@@ -288,10 +297,11 @@ public class BindingMobileActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
+                    showException(getResources().getString(R.string.date_exception_hint));
                 }
             });
         } else {
-            return;
+            showException(getResources().getString(R.string.date_exception_hint));
         }
     }
 
@@ -303,6 +313,26 @@ public class BindingMobileActivity extends BaseActivity {
             }
         }
         return new String(data);
+    }
+
+    /**
+     * 展示后台数据异常
+     *
+     * @param exceptionMsg
+     */
+    private void showException(String exceptionMsg) {
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(BindingMobileActivity.this)
+                    .setTitle("重要提示")
+                    .setSingleButton(true)
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getStrings(exceptionMsg))
+                    .setMsgTextGravity(Gravity.CENTER);
+        } else {
+            alertDialogHelper.setMsg(getStrings(exceptionMsg));
+        }
+        edit_get_code.getText().clear();
+        alertDialogHelper.show();
     }
 
     @Override
@@ -398,17 +428,21 @@ public class BindingMobileActivity extends BaseActivity {
                         showToast(BindingMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        showToast(BindingMobileActivity.this, requestStatus.getMsg());
+                        if (EMPTY_CODE.equals(requestStatus.getCode())) {
+                            showException(getResources().getString(R.string.date_exception_hint));
+                        } else {
+                            showException(requestStatus.getMsg());
+                        }
                     }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("AppDataActivity", "onError: " + ex);
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+                showException(getResources().getString(R.string.date_exception_hint));
             }
         });
     }
@@ -420,21 +454,16 @@ public class BindingMobileActivity extends BaseActivity {
     }
 
     @OnClick(R.id.iv_blue_back)
-   void goBack(View view) {
+    void goBack(View view) {
         finish();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(countDownHelper==null){
+        if (countDownHelper == null) {
             countDownHelper = CountDownHelper.getTimerInstance();
         }
         countDownHelper.setSmsCountDown(tv_bind_send_code);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

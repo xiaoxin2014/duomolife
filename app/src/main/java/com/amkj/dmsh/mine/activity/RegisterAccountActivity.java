@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
@@ -49,6 +51,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUniqueId;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -71,6 +75,7 @@ public class RegisterAccountActivity extends BaseActivity {
     private boolean flag;
     private RegisterUserInfoBean registerUserInfoBean;
     private CountDownHelper countDownHelper;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -188,7 +193,7 @@ public class RegisterAccountActivity extends BaseActivity {
                 if (registerUserInfoEntity != null) {
                     String backCode = registerUserInfoEntity.getCode();
                     registerUserInfoBean = registerUserInfoEntity.getRegisterUserInfoBean();
-                    if (backCode.equals("01")) {
+                    if (backCode.equals(SUCCESS_CODE)) {
 //                        保存个人信息
                         SavePersonalInfoBean savePersonalInfoBean = new SavePersonalInfoBean();
                         savePersonalInfoBean.setAvatar(getStrings(registerUserInfoBean.getAvatar()));
@@ -204,12 +209,16 @@ public class RegisterAccountActivity extends BaseActivity {
                         //                            绑定JPush
                         bindJPush(registerUserInfoBean.getUid());
 //                        七鱼客服登录
-                        QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this,registerUserInfoBean.getUid(),registerUserInfoBean.getNickname(),registerUserInfoBean.getMobile(),registerUserInfoBean.getAvatar());
+                        QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this, registerUserInfoBean.getUid(), registerUserInfoBean.getNickname(), registerUserInfoBean.getMobile(), registerUserInfoBean.getAvatar());
                         Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        showToast(RegisterAccountActivity.this, registerUserInfoEntity.getMsg());
+                        if (EMPTY_CODE.equals(registerUserInfoEntity.getCode())) {
+                            showException(getResources().getString(R.string.date_exception_hint));
+                        } else {
+                            showException(registerUserInfoEntity.getMsg());
+                        }
                     }
                 }
             }
@@ -221,9 +230,29 @@ public class RegisterAccountActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
+                showException(getResources().getString(R.string.date_exception_hint));
             }
         });
+    }
+
+    /**
+     * 展示后台数据异常
+     *
+     * @param exceptionMsg
+     */
+    private void showException(String exceptionMsg) {
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(RegisterAccountActivity.this)
+                    .setTitle("重要提示")
+                    .setSingleButton(true)
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getStrings(exceptionMsg))
+                    .setMsgTextGravity(Gravity.CENTER);
+        } else {
+            alertDialogHelper.setMsg(getStrings(exceptionMsg));
+        }
+        edit_register_sms_code.getText().clear();
+        alertDialogHelper.show();
     }
 
     @Override

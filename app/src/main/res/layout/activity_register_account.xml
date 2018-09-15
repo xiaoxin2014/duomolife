@@ -56,6 +56,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/transparent"
                         android:gravity="center_vertical"
+                        android:layout_centerVertical="true"
                         android:hint="验证码"
                         android:inputType="number"
                         android:minHeight="115px"
@@ -67,10 +68,11 @@
                     <TextView
                         android:id="@+id/tv_sms_code"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="100px"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:clickable="true"
+                        android:gravity="center_vertical"
                         android:textColor="@color/selector_font_blue_hint_gray"
                         android:textSize="24px"
                         android:visibility="visible" />
@@ -110,8 +112,9 @@
 
                     <ImageView
                         android:id="@+id/iv_password_code_visibility"
-                        android:layout_width="42px"
-                        android:layout_height="36px"
+                        android:layout_width="wrap_content"
+                        android:padding="25px"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/register_icon_eye_nor"
                         app:layout_auto_basewidth="height" />
                 </LinearLayout>
