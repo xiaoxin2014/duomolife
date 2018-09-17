@@ -57,6 +57,7 @@ public class DirectLogisticsFragment extends BaseFragment {
     protected int getContentView() {
         return R.layout.layout_communal_smart_refresh_recycler_float_loading;
     }
+
     @Override
     protected void initViews() {
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_direct_logistics_head, (ViewGroup) communal_recycler.getParent(), false);

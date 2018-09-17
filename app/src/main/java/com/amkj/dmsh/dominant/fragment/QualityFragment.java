@@ -216,7 +216,8 @@ public class QualityFragment extends BaseFragment {
 
     private void scrollTypeVisibility(int position) {
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) rv_quality_product_type.getLayoutManager();
-        linearLayoutManager.scrollToPositionWithOffset(position,300);
+        linearLayoutManager.scrollToPositionWithOffset(position,0);
+        linearLayoutManager.setStackFromEnd(true);
     }
 
     private void setStatusColor() {

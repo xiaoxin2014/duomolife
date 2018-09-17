@@ -12,8 +12,9 @@
         android:layout_gravity="center_vertical"
         android:id="@+id/tv_time_product_shaft"
         android:visibility="gone"
+        android:gravity="center"
         android:textSize="26px"
         android:background="@color/bg_trans_80_ffs_pink"
-        android:textColor="@color/selector_font_white_black_sel"
+        android:textColor="@color/white"
         android:layout_height="50px" />
 </FrameLayout>

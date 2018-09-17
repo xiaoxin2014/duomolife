@@ -283,7 +283,9 @@ public class Url {
 //    限时特惠时间轴
     public static final String TIME_SHOW_SHAFT = "api/goods/flashSale/getTimeAxisV2";
 //    限时特惠 商品列表
-    public static final String TIME_SHOW_PRO_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
+    public static final String TIME_SHOW_PRODUCT_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
+//    限时特惠top推荐
+    public static final String TIME_SHOW_PRO_TOP_PRODUCT = "api/goods/flashSale/getGoogsRecommend";
     //    是否设置过提醒
     public static final String TIME_SHOW_PRO_WARM = "api/my/remind/getHadRemind";
     //    设置提醒时间

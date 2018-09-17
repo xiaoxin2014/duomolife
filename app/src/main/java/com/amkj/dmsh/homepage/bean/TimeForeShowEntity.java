@@ -17,7 +17,7 @@ public class TimeForeShowEntity extends BaseTimeEntity{
 
     @SerializedName("topic")
     private TimeTopicBean timeTopicBean;
-    @SerializedName("result")
+    @SerializedName(value = "result",alternate = "productInfoInfoList")
     private List<TimeForeShowBean> timeForeShowList;
 
     public TimeTopicBean getTimeTopicBean() {
@@ -97,15 +97,15 @@ public class TimeForeShowEntity extends BaseTimeEntity{
         private int isRemind;
         private String marketPrice;
         private String maxPrice;
+        @SerializedName(value = "name",alternate = "title")
         private String name;
-        private String path;
+        @SerializedName(value = "picUrl",alternate = "path")
         private String picUrl;
         private int previsionFlag;
         private String price;
         private int quantity;
         private String startTime;
         private String subtitle;
-        private String title;
 
         public String getEndTime() {
             return endTime;
@@ -163,14 +163,6 @@ public class TimeForeShowEntity extends BaseTimeEntity{
             this.name = name;
         }
 
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
         public String getPicUrl() {
             return picUrl;
         }
@@ -217,14 +209,6 @@ public class TimeForeShowEntity extends BaseTimeEntity{
 
         public void setSubtitle(String subtitle) {
             this.subtitle = subtitle;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
         }
     }
 

@@ -2,13 +2,17 @@ package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -17,10 +21,9 @@ import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
-import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
@@ -29,8 +32,8 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeForeShowBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeShaftBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeTopicBean;
+import com.amkj.dmsh.homepage.bean.TimeShaftRecordBean;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -44,11 +47,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -58,6 +62,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 
 ;
 
@@ -95,6 +100,18 @@ public class SpringSaleFragment extends BaseFragment {
     private boolean openQuickShaft;
     //    下拉触发距离
     private int dropDownScroll = 0;
+    //    相同时间是否第一次加入时间轴
+    private boolean isSameDayFirst;
+    //    记录时间轴
+    private List<TimeShaftRecordBean> timeShaftList = new ArrayList<>();
+    private View timeShaftView;
+    private PopupShaftViewHelper popupShaftViewHelper;
+    private TimeShaftRecordAdapter timeShaftRecordAdapter;
+    private CustomPopWindow customPopWindow;
+    private PopupWindow popupWindow;
+    private boolean isClickSelect;
+    private int[] location = new int[2];
+    private boolean isTimeProductTop;
 
     @Override
     protected int getContentView() {
@@ -116,7 +133,7 @@ public class SpringSaleFragment extends BaseFragment {
         });
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_product)
+                .setDividerId(R.drawable.item_divider_five_white)
                 // 开启绘制分隔线，默认关闭
                 .enableDivider(true)
                 // 是否关闭标签点击事件，默认开启
@@ -152,26 +169,6 @@ public class SpringSaleFragment extends BaseFragment {
                 }
             }
         });
-        springSaleRecyclerAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-
-//                TimeForeShowEntity.SpringSaleBean springSaleBean = (SpringSaleBean) view.getTag();
-//                if (springSaleBean != null) {
-//                    switch (view.getId()) {
-//                        case R.id.iv_pro_time_warm:
-////                            设置提醒 取消提醒 是否是第一次设置
-//                            if (userId != 0) {
-//                                isFirstRemind(springSaleBean, (ImageView) view);
-//                            } else {
-//                                getLoginStatus(SpringSaleFragment.this);
-//                            }
-//                            break;
-//                    }
-//                }
-            }
-        });
-
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             scrollY = 0;
             loadData();
@@ -182,133 +179,78 @@ public class SpringSaleFragment extends BaseFragment {
             @Override
             public void onLoadMoreRequested() {
                 page++;
-                getProductData();
+                if (isTimeProductTop) {
+                    getTopRecommendData();
+                } else {
+                    getProductData();
+                }
             }
         }, communal_recycler);
         BaseApplication application = (BaseApplication) getActivity().getApplication();
         int screenHeight = application.getScreenHeight();
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
                 , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});
-        drawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
-        tv_time_product_shaft.setBackground(drawable);
+        gradientDrawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
+        tv_time_product_shaft.setBackground(gradientDrawable);
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 scrollY += dy;
-                Log.d("滚动距离：", "onScrolled: " + scrollY);
                 if (scrollY >= screenHeight * 1.5) {
                     openQuickShaft = true;
                 } else {
                     openQuickShaft = false;
                 }
                 if (dy < 0) {
-                    dropDownScroll+=Math.abs(dy);
-                } else {
+                    dropDownScroll += Math.abs(dy);
+                } else if (dy > 8) {
 //                    重新计算
                     dropDownScroll = 0;
                 }
-                if(openQuickShaft&&dropDownScroll>300){
+                if (openQuickShaft && dropDownScroll > 300 && tv_time_product_shaft.getVisibility() == View.GONE) {
+                    Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.down_in_visiable);
+                    animation.setDuration(500);
+                    tv_time_product_shaft.startAnimation(animation);
                     tv_time_product_shaft.setVisibility(View.VISIBLE);
-                }else{
+                } else if (dy > 0 && tv_time_product_shaft.getVisibility() == View.VISIBLE) {
+                    Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.down_out_hide);
+                    animation.setDuration(500);
+                    tv_time_product_shaft.startAnimation(animation);
                     tv_time_product_shaft.setVisibility(View.GONE);
+                }
+                if (!isClickSelect) {
+                    GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();//可见范围内的第一项的位置
+                    BaseTimeProductTopicBean baseTimeProductTopicBean = saleTimeTotalList.get(firstVisibleItemPosition);
+                    if (baseTimeProductTopicBean.getItemType() == TYPE_2) {
+                        TimeShaftBean timeShaftBean = (TimeShaftBean) baseTimeProductTopicBean;
+                        setTimeShaftSelect(timeShaftBean.getTimeDayWeek());
+                    }
+                } else {
+                    isClickSelect = false;
                 }
             }
         });
+        timeShaftView = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null);
+        popupShaftViewHelper = new PopupShaftViewHelper();
+        ButterKnife.bind(popupShaftViewHelper, timeShaftView);
+        popupShaftViewHelper.initPopView();
         springSaleRecyclerAdapter.openLoadAnimation(null);
+
     }
 
-//    private void isFirstRemind(final SpringSaleBean springSaleBean, final ImageView view) {
-//        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("uid", userId);
-//        XUtil.Post(url, params, new MyCallBack<String>() {
-//            @Override
-//            public void onSuccess(String result) {
-//                Gson gson = new Gson();
-//                RequestStatus foreShowBean = gson.fromJson(result, RequestStatus.class);
-//                if (foreShowBean != null) {
-//                    if (foreShowBean.getCode().equals("01")) {
-//                        if (foreShowBean.getResult().isHadRemind()) { //已设置过提醒
-//                            if (view.isSelected()) {
-////                                取消提醒
-//                                cancelWarm(springSaleBean.getId(), view);
-//                            } else {
-////                                设置提醒
-//                                setWarm(springSaleBean.getId(), view);
-//                            }
-//                        } else {
-//                            setDefaultWarm();
-//                        }
-//                    } else if (!foreShowBean.getCode().equals("02")) {
-//                        showToast(getActivity(), foreShowBean.getMsg());
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable ex, boolean isOnCallback) {
-//                showToast(getActivity(), R.string.unConnectedNetwork);
-//            }
-//        });
-//    }
-//
-//    private void setDefaultWarm() {
-////        设置提醒
-//        View indentPopWindow = LayoutInflater.from(getActivity()).inflate(R.layout.layout_first_time_product_warm, communal_recycler, false);
-//        AutoUtils.autoSize(indentPopWindow);
-//        PopupWindowView popupWindowView = new PopupWindowView();
-//        ButterKnife.bind(popupWindowView, indentPopWindow);
-//        mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(getActivity())
-//                .setView(indentPopWindow)
-//                .enableBackgroundDark(true) //弹出popWindow时，背景是否变暗
-//                .setBgDarkAlpha(0.7f) // 控制亮度
-//                .create().showAtLocation((View) communal_recycler.getParent(), Gravity.CENTER, 0, 0);
-//        popupWindowView.rp_time_pro_warm.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-//                RadioButton radioButton = (RadioButton) group.findViewById(checkedId);
-//                String numberWarm = radioButton.getText().toString().trim();
-//                Message message = new Message();
-//                message.arg1 = 1;
-//                message.obj = numberWarm;
-//                handler.sendMessageDelayed(message, 618);
-//            }
-//        });
-//    }
-//
-//    private Handler handler = new Handler(new Handler.Callback() {
-//        @Override
-//        public boolean handleMessage(Message msg) {
-//            String objData = (String) msg.obj;
-//            if (msg.arg1 == 1) {
-//                mCustomPopWindow.dissmiss();
-//                setWarmTime(getNumber(objData));
-//            }
-//            return false;
-//        }
-//    });
-//
-//    private void setWarmTime(String number) {
-//        String url = Url.BASE_URL + Url.TIME_WARM_PRO;
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("m_uid", userId);
-//        params.put("longtime", number);
-//        XUtil.Post(url, params, new MyCallBack<String>() {
-//            @Override
-//            public void onSuccess(String result) {
-//                Gson gson = new Gson();
-//                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-//                if (requestStatus != null && requestStatus.getCode().equals("01")) {
-//                    showToast(getActivity(), "已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable ex, boolean isOnCallback) {
-//            }
-//        });
-//    }
+    private void setTimeShaftSelect(String weekName) {
+        for (TimeShaftRecordBean timeShaftRecordBean : timeShaftList) {
+            if (getStrings(weekName).equals(timeShaftRecordBean.getWeekName())) {
+                timeShaftRecordBean.setSelect(true);
+                tv_time_product_shaft.setText(getStrings(timeShaftRecordBean.getWeekName()));
+            } else {
+                timeShaftRecordBean.setSelect(false);
+            }
+        }
+        timeShaftRecordAdapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void loadData() {
@@ -316,6 +258,7 @@ public class SpringSaleFragment extends BaseFragment {
             page = 1;
             oldDateDay = "";
             isShowClearData = true;
+            isSameDayFirst = false;
             timeShowBean = showTimeList.get(0);
             searchDateDay = timeShowBean.getDate();
             searchDateHour = timeShowBean.getHourShaft()[0];
@@ -331,7 +274,7 @@ public class SpringSaleFragment extends BaseFragment {
     }
 
     private void getProductData() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_TOPIC_SHAFT;
+        String url = Url.BASE_URL + Url.TIME_SHOW_PRODUCT_TOPIC_SHAFT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("searchDate", searchDateDay);
@@ -350,19 +293,31 @@ public class SpringSaleFragment extends BaseFragment {
                             //重新加载数据
                             saleTimeTotalList.clear();
                             isShowClearData = false;
+                            timeShaftList.clear();
                         }
                         Gson gson = new Gson();
                         timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                                 springSaleRecyclerAdapter.setEnableLoadMore(true);
+                                isTimeProductTop = false;
                                 if (page == 1) {
                                     TimeShaftBean timeShaftBean = new TimeShaftBean();
                                     timeShaftBean.setTimeDayHour(searchDateHour);
                                     timeShaftBean.setItemType(TYPE_2);
 //                            日期是否变更
-                                    if (!searchDateDay.equals(oldDateDay)) {
+                                    if (!searchDateDay.equals(oldDateDay)
+                                            || (searchDateDay.equals(oldDateDay) && !isSameDayFirst)) {
+                                        isSameDayFirst = true;
                                         timeShaftBean.setTimeDayWeek(timeShowBean.getName());
+                                        TimeShaftRecordBean timeShaftRecordBean = new TimeShaftRecordBean();
+                                        timeShaftRecordBean.setScrollPosition(saleTimeTotalList.size() > 0 ? saleTimeTotalList.size() - 1 : 0);
+                                        timeShaftRecordBean.setWeekName(getStrings(timeShowBean.getName()));
+                                        timeShaftList.add(timeShaftRecordBean);
+                                        if (timeShaftList.size() == 1) {
+                                            tv_time_product_shaft.setText(getStrings(timeShaftList.get(0).getWeekName()));
+                                        }
+                                        timeShaftRecordAdapter.notifyDataSetChanged();
                                     }
                                     saleTimeTotalList.add(timeShaftBean);
                                 }
@@ -389,12 +344,17 @@ public class SpringSaleFragment extends BaseFragment {
                                                 for (int j = 0; j < showTimeList.size(); j++) {
                                                     if (timeShowBean.getDate().equals(showTimeList.get(j).getDate())) {
                                                         if (j == showTimeList.size() - 1) {
-                                                            springSaleRecyclerAdapter.loadMoreEnd();
+//                                                            最后一天
+                                                            isTimeProductTop = true;
+                                                            page = 1;
+                                                            getTopRecommendData();
                                                         } else {
                                                             timeShowBean = showTimeList.get(++j);
                                                             searchDateHour = timeShowBean.getHourShaft()[0];
                                                             oldDateDay = searchDateDay;
                                                             searchDateDay = timeShowBean.getDate();
+//                                                            更换天数 重置同一天只展示一次week
+                                                            isSameDayFirst = false;
                                                             getProductData();
                                                         }
                                                         break;
@@ -437,64 +397,54 @@ public class SpringSaleFragment extends BaseFragment {
                 });
     }
 
-    private void cancelWarm(int productId, View view) {
-        final ImageView imageView = (ImageView) view;
-        String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
+    /**
+     * 获取
+     */
+    private void getTopRecommendData() {
+        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_TOP_PRODUCT;
         Map<String, Object> params = new HashMap<>();
-        params.put("m_obj", productId);
-        params.put("m_uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
-                if (status != null) {
-                    if (status.getCode().equals("01")) {
-                        imageView.setSelected(false);
-                        showToast(getActivity(), "已取消提醒");
-                    } else {
-                        showToast(getActivity(), status.getMsg());
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("currentPage", page);
+        params.put("recommendType", "top");
+        if (userId != 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+                        if (timeForeShowEntity != null) {
+                            if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
+                                springSaleRecyclerAdapter.setEnableLoadMore(true);
+                                if (timeForeShowEntity.getTimeForeShowList() != null
+                                        && timeForeShowEntity.getTimeForeShowList().size() > 0) {
+                                    if (page == 1) {
+                                        BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
+                                        baseTimeProductTopicBean.setItemType(TYPE_3);
+                                        saleTimeTotalList.add(baseTimeProductTopicBean);
+                                    }
+                                    saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
+                                }
+                                springSaleRecyclerAdapter.notifyDataSetChanged();
+                            } else {
+                                springSaleRecyclerAdapter.loadMoreEnd();
+                            }
+
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                loadHud.dismiss();
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    private void setWarm(int productId, View view) {
-        final ImageView imageView = (ImageView) view;
-        String url = Url.BASE_URL + Url.ADD_MINE_WARM;
-        Map<String, Object> params = new HashMap<>();
-        params.put("m_obj", productId);
-        params.put("m_uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
-                if (status != null) {
-                    if (status.getCode().equals("01")) {
-                        imageView.setSelected(true);
-                        showToast(getActivity(), "已设置提醒");
-                    } else {
-                        showToast(getActivity(), status.getMsg());
+                    @Override
+                    public void netClose() {
+                        springSaleRecyclerAdapter.loadMoreEnd();
                     }
-                }
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                loadHud.dismiss();
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        springSaleRecyclerAdapter.loadMoreEnd();
+                    }
+                });
     }
 
     @Override
@@ -519,20 +469,107 @@ public class SpringSaleFragment extends BaseFragment {
         RadioGroup rp_time_pro_warm;
     }
 
-    private String getNumber(String str) {
-        String regex = "\\d*";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(str);
-        while (m.find()) {
-            if (!"".equals(m.group()))
-                return m.group();
+    @OnClick(value = R.id.tv_time_product_shaft)
+    public void clickSkipShaft(View view) {
+        if (timeShaftList.size() > 1) {
+            view.setVisibility(View.GONE);
+            tv_time_product_shaft.getLocationOnScreen(location);
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+                if (customPopWindow == null) {
+                    customPopWindow = new CustomPopWindow.PopupWindowBuilder(getActivity())
+                            .setView(timeShaftView)
+                            .setFocusable(true)
+                            .setOutsideTouchable(false)
+                            .setOnDissmissListener(new PopupWindow.OnDismissListener() {
+                                @Override
+                                public void onDismiss() {
+                                    view.setVisibility(View.VISIBLE);
+                                }
+                            })
+                            .create();
+                }
+                customPopWindow.showAtLocation(view, Gravity.NO_GRAVITY, 0, location[1]);
+            } else {
+                if (popupWindow == null) {
+                    popupWindow = new PopupWindow();
+                    popupWindow.setContentView(timeShaftView);
+                    popupWindow.setFocusable(true);
+                    popupWindow.setOutsideTouchable(false);
+                    popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            view.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+                popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, 0, location[1]);
+            }
+        } else {
+            setScrollPosition(0);
         }
-        return "3";
     }
 
     @Override
     public void onDestroyView() {
         new ConstantMethod().releaseHandlers();
         super.onDestroyView();
+    }
+
+    class PopupShaftViewHelper {
+        @BindView(R.id.communal_recycler_wrap_wrap)
+        RecyclerView communal_recycler_wrap_wrap;
+
+        void initPopView() {
+            communal_recycler_wrap_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
+            GradientDrawable gradientDrawable = new GradientDrawable();
+            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
+                    , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});
+            gradientDrawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
+            communal_recycler_wrap_wrap.setBackground(gradientDrawable);
+            timeShaftRecordAdapter = new TimeShaftRecordAdapter(timeShaftList);
+            communal_recycler_wrap_wrap.setAdapter(timeShaftRecordAdapter);
+            timeShaftRecordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    TimeShaftRecordBean timeShaftRecordBean = (TimeShaftRecordBean) view.getTag();
+                    if (timeShaftRecordBean != null && communal_recycler.getChildCount() > 0) {
+                        setPopWindowDismiss();
+                        tv_time_product_shaft.setVisibility(View.VISIBLE);
+                        tv_time_product_shaft.setText(timeShaftRecordBean.getWeekName());
+                        isClickSelect = true;
+                        setScrollPosition(timeShaftRecordBean.getScrollPosition());
+                        setTimeShaftSelect(timeShaftRecordBean.getWeekName());
+                    }
+                }
+            });
+        }
+    }
+
+    private void setScrollPosition(int scrollPosition) {
+        GridLayoutManager layoutManager = (GridLayoutManager) communal_recycler.getLayoutManager();
+        layoutManager.scrollToPositionWithOffset(scrollPosition, 0);
+    }
+
+    private class TimeShaftRecordAdapter extends BaseQuickAdapter<TimeShaftRecordBean, BaseViewHolderHelper> {
+        public TimeShaftRecordAdapter(List<TimeShaftRecordBean> timeShaftList) {
+            super(R.layout.adapter_tv_time_shaft_record, timeShaftList);
+        }
+
+        @Override
+        protected void convert(BaseViewHolderHelper helper, TimeShaftRecordBean timeShaftRecordBean) {
+            TextView textView = helper.getView(R.id.tv_spring_time_week_tag);
+            textView.setSelected(timeShaftRecordBean.isSelect());
+            textView.setText(getStrings(timeShaftRecordBean.getWeekName()));
+            helper.itemView.setTag(timeShaftRecordBean);
+        }
+    }
+
+    private void setPopWindowDismiss() {
+        if (customPopWindow != null) {
+            customPopWindow.dissmiss();
+        }
+        if (popupWindow != null) {
+            popupWindow.dismiss();
+        }
     }
 }

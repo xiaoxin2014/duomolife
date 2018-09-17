@@ -100,12 +100,6 @@ public class QualityNewProActivity extends BaseActivity {
     ImageView iv_img_share;
     @BindView(R.id.tl_quality_bar)
     Toolbar tl_quality_bar;
-    @BindView(R.id.communal_load)
-    View communal_load;
-    @BindView(R.id.communal_error)
-    View communal_error;
-    @BindView(R.id.communal_empty)
-    View communal_empty;
     @BindView(R.id.tv_ql_new_pro_time_tag)
     TextView tv_ql_new_pro_time_tag;
     private int page = 1;
@@ -119,12 +113,13 @@ public class QualityNewProActivity extends BaseActivity {
     private QNewProView qNewProView;
     private Badge badge;
     private CustomPopWindow mCustomPopWindow;
-    private View indentPopWindow;
+    private View productPopWindow;
     private PopupWindowView popupWindowView;
     private TimeShaftAdapter timeShaftAdapter;
     private View headerView;
     private CBViewHolderCreator cbViewHolderCreator;
     private UserLikedProductEntity likedProductEntity;
+    private int[] location = new int[2];
 
     @Override
     protected int getContentView() {
@@ -248,13 +243,12 @@ public class QualityNewProActivity extends BaseActivity {
             }
         });
 //        时间轴
-        indentPopWindow = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null);
-        AutoUtils.autoSize(indentPopWindow);
+        productPopWindow = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null);
+        AutoUtils.autoSize(productPopWindow);
         popupWindowView = new PopupWindowView();
-        ButterKnife.bind(popupWindowView, indentPopWindow);
+        ButterKnife.bind(popupWindowView, productPopWindow);
         popupWindowView.initView();
         badge = ConstantMethod.getBadge(QualityNewProActivity.this, fl_header_service);
-        communal_load.setVisibility(View.VISIBLE);
         totalPersonalTrajectory = insertNewTotalData(QualityNewProActivity.this);
     }
     @Override
@@ -354,8 +348,6 @@ public class QualityNewProActivity extends BaseActivity {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 smart_communal_refresh.finishRefresh();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.VISIBLE);
                 super.onError(ex, isOnCallback);
             }
         });
@@ -394,8 +386,6 @@ public class QualityNewProActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
-                communal_load.setVisibility(View.GONE);
-                communal_error.setVisibility(View.GONE);
                 if (page == 1) {
                     newProList.clear();
                 }
@@ -471,7 +461,7 @@ public class QualityNewProActivity extends BaseActivity {
     void getSelTimeShaft(View view) {
         tv_ql_new_pro_time_tag.setVisibility(View.GONE);
         mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(QualityNewProActivity.this)
-                .setView(indentPopWindow)
+                .setView(productPopWindow)
                 .setFocusable(true)
                 .setOutsideTouchable(false)
                 .setOnDissmissListener(new PopupWindow.OnDismissListener() {
