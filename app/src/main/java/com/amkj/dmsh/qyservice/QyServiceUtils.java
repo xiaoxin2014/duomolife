@@ -284,24 +284,24 @@ public class QyServiceUtils {
 
     public void loginQyUserInfo(Context context, int userId, String nickName, String mobile, String avatar) {
         logoutQyUser();
-        if (userId > 0) {
-            String osVersion = Build.VERSION.RELEASE;
+        String osVersion = Build.VERSION.RELEASE;
 //        手机型号
-            String mobileModel = Build.MODEL;
-            YSFUserInfo userInfo = new YSFUserInfo();
+        String mobileModel = Build.MODEL;
+        YSFUserInfo userInfo = new YSFUserInfo();
+        JSONArray array = new JSONArray();
+        if (userId > 0) {
             userInfo.userId = String.valueOf(userId);
-            JSONArray array = new JSONArray();
             array.put(userInfoDataItem("real_name", getStrings(nickName), -1, null, null));
             array.put(userInfoDataItem("mobile_phone", getStrings(mobile), -1, null, null));
 //            array.add(userInfoDataItem("email", email, -1,null, null)); // email
             array.put(userInfoDataItem("avatar", getStrings(avatar), -1, null, null));
-            array.put(userInfoDataItem("system_version", osVersion, 0, "系统版本", null));
-            array.put(userInfoDataItem("app_version", getVersionName(context), 1, "app版本", null));
-            array.put(userInfoDataItem("mobile_model", mobileModel, 2, "手机型号", null));
-            userInfo.data = array.toString();
-            Unicorn.setUserInfo(userInfo);
             uiCustomization.rightAvatar = avatar;
         }
+        array.put(userInfoDataItem("system_version", osVersion, 0, "系统版本", null));
+        array.put(userInfoDataItem("app_version", getVersionName(context), 1, "app版本", null));
+        array.put(userInfoDataItem("mobile_model", mobileModel, 2, "手机型号", null));
+        userInfo.data = array.toString();
+        Unicorn.setUserInfo(userInfo);
     }
 
     private JSONObject userInfoDataItem(String key, Object value, int index, String label, String href) {

@@ -3,6 +3,7 @@ package com.amkj.dmsh.homepage.adapter;
 import android.content.Context;
 import android.text.TextUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.BaseViewHolderHelper;
@@ -66,15 +67,6 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Base
                         .setText(R.id.tv_product_promotion_join_count, String.format(context.getResources().getString(R.string.time_join_group_count)
                                 , getStrings(timeForeShowBean.getFlashBuyClickCount())))
                         .itemView.setTag(timeForeShowBean);
-
-//                ImageView iv_pro_time_warm = helper.getView(R.id.iv_pro_time_warm);
-//                if (!isTimeStart(springSaleBean)) {
-//                    helper.setGone(R.id.iv_pro_time_warm, true);
-//                    iv_pro_time_warm.setSelected(springSaleBean.getIsRemind() != 0);
-//                } else {
-//                    helper.setGone(R.id.iv_pro_time_warm, false);
-//                }
-//                helper.addOnClickListener(R.id.iv_pro_time_warm).setTag(R.id.iv_pro_time_warm, productTopicBean);
                 break;
 //            品牌团
             case TYPE_1:
@@ -85,6 +77,8 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Base
                 break;
             case TYPE_2:
                 TimeShaftBean timeShaftBean = (TimeShaftBean) productTopicBean;
+                LinearLayout linearLayout = helper.getView(R.id.ll_promotion_week_time);
+                linearLayout.setSelected(helper.getLayoutPosition() - getHeaderLayoutCount() != 0);
                 helper.setGone(R.id.ll_show_time_product_week, !TextUtils.isEmpty(timeShaftBean.getTimeDayWeek()))
                         .setText(R.id.tv_foreShow_product_time_week, timeShaftBean.getTimeDayWeek())
                         .setText(R.id.tv_spring_time_shaft, String.format(context.getResources().getString(R.string.time_product_clock_new), getStrings(timeShaftBean.getTimeDayHour())));
