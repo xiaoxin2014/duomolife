@@ -59,4 +59,5 @@
     <!--页面间距-->
     <dimen name="gap_left">26px</dimen>
     <dimen name="gap_right">24px</dimen>
+    <dimen name="dimen_70dp">70dp</dimen>
 </resources>

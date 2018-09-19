@@ -22,7 +22,6 @@
     <string name="progressActivityErrorContentPlaceholder">网络不给力哦，加载失败</string>
     <!--版本检测-->
     <string name="find_release_topic">参与话题</string>
-    <string name="coupon_click">戳我领取</string>
     <string name="userDataNull">暂无此用户</string>
     <string name="unConnectedNetwork">暂无网络,请检查是否联网</string>
     <string name="connectedFaile">请求失败，无效商品</string>
@@ -55,7 +54,13 @@
     <string name="comment_type_lack">评论类型缺失，评论失败</string>
     <string name="comment_send_success">发送完成</string>
     <string name="quality_search_hint">输入商品关键字</string>
+    <!--优惠券-->
     <string name="Get_Coupon_Fail">优惠券领取失败</string>
+    <string name="coupon_start_fee">满%1$d可使用</string>
+    <string name="coupon_period_date">有效期:%1$s~%2$s</string>
+    <!--淘宝优惠券-->
+    <string name="coupon_tb_price">￥%1$s元优惠券</string>
+
     <string name="AddCarSuccess">添加商品成功</string>
     <string name="integral_hint">积分可以兑换礼品，晒单可获得更多积分</string>
     <string name="collect_failed">收藏%1$s失败</string>
@@ -178,9 +183,6 @@
     <string name="integral_indent_product_price_and_money">%1$d积分+￥%2$s</string>
     <string name="integral_indent_product_price">%1$d积分</string>
     <string name="integral_indent_product_count">共%1$d件 实付:</string>
-    <!--新人专享优惠券-->
-    <string name="coupon_start_fee">满%1$d可使用</string>
-    <string name="coupon_period_date">有效期:%1$s~%2$s</string>
     <string name="product_comment_count">Ta们在说(%1$d)</string>
     <string name="buy_return_integral_total">返%1$d积分</string>
     <string name="invite_partner_register">你的好友 %1$s 邀请你注册多么生活</string>

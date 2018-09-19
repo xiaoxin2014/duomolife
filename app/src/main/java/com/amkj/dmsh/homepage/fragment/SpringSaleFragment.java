@@ -179,11 +179,7 @@ public class SpringSaleFragment extends BaseFragment {
             @Override
             public void onLoadMoreRequested() {
                 page++;
-                if (isTimeProductTop) {
-                    getTopRecommendData();
-                } else {
-                    getProductData();
-                }
+                getProductData();
             }
         }, communal_recycler);
         BaseApplication application = (BaseApplication) getActivity().getApplication();
@@ -346,7 +342,6 @@ public class SpringSaleFragment extends BaseFragment {
                                                         if (j == showTimeList.size() - 1) {
 //                                                            最后一天
                                                             isTimeProductTop = true;
-                                                            page = 1;
                                                             getTopRecommendData();
                                                         } else {
                                                             timeShowBean = showTimeList.get(++j);
@@ -403,8 +398,6 @@ public class SpringSaleFragment extends BaseFragment {
     private void getTopRecommendData() {
         String url = Url.BASE_URL + Url.TIME_SHOW_PRO_TOP_PRODUCT;
         Map<String, Object> params = new HashMap<>();
-        params.put("showCount", TOTAL_COUNT_TWENTY);
-        params.put("currentPage", page);
         params.put("recommendType", "top");
         if (userId != 0) {
             params.put("uid", userId);
@@ -418,21 +411,16 @@ public class SpringSaleFragment extends BaseFragment {
                         timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
-                                springSaleRecyclerAdapter.setEnableLoadMore(true);
                                 if (timeForeShowEntity.getTimeForeShowList() != null
                                         && timeForeShowEntity.getTimeForeShowList().size() > 0) {
-                                    if (page == 1) {
-                                        BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
-                                        baseTimeProductTopicBean.setItemType(TYPE_3);
-                                        saleTimeTotalList.add(baseTimeProductTopicBean);
-                                    }
+                                    BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
+                                    baseTimeProductTopicBean.setItemType(TYPE_3);
+                                    saleTimeTotalList.add(baseTimeProductTopicBean);
                                     saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
                                 }
                                 springSaleRecyclerAdapter.notifyDataSetChanged();
-                            } else {
-                                springSaleRecyclerAdapter.loadMoreEnd();
                             }
-
+                            springSaleRecyclerAdapter.loadMoreEnd();
                         }
                     }
 

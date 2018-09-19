@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
     <include layout="@layout/activity_domolife_header"/>
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/smart_time_product_details"
@@ -28,7 +30,6 @@
                     android:id="@+id/banner_shop_time_details"
                     android:layout_width="match_parent"
                     android:layout_height="750px"
-                    android:visibility="gone"
                     android:background="@drawable/border_bottom_line"
                     app:layout_auto_basewidth = "height"/>
                 <RelativeLayout
@@ -64,7 +65,7 @@
                         app:suffixDay="天"
                         app:suffixTextColor="@color/text_black_t"
                         app:suffixTextSize="28px"
-                        app:timeTextColor="@color/text_black_t"
+                        app:timeTextColor="@color/white"
                         app:timeTextSize="28px"/>
                 </RelativeLayout>
                 <LinearLayout
@@ -133,8 +134,9 @@
                     tl:tl_indicator_color="@color/text_normal_red"
                     tl:tl_indicator_corner_radius="1px"
                     tl:tl_indicator_gravity="BOTTOM"
-                    tl:tl_indicator_height="@dimen/dimen_1dp"
-                    tl:tl_indicator_width="@dimen/dimen_60dp"
+                    tl:tl_indicator_margin_bottom="@dimen/dp_10"
+                    tl:tl_indicator_height="@dimen/dimen_2dp"
+                    tl:tl_indicator_width="@dimen/dimen_70dp"
                     tl:tl_tab_space_equal="true"
                     tl:tl_textSelectColor="@color/text_normal_red"
                     tl:tl_textUnselectColor="@color/text_black_t"

@@ -38,6 +38,8 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     private String cpName;
     //    淘宝优惠券地址
     private String couponUrl;
+//    是否是最后一张淘宝优惠券
+    private boolean lastTbCoupon;
     //    音频 视频地址
     private String url;
     //    音频来源
@@ -84,6 +86,8 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     public static final int TYPE_PRODUCT_RECOMMEND = 15;
     //    关联商品
     public static final int TYPE_RELEVANCE_PRODUCT = 16;
+//    限时特惠 头部红柱 + 标题 top灰色间隔
+    public static final int TYPE_PROMOTION_TITLE = 17;
 
     public CommunalDetailObjectBean() {
     }
@@ -210,6 +214,14 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
 
     public void setCouponUrl(String couponUrl) {
         this.couponUrl = couponUrl;
+    }
+
+    public boolean isLastTbCoupon() {
+        return lastTbCoupon;
+    }
+
+    public void setLastTbCoupon(boolean lastTbCoupon) {
+        this.lastTbCoupon = lastTbCoupon;
     }
 
     public String getFrom() {

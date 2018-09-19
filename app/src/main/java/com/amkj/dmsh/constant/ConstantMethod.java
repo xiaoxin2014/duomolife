@@ -546,7 +546,7 @@ public class ConstantMethod {
     }
 
     public static Badge getBadge(Context context, View view) {
-        return getBadge(context, view, AutoUtils.getPercentWidthSize(15), AutoUtils.getPercentWidthSize( 20));
+        return getBadge(context, view, AutoUtils.getPercentWidthSize(15), AutoUtils.getPercentWidthSize(20));
     }
 
     public static Badge getBadge(Context context, View view, int offsetX, int offsetY) {
@@ -1210,12 +1210,12 @@ public class ConstantMethod {
                             //                    匹配网址
                             Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
                             CommunalDetailObjectBean communalDetailObjectBean;
-                            if(aMatcher.find()){
+                            if (aMatcher.find()) {
                                 communalDetailObjectBean = new CommunalDetailObjectBean();
                                 communalDetailObjectBean.setContent(content);
                                 communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
                                 descriptionDetailList.add(communalDetailObjectBean);
-                            }else{
+                            } else {
                                 Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
                                 boolean hasImgUrl = matcher.find();
                                 while (hasImgUrl) {
@@ -1225,7 +1225,7 @@ public class ConstantMethod {
                                         communalDetailObjectBean.setPicUrl(imgUrl);
                                         communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
                                         descriptionDetailList.add(communalDetailObjectBean);
-                                    }else {
+                                    } else {
 //                                    List<String> imageCropList = getImageCrop(imgUrl, 10000);
 //                                    for (String imageUrl : imageCropList) {
 //                                        communalDetailObjectBean = new CommunalDetailObjectBean();
@@ -1791,45 +1791,47 @@ public class ConstantMethod {
                                 && !TextUtils.isEmpty(requestStatus.getImgUrl())
                                 && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
                             //                                    弹窗
-                            GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                @Override
-                                public void onSuccess(Bitmap bitmap) {
-                                    if (isContextExisted(context)) {
-                                        AlertDialogImage alertDialogImage = new AlertDialogImage();
-                                        AlertDialog alertImageDialog = alertDialogImage.createAlertDialog(context);
-                                        alertImageDialog.show();
-                                        alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                            @Override
-                                            public void imageClick() {
-                                                Intent intent = new Intent();
-                                                switch (requestStatus.getUserType()) {
-                                                    case 1: //新人用户
-                                                        intent.setClass(context, QualityNewUserActivity.class);
-                                                        context.startActivity(intent);
-                                                        break;
+                            if (isContextExisted(context)) {
+                                GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                    @Override
+                                    public void onSuccess(Bitmap bitmap) {
+                                        if (isContextExisted(context)) {
+                                            AlertDialogImage alertDialogImage = new AlertDialogImage();
+                                            AlertDialog alertImageDialog = alertDialogImage.createAlertDialog(context);
+                                            alertImageDialog.show();
+                                            alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                                                @Override
+                                                public void imageClick() {
+                                                    Intent intent = new Intent();
+                                                    switch (requestStatus.getUserType()) {
+                                                        case 1: //新人用户
+                                                            intent.setClass(context, QualityNewUserActivity.class);
+                                                            context.startActivity(intent);
+                                                            break;
 //                                                    领取优惠券
-                                                    case 2:
-                                                    case 3:
-                                                        getNewUserCoupon(context, requestStatus.getCouponId());
-                                                        break;
+                                                        case 2:
+                                                        case 3:
+                                                            getNewUserCoupon(context, requestStatus.getCouponId());
+                                                            break;
+                                                    }
+                                                    alertImageDialog.dismiss();
                                                 }
-                                                alertImageDialog.dismiss();
-                                            }
-                                        });
-                                        alertDialogImage.setImage(bitmap);
+                                            });
+                                            alertDialogImage.setImage(bitmap);
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onStart() {
+                                    @Override
+                                    public void onStart() {
 
-                                }
+                                    }
 
-                                @Override
-                                public void onError(Drawable errorDrawable) {
+                                    @Override
+                                    public void onError(Drawable errorDrawable) {
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -2106,6 +2108,7 @@ public class ConstantMethod {
 
     /**
      * 获取毫秒 空值为当前默认时间
+     *
      * @param time
      * @return
      */
@@ -2364,7 +2367,7 @@ public class ConstantMethod {
     /**
      * 获取应用市场
      */
-    public static void getMarketApp(Context context,String hintText) {
+    public static void getMarketApp(Context context, String hintText) {
         //        获取已安装应用商店的包名列表
         try {
             List<PackageInfo> packageInfo = context.getPackageManager().getInstalledPackages(0);
@@ -2383,13 +2386,13 @@ public class ConstantMethod {
                 try {
                     MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
                 } catch (Exception e) {
-                    showToast(context,hintText);
+                    showToast(context, hintText);
                 }
             } else {
-                showToast(context,hintText);
+                showToast(context, hintText);
             }
         } catch (Exception e) {
-            showToast(context,hintText);
+            showToast(context, hintText);
         }
     }
 

@@ -52,6 +52,8 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.zhy.autolayout.utils.AutoUtils;
 import com.zzhoujay.richtext.ImageHolder;
@@ -74,10 +76,12 @@ import emojicon.EmojiconTextView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
@@ -95,6 +99,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODU
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_RECOMMEND;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TAG;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_RELEVANCE_PRODUCT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
@@ -180,6 +185,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         addItemType(TYPE_RELEVANCE_PRODUCT, R.layout.layout_top_communal_wrap);
 //        占位
         addItemType(TYPE_EMPTY_OBJECT, R.layout.layout_empty_object);
+//        限时特惠商品详情头部
+        addItemType(TYPE_PROMOTION_TITLE, R.layout.layout_promotion_product_details_header_title);
         this.context = context;
         urlMap = new HashMap<>();
         BaseApplication app = (BaseApplication) ((Activity) context).getApplication();
@@ -222,7 +229,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             case TYPE_PRODUCT_RECOMMEND:
                 ProNoShopCarAdapter qualityTypeProductAdapter = new ProNoShopCarAdapter(context, detailObjectBean.getProductList());
                 holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, 2));
-                if(holder.communal_recycler_wrap.getItemDecorationCount()<1){
+                if (holder.communal_recycler_wrap.getItemDecorationCount() < 1) {
                     holder.communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                             // 设置分隔线资源ID
                             .setDividerId(R.drawable.item_divider_five_dp)
@@ -267,14 +274,26 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case TYPE_GIF_IMG:
                 final ImageView iv_gif_load_image = holder.getView(R.id.iv_gif_load_image);
-                GlideImageLoaderUtil.loadGif(context,iv_gif_load_image,detailObjectBean.getPicUrl());
+                GlideImageLoaderUtil.loadGif(context, iv_gif_load_image, detailObjectBean.getPicUrl());
+                break;
+            case TYPE_PROMOTION_TITLE:
+                holder.setText(R.id.tv_communal_red_column_title, getStrings(detailObjectBean.getName()));
                 break;
             case TYPE_LUCKY_MONEY:
-                holder.setText(R.id.tv_coupon_money_amount, getStrings(detailObjectBean.getName()));
-                holder.setTag(R.id.tv_click_get_lucky_money, detailObjectBean)
-                        .setTag(R.id.ll_get_lucky_money, detailObjectBean)
-                        .addOnClickListener(R.id.tv_click_get_lucky_money)
-                        .addOnClickListener(R.id.ll_get_lucky_money);
+                TextView tv_tb_coupon_price = holder.getView(R.id.tv_tb_coupon_price);
+                tv_tb_coupon_price.setText(getStringsChNPrice(context,detailObjectBean.getName()));
+                Link link = new Link(Pattern.compile(REGEX_NUM));
+                link.setTextColor(context.getResources().getColor(R.color.white))
+                        .setUnderlined(false)
+                        .setHighlightAlpha(0f)
+                        .setTextSize(AutoUtils.getPercentWidthSize(74))
+                        .setOnClickListener(null);
+                LinkBuilder.on(tv_tb_coupon_price)
+                        .addLink(link)
+                        .build();
+                holder.setTag(R.id.ll_layout_tb_coupon, detailObjectBean)
+                        .setGone(R.id.tv_last_tb_coupon_hint,detailObjectBean.isLastTbCoupon())
+                        .addOnClickListener(R.id.ll_layout_tb_coupon);
                 break;
             case TYPE_PRODUCT_TITLE:
                 holder.setText(R.id.tv_communal_detail_title, getStrings(detailObjectBean.getContent()));
@@ -346,7 +365,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         //                    匹配网址
                         Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
                         boolean isImageUrl = aMatcher.find();
-                        if(isImageUrl){
+                        if (isImageUrl) {
                             //                    匹配网址
                             String tbUrlImgValue = "";
                             Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
@@ -357,7 +376,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 }
                             }
                             iv_communal_image.setTag(R.id.iv_two_tag, tbUrlImgValue);
-                        }else{
+                        } else {
                             String stringContent = imgIsFind.group();
                             Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
                             while (matcher.find()) {
@@ -526,7 +545,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 .urlClick(new OnUrlClickListener() {
                                     @Override
                                     public boolean urlClicked(String url) {
-                                        setSkipPath(context,url,false);
+                                        setSkipPath(context, url, false);
                                         return true;
                                     }
                                 }).into(tv_content_type);
@@ -697,9 +716,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     public void onClick(View v) {
         String imageUrl = (String) v.getTag(R.id.iv_tag);
         String imageUrlUrl = (String) v.getTag(R.id.iv_two_tag);
-        if(!TextUtils.isEmpty(imageUrlUrl)){
-            setSkipPath(context,imageUrlUrl,false);
-        }else if (!TextUtils.isEmpty(imageUrl)) {
+        if (!TextUtils.isEmpty(imageUrlUrl)) {
+            setSkipPath(context, imageUrlUrl, false);
+        } else if (!TextUtils.isEmpty(imageUrl)) {
             List<ImageBean> imageBeanList = new ArrayList<>();
             ImageBean imageBean = new ImageBean();
             imageBean.setPicUrl(imageUrl);

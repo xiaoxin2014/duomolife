@@ -270,8 +270,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                         }
                         loadHud.dismiss();
                         break;
-                    case R.id.tv_click_get_lucky_money:
-                    case R.id.ll_get_lucky_money:
+
+                    case R.id.ll_layout_tb_coupon:
                         CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
                         if (couponBean != null) {
                             if (loadHud != null) {
