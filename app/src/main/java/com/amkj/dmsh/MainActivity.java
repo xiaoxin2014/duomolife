@@ -126,6 +126,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK;
 import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
@@ -779,7 +780,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                     CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
                     if (minePageData != null) {
                         CommunalUserInfoBean communalUserInfoBean = minePageData.getCommunalUserInfoBean();
-                        if (minePageData.getCode().equals("01")) {
+                        if (minePageData.getCode().equals(SUCCESS_CODE)) {
                             loginClassQYService(communalUserInfoBean);
                             getLoginStatusTime();
 //                            上传设备信息
@@ -800,6 +801,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
             });
         } else {
             userId = 0;
+            QyServiceUtils.getQyInstance().logoutQyUser();
         }
     }
 

@@ -413,6 +413,7 @@ public class SpringSaleFragment extends BaseFragment {
                 , params, new NetLoadUtils.NetLoadListener() {
                     @Override
                     public void onSuccess(String result) {
+                        springSaleRecyclerAdapter.loadMoreComplete();
                         Gson gson = new Gson();
                         timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
@@ -437,11 +438,13 @@ public class SpringSaleFragment extends BaseFragment {
 
                     @Override
                     public void netClose() {
+                        springSaleRecyclerAdapter.loadMoreComplete();
                         springSaleRecyclerAdapter.loadMoreEnd();
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
+                        springSaleRecyclerAdapter.loadMoreComplete();
                         springSaleRecyclerAdapter.loadMoreEnd();
                     }
                 });

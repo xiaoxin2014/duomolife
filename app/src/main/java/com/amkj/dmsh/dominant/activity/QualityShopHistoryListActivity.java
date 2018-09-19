@@ -65,6 +65,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
@@ -351,6 +352,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         getBuyListDetailData();
         getBuyListRecommend();
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -360,6 +362,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     private void getBuyListRecommend() {
         String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST_PRO;
         Map<String, Object> params = new HashMap<>();
@@ -368,7 +371,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         params.put("must_buy_id", listId);
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopHistoryListActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-
                     @Override
                     public void onSuccess(String result) {
                         qualityBuyListAdapter.loadMoreComplete();
@@ -386,23 +388,23 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList, qualityBuyListEntity);
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void netClose() {
                         smart_communal_refresh.finishRefresh();
                         qualityBuyListAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         showToast(QualityShopHistoryListActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList, qualityBuyListEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         smart_communal_refresh.finishRefresh();
                         qualityBuyListAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         showToast(QualityShopHistoryListActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList, qualityBuyListEntity);
                     }
                 });
     }
@@ -414,33 +416,36 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                itemDescriptionList.clear();
-                Gson gson = new Gson();
-                ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
-                if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals("01")) {
-                        shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
-                        tv_header_titleAll.setText(getStrings(shopBuyDetailBean.getName()));
-                        List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopHistoryListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl());
-                        if (descriptionBeanList != null) {
-                            itemDescriptionList.addAll(ConstantMethod.getDetailsDataList(descriptionBeanList));
-                        }
-                    } else if (!shopDetailsEntity.getCode().equals("02")) {
-                        showToast(QualityShopHistoryListActivity.this, shopDetailsEntity.getMsg());
-                    }
-                    communalDetailAdapter.setNewData(itemDescriptionList);
-                }
-            }
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopHistoryListActivity.this, url
+                , params, new NetLoadUtils.NetLoadListener() {
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-            }
-        });
+                    @Override
+                    public void onSuccess(String result) {
+                        itemDescriptionList.clear();
+                        Gson gson = new Gson();
+                        ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
+                        if (shopDetailsEntity != null) {
+                            if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                                shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
+                                tv_header_titleAll.setText(getStrings(shopBuyDetailBean.getName()));
+                                List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
+                                GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopHistoryListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl());
+                                if (descriptionBeanList != null) {
+                                    itemDescriptionList.addAll(ConstantMethod.getDetailsDataList(descriptionBeanList));
+                                }
+                            } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(QualityShopHistoryListActivity.this, shopDetailsEntity.getMsg());
+                            }
+                            communalDetailAdapter.setNewData(itemDescriptionList);
+                        }
+                    }
+
+                    @Override
+                    public void netClose() {}
+
+                    @Override
+                    public void onError(Throwable throwable) {}
+                });
     }
 
     class ShopBuyListView {

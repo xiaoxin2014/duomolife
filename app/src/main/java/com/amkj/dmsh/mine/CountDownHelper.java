@@ -63,6 +63,10 @@ public class CountDownHelper {
                 constantMethod = new ConstantMethod();
                 constantMethod.createSchedule();
             }
+            if(constantMethod.getScheduler()!=null
+                    &&constantMethod.getScheduler().isShutdown()){
+                constantMethod.createSchedule();
+            }
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
                 @Override
                 public void refreshTime() {

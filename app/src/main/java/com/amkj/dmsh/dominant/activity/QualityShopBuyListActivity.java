@@ -439,7 +439,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     }
                     qualityBuyListAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
@@ -447,7 +447,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityBuyListAdapter.loadMoreComplete();
                 showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
@@ -455,7 +455,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityBuyListAdapter.loadMoreComplete();
                 showToast(QualityShopBuyListActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
         });
     }

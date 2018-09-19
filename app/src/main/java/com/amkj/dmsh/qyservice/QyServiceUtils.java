@@ -283,7 +283,6 @@ public class QyServiceUtils {
     }
 
     public void loginQyUserInfo(Context context, int userId, String nickName, String mobile, String avatar) {
-        logoutQyUser();
         String osVersion = Build.VERSION.RELEASE;
 //        手机型号
         String mobileModel = Build.MODEL;

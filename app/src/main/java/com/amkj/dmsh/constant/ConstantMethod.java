@@ -55,6 +55,7 @@ import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -1599,6 +1600,8 @@ public class ConstantMethod {
             edit.putBoolean("isLogin", false);
             edit.clear();
             edit.apply();
+//            七鱼注销
+            QyServiceUtils.getQyInstance().logoutQyUser();
         }
     }
 

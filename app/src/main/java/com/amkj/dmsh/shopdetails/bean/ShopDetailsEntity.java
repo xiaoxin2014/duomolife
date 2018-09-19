@@ -140,6 +140,7 @@ public class ShopDetailsEntity extends BaseEntity{
         private List<String> preSaleInfo;
         @SerializedName("couponJson")
         private List<CouponJsonBean> couponJsonList;
+        private String flashBuyClickCount;
 
         public static ShopPropertyBean objectFromData(String str) {
 
@@ -152,6 +153,14 @@ public class ShopDetailsEntity extends BaseEntity{
 
         public void setNewUserTag(String newUserTag) {
             this.newUserTag = newUserTag;
+        }
+
+        public String getFlashBuyClickCount() {
+            return flashBuyClickCount;
+        }
+
+        public void setFlashBuyClickCount(String flashBuyClickCount) {
+            this.flashBuyClickCount = flashBuyClickCount;
         }
 
         public String getGpDiscounts() {
