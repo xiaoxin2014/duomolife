@@ -55,6 +55,7 @@ public class IndentDiscountsEntity extends BaseEntity{
         private String prompt;
         private UserCouponInfoBean userCouponInfo;
         private int totalDeliveryPrice;
+        private int productIsUsable;
         @SerializedName("priceInfo")
         private List<PriceInfoBean> priceInfoList;
         @SerializedName("productInfo")
@@ -98,6 +99,14 @@ public class IndentDiscountsEntity extends BaseEntity{
 
         public void setIdcard(String idcard) {
             this.idcard = idcard;
+        }
+
+        public int getProductIsUsable() {
+            return productIsUsable;
+        }
+
+        public void setProductIsUsable(int productIsUsable) {
+            this.productIsUsable = productIsUsable;
         }
 
         public String getShowIdcard() {

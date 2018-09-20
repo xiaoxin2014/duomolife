@@ -1226,19 +1226,28 @@ public class ConstantMethod {
                                         communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
                                         descriptionDetailList.add(communalDetailObjectBean);
                                     } else {
-//                                    List<String> imageCropList = getImageCrop(imgUrl, 10000);
-//                                    for (String imageUrl : imageCropList) {
+                                        String imgHeightSizeTag = "_height=";
+                                        if (content.contains(imgHeightSizeTag)) {
+                                            int heightStart = content.indexOf(imgHeightSizeTag) + imgHeightSizeTag.length()+1;
+                                            int heightEnd = content.indexOf("\"", heightStart);
+                                            if(heightStart!=-1&&heightEnd!=-1){
+                                                String substring = content.substring(heightStart, heightEnd);
+                                                List<String> imageCropList = getImageCrop(imgUrl,Integer.parseInt(getNumber(substring)));
+                                                for (String imageUrl : imageCropList) {
+                                                    addImagePath(descriptionDetailList, imageUrl);
+                                                }
+                                            }else{
+                                                addImagePath(descriptionDetailList, imgUrl);
+                                            }
+                                        } else {
+                                            addImagePath(descriptionDetailList, imgUrl);
+                                        }
+
 //                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-//                                        String imgUrlContent = ("<span><img src=\"" + imageUrl + "\" /></span>");
+//                                        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
 //                                        communalDetailObjectBean.setContent(imgUrlContent);
 //                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
 //                                        descriptionDetailList.add(communalDetailObjectBean);
-//                                    }
-                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-                                        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
-                                        communalDetailObjectBean.setContent(imgUrlContent);
-                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-                                        descriptionDetailList.add(communalDetailObjectBean);
                                     }
                                     hasImgUrl = matcher.find();
                                 }
@@ -1290,6 +1299,20 @@ public class ConstantMethod {
     }
 
     /**
+     * 仅针对 json串图片地址
+     * @param descriptionDetailList 详情信息集合
+     * @param imgUrl 图片地址
+     */
+    private static void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl) {
+        CommunalDetailObjectBean communalDetailObjectBean;
+        communalDetailObjectBean = new CommunalDetailObjectBean();
+        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
+        communalDetailObjectBean.setContent(imgUrlContent);
+        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+        descriptionDetailList.add(communalDetailObjectBean);
+    }
+
+    /**
      * 暂时限制每张图片不能超过4096*4096
      * 图片大图截取
      */
@@ -1299,11 +1322,10 @@ public class ConstantMethod {
 //        oss图片样式
 //        根据图片大小 获取展示在屏幕的真正大小
         if (sizeHeight > maxSize) {
-            float scale = AutoUtils.getPercentWidth1px();
-            int imageNormalSize = 2500;
-            int imageCount = (int) (sizeHeight * scale / imageNormalSize);
+            int imageNormalSize = 2000;
+            int imageCount = sizeHeight / imageNormalSize;
             if (imageCount > 0) {
-                imageCount += (scale % maxSize != 0 ? 1 : 0);
+                imageCount += (sizeHeight % imageNormalSize != 0 ? 1 : 0);
                 String ossPrefix = "?x-oss-process=image";
                 String imageNewUrl;
                 if (!imageUrl.contains(ossPrefix)) {

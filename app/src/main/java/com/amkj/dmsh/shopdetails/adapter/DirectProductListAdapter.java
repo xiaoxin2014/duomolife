@@ -463,6 +463,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 intent.putExtra("no", cartProductInfoBean.getOrderNo());
                 intent.putExtra("orderProductId", String.valueOf(cartProductInfoBean.getOrderProductId()));
                 intent.putExtra("orderRefundProductId", String.valueOf(cartProductInfoBean.getOrderRefundProductId()));
+                intent.putExtra(REFUND_TYPE, REFUND_TYPE);
                 context.startActivity(intent);
             }
         } else if (cartProductInfoBean.getStatus() <= 40 && 30 <= cartProductInfoBean.getStatus()) {

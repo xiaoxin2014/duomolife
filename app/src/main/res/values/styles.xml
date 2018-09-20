@@ -13,7 +13,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">@drawable/launch_bg_app</item>
+        <item name="android:windowBackground">@drawable/launch</item>
     </style>
 
     <style name="fullTheme1" parent="AppTheme">

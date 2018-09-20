@@ -75,6 +75,15 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
         private List<WinListBean> winList;
         private int mSeconds;
         private String mCurrentTime;
+        private Object timeObject;
+
+        public Object getTimeObject() {
+            return timeObject;
+        }
+
+        public void setTimeObject(Object timeObject) {
+            this.timeObject = timeObject;
+        }
 
         public String getmCurrentTime() {
             return mCurrentTime;

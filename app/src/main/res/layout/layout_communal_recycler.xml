@@ -5,3 +5,7 @@
     android:scrollbars="none"
     android:layout_weight="1"
     android:layout_height="match_parent" />
+    <!--android:scrollbarThumbVertical="@drawable/recycler_scrollbar_style"-->
+    <!--android:scrollbarTrackVertical="@drawable/recycler_scrollbar_style"
+    android:scrollbarThumbVertical="@drawable/recycler_scrollbar_style"
+        android:scrollbarSize="@dimen/dimen_1dp"-->

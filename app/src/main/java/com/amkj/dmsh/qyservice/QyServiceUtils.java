@@ -206,13 +206,12 @@ public class QyServiceUtils {
 
         if (qyProductIndentInfo != null) {
             pageSource.productDetail = new ProductDetail.Builder()
-                    .setPicture(qyProductIndentInfo.getPicUrl())
+                    .setPicture(getStrings(qyProductIndentInfo.getPicUrl()))
                     .setTitle(getStrings(qyProductIndentInfo.getTitle()))
-                    .setUrl(qyProductIndentInfo.getUrl())
-                    .setDesc(qyProductIndentInfo.getDesc())
-                    .setNote(qyProductIndentInfo.getNote())
-                    .setAlwaysSend(true)
                     .setUrl(getStrings(qyProductIndentInfo.getUrl()))
+                    .setDesc(getStrings(qyProductIndentInfo.getDesc()))
+                    .setNote(getStrings(qyProductIndentInfo.getNote()))
+                    .setAlwaysSend(true)
                     .setShow(1)
                     .setSendByUser(false)
                     .build();

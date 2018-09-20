@@ -495,6 +495,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                 case 50:
                     ll_refund_logistic.setVisibility(View.GONE);
                     ll_refund_bottom.setVisibility(View.VISIBLE);
+                    tv_refund_first.setVisibility(View.VISIBLE);
                     tv_refund_first.setText("撤销申请");
                     tv_refund_first.setTag(R.id.tag_first, CANCEL_APPLY);
                     tv_refund_first.setTag(R.id.tag_second, refundDetailBean);
@@ -502,6 +503,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                     break;
                 case 51:
                     ll_refund_bottom.setVisibility(View.VISIBLE);
+                    tv_refund_first.setVisibility(View.VISIBLE);
                     tv_refund_first.setText("撤销申请");
                     tv_refund_first.setTag(R.id.tag_first, CANCEL_APPLY);
                     tv_refund_first.setTag(R.id.tag_second, refundDetailBean);
@@ -539,25 +541,23 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
             if (refundDetailBean.getStatus() == -10
                     || refundDetailBean.getStatus() == -31
                     || refundDetailBean.getStatus() == -30) {
-                ll_refund_bottom.setVisibility(View.VISIBLE);
-                tv_refund_first.setText("修改申请");
-                tv_refund_first.setTag(R.id.tag_first, EDIT_APPLY);
-                tv_refund_first.setTag(R.id.tag_second, refundDetailBean);
-                tv_refund_second.setVisibility(View.GONE);
 //            退款处理中
                 if (refundDetailBean.getStatus() == -10 || refundDetailBean.getStatus() == -30) {
                     if (refundDetailBean.getChildOrderStatus() == 30 || refundDetailBean.getChildOrderStatus() == 31
                             || refundDetailBean.getChildOrderStatus() == 40) {
+                        tv_refund_first.setVisibility(View.VISIBLE);
+                        tv_refund_second.setVisibility(View.GONE);
                         tv_refund_first.setText("撤销申请");
                         tv_refund_first.setTag(R.id.tag_first, CANCEL_APPLY);
                         tv_refund_first.setTag(R.id.tag_second, refundDetailBean);
-                        tv_refund_second.setVisibility(View.GONE);
                     } else {
                         ll_refund_bottom.setVisibility(View.GONE);
                     }
                 } else if (refundDetailBean.getStatus() == -31) { // 申请被驳回
                     if (refundDetailBean.getChildOrderStatus() == 30 || refundDetailBean.getChildOrderStatus() == 31
                             || refundDetailBean.getChildOrderStatus() == 40) {
+                        tv_refund_first.setVisibility(View.VISIBLE);
+                        tv_refund_second.setVisibility(View.VISIBLE);
                         tv_refund_first.setText("撤销申请");
                         tv_refund_first.setTag(R.id.tag_first, CANCEL_APPLY);
                         tv_refund_first.setTag(R.id.tag_second, refundDetailBean);
@@ -565,10 +565,11 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                         tv_refund_second.setTag(R.id.tag_first, EDIT_APPLY);
                         tv_refund_second.setTag(R.id.tag_second, refundDetailBean);
                     } else {
+                        tv_refund_first.setVisibility(View.VISIBLE);
+                        tv_refund_second.setVisibility(View.GONE);
                         tv_refund_first.setText("修改申请");
                         tv_refund_first.setTag(R.id.tag_first, EDIT_APPLY);
                         tv_refund_first.setTag(R.id.tag_second, refundDetailBean);
-                        tv_refund_second.setVisibility(View.GONE);
                     }
                 } else {
                     ll_refund_bottom.setVisibility(View.GONE);

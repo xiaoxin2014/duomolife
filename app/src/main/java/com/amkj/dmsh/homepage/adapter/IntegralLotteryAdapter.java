@@ -121,9 +121,13 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                 .setText(R.id.tv_lottery_product_name, getStrings(previousInfoBean.getPrizeName()))
                 .setText(R.id.tv_integral_lottery_total, context.getResources().getString(R.string.integral_lottery_number
                         , previousInfoBean.getPrizeNum(), previousInfoBean.getRecordNum()));
-        if (!isEndOrStartTimeAddSeconds(previousInfoBean.getmCurrentTime(), previousInfoBean.getEndTime(), previousInfoBean.getmSeconds())) {
+
+        if (!isEndOrStartTimeAddSeconds(previousInfoBean.getmCurrentTime()
+                , previousInfoBean.getEndTime(), previousInfoBean.getmSeconds())) {
             helper.ct_integral_lottery_time.setTag(previousInfoBean.getPrizeName());
-            setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), helper.ct_integral_lottery_time);
+            helper.ct_integral_lottery_time.setVisibility(View.VISIBLE);
+            previousInfoBean.setTimeObject(helper.ct_integral_lottery_time);
+            setCountDownLotteryData(helper.ct_integral_lottery_time,previousInfoBean);
         }else{
             helper.ct_integral_lottery_time.setVisibility(View.GONE);
         }
@@ -148,7 +152,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             Date eTime = timeFormat.parse(previousInfoBean.getEndTime());
             helper.rel_integral_lottery_prize.removeAllViews();
             if (eTime.getTime() < cTime.getTime()) { //已结束
-                helper.ct_integral_lottery_time.setVisibility(View.GONE);
                 if (!previousInfoBean.isWinning()) {
                     if(previousInfoBean.getLotteryCode()==null
                             ||previousInfoBean.getLotteryCode().size()<1){
@@ -218,7 +221,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 //                刷新数据
                         refreshData();
 //                刷新倒计时
-                        refreshSchedule();
+//                        refreshSchedule();
                     }
                 }
             });
@@ -236,25 +239,17 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         return super.getItemCount();
     }
 
-    private void setCountDownView(int i, CountdownView countdownView) {
-        sparseArray.put(i, countdownView);
-    }
-
     private void refreshData() {
         for (Map.Entry<Integer, PreviousInfoBean> entry : beanMap.entrySet()) {
             PreviousInfoBean previousInfoBean = entry.getValue();
             previousInfoBean.setmSeconds(previousInfoBean.getmSeconds() + 1);
             beanMap.put(entry.getKey(), previousInfoBean);
+            if(previousInfoBean.getTimeObject()!=null){
+                setCountDownLotteryData((CountdownView) previousInfoBean.getTimeObject(), previousInfoBean);
+            }
         }
     }
 
-    private void refreshSchedule() {
-        for (int i = 0; i < sparseArray.size(); i++) {
-            CountdownView countdownView = (CountdownView) sparseArray.get(sparseArray.keyAt(i));
-            PreviousInfoBean previousInfoBean = beanMap.get(sparseArray.keyAt(i));
-            setLotteryData(countdownView, previousInfoBean);
-        }
-    }
 
     /**
      * 设置积分夺宝倒计时
@@ -262,15 +257,15 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
      * @param countdownView
      * @param previousInfoBean
      */
-    private void setLotteryData(CountdownView countdownView, PreviousInfoBean previousInfoBean) {
+    private void setCountDownLotteryData(CountdownView countdownView, PreviousInfoBean previousInfoBean) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         if (isEndOrStartTimeAddSeconds(previousInfoBean.getmCurrentTime()
                 , previousInfoBean.getEndTime()
                 , previousInfoBean.getmSeconds())) {
             countdownView.setOnCountdownEndListener(null);
-            countdownView.setVisibility(View.GONE);
+//            countdownView.setVisibility(View.GONE);
         } else if (isTimeStart(previousInfoBean)) {
-            countdownView.setVisibility(View.VISIBLE);
+//            countdownView.setVisibility(View.VISIBLE);
             try {
                 //格式化结束时间
                 Date dateEnd = formatter.parse(previousInfoBean.getEndTime());
@@ -288,7 +283,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                 e.printStackTrace();
             }
         } else {
-            countdownView.setVisibility(View.VISIBLE);
+//            countdownView.setVisibility(View.VISIBLE);
             try {
                 //格式化开始时间
                 Date dateStart = formatter.parse(previousInfoBean.getStartTime());
@@ -326,7 +321,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         constantMethod.stopSchedule();
         super.onDetachedFromRecyclerView(recyclerView);
     }
-
 
     private boolean isTimeStarting(String startTime, String currentTime, String endTime) {
         if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {

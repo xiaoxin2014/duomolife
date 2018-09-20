@@ -168,6 +168,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     private Date current;
     private TextView tvAlertMsg;
     private CharSequence payErrorMsg;
+    private IndentDiscountsBean indentDiscountsBean;
 
     @Override
     protected int getContentView() {
@@ -1023,12 +1024,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                 getAddressDetails();
             }
         }
-        //            再次购买
-        if (orderNo != null) {
-            getOrderData();
-        } else {
-            getIndentDiscounts(false);
-        }
     }
 
     @Override
@@ -1084,7 +1079,8 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     indentDiscountsEntity = gson.fromJson(result, IndentDiscountsEntity.class);
                     if (indentDiscountsEntity != null) {
                         if (indentDiscountsEntity.getCode().equals(SUCCESS_CODE)) {
-                            setDiscountsInfo(indentDiscountsEntity.getIndentDiscountsBean());
+                            indentDiscountsBean = indentDiscountsEntity.getIndentDiscountsBean();
+                            setDiscountsInfo(indentDiscountsBean);
                         }
                     }
                     NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
@@ -1298,14 +1294,15 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             pullHeaderView.tv_consignee_name.setText(addressInfoBean.getConsignee());
             pullHeaderView.tv_address_mobile_number.setText(addressInfoBean.getMobile());
             pullHeaderView.tv_indent_details_address.setText((addressInfoBean.getAddress_com() + addressInfoBean.getAddress() + " "));
-            if (indentDiscountsEntity != null) {
-                getIndentDiscounts(false);
-            } else {
-                getIndentDiscounts(false);
-            }
         } else {
             pullHeaderView.ll_indent_address_default.setVisibility(View.GONE);
             pullHeaderView.ll_indent_address_null.setVisibility(VISIBLE);
+        }
+        //            再次购买
+        if (orderNo != null) {
+            getOrderData();
+        } else {
+            getIndentDiscounts(false);
         }
     }
 
@@ -1539,16 +1536,22 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         //        优惠券选择
         @OnClick(R.id.ll_layout_coupon)
         void selectFavorable() {
-            if (TextUtils.isEmpty(orderCreateNo)) {
-                if (!type.equals(INDENT_DETAILS_TYPE)) {
-                    Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelableArrayList("couponGoods", (ArrayList<? extends Parcelable>) productInfoList);
-                    intent.putExtras(bundle);
-                    startActivityForResult(intent, DIRECT_COUPON_REQ);
-                } else {
-                    tv_direct_product_favorable.setCompoundDrawables(null, null, null, null);
-                    return;
+            if(indentDiscountsBean!=null){
+                if(indentDiscountsBean.getProductIsUsable()==0){
+                    showToast(DirectIndentWriteActivity.this,"该商品不支持使用优惠券！");
+                }else if(indentDiscountsBean.getProductIsUsable()==1){
+                    if (TextUtils.isEmpty(orderCreateNo)) {
+                        if (!type.equals(INDENT_DETAILS_TYPE)) {
+                            Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelableArrayList("couponGoods", (ArrayList<? extends Parcelable>) productInfoList);
+                            intent.putExtras(bundle);
+                            startActivityForResult(intent, DIRECT_COUPON_REQ);
+                        } else {
+                            tv_direct_product_favorable.setCompoundDrawables(null, null, null, null);
+                            return;
+                        }
+                    }
                 }
             }
         }

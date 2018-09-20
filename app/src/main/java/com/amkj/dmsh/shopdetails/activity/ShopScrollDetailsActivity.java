@@ -2176,6 +2176,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             startActivity(intent);
         }
     }
+    @OnClick(R.id.iv_ql_shop_pro_cp_tag)
+    void unallowedCoupon() {
+        showToast(ShopScrollDetailsActivity.this,"该商品不支持使用优惠券！");
+    }
 
     private void getConstant() {
         if (constantMethod == null) {

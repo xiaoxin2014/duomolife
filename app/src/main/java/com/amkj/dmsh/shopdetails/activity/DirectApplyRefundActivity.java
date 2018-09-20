@@ -744,10 +744,10 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                     if (requestInfo.getCode().equals("01")) {
                         showToast(DirectApplyRefundActivity.this, "提交完成");
                         Intent intent = new Intent(DirectApplyRefundActivity.this, DoMoRefundDetailActivity.class);
-                        intent.putExtra(REFUND_TYPE, REFUND_REPAIR);
                         intent.putExtra("orderProductId", String.valueOf(directRefundProBean.getOrderProductId()));
                         intent.putExtra("no", String.valueOf(refundBean.getOrderNo()));
                         intent.putExtra("orderRefundProductId", String.valueOf(requestInfo.getOrderRefundProductId()));
+                        intent.putExtra(REFUND_TYPE, REFUND_REPAIR);
                         startActivity(intent);
                         finish();
                     } else {
