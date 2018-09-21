@@ -144,7 +144,8 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:id="@+id/fl_promotion_product_details_contain"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:minHeight="500px"/>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>

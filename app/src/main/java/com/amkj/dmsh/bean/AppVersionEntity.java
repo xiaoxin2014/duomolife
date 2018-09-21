@@ -87,10 +87,28 @@ public class AppVersionEntity {
         private String version;
         private int status;
         private String lowestVersion;
+        private String compel_version;
+        private String compel_up_desc;
 
         public static AppVersionBean objectFromData(String str) {
 
             return new Gson().fromJson(str, AppVersionBean.class);
+        }
+
+        public String getCompel_version() {
+            return compel_version;
+        }
+
+        public void setCompel_version(String compel_version) {
+            this.compel_version = compel_version;
+        }
+
+        public String getCompel_up_desc() {
+            return compel_up_desc;
+        }
+
+        public void setCompel_up_desc(String compel_up_desc) {
+            this.compel_up_desc = compel_up_desc;
         }
 
         public int getShowPop() {

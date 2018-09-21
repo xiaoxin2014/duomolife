@@ -96,7 +96,6 @@
 
         <activity
             android:name=".GuideLaunchActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/fullTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

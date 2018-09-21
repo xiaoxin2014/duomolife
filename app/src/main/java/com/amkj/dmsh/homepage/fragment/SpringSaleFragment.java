@@ -86,7 +86,6 @@ public class SpringSaleFragment extends BaseFragment {
     //    当前时间
     private String currentRecordTime = "";
     private SpringSaleRecyclerAdapterNew springSaleRecyclerAdapter;
-    private CustomPopWindow mCustomPopWindow;
     private TimeForeShowEntity timeForeShowEntity;
     private List<TimeShowShaftBean> showTimeList;
     private String searchDateDay;
@@ -173,7 +172,7 @@ public class SpringSaleFragment extends BaseFragment {
             scrollY = 0;
             loadData();
 //                刷新时间轴
-            EventBus.getDefault().post(new EventMessage(TIME_REFRESH, currentRecordTime));
+            EventBus.getDefault().post(new EventMessage(TIME_REFRESH, "timeShaft"));
         });
         springSaleRecyclerAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override

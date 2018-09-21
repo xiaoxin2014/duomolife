@@ -134,7 +134,7 @@ public class TimeShowNewActivity extends BaseActivity {
         timeShowBeanList.clear();
         timeShowBeanList.addAll(timeShowEntity.getTimeShowShaftList());
         if (timeShowBeanList.size() > 0) {
-            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList);
+            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList,timeShowEntity.getSystemTime());
             vp_show_time.setAdapter(timeShowPagerAdapter);
             vp_show_time.setCurrentItem(0);
         }
@@ -142,7 +142,7 @@ public class TimeShowNewActivity extends BaseActivity {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if(message.type.equals(TIME_REFRESH)){
+        if(message.type.equals(TIME_REFRESH)&&"timeShaft".equals(message.result)){
             loadData();
         }
     }

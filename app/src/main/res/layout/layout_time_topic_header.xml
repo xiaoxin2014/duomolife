@@ -5,7 +5,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_communal_img_bg_time"/>
+    <ImageView
+        android:id="@+id/iv_communal_img_bg"
+        android:layout_width="match_parent"
+        android:layout_height="403px"
+        android:scaleType="centerCrop"
+        app:layout_auto_basewidth = "height"/>
 
     <RelativeLayout
         android:id="@+id/rel_topic_details_title"

@@ -107,7 +107,7 @@ public class TimeShowNewFragment extends BaseFragment {
                     Gson gson = new Gson();
                     TimeShowShaftEntity timeShowEntity = gson.fromJson(result, TimeShowShaftEntity.class);
                     if (timeShowEntity != null) {
-                        setTimeShaft(timeShowEntity);
+                        setTimeShaftIndex(timeShowEntity);
                     }
                 } else if (!code.equals("02")) {
                     showToast(getActivity(), msg);
@@ -128,34 +128,11 @@ public class TimeShowNewFragment extends BaseFragment {
             showToast(getActivity(), R.string.unConnectedNetwork);
         }
     }
-
-    private void setTimeShaft(TimeShowShaftEntity timeShowEntity) {
-        if (timeShowBeanList.size() > 0) {
-            boolean isRefresh = false;
-            if (timeShowBeanList.size() == timeShowEntity.getTimeShowShaftList().size()) {
-                for (int i = 0; i < timeShowEntity.getTimeShowShaftList().size(); i++) {
-                    TimeShowShaftBean timeShowBean = timeShowEntity.getTimeShowShaftList().get(i);
-                    TimeShowShaftBean timeShowOldBean = timeShowBeanList.get(i);
-                    if (!timeShowBean.getDate().equals(timeShowOldBean.getDate())
-                            || timeShowBean.getType() != timeShowOldBean.getType()) {
-                        isRefresh = true;
-                        break;
-                    }
-                }
-            }
-            if (isRefresh) {
-                setTimeShaftIndex(timeShowEntity);
-            }
-        } else {
-            setTimeShaftIndex(timeShowEntity);
-        }
-    }
-
     private void setTimeShaftIndex(TimeShowShaftEntity timeShowEntity) {
         timeShowBeanList.clear();
         timeShowBeanList.addAll(timeShowEntity.getTimeShowShaftList());
         if (timeShowBeanList.size() > 0) {
-            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList);
+            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList, timeShowEntity.getSystemTime());
             vp_show_time.setAdapter(timeShowPagerAdapter);
             vp_show_time.setCurrentItem(0);
         }
@@ -163,7 +140,7 @@ public class TimeShowNewFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals(TIME_REFRESH)) {
+        if (message.type.equals(TIME_REFRESH)&&"timeShaft".equals(message.result)) {
             loadData();
         }
     }

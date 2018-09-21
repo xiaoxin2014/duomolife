@@ -43,13 +43,9 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.zhy.autolayout.utils.AutoUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +53,6 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.iwgang.countdownview.CountdownView;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -508,104 +503,6 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         } else {
             timeBrandHeaderView.iv_topic_details_index_bg.setVisibility(GONE);
         }
-        if (isTimeStart(dMLThemeDetail)) {
-            timeBrandHeaderView.tv_foreShow_time_topic_detail_status.setText("距开始：");
-        } else {
-            timeBrandHeaderView.tv_foreShow_time_topic_detail_status.setText("距开团：");
-        }
-        timeBrandHeaderView.ct_show_time_detail_topic.setTag(dMLThemeDetail);
-        setCountTime(dMLThemeDetail, timeBrandHeaderView.ct_show_time_detail_topic);
-        if (!ConstantMethod.isEndOrStartTime(dMLThemeDetail.getCurrentTime()
-                , dMLThemeDetail.getThemeDataBean().getEndTime())) {
-            getConstant();
-            constantMethod.createSchedule();
-            constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                @Override
-                public void refreshTime() {
-                    dmlThemeDetail.setAddSecond(dmlThemeDetail.getAddSecond() + 1);
-                    setCountTime(dmlThemeDetail, timeBrandHeaderView.ct_show_time_detail_topic);
-                }
-            });
-        } else {
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
-            }
-        }
-    }
-
-    private boolean isTimeStart(DMLThemeDetail dMLThemeDetail) {
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(dMLThemeDetail.getThemeDataBean().getStartTime());
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(dMLThemeDetail.getCurrentTime())) {
-                dateCurrent = formatter.parse(dMLThemeDetail.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
-            }
-            if (dateCurrent.getTime() >= dateStart.getTime()) {
-                return true;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private void setCountTime(DMLThemeDetail dMLThemeDetail, CountdownView cv_countdownTime) {
-        if (isTimeStart(dMLThemeDetail)) {
-            try {
-                //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateEnd = formatter.parse(dMLThemeDetail.getThemeDataBean().getEndTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(dMLThemeDetail.getCurrentTime())) {
-                    dateCurrent = formatter.parse(dMLThemeDetail.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime() - dmlThemeDetail.getAddSecond() * 1000);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-//            特惠预告
-            try {
-                //格式化开始时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateStart = formatter.parse(dMLThemeDetail.getThemeDataBean().getStartTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(dMLThemeDetail.getCurrentTime())) {
-                    dateCurrent = formatter.parse(dMLThemeDetail.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime() - dmlThemeDetail.getAddSecond() * 1000);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        if (!ConstantMethod.isEndOrStartTimeAddSeconds(dMLThemeDetail.getCurrentTime()
-                , dMLThemeDetail.getThemeDataBean().getEndTime()
-                , dmlThemeDetail.getAddSecond())) {
-            cv_countdownTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
-                @Override
-                public void onEnd(CountdownView cv) {
-                    cv.setOnCountdownEndListener(null);
-                    if (constantMethod != null) {
-                        constantMethod.stopSchedule();
-                    }
-                    page = 1;
-                    loadData();
-                }
-            });
-        } else {
-            cv_countdownTime.setOnCountdownEndListener(null);
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
-            }
-        }
     }
 
     class TimeBrandHeaderView {
@@ -624,12 +521,6 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         //        副背景图片
         @BindView(R.id.iv_topic_details_index_bg)
         ImageView iv_topic_details_index_bg;
-        //        时钟背景
-        @BindView(R.id.tv_communal_time_status)
-        TextView tv_foreShow_time_topic_detail_status;
-        //        倒计时
-        @BindView(R.id.ct_communal_time_details)
-        CountdownView ct_show_time_detail_topic;
     }
 
     class PopupWindowView {

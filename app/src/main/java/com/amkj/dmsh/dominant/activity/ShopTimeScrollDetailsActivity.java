@@ -170,7 +170,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        tvHeaderTitle.setText("");
+        tvHeaderTitle.setText("详情");
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
         communalRecyclerWrap.setLayoutManager(new LinearLayoutManager(ShopTimeScrollDetailsActivity.this));

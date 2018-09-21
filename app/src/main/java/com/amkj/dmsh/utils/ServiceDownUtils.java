@@ -63,7 +63,7 @@ public class ServiceDownUtils extends Service {
             @Override
             public void onLoading(long total, long current, boolean isDownloading) {
                 if (isShowProgress) {
-                    EventBus.getDefault().post(new EventMessage("appVersionProgress", current * 1f / total * 100 + 1));
+                    EventBus.getDefault().post(new EventMessage("appVersionProgress", current*1f / total * 100 + 1));
                 }
             }
 
@@ -88,6 +88,7 @@ public class ServiceDownUtils extends Service {
         if (isHeightVersion(context, file.getAbsolutePath())) {
             installApps(context,file);
         }else{
+            EventBus.getDefault().post(new EventMessage("finishUpdateDialog","updateVersion"));
             showToast(context, R.string.app_version_tint);
         }
     }

@@ -5,10 +5,8 @@
     <ImageView
         android:id="@+id/iv_launch_wel_page"
         android:layout_width="match_parent"
-        android:src="@drawable/launch"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:adjustViewBounds="true"/>
+        android:background="@drawable/launch_list"
+        android:layout_height="match_parent"/>
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"

@@ -28,9 +28,6 @@ import java.util.Map;
 import cn.iwgang.countdownview.CountdownView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
-
-;
 
 /**
  * @author LGuiPeng

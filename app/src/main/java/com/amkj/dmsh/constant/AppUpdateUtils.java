@@ -24,9 +24,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_VERSION_INFO;
 import static com.amkj.dmsh.constant.ConstantVariable.INTERVAL_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.LAST_UPDATE_TIME;
+import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_DESCRIPTION;
@@ -74,7 +77,7 @@ public class AppUpdateUtils {
                 public void onSuccess(String result) {
                     AppVersionEntity appVersionEntity = AppVersionEntity.objectFromData(result);
                     if (appVersionEntity != null) {
-                        if (appVersionEntity.getCode().equals("01")
+                        if (appVersionEntity.getCode().equals(SUCCESS_CODE)
                                 && appVersionEntity.getAppVersionBean() != null) {
                             AppVersionBean appVersionBean = appVersionEntity.getAppVersionBean();
                             SharedPreferences sharedPreferences = context.getSharedPreferences(APP_VERSION_INFO, MODE_PRIVATE);
@@ -84,17 +87,19 @@ public class AppUpdateUtils {
                             /**
                              * 更新时间  时间间隔
                              */
-                            if (isManual) {
+                            if (isMandatoryUpdateVersion(appVersionBean.getCompel_version())) { // 是否是强制版本
+                                openDialog(appVersionBean,true);
+                            } else if (isManual) {
                                 setAppUpdateData(appVersionEntity, sharedPreferences);
                                 if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
-                                    openDialog(appVersionBean);
+                                    openDialog(appVersionBean,false);
                                 } else {
                                     /**
                                      * 获取升级信息
                                      */
                                     UpgradeInfo upgradeInfo = Beta.getUpgradeInfo();
                                     if (upgradeInfo == null) {
-                                        getMarketApp(context,"暂无更多更新，稍晚留意新版本~");
+                                        getMarketApp(context, "暂无更多更新，稍晚留意新版本~");
                                     } else {
                                         Beta.checkUpgrade();
                                     }
@@ -103,11 +108,11 @@ public class AppUpdateUtils {
                                 if (!appVersionBean.getUpdateTime().equals(updateTime)) {
                                     setAppUpdateData(appVersionEntity, sharedPreferences);
                                     if (appVersionBean.getShowPop() == 1) {
-                                        openDialog(appVersionBean);
+                                        openDialog(appVersionBean,false);
                                     }
                                 } else if (!isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
                                     setAppUpdateData(appVersionEntity, sharedPreferences);
-                                    openDialog(appVersionBean);
+                                    openDialog(appVersionBean,false);
                                 }
                             }
                         }
@@ -115,6 +120,36 @@ public class AppUpdateUtils {
                 }
             });
         }
+    }
+
+    /**
+     * 强制更新当前版本
+     * @param compel_version
+     * @return
+     */
+    private boolean isMandatoryUpdateVersion(String compel_version) {
+        if (!TextUtils.isEmpty(compel_version)) {
+            String[] split = compel_version.split(",");
+            for (int i = 0; i < split.length; i++) {
+                String versionName = split[i];
+                String constraintVersion = getAppendNumber(versionName);
+                String currentVersion = getAppendNumber(getVersionName(context));
+                int constraintLength = constraintVersion.length();
+                int currentLength = currentVersion.length();
+                int absNumber = Math.abs(constraintLength - currentLength);
+                if (absNumber > 0) {
+                    if (constraintLength > currentLength) {
+                        currentVersion += String.format("%1$0" + absNumber + "d", 0);
+                    } else {
+                        constraintVersion += String.format("%1$0" + absNumber + "d", 0);
+                    }
+                }
+                if (currentVersion.equals(constraintVersion)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void setAppUpdateData(AppVersionEntity appVersionEntity, SharedPreferences sharedPreferences) {
@@ -130,13 +165,17 @@ public class AppUpdateUtils {
     /**
      * @param appVersionBean
      */
-    private void openDialog(AppVersionBean appVersionBean) {
+    private void openDialog(AppVersionBean appVersionBean,boolean isMandatoryUpdate) {
         if (!TextUtils.isEmpty(appVersionBean.getLink())) {
             Intent intent = new Intent(context, AppUpdateDialogActivity.class);
             intent.putExtra(VERSION_DOWN_LINK, getStrings(appVersionBean.getLink()));
             intent.putExtra(VERSION_UPDATE_DESCRIPTION, getStrings(appVersionBean.getDescription()));
             intent.putExtra(VERSION_UPDATE_LOW, getStrings(appVersionBean.getLowestVersion()));
             intent.putExtra(APP_CURRENT_UPDATE_VERSION, getStrings(appVersionBean.getVersion()));
+            if(isMandatoryUpdate){
+                intent.putExtra(APP_MANDATORY_UPDATE_VERSION, true);
+                intent.putExtra(MANDATORY_UPDATE_DESCRIPTION, getStrings(appVersionBean.getCompel_up_desc()));
+            }
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(0, 0);
         }

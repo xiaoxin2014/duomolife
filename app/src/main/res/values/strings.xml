@@ -193,5 +193,5 @@
     <string name="load_data_failed">可能原因\n·网络信号弱，换个wifi试一试~\n·系统出错，技术小哥正在抢修</string>
     <!--限时特惠-->
     <string name="time_product_clock_new">%1$s点上新</string>
-    <string name="time_join_group_count">%1$s人已参与</string>
+    <string name="time_join_group_count">%1$s人已参团</string>
 </resources>

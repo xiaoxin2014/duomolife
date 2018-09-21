@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,6 +30,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.isHeightVersion;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_DESCRIPTION;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_DESCRIPTION;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_LOW;
@@ -77,6 +80,10 @@ public class AppUpdateDialogActivity extends BaseActivity {
         String versionDescription = intent.getStringExtra(VERSION_UPDATE_DESCRIPTION);
         String versionLow = intent.getStringExtra(VERSION_UPDATE_LOW);
         String appCurrentVersion = intent.getStringExtra(APP_CURRENT_UPDATE_VERSION);
+//        强制更新此版本详情
+        String mandatoryDescription = intent.getStringExtra(MANDATORY_UPDATE_DESCRIPTION);
+//        是否强制更新此版本
+        boolean isMandatoryUpdate = intent.getBooleanExtra(APP_MANDATORY_UPDATE_VERSION, false);
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             saveAppPath = Environment.getExternalStorageDirectory() + "/download" + (
                     downLink.contains("/") ? downLink.substring(downLink.lastIndexOf("/")) : "domolife.apk");
@@ -85,11 +92,16 @@ public class AppUpdateDialogActivity extends BaseActivity {
             exists = downAppFile.exists();
         }
         tvAppVersionDescription.setMovementMethod(ScrollingMovementMethod.getInstance());
-        tvAppVersionDescription.setText(getStrings(versionDescription));
+        tvAppVersionDescription.setText(isMandatoryUpdate ? (!TextUtils.isEmpty(mandatoryDescription) ?
+                getStrings(mandatoryDescription) : getStrings(versionDescription)) : getStrings(versionDescription));
         tvAppVersionUpdate.setText(exists ? "安装" : "更新");
-        tvAppVersionInfo.setText(("多么生活 "+getStrings(appCurrentVersion)));
-//        是否低于强制更新的版本
-        constraintUpdate = isConstraintUpdate(versionLow);
+        tvAppVersionInfo.setText(("多么生活 " + getStrings(appCurrentVersion)));
+//        是否强制更新的版本
+        if (isMandatoryUpdate) {
+            constraintUpdate = true;
+        } else if (isConstraintUpdate(versionLow)) {
+            constraintUpdate = true;
+        }
         setFinishOnTouchOutside(!constraintUpdate);
     }
 
@@ -102,7 +114,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
     void updateInstall() {
         if (exists) {
             if (isHeightVersion(AppUpdateDialogActivity.this, saveAppPath)) {
-                installApps(AppUpdateDialogActivity.this,downAppFile);
+                installApps(AppUpdateDialogActivity.this, downAppFile);
             } else {
                 showToast(AppUpdateDialogActivity.this, R.string.app_version_tint);
                 finish();
@@ -119,7 +131,9 @@ public class AppUpdateDialogActivity extends BaseActivity {
                 intent.putExtra("isInstallApp", true);
             }
             AppUpdateDialogActivity.this.startService(intent);
-            finish();
+            if(!constraintUpdate){
+                finish();
+            }
         }
     }
 
@@ -149,11 +163,31 @@ public class AppUpdateDialogActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("appVersionProgress")) {
-            int total = (int) message.result;
+            int total = 0;
+            try {
+                float totalCurrent = (float) message.result;
+                total = (int) totalCurrent;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             llAppVersionDownTotal.setVisibility(View.VISIBLE);
             tvAppVersionUpdate.setVisibility(View.GONE);
             seekBarAppVersionTotal.setProgress(total);
             tvAppVersionTotalNumber.setText(((total > 100 ? 100 : total) + "%"));
+        }else if(message.type.equals("finishUpdateDialog")){
+            finish();
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(constraintUpdate){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

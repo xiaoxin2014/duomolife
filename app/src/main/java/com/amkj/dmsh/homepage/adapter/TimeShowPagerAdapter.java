@@ -3,15 +3,22 @@ package com.amkj.dmsh.homepage.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.homepage.fragment.SpringSaleFragment;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 
 
 /**
@@ -27,26 +34,58 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
     private final List<TimeShowShaftBean> timeShowBeanOpeningList = new ArrayList<>();
     private Map<String, Object> params = new HashMap<>();
 
-    public TimeShowPagerAdapter(FragmentManager fm, List<TimeShowShaftBean> timeShowBeanList) {
+    public TimeShowPagerAdapter(FragmentManager fm, List<TimeShowShaftBean> timeShowBeanList, String systemTime) {
         super(fm);
         for (TimeShowShaftBean timeShowBean : timeShowBeanList) {
             if (timeShowBean.getHourShaft() != null
                     && timeShowBean.getHourShaft().length > 0) {
                 if (timeShowBean.getType() > 1) {
                     timeShowBeanWaitList.add(timeShowBean);
+                } else if (timeShowBean.getType() == 1) {
+                    List<String> openString = new ArrayList<>();
+                    List<String> waitString = new ArrayList<>();
+                    for (int i = 0; i < timeShowBean.getHourShaft().length; i++) {
+                        String shaftTime = timeShowBean.getHourShaft()[i];
+                        if(Integer.parseInt(getNumber(shaftTime))>getTimeHour(systemTime)){
+                            waitString.add(shaftTime);
+                        }else{
+                            openString.add(shaftTime);
+                        }
+                    }
+                    if(openString.size()>0){
+                        TimeShowShaftBean timeShowWaitBean = new TimeShowShaftBean();
+                        timeShowWaitBean.setType(timeShowBean.getType());
+                        timeShowWaitBean.setDate(timeShowBean.getDate());
+                        timeShowWaitBean.setName(timeShowBean.getName());
+                        timeShowWaitBean.setHourShaft(openString.toArray(new String[openString.size()]));
+                        timeShowBeanOpeningList.add(timeShowWaitBean);
+                    }
+                    if(waitString.size()>0){
+                        TimeShowShaftBean timeShowWaitBean = new TimeShowShaftBean();
+                        timeShowWaitBean.setType(timeShowBean.getType());
+                        timeShowWaitBean.setDate(timeShowBean.getDate());
+                        timeShowWaitBean.setName(timeShowBean.getName());
+                        timeShowWaitBean.setHourShaft(waitString.toArray(new String[waitString.size()]));
+                        timeShowBeanWaitList.add(timeShowWaitBean);
+                    }
                 } else {
-                    timeShowBeanOpeningList.add(timeShowBean);
-                }
-            } else {
-                if (timeShowBean.getType() > 1) {
-                    timeShowBean.setHourShaft(new String[]{"10", "20"});
-                    timeShowBeanWaitList.add(timeShowBean);
-                } else {
-                    timeShowBean.setHourShaft(new String[]{"10", "20"});
                     timeShowBeanOpeningList.add(timeShowBean);
                 }
             }
         }
+    }
+
+    private int getTimeHour(String systemTime) {
+        Calendar calendar = Calendar.getInstance();
+        if(!TextUtils.isEmpty(systemTime)){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            try {
+                calendar.setTime(formatter.parse(systemTime));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return calendar.get(Calendar.HOUR_OF_DAY);
     }
 
     @Override

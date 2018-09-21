@@ -5,7 +5,7 @@
     android:id="@+id/ll_spr_sale"
     android:orientation="vertical">
     <include layout="@layout/activity_domolife_header"/>
-    <RadioGroup
+    <com.amkj.dmsh.views.autoviews.AutoRadioGroup
         android:layout_width="match_parent"
         android:background="@color/white"
         android:orientation="horizontal"
@@ -36,7 +36,7 @@
             android:gravity="center"
             android:background="@drawable/sel_time_spring_tab_red_ffs_un_ffb"
             android:layout_height="match_parent" />
-    </RadioGroup>
+    </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:id="@+id/vp_show_time"
