@@ -2,7 +2,7 @@ package com.amkj.dmsh.utils;
 
 import android.text.TextUtils;
 
-import static com.amkj.dmsh.base.BaseApplication.OSS_URL;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
 
 /**
  * @author LGuiPeng

@@ -55,7 +55,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.BaseApplication.OSS_URL;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;

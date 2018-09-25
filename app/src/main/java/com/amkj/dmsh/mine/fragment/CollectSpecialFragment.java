@@ -6,9 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.SpecialTopicAdapter;
@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -103,7 +104,7 @@ public class CollectSpecialFragment extends BaseFragment {
                     scrollY = 0;
                 }
                 if (screenHeight == 0) {
-                    BaseApplication app = (BaseApplication) getActivity().getApplication();
+                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                     screenHeight = app.getScreenHeight();
                 }
                 if (scrollY >= screenHeight) {

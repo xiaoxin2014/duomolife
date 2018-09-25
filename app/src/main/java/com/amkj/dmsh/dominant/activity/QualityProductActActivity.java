@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -39,6 +39,7 @@ import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,7 +198,7 @@ public class QualityProductActActivity extends BaseActivity {
                     scrollY = 0;
                 }
                 if (screenHeight == 0) {
-                    BaseApplication app = (BaseApplication) getApplication();
+                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                     screenHeight = app.getScreenHeight();
                 }
                 if (scrollY >= screenHeight) {
@@ -372,7 +373,7 @@ public class QualityProductActActivity extends BaseActivity {
                     alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     alertDialog.setCanceledOnTouchOutside(true);
                     alertDialog.show();
-                    BaseApplication app = (BaseApplication) getApplication();
+                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                     int dialogHeight = (int) (app.getScreenHeight() * 0.4 + 1);
                     Window window = alertDialog.getWindow();
                     window.getDecorView().setPadding(0, 0, 0, 0);

@@ -18,10 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CategoryTypeEntity;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
@@ -55,6 +55,7 @@ import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.MarginTopAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
@@ -73,7 +74,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -89,6 +90,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 
+;
 ;
 
 /**
@@ -194,7 +196,7 @@ public class HomePageFragment extends BaseFragment {
         std_home_art_type.setIndicatorHeight(AutoUtils.getPercentWidth1px() * 1);
         std_home_art_type.setIndicatorCornerRadius(AutoUtils.getPercentWidth1px() * 1);
         setStatusColor();
-        BaseApplication app = (BaseApplication) getActivity().getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         rel_home_page.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

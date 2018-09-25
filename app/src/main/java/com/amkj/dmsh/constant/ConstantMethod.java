@@ -116,9 +116,9 @@ import q.rorbin.badgeview.QBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
-import static com.amkj.dmsh.base.BaseApplication.mAppContext;
-import static com.amkj.dmsh.base.BaseApplication.webUrlParameterTransform;
-import static com.amkj.dmsh.base.BaseApplication.webUrlTransform;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlParameterTransform;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlTransform;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;

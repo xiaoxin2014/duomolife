@@ -14,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
@@ -27,6 +27,7 @@ import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -56,7 +57,7 @@ public class DirectPublishAppraiseAdapter extends BaseQuickAdapter<DirectApprais
         super(R.layout.adapter_layout_public_appraise, directAppraisePassList);
         this.directAppraisePassList = directAppraisePassList;
         this.context = context;
-        BaseApplication app = (BaseApplication) ((Activity) context).getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenWidth = app.getScreenWidth();
     }
 

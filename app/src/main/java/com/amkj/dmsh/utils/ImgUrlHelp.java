@@ -1,6 +1,5 @@
 package com.amkj.dmsh.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -15,7 +14,8 @@ import com.alibaba.sdk.android.oss.model.DeleteObjectRequest;
 import com.alibaba.sdk.android.oss.model.DeleteObjectResult;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,8 +32,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import top.zibin.luban.Luban;
 
-import static com.amkj.dmsh.base.BaseApplication.BUCKET_NAME;
-import static com.amkj.dmsh.base.BaseApplication.OSS_URL;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.BUCKET_NAME;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
 
 
 /**
@@ -93,7 +93,7 @@ public class ImgUrlHelp {
     }
 
     private void sendOSSImg(Context context) {
-        BaseApplication application = (BaseApplication) ((Activity) context).getApplication();
+        TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         oss = application.getOSS();
         //        上传网址
         // 构造上传请求
@@ -188,7 +188,7 @@ public class ImgUrlHelp {
     }
 
     public void setSingleImg(Context context, Bitmap bitmap) {
-        BaseApplication application = (BaseApplication) ((Activity) context).getApplication();
+        TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         OSS oss = application.getOSS();
         //        上传网址
         // 构造上传请求

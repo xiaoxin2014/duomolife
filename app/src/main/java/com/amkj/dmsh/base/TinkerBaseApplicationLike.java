@@ -1,12 +1,15 @@
 package com.amkj.dmsh.base;
 
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -48,6 +51,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.stat.MtaSDkException;
 import com.tencent.stat.StatService;
+import com.tencent.tinker.loader.app.DefaultApplicationLike;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
@@ -68,7 +72,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
+import me.jessyan.autosize.AutoSizeConfig;
+import me.jessyan.autosize.unit.Subunits;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -76,12 +83,19 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 
-public class BaseApplication extends Application {
+
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2018/9/25
+ * version 3.1.7
+ * class description:Tinker集成
+ */
+public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public OSS oss;
-    //    private DbManager dbManager;
-    public static final String MobAPPKEY = "1693fa0f7b0a0";
-    public static final String MobAPPSECRET = "435ac0137e0179dafee0139a85f6ed92";
-    public static String BUGLY_APP_ID = "385d38aeeb";
+    private final String MobAPPKEY = "1693fa0f7b0a0";
+    private final String MobAPPSECRET = "435ac0137e0179dafee0139a85f6ed92";
+    private String BUGLY_APP_ID = "385d38aeeb";
     public OSSCredentialProvider credentialProvider;
     public static String BUCKET_NAME = "domolifes";
     public static String OSS_URL;
@@ -137,31 +151,48 @@ public class BaseApplication extends Application {
     //    全局上下文
     public static Context mAppContext;
 
+    public TinkerBaseApplicationLike(Application application, int tinkerFlags,
+                                 boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
+                                 long applicationStartMillisTime, Intent tinkerResultIntent) {
+        super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
+    public void onBaseContextAttached(Context base) {
+        super.onBaseContextAttached(base);
         // you must install multiDex whatever tinker is installed!
         MultiDex.install(base);
-//        // 安装tinker
-        Beta.installTinker();
+
+        // 安装tinker
+        Beta.installTinker(this);
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public void registerActivityLifecycleCallback(Application.ActivityLifecycleCallbacks callbacks) {
+        getApplication().registerActivityLifecycleCallbacks(callbacks);
     }
 
     @Override
     public void onCreate() {
         // 调试时，将第三个参数改为true
 //        腾讯hotfix
-        mAppContext = getApplicationContext();
+//        已包含bugly 初始化
+
+        mAppContext = getApplication().getApplicationContext();
+        setTotalChanel();
         if (isDebugTag) {
             // 补丁回调接口
             Beta.betaPatchListener = new BetaPatchListener() {
                 @Override
                 public void onPatchReceived(String patchFile) {
-                    showToast(BaseApplication.this, "补丁下载地址" + patchFile);
+                    showToast(mAppContext, "补丁下载地址" + patchFile);
                 }
 
                 @Override
                 public void onDownloadReceived(long savedLength, long totalLength) {
-                    showToast(BaseApplication.this,
+                    showToast(mAppContext,
                             String.format(Locale.getDefault(), "%s %d%%",
                                     Beta.strNotificationDownloading,
                                     (int) (totalLength == 0 ? 0 : savedLength * 100 / totalLength)));
@@ -169,23 +200,23 @@ public class BaseApplication extends Application {
 
                 @Override
                 public void onDownloadSuccess(String msg) {
-                    showToast(BaseApplication.this, "补丁下载成功");
+                    showToast(mAppContext, "补丁下载成功");
                 }
 
                 @Override
                 public void onDownloadFailure(String msg) {
-                    showToast(BaseApplication.this, "补丁下载失败");
+                    showToast(mAppContext, "补丁下载失败");
 
                 }
 
                 @Override
                 public void onApplySuccess(String msg) {
-                    showToast(BaseApplication.this, "补丁应用成功");
+                    showToast(mAppContext, "补丁应用成功");
                 }
 
                 @Override
                 public void onApplyFailure(String msg) {
-                    showToast(BaseApplication.this, "补丁应用失败");
+                    showToast(mAppContext, "补丁应用失败");
                 }
 
                 @Override
@@ -194,12 +225,12 @@ public class BaseApplication extends Application {
                 }
             };
             // 设置开发设备，默认为false，上传补丁如果下发范围指定为“开发设备”，需要调用此接口来标识开发设备
-            Bugly.setIsDevelopmentDevice(BaseApplication.this, true);
+            Bugly.setIsDevelopmentDevice(mAppContext, true);
         }
-        SharedPreferences sp = getSharedPreferences("delOldVersion", Context.MODE_PRIVATE);
+        SharedPreferences sp = mAppContext.getSharedPreferences("delOldVersion", MODE_PRIVATE);
         boolean isDelOldVersionCache = sp.getBoolean("delOldVersionCache", true);
         if (isDelOldVersionCache) {
-            FileCacheUtils.cleanApplicationData(this);
+            FileCacheUtils.cleanApplicationData(mAppContext);
             SharedPreferences.Editor edit = sp.edit();
             edit.putBoolean("delOldVersionCache", false);
             edit.apply();
@@ -208,20 +239,19 @@ public class BaseApplication extends Application {
 //        initBaiCHotFix();
         //        阿里百川初始化
         if (isDebugTag) {
-            SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
             int selectServer = sharedPreferences.getInt("selectServer", 0);
-            new Url(getApplicationContext(), selectServer);
+            new Url(mAppContext, selectServer);
         }
         initNewAliBaiC();
         if (isAppMainProcess()) {
             //        七鱼客服初始化
             initQYService();
-            setTotalChanel();
             //      友盟初始化
             youMengInit();
             try {
                 TuSdk.enableDebugLog(isDebugTag);
-                TuSdk.init(getApplicationContext(), "08b501fdf166d42d-02-5dvwp1");
+                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -241,22 +271,21 @@ public class BaseApplication extends Application {
 //        oss初始化
         initOSS();
         // 初始化xUtils
-        x.Ext.init(this);
+        x.Ext.init(getApplication());
         //shareSDK
-        MobSDK.init(this, MobAPPKEY, MobAPPSECRET);
+        MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
 
 //        腾讯移动分析初始化
         // 第三个参数必须为：com.tencent.stat.common.StatConstants.VERSION
         try {
-            StatService.startStatService(this, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
+            StatService.startStatService(mAppContext, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
         } catch (MtaSDkException e) {
             e.printStackTrace();
         }
 //      jPush 初始化
         JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
-        JPushInterface.init(this);
+        JPushInterface.init(mAppContext);
 //      腾讯升级策略
-//        initUpdateApp();
 // 如果通过“AndroidManifest.xml”来配置APP信息，初始化方法如下
 // CrashReport.initCrashReport(context, strategy);
         getScreenInfo();
@@ -264,6 +293,30 @@ public class BaseApplication extends Application {
         initLinkMe();
         initWebUrlTransformLocation();
         initLoadSir();
+        initAutoSizeScreen();
+    }
+
+    /**
+     * 初始化屏幕适配
+     */
+    private void initAutoSizeScreen() {
+        //AndroidAutoSize 默认开启对 dp 的支持, 调用 UnitsManager.setSupportDP(false); 可以关闭对 dp 的支持
+        //主单位 dp 和 副单位可以同时开启的原因是, 对于旧项目中已经使用了 dp 进行布局的页面的兼容
+        //让开发者的旧项目可以渐进式的从 dp 切换到副单位, 即新页面用副单位进行布局, 然后抽时间逐渐的将旧页面的布局单位从 dp 改为副单位
+        //最后将 dp 全部改为副单位后, 再使用 UnitsManager.setSupportDP(false); 将 dp 的支持关闭, 彻底隔离修改 density 所造成的不良影响
+        //如果项目完全使用副单位, 则可以直接以像素为单位填写 AndroidManifest 中需要填写的设计图尺寸, 不需再把像素转化为 dp
+        AutoSizeConfig.getInstance().getUnitsManager()
+                .setSupportDP(false)
+                //AndroidAutoSize 默认开启对 sp 的支持, 调用 UnitsManager.setSupportSP(false); 可以关闭对 sp 的支持
+                //如果关闭对 sp 的支持, 在布局时就应该使用副单位填写字体的尺寸
+                //如果开启 sp, 对其他三方库控件影响不大, 也可以不关闭对 sp 的支持, 这里我就继续开启 sp, 请自行斟酌自己的项目是否需要关闭对 sp 的支持
+                .setSupportSP(false)
+
+                //AndroidAutoSize 默认不支持副单位, 调用 UnitsManager#setSupportSubunits() 可选择一个自己心仪的副单位, 并开启对副单位的支持
+                //只能在 pt、in、mm 这三个冷门单位中选择一个作为副单位, 三个单位的适配效果其实都是一样的, 您觉的哪个单位看起顺眼就用哪个
+                //您选择什么单位就在 layout 文件中用什么单位进行布局, 我选择用 mm 为单位进行布局, 因为 mm 翻译为中文是妹妹的意思
+                //如果大家生活中没有妹妹, 那我们就让项目中最不缺的就是妹妹!
+                .setSupportSubunits(Subunits.MM);
     }
 
     /**
@@ -286,9 +339,9 @@ public class BaseApplication extends Application {
     private void initLinkMe() {
         if (isDebugTag) {
             //设置debug模式下打印LinkedME日志
-            LinkedME.getInstance(this).setDebug();
+            LinkedME.getInstance(mAppContext).setDebug();
         } else {
-            LinkedME.getInstance(this);
+            LinkedME.getInstance(mAppContext);
         }
         // 设置是否开启自动跳转指定页面，默认为true
         // 若在此处设置为false，请务必在配置Uri scheme的Activity页面的onCreate()方法中，
@@ -312,15 +365,15 @@ public class BaseApplication extends Application {
      * 配置统计渠道
      */
     private void setTotalChanel() {
-        String channel = ChannelReaderUtil.getChannel(getApplicationContext());
+        String channel = ChannelReaderUtil.getChannel(mAppContext);
         if (!TextUtils.isEmpty(channel)) {
-            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
+            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(mAppContext);
             strategy.setAppChannel(channel);  //设置渠道
             strategy.setAppVersion(getVersionName());      //App的版本
-            strategy.setAppPackageName(getStrings(getPackageName()));  //App的包名
-            Bugly.init(this, BUGLY_APP_ID, isDebugTag, strategy);
+            strategy.setAppPackageName(getStrings(mAppContext.getPackageName()));  //App的包名
+            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
         } else {
-            Bugly.init(this, BUGLY_APP_ID, isDebugTag);
+            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);
         }
     }
 
@@ -328,9 +381,9 @@ public class BaseApplication extends Application {
     private String getVersionName() {
         try {
             // 获取packagemanager的实例
-            PackageManager packageManager = getPackageManager();
+            PackageManager packageManager = mAppContext.getPackageManager();
             // getPackageName()是你当前类的包名，0代表是获取版本信息
-            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            PackageInfo packInfo = packageManager.getPackageInfo(mAppContext.getPackageName(), 0);
             return packInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -340,7 +393,7 @@ public class BaseApplication extends Application {
 
     private void initNewAliBaiC() {
 //        MemberSDK.turnOnDebug();
-        AlibcTradeSDK.asyncInit(this, new AlibcTradeInitCallback() {
+        AlibcTradeSDK.asyncInit(getApplication(), new AlibcTradeInitCallback() {
             @Override
             public void onSuccess() {
                 //初始化成功，设置相关的全局配置参数
@@ -360,7 +413,7 @@ public class BaseApplication extends Application {
 //        获取屏幕宽度
         DisplayMetrics dm = new DisplayMetrics();
         //取得窗口属性
-        WindowManager mWindowManager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager mWindowManager = (WindowManager) mAppContext.getSystemService(Context.WINDOW_SERVICE);
         if (mWindowManager == null) throw new AssertionError();
         mWindowManager.getDefaultDisplay().getMetrics(dm);
         //窗口的宽度
@@ -383,7 +436,7 @@ public class BaseApplication extends Application {
 
     private void youMengInit() {
         //SDK 初始化
-        UMConfigure.init(this, "57db8f1fe0f55a7ac0004684", getStrings(ChannelReaderUtil.getChannel(getApplicationContext())), UMConfigure.DEVICE_TYPE_PHONE, null);
+        UMConfigure.init(mAppContext, "57db8f1fe0f55a7ac0004684", getStrings(ChannelReaderUtil.getChannel(mAppContext)), UMConfigure.DEVICE_TYPE_PHONE, null);
         /**
          * 设置组件化的Log开关
          * 参数: boolean 默认为false，如需查看LOG设置为true
@@ -392,7 +445,7 @@ public class BaseApplication extends Application {
 
         UMShareAPI umShareAPI = null;
         try {
-            umShareAPI = UMShareAPI.get(this);
+            umShareAPI = UMShareAPI.get(mAppContext);
             if (umShareAPI != null) {
                 //微信 appid appsecret
                 PlatformConfig.setWeixin(WeChatPayConstants.APP_ID, "cf7907b157cae36cfa0310fad61db22b");
@@ -412,7 +465,7 @@ public class BaseApplication extends Application {
 
     private void initOSS() {
         // 明文设置secret的方式建议只在测试时使用，更多鉴权模式请参考后面的访问控制章节
-        SharedPreferences preferences = getSharedPreferences("ossConfig", MODE_PRIVATE);
+        SharedPreferences preferences = mAppContext.getSharedPreferences("ossConfig", MODE_PRIVATE);
         String endpoint = new String(Base64.decode(preferences.getString("endpoint", "b3NzLWNuLWJlaWppbmcuYWxpeXVuY3MuY29t"), Base64.DEFAULT));
         BUCKET_NAME = new String(Base64.decode(preferences.getString("bucketName", "ZG9tb2xpZmVz"), Base64.DEFAULT));
         String accessKeyId = new String(Base64.decode(preferences.getString("accessKeyId", "TFRBSVd3d2FkcjdidGJpMg=="), Base64.DEFAULT));
@@ -424,7 +477,7 @@ public class BaseApplication extends Application {
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        oss = new OSSClient(getApplicationContext(), endpoint, credentialProvider, conf);
+        oss = new OSSClient(mAppContext, endpoint, credentialProvider, conf);
     }
 
     /**
@@ -433,10 +486,10 @@ public class BaseApplication extends Application {
     public boolean isAppMainProcess() {
         try {
             int pid = android.os.Process.myPid();
-            String process = getAppNameByPID(this, pid);
+            String process = getAppNameByPID(mAppContext, pid);
             if (TextUtils.isEmpty(process)) {
                 return true;
-            } else if (getPackageName().equalsIgnoreCase(process)) {
+            } else if (mAppContext.getPackageName().equalsIgnoreCase(process)) {
                 return true;
             } else {
                 return false;
@@ -467,7 +520,7 @@ public class BaseApplication extends Application {
 
     //    地址初始化
     protected void initProvinceData() {
-        String adsPath = getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt";
+        String adsPath = mAppContext.getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt";
         if (new File(adsPath).exists()) {
             try {
                 Gson gson = new Gson();
@@ -495,7 +548,7 @@ public class BaseApplication extends Application {
      */
     private void initTotalAction() {
         try {
-            AssetManager asset = getAssets();
+            AssetManager asset = mAppContext.getAssets();
             InputStream totalStream = asset.open("totalAction.txt");
             totalActionMap = new HashMap<>();
             String fileTotal = FileStreamUtils.InputStreamTOString(totalStream);
@@ -518,7 +571,7 @@ public class BaseApplication extends Application {
      * @throws IOException
      */
     private void getAssetAdsData() throws IOException {
-        AssetManager asset = getAssets();
+        AssetManager asset = mAppContext.getAssets();
         InputStream input = asset.open("area.json");
         Gson gson = new Gson();
         AddressInfo addressInfo = gson.fromJson(new InputStreamReader(input), AddressInfo.class);
@@ -638,7 +691,7 @@ public class BaseApplication extends Application {
 
     public IWXAPI getApi() {
         if (api == null) {
-            api = WXAPIFactory.createWXAPI(BaseApplication.this, WeChatPayConstants.APP_ID, false);
+            api = WXAPIFactory.createWXAPI(mAppContext, WeChatPayConstants.APP_ID, false);
             // 将该app注册到微信
             api.registerApp(WeChatPayConstants.APP_ID);
         }
@@ -646,7 +699,7 @@ public class BaseApplication extends Application {
     }
 
     private String getFilePath() {
-        String Img_PATH = getFilesDir() + "/ImgArticle";
+        String Img_PATH = mAppContext.getFilesDir() + "/ImgArticle";
         File ImgFile = new File(Img_PATH);
         if (!ImgFile.exists()) {
             LogUtils.d("创建文件夹");
@@ -784,20 +837,11 @@ public class BaseApplication extends Application {
         return mCurrentProvinceId;
     }
 
-
-//    public DisplayImageOptions getImageOptions() {
-//        return QYOptions;
-//    }
-//
-//    public ImageLoader getImageLoader() {
-//        return imageLoader;
-//    }
-
     public OSS getOSS() {
         return oss;
     }
 
     public Context getContext() {
-        return getApplicationContext();
+        return mAppContext;
     }
 }

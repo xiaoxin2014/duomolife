@@ -1,6 +1,5 @@
 package com.amkj.dmsh.find.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -8,11 +7,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.WidthAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
@@ -30,14 +30,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 public class RecyclerFindHotAdapter extends BaseQuickAdapter<CommunalADActivityBean, RecyclerFindHotAdapter.HotViewHolderHelper> {
     private final List<CommunalADActivityBean> communalADActivityBeanList;
     private Context context;
-    private final BaseApplication app;
+    private final TinkerBaseApplicationLike app;
     private final int screenWidth;
 
     public RecyclerFindHotAdapter(Context context, List<CommunalADActivityBean> communalADActivityBeanList) {
         super(R.layout.adapter_find_hot_activity, communalADActivityBeanList);
         this.context = context;
         this.communalADActivityBeanList = communalADActivityBeanList;
-        app = (BaseApplication) ((Activity) context).getApplication();
+        app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenWidth = app.getScreenWidth();
     }
 

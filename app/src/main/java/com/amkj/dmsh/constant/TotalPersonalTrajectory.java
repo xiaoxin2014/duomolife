@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestSyncStatus;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileSizeUtil;
@@ -13,6 +13,7 @@ import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONObject;
 
@@ -139,7 +140,7 @@ public class TotalPersonalTrajectory {
         if (context == null) {
             return;
         }
-        BaseApplication application = (BaseApplication) context.getApplicationContext();
+        TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         Map<String, Map<String, String>> totalActionMap = application.getTotalActionMap();
         if (totalActionMap == null) {
             return;

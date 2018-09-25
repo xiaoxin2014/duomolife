@@ -2,8 +2,9 @@ package com.amkj.dmsh.shopdetails.weixin;
 
 import android.content.Context;
 
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -33,7 +34,7 @@ public class WXPay {
     }
 
     public WXPay(Context context) {
-        BaseApplication app = (BaseApplication) context;
+        TinkerBaseApplicationLike app =(TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         mWXApi = app.getApi();
     }
 

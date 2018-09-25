@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.constant.Url;
@@ -23,6 +23,7 @@ import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class RegisterSelSexActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        BaseApplication app = (BaseApplication) getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         int screenHeight = app.getScreenHeight();
         Drawable[] compoundMaleDrawables = rb_register_sex_male.getCompoundDrawables();
         Drawable[] compoundFemaleDrawables = rb_register_sex_female.getCompoundDrawables();

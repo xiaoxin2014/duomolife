@@ -31,11 +31,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.ali.auth.third.ui.context.CallbackContext;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.MainNavEntity;
@@ -77,6 +77,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -102,7 +103,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
-import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getCurrentTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
@@ -133,6 +134,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
+
+;
 
 /**
  * @author Liuguipeng
@@ -447,7 +450,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
 
     private void setNavData() {
         iconMap.clear();
-        BaseApplication app = (BaseApplication) getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
         String modifyTime = sharedPreferences.getString("modifyTime", "");

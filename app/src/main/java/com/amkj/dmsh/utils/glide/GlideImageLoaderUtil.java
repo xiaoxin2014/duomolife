@@ -20,7 +20,7 @@ import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
-import static com.amkj.dmsh.base.BaseApplication.OSS_URL;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;

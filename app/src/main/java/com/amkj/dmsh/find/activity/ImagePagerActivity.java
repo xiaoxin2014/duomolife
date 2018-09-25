@@ -25,7 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -37,6 +37,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -97,7 +98,7 @@ public class ImagePagerActivity extends Activity {
             rel_shop_sku.setVisibility(View.GONE);
             setIndicatorData(startPos,imgUrls.size());
         }
-        BaseApplication app = (BaseApplication) getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenWidth = app.getScreenWidth();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

@@ -17,7 +17,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
@@ -178,7 +177,6 @@ public class SpringSaleFragment extends BaseFragment {
                 getProductData();
             }
         }, communal_recycler);
-        BaseApplication application = (BaseApplication) getActivity().getApplication();
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
                 , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});

@@ -22,13 +22,14 @@ import com.amkj.dmsh.address.widget.OnWheelChangedListener;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseApplication;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     }
 
     private void initAddress() {
-        BaseApplication app = (BaseApplication) getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         mProvinceData = app.getAllProvince();
         mDistrictDataMap = app.getCityDistrict();
         mCurrentCityId = app.getCurrentCity();

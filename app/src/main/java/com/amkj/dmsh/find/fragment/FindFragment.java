@@ -14,9 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -48,6 +48,7 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.MarginTopAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
@@ -154,7 +155,7 @@ public class FindFragment extends BaseFragment {
         });
         badge = ConstantMethod.getTopBadge(getActivity(), fra_find_message_total);
         setStatusColor();
-        BaseApplication app = (BaseApplication) getActivity().getApplication();
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         ll_find_header.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

@@ -8,8 +8,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseApplication;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.shopdetails.adapter.LogisticsPagerAdapter;
@@ -18,6 +17,7 @@ import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
@@ -27,6 +27,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+
+;
 
 public class DirectLogisticsDetailsActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
@@ -64,7 +68,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         LogisticsPagerAdapter logisticsPagerAdapter = new LogisticsPagerAdapter(getSupportFragmentManager(), pageTitle, directLogisticsBean);
         vp_direct_logistics_details.setAdapter(logisticsPagerAdapter);
         if (tabWidth == 0) {
-            BaseApplication app = (BaseApplication) getApplication();
+            TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
             tabWidth = app.getScreenWidth() / 5f;
         }
         stl_direct_logistics_details.setTabWidth(tabWidth);

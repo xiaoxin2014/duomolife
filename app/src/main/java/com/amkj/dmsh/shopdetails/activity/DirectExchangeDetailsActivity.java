@@ -25,9 +25,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -74,6 +74,7 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
@@ -97,7 +98,7 @@ import butterknife.OnLongClick;
 import cn.iwgang.countdownview.CountdownView;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.base.BaseApplication.mAppContext;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -125,6 +126,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
+
+;
 
 /**
  * Created by atd48 on 2016/7/18.
@@ -1314,7 +1317,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 alertDialog.setCanceledOnTouchOutside(true);
                 alertDialog.show();
-                BaseApplication app = (BaseApplication) getApplication();
+                TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                 int dialogHeight = (int) (app.getScreenHeight() * 0.4 + 1);
                 Window window = alertDialog.getWindow();
                 window.getDecorView().setPadding(0, 0, 0, 0);
