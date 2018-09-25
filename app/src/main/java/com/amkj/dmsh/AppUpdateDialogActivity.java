@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.utils.ServiceDownUtils;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -62,6 +63,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
     private String downLink;
     private String saveAppPath;
     private File downAppFile;
+    private ConstantMethod constantMethod;
 
     @Override
     protected int getContentView() {
@@ -120,20 +122,29 @@ public class AppUpdateDialogActivity extends BaseActivity {
                 finish();
             }
         } else if (!TextUtils.isEmpty(downLink)) {
-            Intent intent = new Intent(AppUpdateDialogActivity.this, ServiceDownUtils.class);
-            intent.putExtra("downUrl", downLink);
-            intent.putExtra("downFilePath", saveAppPath);
-            if (constraintUpdate) {
-                intent.putExtra("isInstallApp", true);
-                intent.putExtra("isShowProgress", true);
-            } else {
-                showToast(AppUpdateDialogActivity.this, "正在下载……");
-                intent.putExtra("isInstallApp", true);
+            if(constantMethod==null){
+                constantMethod = new ConstantMethod();
             }
-            AppUpdateDialogActivity.this.startService(intent);
-            if(!constraintUpdate){
-                finish();
-            }
+            constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+                @Override
+                public void getPermissionsSuccess() {
+                    Intent intent = new Intent(AppUpdateDialogActivity.this, ServiceDownUtils.class);
+                    intent.putExtra("downUrl", downLink);
+                    intent.putExtra("downFilePath", saveAppPath);
+                    if (constraintUpdate) {
+                        intent.putExtra("isInstallApp", true);
+                        intent.putExtra("isShowProgress", true);
+                    } else {
+                        showToast(AppUpdateDialogActivity.this, "正在下载……");
+                        intent.putExtra("isInstallApp", true);
+                    }
+                    AppUpdateDialogActivity.this.startService(intent);
+                    if(!constraintUpdate){
+                        finish();
+                    }
+                }
+            });
+            constantMethod.getPermissions(AppUpdateDialogActivity.this, com.yanzhenjie.permission.Permission.WRITE_EXTERNAL_STORAGE);
         }
     }
 
