@@ -140,6 +140,8 @@ public class ConstantVariable {
     public static final String regexATextUrl = "<a [\\s\\S]*?href=\"[\\s\\S]*?\"[\\s\\S]*?>";
     //    数字
     public static final String REGEX_NUM = "[+|-]*\\d+(\\.\\d+)?";
+//    正则匹配空格 换行符
+    public static final String REGEX_SPACE_CHAR = "\\s*|\\t|\\r|\\n";
     //    订单商品状态
     public static Map<String, String> INDENT_PRO_STATUS;
     //    购物车活动状态

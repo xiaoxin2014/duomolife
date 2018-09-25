@@ -126,6 +126,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_TOPIC;
+import static com.amkj.dmsh.constant.ConstantVariable.REGEX_SPACE_CHAR;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
@@ -168,7 +169,7 @@ public class ConstantMethod {
     }
 
     /**
-     * 判断是否为空 去掉特殊\r\n字符
+     * 判断是否为空 去掉特殊空格\r\n字符
      *
      * @param text
      * @return
@@ -178,8 +179,9 @@ public class ConstantMethod {
     }
 
     private static String filterSpecial(String text) {
-        text = text.replaceAll("\n", "");
-        text = text.replaceAll("\r", "");
+        Pattern p = Pattern.compile(REGEX_SPACE_CHAR);
+        Matcher m = p.matcher(text);
+        text =  m.replaceAll("");
         return text;
     }
 
@@ -1228,15 +1230,15 @@ public class ConstantMethod {
                                     } else {
                                         String imgHeightSizeTag = "_height=";
                                         if (content.contains(imgHeightSizeTag)) {
-                                            int heightStart = content.indexOf(imgHeightSizeTag) + imgHeightSizeTag.length()+1;
+                                            int heightStart = content.indexOf(imgHeightSizeTag) + imgHeightSizeTag.length() + 1;
                                             int heightEnd = content.indexOf("\"", heightStart);
-                                            if(heightStart!=-1&&heightEnd!=-1){
+                                            if (heightStart != -1 && heightEnd != -1) {
                                                 String substring = content.substring(heightStart, heightEnd);
-                                                List<String> imageCropList = getImageCrop(imgUrl,Integer.parseInt(getNumber(substring)));
+                                                List<String> imageCropList = getImageCrop(imgUrl, Integer.parseInt(getNumber(substring)));
                                                 for (String imageUrl : imageCropList) {
                                                     addImagePath(descriptionDetailList, imageUrl);
                                                 }
-                                            }else{
+                                            } else {
                                                 addImagePath(descriptionDetailList, imgUrl);
                                             }
                                         } else {
@@ -1300,8 +1302,9 @@ public class ConstantMethod {
 
     /**
      * 仅针对 json串图片地址
+     *
      * @param descriptionDetailList 详情信息集合
-     * @param imgUrl 图片地址
+     * @param imgUrl                图片地址
      */
     private static void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl) {
         CommunalDetailObjectBean communalDetailObjectBean;
@@ -1538,7 +1541,15 @@ public class ConstantMethod {
 
             }
         };
-        editText.setFilters(new InputFilter[]{emojiFilter, specialCharFilter});
+        InputFilter strSpaceFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                Pattern p = Pattern.compile(REGEX_SPACE_CHAR);
+                Matcher m = p.matcher(source.toString());
+                return m.replaceAll("");
+            }
+        };
+        editText.setFilters(new InputFilter[]{strSpaceFilter,emojiFilter, specialCharFilter});
     }
 
 

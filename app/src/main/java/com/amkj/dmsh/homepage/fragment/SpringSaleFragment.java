@@ -95,8 +95,6 @@ public class SpringSaleFragment extends BaseFragment {
     private TimeShowShaftBean timeShowBean;
     //    总共滚动距离
     private int scrollY = 0;
-    //    是否开启按钮
-    private boolean openQuickShaft;
     //    下拉触发距离
     private int dropDownScroll = 0;
     //    相同时间是否第一次加入时间轴
@@ -110,7 +108,6 @@ public class SpringSaleFragment extends BaseFragment {
     private PopupWindow popupWindow;
     private boolean isClickSelect;
     private int[] location = new int[2];
-    private boolean isTimeProductTop;
 
     @Override
     protected int getContentView() {
@@ -182,7 +179,6 @@ public class SpringSaleFragment extends BaseFragment {
             }
         }, communal_recycler);
         BaseApplication application = (BaseApplication) getActivity().getApplication();
-        int screenHeight = application.getScreenHeight();
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
                 , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});
@@ -192,18 +188,13 @@ public class SpringSaleFragment extends BaseFragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 scrollY += dy;
-                if (scrollY >= screenHeight * 1.5) {
-                    openQuickShaft = true;
-                } else {
-                    openQuickShaft = false;
-                }
                 if (dy < 0) {
                     dropDownScroll += Math.abs(dy);
                 } else if (dy > 8) {
 //                    重新计算
                     dropDownScroll = 0;
                 }
-                if (openQuickShaft && dropDownScroll > 300 && tv_time_product_shaft.getVisibility() == View.GONE) {
+                if (timeShaftList.size()>2&&dropDownScroll > 300 && tv_time_product_shaft.getVisibility() == View.GONE) {
                     Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.down_in_visiable);
                     animation.setDuration(500);
                     tv_time_product_shaft.startAnimation(animation);
@@ -295,7 +286,6 @@ public class SpringSaleFragment extends BaseFragment {
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                                 springSaleRecyclerAdapter.setEnableLoadMore(true);
-                                isTimeProductTop = false;
                                 if (page == 1) {
                                     TimeShaftBean timeShaftBean = new TimeShaftBean();
                                     timeShaftBean.setTimeDayHour(searchDateHour);
@@ -340,7 +330,6 @@ public class SpringSaleFragment extends BaseFragment {
                                                     if (timeShowBean.getDate().equals(showTimeList.get(j).getDate())) {
                                                         if (j == showTimeList.size() - 1) {
 //                                                            最后一天
-                                                            isTimeProductTop = true;
                                                             getTopRecommendData();
                                                         } else {
                                                             timeShowBean = showTimeList.get(++j);

@@ -11,7 +11,7 @@
         android:paddingRight="20px"
         android:id="@+id/tv_time_product_shaft"
         android:layout_marginTop="350px"
-        android:visibility="visible"
+        android:visibility="gone"
         android:gravity="center"
         android:textSize="26px"
         android:background="@color/bg_trans_80_ffs_pink"

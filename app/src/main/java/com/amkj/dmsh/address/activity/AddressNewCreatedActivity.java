@@ -26,8 +26,6 @@ import com.amkj.dmsh.base.BaseApplication;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
@@ -38,8 +36,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
+import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 ;
 
@@ -93,20 +94,17 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 
     private int addressId;
     private AddressInfoBean addressInfoBean;
-    private int uid;
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         initAddress();
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setText("保存");
         tv_header_titleAll.setText("新增地址");
         Intent intent = getIntent();
         addressId = intent.getIntExtra("addressId", 0);
-        if (addressId != 0) {
-            getAddressDetails();
-        }
+        setEtFilter(et_address_consignee);
         //手机号匹配
         setUpListener();
         setUpData();
@@ -128,22 +126,14 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 
     @Override
     protected void loadData() {
+        if (addressId != 0) {
+            getAddressDetails();
+        }
     }
 
     @Override
     protected int getContentView() {
         return R.layout.activity_address_new;
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if(personalInfo.isLogin()){
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
     }
 
     private void getAddressDetails() {
@@ -174,7 +164,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     private void setData(AddressInfoBean addressInfoBean) {
         ll_communal_multi_time.setFocusable(true);
         ll_communal_multi_time.setFocusableInTouchMode(true);
-        et_address_consignee.setText(addressInfoBean.getConsignee());
+        et_address_consignee.setText(getStringFilter(addressInfoBean.getConsignee()));
         et_address_mobile.setText(addressInfoBean.getMobile());
 //        省市县
         tv_address_district.setText(addressInfoBean.getAddress_com());
@@ -196,13 +186,13 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     void addSaved(View view) {
         AddressInfoBean myAddress = new AddressInfoBean();
 //        收货人
-        myAddress.setConsignee(et_address_consignee.getText().toString().trim() + "");
+        myAddress.setConsignee(et_address_consignee.getText().toString().trim());
 //        手机
-        myAddress.setMobile(et_address_mobile.getText().toString().trim() + "");
+        myAddress.setMobile(et_address_mobile.getText().toString().trim());
 //        省市县
-        myAddress.setAddress_com(tv_address_district.getText().toString().trim() + "");
+        myAddress.setAddress_com(tv_address_district.getText().toString().trim());
 //        详细街道地址
-        myAddress.setAddress(et_address_detail_district.getText().toString().trim() + "");
+        myAddress.setAddress(et_address_detail_district.getText().toString().trim());
         if (cb_address_default.isChecked()) {
             myAddress.setStatus(1);
         } else {
@@ -211,7 +201,6 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         if (myAddress.getAddress_com().length() < 1 || myAddress.getAddress().length() < 1
                 || myAddress.getConsignee().length() < 1 || myAddress.getMobile().length() < 1) {
             showToast(getBaseContext(), "请完整填写收货人资料");
-            return;
         } else {
             String mobilePhone = myAddress.getMobile();
             if (mobilePhone.length() == 11) {
@@ -233,7 +222,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         //地址详情内容
         String url = Url.BASE_URL + Url.ADD_ADDRESS;
         Map<String, Object> params = new HashMap<>();
-        params.put("user_id", uid);
+        params.put("user_id", userId);
 //        收货人
         params.put("consignee", myAddress.getConsignee());
         params.put("mobile", myAddress.getMobile());
@@ -279,7 +268,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         String url = Url.BASE_URL + Url.EDIT_ADDRESS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", addressInfoBean.getId());
-        params.put("user_id", uid);
+        params.put("user_id", userId);
 //        收货人
         params.put("consignee", myAddress.getConsignee());
         params.put("mobile", myAddress.getMobile());
@@ -446,7 +435,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            getLoginStatus();
+            loadData();
         }
     }
 

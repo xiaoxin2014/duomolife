@@ -26,7 +26,9 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -60,10 +62,12 @@ public class PersonalRealNameActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getLoginStatus(this);
         tv_header_titleAll.setText("实名信息");
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setText("完成");
-        getLoginStatus(this);
+        setEtFilter(et_per_real_name);
+        setEtFilter(et_per_real_id_card);
     }
 
     @Override
@@ -158,9 +162,9 @@ public class PersonalRealNameActivity extends BaseActivity {
         if (!TextUtils.isEmpty(communalUserInfoBean.getIdcard())) {
             String idCard = getStrings(communalUserInfoBean.getIdcard());
             String realName = getStrings(communalUserInfoBean.getReal_name());
-            et_per_real_id_card.setText(idCard);
+            et_per_real_id_card.setText(getStringFilter(idCard));
             et_per_real_id_card.setSelection(idCard.length());
-            et_per_real_name.setText(realName);
+            et_per_real_name.setText(getStringFilter(realName));
             et_per_real_name.setSelection(realName.length());
         }
     }

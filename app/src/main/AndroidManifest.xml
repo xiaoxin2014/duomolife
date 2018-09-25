@@ -90,12 +90,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+        <!--不处理刘海屏-->
+        <meta-data
+            android:name="android.notch_support"
+            android:value="true" />
         <meta-data
             android:name="linkedme.sdk.key"
             android:value="576097e25440399c5fabbbbaa1ce989d" />
 
         <activity
             android:name=".GuideLaunchActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/fullTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -1057,6 +1062,7 @@
         <meta-data
             android:name="design_height"
             android:value="1336" />
+
         <activity
             android:name=".qyservice.QyServiceNotifyReceiver"
             android:excludeFromRecents="true"

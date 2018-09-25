@@ -335,7 +335,8 @@ public class AttendanceActivity extends BaseActivity {
                             IntegrationBean integrationBean = new IntegrationBean();
                             integrationBean.setcItemType(TYPE_1);
                             integrationBeanList.add(integrationBean);
-                            integrationBeanList.addAll(integrationProEntity.getIntegrationList());
+                            integrationBeanList.addAll(integrationProEntity.getIntegrationList().size()>9
+                                    ?integrationProEntity.getIntegrationList().subList(0,9):integrationProEntity.getIntegrationList());
                         } else if (!integrationProEntity.getCode().equals("02")) {
                             showToast(AttendanceActivity.this, integrationProEntity.getMsg());
                         }

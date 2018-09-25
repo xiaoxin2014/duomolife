@@ -17,7 +17,6 @@ import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 public class GuideLaunchActivity extends BaseActivity {
     @BindView(R.id.vp_guide_images)
     ViewPager vp_guide_images;
-    //    List<CategoryAD.AdBean> adBeanList = new ArrayList<>();
     //    网络图片
     //    本地图片
     private List<Integer> localImages = new ArrayList<>();

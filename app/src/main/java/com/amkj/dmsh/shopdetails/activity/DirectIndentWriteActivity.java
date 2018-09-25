@@ -87,8 +87,10 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.BaseApplication.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
+import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -189,6 +191,8 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         View headerView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_header_address, (ViewGroup) communal_recycler.getParent(), false);
         pullHeaderView = new PullHeaderView();
         ButterKnife.bind(pullHeaderView, headerView);
+        setEtFilter(pullHeaderView.et_oversea_name);
+        setEtFilter(pullHeaderView.et_oversea_card);
 //        订单详情
         View footView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_foot, (ViewGroup) communal_recycler.getParent(), false);
         pullFootView = new PullFootView();
@@ -1216,9 +1220,9 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     private void setOverseaData(IndentDiscountsBean indentDiscountsBean) {
         if (indentDiscountsBean.isOverseasGo()) {
             pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
-            pullHeaderView.et_oversea_name.setText(getStrings(indentDiscountsBean.getRealName()));
+            pullHeaderView.et_oversea_name.setText(getStringFilter(indentDiscountsBean.getRealName()));
             pullHeaderView.et_oversea_name.setSelection(getStrings(indentDiscountsBean.getRealName()).length());
-            pullHeaderView.et_oversea_card.setText(getStrings(indentDiscountsBean.getShowIdcard()));
+            pullHeaderView.et_oversea_card.setText(getStringFilter(indentDiscountsBean.getShowIdcard()));
             pullHeaderView.et_oversea_card.setSelection(getStrings(indentDiscountsBean.getShowIdcard()).length());
             pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentDiscountsBean.getIdcard()));
             pullHeaderView.et_oversea_card.setTag(getStrings(indentDiscountsBean.getShowIdcard()));
