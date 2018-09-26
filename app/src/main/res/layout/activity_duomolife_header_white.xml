@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="80px"
+    android:layout_height="@dimen/sc_mm_80"
     android:background="@color/transparent"
     app:contentInsetStart="0dp">
     <RelativeLayout
@@ -11,25 +11,25 @@
         android:background="@android:color/transparent"
         android:layout_height="match_parent">
         <ImageView
-            android:paddingLeft="34px"
-            android:paddingRight="34px"
+            android:paddingLeft="@dimen/sc_mm_34"
+            android:paddingRight="@dimen/sc_mm_34"
             android:layout_centerVertical="true"
             android:id="@+id/iv_user_back"
-            android:clickable="true"
+
             android:layout_width="wrap_content"
             android:background="@android:color/transparent"
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_back_w_btn_nor"
             android:layout_height="match_parent" />
         <ImageView
-            android:clickable="true"
+
             android:layout_width="wrap_content"
             android:id="@+id/iv_header_share"
             android:layout_alignParentRight="true"
-            android:paddingRight="36px"
-            android:paddingLeft="36px"
+            android:paddingRight="@dimen/sc_mm_36"
+            android:paddingLeft="@dimen/sc_mm_36"
             android:background="@android:color/transparent"
             android:src="@drawable/common_share_w_btn_nor"
             android:layout_height="match_parent" />
     </RelativeLayout>
-</com.amkj.dmsh.views.autoviews.AutoToolbar>
+</android.support.v7.widget.Toolbar>

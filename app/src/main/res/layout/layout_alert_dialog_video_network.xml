@@ -12,38 +12,38 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:lineSpacingExtra="@dimen/dimen_5_dp"
-        android:minHeight="88px"
+        android:minHeight="@dimen/sc_mm_88"
         android:singleLine="true"
         android:ellipsize="end"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30"
         android:textColor="@color/text_black_t"
-        android:textSize="28px" />
+        android:textSize="@dimen/sc_mm_28" />
 
     <TextView
         android:id="@+id/tv_alert_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_alert_title"
-        android:layout_marginTop="15px"
+        android:layout_marginTop="@dimen/sc_mm_15"
         android:gravity="center_vertical"
         android:visibility="visible"
         android:lineSpacingExtra="@dimen/dimen_5_dp"
-        android:minHeight="68px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
+        android:minHeight="@dimen/sc_mm_68"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="26px" />
+        android:textSize="@dimen/sc_mm_26" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80px"
+        android:layout_height="@dimen/sc_mm_80"
         android:layout_below="@id/tv_alert_message"
         android:layout_marginTop="@dimen/dp_10"
         android:divider="@drawable/item_divider_gray_f_two_px"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingLeft="40px"
-        android:paddingRight="40px"
+        android:paddingLeft="@dimen/sc_mm_40"
+        android:paddingRight="@dimen/sc_mm_40"
         android:showDividers="middle">
 
         <TextView
@@ -54,7 +54,7 @@
             android:gravity="center"
             android:text="确定"
             android:textColor="@color/text_login_blue_z"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:visibility="visible" />
 
         <TextView
@@ -66,6 +66,6 @@
             android:visibility="visible"
             android:text="取消"
             android:textColor="@color/text_login_blue_z"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
     </LinearLayout>
 </LinearLayout>

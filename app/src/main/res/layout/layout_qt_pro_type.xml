@@ -11,7 +11,7 @@
         <include layout="@layout/layout_communal_recycler_wrap"/>
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_marginTop="20px"
+            android:layout_marginTop="@dimen/sc_mm_20"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:id="@+id/rv_ql_center_pro"

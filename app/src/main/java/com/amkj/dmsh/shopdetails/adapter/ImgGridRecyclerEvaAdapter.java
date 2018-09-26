@@ -4,16 +4,16 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 
 /**
  * Created by dq on 2016/1/26.
  */
-public class ImgGridRecyclerEvaAdapter extends BaseQuickAdapter<String, BaseViewHolderHelper> {
+public class ImgGridRecyclerEvaAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     public static final String DEFAULT_ADD_IMG = "plus_icon_nor.png";
     private final Context context;
     private int evaItemPosition;
@@ -25,7 +25,7 @@ public class ImgGridRecyclerEvaAdapter extends BaseQuickAdapter<String, BaseView
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, String item) {
+    protected void convert(BaseViewHolder helper, String item) {
         ImageView image = helper.getView(R.id.pv_image);
         int adapterPosition = helper.getAdapterPosition();
 //        是否显示删除图标

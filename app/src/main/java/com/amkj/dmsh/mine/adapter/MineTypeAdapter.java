@@ -6,8 +6,8 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class MineTypeAdapter extends BaseQuickAdapter<QualityTypeBean, MineTypeA
         helper.itemView.setTag(qualityTypeBean);
     }
 
-    public class TypeViewHolderHelper extends BaseViewHolderHelper{
+    public class TypeViewHolderHelper extends BaseViewHolder {
         Badge badge;
         ImageView iv_mine_type_icon;
         public TypeViewHolderHelper(View view) {

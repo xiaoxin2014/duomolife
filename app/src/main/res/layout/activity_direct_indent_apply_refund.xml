@@ -33,16 +33,16 @@
                     android:id="@+id/tv_dir_indent_apply_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30px"
+                    android:layout_marginTop="@dimen/sc_mm_30"
                     android:text="服务类型"
                     android:textColor="@color/text_black_t"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
 
                 <TextView
                     android:id="@+id/tv_dir_indent_apply_type_sel"
                     android:layout_width="match_parent"
-                    android:layout_height="80px"
-                    android:layout_marginTop="20px"
+                    android:layout_height="@dimen/sc_mm_80"
+                    android:layout_marginTop="@dimen/sc_mm_20"
                     android:background="@drawable/border_cir_4dp_gray_bg"
                     android:drawableRight="@drawable/arrow_down_b_icon"
                     android:gravity="center_vertical"
@@ -51,7 +51,7 @@
                     android:paddingRight="@dimen/gap_right"
                     android:textColor="@color/text_black_t"
                     android:textColorHint="@color/text_gray_c"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -64,70 +64,70 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginTop="30px"
+                        android:layout_marginTop="@dimen/sc_mm_30"
                         android:text="退款金额"
                         android:textColor="@color/text_black_t"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <TextView
                         android:id="@+id/tv_dir_indent_apply_msg"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16px"
+                        android:layout_marginTop="@dimen/sc_mm_16"
                         android:layout_marginLeft="@dimen/gap_left"
                         android:lineSpacingExtra="@dimen/dimen_6_dp"
                         android:textColor="@color/text_gray_hint_n"
-                        android:textSize="24px"
+                        android:textSize="@dimen/sc_mm_24"
                         android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tv_dir_indent_apply_reason"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30px"
+                        android:layout_marginTop="@dimen/sc_mm_30"
                         android:text="退款原因"
                         android:textColor="@color/text_black_t"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <TextView
                         android:id="@+id/tv_dir_indent_apply_reason_sel"
                         android:layout_width="match_parent"
-                        android:layout_height="80px"
-                        android:layout_marginTop="20px"
+                        android:layout_height="@dimen/sc_mm_80"
+                        android:layout_marginTop="@dimen/sc_mm_20"
                         android:background="@drawable/border_cir_4dp_gray_bg"
                         android:drawableRight="@drawable/sel_bt_top_bot_icon"
                         android:gravity="center_vertical"
                         android:hint="请选择退款原因"
-                        android:paddingLeft="30px"
-                        android:paddingRight="28px"
+                        android:paddingLeft="@dimen/sc_mm_30"
+                        android:paddingRight="@dimen/sc_mm_28"
                         android:textColor="@color/text_black_t"
                         android:textColorHint="@color/text_gray_c"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30px"
+                    android:layout_marginTop="@dimen/sc_mm_30"
                     android:text="问题描述"
                     android:id="@+id/tv_indent_reply_reason_tint"
                     android:textColor="@color/text_black_t"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
 
                 <EditText
                     android:id="@+id/et_dir_indent_apply_explain"
                     android:layout_width="match_parent"
-                    android:layout_height="160px"
-                    android:layout_marginTop="20px"
+                    android:layout_height="@dimen/sc_mm_160"
+                    android:layout_marginTop="@dimen/sc_mm_20"
                     android:background="@drawable/border_cir_4dp_gray_bg"
                     android:gravity="top"
                     android:hint="请描述详细问题"
-                    android:paddingLeft="30px"
-                    android:paddingRight="28px"
-                    android:paddingTop="27px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_28"
+                    android:paddingTop="@dimen/sc_mm_27"
                     android:textColor="@color/text_black_t"
                     android:textColorHint="@color/text_gray_c"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:id="@+id/rel_up_evidence"
@@ -135,12 +135,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20px"
-                        android:layout_marginTop="30px"
+                        android:layout_marginBottom="@dimen/sc_mm_20"
+                        android:layout_marginTop="@dimen/sc_mm_30"
                         android:text="上传凭证"
                         android:id="@+id/tv_up_evidence"
                         android:textColor="@color/text_black_t"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rv_apply_refund_img"
@@ -154,7 +154,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/rel_repair_address"
-                android:paddingTop="20px"
+                android:paddingTop="@dimen/sc_mm_20"
                 android:visibility="gone"
                 android:layout_height="wrap_content">
                 <TextView
@@ -163,7 +163,7 @@
                     android:paddingLeft="@dimen/gap_left"
                     android:paddingRight="@dimen/gap_right"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="30px"
+                    android:textSize="@dimen/sc_mm_30"
                     android:text="@string/refund_repair_address"
                     android:layout_height="wrap_content" />
                 <FrameLayout

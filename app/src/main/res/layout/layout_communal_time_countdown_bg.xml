@@ -11,12 +11,12 @@
         android:gravity="center_vertical|right"
         android:textColor="@color/text_login_gray_s"
         android:text="距结束"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:layout_height="wrap_content" />
     <cn.iwgang.countdownview.CountdownView
         android:id="@+id/ct_time_communal_show_bg"
         android:layout_width="wrap_content"
-        android:layout_marginLeft="14px"
+        android:layout_marginLeft="@dimen/sc_mm_14"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         app:isHideTimeBackground="false"
@@ -31,8 +31,8 @@
         app:isShowSecond="true"
         app:suffixGravity="center"
         app:suffixTextColor="@color/home_text_color"
-        app:suffixTextSize="28px"
+        app:suffixTextSize="@dimen/sc_mm_28"
         app:timeBgRadius="@dimen/dimen_5_dp"
         app:timeTextColor="@color/white"
-        app:timeTextSize="28px"/>
+        app:timeTextSize="@dimen/sc_mm_28"/>
 </LinearLayout>

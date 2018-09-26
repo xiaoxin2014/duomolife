@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:lineSpacingExtra="@dimen/dimen_8dp"
-        android:paddingBottom="30px"
-        android:paddingLeft="24px"
+        android:paddingBottom="@dimen/sc_mm_30"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
-        android:paddingTop="30px"
+        android:paddingTop="@dimen/sc_mm_30"
         android:textColor="@color/text_black_t"
-        android:textSize="30px"
-        android:layout_marginBottom="15px"/>
+        android:textSize="@dimen/sc_mm_30"
+        android:layout_marginBottom="@dimen/sc_mm_15"/>
     <include layout="@layout/layout_communal_detail_scroll_rec"/>
 </LinearLayout>

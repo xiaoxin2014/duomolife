@@ -101,6 +101,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -580,10 +581,9 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         Bitmap bitmap = BitmapFactory.decodeFile(picPath);
         Bitmap secBitmap = BitmapFactory.decodeFile(picSecondPath);
         StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(secBitmap));
-        drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(bitmap));
-        float cofValue = (48f / 1334) * screenHeight / drawable.getMinimumHeight();
-        drawable.setBounds(0, 0, (int) (drawable.getMinimumWidth() * cofValue), (int) (cofValue * drawable.getMinimumHeight())); //设置边界
+        drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(null,secBitmap));
+        drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(null,bitmap));
+        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48)); //设置边界
         rb.setCompoundDrawables(null, drawable, null, null);
     }
 
@@ -610,40 +610,35 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 rb.setTag(R.id.main_page, MAIN_HOME);
                 iconMap.put(MAIN_HOME, i);
                 Drawable drawable = getResources().getDrawable(R.drawable.selector_bottom_home_bar);
-                float cofValue = (48f / 1334) * screenHeight / drawable.getMinimumHeight();
-                drawable.setBounds(0, 0, (int) (drawable.getMinimumWidth() * cofValue), (int) (cofValue * drawable.getMinimumHeight()));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 1:
                 rb.setTag(R.id.main_page, MAIN_QUALITY);
                 iconMap.put(MAIN_QUALITY, i);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_quality_bar);
-                cofValue = (48f / 1334) * screenHeight / drawable.getMinimumHeight();
-                drawable.setBounds(0, 0, (int) (drawable.getMinimumWidth() * cofValue), (int) (cofValue * drawable.getMinimumHeight()));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 2:
                 rb.setTag(R.id.main_page, MAIN_TIME);
                 iconMap.put(MAIN_TIME, i);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_time_bar);
-                cofValue = (48f / 1334) * screenHeight / drawable.getMinimumHeight();
-                drawable.setBounds(0, 0, (int) (drawable.getMinimumWidth() * cofValue), (int) (cofValue * drawable.getMinimumHeight()));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 3:
                 rb.setTag(R.id.main_page, MAIN_FIND);
                 iconMap.put(MAIN_FIND, i);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_find_bar);
-                cofValue = (48f / 1334) * screenHeight / drawable.getMinimumHeight();
-                drawable.setBounds(0, 0, (int) (drawable.getMinimumWidth() * cofValue), (int) (cofValue * drawable.getMinimumHeight()));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 4:
                 rb.setTag(R.id.main_page, MAIN_MINE);
                 iconMap.put(MAIN_MINE, i);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_mine_bar);
-                cofValue = (48f / 1334) * screenHeight / drawable.getMinimumHeight();
-                drawable.setBounds(0, 0, (int) (drawable.getMinimumWidth() * cofValue), (int) (cofValue * drawable.getMinimumHeight()));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
         }

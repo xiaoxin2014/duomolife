@@ -8,17 +8,17 @@
         android:layout_width="wrap_content"
         android:textColor="@color/text_login_gray_s"
         android:id="@+id/tv_comm_comment_receive"
-        android:clickable="true"
+
         android:text="回复  ·"
-        android:textSize="24px"
-        android:paddingRight="20px"
+        android:textSize="@dimen/sc_mm_24"
+        android:paddingRight="@dimen/sc_mm_20"
         android:layout_height="wrap_content" />
     <TextView
-        android:layout_width="93px"
+        android:layout_width="@dimen/sc_mm_93"
         android:id="@+id/tv_comm_comment_like"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:textColor="@color/text_login_gray_s"
-        android:clickable="true"
+
         android:drawableLeft="@drawable/sel_art_like_heart"
         android:drawablePadding="@dimen/dimen_5_dp"
         android:gravity="center_vertical"

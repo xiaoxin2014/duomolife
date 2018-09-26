@@ -6,7 +6,7 @@
     android:gravity="center"
     android:orientation="vertical">
     <ImageView
-        android:layout_width="400px"
+        android:layout_width="@dimen/sc_mm_400"
         android:layout_weight="1"
         android:id="@+id/iv_communal_image_empty"
         android:src="@drawable/integral_lottery_award_empty"

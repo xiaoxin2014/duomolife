@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_marginLeft="50px"
-    android:layout_marginRight="50px"
-    android:layout_marginTop="20px"
+    android:layout_marginLeft="@dimen/sc_mm_50"
+    android:layout_marginRight="@dimen/sc_mm_50"
+    android:layout_marginTop="@dimen/sc_mm_20"
     android:id="@+id/tv_communal_share"
     android:textColor="@color/white"
-    android:textSize="34px"
+    android:textSize="@dimen/sc_mm_34"
     android:gravity="center"
     android:text="分享有惊喜"
     android:background="@drawable/border_circle_ten_bg_n_red_s_red"
-    android:clickable="true"
-    android:layout_marginBottom="20px"
-    android:layout_height="80px"/>
+
+    android:layout_marginBottom="@dimen/sc_mm_20"
+    android:layout_height="@dimen/sc_mm_80"/>

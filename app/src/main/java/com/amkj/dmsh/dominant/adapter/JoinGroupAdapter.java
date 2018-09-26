@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -44,7 +44,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:拼团-参与列表
  */
 
-public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBean, BaseViewHolderHelper> {
+public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBean, BaseViewHolder> {
     private final Context context;
     private final List<GroupShopJoinBean> groupShopJoinList;
     private SparseArray<Object> sparseArray = new SparseArray<>();
@@ -125,7 +125,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, GroupShopJoinBean groupShopJoinBean) {
+    protected void convert(BaseViewHolder helper, GroupShopJoinBean groupShopJoinBean) {
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_0:
                 GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.cir_ql_gp_ava), groupShopJoinBean.getAvatar());

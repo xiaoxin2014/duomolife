@@ -5,11 +5,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean.ReplyCommListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:内部评论
  */
 
-public class ArticleCommentInnerAdapter extends BaseMultiItemQuickAdapter<ReplyCommListBean, BaseViewHolderHelper> {
+public class ArticleCommentInnerAdapter extends BaseMultiItemQuickAdapter<ReplyCommListBean, BaseViewHolder> {
     private final Context context;
 
     public ArticleCommentInnerAdapter(Context context, List<ReplyCommListBean> replyCommList) {
@@ -35,7 +35,7 @@ public class ArticleCommentInnerAdapter extends BaseMultiItemQuickAdapter<ReplyC
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, ReplyCommListBean replyCommListBean) {
+    protected void convert(BaseViewHolder helper, ReplyCommListBean replyCommListBean) {
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_0:
                 TextView tv_comm_comment_like = helper.getView(R.id.tv_comm_comment_like);

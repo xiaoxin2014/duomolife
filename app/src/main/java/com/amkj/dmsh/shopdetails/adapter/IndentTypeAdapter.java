@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class IndentTypeAdapter extends BaseQuickAdapter<QualityTypeBean, IndentT
         helper.itemView.setTag(qualityTypeBeanBean);
     }
 
-    public class BaseViewHolderHelperBind extends BaseViewHolderHelper {
+    public class BaseViewHolderHelperBind extends BaseViewHolder {
         Badge badge;
         FrameLayout fl_intent_mes_layout;
 

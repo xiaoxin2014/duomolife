@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="150px"
+    android:layout_width="@dimen/sc_mm_150"
     android:layout_height="wrap_content">
     <ImageView
-        android:layout_width="150px"
-        android:layout_height="150px"
-        android:padding="1px"
+        android:layout_width="@dimen/sc_mm_150"
+        android:layout_height="@dimen/sc_mm_150"
+        android:padding="@dimen/sc_mm_1"
         android:id="@+id/iv_release_product_img"
         android:background="@drawable/border_rect_four_gray_c_one_bg_white"
-        app:layout_auto_basewidth = "height"/>
+        />
     <ImageView
-        android:layout_width="150px"
-        android:layout_height="150px"
+        android:layout_width="@dimen/sc_mm_150"
+        android:layout_height="@dimen/sc_mm_150"
         android:id="@+id/iv_release_product_img_sel"
         android:src="@drawable/habit_check_bg"
-        app:layout_auto_basewidth = "height"/>
+        />
 </RelativeLayout>

@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
 
 
 public class RectAddAndSubViewDirect extends LinearLayout {
@@ -85,7 +84,6 @@ public class RectAddAndSubViewDirect extends LinearLayout {
      */
     private void initView() {
         view = LayoutInflater.from(context).inflate(R.layout.layout_add_sub_view_direct, this, false);
-        AutoUtils.autoSize(view);
         addButton = (ImageView) view.findViewById(R.id.img_integration_details_credits_add);
         subButton = (ImageView) view.findViewById(R.id.img_integration_details_credits_minus);
         editText = (TextView) view.findViewById(R.id.tv_integration_details_credits_count);

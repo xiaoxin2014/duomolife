@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="98px"
+    android:layout_height="@dimen/sc_mm_98"
     android:divider="@drawable/divider_ll_1dp_red"
     android:showDividers="middle"
     android:orientation="horizontal">
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/sel_light_red_un_gray"
-        android:clickable="true"
+
         android:gravity="center"
         android:orientation="vertical">
 
@@ -21,30 +21,30 @@
             android:id="@+id/tv_sp_details_ol_buy_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
+
             android:text="￥300"
             android:ellipsize="end"
-            android:layout_marginBottom="15px"
+            android:layout_marginBottom="@dimen/sc_mm_15"
             android:textColor="@color/white"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:maxLines="1"
             android:id="@+id/tv_sp_details_ol_buy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
+
             android:text="单独购买"
             android:ellipsize="end"
             android:textColor="@color/white"
-            android:textSize="30px" />
+            android:textSize="@dimen/sc_mm_30" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:clickable="true"
+
         android:id="@+id/ll_group_buy"
         android:background="@drawable/sel_nor_red_un_gray"
         android:gravity="center"
@@ -54,13 +54,13 @@
             android:id="@+id/tv_sp_details_join_buy_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
+
             android:text="￥288"
             android:maxLines="1"
             android:ellipsize="end"
-            android:layout_marginBottom="15px"
+            android:layout_marginBottom="@dimen/sc_mm_15"
             android:textColor="@color/white"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_sp_details_join_count"
@@ -70,6 +70,6 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textColor="@color/white"
-            android:textSize="30px" />
+            android:textSize="@dimen/sc_mm_30" />
     </LinearLayout>
 </LinearLayout>

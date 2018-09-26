@@ -7,7 +7,6 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.zhy.autolayout.utils.AutoUtils;
 
 /**
  * @author LGuiPeng
@@ -34,6 +33,5 @@ public class BaseViewHolderHelperWelfare extends BaseViewHolder {
                 // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                 .setHeaderClickListener(null)
                 .create());
-        AutoUtils.autoSize(view);
     }
 }

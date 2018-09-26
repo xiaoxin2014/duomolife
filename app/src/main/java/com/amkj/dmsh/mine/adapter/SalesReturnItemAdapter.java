@@ -8,11 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.activity.SalesReturnAppealActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/8/25.
  */
-public class SalesReturnItemAdapter extends BaseQuickAdapter<GoodsBean, BaseViewHolderHelper> {
+public class SalesReturnItemAdapter extends BaseQuickAdapter<GoodsBean, BaseViewHolder> {
     private final Context context;
     private final String orderNo;
 
@@ -34,7 +34,7 @@ public class SalesReturnItemAdapter extends BaseQuickAdapter<GoodsBean, BaseView
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, GoodsBean goodsBean) {
+    protected void convert(BaseViewHolder helper, GoodsBean goodsBean) {
         TextView tv_tag_apply_appeal = helper.getView(R.id.tv_tag_apply_appeal);
         tv_tag_apply_appeal.setTag(goodsBean);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), goodsBean.getPicUrl());

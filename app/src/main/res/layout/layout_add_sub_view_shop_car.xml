@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="6px"
-    android:paddingBottom="6px"
+    android:paddingTop="@dimen/sc_mm_6"
+    android:paddingBottom="@dimen/sc_mm_6"
     android:background="@color/white"
     android:gravity="center"
     android:orientation="horizontal">
@@ -12,10 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:paddingLeft="8px"
-        android:paddingRight="8px"
+        android:paddingLeft="@dimen/sc_mm_8"
+        android:paddingRight="@dimen/sc_mm_8"
         android:background="@drawable/bitmap_sub"
-        android:clickable="true" />
+         />
 
     <TextView
         android:id="@+id/tv_integration_details_credits_count"
@@ -26,16 +26,16 @@
         android:gravity="center"
         android:text="1000"
         android:textColor="@color/home_text_color"
-        android:textSize="28px" />
+        android:textSize="@dimen/sc_mm_28" />
 
     <ImageView
-        android:paddingLeft="8px"
-        android:paddingRight="8px"
+        android:paddingLeft="@dimen/sc_mm_8"
+        android:paddingRight="@dimen/sc_mm_8"
         android:id="@+id/img_integration_details_credits_add"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/bitmap_add"
         android:layout_weight="1"
-        android:clickable="true" />
+         />
 
 </LinearLayout>

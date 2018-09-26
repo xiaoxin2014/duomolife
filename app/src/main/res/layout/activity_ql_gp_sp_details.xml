@@ -45,20 +45,20 @@
                             <com.bigkoo.convenientbanner.ConvenientBanner
                                 android:id="@+id/banner_ql_gp_sp_details"
                                 android:layout_width="match_parent"
-                                android:layout_height="750px"
+                                android:layout_height="@dimen/sc_mm_750"
                                 android:visibility="visible"
-                                app:layout_auto_basewidth="height" />
+                                 />
 
                             <TextView
                                 android:id="@+id/tv_ql_gp_sp_new_detail"
-                                android:layout_width="116px"
-                                android:layout_height="74px"
-                                android:layout_marginLeft="20px"
+                                android:layout_width="@dimen/sc_mm_116"
+                                android:layout_height="@dimen/sc_mm_74"
+                                android:layout_marginLeft="@dimen/sc_mm_20"
                                 android:background="@drawable/ql_gp_detail_icon"
                                 android:gravity="center"
                                 android:text="邀新团"
                                 android:textColor="@color/white"
-                                android:textSize="28px"
+                                android:textSize="@dimen/sc_mm_28"
                                 android:visibility="gone" />
                         </RelativeLayout>
 
@@ -66,27 +66,27 @@
                             android:id="@+id/rel_ql_gp_sp_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="20px"
+                            android:layout_marginTop="@dimen/sc_mm_20"
                             android:gravity="center_vertical"
-                            android:paddingLeft="30px"
-                            android:paddingRight="30px">
+                            android:paddingLeft="@dimen/sc_mm_30"
+                            android:paddingRight="@dimen/sc_mm_30">
 
                             <TextView
                                 android:id="@+id/tv_open_pro_label"
-                                android:layout_width="60px"
-                                android:layout_height="32px"
+                                android:layout_width="@dimen/sc_mm_60"
+                                android:layout_height="@dimen/sc_mm_32"
                                 android:layout_centerVertical="true"
                                 android:background="@drawable/border_circle_two_str_solid_red"
                                 android:gravity="center"
                                 android:text="拼团"
                                 android:textColor="@color/white"
-                                android:textSize="22px" />
+                                android:textSize="@dimen/sc_mm_22" />
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:layout_marginLeft="16px"
+                                android:layout_marginLeft="@dimen/sc_mm_16"
                                 android:layout_toRightOf="@id/tv_open_pro_label">
 
                                 <include layout="@layout/layout_down_time_prodetails" />
@@ -97,20 +97,20 @@
                             android:id="@+id/tv_ql_sp_pro_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="18px"
+                            android:layout_marginTop="@dimen/sc_mm_18"
                             android:maxLines="2"
-                            android:paddingLeft="30px"
-                            android:paddingRight="30px"
+                            android:paddingLeft="@dimen/sc_mm_30"
+                            android:paddingRight="@dimen/sc_mm_30"
                             android:text="商品名字商品名字"
                             android:textColor="@color/text_black_t"
-                            android:textSize="28px" />
+                            android:textSize="@dimen/sc_mm_28" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="28px"
-                            android:paddingLeft="30px"
-                            android:paddingRight="20px">
+                            android:layout_marginTop="@dimen/sc_mm_28"
+                            android:paddingLeft="@dimen/sc_mm_30"
+                            android:paddingRight="@dimen/sc_mm_20">
 
                             <include layout="@layout/layout_ql_gp_sp_price" />
                         </RelativeLayout>
@@ -126,10 +126,10 @@
                                 android:id="@+id/ll_layout_pro_tag"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="21px"
+                                android:layout_marginTop="@dimen/sc_mm_21"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal"
-                                android:paddingLeft="36px">
+                                android:paddingLeft="@dimen/sc_mm_36">
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -144,9 +144,9 @@
                                     android:id="@+id/iv_ql_gp_sp_dig"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:minHeight="68px"
-                                    android:paddingLeft="10px"
-                                    android:paddingRight="26px"
+                                    android:minHeight="@dimen/sc_mm_68"
+                                    android:paddingLeft="@dimen/sc_mm_10"
+                                    android:paddingRight="@dimen/sc_mm_26"
                                     android:src="@drawable/right_btn_nor" />
                             </LinearLayout>
 
@@ -155,12 +155,12 @@
                             <com.flyco.tablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/ctb_ql_gp_sp_tab"
                                 android:layout_width="match_parent"
-                                android:layout_height="88px"
+                                android:layout_height="@dimen/sc_mm_88"
                                 android:layout_marginBottom="@dimen/dimen_1dp"
                                 android:background="@drawable/border_bottom_line"
                                 tl:tl_iconMargin="@dimen/dimen_1dp"
                                 tl:tl_indicator_color="@color/text_normal_red"
-                                tl:tl_indicator_corner_radius="1px"
+                                tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
                                 tl:tl_indicator_gravity="BOTTOM"
                                 tl:tl_indicator_height="@dimen/dimen_1dp"
                                 tl:tl_indicator_width="@dimen/dimen_60dp"

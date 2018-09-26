@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@color/bg_gray_f_n"
-        android:layout_height="78px">
+        android:layout_height="@dimen/sc_mm_78">
 
         <TextView
             android:id="@+id/tv_time_cancel"
@@ -16,26 +16,26 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="30px"
+            android:paddingLeft="@dimen/sc_mm_30"
             android:gravity="center"
-            android:paddingRight="30px"
-            android:clickable="true"
+            android:paddingRight="@dimen/sc_mm_30"
+
             android:text="取消"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
         <TextView
             android:id="@+id/tv_time_confirm"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="30px"
+            android:paddingLeft="@dimen/sc_mm_30"
             android:gravity="center"
-            android:paddingRight="30px"
+            android:paddingRight="@dimen/sc_mm_30"
             android:text="完成"
-            android:clickable="true"
+
             android:textColor="@color/text_login_blue_z"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
     </RelativeLayout>
 
 
@@ -44,8 +44,8 @@
         android:id="@+id/timepicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="140px"
-        android:paddingRight="140px"
+        android:paddingLeft="@dimen/sc_mm_140"
+        android:paddingRight="@dimen/sc_mm_140"
         android:background="@android:color/white"
         android:orientation="horizontal">
 

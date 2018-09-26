@@ -6,13 +6,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.BaseTimeProductTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeForeShowBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeShaftBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeTopicBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
  * created on 2017/3/2
  * class description:限时特惠商品
  */
-public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<BaseTimeProductTopicBean, BaseViewHolderHelper> {
+public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<BaseTimeProductTopicBean, BaseViewHolder> {
     private final Context context;
 
     public SpringSaleRecyclerAdapterNew(Context context, List<BaseTimeProductTopicBean> saleTimeTotalList) {
@@ -45,7 +45,7 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Base
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, BaseTimeProductTopicBean productTopicBean) {
+    protected void convert(BaseViewHolder helper, BaseTimeProductTopicBean productTopicBean) {
         switch (helper.getItemViewType()) {
 //            单品
             case TYPE_0:

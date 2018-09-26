@@ -10,8 +10,8 @@
 	    android:id="@+id/tempValue"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-		android:paddingTop="10px"
-		android:paddingBottom="10px"
+		android:paddingTop="@dimen/sc_mm_10"
+		android:paddingBottom="@dimen/sc_mm_10"
 	    android:gravity="center"
 	    android:textColor="#333333"/>
     

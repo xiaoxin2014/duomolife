@@ -9,7 +9,7 @@
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="40px"
+        android:minHeight="@dimen/sc_mm_40"
         android:descendantFocusability="beforeDescendants"
         android:gravity="center_vertical"
         android:lines="2"
@@ -20,6 +20,6 @@
         android:background="@color/white"
         android:inputType="number"
         android:hint="请输入要添加的标签"
-        android:textSize="24px" />
+        android:textSize="@dimen/sc_mm_24" />
 
 </LinearLayout>

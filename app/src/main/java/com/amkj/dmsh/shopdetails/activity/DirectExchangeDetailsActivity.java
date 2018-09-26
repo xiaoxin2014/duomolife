@@ -75,7 +75,6 @@ import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -870,8 +869,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 startActivity(intent);
                 break;
             case PAY://支付
-                View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null);
-                AutoUtils.autoSize(indentPopWindow);
+                View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null,false);
                 PopupWindowView popupWindowView = new PopupWindowView();
                 ButterKnife.bind(popupWindowView, indentPopWindow);
                 mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(DirectExchangeDetailsActivity.this)

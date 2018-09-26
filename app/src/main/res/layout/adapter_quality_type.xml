@@ -5,24 +5,24 @@
     android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
-        android:paddingBottom="30px"
+        android:paddingBottom="@dimen/sc_mm_30"
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:background="@color/white"
-        app:layout_auto_basewidth = "height">
+        >
         <ImageView
-            android:layout_width="125px"
+            android:layout_width="@dimen/sc_mm_125"
             android:id="@+id/iv_product_type"
             android:scaleType="centerInside"
-            android:layout_height="125px"
-            app:layout_auto_basewidth = "height"/>
+            android:layout_height="@dimen/sc_mm_125"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:textColor="@color/text_login_gray_s"
             android:id="@+id/tv_type_title"
-            android:layout_marginTop="12px"
-            android:textSize="24px"
+            android:layout_marginTop="@dimen/sc_mm_12"
+            android:textSize="@dimen/sc_mm_24"
             android:gravity="center"
             android:layout_height="wrap_content" />
     </LinearLayout>

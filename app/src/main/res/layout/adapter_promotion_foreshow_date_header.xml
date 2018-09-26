@@ -8,45 +8,45 @@
     android:gravity="center_vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:paddingTop="54px"
+        android:paddingTop="@dimen/sc_mm_54"
         android:orientation="horizontal"
         android:id="@+id/ll_show_time_product_week"
         android:gravity="center"
         android:layout_height="wrap_content">
         <View
-            android:layout_width="50px"
+            android:layout_width="@dimen/sc_mm_50"
             android:background="@color/text_gray_c"
-            android:layout_height="1px"/>
+            android:layout_height="@dimen/sc_mm_1"/>
         <TextView
             android:id="@+id/tv_foreShow_product_time_week"
             android:layout_width="wrap_content"
             android:gravity="center"
-            android:layout_marginLeft="36px"
-            android:layout_marginRight="36px"
+            android:layout_marginLeft="@dimen/sc_mm_36"
+            android:layout_marginRight="@dimen/sc_mm_36"
             android:textColor="@color/text_black_t"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:layout_height="wrap_content" />
         <View
-            android:layout_width="50px"
+            android:layout_width="@dimen/sc_mm_50"
             android:background="@color/text_gray_c"
-            android:layout_height="1px"/>
+            android:layout_height="@dimen/sc_mm_1"/>
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginLeft="20px"
-        android:layout_height="100px">
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_height="@dimen/sc_mm_100">
         <View
-            android:layout_width="6px"
+            android:layout_width="@dimen/sc_mm_6"
             android:layout_centerVertical="true"
             android:background="@color/text_normal_red"
             android:id="@+id/v_red"
-            android:layout_height="34px"/>
+            android:layout_height="@dimen/sc_mm_34"/>
         <TextView
             android:layout_toRightOf="@id/v_red"
             android:layout_width="match_parent"
-            android:layout_marginLeft="18px"
+            android:layout_marginLeft="@dimen/sc_mm_18"
             android:textColor="@color/text_black_t"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:text="@string/time_product_clock_new"

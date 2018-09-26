@@ -7,10 +7,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/6/30.
  */
-public class RecyclerArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, BaseViewHolderHelper> {
+public class RecyclerArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, BaseViewHolder> {
     private final Context context;
     private final String type;
 
@@ -31,7 +31,7 @@ public class RecyclerArticleAdapter extends BaseQuickAdapter<CommunalArticleBean
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper holder, CommunalArticleBean articleBean) {
+    protected void convert(BaseViewHolder holder, CommunalArticleBean articleBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) holder.getView(R.id.iv_com_art_cover), articleBean.getPath());
         TextView tv_homepage_hot_tag = holder.getView(R.id.tv_com_art_hot_tag);
         if (type == "ArticleType") {

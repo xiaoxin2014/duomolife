@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:id="@+id/cb_red_communal_text"
         android:textColor="@color/sel_font_red_n_gray_check"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:button="@null"
         android:enabled="false"
         android:drawableLeft="@drawable/sel_icon_red_gray"
@@ -14,5 +14,5 @@
         android:singleLine="true"
         android:ellipsize="end"
         android:gravity="center_vertical"
-        android:layout_height="48px" />
+        android:layout_height="@dimen/sc_mm_48" />
 </RelativeLayout>

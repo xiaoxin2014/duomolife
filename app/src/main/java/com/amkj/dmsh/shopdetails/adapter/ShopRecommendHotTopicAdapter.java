@@ -4,10 +4,10 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
  * version 3.6
  * class description: 商品热门 专题推荐
  */
-public class ShopRecommendHotTopicAdapter extends BaseMultiItemQuickAdapter<ShopRecommendHotTopicBean, BaseViewHolderHelper> {
+public class ShopRecommendHotTopicAdapter extends BaseMultiItemQuickAdapter<ShopRecommendHotTopicBean, BaseViewHolder> {
     private final Context context;
 
     public ShopRecommendHotTopicAdapter(Context context, List<ShopRecommendHotTopicBean> data) {
@@ -46,7 +46,7 @@ public class ShopRecommendHotTopicAdapter extends BaseMultiItemQuickAdapter<Shop
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
+    protected void convert(BaseViewHolder helper, ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
         switch (helper.getItemViewType()) {
             case TYPE_1:
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_cover_detail_bg), shopRecommendHotTopicBean.getPic_url());

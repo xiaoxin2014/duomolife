@@ -18,35 +18,35 @@
             android:layout_width="match_parent"
             android:background="@color/white"
             android:id="@+id/rel_tag_info"
-            android:padding="20px"
+            android:padding="@dimen/sc_mm_20"
             android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/iv_rev_tag_cover"
-                android:layout_width="130px"
-                android:layout_height="130px"
+                android:layout_width="@dimen/sc_mm_130"
+                android:layout_height="@dimen/sc_mm_130"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
-                app:layout_auto_basewidth = "height"/>
+                />
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="20px"
+                android:layout_marginLeft="@dimen/sc_mm_20"
                 android:layout_toRightOf="@id/iv_rev_tag_cover"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="match_parent"
                     android:id="@+id/tv_tag_rel_tag_name"
                     android:textColor="@color/text_black_t"
-                    android:textSize="34px"
+                    android:textSize="@dimen/sc_mm_34"
                     android:layout_height="wrap_content" />
                 <TextView
                     android:layout_width="match_parent"
                     android:id="@+id/tv_tag_rel_tag_count"
-                    android:layout_marginTop="30px"
+                    android:layout_marginTop="@dimen/sc_mm_30"
                     android:layout_below="@id/tv_tag_rel_tag_name"
                     android:textColor="@color/text_black_t"
-                    android:textSize="24px"
+                    android:textSize="@dimen/sc_mm_24"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
         </RelativeLayout>
@@ -56,7 +56,7 @@
             android:id="@+id/rv_tag_detail"
             android:visibility="gone"
             android:background="@color/white"
-            android:padding="20px"/>
+            android:padding="@dimen/sc_mm_20"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -66,17 +66,17 @@
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="match_parent"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:gravity="center_vertical"
             android:id="@+id/tv_tag_pro_header"
             android:textColor="@color/text_login_gray_s"
             android:text="关联商品"
-            android:paddingLeft="20px"
-            android:layout_height="80px" />
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:layout_height="@dimen/sc_mm_80" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_below="@id/tv_tag_pro_header"
-            android:paddingLeft="20px"
+            android:paddingLeft="@dimen/sc_mm_20"
             android:layout_height="wrap_content">
             <include layout="@layout/layout_communal_recycler_wrap"/>
         </RelativeLayout>

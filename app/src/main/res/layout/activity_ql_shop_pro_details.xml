@@ -51,8 +51,8 @@
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="750px"
-                                app:layout_auto_basewidth="height">
+                                android:layout_height="@dimen/sc_mm_750"
+                                >
 
                                 <com.bigkoo.convenientbanner.ConvenientBanner
                                     android:id="@+id/banner_ql_sp_pro_details"
@@ -63,15 +63,15 @@
                                         android:text="@string/group_discount"
                                         android:textColor="@color/white"
                                         android:gravity="center"
-                                        android:textSize="22px"
-                                        android:layout_width="110px"
-                                        android:layout_height="110px"
+                                        android:textSize="@dimen/sc_mm_22"
+                                        android:layout_width="@dimen/sc_mm_110"
+                                        android:layout_height="@dimen/sc_mm_110"
                                         android:layout_alignParentBottom="true"
                                         android:layout_alignParentRight="true"
                                         android:visibility="visible"
-                                        android:layout_marginBottom="55px"
+                                        android:layout_marginBottom="@dimen/sc_mm_55"
                                         android:layout_marginRight="@dimen/gap_right"
-                                        app:layout_auto_basewidth="height"/>
+                                        />
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -79,7 +79,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/gap_left"
-                                android:paddingTop="22px"
+                                android:paddingTop="@dimen/sc_mm_22"
                                 android:visibility="gone">
 
                                 <include layout="@layout/layout_down_time_prodetails" />
@@ -98,23 +98,23 @@
                                 android:id="@+id/tv_ql_sp_pro_sc_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="18px"
+                                android:layout_marginTop="@dimen/sc_mm_18"
                                 android:maxLines="2"
                                 android:visibility="visible"
                                 android:paddingLeft="@dimen/gap_left"
                                 android:paddingRight="@dimen/gap_right"
                                 android:textColor="@color/text_black_t"
-                                android:textSize="32px" />
+                                android:textSize="@dimen/sc_mm_32" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="115px"
+                                android:layout_height="@dimen/sc_mm_115"
                                 android:background="@color/white"
                                 android:gravity="bottom"
-                                android:paddingBottom="30px"
+                                android:paddingBottom="@dimen/sc_mm_30"
                                 android:paddingLeft="@dimen/gap_left"
                                 android:paddingRight="@dimen/gap_right"
-                                android:paddingTop="30px">
+                                android:paddingTop="@dimen/sc_mm_30">
 
                                 <TextView
                                     android:id="@+id/tv_ql_sp_pro_sc_price"
@@ -122,13 +122,13 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
                                     android:textColor="@color/text_red_color"
-                                    android:textSize="32px" />
+                                    android:textSize="@dimen/sc_mm_32" />
                                 <TextView
                                     android:layout_width="wrap_content"
-                                    android:layout_marginLeft="24px"
-                                    android:padding="4px"
+                                    android:layout_marginLeft="@dimen/sc_mm_24"
+                                    android:padding="@dimen/sc_mm_4"
                                     android:id="@+id/tv_new_user_tag"
-                                    android:textSize="22px"
+                                    android:textSize="@dimen/sc_mm_22"
                                     android:text="新人专享"
                                     android:visibility="gone"
                                     android:layout_alignParentBottom="true"
@@ -141,10 +141,10 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
-                                    android:layout_marginLeft="38px"
+                                    android:layout_marginLeft="@dimen/sc_mm_38"
                                     android:layout_toRightOf="@id/tv_new_user_tag"
                                     android:textColor="@color/text_gray_hint_n"
-                                    android:textSize="22px" />
+                                    android:textSize="@dimen/sc_mm_22" />
 
                                 <ImageView
                                     android:id="@+id/iv_ql_shop_pro_cp_tag"
@@ -172,8 +172,8 @@
                                     <TextView
                                         android:id="@+id/tv_ql_sp_pro_sc_integral_hint"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="68px"
-                                        android:clickable="true"
+                                        android:layout_height="@dimen/sc_mm_68"
+
                                         android:drawableLeft="@drawable/inte_mon_icon"
                                         android:drawablePadding="@dimen/dimen_5_dp"
                                         android:drawableRight="@drawable/ql_ques_icon"
@@ -182,7 +182,7 @@
                                         android:paddingRight="@dimen/gap_right"
                                         android:text="购买可获得5积分"
                                         android:textColor="@color/text_login_gray_s"
-                                        android:textSize="24px" />
+                                        android:textSize="@dimen/sc_mm_24" />
                                 </RelativeLayout>
 
                                 <RelativeLayout
@@ -204,7 +204,7 @@
                             <LinearLayout
                                 android:id="@+id/ll_sp_pro_sku_value"
                                 android:layout_width="match_parent"
-                                android:layout_height="120px"
+                                android:layout_height="@dimen/sc_mm_120"
                                 android:background="@color/light_gray_f"
                                 android:orientation="horizontal"
                                 android:paddingTop="@dimen/dimen_10_dp">
@@ -215,14 +215,14 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:background="@color/white"
-                                    android:clickable="true"
+
                                     android:drawableRight="@drawable/right_btn_nor"
                                     android:gravity="center_vertical|left"
                                     android:paddingLeft="@dimen/gap_left"
                                     android:paddingRight="@dimen/gap_right"
                                     android:text="选择商品属性"
                                     android:textColor="@color/text_black_t"
-                                    android:textSize="28px" />
+                                    android:textSize="@dimen/sc_mm_28" />
                             </LinearLayout>
 
                             <RelativeLayout
@@ -251,9 +251,9 @@
                                     android:background="@drawable/border_bottom_line"
                                     android:gravity="center_vertical"
                                     android:orientation="horizontal"
-                                    android:paddingBottom="15px"
+                                    android:paddingBottom="@dimen/sc_mm_15"
                                     android:paddingLeft="@dimen/gap_left"
-                                    android:paddingTop="15px"
+                                    android:paddingTop="@dimen/sc_mm_15"
                                     android:visibility="visible">
 
                                     <TextView
@@ -261,7 +261,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="购前须知："
                                         android:textColor="@color/text_black_t"
-                                        android:textSize="24px" />
+                                        android:textSize="@dimen/sc_mm_24" />
 
                                     <TextView
                                         android:id="@+id/tv_pro_buy_text"
@@ -271,12 +271,12 @@
                                         android:ellipsize="end"
                                         android:maxLines="2"
                                         android:textColor="@color/text_login_gray_s"
-                                        android:textSize="24px" />
+                                        android:textSize="@dimen/sc_mm_24" />
 
                                     <ImageView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:paddingLeft="20px"
+                                        android:paddingLeft="@dimen/sc_mm_20"
                                         android:paddingRight="@dimen/gap_right"
                                         android:src="@drawable/right_btn_nor" />
                                 </LinearLayout>
@@ -323,9 +323,9 @@
         android:layout_below="@+id/tl_quality_bar"
         android:background="@drawable/share_show_dialog"
         android:gravity="center"
-        android:padding="10px"
+        android:padding="@dimen/sc_mm_10"
         android:text="分享有惊喜"
         android:textColor="@color/white"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:visibility="gone" />
 </RelativeLayout>

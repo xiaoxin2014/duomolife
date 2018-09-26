@@ -5,14 +5,14 @@
     android:background="@color/transparent"
     android:layout_gravity="center_horizontal|bottom">
     <TextView
-        android:layout_width="348px"
-        android:layout_marginBottom="30px"
+        android:layout_width="@dimen/sc_mm_348"
+        android:layout_marginBottom="@dimen/sc_mm_30"
         android:background="@drawable/login_bt_bg"
         android:id="@+id/tv_find_release_topic"
         android:gravity="center"
         android:textColor="@color/text_black_t"
-        android:textSize="32px"
-        android:clickable="true"
+        android:textSize="@dimen/sc_mm_32"
+
         android:text="@string/find_release_topic"
-        android:layout_height="80px" />
+        android:layout_height="@dimen/sc_mm_80" />
 </RelativeLayout>

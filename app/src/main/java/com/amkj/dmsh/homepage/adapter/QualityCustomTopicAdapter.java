@@ -5,10 +5,10 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
  * version 3.1.5
  * class description:双倍积分 自定义专区
  */
-public class QualityCustomTopicAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolderHelper> {
+public class QualityCustomTopicAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
 
     private final Context context;
 
@@ -38,7 +38,7 @@ public class QualityCustomTopicAdapter extends BaseMultiItemQuickAdapter<LikedPr
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, LikedProductBean likedProductBean) {
+    protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
         if(helper.getItemViewType() == TYPE_0){
             GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
                     , likedProductBean.getPicUrl(),likedProductBean.getWaterRemark(),true);

@@ -8,9 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
@@ -148,7 +148,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
         return outTime;
     }
 
-    public class DirectMyCouponHolder extends BaseViewHolderHelper {
+    public class DirectMyCouponHolder extends BaseViewHolder {
         LinearLayout ll_layout_coupon_bg;
         TextView tv_coupon_used;
 

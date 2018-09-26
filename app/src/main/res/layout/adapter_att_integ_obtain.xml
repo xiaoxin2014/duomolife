@@ -4,23 +4,23 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingLeft="46px"
-    android:paddingRight="36px">
+    android:paddingLeft="@dimen/sc_mm_46"
+    android:paddingRight="@dimen/sc_mm_36">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingBottom="25px"
-        android:paddingRight="25px"
-        android:paddingTop="25px">
+        android:paddingBottom="@dimen/sc_mm_25"
+        android:paddingRight="@dimen/sc_mm_25"
+        android:paddingTop="@dimen/sc_mm_25">
 
         <TextView
             android:id="@+id/tv_att_obt_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_black_t"
-            android:textSize="30px" />
+            android:textSize="@dimen/sc_mm_30" />
 
         <TextView
             android:id="@+id/tv_att_obt_desc"
@@ -29,9 +29,9 @@
             android:maxLines="2"
             android:ellipsize="end"
             android:layout_below="@id/tv_att_obt_title"
-            android:layout_marginTop="12px"
+            android:layout_marginTop="@dimen/sc_mm_12"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="22px" />
+            android:textSize="@dimen/sc_mm_22" />
     </RelativeLayout>
 
     <FrameLayout
@@ -40,14 +40,14 @@
 
         <Button
             android:id="@+id/bt_att_integ_complete"
-            android:layout_width="125px"
-            android:layout_height="52px"
+            android:layout_width="@dimen/sc_mm_125"
+            android:layout_height="@dimen/sc_mm_52"
             android:visibility="gone"
             android:clickable="false"
             android:layout_gravity="right|center_vertical"
             android:background="@drawable/sel_border_cir_thr_lblue_white"
             android:textColor="@color/selector_font_black_white"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
         <ImageView
             android:layout_width="wrap_content"
             android:id="@+id/iv_att_integ_skip"

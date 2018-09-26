@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="88px"
+    android:layout_height="@dimen/sc_mm_88"
     android:id="@+id/tl_quality_bar"
     android:background="@drawable/sel_bg_border_gray_white"
     android:orientation="vertical">
@@ -17,13 +17,13 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/common_back_btn_nor"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/gap_left"
-            android:paddingRight="26px"
+            android:paddingRight="@dimen/sc_mm_26"
             android:textColor="@color/home_text_color"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
         <TextView
             android:id="@+id/tv_header_title"
@@ -34,7 +34,7 @@
             android:lines="1"
             android:ellipsize="end"
             android:textColor="@color/home_text_color"
-            android:textSize="32px"/>
+            android:textSize="@dimen/sc_mm_32"/>
         <FrameLayout
             android:layout_width="wrap_content"
             android:id="@+id/fl_header_service"
@@ -46,7 +46,7 @@
                 android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:padding="24px"
+                android:padding="@dimen/sc_mm_24"
                 android:paddingLeft="@dimen/gap_left"
                 android:src="@drawable/service_gray" />
         </FrameLayout>
@@ -55,11 +55,10 @@
             android:id="@+id/iv_img_share"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingRight="26px"
+            android:paddingRight="@dimen/sc_mm_26"
             android:layout_toLeftOf="@id/fl_header_service"
-            android:clickable="true"
             android:paddingLeft="@dimen/gap_left"
             android:src="@drawable/common_share_btn_nor" />
 
     </RelativeLayout>
-</com.amkj.dmsh.views.autoviews.AutoToolbar>
+</android.support.v7.widget.Toolbar>

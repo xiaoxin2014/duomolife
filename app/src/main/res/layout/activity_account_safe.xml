@@ -10,25 +10,24 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_mobile_account"
-        android:layout_height="104px">
+        android:layout_height="@dimen/sc_mm_104">
         <TextView
-            android:layout_marginLeft="30px"
+            android:layout_marginLeft="@dimen/gap_left"
             android:textColor="@color/text_black_t"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:gravity="center_vertical"
-            android:drawablePadding="@dimen/dimen_5_dp"
             android:text="绑定手机"
             android:layout_height="wrap_content"/>
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:drawablePadding="@dimen/dimen_10_dp"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:drawableRight="@drawable/right_btn_nor"
-            android:paddingRight="36px"
-            android:textSize="28px"
+            android:paddingRight="@dimen/gap_right"
+            android:textSize="@dimen/sc_mm_28"
             android:id="@+id/tv_account_safe_mobile"
             android:text="未绑定"
             android:layout_centerVertical="true"
@@ -39,44 +38,43 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_weChat_account"
-        android:clickable="true"
-        android:layout_height="104px">
+        android:layout_height="@dimen/sc_mm_104">
         <TextView
-            android:layout_marginLeft="30px"
+            android:layout_marginLeft="@dimen/gap_left"
             android:textColor="@color/text_black_t"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:gravity="center_vertical"
-            android:drawablePadding="@dimen/dimen_5_dp"
+            android:drawablePadding="@dimen/sc_mm_5"
             android:text="微信账号"
             android:layout_height="wrap_content"/>
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:drawablePadding="@dimen/dimen_10_dp"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:drawableRight="@drawable/right_btn_nor"
-            android:paddingRight="36px"
-            android:textSize="28px"
+            android:paddingRight="@dimen/gap_right"
+            android:textSize="@dimen/sc_mm_28"
             android:id="@+id/tv_account_safe_weChat"
             android:text="未绑定"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:textColor="@color/text_login_gray_s"
-            android:layout_alignParentRight="true"
             android:layout_height="match_parent"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_weiBo_account"
-        android:layout_height="104px">
+        android:layout_height="@dimen/sc_mm_104">
         <TextView
-            android:layout_marginLeft="30px"
+            android:layout_marginLeft="@dimen/gap_left"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:textColor="@color/text_black_t"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:gravity="center_vertical"
             android:drawablePadding="@dimen/dimen_5_dp"
             android:text="新浪微博"
@@ -84,11 +82,11 @@
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:drawablePadding="@dimen/dimen_10_dp"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:drawableRight="@drawable/right_btn_nor"
-            android:paddingRight="36px"
+            android:paddingRight="@dimen/gap_right"
             android:id="@+id/tv_account_safe_weiBo"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:text="未绑定"
             android:layout_centerVertical="true"
             android:textColor="@color/home_text_color"
@@ -98,14 +96,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_qq_account"
-        android:layout_height="104px">
+        android:layout_height="@dimen/sc_mm_104">
         <TextView
-            android:layout_marginLeft="30px"
+            android:layout_marginLeft="@dimen/gap_left"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:textColor="@color/text_black_t"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:gravity="center_vertical"
             android:drawablePadding="@dimen/dimen_5_dp"
             android:text="QQ账号"
@@ -113,10 +111,10 @@
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:drawablePadding="@dimen/dimen_10_dp"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:drawableRight="@drawable/right_btn_nor"
-            android:paddingRight="36px"
-            android:textSize="28px"
+            android:paddingRight="@dimen/gap_right"
+            android:textSize="@dimen/sc_mm_28"
             android:id="@+id/tv_account_safe_qq"
             android:text="未绑定"
             android:layout_centerVertical="true"
@@ -127,25 +125,25 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_real_info"
-        android:layout_height="104px">
+        android:layout_height="@dimen/sc_mm_104">
         <TextView
-            android:layout_marginLeft="24px"
+            android:layout_marginLeft="@dimen/sc_mm_24"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:textColor="@color/text_black_t"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:gravity="center_vertical"
             android:text="实名信息"
             android:layout_height="wrap_content"/>
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:drawablePadding="@dimen/dimen_10_dp"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:drawableRight="@drawable/right_btn_nor"
-            android:paddingRight="36px"
+            android:paddingRight="@dimen/gap_right"
             android:text="未设置"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:id="@+id/tv_account_safe_real_info"
             android:layout_centerVertical="true"
             android:textColor="@color/home_text_color"
@@ -155,23 +153,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_chang_password"
-        android:layout_height="104px">
+        android:layout_height="@dimen/sc_mm_104">
         <TextView
-            android:layout_marginLeft="24px"
+            android:layout_marginLeft="@dimen/sc_mm_24"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:textColor="@color/text_black_t"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:gravity="center_vertical"
             android:text="修改密码"
             android:layout_height="wrap_content"/>
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:drawablePadding="@dimen/dimen_10_dp"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:drawableRight="@drawable/right_btn_nor"
-            android:paddingRight="36px"
+            android:paddingRight="@dimen/gap_right"
             android:id="@+id/tv_account_safe_changeP"
             android:layout_centerVertical="true"
             android:textColor="@color/home_text_color"

@@ -9,7 +9,7 @@
 
     <include layout="@layout/activity_domolife_header" />
 
-    <com.amkj.dmsh.views.autoviews.AutoRadioGroup
+    <RadioGroup
         android:id="@+id/rp_message_warm"
         android:layout_width="match_parent"
         android:divider="@drawable/item_divider_gray_f_two_px"
@@ -36,5 +36,5 @@
         <RadioButton
             style="@style/MessageWarm"
             android:text="提前60分钟提醒" />
-    </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
+    </RadioGroup>
 </LinearLayout>

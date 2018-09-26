@@ -18,6 +18,6 @@
     <include
         layout="@layout/layout_communal_indent_bottom"
         android:layout_width="match_parent"
-        android:layout_height="98px"
-        android:layout_marginRight="26px" />
+        android:layout_height="@dimen/sc_mm_98"
+        android:layout_marginRight="@dimen/sc_mm_26" />
 </LinearLayout>

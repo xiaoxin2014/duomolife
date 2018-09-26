@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.message.bean.MessageCommentEntity.MessageCommentBean;
 import com.amkj.dmsh.message.bean.MessageSysEntity.MessageSysBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
 /**
  * Created by atd48 on 2016/7/11.
  */
-public class MessageCommunalAdapterNew extends BaseQuickAdapter<Object, BaseViewHolderHelper> {
+public class MessageCommunalAdapterNew extends BaseQuickAdapter<Object, BaseViewHolder> {
     private final String type;
     private final Context context;
     private final String MESSAGE_LIKED = "message_liked";
@@ -42,7 +42,7 @@ public class MessageCommunalAdapterNew extends BaseQuickAdapter<Object, BaseView
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, Object item) {
+    protected void convert(BaseViewHolder helper, Object item) {
         TextView tv_user_liked_collect = helper.getView(R.id.tv_mes_com_receiver);
         ImageView img_user_product = helper.getView(R.id.img_user_product);
         switch (type) {

@@ -9,21 +9,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="26px"
-        android:layout_marginTop="30px"
+        android:layout_marginLeft="@dimen/sc_mm_26"
+        android:layout_marginTop="@dimen/sc_mm_30"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.gongwen.marqueen.MarqueeView
             android:id="@+id/marquee_attendance_text"
-            android:layout_width="400px"
-            android:layout_height="60px"
+            android:layout_width="@dimen/sc_mm_400"
+            android:layout_height="@dimen/sc_mm_60"
             android:background="@color/white"
             app:smvTextColor="@color/text_black_t"
             app:smvTextEllipsize="end"
             app:smvTextGravity="center_vertical"
             app:smvTextSingleLine="true"
-            app:smvTextSize="24px" />
+            app:smvTextSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_attendance_warm"
@@ -31,52 +31,52 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:clickable="true"
+
             android:drawablePadding="@dimen/dimen_7_dp"
             android:drawableRight="@drawable/sel_att_warm"
             android:gravity="center|right"
-            android:paddingBottom="10px"
-            android:paddingRight="30px"
-            android:paddingTop="10px"
+            android:paddingBottom="@dimen/sc_mm_10"
+            android:paddingRight="@dimen/sc_mm_30"
+            android:paddingTop="@dimen/sc_mm_10"
             android:text="签到提醒"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_attendance_integral_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60px"
+        android:layout_marginTop="@dimen/sc_mm_60"
         android:layout_gravity="center_horizontal"
         android:drawablePadding="@dimen/dimen_16_dp"
         android:drawableRight="@drawable/attendance_ques"
         android:text="40000"
         android:textColor="@color/light_blue_n"
-        android:textSize="60px" />
+        android:textSize="@dimen/sc_mm_60" />
 
     <include
         layout="@layout/layout_communal_recycler_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30px"
-        android:layout_marginRight="30px"
-        android:layout_marginTop="60px" />
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_60" />
 
     <TextView
         android:id="@+id/tv_attendance_sign_in"
-        android:layout_width="420px"
-        android:layout_height="85px"
+        android:layout_width="@dimen/sc_mm_420"
+        android:layout_height="@dimen/sc_mm_85"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="70px"
-        android:layout_marginTop="64px"
+        android:layout_marginBottom="@dimen/sc_mm_70"
+        android:layout_marginTop="@dimen/sc_mm_64"
         android:background="@drawable/sel_attention_sign_in"
         android:gravity="center"
         android:textColor="@color/selector_font_enable_white_black"
-        android:textSize="34px" />
+        android:textSize="@dimen/sc_mm_34" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200px"
+        android:layout_height="@dimen/sc_mm_200"
         android:orientation="horizontal"
         android:background="@drawable/border_top_line"
         android:showDividers="middle"
@@ -94,15 +94,15 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="wrap_content"
-                android:textSize="28px"
-                android:layout_marginTop="22px"
+                android:textSize="@dimen/sc_mm_28"
+                android:layout_marginTop="@dimen/sc_mm_22"
                 android:textColor="@color/text_black_t"
                 android:text="赚积分"
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="wrap_content"
-                android:textSize="22px"
-                android:layout_marginTop="10px"
+                android:textSize="@dimen/sc_mm_22"
+                android:layout_marginTop="@dimen/sc_mm_10"
                 android:textColor="@color/text_black_t"
                 android:text="积分等你领"
                 android:layout_height="wrap_content" />
@@ -120,15 +120,15 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="wrap_content"
-                android:textSize="28px"
-                android:layout_marginTop="22px"
+                android:textSize="@dimen/sc_mm_28"
+                android:layout_marginTop="@dimen/sc_mm_22"
                 android:textColor="@color/text_black_t"
                 android:text="积分明细"
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="wrap_content"
-                android:textSize="22px"
-                android:layout_marginTop="10px"
+                android:textSize="@dimen/sc_mm_22"
+                android:layout_marginTop="@dimen/sc_mm_10"
                 android:textColor="@color/text_black_t"
                 android:text="积分变动一目了然"
                 android:layout_height="wrap_content" />

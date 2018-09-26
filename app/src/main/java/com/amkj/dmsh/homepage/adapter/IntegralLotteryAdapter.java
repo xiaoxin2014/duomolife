@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.IntegralLotteryAwardGetActivity;
@@ -34,6 +33,7 @@ import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.zhy.autolayout.attr.Attrs;
@@ -364,7 +364,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         return false;
     }
 
-    public class IntegralLotteryViewHolder extends BaseViewHolderHelper {
+    public class IntegralLotteryViewHolder extends BaseViewHolder {
         private final CountdownView ct_integral_lottery_time;
         private final RelativeLayout rel_integral_lottery_prize;
         private IntegralLotteryEndLoseHelper integralLotteryEndLoseHelper;

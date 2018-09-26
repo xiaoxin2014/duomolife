@@ -20,7 +20,7 @@
         android:lineSpacingExtra="@dimen/dimen_5_dp"
         android:gravity="center_vertical"
         android:textColor="@color/textColor_alert_title"
-        android:textSize="28px" />
+        android:textSize="@dimen/sc_mm_28" />
 
     <TextView
         android:id="@+id/tvAlertMsg"
@@ -30,5 +30,5 @@
         android:lineSpacingExtra="@dimen/dimen_5_dp"
         android:gravity="center_vertical"
         android:textColor="@color/textColor_alert_msg"
-        android:textSize="26px" />
+        android:textSize="@dimen/sc_mm_26" />
 </LinearLayout>

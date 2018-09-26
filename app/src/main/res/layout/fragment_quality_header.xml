@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="88px"
+    android:layout_height="@dimen/sc_mm_88"
     android:background="@android:color/transparent"
     android:minHeight="0dp"
     app:contentInsetStart="0dp">
@@ -17,24 +17,24 @@
             android:id="@+id/iv_quality_type"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="28px"
-            android:paddingRight="28px"
+            android:paddingLeft="@dimen/sc_mm_28"
+            android:paddingRight="@dimen/sc_mm_28"
             android:src="@drawable/quality_type" />
 
         <TextView
             android:id="@+id/tv_quality_search"
             android:layout_width="0dp"
-            android:layout_height="60px"
+            android:layout_height="@dimen/sc_mm_60"
             android:layout_weight="1"
             android:background="@drawable/border_civ_3dp_light_gray"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/quality_search"
             android:drawablePadding="@dimen/dimen_8_dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20px"
+            android:paddingLeft="@dimen/sc_mm_20"
             android:text="@string/quality_search_hint"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
         <FrameLayout
             android:layout_width="wrap_content"
             android:id="@+id/fl_shop_car_quality"
@@ -43,9 +43,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/iv_quality_shop_car"
-                android:paddingRight="28px"
-                android:paddingLeft="28px"
+                android:paddingRight="@dimen/sc_mm_28"
+                android:paddingLeft="@dimen/sc_mm_28"
                 android:src="@drawable/shop_car_icon" />
         </FrameLayout>
     </LinearLayout>
-</com.amkj.dmsh.views.autoviews.AutoToolbar>
+</android.support.v7.widget.Toolbar>

@@ -1,9 +1,9 @@
 package com.amkj.dmsh.address.adapter;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/7/16.
  */
-public class SelectedAddressAdapter extends BaseQuickAdapter<AddressListBean, BaseViewHolderHelper> {
+public class SelectedAddressAdapter extends BaseQuickAdapter<AddressListBean, BaseViewHolder> {
 
     private final boolean isShowDel;
 
@@ -22,7 +22,7 @@ public class SelectedAddressAdapter extends BaseQuickAdapter<AddressListBean, Ba
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, AddressListBean addressAllBean) {
+    protected void convert(BaseViewHolder helper, AddressListBean addressAllBean) {
         helper.setText(R.id.tv_address_item_perName, getStrings(addressAllBean.getConsignee()))
                 .setText(R.id.tv_address_item_perPhone, getStrings(addressAllBean.getMobile()))
                 .setText(R.id.tv_address_item_address, getStrings(addressAllBean.getAddress_com() + addressAllBean.getAddress()))

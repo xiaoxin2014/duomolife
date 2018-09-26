@@ -5,9 +5,9 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
  * create on 4/10/2018
  * class description 良品侧边栏具体分类
  */
-public class QualityProductTypeSpecificAdapter extends BaseMultiItemQuickAdapter<QualityTypeBean, BaseViewHolderHelper> {
+public class QualityProductTypeSpecificAdapter extends BaseMultiItemQuickAdapter<QualityTypeBean, BaseViewHolder> {
     private final Context context;
 
     public QualityProductTypeSpecificAdapter(Context context, List<QualityTypeBean> qualityTypeBeanList) {
@@ -33,7 +33,7 @@ public class QualityProductTypeSpecificAdapter extends BaseMultiItemQuickAdapter
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, QualityTypeBean qualityTypeBeanBean) {
+    protected void convert(BaseViewHolder helper, QualityTypeBean qualityTypeBeanBean) {
         if (helper.getItemViewType() == TYPE_1) {
             helper.setText(R.id.tv_quality_type_specific, "—— " + getStrings(qualityTypeBeanBean.getName())+" ——");
         }else{

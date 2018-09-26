@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingRight="26px">
+        android:paddingRight="@dimen/gap_right">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -22,11 +22,10 @@
 
         <ImageView
             android:id="@+id/iv_find_rec_tag"
-            android:layout_width="56px"
-            android:layout_height="56px"
+            android:layout_width="@dimen/sc_mm_56"
+            android:layout_height="@dimen/sc_mm_56"
             android:src="@drawable/sel_find_rec_tag"
-            android:visibility="gone"
-            app:layout_auto_basewidth="height" />
+            android:visibility="gone"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -34,7 +33,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="@dimen/gap_left"
-        android:paddingRight="26px">
+        android:paddingRight="@dimen/gap_right">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -45,32 +44,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:lineSpacingExtra="@dimen/dimen_3dp"
+                android:lineSpacingExtra="@dimen/sc_mm_6"
                 android:longClickable="true"
                 android:textColor="@color/text_login_gray_s"
-                android:textSize="32px"/>
-            <!--
-                android:paddingBottom="@dimen/dimen_2dp"
-                android:ellipsize="end"
-                android:maxLength="3"-->
+                android:textSize="@dimen/sc_mm_32"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/text_login_blue_z"
-                android:textSize="32px"
+                android:textSize="@dimen/sc_mm_32"
                 android:id="@+id/tv_find_look_more"
                 android:visibility="gone"
-                android:paddingRight="@dimen/dimen_2dp"
+                android:paddingRight="@dimen/sc_mm_4"
                 android:background="@color/white"
                 android:text="查看更多"
-                android:paddingLeft="@dimen/dimen_2dp"
+                android:paddingLeft="@dimen/sc_mm_4"
                 android:gravity="center_vertical"
                 android:layout_alignBottom="@id/tv_inv_live_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="24px"
+            android:layout_marginTop="@dimen/sc_mm_24"
             android:id="@+id/rel_find_article"
             android:layout_height="wrap_content">
             <ImageView
@@ -85,8 +80,8 @@
                 android:id="@+id/tv_find_article_digest"
                 android:layout_height="wrap_content"
                 app:emojiconAlignment="baseline"
-                android:textSize="28px"
-                android:layout_marginTop="26px"
+                android:textSize="@dimen/sc_mm_28"
+                android:layout_marginTop="@dimen/sc_mm_26"
                 android:textColor="@color/text_login_gray_s"
                 app:emojiconSize="17sp" />
         </RelativeLayout>
@@ -95,15 +90,15 @@
             android:id="@+id/rv_find_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25px"
+            android:layout_marginTop="@dimen/sc_mm_25"
             android:nestedScrollingEnabled="false"
-            android:paddingBottom="10px"
+            android:paddingBottom="@dimen/sc_mm_10"
             android:scrollbars="none" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:layout_marginTop="14px"
+            android:layout_marginTop="@dimen/sc_mm_14"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -111,7 +106,7 @@
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginRight="10px"
+                android:layout_marginRight="@dimen/sc_mm_10"
                 android:visibility="invisible">
 
                 <include
@@ -130,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border_top_line"
-        android:paddingTop="1px">
+        android:paddingTop="@dimen/sc_mm_1">
 
         <include layout="@layout/layout_communal_recycler_wrap" />
     </RelativeLayout>

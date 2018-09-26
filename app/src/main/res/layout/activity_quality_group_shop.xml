@@ -13,7 +13,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="98px"
+        android:layout_height="@dimen/sc_mm_98"
         android:background="@drawable/border_top_line"
         android:divider="@drawable/divider_ll_0_5_dp"
         android:orientation="horizontal"
@@ -24,25 +24,25 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/ql_red_g_icon"
             android:drawablePadding="@dimen/dimen_10_dp"
             android:gravity="center_vertical"
             android:text="全部拼团"
             android:textColor="@color/text_black_t"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
         <com.amkj.dmsh.views.DrawableCenterTextView
             android:id="@+id/tv_quality_join_gp_sp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/my_group_icon"
             android:drawablePadding="@dimen/dimen_10_dp"
             android:gravity="center_vertical"
             android:text="我的拼团"
             android:textColor="@color/text_black_t"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
     </LinearLayout>
 </LinearLayout>

@@ -6,9 +6,9 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 /**
  * Created by atd48 on 2016/6/29.
  */
-public class IntegrationRecyclerAdapter extends BaseMultiItemQuickAdapter<IntegrationBean, BaseViewHolderHelper> {
+public class IntegrationRecyclerAdapter extends BaseMultiItemQuickAdapter<IntegrationBean, BaseViewHolder> {
     private final Context context;
 
     public IntegrationRecyclerAdapter(Context context, List<IntegrationBean> integrationBeanList) {
@@ -31,7 +31,7 @@ public class IntegrationRecyclerAdapter extends BaseMultiItemQuickAdapter<Integr
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, IntegrationBean integrationBean) {
+    protected void convert(BaseViewHolder helper, IntegrationBean integrationBean) {
         if (helper.getItemViewType() == TYPE_0) {
             ImageView iv_integral_pro_tag_out = helper.getView(R.id.iv_integral_pro_tag_out);
             iv_integral_pro_tag_out.setImageResource(R.drawable.goods_sold_out);

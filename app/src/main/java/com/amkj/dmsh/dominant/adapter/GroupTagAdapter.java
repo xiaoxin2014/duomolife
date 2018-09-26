@@ -5,10 +5,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * version 3.1.4
  * class description:组团邀请参团
  */
-public class GroupTagAdapter extends BaseQuickAdapter<MemberListBean,BaseViewHolderHelper>{
+public class GroupTagAdapter extends BaseQuickAdapter<MemberListBean,BaseViewHolder>{
     private final Context context;
 
     public GroupTagAdapter(Context context, List<MemberListBean> memberListBeans) {
@@ -31,7 +31,7 @@ public class GroupTagAdapter extends BaseQuickAdapter<MemberListBean,BaseViewHol
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, MemberListBean memberListBean) {
+    protected void convert(BaseViewHolder helper, MemberListBean memberListBean) {
         ImageView imageView = (ImageView) helper.getView(R.id.iv_dm_gp_open_ava);
         TextView tv_dm_gp_name = (TextView) helper.getView(R.id.tv_dm_gp_name);
         GlideImageLoaderUtil.loadRoundImg(context, imageView, memberListBean.getAvatar(), (int) (AutoUtils.getPercentWidth1px() * 100));

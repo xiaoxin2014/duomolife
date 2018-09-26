@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/rel_communal_banner"
-    android:layout_height="403px">
+    android:layout_height="@dimen/sc_mm_403">
 
     <com.bigkoo.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/ad_communal_banner"

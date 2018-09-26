@@ -9,16 +9,16 @@
 
     <ImageView
         android:id="@+id/iv_dm_gp_open_ava"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="@dimen/sc_mm_100"
+        android:layout_height="@dimen/sc_mm_100"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:src="@drawable/dm_gp_join"
-        app:layout_auto_basewidth = "height"/>
+        />
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="24px"
-        android:layout_marginTop="10px"
+        android:textSize="@dimen/sc_mm_24"
+        android:layout_marginTop="@dimen/sc_mm_10"
         android:text="多么生活"
         android:textColor="@color/text_login_gray_s"
         android:id="@+id/tv_dm_gp_name"

@@ -9,16 +9,16 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60px"
-        android:layout_marginLeft="54px"
-        android:layout_marginRight="82px"
-        android:layout_marginTop="75px"
+        android:layout_marginBottom="@dimen/sc_mm_60"
+        android:layout_marginLeft="@dimen/sc_mm_54"
+        android:layout_marginRight="@dimen/sc_mm_82"
+        android:layout_marginTop="@dimen/sc_mm_75"
         android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30px"
+            android:layout_marginRight="@dimen/sc_mm_30"
             android:src="@drawable/invoice_hint_icon" />
 
         <TextView
@@ -26,6 +26,6 @@
             android:layout_height="wrap_content"
             android:text="如发现有用户违规刷积分，多么生活有权取消用户的积分资格"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
     </LinearLayout>
 </FrameLayout>

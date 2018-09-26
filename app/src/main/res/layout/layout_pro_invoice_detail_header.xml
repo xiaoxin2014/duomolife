@@ -10,7 +10,7 @@
     android:visibility="visible">
 
     <LinearLayout
-        android:paddingLeft="24px"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,39 +18,39 @@
 
         <TextView
             android:id="@+id/tv_indent_invoice_header_type"
-            android:paddingTop="5px"
+            android:paddingTop="@dimen/sc_mm_5"
             android:text="订单已完成"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:textColor="@color/text_black_t"
-            android:textSize="36px" />
+            android:textSize="@dimen/sc_mm_36" />
     </LinearLayout>
 
     <TextView
-        android:paddingLeft="24px"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
         android:id="@+id/tv_indent_invoice_orderID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16px"
+        android:layout_marginTop="@dimen/sc_mm_16"
         android:ellipsize="end"
         android:lines="1"
         android:longClickable="true"
         android:textColor="@color/text_black_t"
-        android:textSize="24px" />
+        android:textSize="@dimen/sc_mm_24" />
 
     <TextView
-        android:paddingLeft="24px"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
         android:id="@+id/tv_indent_invoice_orderTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16px"
+        android:layout_marginTop="@dimen/sc_mm_16"
         android:ellipsize="end"
         android:gravity="top"
         android:lines="1"
         android:textColor="@color/text_black_t"
-        android:textSize="24px"
-        android:paddingBottom="30px"/>
+        android:textSize="@dimen/sc_mm_24"
+        android:paddingBottom="@dimen/sc_mm_30"/>
 </LinearLayout>

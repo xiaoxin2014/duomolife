@@ -4,10 +4,10 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity.DmlOptimizedSelBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:请输入类描述
  */
 
-public class DmlOptimizedSelAdapter extends BaseQuickAdapter<DmlOptimizedSelBean, BaseViewHolderHelper> {
+public class DmlOptimizedSelAdapter extends BaseQuickAdapter<DmlOptimizedSelBean, BaseViewHolder> {
     private final Context context;
 
     public DmlOptimizedSelAdapter(Context context, List<DmlOptimizedSelBean> dmlOptimizedSelList) {
@@ -29,7 +29,7 @@ public class DmlOptimizedSelAdapter extends BaseQuickAdapter<DmlOptimizedSelBean
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, DmlOptimizedSelBean dmlOptimizedSelBean) {
+    protected void convert(BaseViewHolder helper, DmlOptimizedSelBean dmlOptimizedSelBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_cover_detail_bg), dmlOptimizedSelBean.getPicUrl());
         helper.setText(R.id.tv_opt_sel_title, getStrings(dmlOptimizedSelBean.getTitle()))
                 .setText(R.id.tv_opt_sel_subtitle, getStrings(dmlOptimizedSelBean.getSubtitle()));

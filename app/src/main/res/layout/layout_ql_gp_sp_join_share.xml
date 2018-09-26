@@ -11,7 +11,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="87px"
+            android:layout_marginTop="@dimen/sc_mm_87"
             android:gravity="center">
 
             <include layout="@layout/layout_communal_time_countdown_bg" />
@@ -21,27 +21,27 @@
             android:id="@+id/tv_invite_fr_join_gp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="70px"
+            android:layout_marginTop="@dimen/sc_mm_70"
             android:gravity="center"
             android:lineSpacingExtra="@dimen/dimen_10_dp"
             android:text="@string/share_join_group"
             android:textColor="@color/text_black_t"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="44px"
+            android:layout_marginTop="@dimen/sc_mm_44"
             android:gravity="center"
             android:text="倒计时结束前人数不满将拼团失败"
             android:textColor="@color/text_black_t"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rel_group_join_share"
-            android:layout_marginTop="44px"
+            android:layout_marginTop="@dimen/sc_mm_44"
             android:gravity="center">
             <com.amkj.dmsh.views.flowlayout.TagFlowLayout
                 android:id="@+id/tag_gp_tag_ava"
@@ -52,23 +52,23 @@
             </com.amkj.dmsh.views.flowlayout.TagFlowLayout>
         </RelativeLayout>
         <TextView
-            android:layout_marginTop="44px"
+            android:layout_marginTop="@dimen/sc_mm_44"
             android:layout_width="match_parent"
-            android:layout_marginLeft="80px"
-            android:layout_marginRight="80px"
+            android:layout_marginLeft="@dimen/sc_mm_80"
+            android:layout_marginRight="@dimen/sc_mm_80"
             android:id="@+id/tv_join_share"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:gravity="center"
             android:text="邀请好友参团"
             android:background="@drawable/border_circle_4_s_red"
             android:textColor="@color/white"
-            android:layout_height="88px" />
+            android:layout_height="@dimen/sc_mm_88" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16px"
-            android:layout_marginBottom="44px"
-            android:textSize="24px"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:layout_marginBottom="@dimen/sc_mm_44"
+            android:textSize="@dimen/sc_mm_24"
             android:text="（分享有惊喜）"
             android:textColor="@color/text_gray_hint_n"
             android:gravity="center"

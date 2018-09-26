@@ -3,11 +3,11 @@ package com.amkj.dmsh.qyservice;
 import android.content.Context;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
  * version 3.1.6
  * class description:客服订单弹窗
  */
-public class ProductIndentAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolderHelper> {
+public class ProductIndentAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolder> {
     private final Context context;
 
     public ProductIndentAdapter(Context context, List<OrderListBean> orderListBeans) {
@@ -31,7 +31,7 @@ public class ProductIndentAdapter extends BaseQuickAdapter<OrderListBean, BaseVi
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, OrderListBean orderListBean) {
+    protected void convert(BaseViewHolder helper, OrderListBean orderListBean) {
         String name = "";
         if (orderListBean.getGoods() != null && orderListBean.getGoods().size() > 0) {
             GoodsBean goodsBean = orderListBean.getGoods().get(0);

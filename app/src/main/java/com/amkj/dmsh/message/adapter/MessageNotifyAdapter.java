@@ -8,11 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean.ProductPriceBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:请输入类描述
  */
 
-public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, BaseViewHolderHelper> {
+public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, BaseViewHolder> {
     private final Context context;
 
     public MessageNotifyAdapter(Context context, List<MessageNotifyBean> officialBeanList) {
@@ -36,7 +36,7 @@ public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, Ba
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, MessageNotifyBean messageIndentBean) {
+    protected void convert(BaseViewHolder helper, MessageNotifyBean messageIndentBean) {
         ImageView iv_mes_notify_cover_pro = helper.getView(R.id.iv_mes_notify_cover_pro);
         ImageView iv_mes_notify_cover_icon = helper.getView(R.id.iv_mes_notify_cover_icon);
         helper.setGone(R.id.fl_mes_sys, true);

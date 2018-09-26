@@ -20,7 +20,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -35,6 +34,7 @@ import com.amkj.dmsh.homepage.bean.TimeShaftRecordBean;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -527,13 +527,13 @@ public class SpringSaleFragment extends BaseFragment {
         layoutManager.scrollToPositionWithOffset(scrollPosition, 0);
     }
 
-    private class TimeShaftRecordAdapter extends BaseQuickAdapter<TimeShaftRecordBean, BaseViewHolderHelper> {
+    private class TimeShaftRecordAdapter extends BaseQuickAdapter<TimeShaftRecordBean, BaseViewHolder> {
         public TimeShaftRecordAdapter(List<TimeShaftRecordBean> timeShaftList) {
             super(R.layout.adapter_tv_time_shaft_record, timeShaftList);
         }
 
         @Override
-        protected void convert(BaseViewHolderHelper helper, TimeShaftRecordBean timeShaftRecordBean) {
+        protected void convert(BaseViewHolder helper, TimeShaftRecordBean timeShaftRecordBean) {
             TextView textView = helper.getView(R.id.tv_spring_time_week_tag);
             textView.setSelected(timeShaftRecordBean.isSelect());
             textView.setText(getStrings(timeShaftRecordBean.getWeekName()));

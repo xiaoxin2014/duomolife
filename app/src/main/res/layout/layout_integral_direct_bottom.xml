@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="98px"
+    android:layout_height="@dimen/sc_mm_98"
     android:id="@+id/ll_integral_settlement"
     android:gravity="center_vertical"
     android:paddingLeft="@dimen/gap_left">
@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:text="实付："
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:textColor="@color/text_black_t"
         android:id="@+id/tv_integral_direct_tag"
         android:layout_height="wrap_content" />
@@ -20,19 +20,19 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:textColor="@color/text_normal_red"
-        android:textSize="34px" />
+        android:textSize="@dimen/sc_mm_34" />
 
     <TextView
         android:id="@+id/tv_integral_details_create_int"
-        android:layout_width="250px"
+        android:layout_width="@dimen/sc_mm_250"
         android:layout_alignParentRight="true"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical|right"
         android:background="@drawable/sel_nor_red_un_gray"
         android:enabled="true"
-        android:clickable="true"
+
         android:gravity="center"
         android:text="立即兑换"
         android:textColor="@color/white"
-        android:textSize="32px" />
+        android:textSize="@dimen/sc_mm_32" />
 </RelativeLayout>

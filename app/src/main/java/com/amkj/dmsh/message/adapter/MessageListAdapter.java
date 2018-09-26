@@ -7,9 +7,9 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class MessageListAdapter extends BaseQuickAdapter<QualityTypeBean, Messag
         helper.itemView.setTag(qualityTypeBean);
     }
 
-    public class BaseViewHolderHelperBadge extends BaseViewHolderHelper {
+    public class BaseViewHolderHelperBadge extends BaseViewHolder {
         Badge badge;
         FrameLayout fra_home_message_total;
 

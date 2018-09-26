@@ -5,11 +5,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
 import com.zhy.autolayout.attr.Attrs;
 import com.zhy.autolayout.attr.AutoAttr;
@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * version 3.1.5
  * class description:积分夺宝奖励
  */
-public class IntegralLotteryAwardHistoryAdapter extends BaseQuickAdapter<PreviousInfoBean, BaseViewHolderHelper> {
+public class IntegralLotteryAwardHistoryAdapter extends BaseQuickAdapter<PreviousInfoBean, BaseViewHolder> {
 
     private final Context context;
 
@@ -38,7 +38,7 @@ public class IntegralLotteryAwardHistoryAdapter extends BaseQuickAdapter<Previou
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, PreviousInfoBean previousInfoBean) {
+    protected void convert(BaseViewHolder helper, PreviousInfoBean previousInfoBean) {
         ImageView iv_integral_lottery_award_image = helper.getView(R.id.iv_integral_lottery_award_image);
         FlexboxLayout fbl_integral_lottery_avatar = helper.getView(R.id.fbl_integral_lottery_avatar);
         GlideImageLoaderUtil.loadCenterCrop(context, iv_integral_lottery_award_image, previousInfoBean.getImage());

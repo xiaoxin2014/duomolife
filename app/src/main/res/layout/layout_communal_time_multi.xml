@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_communal_multi_time"
     android:layout_width="match_parent"
-    android:layout_height="415px"
+    android:layout_height="@dimen/sc_mm_415"
     android:orientation="vertical"
     android:visibility="gone">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="84px"
+        android:layout_height="@dimen/sc_mm_84"
         android:background="#f9f9f9"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -18,12 +18,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#f9f9f9"
-            android:clickable="true"
             android:gravity="center"
             android:paddingLeft="@dimen/gap_left"
             android:text="取消"
             android:textColor="#408ed6"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
         <View
             android:layout_width="0dp"
@@ -36,20 +35,19 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#f9f9f9"
-            android:clickable="true"
             android:gravity="center"
             android:paddingRight="@dimen/gap_right"
             android:text="确定"
             android:textColor="#408ed6"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="40px"
-        android:paddingRight="40px">
+        android:paddingLeft="@dimen/sc_mm_40"
+        android:paddingRight="@dimen/sc_mm_40">
 
         <com.amkj.dmsh.address.widget.WheelView
             android:id="@+id/id_one_wheel"

@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -21,13 +22,10 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CategoryTypeEntity;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
@@ -40,8 +38,6 @@ import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
@@ -54,12 +50,7 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.MarginTopAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
-import com.zhy.autolayout.utils.AutoUtils;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.xutils.ex.HttpException;
 
@@ -70,6 +61,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import q.rorbin.badgeview.Badge;
 
@@ -101,7 +93,7 @@ import static com.amkj.dmsh.constant.Url.BASE_URL;
  */
 public class HomePageFragment extends BaseFragment {
     @BindView(R.id.smart_refresh_home)
-    RefreshLayout smart_refresh_home;
+    SmartRefreshLayout smart_refresh_home;
     @BindView(R.id.communal_recycler_wrap)
     RecyclerView communal_recycler_wrap;
     @BindView(R.id.rv_home_activity)
@@ -134,7 +126,6 @@ public class HomePageFragment extends BaseFragment {
     RelativeLayout rel_home_page;
     @BindView(R.id.iv_float_ad_icon)
     ImageView iv_float_ad_icon;
-    private int uid;
     private Badge badge;
     private List<CategoryTypeBean> categoryList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -143,7 +134,6 @@ public class HomePageFragment extends BaseFragment {
     //    热门活动
     private RecyclerHotAdapterNew hotActivityAdapter;
     private HomeImgActivityAdapter homeImgActivityAdapter;
-    private int screenHeight;
     private boolean isAutoClose;
     private CBViewHolderCreator cbViewHolderCreator;
 
@@ -154,7 +144,6 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         smart_refresh_home.setOnRefreshListener((refreshLayout) -> {
             loadData();
         });
@@ -190,23 +179,19 @@ public class HomePageFragment extends BaseFragment {
         });
 
         badge = getTopBadge(getActivity(), fra_home_message_total);
-        AutoUtils.auto(std_home_art_type);
-        std_home_art_type.setTextsize(AutoUtils.getPercentWidth1px() * 28);
-        std_home_art_type.setTabPadding(AutoUtils.getPercentWidth1px() * 40);
-        std_home_art_type.setIndicatorHeight(AutoUtils.getPercentWidth1px() * 1);
-        std_home_art_type.setIndicatorCornerRadius(AutoUtils.getPercentWidth1px() * 1);
+        std_home_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,28) );
+        std_home_art_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext,40));
+        std_home_art_type.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext,1));
+        std_home_art_type.setIndicatorCornerRadius(AutoSizeUtils.mm2px(mAppContext,1));
         setStatusColor();
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
         rel_home_page.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 rel_home_page.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                AutoLayoutHelper.AutoLayoutParams autoLayoutHelper = (AutoLayoutHelper.AutoLayoutParams) rel_home_page.getLayoutParams();
-                AutoLayoutInfo autoLayoutInfo = autoLayoutHelper.getAutoLayoutInfo();
-                float measuredHeight = tb_tool_home.getMeasuredHeight() * (1336f / screenHeight);
-                autoLayoutInfo.addAttr(new MarginTopAttr((int) measuredHeight, 0, 1));
-                rel_home_page.setLayoutParams(rel_home_page.getLayoutParams());
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) rel_home_page.getLayoutParams();
+                int measuredHeight = tb_tool_home.getMeasuredHeight();
+                layoutParams.setMargins(0,measuredHeight,0,0);
+                rel_home_page.setLayoutParams(layoutParams);
             }
         });
     }
@@ -300,26 +285,6 @@ public class HomePageFragment extends BaseFragment {
         }
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -328,7 +293,6 @@ public class HomePageFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
             //我的
-            getLoginStatus();
             getMessageWarm();
         }
     }
@@ -336,7 +300,7 @@ public class HomePageFragment extends BaseFragment {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 getMessageWarm();
             }
         } else if (START_AUTO_PAGE_TURN.equals(message.type)) {
@@ -364,8 +328,7 @@ public class HomePageFragment extends BaseFragment {
 
     //
     private void getMessageWarm() {
-        isLoginStatus();
-        if (uid > 0) {
+        if (userId > 0) {
             String url = Url.BASE_URL + Url.H_MES_STATISTICS;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);

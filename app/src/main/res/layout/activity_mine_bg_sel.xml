@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:paddingLeft="@dimen/gap_left"
-        android:paddingRight="26px"
+        android:paddingRight="@dimen/sc_mm_26"
         android:layout_height="match_parent">
         <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading"/>
     </RelativeLayout>

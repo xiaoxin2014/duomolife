@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.bean.QualityGroupEntity.QualityGroupBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,7 +36,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:拼团列表
  */
 
-public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, BaseViewHolderHelper> {
+public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, BaseViewHolder> {
     private final Context context;
     private final List<QualityGroupBean> qualityGroupBeanList;
     private SparseArray<Object> sparseArray = new SparseArray<>();
@@ -178,7 +178,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, QualityGroupBean qualityGroupBean) {
+    protected void convert(BaseViewHolder helper, QualityGroupBean qualityGroupBean) {
 //        封面图
         TextView tv_gp_sp_count = helper.getView(R.id.tv_gp_sp_count);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_communal_img_bg), qualityGroupBean.getCoverImage());

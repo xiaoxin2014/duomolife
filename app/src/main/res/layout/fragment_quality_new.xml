@@ -21,7 +21,7 @@
             <com.flyco.tablayout.SlidingTabLayout
                 xmlns:tl="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="88px"
+                android:layout_height="@dimen/sc_mm_88"
                 android:id="@+id/std_quality_type"
                 android:background="@drawable/border_bottom_line"
                 tl:tl_indicator_width_equal_title="true"
@@ -42,7 +42,7 @@
     </FrameLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginRight="170px"
+        android:layout_marginRight="@dimen/sc_mm_170"
         android:layout_gravity="start"
         android:background="@color/white"
         android:id="@+id/ll_drawer_quality"
@@ -52,11 +52,11 @@
         <TextView
             android:layout_width="match_parent"
             android:text="分类"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:textColor="@color/text_black_t"
             android:gravity="center_vertical|right"
-            android:layout_marginRight="63px"
-            android:layout_height="88px" />
+            android:layout_marginRight="@dimen/sc_mm_63"
+            android:layout_height="@dimen/sc_mm_88" />
         <View
             android:layout_width="match_parent"
             android:background="#e6e6e6"
@@ -65,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
-                android:layout_width="160px"
+                android:layout_width="@dimen/sc_mm_160"
                 android:id="@+id/rv_quality_product_type"
                 android:scrollbars="none"
                 android:paddingRight="0.5dp"

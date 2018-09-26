@@ -6,12 +6,12 @@
     android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
-        android:textSize="28px"
-        android:paddingTop="21px"
-        android:paddingLeft="30px"
+        android:textSize="@dimen/sc_mm_28"
+        android:paddingTop="@dimen/sc_mm_21"
+        android:paddingLeft="@dimen/sc_mm_30"
         android:id="@+id/tv_partner_join"
-        android:paddingRight="30px"
-        android:paddingBottom="22px"
+        android:paddingRight="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_22"
         android:textColor="@color/text_login_gray_s"
         android:layout_height="wrap_content" />
 </LinearLayout>

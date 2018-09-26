@@ -4,19 +4,19 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:gravity="center"
-    android:paddingTop="15px"
+    android:paddingTop="@dimen/sc_mm_15"
     android:orientation="vertical">
     <include layout="@layout/layout_communal_time_countdown_bg" />
     <TextView
         android:layout_width="match_parent"
         android:gravity="center"
-        android:layout_marginTop="30px"
+        android:layout_marginTop="@dimen/sc_mm_30"
         android:text="盼你就像盼星星盼月亮，就差你了"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:layout_height="wrap_content" />
     <View
         android:layout_width= "match_parent"
-        android:layout_marginTop="15px"
+        android:layout_marginTop="@dimen/sc_mm_15"
         android:background="@color/gray_bg"
         android:layout_height="@dimen/dp_10" />
 </LinearLayout>

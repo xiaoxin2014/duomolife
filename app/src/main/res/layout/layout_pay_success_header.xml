@@ -8,9 +8,9 @@
     <com.amkj.dmsh.views.DrawableCenterTextView
         android:layout_width="match_parent"
         android:drawablePadding="@dimen/dimen_12dp"
-        android:textSize="40px"
-        android:paddingTop="58px"
-        android:paddingBottom="58px"
+        android:textSize="@dimen/sc_mm_40"
+        android:paddingTop="@dimen/sc_mm_58"
+        android:paddingBottom="@dimen/sc_mm_58"
         android:textColor="@color/text_black_t"
         android:text="支付成功"
         android:drawableLeft="@drawable/pay_suc_icon"
@@ -18,30 +18,30 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="60px"
+        android:layout_marginBottom="@dimen/sc_mm_60"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_width="156px"
+            android:layout_width="@dimen/sc_mm_156"
             android:background="@drawable/border_circle_four_gray_bg_white"
             android:gravity="center"
             android:textColor="@color/text_login_gray_s"
             android:text="@string/look_indent"
             android:id="@+id/tv_pay_suc_indent"
-            android:textSize="26px"
-            android:clickable="true"
-            android:layout_height="60px" />
+            android:textSize="@dimen/sc_mm_26"
+
+            android:layout_height="@dimen/sc_mm_60" />
         <TextView
-            android:layout_width="156px"
-            android:layout_marginLeft="49px"
+            android:layout_width="@dimen/sc_mm_156"
+            android:layout_marginLeft="@dimen/sc_mm_49"
             android:background="@drawable/border_circle_four_gray_bg_white"
             android:gravity="center"
             android:textColor="@color/text_login_gray_s"
             android:text="@string/skip_quality"
             android:layout_toRightOf="@+id/tv_pay_suc_indent"
             android:id="@+id/tv_pay_suc_quality"
-            android:textSize="26px"
-            android:clickable="true"
-            android:layout_height="60px" />
+            android:textSize="@dimen/sc_mm_26"
+
+            android:layout_height="@dimen/sc_mm_60" />
     </RelativeLayout>
     <include layout="@layout/adapter_ql_goods_pro_header"/>
 </LinearLayout>

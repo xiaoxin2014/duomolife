@@ -5,10 +5,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean.ReplyCommBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * created on 2017/7/21
  * class description:请输入类描述
  */
-public class ArticleCommentDetailAdapter extends BaseQuickAdapter<ReplyCommBean, BaseViewHolderHelper> {
+public class ArticleCommentDetailAdapter extends BaseQuickAdapter<ReplyCommBean, BaseViewHolder> {
     private final Context context;
 
     public ArticleCommentDetailAdapter(Context context, List<ReplyCommBean> replyCommList) {
@@ -29,7 +29,7 @@ public class ArticleCommentDetailAdapter extends BaseQuickAdapter<ReplyCommBean,
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, ReplyCommBean replyCommBean) {
+    protected void convert(BaseViewHolder helper, ReplyCommBean replyCommBean) {
         TextView tv_comm_comment_like = helper.getView(R.id.tv_comm_comment_like);
         GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.civ_comm_comment_inner_avatar), replyCommBean.getAvatar());
         helper.setText(R.id.tv_comm_comment_inner_name, replyCommBean.getIs_reply() == 1 ?

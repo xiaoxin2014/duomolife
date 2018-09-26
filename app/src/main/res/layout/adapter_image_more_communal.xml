@@ -3,15 +3,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <TextView
-        android:layout_width="70px"
+        android:layout_width="@dimen/sc_mm_70"
         android:ems="1"
-        android:layout_marginRight="20px"
-        android:paddingLeft="22px"
-        android:paddingRight="22px"
+        android:layout_marginRight="@dimen/sc_mm_20"
+        android:paddingLeft="@dimen/sc_mm_22"
+        android:paddingRight="@dimen/sc_mm_22"
         android:gravity="center"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:textColor="@color/text_gray_hint_n"
         android:text="查看更多图片"
         android:background="@color/light_gray_f"
-        android:layout_height="240px" />
+        android:layout_height="@dimen/sc_mm_240" />
 </RelativeLayout>

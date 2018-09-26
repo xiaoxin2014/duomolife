@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dimen_10_dp"
-            android:clickable="true"
+
             android:gravity="center"
             android:text="取消"
             android:textColor="@color/dialog_text_blue_color"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/dimen_10_dp"
-            android:clickable="true"
+
             android:gravity="center"
             android:text="确定"
             android:textColor="@color/dialog_text_blue_color"

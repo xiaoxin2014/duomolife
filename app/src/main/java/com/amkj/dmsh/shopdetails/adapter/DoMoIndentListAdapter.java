@@ -13,16 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +37,6 @@ import butterknife.ButterKnife;
 import cn.iwgang.countdownview.CountdownView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
@@ -141,9 +139,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         }
         DirectProductListAdapter directProductListAdapter = new DirectProductListAdapter(context, orderListBean.getGoods(), INDENT_TYPE);
         View headerView = layoutInflater.inflate(R.layout.layout_indent_item_header, helper.communal_recycler_wrap, false);
-        AutoUtils.autoSize(headerView);
         View footView = layoutInflater.inflate(R.layout.layout_indent_item_foot, helper.communal_recycler_wrap, false);
-        AutoUtils.autoSize(footView);
         IntentHView intentHView = new IntentHView();
         ButterKnife.bind(intentHView, headerView);
         IntentFView intentFView = new IntentFView();
@@ -417,7 +413,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         TextView tv_intent_count_price;
     }
 
-    public class IndentListViewHolder extends BaseViewHolderHelper {
+    public class IndentListViewHolder extends BaseViewHolder {
         private RecyclerView communal_recycler_wrap;
 
         public IndentListViewHolder(View view) {

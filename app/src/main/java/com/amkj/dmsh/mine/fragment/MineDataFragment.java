@@ -72,10 +72,6 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.HeightAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +82,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -97,6 +93,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 
+;
 ;
 
 /**
@@ -200,15 +197,6 @@ public class MineDataFragment extends BaseFragment {
             qualityTypeBean.setPicUrl(typeMinePic[i]);
             qualityTypeBean.setId(i);
             mineTypeList.add(qualityTypeBean);
-        }
-        if (AutoUtils.getPercentWidth1px() < AutoUtils.getPercentHeight1px()) {
-            fl_mine_bg.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-                AutoLayoutHelper.AutoLayoutParams autoLayoutHelper = (AutoLayoutHelper.AutoLayoutParams) fl_mine_bg.getLayoutParams();
-                AutoLayoutInfo autoLayoutInfo = autoLayoutHelper.getAutoLayoutInfo();
-                autoLayoutInfo.addAttr(new HeightAttr(480, 0, 1) {
-                });
-                fl_mine_bg.setLayoutParams(fl_mine_bg.getLayoutParams());
-            });
         }
         typeMineAdapter = new MineTypeAdapter(getActivity(), mineTypeList);
         communal_recycler_wrap.setAdapter(typeMineAdapter);
@@ -362,9 +350,9 @@ public class MineDataFragment extends BaseFragment {
 
     private void setData(final CommunalUserInfoEntity.CommunalUserInfoBean userData) {
         tv_mine_name.setText(getStrings(userData.getNickname()));
-        tv_mine_att_count.setText(String.valueOf(userData.getFllow()));
-        tv_mine_fans_count.setText(String.valueOf(userData.getFans()));
-        tv_mine_inv_count.setText(String.valueOf(userData.getDocumentcount()));
+        tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count),userData.getFllow()));
+        tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count),userData.getFans()));
+        tv_mine_inv_count.setText(String.format(getResources().getString(R.string.mine_invitation_count),userData.getDocumentcount()));
         tv_mine_score.setText(("积分：" + userData.getScore()));
         GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(userData.getAvatar())
                 ? ImageConverterUtils.getFormatImg(userData.getAvatar()) : "");
@@ -619,13 +607,12 @@ public class MineDataFragment extends BaseFragment {
     }
 
     // 2016/8/18 跳转粉丝页
-    @OnClick({R.id.rel_mine_fans, R.id.tv_mine_fans_count, R.id.tv_mine_fans})
+    @OnClick(R.id.tv_mine_fans_count)
     void skipFans(View view) {
         if (userId != 0) {
             Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
             intent.putExtra("type", "fans");
             intent.putExtra("fromPage", "mine");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             skipLoginPage();
@@ -633,13 +620,12 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //  2016/8/18 跳转关注页
-    @OnClick({R.id.rel_mine_att, R.id.tv_mine_att_count, R.id.tv_mine_att})
+    @OnClick(R.id.tv_mine_att_count)
     void skipAttention(View view) {
         if (userId != 0) {
             Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
             intent.putExtra("type", "attention");
             intent.putExtra("fromPage", "mine");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             skipLoginPage();
@@ -647,7 +633,7 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //    我的帖子
-    @OnClick({R.id.rel_mine_inv, R.id.tv_mine_inv_count, R.id.tv_mine_inv})
+    @OnClick(R.id.tv_mine_inv_count)
     void skipInvitation(View view) {
         Intent intent = new Intent(getActivity(), MineInvitationListActivity.class);
         startActivity(intent);

@@ -3,10 +3,10 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Context;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
  * class description:积分产品
  */
 
-public class IntegralProductIndentAdapter extends BaseQuickAdapter<GoodsBean, BaseViewHolderHelper> {
+public class IntegralProductIndentAdapter extends BaseQuickAdapter<GoodsBean, BaseViewHolder> {
     private final Context context;
 
     public IntegralProductIndentAdapter(Context context, List<GoodsBean> orderBeanList) {
@@ -29,7 +29,7 @@ public class IntegralProductIndentAdapter extends BaseQuickAdapter<GoodsBean, Ba
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, GoodsBean goodsBean) {
+    protected void convert(BaseViewHolder helper, GoodsBean goodsBean) {
         // 纯积分
         String price;
         if (goodsBean.getIntegralType() == 0) {

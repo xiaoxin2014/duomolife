@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,7 +36,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * Created by atd48 on 2016/10/20.
  * 我的提醒列表
  */
-public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseViewHolderHelper> {
+public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseViewHolder> {
     private final Context context;
     private final List<MineWarmBean> mineWarmBeanList;
     private SparseArray<Object> sparseArray = new SparseArray<>();
@@ -166,7 +166,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, MineWarmBean mineWarmBean) {
+    protected void convert(BaseViewHolder helper, MineWarmBean mineWarmBean) {
         TextView tv_mine_warm_set_status = helper.getView(R.id.tv_mine_warm_set_status);
         helper.setGone(R.id.ll_communal_count_time,true);
 //        开团状态

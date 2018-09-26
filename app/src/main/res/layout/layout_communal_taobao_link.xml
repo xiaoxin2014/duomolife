@@ -12,12 +12,12 @@
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/tv_communal_tb_link"
-        android:textSize="30px"
-        android:paddingLeft="24px"
+        android:textSize="@dimen/sc_mm_30"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
-        android:paddingTop="10px"
-        android:clickable="true"
-        android:paddingBottom="10px"
+        android:paddingTop="@dimen/sc_mm_10"
+
+        android:paddingBottom="@dimen/sc_mm_10"
         android:textColor="@color/text_blue_sev"
         android:layout_height="wrap_content" />
 </RelativeLayout>

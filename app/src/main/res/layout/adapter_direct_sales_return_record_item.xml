@@ -11,19 +11,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:paddingRight="@dimen/gap_right"
-        android:layout_height="98px">
+        android:layout_height="@dimen/sc_mm_98">
         <TextView
             android:id="@+id/tv_indent_reply_border_first_gray"
-            android:layout_width="160px"
-            android:layout_height="58px"
+            android:layout_width="@dimen/sc_mm_160"
+            android:layout_height="@dimen/sc_mm_58"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:text="查看详情"
             android:layout_gravity="center_vertical"
             android:background="@drawable/selector_border_circle_three_gray_white"
-            android:clickable="true"
+
             android:gravity="center"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
     </RelativeLayout>
 </LinearLayout>

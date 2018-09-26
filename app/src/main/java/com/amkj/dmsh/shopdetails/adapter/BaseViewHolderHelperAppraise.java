@@ -5,7 +5,6 @@ import android.widget.EditText;
 
 import com.amkj.dmsh.R;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 
 /**
@@ -21,6 +20,5 @@ public class BaseViewHolderHelperAppraise extends BaseViewHolder {
     public BaseViewHolderHelperAppraise(View view) {
         super(view);
         et_indent_appraise_input = (EditText) view.findViewById(R.id.et_indent_appraise_input);
-        AutoUtils.autoSize(view);
     }
 }

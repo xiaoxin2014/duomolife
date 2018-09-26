@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
-        android:paddingTop="24px"
-        android:paddingBottom="24px"
+        android:paddingTop="@dimen/sc_mm_24"
+        android:paddingBottom="@dimen/sc_mm_24"
         android:orientation="vertical">
 
         <TextView
@@ -21,12 +21,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:textColor="@color/text_black_t"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <com.amkj.dmsh.views.bottomdialog.KeywordContainer
             android:id="@+id/kc_params_as"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28px" />
+            android:layout_marginTop="@dimen/sc_mm_28" />
     </LinearLayout>
 </LinearLayout>

@@ -8,9 +8,9 @@
     <ImageView
         android:id="@+id/iv_cover_bg_header_img"
         android:layout_width="match_parent"
-        android:layout_height="403px"
+        android:layout_height="@dimen/sc_mm_403"
         android:scaleType="centerCrop"
-        app:layout_auto_basewidth = "height"/>
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_wrap_bar_none"

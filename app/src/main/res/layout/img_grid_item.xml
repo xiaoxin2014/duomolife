@@ -4,27 +4,27 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="20px"
+    android:layout_marginBottom="@dimen/sc_mm_20"
     android:gravity="center">
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/pv_image"
-            android:layout_width="126px"
-            android:layout_height="126px"
+            android:layout_width="@dimen/sc_mm_126"
+            android:layout_height="@dimen/sc_mm_126"
             android:layout_gravity="left|bottom"
             android:scaleType="centerCrop"
             android:background="@drawable/border_dot_line"
             android:src="@drawable/plus_icon_nor"/>
         <ImageView
             android:id="@+id/delete"
-            android:layout_width="30px"
-            android:layout_height="30px"
+            android:layout_width="@dimen/sc_mm_30"
+            android:layout_height="@dimen/sc_mm_30"
             android:layout_gravity="top|right"
             android:scaleType="fitXY"
             android:src="@drawable/delete_btn_sel"
             android:visibility="visible"
-            app:layout_auto_basewidth = "height"/>
+            />
     </FrameLayout>
 </LinearLayout>

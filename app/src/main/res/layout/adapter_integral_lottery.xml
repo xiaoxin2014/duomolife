@@ -5,24 +5,24 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="@drawable/border_rect_four_gray_c_one_bg_white"
-    android:padding="1px"
+    android:padding="@dimen/sc_mm_1"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:layout_marginLeft="38px"
-        android:layout_marginRight="44px"
-        android:layout_height="86px">
+        android:layout_marginLeft="@dimen/sc_mm_38"
+        android:layout_marginRight="@dimen/sc_mm_44"
+        android:layout_height="@dimen/sc_mm_86">
         <TextView
             android:layout_width="wrap_content"
-            android:textSize="26px"
+            android:textSize="@dimen/sc_mm_26"
             android:layout_centerVertical="true"
             android:id="@+id/tv_integral_lottery_number"
             android:textColor="@color/text_login_gray_s"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_width="wrap_content"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:id="@+id/tv_integral_lottery_status"
@@ -32,17 +32,17 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:layout_marginLeft="38px"
-        android:layout_marginRight="44px"
+        android:layout_marginLeft="@dimen/sc_mm_38"
+        android:layout_marginRight="@dimen/sc_mm_44"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_width="220px"
-            android:layout_height="220px"
+            android:layout_width="@dimen/sc_mm_220"
+            android:layout_height="@dimen/sc_mm_220"
             android:id="@+id/iv_lottery_product_cover"
-            app:layout_auto_basewidth = "height"/>
+            />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginLeft="32px"
+            android:layout_marginLeft="@dimen/sc_mm_32"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_lottery_product_cover"
             android:layout_height="wrap_content">
@@ -50,17 +50,17 @@
                 android:layout_width="match_parent"
                 android:textColor="@color/text_black_t"
                 android:id="@+id/tv_lottery_product_name"
-                android:textSize="28px"
+                android:textSize="@dimen/sc_mm_28"
                 android:lineSpacingExtra="@dimen/dimen_5_dp"
                 android:lines="2"
                 android:ellipsize="end"
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="match_parent"
-                android:textSize="24px"
+                android:textSize="@dimen/sc_mm_24"
                 android:id="@+id/tv_integral_lottery_total"
                 android:textColor="@color/text_login_gray_s"
-                android:layout_marginTop="54px"
+                android:layout_marginTop="@dimen/sc_mm_54"
                 android:layout_below="@id/tv_lottery_product_name"
                 android:lineSpacingExtra="@dimen/dimen_7_dp"
                 android:text="@string/integral_lottery_number"
@@ -71,18 +71,18 @@
         android:layout_width="match_parent"
         android:gravity="center"
         android:background="@drawable/border_bottom_line"
-        android:layout_height="114px">
+        android:layout_height="@dimen/sc_mm_114">
         <TextView
             android:layout_width="wrap_content"
             android:id="@+id/tv_integral_lottery_time_status"
             android:textColor="@color/sel_font_yel_fsc_black"
             android:layout_centerVertical="true"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:text="中奖倒计时"
             android:layout_height="wrap_content" />
         <cn.iwgang.countdownview.CountdownView
             android:layout_width="wrap_content"
-            android:layout_marginLeft="17px"
+            android:layout_marginLeft="@dimen/sc_mm_17"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:id="@+id/ct_integral_lottery_time"
@@ -99,17 +99,17 @@
             app:suffixMinute=":"
             app:suffixDay="天"
             app:suffixTextColor="@color/text_black_t"
-            app:suffixTextSize="28px"
+            app:suffixTextSize="@dimen/sc_mm_28"
             app:timeTextColor="@color/text_black_t"
-            app:timeTextSize="28px"/>
+            app:timeTextSize="@dimen/sc_mm_28"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginLeft="40px"
-        android:layout_marginRight="52px"
+        android:layout_marginLeft="@dimen/sc_mm_40"
+        android:layout_marginRight="@dimen/sc_mm_52"
         android:gravity="center"
         android:id="@+id/rel_integral_lottery_prize"
-        android:layout_height="192px"
-        app:layout_auto_basewidth = "height">
+        android:layout_height="@dimen/sc_mm_192"
+        >
     </RelativeLayout>
 </LinearLayout>

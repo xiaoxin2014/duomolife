@@ -5,11 +5,11 @@
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
-        android:paddingTop="50px"
+        android:paddingTop="@dimen/sc_mm_50"
         android:textColor="@color/sel_font_blue_gray_s_sel"
-        android:paddingBottom="50px"
+        android:paddingBottom="@dimen/sc_mm_50"
         android:id="@+id/tv_quality_type"
         android:gravity="center"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:layout_height="wrap_content" />
 </RelativeLayout>

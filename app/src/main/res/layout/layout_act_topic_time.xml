@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/text_light_pink_da"
-    android:clickable="true"
+
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="12px"
-    android:paddingLeft="20px"
-    android:paddingTop="12px">
+    android:paddingBottom="@dimen/sc_mm_12"
+    android:paddingLeft="@dimen/sc_mm_20"
+    android:paddingTop="@dimen/sc_mm_12">
 
     <include layout="@layout/layout_communal_pro_tag_red" />
 
     <RelativeLayout
         android:layout_width="0px"
-        android:layout_marginRight="12px"
+        android:layout_marginRight="@dimen/sc_mm_12"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -23,20 +23,20 @@
             android:id="@+id/tv_pro_act_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10px"
+            android:paddingLeft="@dimen/sc_mm_10"
             android:visibility="visible"
-            android:paddingRight="10px"
+            android:paddingRight="@dimen/sc_mm_10"
             android:textColor="@color/text_black_t"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_below="@id/tv_pro_act_desc"
-            android:layout_marginTop="12px"
+            android:layout_marginTop="@dimen/sc_mm_12"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="24px">
+            android:layout_marginRight="@dimen/sc_mm_24">
 
             <include layout="@layout/layout_countdown_time_hours" />
         </RelativeLayout>

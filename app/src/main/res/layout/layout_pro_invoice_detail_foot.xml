@@ -9,33 +9,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:gravity="center_vertical|right"
-        android:paddingLeft="24px"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
-        android:layout_height="80px">
+        android:layout_height="@dimen/sc_mm_80">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="实付:"
             android:textColor="@color/home_text_color"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
         <TextView
-            android:layout_marginLeft="20px"
+            android:layout_marginLeft="@dimen/sc_mm_20"
             android:id="@+id/tv_indent_direct_pay_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|right"
             android:textColor="@color/text_b_red_color"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="24px"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:id="@+id/ll_draw_up_invoice"
         android:paddingRight="@dimen/gap_right"
-        android:paddingTop="40px"
-        android:paddingBottom="40px"
+        android:paddingTop="@dimen/sc_mm_40"
+        android:paddingBottom="@dimen/sc_mm_40"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,107 +45,107 @@
                 android:layout_width="wrap_content"
                 android:textColor="@color/home_text_color"
                 android:text="发票类型："
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/tv_indent_invoice_type"
                 android:layout_width="wrap_content"
                 android:textColor="@color/text_black_t"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_marginTop="30px"
+            android:layout_marginTop="@dimen/sc_mm_30"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:textColor="@color/home_text_color"
                 android:text="发票状态："
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/tv_indent_invoice_status"
                 android:layout_width="wrap_content"
                 android:textColor="@color/text_black_t"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/tv_indent_invoice_status_check"
-                android:clickable="true"
+
                 android:text="  (下载)"
                 android:layout_width="wrap_content"
                 android:textColor="@color/promotion_blue"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_marginTop="30px"
+            android:layout_marginTop="@dimen/sc_mm_30"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:textColor="@color/home_text_color"
                 android:text="发票内容："
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/tv_indent_invoice_detail"
                 android:layout_width="wrap_content"
                 android:textColor="@color/text_black_t"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_marginTop="30px"
+            android:layout_marginTop="@dimen/sc_mm_30"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:textColor="@color/home_text_color"
                 android:text="发票抬头："
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/tv_indent_invoice_title"
                 android:layout_width="wrap_content"
                 android:textColor="@color/text_black_t"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="24px"
+        android:paddingLeft="@dimen/sc_mm_24"
         android:visibility="gone"
         android:id="@+id/ll_wait_no_invoice"
         android:paddingRight="@dimen/gap_right"
-        android:paddingTop="40px"
-        android:paddingBottom="40px"
+        android:paddingTop="@dimen/sc_mm_40"
+        android:paddingBottom="@dimen/sc_mm_40"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:textColor="@color/home_text_color"
             android:text="发票状态："
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/tv_indent_w_n_invoice_status"
             android:layout_width="wrap_content"
             android:textColor="@color/sel_invoice_no_wait_text_color"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/tv_indent_w_n_invoice_status_check"
-            android:clickable="true"
+
             android:text="(去开发票)"
             android:layout_width="wrap_content"
             android:textColor="@color/green_base"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="168px"
+    android:layout_width="@dimen/sc_mm_168"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingTop="76px"
+    android:paddingTop="@dimen/sc_mm_76"
     android:gravity="center"
-    android:paddingBottom="70px"
+    android:paddingBottom="@dimen/sc_mm_70"
     android:orientation="vertical">
     <ImageView
-        android:layout_width="168px"
+        android:layout_width="@dimen/sc_mm_168"
         android:id="@+id/iv_baby_info_img"
-        android:layout_height="168px"
-        app:layout_auto_basewidth = "height"/>
+        android:layout_height="@dimen/sc_mm_168"
+        />
     <TextView
-        android:layout_marginTop="38px"
-        android:layout_width="140px"
+        android:layout_marginTop="@dimen/sc_mm_38"
+        android:layout_width="@dimen/sc_mm_140"
         android:id="@+id/tv_baby_info_status"
         android:gravity="center"
         android:background="@drawable/sel_border_cir_four_lblue_gray_s"
         android:textColor="@color/sel_font_gray_b_gray_n"
-        android:layout_height="58px" />
+        android:layout_height="@dimen/sc_mm_58" />
 </LinearLayout>

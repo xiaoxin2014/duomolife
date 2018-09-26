@@ -6,11 +6,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.VIRTUAL_COUPON;
 /**
  * Created by atd48 on 2016/8/25.
  */
-public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolderHelper> {
+public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolder> {
     private final Context context;
 
     public IntegralIndentListAdapter(Context context, List<OrderListBean> orderListBeanList) {
@@ -41,7 +41,7 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, OrderListBean orderListBean) {
+    protected void convert(BaseViewHolder helper, OrderListBean orderListBean) {
         List<OrderListBean.GoodsBean> goods = orderListBean.getGoods();
         if (goods != null && goods.size() > 0) {
             String price;
@@ -65,7 +65,7 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
                 .itemView.setTag(orderListBean);
     }
 
-    private void setIntegralIntentStatus(BaseViewHolderHelper helper, OrderListBean orderListBean, GoodsBean goodBean) {
+    private void setIntegralIntentStatus(BaseViewHolder helper, OrderListBean orderListBean, GoodsBean goodBean) {
         int statusCode = goodBean.getStatus();
         LinearLayout ll_indent_bottom = helper.getView(R.id.ll_indent_bottom);
         TextView tv_indent_border_first_gray = helper.getView(R.id.tv_indent_border_first_gray);

@@ -6,9 +6,9 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * version 3.1.5
  * class description:积分商品
  */
-public class IntegralProductAdapter extends BaseQuickAdapter<IntegrationBean,BaseViewHolderHelper>{
+public class IntegralProductAdapter extends BaseQuickAdapter<IntegrationBean,BaseViewHolder>{
 
     private final Context context;
 
@@ -31,7 +31,7 @@ public class IntegralProductAdapter extends BaseQuickAdapter<IntegrationBean,Bas
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, IntegrationBean integrationBean) {
+    protected void convert(BaseViewHolder helper, IntegrationBean integrationBean) {
         ImageView iv_integral_shop_product_img = helper.getView(R.id.iv_integral_shop_product_tag_out);
         iv_integral_shop_product_img.setImageResource(R.drawable.goods_sold_out);
         if (integrationBean.getQuantity() < 1) {

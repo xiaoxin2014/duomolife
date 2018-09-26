@@ -10,9 +10,9 @@
         android:layout_height="wrap_content" />
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:textColor="@color/text_gray_hint_n"
-        android:layout_marginTop="44px"
+        android:layout_marginTop="@dimen/sc_mm_44"
         android:lineSpacingExtra="@dimen/dimen_4dp"
         android:gravity="center"
         android:text="还没有商品提醒哦\n快去添加吧"

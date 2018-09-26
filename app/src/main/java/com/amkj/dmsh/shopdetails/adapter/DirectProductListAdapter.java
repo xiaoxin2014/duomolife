@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -38,6 +37,7 @@ import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.Or
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -72,7 +72,7 @@ import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TY
 /**
  * Created by atd48 on 2016/8/17.
  */
-public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewHolderHelper> {
+public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewHolder> {
     private final String type;
     private final Context context;
     private List<CartProductInfoBean> preComProInfoBeanList = new ArrayList<>();
@@ -93,7 +93,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, Object item) {
+    protected void convert(BaseViewHolder helper, Object item) {
         TextView tv_direct_indent_product_price = helper.getView(R.id.tv_direct_indent_pro_price);
         tv_direct_indent_product_price.setSelected(false);
         switch (type) {
@@ -356,7 +356,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
      * @param isParentClick              是否可点击父级跳转
      * @param isChildrenClick            是否可点击父子控件跳转
      */
-    private void setComPreData(BaseViewHolderHelper helper, List<CartProductInfoBean> presentProductInfoBeanList
+    private void setComPreData(BaseViewHolder helper, List<CartProductInfoBean> presentProductInfoBeanList
             , boolean isParentClick, final boolean isSkipIndentDetail, boolean isChildrenClick) {
         RecyclerView communal_recycler_wrap = helper.getView(R.id.communal_recycler_wrap);
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(context));
@@ -396,7 +396,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         }
     }
 
-    private void setIndentProStatus(BaseViewHolderHelper helper, Object obj) {
+    private void setIndentProStatus(BaseViewHolder helper, Object obj) {
         switch (type) {
             case INDENT_TYPE:
                 TextView tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);

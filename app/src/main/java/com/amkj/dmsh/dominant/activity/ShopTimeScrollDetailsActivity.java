@@ -643,7 +643,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private void setDefaultWarm() {
 //        设置提醒
         View indentPopWindow = LayoutInflater.from(ShopTimeScrollDetailsActivity.this).inflate(R.layout.layout_first_time_product_warm, smart_communal_refresh, false);
-        AutoUtils.autoSize(indentPopWindow);
         PopupWindowView popupWindowView = new PopupWindowView();
         ButterKnife.bind(popupWindowView, indentPopWindow);
         mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(ShopTimeScrollDetailsActivity.this)

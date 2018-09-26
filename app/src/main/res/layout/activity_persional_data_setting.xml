@@ -34,73 +34,73 @@
                 <TextView
                     android:id="@+id/tv_mine_setting_per"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:drawableRight="@drawable/right_btn_nor"
                     android:gravity="center_vertical"
-                    android:paddingLeft="30px"
-                    android:paddingRight="36px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_36"
                     android:text="个人信息"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
                 <TextView
                     android:id="@+id/tv_mine_setting_account_safe"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:drawableRight="@drawable/right_btn_nor"
                     android:gravity="center_vertical"
-                    android:paddingLeft="30px"
-                    android:paddingRight="36px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_36"
                     android:text="账户安全"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
                 <TextView
                     android:visibility="visible"
                     android:id="@+id/tv_mine_setting_mes"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:drawableRight="@drawable/right_btn_nor"
                     android:gravity="center_vertical"
-                    android:paddingLeft="30px"
-                    android:paddingRight="36px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_36"
                     android:text="消息推送"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
-                    android:clickable="true"
+                    android:layout_height="@dimen/sc_mm_104"
+
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="30px"
+                        android:paddingLeft="@dimen/sc_mm_30"
                         android:text="地址管理"
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
 
                     <TextView
                         android:id="@+id/tv_mine_setting_address"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:clickable="true"
+
                         android:drawableRight="@drawable/right_btn_nor"
                         android:drawablePadding="@dimen/dimen_6_dp"
-                        android:layout_marginLeft="82px"
+                        android:layout_marginLeft="@dimen/sc_mm_82"
                         android:gravity="left|center_vertical"
                         android:lines="1"
                         android:ellipsize="end"
-                        android:paddingRight="36px"
+                        android:paddingRight="@dimen/sc_mm_36"
                         android:textColor="@color/text_gray_hint_n"
-                        android:textSize="26px" />
+                        android:textSize="@dimen/sc_mm_26" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -114,63 +114,63 @@
                 <TextView
                     android:id="@+id/tv_setting_about"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:drawableRight="@drawable/right_btn_nor"
                     android:gravity="center_vertical"
-                    android:paddingLeft="30px"
-                    android:paddingRight="36px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_36"
                     android:text="关于多么生活"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
                 <TextView
                     android:id="@+id/tv_setting_good"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:drawableRight="@drawable/right_btn_nor"
                     android:gravity="center_vertical"
-                    android:paddingLeft="30px"
-                    android:paddingRight="36px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_36"
                     android:text="给个好评"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
                 <TextView
                     android:id="@+id/tv_setting_sug"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:drawableRight="@drawable/right_btn_nor"
                     android:gravity="center_vertical"
-                    android:paddingLeft="30px"
-                    android:paddingRight="36px"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_36"
                     android:text="意见反馈"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:clickable="true"
+
                     android:id="@+id/rel_mine_cache"
-                    android:layout_height="114px">
+                    android:layout_height="@dimen/sc_mm_114">
                     <TextView
                         android:layout_width="wrap_content"
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px"
+                        android:textSize="@dimen/sc_mm_30"
                         android:gravity="center_vertical"
                         android:text="清理缓存"
-                        android:paddingLeft="30px"
+                        android:paddingLeft="@dimen/sc_mm_30"
                         android:layout_height="match_parent" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_alignParentRight="true"
                         android:gravity="center_vertical"
-                        android:paddingRight="36px"
+                        android:paddingRight="@dimen/sc_mm_36"
                         android:text="0.00B"
-                        android:clickable="true"
-                        android:textSize="28px"
+
+                        android:textSize="@dimen/sc_mm_28"
                         android:id="@+id/tv_set_clear_cache"
                         android:layout_height="match_parent" />
                 </RelativeLayout>
@@ -178,15 +178,15 @@
             <TextView
                 android:id="@+id/tv_set_account_exit"
                 android:layout_width="match_parent"
-                android:layout_height="104px"
+                android:layout_height="@dimen/sc_mm_104"
                 android:layout_weight="1"
-                android:clickable="true"
+
                 android:gravity="center"
-                android:paddingLeft="30px"
-                android:paddingRight="36px"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingRight="@dimen/sc_mm_36"
                 android:text="退出登录"
                 android:textColor="@color/text_normal_red"
-                android:textSize="32px" />
+                android:textSize="@dimen/sc_mm_32" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

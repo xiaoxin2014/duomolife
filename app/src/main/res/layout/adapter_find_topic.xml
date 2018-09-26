@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="180px"
+    android:layout_height="@dimen/sc_mm_180"
     android:background="@color/white"
     android:gravity="center_vertical"
-    android:padding="20px"
     android:orientation="horizontal">
     <ImageView
-        android:layout_width="198px"
-        android:layout_height="140px"
-        android:id="@+id/iv_round_find_topic"
-        app:layout_auto_basewidth = "height"/>
+        android:layout_width="@dimen/sc_mm_198"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_height="@dimen/sc_mm_140"
+        android:id="@+id/iv_round_find_topic"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginLeft="20px"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
         android:layout_height="wrap_content">
         <com.klinker.android.link_builder.LinkConsumableTextView
             android:layout_width="match_parent"
             android:id="@+id/tv_find_topic_title"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:textColor="@color/text_black_t"
             android:maxLines="2"
-            android:lineSpacingExtra="@dimen/dimen_8_dp"
+            android:lineSpacingExtra="@dimen/sc_mm_8"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_width="wrap_content"
             android:id="@+id/tv_find_topic_join_number"
             android:lines="1"
-            android:layout_marginTop="20px"
+            android:layout_marginTop="@dimen/sc_mm_20"
             android:layout_below="@id/tv_find_topic_title"
             android:layout_height="wrap_content" />
     </RelativeLayout>

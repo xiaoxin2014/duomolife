@@ -17,16 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="120px"
-            android:paddingRight="120px"
-            android:paddingTop="100px">
+            android:paddingLeft="@dimen/sc_mm_120"
+            android:paddingRight="@dimen/sc_mm_120"
+            android:paddingTop="@dimen/sc_mm_100">
 
             <include  layout="@layout/layout_mine_wel_image"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="38px"
+                android:layout_marginTop="@dimen/sc_mm_38"
                 android:orientation="vertical">
 
                 <EditText
@@ -39,10 +39,10 @@
                     android:singleLine="true"
                     android:inputType="phone"
                     android:maxLength="11"
-                    android:minHeight="115px"
+                    android:minHeight="@dimen/sc_mm_115"
                     android:textColor="@color/login_text_color"
                     android:textColorHint="@color/text_gray_hint_n"
-                    android:textSize="32px" />
+                    android:textSize="@dimen/sc_mm_32" />
 
 
                 <RelativeLayout
@@ -59,22 +59,22 @@
                         android:layout_centerVertical="true"
                         android:hint="验证码"
                         android:inputType="number"
-                        android:minHeight="115px"
+                        android:minHeight="@dimen/sc_mm_115"
                         android:singleLine="true"
                         android:textColor="@color/login_text_color"
                         android:textColorHint="@color/text_gray_hint_n"
-                        android:textSize="32px" />
+                        android:textSize="@dimen/sc_mm_32" />
 
                     <TextView
                         android:id="@+id/tv_sms_code"
                         android:layout_width="wrap_content"
-                        android:layout_height="100px"
+                        android:layout_height="@dimen/sc_mm_100"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:clickable="true"
+
                         android:gravity="center_vertical"
                         android:textColor="@color/selector_font_blue_hint_gray"
-                        android:textSize="24px"
+                        android:textSize="@dimen/sc_mm_24"
                         android:visibility="visible" />
 
                     <ProgressBar
@@ -104,31 +104,31 @@
                         android:gravity="center_vertical"
                         android:hint="设置登录密码，不少于6位"
                         android:inputType="textPassword"
-                        android:minHeight="115px"
+                        android:minHeight="@dimen/sc_mm_115"
                         android:singleLine="true"
                         android:textColor="@color/login_text_color"
                         android:textColorHint="@color/text_gray_hint_n"
-                        android:textSize="32px" />
+                        android:textSize="@dimen/sc_mm_32" />
 
                     <ImageView
                         android:id="@+id/iv_password_code_visibility"
                         android:layout_width="wrap_content"
-                        android:padding="25px"
+                        android:padding="@dimen/sc_mm_25"
                         android:layout_height="wrap_content"
                         android:src="@drawable/register_icon_eye_nor"
-                        app:layout_auto_basewidth="height" />
+                         />
                 </LinearLayout>
 
                 <Button
                     android:id="@+id/bt_mine_reg"
                     android:layout_width="match_parent"
-                    android:layout_height="90px"
-                    android:layout_marginTop="44px"
+                    android:layout_height="@dimen/sc_mm_90"
+                    android:layout_marginTop="@dimen/sc_mm_44"
                     android:background="@drawable/sel_login_bg"
                     android:gravity="center"
                     android:text="注 册"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="32px" />
+                    android:textSize="@dimen/sc_mm_32" />
             </LinearLayout>
 
             <TextView
@@ -136,12 +136,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20px"
-                android:clickable="true"
-                android:padding="30px"
+                android:layout_marginTop="@dimen/sc_mm_20"
+
+                android:padding="@dimen/sc_mm_30"
                 android:text="登录"
                 android:textColor="@color/text_login_blue_z"
-                android:textSize="32px" />
+                android:textSize="@dimen/sc_mm_32" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

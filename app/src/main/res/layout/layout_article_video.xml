@@ -6,6 +6,6 @@
     <com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog
         android:layout_width="match_parent"
         android:id="@+id/jvp_video_play"
-        android:layout_height="395px"
-        app:layout_auto_basewidth = "height"/>
+        android:layout_height="@dimen/sc_mm_395"
+        />
 </RelativeLayout>

@@ -17,7 +17,7 @@
         android:id="@+id/ll_indent_detail_bottom"
         android:orientation="vertical"
         android:visibility="gone"
-        android:layout_marginRight="24px"
+        android:layout_marginRight="@dimen/sc_mm_24"
         android:layout_height="wrap_content">
         <include layout="@layout/layout_communal_indent_bottom"/>
     </LinearLayout>

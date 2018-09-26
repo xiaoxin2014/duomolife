@@ -7,38 +7,38 @@
     android:gravity="center_vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="140px"
+        android:layout_height="@dimen/sc_mm_140"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="24px">
+        android:paddingLeft="@dimen/sc_mm_24">
         <ImageView
             android:id="@+id/iv_logistic_indent_pro"
-            android:layout_width="98px"
-            android:layout_height="98px"
+            android:layout_width="@dimen/sc_mm_98"
+            android:layout_height="@dimen/sc_mm_98"
             android:scaleType="centerCrop"
-            app:layout_auto_basewidth = "height"/>
+            />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22px"
-            android:layout_marginRight="22px">
+            android:layout_marginLeft="@dimen/sc_mm_22"
+            android:layout_marginRight="@dimen/sc_mm_22">
 
             <TextView
                 android:id="@+id/tv_logistic_indent_pro_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/home_text_color"
-                android:textSize="24px" />
+                android:textSize="@dimen/sc_mm_24" />
 
             <TextView
                 android:id="@+id/tv_logistics_indent_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_logistic_indent_pro_name"
-                android:layout_marginTop="14px"
+                android:layout_marginTop="@dimen/sc_mm_14"
                 android:textColor="@color/home_text_color"
-                android:textSize="24px" />
+                android:textSize="@dimen/sc_mm_24" />
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

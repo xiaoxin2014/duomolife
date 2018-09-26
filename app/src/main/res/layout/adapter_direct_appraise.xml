@@ -9,14 +9,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="24px"
-        android:paddingRight="26px"
+        android:paddingLeft="@dimen/sc_mm_24"
+        android:paddingRight="@dimen/sc_mm_26"
         android:gravity="center_vertical"
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
             android:gravity="center_vertical"
-            android:layout_height="75px">
+            android:layout_height="@dimen/sc_mm_75">
             <TextView
                 android:layout_width="wrap_content"
                 android:gravity="center_vertical"
@@ -24,7 +24,7 @@
                 android:layout_centerVertical="true"
                 android:id="@+id/tv_direct_delivered_appraise"
                 android:visibility="gone"
-                android:textSize="24px"
+                android:textSize="@dimen/sc_mm_24"
                 android:text="评论状态："
                 android:layout_height="wrap_content" />
             <me.zhanghai.android.materialratingbar.MaterialRatingBar
@@ -32,8 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:maxHeight="28px"
-                android:minHeight="28px"
+                android:maxHeight="@dimen/sc_mm_28"
+                android:minHeight="@dimen/sc_mm_28"
                 android:stepSize="1"
                 android:rating="5"
                 android:numStars="5"
@@ -45,7 +45,7 @@
         </RelativeLayout>
         <emojicon.EmojiconTextView
             android:layout_width="match_parent"
-            android:textSize="24px"
+            android:textSize="@dimen/sc_mm_24"
             android:lineSpacingExtra="@dimen/dimen_3_dp"
             android:gravity="center_vertical"
             android:textColor="@color/home_text_color"
@@ -54,31 +54,31 @@
             app:emojiconSize = "14sp"/>
         <LinearLayout
             android:id="@+id/viewStub_direct_appraise"
-            android:layout_marginTop="18px"
+            android:layout_marginTop="@dimen/sc_mm_18"
             android:layout_width="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:layout_height="wrap_content"
-            app:layout_auto_basewidth = "height"/>
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_marginTop="16px"
+            android:layout_marginTop="@dimen/sc_mm_16"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16px"
+            android:layout_marginBottom="@dimen/sc_mm_16"
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/iv_direct_appraise_goods"
                 android:background="@drawable/border_rect_four_gray_bg_white"
-                android:layout_width="107px"
-                android:clickable="true"
+                android:layout_width="@dimen/sc_mm_107"
+
                 android:scaleType="centerCrop"
-                android:layout_height="107px"
-                app:layout_auto_basewidth = "height"/>
+                android:layout_height="@dimen/sc_mm_107"
+                />
             <TextView
-                android:paddingLeft="24px"
+                android:paddingLeft="@dimen/sc_mm_24"
                 android:layout_width="wrap_content"
-                android:textSize="24px"
+                android:textSize="@dimen/sc_mm_24"
                 android:textColor="@color/home_text_color"
                 android:id="@+id/tv_direct_appraise_goods_name"
                 android:layout_height="wrap_content" />

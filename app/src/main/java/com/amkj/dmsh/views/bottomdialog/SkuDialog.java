@@ -203,7 +203,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         win.setAttributes(params);
         //设置对话框布局
         View view = LayoutInflater.from(dialog.getContext()).inflate(R.layout.sku_layout_product, (ViewGroup) dialog.getWindow().getDecorView(), false);
-        AutoUtils.autoSize(view);
         scrollView = view.findViewById(R.id.scroll_sku_values);
         dialog.setContentView(view);
         skuDialogView = new SkuDialogView();
@@ -528,7 +527,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     params.rightMargin = 21;
                     params.bottomMargin = 23;
                     textView.setLayoutParams(params);
-                    AutoUtils.autoSize(textView);
                     return textView;
                 }
             });

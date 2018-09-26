@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialog_layout_slp"
     android:layout_width="match_parent"
-    android:clickable="true"
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
@@ -18,25 +17,25 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="216px"
+            android:layout_height="@dimen/sc_mm_216"
             android:background="@color/white"
             android:id="@+id/ll_product_sku_header"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="30px"
-            android:paddingRight="30px">
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_30">
 
             <ImageView
                 android:id="@+id/iv_dir_indent_pro"
-                android:layout_width="176px"
-                android:layout_height="176px"
+                android:layout_width="@dimen/sc_mm_176"
+                android:layout_height="@dimen/sc_mm_176"
                 android:scaleType="centerCrop"
-                app:layout_auto_basewidth="height" />
+                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="32px"
+                android:layout_marginLeft="@dimen/sc_mm_32"
                 android:orientation="vertical">
 
                 <TextView
@@ -46,23 +45,23 @@
                     android:lineSpacingExtra="@dimen/dimen_2dp"
                     android:maxLines="2"
                     android:textColor="@color/text_black_t"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
                 <TextView
                     android:id="@+id/tv_pro_combine_discount"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="20px"
+                    android:layout_marginTop="@dimen/sc_mm_20"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     android:lineSpacingExtra="@dimen/dimen_2dp"
                     android:maxLines="2"
                     android:textColor="@color/text_normal_red"
-                    android:textSize="22px" />
+                    android:textSize="@dimen/sc_mm_22" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="24px"
+                    android:layout_marginTop="@dimen/sc_mm_24"
                     android:orientation="horizontal">
 
                     <TextView
@@ -72,7 +71,7 @@
                         android:layout_weight="1"
                         android:gravity="center_vertical|left"
                         android:textColor="@color/text_black_t"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <TextView
                         android:id="@+id/tv_dir_indent_pro_quality"
@@ -81,7 +80,7 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:textColor="@color/sel_font_gray_s_yel_fsc"
-                        android:textSize="26px" />
+                        android:textSize="@dimen/sc_mm_26" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -90,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/scroll_sku_values"
-            android:minHeight="350px"
+            android:minHeight="@dimen/sc_mm_350"
             android:layout_weight="1"
             android:background="@drawable/border_top_bottom_line">
 
@@ -108,25 +107,25 @@
                 android:id="@+id/bt_direct_attribute_car"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="98px"
+                android:layout_height="@dimen/sc_mm_98"
                 android:visibility="gone"
                 android:background="@drawable/sel_bg_pink_yellow_gray"
-                android:clickable="true"
+
                 android:gravity="center"
                 android:text="加入购物车"
                 android:textColor="@color/white"
-                android:textSize="32px" />
+                android:textSize="@dimen/sc_mm_32" />
             <Button
                 android:id="@+id/bt_direct_attribute_buy"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="98px"
+                android:layout_height="@dimen/sc_mm_98"
                 android:background="@drawable/sel_deep_red_yel_gray"
-                android:clickable="true"
+
                 android:gravity="center"
                 android:text="立即购买"
                 android:textColor="@color/white"
-                android:textSize="32px" />
+                android:textSize="@dimen/sc_mm_32" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

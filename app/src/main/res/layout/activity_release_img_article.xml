@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/sc_mm_88"
         android:background="@drawable/border_bottom_line">
 
         <include layout="@layout/activity_domolife_header" />
@@ -29,19 +29,19 @@
                 android:id="@+id/release_et_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30px"
-                android:layout_marginRight="26px"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:layout_marginRight="@dimen/sc_mm_26"
                 android:background="@null"
                 android:gravity="top"
                 android:hint="分享您的心得…"
                 android:lineSpacingExtra="@dimen/dimen_4dp"
-                android:minHeight="300px"
-                android:paddingBottom="20px"
-                android:paddingTop="24px"
+                android:minHeight="@dimen/sc_mm_300"
+                android:paddingBottom="@dimen/sc_mm_20"
+                android:paddingTop="@dimen/sc_mm_24"
                 android:textColor="@color/text_login_gray_s"
                 android:textColorHint="@color/text_gray_hint_n"
                 android:textCursorDrawable="@null"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_img_article"
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:layout_marginTop="20px"
+                android:layout_marginTop="@dimen/sc_mm_20"
                 android:id="@+id/rel_relevance_product_header"
                 android:background="@drawable/border_top_line">
 
@@ -66,21 +66,21 @@
                     android:layout_alignParentLeft="true"
                     android:drawableLeft="@drawable/tag_label_icon"
                     android:drawablePadding="@dimen/dimen_7_dp"
-                    android:padding="24px"
+                    android:padding="@dimen/sc_mm_24"
                     android:text="添加商品"
                     android:textColor="@color/text_gray_hint_n"
-                    android:textSize="26px" />
+                    android:textSize="@dimen/sc_mm_26" />
 
                 <TextView
                     android:id="@+id/tv_release_add_good"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:clickable="true"
-                    android:padding="24px"
+
+                    android:padding="@dimen/sc_mm_24"
                     android:text="添加商品 >"
                     android:textColor="@color/text_black_t"
-                    android:textSize="26px" />
+                    android:textSize="@dimen/sc_mm_26" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"

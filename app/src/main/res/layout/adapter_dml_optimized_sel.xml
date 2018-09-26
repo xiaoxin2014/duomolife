@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="16px"
+    android:paddingBottom="@dimen/sc_mm_16"
     android:background="@color/white"
     android:orientation="vertical">
     <include layout="@layout/layout_communal_cover"/>
@@ -13,8 +13,8 @@
         <TextView
             android:layout_width="match_parent"
             android:textColor="@color/text_black_t"
-            android:textSize="30px"
-            android:layout_marginTop="20px"
+            android:textSize="@dimen/sc_mm_30"
+            android:layout_marginTop="@dimen/sc_mm_20"
             android:id="@+id/tv_opt_sel_title"
             android:lines="1"
             android:ellipsize="end"
@@ -24,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_below="@id/tv_opt_sel_title"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="26px"
-            android:layout_marginTop="20px"
+            android:textSize="@dimen/sc_mm_26"
+            android:layout_marginTop="@dimen/sc_mm_20"
             android:id="@+id/tv_opt_sel_subtitle"
             android:gravity="center"
             android:maxLines="1"

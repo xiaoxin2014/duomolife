@@ -3,9 +3,9 @@ package com.amkj.dmsh.release.adapter;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.find.bean.FindRelTopicEntity.FindRelTopicBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -20,13 +20,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:发现-关联话题
  */
 
-public class FindRelTopicAdapter extends BaseQuickAdapter<FindRelTopicBean, BaseViewHolderHelper> {
+public class FindRelTopicAdapter extends BaseQuickAdapter<FindRelTopicBean, BaseViewHolder> {
     public FindRelTopicAdapter(List<FindRelTopicBean> hotTopicBeanList) {
         super(R.layout.adapter_layout_find_rel_topic, hotTopicBeanList);
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, FindRelTopicBean findRelTopicBean) {
+    protected void convert(BaseViewHolder helper, FindRelTopicBean findRelTopicBean) {
         TextView tv_find_rel_topic_title = helper.getView(R.id.tv_find_rel_topic_title);
         tv_find_rel_topic_title.setText(getStrings(findRelTopicBean.getTitle()));
         tv_find_rel_topic_title.setSelected(findRelTopicBean.isSelect());

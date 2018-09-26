@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="24px"
+    android:paddingLeft="@dimen/sc_mm_24"
     android:background="@color/light_gray_f"
     android:paddingRight="@dimen/gap_right"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="88px">
+        android:layout_height="@dimen/sc_mm_88">
         <TextView
             android:layout_width="wrap_content"
             android:textColor="@color/white"
-            android:textSize="26px"
+            android:textSize="@dimen/sc_mm_26"
             android:id="@+id/tv_mes_official_time"
             android:background="@drawable/border_cir_four_bg_all_gray"
-            android:padding="12px"
+            android:padding="@dimen/sc_mm_12"
             android:gravity="center_vertical"
             android:layout_centerInParent="true"
             android:layout_height="wrap_content" />
@@ -25,30 +25,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:background="@color/white"
-        android:paddingLeft="16px"
-        android:paddingRight="16px"
-        android:paddingBottom="26px"
+        android:paddingLeft="@dimen/sc_mm_16"
+        android:paddingRight="@dimen/sc_mm_16"
+        android:paddingBottom="@dimen/sc_mm_26"
         android:orientation="vertical"
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_height="68px">
+            android:layout_height="@dimen/sc_mm_68">
             <TextView
-                android:layout_width="61px"
-                android:layout_marginRight="17px"
+                android:layout_width="@dimen/sc_mm_61"
+                android:layout_marginRight="@dimen/sc_mm_17"
                 android:background="@drawable/border_cir_1dp5_nor_red"
-                android:textSize="20px"
+                android:textSize="@dimen/sc_mm_20"
                 android:id="@+id/tv_mes_official_tag"
                 android:textColor="@color/white"
                 android:text="未读"
                 android:gravity="center"
-                android:layout_height="30px" />
+                android:layout_height="@dimen/sc_mm_30" />
             <TextView
                 android:layout_width="match_parent"
                 android:textColor="@color/text_black_t"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:id="@+id/tv_mes_official_title"
@@ -58,14 +58,14 @@
             android:layout_width="match_parent"
             android:scaleType="centerCrop"
             android:id="@+id/iv_mes_official_cover"
-            android:layout_height="360px"
-            app:layout_auto_basewidth = "height"/>
+            android:layout_height="@dimen/sc_mm_360"
+            />
 
         <TextView
-            android:layout_marginTop="20px"
+            android:layout_marginTop="@dimen/sc_mm_20"
             android:layout_width="match_parent"
             android:textColor="@color/text_black_t"
-            android:textSize="26px"
+            android:textSize="@dimen/sc_mm_26"
             android:lineSpacingExtra="@dimen/dimen_8_dp"
             android:maxLines="2"
             android:ellipsize="end"

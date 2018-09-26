@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:layout_marginTop="30px"
+    android:layout_marginTop="@dimen/sc_mm_30"
     android:gravity="center"
     android:orientation="horizontal">
 
@@ -11,31 +11,31 @@
         android:id="@+id/img_integration_details_credits_minus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:padding="20px"
+
+        android:padding="@dimen/sc_mm_20"
         android:src="@drawable/bitmap_sub" />
 
     <TextView
         android:id="@+id/tv_integration_details_credits_count"
         android:layout_width="wrap_content"
-        android:minWidth="160px"
+        android:minWidth="@dimen/sc_mm_160"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="34px"
-        android:layout_marginRight="34px"
+        android:layout_marginLeft="@dimen/sc_mm_34"
+        android:layout_marginRight="@dimen/sc_mm_34"
         android:background="@color/white"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
+        android:paddingTop="@dimen/sc_mm_10"
+        android:paddingBottom="@dimen/sc_mm_10"
         android:gravity="center"
         android:text="1"
         android:textColor="@color/home_text_color"
-        android:textSize="28px" />
+        android:textSize="@dimen/sc_mm_28" />
 
     <ImageView
         android:id="@+id/img_integration_details_credits_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/bitmap_add"
-        android:padding="20px"
-        android:clickable="true" />
+        android:padding="@dimen/sc_mm_20"
+         />
 
 </LinearLayout>

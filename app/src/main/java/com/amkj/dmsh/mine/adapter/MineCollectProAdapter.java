@@ -8,10 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.mine.bean.CollectProEntity.CollectProBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:收藏商品
  */
 
-public class MineCollectProAdapter extends BaseQuickAdapter<CollectProBean, BaseViewHolderHelper> {
+public class MineCollectProAdapter extends BaseQuickAdapter<CollectProBean, BaseViewHolder> {
     private final Context context;
 
     public MineCollectProAdapter(Context context, List<CollectProBean> collectProList) {
@@ -34,7 +34,7 @@ public class MineCollectProAdapter extends BaseQuickAdapter<CollectProBean, Base
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, CollectProBean collectProBean) {
+    protected void convert(BaseViewHolder helper, CollectProBean collectProBean) {
         CheckBox cb_collect_product = helper.getView(R.id.cb_collect_product);
         TextView tv_mine_col_pro_buy = helper.getView(R.id.tv_mine_col_pro_buy);
         if (collectProBean.isEditStatus()) {

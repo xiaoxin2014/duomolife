@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="98px"
+    android:layout_height="@dimen/sc_mm_98"
     android:gravity="center"
     android:id="@+id/ll_relev_pro"
     android:background="@drawable/border_top_line"
-    android:clickable="true"
+
     android:orientation="vertical">
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/tv_rel_pro_name"
         android:textColor="@color/blue_six_f"
-        android:textSize="32px"
-        android:clickable="true"
+        android:textSize="@dimen/sc_mm_32"
+
         android:drawableLeft="@drawable/rel_rev_pro_icon"
         android:drawablePadding="@dimen/dimen_6_dp"
         android:text="关联商品"
         android:layout_height="wrap_content" />
     <TextView
         android:layout_width="wrap_content"
-        android:layout_marginTop="10px"
-        android:textSize="20px"
+        android:layout_marginTop="@dimen/sc_mm_10"
+        android:textSize="@dimen/sc_mm_20"
         android:id="@+id/tv_rel_pro_tint"
-        android:clickable="true"
+
         android:text="@string/find_relev_invita_tint"
         android:layout_height="wrap_content" />
 </LinearLayout>

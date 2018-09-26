@@ -42,7 +42,6 @@ import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -238,7 +237,6 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     private void setDefaultWarm() {
 //        设置提醒
         View indentPopWindow = LayoutInflater.from(TimeBrandDetailsActivity.this).inflate(R.layout.layout_first_time_product_warm, communal_recycler, false);
-        AutoUtils.autoSize(indentPopWindow);
         PopupWindowView popupWindowView = new PopupWindowView();
         ButterKnife.bind(popupWindowView, indentPopWindow);
         mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(TimeBrandDetailsActivity.this)

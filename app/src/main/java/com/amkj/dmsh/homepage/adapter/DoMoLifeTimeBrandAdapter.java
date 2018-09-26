@@ -5,10 +5,10 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.DMLTimeDetailEntity.DMLTimeDetailBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +23,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/6/27.
  */
-public class DoMoLifeTimeBrandAdapter extends BaseQuickAdapter<DMLTimeDetailBean, BaseViewHolderHelper> {
+public class DoMoLifeTimeBrandAdapter extends BaseQuickAdapter<DMLTimeDetailBean, BaseViewHolder> {
 
     private final Context context;
 
@@ -33,7 +33,7 @@ public class DoMoLifeTimeBrandAdapter extends BaseQuickAdapter<DMLTimeDetailBean
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, DMLTimeDetailBean dmlTimeDetailBean) {
+    protected void convert(BaseViewHolder helper, DMLTimeDetailBean dmlTimeDetailBean) {
         if (dmlTimeDetailBean.getQuantity() < 1) {
             helper.setGone(R.id.img_spring_sale_tag_out, true);
         } else {

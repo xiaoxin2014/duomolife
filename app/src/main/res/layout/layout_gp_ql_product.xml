@@ -9,10 +9,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="68px"
+        android:layout_height="@dimen/sc_mm_68"
         android:gravity="center_vertical"
-        android:paddingLeft="20px"
-        android:paddingRight="33px">
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_33">
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
             android:layout_alignParentLeft="true"
             android:text="创建时间"
             android:textColor="@color/text_black_t"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
 
         <TextView
             android:id="@+id/tv_gp_ql_share_product_c_time"
@@ -29,75 +29,75 @@
             android:layout_alignParentRight="true"
             android:text="2011111111111111111111111111"
             android:textColor="@color/text_black_t"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="216px"
+        android:layout_height="@dimen/sc_mm_216"
         android:orientation="horizontal"
-        android:paddingLeft="30px"
+        android:paddingLeft="@dimen/sc_mm_30"
         android:gravity="center_vertical"
-        android:paddingRight="35px">
+        android:paddingRight="@dimen/sc_mm_35">
 
         <ImageView
             android:id="@+id/iv_gp_ql_share_product"
-            android:layout_width="176px"
-            android:layout_height="176px"
+            android:layout_width="@dimen/sc_mm_176"
+            android:layout_height="@dimen/sc_mm_176"
             android:scaleType="centerCrop"
-            app:layout_auto_basewidth="height" />
+             />
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="30px"
+            android:paddingLeft="@dimen/sc_mm_30"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="match_parent"
                 android:id="@+id/tv_gp_ql_share_pro_name"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px"
+                android:textSize="@dimen/sc_mm_28"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:layout_height="wrap_content" />
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="22px"
+                android:layout_marginTop="@dimen/sc_mm_22"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:id="@+id/tv_gp_ql_share_count"
-                    android:textSize="24px"
+                    android:textSize="@dimen/sc_mm_24"
                     android:textColor="@color/text_gray_hint_n"
                     android:layout_height="wrap_content" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="15px"
+                    android:layout_marginLeft="@dimen/sc_mm_15"
                     android:layout_toRightOf="@id/tv_gp_ql_share_count"
                     android:id="@+id/tv_gp_ql_share_open_count"
-                    android:textSize="24px"
+                    android:textSize="@dimen/sc_mm_24"
                     android:textColor="@color/text_gray_hint_n"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="22px"
+                android:layout_marginTop="@dimen/sc_mm_22"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:id="@+id/tv_gp_ql_share_price"
-                    android:textSize="30px"
+                    android:textSize="@dimen/sc_mm_30"
                     android:textColor="@color/text_normal_red"
                     android:layout_height="wrap_content" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="30px"
+                    android:layout_marginLeft="@dimen/sc_mm_30"
                     android:layout_toRightOf="@id/tv_gp_ql_share_price"
                     android:id="@+id/tv_gp_ql_share_only_price"
-                    android:textSize="24px"
+                    android:textSize="@dimen/sc_mm_24"
                     android:textColor="@color/text_gray_hint_n"
                     android:layout_height="wrap_content" />
             </RelativeLayout>

@@ -8,17 +8,17 @@
         android:background="@color/light_gray_f"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_height="98px">
+        android:layout_height="@dimen/sc_mm_98">
         <View
-            android:layout_marginLeft="20px"
-            android:layout_width="8px"
+            android:layout_marginLeft="@dimen/sc_mm_20"
+            android:layout_width="@dimen/sc_mm_8"
             android:background="@color/text_normal_red"
-            android:layout_height="34px"/>
+            android:layout_height="@dimen/sc_mm_34"/>
         <TextView
             android:layout_width="wrap_content"
             android:text="domo推荐"
-            android:paddingLeft="20px"
-            android:textSize="32px"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:textSize="@dimen/sc_mm_32"
             android:textColor="@color/text_black_t"
             android:layout_height="wrap_content" />
     </LinearLayout>

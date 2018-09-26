@@ -5,21 +5,21 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="horizontal"
-    android:paddingBottom="24px"
-    android:paddingLeft="20px"
-    android:paddingRight="26px"
-    android:paddingTop="24px">
+    android:paddingBottom="@dimen/sc_mm_24"
+    android:paddingLeft="@dimen/sc_mm_20"
+    android:paddingRight="@dimen/sc_mm_26"
+    android:paddingTop="@dimen/sc_mm_24">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civ_comm_comment_avatar"
-        android:layout_width="70px"
-        android:layout_height="70px"
-        app:layout_auto_basewidth="height" />
+        android:layout_width="@dimen/sc_mm_70"
+        android:layout_height="@dimen/sc_mm_70"
+         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="22px"
+        android:layout_marginLeft="@dimen/sc_mm_22"
         android:orientation="vertical">
 
         <emojicon.EmojiconTextView
@@ -29,23 +29,23 @@
             android:lines="1"
             android:ellipsize="end"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             app:emojiconSize="17sp"/>
 
         <emojicon.EmojiconTextView
             android:id="@+id/tv_comm_comment_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26px"
+            android:layout_marginTop="@dimen/sc_mm_26"
             android:lineSpacingExtra="6sp"
             android:textColor="@color/text_black_t"
-            android:textSize="26px"
+            android:textSize="@dimen/sc_mm_26"
             app:emojiconSize="15sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26px">
+            android:layout_marginTop="@dimen/sc_mm_26">
 
             <TextView
                 android:id="@+id/tv_comm_comment_time"
@@ -54,12 +54,12 @@
                 android:layout_alignParentLeft="true"
                 android:text="6-29"
                 android:textColor="@color/text_gray_hint_n"
-                android:textSize="24px" />
+                android:textSize="@dimen/sc_mm_24" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="16px"
+                android:paddingRight="@dimen/sc_mm_16"
                 android:layout_alignParentRight="true">
                 <include layout="@layout/layout_comm_comment_like_rec" />
             </RelativeLayout>
@@ -67,7 +67,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:id="@+id/rel_art_comment_inner"
-            android:layout_marginTop="26px"
+            android:layout_marginTop="@dimen/sc_mm_26"
             android:background="@drawable/border_cir_4dp_light_green"
             android:layout_height="wrap_content">
             <include layout="@layout/layout_communal_recycler_wrap" />

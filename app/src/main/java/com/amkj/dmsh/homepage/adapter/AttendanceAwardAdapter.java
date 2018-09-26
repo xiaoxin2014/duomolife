@@ -4,13 +4,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.AttendanceDetailBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-;import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+
+;
 
 /**
  * @author LGuiPeng
@@ -20,13 +22,13 @@ import java.util.List;
  * class description:签到奖励
  */
 
-public class AttendanceAwardAdapter extends BaseQuickAdapter<AttendanceDetailBean, BaseViewHolderHelper> {
+public class AttendanceAwardAdapter extends BaseQuickAdapter<AttendanceDetailBean, BaseViewHolder> {
     public AttendanceAwardAdapter(List<AttendanceDetailBean> attendanceDetailBeans) {
         super(R.layout.adapter_attendance_award, attendanceDetailBeans);
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, AttendanceDetailBean attendanceDetailBean) {
+    protected void convert(BaseViewHolder helper, AttendanceDetailBean attendanceDetailBean) {
         TextView tv_attendance_award_text = helper.getView(R.id.tv_attendance_award_text);
         ImageView iv_attendance_award_icon = helper.getView(R.id.iv_attendance_award_icon);
         tv_attendance_award_text.setText(getStrings(attendanceDetailBean.getToWeek()));

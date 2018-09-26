@@ -7,12 +7,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:好物
  */
 
-public class QualityGoodNewProAdapter extends BaseQuickAdapter<Attribute, BaseViewHolderHelper> {
+public class QualityGoodNewProAdapter extends BaseQuickAdapter<Attribute, BaseViewHolder> {
     private final Context context;
 
     public QualityGoodNewProAdapter(Context context, List<Attribute> goodsProList) {
@@ -36,7 +36,7 @@ public class QualityGoodNewProAdapter extends BaseQuickAdapter<Attribute, BaseVi
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, Attribute attribute) {
+    protected void convert(BaseViewHolder helper, Attribute attribute) {
         LinearLayout ll_quality_product = helper.getView(R.id.ll_quality_product);
         ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
         ll_quality_product.setVisibility(View.GONE);

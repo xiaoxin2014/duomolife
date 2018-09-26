@@ -6,12 +6,10 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <com.amkj.dmsh.views.autoviews.AutoRadioGroup
+    <RadioGroup
         android:id="@+id/rp_bottom_main"
         android:background="@drawable/border_top_line"
-        style="@style/RadioGroupStyleBottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        style="@style/RadioGroupStyleBottom">
 
         <RadioButton
             android:id="@+id/rb_homepage"
@@ -42,5 +40,5 @@
             style="@style/RadioButtonStyleBottom"
             android:drawableTop="@drawable/selector_bottom_mine_bar"
             android:text="我的" />
-    </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
+    </RadioGroup>
 </LinearLayout>

@@ -6,7 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:background="@color/white"
-        android:layout_height="98px"
+        android:layout_height="@dimen/sc_mm_98"
         android:visibility="visible"
         android:orientation="horizontal">
 
@@ -15,17 +15,17 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.8"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/search_gray_n"
             android:drawablePadding="@dimen/dimen_10_dp"
             android:gravity="center_vertical"
             android:text="客服"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <View
             android:layout_width="0.5dp"
-            android:layout_height="48px"
+            android:layout_height="@dimen/sc_mm_48"
             android:layout_gravity="center_vertical"
             android:background="#686868" />
         <com.amkj.dmsh.views.DrawableCenterTextView
@@ -33,13 +33,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/bubble_gray"
             android:drawablePadding="@dimen/dimen_10_dp"
             android:gravity="center_vertical"
             android:text="评论"
             android:textColor="@color/home_text_color"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_time_ahead_watch_start"
@@ -51,7 +51,7 @@
             android:enabled="true"
             android:text="提前预览"
             android:textColor="@color/white"
-            android:textSize="34px" />
+            android:textSize="@dimen/sc_mm_34" />
 
         <TextView
             android:id="@+id/tv_time_set_warm_start"
@@ -59,10 +59,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/sel_bt_red_gray"
-            android:clickable="true"
+
             android:gravity="center"
             android:text="开团提醒"
             android:textColor="@color/white"
-            android:textSize="34px" />
+            android:textSize="@dimen/sc_mm_34" />
     </LinearLayout>
 </FrameLayout>

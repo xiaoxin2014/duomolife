@@ -751,4 +751,7 @@
     <dimen name="sc_mm_748">748mm</dimen>
     <dimen name="sc_mm_749">749mm</dimen>
     <dimen name="sc_mm_750">750mm</dimen>
+    <!--页面间距-->
+    <dimen name="gap_left">26mm</dimen>
+    <dimen name="gap_right">24mm</dimen>
 </resources>

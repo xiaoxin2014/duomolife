@@ -4,7 +4,7 @@
     android:orientation="horizontal"
     android:background="@color/white"
     android:gravity="center_vertical"
-    android:layout_height="68px">
+    android:layout_height="@dimen/sc_mm_68">
     <TextView
         android:id="@+id/tv_goods_indent_code"
         android:layout_width="wrap_content"
@@ -14,7 +14,7 @@
         android:layout_weight="1"
         android:ellipsize="end"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="26px" />
+        android:textSize="@dimen/sc_mm_26" />
 
     <TextView
         android:id="@+id/tv_tag_record_state"
@@ -23,9 +23,9 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/gap_right"
-        android:clickable="true"
+
         android:gravity="center"
         android:text="已处理"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="26px" />
+        android:textSize="@dimen/sc_mm_26" />
 </LinearLayout>

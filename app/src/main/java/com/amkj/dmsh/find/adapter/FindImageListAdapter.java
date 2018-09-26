@@ -5,10 +5,10 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
  * class description:图片列表
  */
 
-public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean, BaseViewHolderHelper> {
+public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean, BaseViewHolder> {
     private final Context context;
 
     public FindImageListAdapter(Context context, List<PictureBean> pictureBeanList) {
@@ -42,7 +42,7 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, PictureBean pictureBean) {
+    protected void convert(BaseViewHolder helper, PictureBean pictureBean) {
         switch (pictureBean.getItemType()) {
             case TYPE_1:
                 final ImageView iv_image_details = helper.getView(R.id.iv_image_details);

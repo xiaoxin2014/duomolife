@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.adapter.FindImageListAdapter;
@@ -22,6 +21,7 @@ import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -154,7 +154,7 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
     }
 
 
-    public class ProductEvaViewHolder extends BaseViewHolderHelper {
+    public class ProductEvaViewHolder extends BaseViewHolder {
         RecyclerView rv_pro_eva;
 
         public ProductEvaViewHolder(View view) {

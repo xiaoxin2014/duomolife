@@ -6,14 +6,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.zhy.autolayout.utils.AutoUtils;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -25,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:请输入类描述
  */
 
-public class SpecialTopicAdapter extends BaseQuickAdapter<TopicSpecialBean, BaseViewHolderHelper> {
+public class SpecialTopicAdapter extends BaseQuickAdapter<TopicSpecialBean, BaseViewHolder> {
     private final Context context;
 
     public SpecialTopicAdapter(Context context, List<TopicSpecialBean> specialSearList) {
@@ -34,10 +36,10 @@ public class SpecialTopicAdapter extends BaseQuickAdapter<TopicSpecialBean, Base
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, TopicSpecialBean topicSpecialBean) {
+    protected void convert(BaseViewHolder helper, TopicSpecialBean topicSpecialBean) {
         TextView tv_sp_label = helper.getView(R.id.tv_sp_label);
         GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadius(AutoUtils.getPercentWidth1px() * 8);
+        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext,8));
         gradientDrawable.setColor(0x7f000000);
         tv_sp_label.setBackground(gradientDrawable);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_communal_cover_padding)

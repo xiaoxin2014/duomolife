@@ -6,20 +6,20 @@
     android:background="@color/white"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="15px"
-    android:paddingTop="15px">
+    android:paddingBottom="@dimen/sc_mm_15"
+    android:paddingTop="@dimen/sc_mm_15">
 
     <ImageView
         android:id="@+id/iv_cart_com_pre"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="@dimen/sc_mm_100"
+        android:layout_height="@dimen/sc_mm_100"
         android:scaleType="fitCenter"
-        app:layout_auto_basewidth="height" />
+         />
 
     <LinearLayout
         android:layout_width="0px"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30px"
+        android:layout_marginLeft="@dimen/sc_mm_30"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -30,23 +30,23 @@
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/text_black_t"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_cart_cp_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18px"
+            android:layout_marginTop="@dimen/sc_mm_18"
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="22px" />
+            android:textSize="@dimen/sc_mm_22" />
 
         <RelativeLayout
             android:id="@+id/rel_cart_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18px">
+            android:layout_marginTop="@dimen/sc_mm_18">
 
             <TextView
                 android:id="@+id/tv_cart_cp_price"
@@ -55,18 +55,18 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:textColor="@color/text_black_t"
-                android:textSize="26px" />
+                android:textSize="@dimen/sc_mm_26" />
 
             <TextView
                 android:id="@+id/tv_cart_cp_price_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40px"
+                android:layout_marginLeft="@dimen/sc_mm_40"
                 android:layout_toRightOf="@+id/tv_cart_cp_price"
                 android:ellipsize="end"
                 android:lines="1"
                 android:textColor="@color/text_normal_red"
-                android:textSize="22px" />
+                android:textSize="@dimen/sc_mm_22" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -74,9 +74,9 @@
         android:id="@+id/tv_cart_com_pre_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30px"
-        android:layout_marginRight="24px"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_24"
         android:text="x1"
         android:textColor="@color/text_black_t"
-        android:textSize="28px" />
+        android:textSize="@dimen/sc_mm_28" />
 </LinearLayout>

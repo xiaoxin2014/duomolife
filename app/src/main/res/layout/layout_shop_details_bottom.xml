@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="98px"
+    android:layout_height="@dimen/sc_mm_98"
     android:background="@color/white"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_sp_details_collect"
-        android:layout_width="125px"
+        android:layout_width="@dimen/sc_mm_125"
         android:layout_height="match_parent"
-        android:clickable="true"
-        android:paddingTop="17px"
+
+        android:paddingTop="@dimen/sc_mm_17"
         android:drawableTop="@drawable/sel_comment_collect_star"
         android:gravity="center"
         android:text="收藏"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="22px" />
+        android:textSize="@dimen/sc_mm_22" />
 
     <View
         android:layout_width="0.5dp"
-        android:layout_height="48px"
+        android:layout_height="@dimen/sc_mm_48"
         android:layout_gravity="center_vertical"
         android:background="#686868" />
 
     <TextView
         android:id="@+id/tv_sp_details_service"
-        android:layout_width="125px"
-        android:paddingTop="17px"
+        android:layout_width="@dimen/sc_mm_125"
+        android:paddingTop="@dimen/sc_mm_17"
         android:layout_height="match_parent"
         android:drawableTop="@drawable/service_gray"
-        android:clickable="true"
+
         android:gravity="center"
         android:text="客服"
         android:textColor="@color/home_text_color"
-        android:textSize="22px" />
+        android:textSize="@dimen/sc_mm_22" />
 
     <TextView
         android:id="@+id/tv_sp_details_add_car"
@@ -45,7 +45,7 @@
         android:gravity="center"
         android:text="加入购物车"
         android:textColor="@color/white"
-        android:textSize="34px" />
+        android:textSize="@dimen/sc_mm_34" />
 
     <TextView
         android:id="@+id/tv_sp_details_buy_it"
@@ -53,9 +53,9 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/sel_deep_red_yel_gray"
-        android:clickable="true"
+
         android:gravity="center"
         android:text="立即购买"
         android:textColor="@color/white"
-        android:textSize="34px" />
+        android:textSize="@dimen/sc_mm_34" />
 </LinearLayout>

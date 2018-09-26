@@ -5,13 +5,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@color/light_gray_f"
-        android:layout_height="88px"
-        android:paddingLeft="24px">
+        android:layout_height="@dimen/sc_mm_88"
+        android:paddingLeft="@dimen/sc_mm_24">
         <TextView
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:text="积分商城"
             android:layout_height="match_parent" />
         <TextView
@@ -20,14 +20,14 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:clickable="true"
+
             android:drawablePadding="10dp"
             android:drawableRight="@drawable/arrow_under_btn_nor"
             android:gravity="center_vertical"
-            android:paddingLeft="30px"
-            android:paddingRight="30px"
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_30"
             android:text="筛选"
             android:textColor="@color/home_text_color"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
     </RelativeLayout>
 </RelativeLayout>

@@ -9,10 +9,10 @@ import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.Attrs;
 import com.zhy.autolayout.attr.HeightAttr;
@@ -51,7 +51,7 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
         helper.itemView.setTag(DMLGoodsBean);
     }
 
-    public class HorViewHolderHelper extends BaseViewHolderHelper {
+    public class HorViewHolderHelper extends BaseViewHolder {
         RelativeLayout rel_hor_welfare_img;
         LinearLayout ll_hor_welfare_text;
         RelativeLayout rel_dnl_hor_layout;

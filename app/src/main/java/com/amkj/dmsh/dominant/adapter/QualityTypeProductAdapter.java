@@ -5,10 +5,10 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:商品列表
  */
 
-public class QualityTypeProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseViewHolderHelper> {
+public class QualityTypeProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseViewHolder> {
     private final Context context;
 
     public QualityTypeProductAdapter(Context context, List<LikedProductBean> likedProductBeanList) {
@@ -30,7 +30,7 @@ public class QualityTypeProductAdapter extends BaseQuickAdapter<LikedProductBean
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, LikedProductBean likedProductBean) {
+    protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
         GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
                 , likedProductBean.getPicUrl(),likedProductBean.getWaterRemark(),true);
         helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)

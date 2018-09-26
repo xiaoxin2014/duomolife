@@ -6,10 +6,10 @@
     <TextView
         android:layout_width="match_parent"
         android:gravity="center"
-        android:paddingBottom="50px"
-        android:paddingTop="50px"
+        android:paddingBottom="@dimen/sc_mm_50"
+        android:paddingTop="@dimen/sc_mm_50"
         android:id="@+id/tv_quality_type_specific"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:textColor="@color/text_black_t"
         android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -17,9 +16,8 @@
             <FrameLayout
                 android:id="@+id/fl_mine_bg"
                 android:layout_width="match_parent"
-                android:layout_height="480px"
-                android:background="@drawable/mine_no_login_bg"
-                app:layout_auto_basewidth="height">
+                android:layout_height="@dimen/sc_mm_480"
+                android:background="@drawable/mine_no_login_bg">
 
                 <ImageView
                     android:id="@+id/iv_mine_page_bg"
@@ -45,19 +43,17 @@
                     <FrameLayout
                         android:id="@+id/fl_mine_info"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clickable="true">
+                        android:layout_height="match_parent">
 
                         <LinearLayout
                             android:id="@+id/ll_mime_no_login"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:clickable="true"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:paddingTop="8px"
-                            android:visibility="visible">
+                            android:paddingTop="@dimen/sc_mm_8"
+                            android:visibility="gone">
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -66,18 +62,17 @@
                                 android:lineSpacingExtra="@dimen/dimen_10_dp"
                                 android:text="多么生活 您的生活美学专家\n为你提供最优质、省钱、放心的产品"
                                 android:textColor="@color/white"
-                                android:textSize="28px" />
+                                android:textSize="@dimen/sc_mm_28" />
 
                             <TextView
                                 android:id="@+id/tv_no_login_show"
-                                android:layout_width="350px"
-                                android:layout_height="80px"
-                                android:layout_marginTop="50px"
-                                android:clickable="true"
+                                android:layout_width="@dimen/sc_mm_350"
+                                android:layout_height="@dimen/sc_mm_80"
+                                android:layout_marginTop="@dimen/sc_mm_50"
                                 android:gravity="center"
                                 android:text="登录/注册"
                                 android:textColor="@color/white"
-                                android:textSize="32px" />
+                                android:textSize="@dimen/sc_mm_32" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -86,32 +81,31 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:visibility="gone">
+                            android:visibility="visible">
 
                             <de.hdodenhof.circleimageview.CircleImageView
                                 android:id="@+id/iv_mine_header"
-                                android:layout_width="130px"
-                                android:layout_height="130px"
-                                android:layout_centerHorizontal="true"
-                                app:layout_auto_basewidth="height" />
+                                android:layout_width="@dimen/sc_mm_130"
+                                android:layout_height="@dimen/sc_mm_130"
+                                android:layout_centerHorizontal="true"/>
 
                             <TextView
                                 android:id="@+id/tv_mine_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20px"
+                                android:layout_marginTop="@dimen/sc_mm_15"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:paddingLeft="150px"
-                                android:paddingRight="150px"
+                                android:paddingLeft="@dimen/sc_mm_150"
+                                android:paddingRight="@dimen/sc_mm_150"
                                 android:textColor="@color/white"
-                                android:textSize="30px" />
+                                android:textSize="@dimen/sc_mm_30" />
 
                             <RelativeLayout
                                 android:id="@+id/rel_integral_more"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:padding="20px">
+                                android:padding="@dimen/sc_mm_15">
 
                                 <TextView
                                     android:id="@+id/tv_mine_score"
@@ -120,7 +114,7 @@
                                     android:layout_centerVertical="true"
                                     android:text="积分：430"
                                     android:textColor="@color/white"
-                                    android:textSize="24px" />
+                                    android:textSize="@dimen/sc_mm_24" />
 
                                 <TextView
                                     android:id="@+id/tv_mine_get_score_more"
@@ -131,155 +125,95 @@
                                     android:paddingLeft="@dimen/gap_left"
                                     android:text="获取更多积分"
                                     android:textColor="@color/white"
-                                    android:textSize="22px" />
+                                    android:textSize="@dimen/sc_mm_22" />
                             </RelativeLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="20px"
+                                android:layout_marginBottom="@dimen/sc_mm_15"
                                 android:background="@color/transparent"
                                 android:orientation="horizontal">
 
-                                <RelativeLayout
-                                    android:id="@+id/rel_mine_att"
+                                <TextView
+                                    android:id="@+id/tv_mine_att_count"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:clickable="true"
                                     android:gravity="center"
-                                    android:orientation="vertical">
+                                    android:lines="2"
+                                    android:lineSpacingExtra="@dimen/sc_mm_10"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/sc_mm_28"
+                                    android:visibility="visible" />
 
-                                    <TextView
-                                        android:id="@+id/tv_mine_att_count"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:clickable="true"
-                                        android:gravity="center"
-                                        android:maxLines="1"
-                                        android:text="110"
-                                        android:textColor="@color/white"
-                                        android:textSize="30px"
-                                        android:visibility="visible" />
-
-                                    <TextView
-                                        android:id="@+id/tv_mine_att"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_below="@id/tv_mine_att_count"
-                                        android:layout_marginTop="12px"
-                                        android:clickable="true"
-                                        android:gravity="center"
-                                        android:text="关注"
-                                        android:textColor="@color/white"
-                                        android:textSize="24px" />
-                                </RelativeLayout>
-
-                                <RelativeLayout
-                                    android:id="@+id/rel_mine_fans"
+                                <TextView
+                                    android:id="@+id/tv_mine_fans_count"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:clickable="true"
                                     android:gravity="center"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:id="@+id/tv_mine_fans_count"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:clickable="true"
-                                        android:gravity="center"
-                                        android:maxLines="1"
-                                        android:text="110"
-                                        android:textColor="@color/white"
-                                        android:textSize="30px"
-                                        android:visibility="visible" />
-
-                                    <TextView
-                                        android:id="@+id/tv_mine_fans"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_below="@id/tv_mine_fans_count"
-                                        android:layout_marginTop="12px"
-                                        android:clickable="true"
-                                        android:gravity="center"
-                                        android:text="粉丝"
-                                        android:textColor="@color/white"
-                                        android:textSize="24px" />
-                                </RelativeLayout>
-
-                                <RelativeLayout
-                                    android:id="@+id/rel_mine_inv"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:clickable="true">
+                                    android:lines="2"
+                                    android:lineSpacingExtra="@dimen/sc_mm_10"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/sc_mm_28" />
 
                                     <TextView
                                         android:id="@+id/tv_mine_inv_count"
-                                        android:layout_width="match_parent"
+                                        android:layout_width="0dp"
                                         android:layout_height="wrap_content"
-                                        android:clickable="true"
+                                        android:layout_weight="1"
                                         android:gravity="center"
-                                        android:text="5"
+                                        android:lines="2"
+                                        android:lineSpacingExtra="@dimen/sc_mm_10"
                                         android:textColor="@color/white"
-                                        android:textSize="32px" />
-
-                                    <TextView
-                                        android:id="@+id/tv_mine_inv"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_below="@id/tv_mine_inv_count"
-                                        android:layout_marginTop="12px"
-                                        android:clickable="true"
-                                        android:gravity="center"
-                                        android:text="帖子"
-                                        android:textColor="@color/white"
-                                        android:textSize="24px" />
-                                </RelativeLayout>
+                                        android:textSize="@dimen/sc_mm_28" />
                             </LinearLayout>
                         </LinearLayout>
 
                     </FrameLayout>
                 </LinearLayout>
             </FrameLayout>
+
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:background="#e4f0fe"
-                android:paddingLeft="30px"
                 android:id="@+id/rel_personal_data_sup"
-                android:visibility="gone"
-                android:layout_height="90px">
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_90"
+                android:background="#e4f0fe"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:visibility="gone">
+
                 <ImageView
-                    android:layout_width="40px"
-                    android:src="@drawable/mine_tips"
                     android:id="@+id/iv_personal_data_sup"
+                    android:layout_width="@dimen/sc_mm_40"
+                    android:layout_height="@dimen/sc_mm_40"
                     android:layout_centerVertical="true"
-                    android:layout_height="40px" />
+                    android:src="@drawable/mine_tips" />
+
                 <TextView
-                    android:layout_width="match_parent"
                     android:id="@+id/tv_personal_data_sup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/sc_mm_20"
                     android:layout_toRightOf="@+id/iv_personal_data_sup"
-                    android:textSize="28px"
-                    android:layout_marginLeft="20px"
                     android:gravity="center_vertical"
                     android:textColor="@color/text_login_gray_s"
-                    android:layout_height="match_parent" />
+                    android:textSize="@dimen/sc_mm_28" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="100px"
+                android:layout_height="@dimen/sc_mm_100"
                 android:background="@drawable/border_bottom_line">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="26px"
+                    android:layout_marginLeft="@dimen/sc_mm_26"
                     android:text="我的订单"
                     android:textColor="@color/text_black_t"
-                    android:textSize="32px" />
+                    android:textSize="@dimen/sc_mm_32" />
 
                 <TextView
                     android:id="@+id/tv_mine_all_indent"
@@ -287,14 +221,14 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:clickable="true"
+
                     android:drawablePadding="@dimen/dimen_5_dp"
                     android:drawableRight="@drawable/att_integ_next"
                     android:gravity="center_vertical"
-                    android:paddingRight="20px"
+                    android:paddingRight="@dimen/sc_mm_20"
                     android:text="查看全部订单"
                     android:textColor="@color/text_gray_hint_n"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
             </RelativeLayout>
 
             <LinearLayout
@@ -315,8 +249,7 @@
                 <com.bigkoo.convenientbanner.ConvenientBanner
                     android:id="@+id/ad_mine"
                     android:layout_width="match_parent"
-                    android:layout_height="180px"
-                    app:layout_auto_basewidth="height" />
+                    android:layout_height="@dimen/sc_mm_180"/>
             </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

@@ -9,12 +9,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.mine.adapter.SalesReturnItemAdapter;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.zhy.autolayout.utils.AutoUtils;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ import butterknife.ButterKnife;
  * class description:退货申诉
  */
 
-public class DirectSalesReturnReplyAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolderHelper> {
+public class DirectSalesReturnReplyAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolder> {
     private final LayoutInflater layoutInflater;
     private Context context;
 
@@ -40,14 +39,13 @@ public class DirectSalesReturnReplyAdapter extends BaseQuickAdapter<OrderListBea
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, final OrderListBean orderListBean) {
+    protected void convert(BaseViewHolder helper, final OrderListBean orderListBean) {
         RecyclerView communal_recycler_wrap = helper.getView(R.id.communal_recycler_wrap);
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(context));
         SalesReturnItemAdapter salesReturnItemAdapter = new SalesReturnItemAdapter(context, orderListBean.getGoods(), orderListBean.getNo());
         View headerView = layoutInflater.inflate(R.layout.adapter_sales_return_header, communal_recycler_wrap, false);
         ReturnHeaderView returnHeaderView = new ReturnHeaderView();
         ButterKnife.bind(returnHeaderView, headerView);
-        AutoUtils.autoSize(headerView);
         salesReturnItemAdapter.setHeaderView(headerView);
         communal_recycler_wrap.setAdapter(salesReturnItemAdapter);
         setHeaderData(returnHeaderView, orderListBean);

@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:paddingTop="12px"
-    android:paddingBottom="12px"
+    android:paddingTop="@dimen/sc_mm_12"
+    android:paddingBottom="@dimen/sc_mm_12"
     android:visibility="gone">
 
     <TextView
@@ -14,13 +14,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/border_circle_two_pink_bg"
         android:gravity="center"
-        android:paddingBottom="5px"
-        android:paddingLeft="8px"
-        android:paddingRight="8px"
-        android:paddingTop="5px"
+        android:paddingBottom="@dimen/sc_mm_5"
+        android:paddingLeft="@dimen/sc_mm_8"
+        android:paddingRight="@dimen/sc_mm_8"
+        android:paddingTop="@dimen/sc_mm_5"
         android:text="满减"
         android:textColor="@color/white"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:visibility="gone" />
 
     <LinearLayout
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginLeft="14px"
+        android:layout_marginLeft="@dimen/sc_mm_14"
         android:layout_toRightOf="@id/tv_communal_activity_tag">
 
         <TextView
@@ -41,20 +41,20 @@
             android:gravity="center_vertical|left"
             android:lines="1"
             android:textColor="@color/text_pink_red"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_communal_activity_tag_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5px"
+            android:layout_marginLeft="@dimen/sc_mm_5"
             android:drawablePadding="@dimen/dimen_5_dp"
             android:drawableRight="@drawable/next_pink_icon"
             android:gravity="center"
             android:lines="1"
-            android:paddingBottom="5px"
-            android:paddingTop="5px"
+            android:paddingBottom="@dimen/sc_mm_5"
+            android:paddingTop="@dimen/sc_mm_5"
             android:textColor="@color/text_pink_red"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
     </LinearLayout>
 </LinearLayout>

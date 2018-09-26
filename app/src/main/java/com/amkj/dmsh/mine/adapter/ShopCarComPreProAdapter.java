@@ -7,10 +7,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TY
  * class description:购物车组合赠品适配器
  */
 
-public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProductInfoBean, BaseViewHolderHelper> {
+public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProductInfoBean, BaseViewHolder> {
     private final Context context;
 
     public ShopCarComPreProAdapter(Context context, List<CartProductInfoBean> cartProductInfoBeanList) {
@@ -42,7 +42,7 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, CartProductInfoBean cartProductInfoBean) {
+    protected void convert(BaseViewHolder helper, CartProductInfoBean cartProductInfoBean) {
         switch (helper.getItemViewType()) {
             case TYPE_1:
                 GlideImageLoaderUtil.loadFitCenter(context, (ImageView) helper.getView(R.id.iv_cart_com_pre)
@@ -94,7 +94,7 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
         }
     }
 
-    private void SetIndentProStatus(BaseViewHolderHelper helper, CartProductInfoBean cartProductInfoBean) {
+    private void SetIndentProStatus(BaseViewHolder helper, CartProductInfoBean cartProductInfoBean) {
         switch (cartProductInfoBean.getIndentType()) {
             case INDENT_TYPE:
                 if (cartProductInfoBean.getStatus() == 11 || cartProductInfoBean.getStatus() == 13) {

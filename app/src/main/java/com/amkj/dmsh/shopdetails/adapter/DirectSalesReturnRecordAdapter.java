@@ -5,11 +5,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.bean.DirectReturnRecordEntity.DirectReturnRecordBean.OrderListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/11/1.
  */
-public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolderHelper> {
+public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolder> {
     private final Context context;
 
     public DirectSalesReturnRecordAdapter(Context context, List<OrderListBean> orderListBeanList) {
@@ -30,7 +30,7 @@ public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<OrderListBe
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, OrderListBean orderListBean) {
+    protected void convert(BaseViewHolder helper, OrderListBean orderListBean) {
         TextView tv_tag_record_state = helper.getView(R.id.tv_tag_record_state);
         tv_tag_record_state.setText(ConstantVariable.INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())));
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), orderListBean.getPicUrl());

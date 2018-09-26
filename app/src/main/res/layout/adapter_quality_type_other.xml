@@ -5,18 +5,18 @@
     android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
-        android:paddingTop="30px"
-        android:paddingBottom="10px"
+        android:paddingTop="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_10"
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:background="@color/white"
-        app:layout_auto_basewidth = "height">
+        >
         <TextView
             android:layout_width="wrap_content"
             android:textColor="@color/text_login_gray_s"
             android:id="@+id/tv_other_type_title"
-            android:textSize="26px"
+            android:textSize="@dimen/sc_mm_26"
             android:gravity="center"
             android:layout_height="wrap_content" />
     </LinearLayout>

@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="30px"
+    android:paddingBottom="@dimen/sc_mm_30"
     android:paddingRight="@dimen/gap_right"
-    android:paddingTop="30px">
+    android:paddingTop="@dimen/sc_mm_30">
 
     <CheckBox
         android:id="@+id/cb_collect_product"
@@ -17,41 +17,41 @@
         android:button="@null"
         android:drawableRight="@drawable/sel_check_box_shop_car"
         android:gravity="center_vertical"
-        android:paddingBottom="20px"
-        android:paddingLeft="24px"
-        android:paddingRight="12px"
-        android:paddingTop="20px"
+        android:paddingBottom="@dimen/sc_mm_20"
+        android:paddingLeft="@dimen/sc_mm_24"
+        android:paddingRight="@dimen/sc_mm_12"
+        android:paddingTop="@dimen/sc_mm_20"
         android:visibility="gone" />
 
     <RelativeLayout
-        android:layout_width="176px"
-        android:layout_height="176px"
-        app:layout_auto_basewidth="height">
+        android:layout_width="@dimen/sc_mm_176"
+        android:layout_height="@dimen/sc_mm_176"
+        >
 
         <ImageView
             android:id="@+id/iv_mine_col_pro"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="12px"
+            android:layout_marginLeft="@dimen/sc_mm_12"
             android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/tv_collect_pro_sack_tag"
             android:layout_width="match_parent"
-            android:layout_height="42px"
+            android:layout_height="@dimen/sc_mm_42"
             android:layout_alignParentBottom="true"
             android:background="#7f000000"
             android:gravity="center"
             android:text="已失效"
             android:textColor="@color/white"
-            android:textSize="24px"
+            android:textSize="@dimen/sc_mm_24"
             android:visibility="gone" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="30px">
+        android:paddingLeft="@dimen/sc_mm_30">
 
         <TextView
             android:id="@+id/tv_mine_col_pro_name"
@@ -60,7 +60,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/text_black_t"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <TextView
             android:id="@+id/tv_mine_col_pro_tag"
@@ -68,17 +68,17 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_mine_col_pro_name"
             android:layout_centerVertical="true"
-            android:layout_marginTop="18px"
+            android:layout_marginTop="@dimen/sc_mm_18"
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/text_normal_red"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="22px"
+            android:layout_marginTop="@dimen/sc_mm_22"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -91,18 +91,18 @@
                 android:gravity="left|center_vertical"
                 android:maxLines="1"
                 android:textColor="@color/text_normal_red"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <TextView
                 android:id="@+id/tv_mine_col_pro_buy"
-                android:layout_width="120px"
-                android:layout_height="50px"
+                android:layout_width="@dimen/sc_mm_120"
+                android:layout_height="@dimen/sc_mm_50"
                 android:background="@drawable/border_circle_two_red_white"
-                android:clickable="true"
+
                 android:gravity="center"
                 android:text="去购买"
                 android:textColor="@color/text_red_color"
-                android:textSize="24px" />
+                android:textSize="@dimen/sc_mm_24" />
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

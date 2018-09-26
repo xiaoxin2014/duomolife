@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="180px"
+    android:layout_height="wrap_content"
     android:background="@color/white">
-
+<!--@dimen/sc_mm_180-->
     <ImageView
         android:id="@+id/iv_home_img_activity"
         android:layout_width="match_parent"
         android:layout_centerVertical="true"
-        android:layout_height="154px"
-        android:scaleType="centerCrop"
-        app:layout_auto_basewidth="height" />
+        android:layout_height="@dimen/sc_mm_154"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"/>
 </RelativeLayout>

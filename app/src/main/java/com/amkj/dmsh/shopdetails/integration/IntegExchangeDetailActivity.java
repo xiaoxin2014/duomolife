@@ -53,7 +53,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,7 +68,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -90,6 +89,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.VIRTUAL_COUPON;
+
+;
 
 /**
  * Created by atd48 on 2016/7/18.
@@ -597,7 +598,6 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
                 break;
             case PAY:
                 View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null);
-                AutoUtils.autoSize(indentPopWindow);
                 PopupWindowView popupWindowView = new PopupWindowView();
                 ButterKnife.bind(popupWindowView, indentPopWindow);
                 mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(this)

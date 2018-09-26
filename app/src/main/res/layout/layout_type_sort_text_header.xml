@@ -6,9 +6,9 @@
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/tv_product_type_header"
-        android:layout_marginBottom="26px"
+        android:layout_marginBottom="@dimen/sc_mm_26"
         android:textColor="@color/text_black_t"
-        android:textSize="26px"
+        android:textSize="@dimen/sc_mm_26"
         android:text="全部分类"
         android:layout_height="wrap_content" />
 </FrameLayout>

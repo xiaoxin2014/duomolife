@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="88px"
+    android:layout_height="@dimen/sc_mm_88"
     android:gravity="center_vertical|right"
     android:orientation="horizontal">
     <TextView
-        android:layout_width="110px"
+        android:layout_width="@dimen/sc_mm_100"
         android:id="@+id/tv_com_art_like_count"
-        android:textSize="22px"
+        android:textSize="@dimen/sc_mm_22"
         android:textColor="@color/text_login_gray_s"
-        android:clickable="true"
         android:drawableLeft="@drawable/sel_art_like_heart"
-        android:drawablePadding="@dimen/dimen_8_dp"
+        android:drawablePadding="@dimen/sc_mm_8"
         android:gravity="center_vertical"
         android:text="赞"
         android:layout_height="match_parent" />
-    <!--android:paddingLeft="30px"-->
+    <!--android:paddingLeft="@dimen/sc_mm_30"-->
     <TextView
-        android:layout_width="110px"
-        android:layout_marginLeft="10px"
+        android:layout_width="@dimen/sc_mm_100"
+        android:layout_marginLeft="@dimen/sc_mm_10"
         android:id="@+id/tv_com_art_comment_count"
-        android:textSize="22px"
+        android:textSize="@dimen/sc_mm_22"
         android:textColor="@color/text_login_gray_s"
         android:drawableLeft="@drawable/art_comment_icon"
-        android:drawablePadding="@dimen/dimen_8_dp"
+        android:drawablePadding="@dimen/sc_mm_8"
         android:gravity="center_vertical"
         android:text="评论"
         android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/tv_com_art_collect_count"
-        android:textSize="22px"
+        android:textSize="@dimen/sc_mm_22"
         android:visibility="gone"
         android:textColor="@color/text_login_gray_s"
-        android:clickable="true"
+
         android:drawableLeft="@drawable/sel_art_collect_star"
-        android:drawablePadding="@dimen/dimen_8_dp"
+        android:drawablePadding="@dimen/sc_mm_8"
         android:gravity="center_vertical"
         android:text="收藏"
-        android:layout_width="110px"
-        android:layout_marginLeft="15px"
+        android:layout_width="@dimen/sc_mm_110"
+        android:layout_marginLeft="@dimen/sc_mm_15"
         android:layout_height="match_parent" />
 </LinearLayout>

@@ -5,10 +5,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
  * class description:新人专享
  */
 
-public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<QualityNewUserShopBean, BaseViewHolderHelper> {
+public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<QualityNewUserShopBean, BaseViewHolder> {
     private final Context context;
 
     public QualityNewUserShopAdapter(Context context, List<QualityNewUserShopBean> qualityNewUserShopList) {
@@ -42,7 +42,7 @@ public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<Quality
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, QualityNewUserShopBean qualityNewUserShopBean) {
+    protected void convert(BaseViewHolder helper, QualityNewUserShopBean qualityNewUserShopBean) {
         if (helper.getItemViewType() == TYPE_0) {
             GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_qt_pro_img)
                     , qualityNewUserShopBean.getPicUrl());

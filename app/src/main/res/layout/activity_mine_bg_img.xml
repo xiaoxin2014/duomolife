@@ -8,30 +8,30 @@
     android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="480px"
+        android:layout_height="@dimen/sc_mm_480"
         android:scaleType="centerCrop"
         android:id="@+id/iv_mine_bg_img"
-        app:layout_auto_basewidth = "height"/>
+        />
     <TextView
-        android:layout_marginTop="100px"
-        android:layout_width="678px"
-        android:layout_height="84px"
+        android:layout_marginTop="@dimen/sc_mm_100"
+        android:layout_width="@dimen/sc_mm_678"
+        android:layout_height="@dimen/sc_mm_84"
         android:gravity="center"
         android:textColor="@color/text_gray_hint_n"
         android:id="@+id/tv_mine_bg_cover"
-        android:textSize="32px"
-        android:clickable="true"
+        android:textSize="@dimen/sc_mm_32"
+
         android:text="更换封面"
         android:background="@drawable/border_circle_four_gray_bg_white"/>
     <TextView
-        android:layout_marginTop="30px"
-        android:layout_width="678px"
-        android:layout_height="84px"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_width="@dimen/sc_mm_678"
+        android:layout_height="@dimen/sc_mm_84"
         android:gravity="center"
         android:textColor="@color/text_gray_hint_n"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:id="@+id/tv_mine_bg_cancel"
         android:text="取消"
-        android:clickable="true"
+
         android:background="@drawable/border_circle_four_gray_bg_white"/>
 </LinearLayout>

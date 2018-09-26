@@ -11,7 +11,7 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -37,59 +37,59 @@
                     android:textColorHint="@color/text_gray_hint_n"
                     android:textColor="@color/text_black_t"
                     android:paddingLeft="@dimen/gap_left"
-                    android:textSize="30px"
-                    android:layout_height="104px" />
+                    android:textSize="@dimen/sc_mm_30"
+                    android:layout_height="@dimen/sc_mm_104" />
                 <EditText
                     android:layout_width="match_parent"
                     android:gravity="center_vertical"
                     android:background="@color/white"
                     android:singleLine="true"
                     android:hint="手机号"
-                    android:textSize="30px"
+                    android:textSize="@dimen/sc_mm_30"
                     android:id="@+id/et_address_mobile"
                     android:textColorHint="@color/text_gray_hint_n"
                     android:textColor="@color/text_black_t"
                     android:paddingLeft="@dimen/gap_left"
-                    android:layout_height="104px" />
+                    android:layout_height="@dimen/sc_mm_104" />
                 <TextView
                     android:layout_width="match_parent"
                     android:gravity="center_vertical"
                     android:background="@color/white"
                     android:hint="所在地区"
-                    android:clickable="true"
-                    android:textSize="30px"
+
+                    android:textSize="@dimen/sc_mm_30"
                     android:id="@+id/tv_address_district"
                     android:textColorHint="@color/text_gray_hint_n"
                     android:textColor="@color/text_black_t"
                     android:paddingLeft="@dimen/gap_left"
-                    android:layout_height="104px" />
+                    android:layout_height="@dimen/sc_mm_104" />
                 <EditText
                     android:layout_width="match_parent"
                     android:gravity="center_vertical"
                     android:background="@color/white"
                     android:hint="详细地址"
-                    android:textSize="30px"
+                    android:textSize="@dimen/sc_mm_30"
                     android:id="@+id/et_address_detail_district"
                     android:textColorHint="@color/text_gray_hint_n"
                     android:textColor="@color/text_black_t"
                     android:paddingLeft="@dimen/gap_left"
-                    android:minHeight="150px"
+                    android:minHeight="@dimen/sc_mm_150"
                     android:layout_height="wrap_content" />
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/rel_address_default"
-                android:layout_height="104px">
+                android:layout_height="@dimen/sc_mm_104">
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:paddingLeft="@dimen/gap_left"
                     android:background="@color/white"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px"
+                    android:textSize="@dimen/sc_mm_30"
                     android:id="@+id/cb_address_default"
                     android:text="设为默认地址"
                     android:drawableLeft="@drawable/selector_address_red"
-                    android:drawablePadding="@dimen/dimen_15_dp"
+                    android:drawablePadding="@dimen/sc_mm_15"
                     android:gravity="center_vertical"
                     android:button="@null"
                     android:layout_centerVertical="true"

@@ -12,26 +12,26 @@
         android:layout_width="match_parent"
         android:background="@drawable/login_bg"
         android:orientation="vertical"
-        android:paddingLeft="120px"
-        android:paddingRight="120px"
+        android:paddingLeft="@dimen/sc_mm_120"
+        android:paddingRight="@dimen/sc_mm_120"
         android:id="@+id/ll_phone_unBind"
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="114px"
+            android:layout_marginTop="@dimen/sc_mm_114"
             android:layout_height="wrap_content">
             <EditText
                 android:layout_centerVertical="true"
                 android:layout_width="match_parent"
                 android:textColor="@color/home_text_color"
-                android:textSize="32px"
+                android:textSize="@dimen/sc_mm_32"
                 android:inputType="number|phone"
                 android:hint="手机号"
                 android:singleLine="true"
                 android:background="@drawable/border_bottom_line"
                 android:id="@+id/edit_binding_mobile"
                 android:maxLength="11"
-                android:minHeight="115px"
+                android:minHeight="@dimen/sc_mm_115"
                 android:textColorHint="@color/text_gray_hint_n"
                 android:gravity="center_vertical"
                 android:layout_height="wrap_content"/>
@@ -47,7 +47,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:textColor="@color/home_text_color"
-                android:textSize="32px"
+                android:textSize="@dimen/sc_mm_32"
                 android:inputType="number|phone"
                 android:maxLength="6"
                 android:background="@drawable/border_bottom_line"
@@ -55,7 +55,7 @@
                 android:gravity="center_vertical"
                 android:hint="验证码"
                 android:textColorHint="@color/text_gray_hint_n"
-                android:minHeight="115px"
+                android:minHeight="@dimen/sc_mm_115"
                 android:layout_height="wrap_content"/>
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -65,20 +65,19 @@
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:paddingRight="@dimen/gap_right"
-                    android:clickable="true"
-                    android:textSize="24px"
+                    android:textSize="@dimen/sc_mm_24"
                     android:text="发送验证码"
                     android:lines="1"
                     android:visibility="visible"
                     android:layout_gravity="center"
                     android:id="@+id/tv_bind_send_code"
                     android:textColor="@color/selector_font_blue_hint_gray"
-                    android:layout_height="110px"/>
+                    android:layout_height="@dimen/sc_mm_110"/>
                 <ProgressBar
                     android:id="@+id/reg_bind_code_gif_view"
-                    android:layout_width="60px"
+                    android:layout_width="@dimen/sc_mm_60"
                     android:paddingRight="@dimen/gap_right"
-                    android:layout_height="60px"
+                    android:layout_height="@dimen/sc_mm_60"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
@@ -98,7 +97,7 @@
                     android:layout_centerVertical="true"
                     android:layout_width="match_parent"
                     android:textColor="@color/home_text_color"
-                    android:textSize="32px"
+                    android:textSize="@dimen/sc_mm_32"
                     android:singleLine="true"
                     android:inputType="textPassword"
                     android:id="@+id/edit_bind_set_password_new"
@@ -106,21 +105,20 @@
                     android:textColorHint="@color/text_gray_hint_n"
                     android:hint="请输入密码，最少6位"
                     android:layout_height="wrap_content"
-                    android:minHeight="115px"/>
+                    android:minHeight="@dimen/sc_mm_115"/>
             </RelativeLayout>
         </LinearLayout>
         <TextView
-            android:layout_marginTop="126px"
+            android:layout_marginTop="@dimen/sc_mm_126"
             android:layout_width="match_parent"
             android:id="@+id/tv_bind_mobile_click"
             android:text="绑定手机号"
             android:visibility="visible"
             android:gravity="center"
-            android:clickable="true"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:background="@drawable/login_bt_bg"
             android:textColor="@color/text_login_gray_s"
-            android:layout_height="90px" />
+            android:layout_height="@dimen/sc_mm_90" />
     </LinearLayout>
 
     <LinearLayout
@@ -130,34 +128,34 @@
         android:id="@+id/ll_phone_change"
         android:layout_height="match_parent">
         <TextView
-            android:layout_marginTop="190px"
+            android:layout_marginTop="@dimen/sc_mm_190"
             android:layout_width="match_parent"
             android:text="当前手机号"
             android:gravity="center"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:textColor="@color/text_login_gray_s"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_width="match_parent"
-            android:layout_marginTop="56px"
+            android:layout_marginTop="@dimen/sc_mm_56"
             android:textColor="@color/text_black_t"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:gravity="center"
             android:id="@+id/tv_bind_mobile_num"
             android:layout_height="wrap_content" />
         <TextView
-            android:layout_marginLeft="120px"
-            android:layout_marginRight="120px"
-            android:layout_marginTop="156px"
+            android:layout_marginLeft="@dimen/sc_mm_120"
+            android:layout_marginRight="@dimen/sc_mm_120"
+            android:layout_marginTop="@dimen/sc_mm_156"
             android:layout_width="match_parent"
             android:id="@+id/tv_change_mobile_phone_number"
             android:text="更换手机号"
-            android:clickable="true"
+
             android:enabled="true"
             android:gravity="center"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:background="@drawable/login_bt_bg"
             android:textColor="@color/text_login_gray_s"
-            android:layout_height="90px" />
+            android:layout_height="@dimen/sc_mm_90" />
     </LinearLayout>
 </LinearLayout>

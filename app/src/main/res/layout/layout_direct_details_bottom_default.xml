@@ -18,11 +18,11 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/gap_left"
         android:gravity="center_vertical"
-        android:layout_height="170px">
+        android:layout_height="@dimen/sc_mm_170">
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_marginRight="24px"
+            android:layout_marginRight="@dimen/sc_mm_24"
             android:layout_gravity="center_vertical"
             android:layout_height="wrap_content">
             <TextView
@@ -33,9 +33,9 @@
                 android:layout_weight="1"
                 android:lines="1"
                 android:longClickable="true"
-                android:layout_marginRight="24px"
+                android:layout_marginRight="@dimen/sc_mm_24"
                 android:textColor="@color/text_login_gray_s"
-                android:textSize="26px" />
+                android:textSize="@dimen/sc_mm_26" />
             <include layout="@layout/layout_communal_copy_text_button"/>
         </LinearLayout>
 
@@ -43,23 +43,23 @@
             android:id="@+id/tv_indent_order_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16px"
+            android:layout_marginTop="@dimen/sc_mm_16"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:lines="1"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
 
         <TextView
             android:id="@+id/tv_indent_pay_way"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16px"
+            android:layout_marginTop="@dimen/sc_mm_16"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:lines="1"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
     </LinearLayout>
 
 </LinearLayout>

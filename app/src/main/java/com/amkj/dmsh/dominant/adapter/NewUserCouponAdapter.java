@@ -4,9 +4,9 @@ import android.content.Context;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity.CouponGiftBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -25,7 +25,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
  * version 3.1.5
  * class description:新人专享优惠券
  */
-public class NewUserCouponAdapter extends BaseQuickAdapter<CouponGiftBean, BaseViewHolderHelper> {
+public class NewUserCouponAdapter extends BaseQuickAdapter<CouponGiftBean, BaseViewHolder> {
 
     private final Context context;
 
@@ -35,7 +35,7 @@ public class NewUserCouponAdapter extends BaseQuickAdapter<CouponGiftBean, BaseV
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, CouponGiftBean couponGiftBean) {
+    protected void convert(BaseViewHolder helper, CouponGiftBean couponGiftBean) {
         TextView tv_new_user_coupon_amount = helper.getView(R.id.tv_new_user_coupon_amount);
         tv_new_user_coupon_amount.setText(String.format(context.getString(R.string.money_price_chn), String.valueOf(couponGiftBean.getAmount())));
         Pattern p = Pattern.compile(REGEX_NUM);

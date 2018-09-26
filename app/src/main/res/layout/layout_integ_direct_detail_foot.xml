@@ -19,15 +19,15 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingBottom="30px"
+        android:paddingBottom="@dimen/sc_mm_30"
         android:paddingLeft="@dimen/gap_left"
         android:paddingRight="@dimen/gap_right"
-        android:paddingTop="30px">
+        android:paddingTop="@dimen/sc_mm_30">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_marginRight="24px"
+            android:layout_marginRight="@dimen/sc_mm_24"
             android:layout_gravity="center_vertical"
             android:layout_height="wrap_content">
             <TextView
@@ -38,9 +38,9 @@
                 android:layout_weight="1"
                 android:lines="1"
                 android:longClickable="true"
-                android:layout_marginRight="24px"
+                android:layout_marginRight="@dimen/sc_mm_24"
                 android:textColor="@color/text_login_gray_s"
-                android:textSize="26px" />
+                android:textSize="@dimen/sc_mm_26" />
             <include layout="@layout/layout_communal_copy_text_button"/>
         </LinearLayout>
         <TextView
@@ -50,8 +50,8 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:lines="1"
-            android:layout_marginTop="16px"
+            android:layout_marginTop="@dimen/sc_mm_16"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
     </LinearLayout>
 </LinearLayout>

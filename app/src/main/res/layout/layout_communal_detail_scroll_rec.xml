@@ -12,11 +12,11 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="403px"
+            android:layout_height="@dimen/sc_mm_403"
             android:visibility="gone"
             android:scaleType="centerCrop"
-            android:layout_marginBottom="30px"
-            app:layout_auto_basewidth="height" />
+            android:layout_marginBottom="@dimen/sc_mm_30"
+             />
 
         <include layout="@layout/layout_communal_recycler_wrap" />
     </LinearLayout>

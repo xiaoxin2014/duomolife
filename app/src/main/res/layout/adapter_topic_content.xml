@@ -8,34 +8,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:paddingLeft="20px"
+        android:paddingLeft="@dimen/sc_mm_20"
         android:gravity="center_vertical"
-        android:paddingRight="100px"
-        android:layout_height="180px">
+        android:paddingRight="@dimen/sc_mm_100"
+        android:layout_height="@dimen/sc_mm_180">
         <ImageView
-            android:layout_width="198px"
-            android:layout_height="140px"
+            android:layout_width="@dimen/sc_mm_198"
+            android:layout_height="@dimen/sc_mm_140"
             android:id="@+id/iv_topic_content"
             android:scaleType="centerCrop"
-            app:layout_auto_basewidth = "height"/>
+            />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginLeft="20px"
+            android:layout_marginLeft="@dimen/sc_mm_20"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="match_parent"
                 android:id="@+id/tv_topic_content_title"
                 android:textColor="@color/text_black_t"
-                android:textSize="32px"
+                android:textSize="@dimen/sc_mm_32"
                 android:maxLines="2"
                 android:lineSpacingExtra="@dimen/dimen_8_dp"
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="match_parent"
-                android:layout_marginTop="20px"
+                android:layout_marginTop="@dimen/sc_mm_20"
                 android:layout_below="@id/tv_topic_content_title"
                 android:id="@+id/tv_topic_content_join"
-                android:textSize="24px"
+                android:textSize="@dimen/sc_mm_24"
                 android:textColor="@color/text_login_gray_s"
                 android:layout_height="wrap_content" />
         </RelativeLayout>

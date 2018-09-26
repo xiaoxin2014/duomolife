@@ -9,12 +9,12 @@
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/tv_indent_border_first_gray"
-        android:textSize="30px"
+        android:textSize="@dimen/sc_mm_30"
         android:paddingLeft="@dimen/gap_left"
         android:paddingRight="@dimen/gap_right"
         android:gravity="center_vertical"
         android:textColor="@color/text_login_gray_s"
         android:background="@color/bg_light_blue_e"
-        android:layout_height="100px" />
+        android:layout_height="@dimen/sc_mm_100" />
     <include layout="@layout/layout_recycler_top_address_default" />
 </LinearLayout>

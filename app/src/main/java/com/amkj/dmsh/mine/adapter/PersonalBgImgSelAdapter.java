@@ -4,10 +4,10 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity.MineBgImgBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * class description:背景图片
  */
 
-public class PersonalBgImgSelAdapter extends BaseQuickAdapter<MineBgImgBean, BaseViewHolderHelper> {
+public class PersonalBgImgSelAdapter extends BaseQuickAdapter<MineBgImgBean, BaseViewHolder> {
     private final Context context;
 
     public PersonalBgImgSelAdapter(Context context, List<MineBgImgBean> data) {
@@ -27,7 +27,7 @@ public class PersonalBgImgSelAdapter extends BaseQuickAdapter<MineBgImgBean, Bas
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, MineBgImgBean mineBgImgBean) {
+    protected void convert(BaseViewHolder helper, MineBgImgBean mineBgImgBean) {
         GlideImageLoaderUtil.loadFitCenter(context, (ImageView) helper.getView(R.id.iv_mine_bg_img), mineBgImgBean.getBgimg_url());
         helper.itemView.setTag(mineBgImgBean);
     }

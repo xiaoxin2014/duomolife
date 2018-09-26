@@ -19,9 +19,9 @@
             <com.bigkoo.convenientbanner.ConvenientBanner
                 android:id="@+id/banner_integration_details"
                 android:layout_width="match_parent"
-                android:layout_height="750px"
+                android:layout_height="@dimen/sc_mm_750"
                 android:background="@drawable/border_bottom_line"
-                app:layout_auto_basewidth="height" />
+                 />
             <include
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,8 +40,8 @@
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:id="@+id/flex_integral_tag"
-            android:paddingLeft="30px"
-            android:paddingRight="26px"
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_26"
             android:layout_height="wrap_content"
             app:flexWrap="wrap"/>
     </LinearLayout>

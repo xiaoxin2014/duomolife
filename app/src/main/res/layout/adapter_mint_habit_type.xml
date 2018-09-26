@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="168px"
+    android:layout_width="@dimen/sc_mm_168"
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <FrameLayout
@@ -11,17 +11,17 @@
         <ImageView
             android:id="@+id/iv_habit_type"
             android:layout_width="match_parent"
-            android:layout_height="168px"
+            android:layout_height="@dimen/sc_mm_168"
             android:scaleType="centerCrop"
-            app:layout_auto_basewidth="height"/>
+            />
         <com.amkj.dmsh.views.RoundImageView
             android:id="@+id/iv_round_habit_type_fg"
             android:layout_width="match_parent"
-            android:layout_height="168px"
+            android:layout_height="@dimen/sc_mm_168"
             android:scaleType="fitCenter"
             android:visibility="gone"
             android:src="@drawable/habit_check_bg"
-            app:layout_auto_basewidth="height"
+
             app:radius="@dimen/dimen_4dp"
             app:type="round"/>
     </FrameLayout>
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="母婴"
-        android:layout_marginTop="12px"
+        android:layout_marginTop="@dimen/sc_mm_12"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="26px" />
+        android:textSize="@dimen/sc_mm_26" />
 </LinearLayout>

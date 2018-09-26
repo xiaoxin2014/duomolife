@@ -16,14 +16,14 @@
         android:orientation="horizontal"
         android:id="@+id/ll_lottery_award"
         android:gravity="center_vertical"
-        android:layout_marginRight="38px"
+        android:layout_marginRight="@dimen/sc_mm_38"
         android:layout_height="wrap_content">
         <include
             layout="@layout/layout_integral_lottery_prize"
             android:layout_width="match_parent"
-            android:layout_height="100px"
-            android:layout_marginLeft="30px"
-            android:layout_marginRight="38px"
+            android:layout_height="@dimen/sc_mm_100"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginRight="@dimen/sc_mm_38"
             android:layout_weight="1"
             android:layout_gravity="center_vertical" />
         <ImageView

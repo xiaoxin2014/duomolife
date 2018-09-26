@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.amkj.dmsh.views.autoviews.AutoRadioGroup
+            <RadioGroup
                 android:id="@+id/rp_draw_up_invoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,29 +28,29 @@
                 <RadioButton
                     android:id="@+id/rb_no_invoice"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:background="@drawable/border_top_bottom_line"
                     android:button="@null"
                     android:checked="true"
                     android:drawableLeft="@drawable/sel_cb_blue_white"
                     android:drawablePadding="@dimen/dimen_14dp"
-                    android:paddingLeft="30px"
+                    android:paddingLeft="@dimen/sc_mm_30"
                     android:text="不开发票"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
+                    android:textSize="@dimen/sc_mm_30" />
 
                 <RadioButton
                     android:id="@+id/rb_draw_up_invoice"
                     android:layout_width="match_parent"
-                    android:layout_height="104px"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:button="@null"
                     android:drawableLeft="@drawable/sel_cb_blue_white"
                     android:drawablePadding="@dimen/dimen_14dp"
-                    android:paddingLeft="30px"
+                    android:paddingLeft="@dimen/sc_mm_30"
                     android:text="普通发票"
                     android:textColor="@color/text_black_t"
-                    android:textSize="30px" />
-            </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
+                    android:textSize="@dimen/sc_mm_30" />
+            </RadioGroup>
 
             <View
                 android:layout_width="match_parent"
@@ -69,19 +69,19 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="104px"
-                    android:paddingLeft="30px"
+                    android:minHeight="@dimen/sc_mm_104"
+                    android:paddingLeft="@dimen/sc_mm_30"
                     android:paddingRight="@dimen/gap_right">
 
                     <TextView
                         android:id="@+id/tv_invoice_info_title"
                         android:layout_width="wrap_content"
-                        android:layout_height="104px"
+                        android:layout_height="@dimen/sc_mm_104"
                         android:layout_centerVertical="true"
                         android:gravity="center_vertical"
                         android:text="发票抬头 ："
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
 
                     <EditText
                         android:id="@+id/et_invoice_info_title"
@@ -92,28 +92,28 @@
                         android:gravity="center_vertical"
                         android:hint="请填写发票抬头名称"
                         android:lines="2"
-                        android:minHeight="104px"
+                        android:minHeight="@dimen/sc_mm_104"
                         android:textColor="@color/text_black_t"
                         android:textColorHint="@color/text_hint_gray_ae"
-                        android:textSize="30px"
+                        android:textSize="@dimen/sc_mm_30"
                         android:background="@color/transparent"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="104px"
-                    android:paddingLeft="30px"
+                    android:minHeight="@dimen/sc_mm_104"
+                    android:paddingLeft="@dimen/sc_mm_30"
                     android:paddingRight="@dimen/gap_right">
 
                     <TextView
                         android:id="@+id/tv_invoice_info_num"
                         android:layout_width="wrap_content"
-                        android:layout_height="84px"
+                        android:layout_height="@dimen/sc_mm_84"
                         android:layout_centerVertical="true"
                         android:gravity="center_vertical"
                         android:text="纳税人识别号 ："
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
 
                     <EditText
                         android:id="@+id/et_invoice_info_num"
@@ -124,29 +124,29 @@
                         android:gravity="center_vertical"
                         android:hint="企业必填"
                         android:lines="2"
-                        android:minHeight="104px"
+                        android:minHeight="@dimen/sc_mm_104"
                         android:textColor="@color/text_black_t"
                         android:textColorHint="@color/text_hint_gray_ae"
-                        android:textSize="30px"
+                        android:textSize="@dimen/sc_mm_30"
                         android:background="@color/transparent"/>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="104px"
-                    android:paddingLeft="30px"
+                    android:minHeight="@dimen/sc_mm_104"
+                    android:paddingLeft="@dimen/sc_mm_30"
                     android:paddingRight="@dimen/gap_right">
 
                     <TextView
                         android:id="@+id/tv_invoice_info_type"
                         android:layout_width="wrap_content"
-                        android:layout_height="104px"
+                        android:layout_height="@dimen/sc_mm_104"
                         android:layout_centerVertical="true"
                         android:gravity="center_vertical"
                         android:text="发票类型 ："
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -154,28 +154,28 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/tv_invoice_info_type"
                         android:gravity="center_vertical"
-                        android:minHeight="104px"
+                        android:minHeight="@dimen/sc_mm_104"
                         android:text="电子发票"
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="104px"
-                    android:paddingLeft="30px"
+                    android:minHeight="@dimen/sc_mm_104"
+                    android:paddingLeft="@dimen/sc_mm_30"
                     android:paddingRight="@dimen/gap_right">
 
                     <TextView
                         android:id="@+id/tv_invoice_info_content"
                         android:layout_width="wrap_content"
-                        android:layout_height="104px"
+                        android:layout_height="@dimen/sc_mm_104"
                         android:layout_centerVertical="true"
                         android:gravity="center_vertical"
                         android:text="发票内容 ："
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -183,10 +183,10 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/tv_invoice_info_content"
                         android:gravity="center_vertical"
-                        android:minHeight="104px"
+                        android:minHeight="@dimen/sc_mm_104"
                         android:text="明细"
                         android:textColor="@color/text_black_t"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -194,15 +194,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="70px"
-                android:paddingLeft="30px"
-                android:paddingRight="30px"
-                android:paddingTop="12px">
+                android:paddingBottom="@dimen/sc_mm_70"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingRight="@dimen/sc_mm_30"
+                android:paddingTop="@dimen/sc_mm_12">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10px"
+                    android:layout_marginRight="@dimen/sc_mm_10"
                     android:src="@drawable/invoice_hint_icon" />
                 <include layout="@layout/layout_communal_recycler_wrap"/>
             </LinearLayout>
@@ -213,9 +213,9 @@
         android:id="@+id/bt_draw_up_invoice_finish"
         android:visibility="gone"
         android:background="@drawable/sel_bt_click_red_gray"
-        android:textSize="36px"
+        android:textSize="@dimen/sc_mm_36"
         android:gravity="center"
         android:text="完成"
         android:textColor="@color/white"
-        android:layout_height="98px" />
+        android:layout_height="@dimen/sc_mm_98" />
 </LinearLayout>

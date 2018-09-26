@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -133,10 +134,18 @@ public class TimeShowNewActivity extends BaseActivity {
     private void setTimeShaftIndex(TimeShowShaftEntity timeShowEntity) {
         timeShowBeanList.clear();
         timeShowBeanList.addAll(timeShowEntity.getTimeShowShaftList());
+        int currentPosition = 0;
+        for (int i = 0; i < rp_time_spring.getChildCount(); i++) {
+            RadioButton radioButton = (RadioButton) rp_time_spring.getChildAt(i);
+            if(radioButton.isChecked()){
+                currentPosition = i;
+                break;
+            }
+        }
         if (timeShowBeanList.size() > 0) {
             TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList,timeShowEntity.getSystemTime());
             vp_show_time.setAdapter(timeShowPagerAdapter);
-            vp_show_time.setCurrentItem(0);
+            vp_show_time.setCurrentItem(currentPosition);
         }
     }
 

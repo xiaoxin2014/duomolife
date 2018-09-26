@@ -27,12 +27,12 @@
             android:paddingLeft="@dimen/gap_left"
             android:text="搜索历史"
             android:textColor="@color/home_text_color"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_indent_history_search"
             android:layout_width="match_parent"
-            android:layout_height="300px"
+            android:layout_height="@dimen/sc_mm_300"
             android:scrollbars="none" />
     </LinearLayout>
 
@@ -46,14 +46,14 @@
         <TextView
             android:id="@+id/tv_key_clear"
             android:layout_width="wrap_content"
-            android:layout_height="60px"
+            android:layout_height="@dimen/sc_mm_60"
             android:layout_gravity="center"
-            android:clickable="true"
+
             android:drawableLeft="@drawable/srash_s_btn_nor"
             android:drawablePadding="5dp"
             android:gravity="center_vertical"
             android:text="清除搜索历史"
             android:textColor="#5faeff"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
     </LinearLayout>
 </LinearLayout>

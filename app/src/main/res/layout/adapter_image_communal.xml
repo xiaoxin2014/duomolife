@@ -5,10 +5,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <ImageView
-        android:layout_width="240px"
-        android:layout_height="240px"
-        android:layout_marginRight="20px"
+        android:layout_width="@dimen/sc_mm_240"
+        android:layout_height="@dimen/sc_mm_240"
+        android:layout_marginRight="@dimen/sc_mm_20"
         android:scaleType="centerCrop"
         android:id="@+id/iv_image_path"
-        app:layout_auto_basewidth = "height"/>
+        />
 </RelativeLayout>

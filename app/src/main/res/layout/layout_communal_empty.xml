@@ -2,18 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="222px"
     android:background="@color/gray_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical">
     <ImageView
         android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_222"
         android:src="@drawable/integ_indent_empty"
         android:layout_height="wrap_content" />
     <TextView
         android:layout_width="wrap_content"
-        android:layout_marginTop="71px"
-        android:textSize="30px"
+        android:layout_marginTop="@dimen/sc_mm_71"
+        android:textSize="@dimen/sc_mm_30"
         android:text="@string/no_found_content"
         android:id="@+id/tv_communal_empty"
         android:textColor="@color/text_gray_hint_n"

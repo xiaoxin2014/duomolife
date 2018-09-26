@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
@@ -18,6 +17,7 @@ import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 /**
  * Created by atd48 on 2016/7/4.
  */
-public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFansBean, BaseViewHolderHelper> {
+public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFansBean, BaseViewHolder> {
 
     private final Context context;
     private String type;
@@ -45,7 +45,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, UserAttentionFansBean userAttentionFansBean) {
+    protected void convert(BaseViewHolder helper, UserAttentionFansBean userAttentionFansBean) {
         ImageView search_details_user_header = helper.getView(R.id.search_details_user_header);
         TextView tv_search_details_user_name = helper.getView(R.id.tv_search_details_user_name);
         TextView tv_search_details_attention = helper.getView(R.id.tv_search_details_attention);

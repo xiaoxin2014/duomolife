@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="68px"
+    android:layout_height="@dimen/sc_mm_68"
     android:id="@+id/ll_home_marquee"
     android:visibility="gone"
     android:gravity="center_vertical"
     android:background="@color/bg_blue_dz"
     android:orientation="horizontal">
     <ImageView
-        android:layout_width="29px"
+        android:layout_width="@dimen/sc_mm_29"
         android:src="@drawable/marquee_not"
-        android:layout_marginLeft="15px"
-        android:layout_marginRight="16px"
-        android:layout_height="28px" />
+        android:layout_marginLeft="@dimen/sc_mm_15"
+        android:layout_marginRight="@dimen/sc_mm_16"
+        android:layout_height="@dimen/sc_mm_28" />
     <com.amkj.dmsh.views.MarqueeTextView
         android:layout_width="0px"
         android:layout_weight="1"
         android:singleLine="true"
         android:id="@+id/tv_marquee_text"
         android:ellipsize="marquee"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:textColor="@color/text_login_gray_s"
         android:marqueeRepeatLimit="1"
         android:layout_height="wrap_content" />
     <View
-        android:layout_width="2px"
+        android:layout_width="@dimen/sc_mm_2"
         android:background="@color/text_login_gray_s"
-        android:layout_height="35px"/>
+        android:layout_height="@dimen/sc_mm_35"/>
     <ImageView
-        android:layout_width="67px"
-        android:padding="20px"
+        android:layout_width="@dimen/sc_mm_67"
+        android:padding="@dimen/sc_mm_20"
         android:id="@+id/iv_home_marquee_close"
         android:src="@drawable/marquee_close"
         android:scaleType="fitCenter"

@@ -7,8 +7,8 @@
     <include layout="@layout/activity_domolife_header"/>
     <com.flyco.tablayout.SlidingTabLayout
         xmlns:tl="http://schemas.android.com/apk/res-auto"
-        android:layout_width="550px"
-        android:layout_height="98px"
+        android:layout_width="@dimen/sc_mm_550"
+        android:layout_height="@dimen/sc_mm_98"
         android:id="@+id/std_integral_product"
         android:background="@color/white"
         tl:tl_indicator_width_equal_title="true"

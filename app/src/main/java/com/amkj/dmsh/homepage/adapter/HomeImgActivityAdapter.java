@@ -4,10 +4,10 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * class description:图片广告
  */
 
-public class HomeImgActivityAdapter extends BaseQuickAdapter<CommunalADActivityBean, BaseViewHolderHelper> {
+public class HomeImgActivityAdapter extends BaseQuickAdapter<CommunalADActivityBean, BaseViewHolder> {
     private final Context context;
 
     public HomeImgActivityAdapter(Context context, List<CommunalADActivityBean> activityBeanList) {
@@ -27,7 +27,7 @@ public class HomeImgActivityAdapter extends BaseQuickAdapter<CommunalADActivityB
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, CommunalADActivityBean communalADActivityBean) {
+    protected void convert(BaseViewHolder helper, CommunalADActivityBean communalADActivityBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_home_img_activity), communalADActivityBean.getPicUrl());
         helper.itemView.setTag(communalADActivityBean);
     }

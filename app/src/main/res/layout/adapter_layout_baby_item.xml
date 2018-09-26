@@ -7,22 +7,22 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="90px">
+        android:layout_height="@dimen/sc_mm_90">
         <TextView
-            android:paddingLeft="24px"
+            android:paddingLeft="@dimen/sc_mm_24"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:id="@+id/tv_mine_baby_sex"
             android:textColor="@color/home_text_color"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:layout_height="wrap_content"/>
         <TextView
             android:gravity="center_vertical"
             android:layout_width="wrap_content"
             android:drawablePadding="@dimen/dimen_15_dp"
             android:paddingRight="@dimen/dimen_5_dp"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             android:drawableRight="@drawable/right_btn_nor"
             android:id="@+id/tv_baby_data_time"
             android:layout_centerVertical="true"

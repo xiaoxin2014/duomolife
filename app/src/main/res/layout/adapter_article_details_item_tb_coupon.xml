@@ -8,34 +8,34 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/rel_tb_coupon"
-        android:layout_marginBottom="20px"
+        android:layout_marginBottom="@dimen/sc_mm_20"
         android:layout_height="wrap_content">
         <ImageView
             android:layout_width="match_parent"
             android:background="@drawable/coupon_taobao_bg"
-            android:layout_height="134px"
+            android:layout_height="@dimen/sc_mm_134"
             android:id="@+id/iv_tb_coupon_bg"
             android:layout_marginLeft="@dimen/gap_left"
             android:layout_marginRight="@dimen/gap_right"
-            app:layout_auto_basewidth = "height"/>
+            />
         <TextView
             android:layout_width="wrap_content"
             android:textColor="@color/white"
-            android:textSize="32px"
+            android:textSize="@dimen/sc_mm_32"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/dimen_50dp"
             android:layout_marginRight="@dimen/gap_right"
             android:id="@+id/tv_tb_coupon_price"
             android:gravity="bottom"
-            android:minHeight="75px"
+            android:minHeight="@dimen/sc_mm_75"
             android:text="￥30优惠券"
             android:layout_height="wrap_content" />
     </RelativeLayout>
     <TextView
         android:layout_width="match_parent"
-        android:layout_marginBottom="40px"
+        android:layout_marginBottom="@dimen/sc_mm_40"
         android:textColor="@color/text_normal_red"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:visibility="gone"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"

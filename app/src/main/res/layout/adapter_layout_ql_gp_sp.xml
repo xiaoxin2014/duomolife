@@ -5,23 +5,23 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingBottom="26px">
+    android:paddingBottom="@dimen/sc_mm_26">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <include layout="@layout/layout_communal_img_bg_time" />
         <TextView
-            android:layout_width="108px"
-            android:layout_height="68px"
-            android:layout_marginLeft="20px"
-            android:textSize="28px"
+            android:layout_width="@dimen/sc_mm_108"
+            android:layout_height="@dimen/sc_mm_68"
+            android:layout_marginLeft="@dimen/sc_mm_20"
+            android:textSize="@dimen/sc_mm_28"
             android:textColor="@color/white"
             android:text="邀新团"
             android:gravity="center"
             android:visibility="gone"
             android:background="@drawable/ql_gp_icon"
             android:id="@+id/tv_ql_gp_sp_new"
-            app:layout_auto_basewidth = "height"/>
+            />
     </RelativeLayout>
 
     <TextView
@@ -31,69 +31,69 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:lines="1"
-        android:paddingLeft="20px"
-        android:paddingTop="20px"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingTop="@dimen/sc_mm_20"
         android:textColor="@color/text_black_t"
-        android:textSize="28px" />
+        android:textSize="@dimen/sc_mm_28" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28px"
-        android:paddingLeft="30px"
-        android:paddingRight="20px">
+        android:layout_marginTop="@dimen/sc_mm_28"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_20">
         <include layout="@layout/layout_ql_gp_sp_price" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28px"
+        android:layout_marginTop="@dimen/sc_mm_28"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="20px"
-        android:paddingRight="20px">
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_20">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="已成团:"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_gp_sp_open_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="18px"
+            android:layout_marginLeft="@dimen/sc_mm_18"
             android:textColor="@color/text_normal_red"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="68px"
+            android:layout_marginLeft="@dimen/sc_mm_68"
             android:text="库存:"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:id="@+id/tv_gp_sp_inventory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="18px"
+            android:layout_marginLeft="@dimen/sc_mm_18"
             android:layout_weight="1"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
-            android:layout_width="177px"
-            android:layout_height="58px"
+            android:layout_width="@dimen/sc_mm_177"
+            android:layout_height="@dimen/sc_mm_58"
             android:id="@+id/tv_gp_sp_count"
             android:background="@drawable/sel_red_nor_gray_cir_five"
             android:gravity="center"
             android:text="去开团"
             android:textColor="@color/white"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
     </LinearLayout>
 </LinearLayout>

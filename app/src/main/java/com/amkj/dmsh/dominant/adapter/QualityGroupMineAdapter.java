@@ -6,10 +6,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:拼团订单
  */
 
-public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBean, BaseViewHolderHelper> {
+public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBean, BaseViewHolder> {
     private final Context context;
 
     public QualityGroupMineAdapter(Context context, List<QualityGroupMineBean> qualityGroupMineList) {
@@ -35,7 +35,7 @@ public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBe
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, QualityGroupMineBean qualityGroupMineBean) {
+    protected void convert(BaseViewHolder helper, QualityGroupMineBean qualityGroupMineBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_gp_product), qualityGroupMineBean.getGpPicUrl());
         helper.setText(R.id.tv_ql_mine_time, !TextUtils.isEmpty(qualityGroupMineBean.getPayTime())
                 ? qualityGroupMineBean.getPayTime() : getStrings(qualityGroupMineBean.getCreateTime()))

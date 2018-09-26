@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_communal_sel_wheel"
     android:layout_width="match_parent"
-    android:layout_height="415px"
+    android:layout_height="@dimen/sc_mm_415"
     android:background="@color/white"
     android:orientation="vertical"
     android:visibility="gone">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70px"
+        android:layout_height="@dimen/sc_mm_70"
         android:background="#f9f9f9"
         android:gravity="center_vertical">
 
@@ -18,26 +18,26 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#f9f9f9"
-            android:clickable="true"
+
             android:gravity="center"
             android:paddingLeft="@dimen/gap_left"
-            android:paddingRight="20px"
+            android:paddingRight="@dimen/sc_mm_20"
             android:text="取消"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
         <TextView
             android:id="@+id/tv_one_click_confirmed"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:clickable="true"
+
             android:gravity="center"
-            android:paddingLeft="20px"
+            android:paddingLeft="@dimen/sc_mm_20"
             android:paddingRight="@dimen/gap_right"
             android:text="确定"
             android:textColor="#408ed6"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
     </RelativeLayout>
 
     <com.amkj.dmsh.address.widget.WheelView

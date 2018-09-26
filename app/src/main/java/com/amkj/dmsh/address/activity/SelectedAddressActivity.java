@@ -174,19 +174,16 @@ public class SelectedAddressActivity extends BaseActivity {
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 finish();
-            } else {
-                return;
             }
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == CREATE_ADDRESS_REQ || requestCode == EDIT_ADDRESS_REQ) {
-                int addressId = data.getIntExtra("addressId", 0);
-                if (!isMineSkip && addressId != 0) {
-                    goBackAddress(addressId);
-                } else {
-                    loadData();
-                }
+        if (requestCode == CREATE_ADDRESS_REQ || requestCode == EDIT_ADDRESS_REQ) {
+            int addressId = data.getIntExtra("addressId", 0);
+            if (!isMineSkip && addressId != 0) {
+                goBackAddress(addressId);
+            } else {
+                loadData();
             }
         }
     }
@@ -223,8 +220,8 @@ public class SelectedAddressActivity extends BaseActivity {
     @Override
     protected void loadData() {
         String url = Url.BASE_URL + Url.ADDRESS_LIST;
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
@@ -241,7 +238,7 @@ public class SelectedAddressActivity extends BaseActivity {
                         showToast(SelectedAddressActivity.this, addressListEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
             }
 
             @Override
@@ -249,7 +246,7 @@ public class SelectedAddressActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 selectedAddressAdapter.loadMoreComplete();
                 showToast(SelectedAddressActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
             }
 
             @Override
@@ -257,7 +254,7 @@ public class SelectedAddressActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 selectedAddressAdapter.loadMoreComplete();
                 showToast(SelectedAddressActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,addressAllBeanList,addressListEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
             }
         });
     }
@@ -275,9 +272,9 @@ public class SelectedAddressActivity extends BaseActivity {
                 if (status != null) {
                     if (status.getCode().equals("01")) {
                         showToast(SelectedAddressActivity.this, "修改默认地址完成");
-                        if(!isMineSkip){
+                        if (!isMineSkip) {
                             goBackAddress(addressAllBean.getId());
-                        }else{
+                        } else {
                             loadData();
                         }
                     } else if (!status.getCode().equals("02")) {

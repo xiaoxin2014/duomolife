@@ -5,11 +5,11 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:paddingTop="24px"
-        android:paddingBottom="24px"
+        android:paddingTop="@dimen/sc_mm_24"
+        android:paddingBottom="@dimen/sc_mm_24"
         android:gravity="center"
         android:textColor="@color/text_login_blue_z"
         android:text="查看更多"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:layout_height="wrap_content"/>
 </RelativeLayout>

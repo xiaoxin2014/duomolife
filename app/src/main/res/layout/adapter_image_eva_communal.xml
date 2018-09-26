@@ -5,12 +5,12 @@
     android:background="@color/white"
     android:layout_height="wrap_content">
     <ImageView
-        android:layout_width="160px"
+        android:layout_width="@dimen/sc_mm_160"
         android:id="@+id/iv_eva_image"
         android:scaleType="centerCrop"
-        android:layout_marginRight="20px"
+        android:layout_marginRight="@dimen/sc_mm_20"
         android:adjustViewBounds="true"
         android:src="@drawable/load_loading_image"
-        android:layout_height="160px"
-        app:layout_auto_basewidth = "height"/>
+        android:layout_height="@dimen/sc_mm_160"
+        />
 </RelativeLayout>

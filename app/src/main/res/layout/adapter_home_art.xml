@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="20px"
-    android:paddingRight="20px">
+    android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="382px"
-        android:scaleType="centerCrop"
-        app:layout_auto_basewidth="height" >
+        android:layout_height="@dimen/sc_mm_382"
+        android:layout_marginLeft="@dimen/sc_mm_15"
+        android:layout_marginRight="@dimen/sc_mm_15"
+        android:scaleType="centerCrop">
         <ImageView
             android:id="@+id/iv_article_cover"
             android:layout_width="match_parent"
@@ -18,18 +16,18 @@
             android:scaleType="centerCrop"/>
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="36px"
-            android:drawablePadding="@dimen/dimen_5_dp"
+            android:layout_height="@dimen/sc_mm_36"
+            android:drawablePadding="@dimen/sc_mm_5"
             android:textColor="@color/white"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
-            android:textSize="22px"
+            android:textSize="@dimen/sc_mm_22"
             android:drawableLeft="@drawable/art_eye_icon"
             android:id="@+id/tv_article_view_count"
-            android:paddingLeft="12px"
-            android:paddingRight="12px"
-            android:layout_marginBottom="20px"/>
+            android:paddingLeft="@dimen/sc_mm_12"
+            android:paddingRight="@dimen/sc_mm_12"
+            android:layout_marginBottom="@dimen/sc_mm_20"/>
     </RelativeLayout>
 
     <TextView
@@ -37,35 +35,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:layout_marginLeft="@dimen/sc_mm_15"
+        android:layout_marginRight="@dimen/sc_mm_15"
         android:lines="1"
-        android:paddingBottom="20px"
-        android:paddingTop="20px"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/sc_mm_20"
+        android:paddingTop="@dimen/sc_mm_20"
         android:textColor="@color/text_black_t"
-        android:textSize="32px" />
+        android:textSize="@dimen/sc_mm_32" />
 
     <TextView
         android:id="@+id/tv_article_descrip"
         android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/sc_mm_15"
+        android:layout_marginRight="@dimen/sc_mm_15"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6px"
+        android:layout_marginTop="@dimen/sc_mm_6"
         android:ellipsize="end"
         android:lineSpacingExtra="@dimen/dimen_8_dp"
         android:maxLines="3"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="26px" />
+        android:textSize="@dimen/sc_mm_26" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_15"
+        android:layout_marginRight="@dimen/sc_mm_15"
         android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tv_article_type"
             android:layout_width="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_height="60px"
+            android:layout_height="@dimen/sc_mm_60"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="22px" />
+            android:textSize="@dimen/sc_mm_22" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

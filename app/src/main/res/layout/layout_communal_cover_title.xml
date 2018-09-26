@@ -9,10 +9,10 @@
         android:id="@+id/tv_descrip_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="40px"
-        android:paddingLeft="30px"
-        android:paddingRight="40px"
-        android:paddingTop="40px"
+        android:paddingBottom="@dimen/sc_mm_40"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_40"
+        android:paddingTop="@dimen/sc_mm_40"
         android:textColor="@color/text_black_t"
-        android:textSize="30px" />
+        android:textSize="@dimen/sc_mm_30" />
 </LinearLayout>

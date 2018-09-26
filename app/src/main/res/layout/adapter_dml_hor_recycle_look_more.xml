@@ -3,17 +3,17 @@
     android:layout_width="wrap_content"
     android:gravity="center"
     android:background="@color/white"
-    android:paddingLeft="20px"
-    android:paddingRight="20px"
-    android:paddingTop="18px"
-    android:paddingBottom="18px"
+    android:paddingLeft="@dimen/sc_mm_20"
+    android:paddingRight="@dimen/sc_mm_20"
+    android:paddingTop="@dimen/sc_mm_18"
+    android:paddingBottom="@dimen/sc_mm_18"
     android:orientation="vertical"
     android:layout_height="wrap_content">
     <RelativeLayout
-        android:layout_width="200px"
+        android:layout_width="@dimen/sc_mm_200"
         android:gravity="center"
         android:id="@+id/rel_dnl_hor_layout"
-        android:layout_height="200px">
+        android:layout_height="@dimen/sc_mm_200">
         <LinearLayout
             android:layout_width="wrap_content"
             android:orientation="vertical"
@@ -23,44 +23,44 @@
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:text="查看全部"
-                android:textSize="26px"
-                android:paddingBottom="7px"
+                android:textSize="@dimen/sc_mm_26"
+                android:paddingBottom="@dimen/sc_mm_7"
                 android:textColor="@color/text_login_blue_z"
                 android:layout_height="wrap_content" />
             <TextView
-                android:paddingTop="10px"
+                android:paddingTop="@dimen/sc_mm_10"
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:text="See more"
-                android:textSize="24px"
+                android:textSize="@dimen/sc_mm_24"
                 android:textColor="@color/text_gray_hint_n"
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="200px"
+        android:layout_width="@dimen/sc_mm_200"
         android:orientation="vertical"
         android:visibility="invisible"
         android:layout_height="wrap_content">
         <TextView
            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12px"
+            android:layout_marginTop="@dimen/sc_mm_12"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:lines="2"
-            android:paddingLeft="4px"
+            android:paddingLeft="@dimen/sc_mm_4"
             android:textColor="@color/home_text_color"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12px"
+            android:layout_marginTop="@dimen/sc_mm_12"
             android:gravity="center_vertical"
-            android:paddingLeft="4px"
+            android:paddingLeft="@dimen/sc_mm_4"
             android:textColor="#ff6d6d"
-            android:textSize="24px" />
+            android:textSize="@dimen/sc_mm_24" />
     </LinearLayout>
 </LinearLayout>

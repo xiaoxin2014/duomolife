@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ImageBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.XFLinearLayoutManager;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
@@ -38,6 +37,7 @@ import com.amkj.dmsh.views.flowlayout.FlowLayout;
 import com.amkj.dmsh.views.flowlayout.TagAdapter;
 import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -234,7 +234,6 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                     } else {
                         view.setPadding(DensityUtil.dip2px(context, 10), 0, 0, 0);
                     }
-                    AutoUtils.autoSize(view);
                     textView.setText(s);
                     return view;
                 }
@@ -412,7 +411,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
         }
     }
 
-    public class InvitationViewHolder extends BaseViewHolderHelper {
+    public class InvitationViewHolder extends BaseViewHolder {
         private RecyclerView communal_recycler_wrap;
         private RecyclerView rv_find_image;
         private RelativeLayout rel_inv_pro;

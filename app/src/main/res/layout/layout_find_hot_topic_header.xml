@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="88px">
-        <View
-            android:layout_width="5px"
-            android:layout_centerVertical="true"
-            android:background="@color/text_login_blue_z"
-            android:layout_height="30px"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
-            android:textSize="28px"
-            android:layout_marginLeft="14px"
-            android:textColor="@color/text_login_gray_s"
-            android:text="@string/hot_text"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:id="@+id/tv_find_hot_topic"
-            android:clickable="true"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="24px"
-            android:gravity="center_vertical"
-            android:layout_alignParentRight="true"
-            android:paddingRight="20px"
-            android:text="@string/text_more"
-            android:drawablePadding="@dimen/dimen_5_dp"
-            android:drawableRight="@drawable/black_next_icon"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
+    android:layout_height="@dimen/sc_mm_88"
+    android:background="@color/white">
+
+    <View
+        android:layout_width="@dimen/sc_mm_5"
+        android:layout_height="@dimen/sc_mm_30"
+        android:layout_centerVertical="true"
+        android:background="@color/text_login_blue_z" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:text="@string/hot_text"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <TextView
+        android:id="@+id/tv_find_hot_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:drawablePadding="@dimen/sc_mm_5"
+        android:drawableRight="@drawable/black_next_icon"
+        android:gravity="center_vertical"
+        android:paddingRight="@dimen/gap_right"
+        android:text="@string/text_more"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24" />
 </RelativeLayout>

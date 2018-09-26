@@ -13,7 +13,7 @@
     <com.flyco.tablayout.SlidingTabLayout
         android:id="@+id/sliding_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/sc_mm_88"
         android:background="@drawable/border_top_bottom_line"
         app:tl_indicator_color="@color/promotion_blue"
         app:tl_indicator_height="@dimen/dimen_1dp"

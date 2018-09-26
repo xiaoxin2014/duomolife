@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/tl_find_header"
     android:background="@drawable/sel_bg_border_gray_white"
     app:layout_collapseMode="pin"
-    android:minHeight="88px"
+    android:minHeight="@dimen/sc_mm_88"
     app:contentInsetStart="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/sc_mm_88"
         android:gravity="center_vertical">
         <TextView
             android:layout_width="wrap_content"
             android:textColor="@color/text_black_t"
-            android:textSize="34px"
+            android:textSize="@dimen/sc_mm_34"
             android:text="发 现"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:layout_height="match_parent" />
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_marginRight="18px"
-            android:layout_marginLeft="31px"
+            android:layout_marginRight="@dimen/sc_mm_18"
+            android:layout_marginLeft="@dimen/sc_mm_31"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:id="@+id/fra_find_message_total"
             android:layout_height="wrap_content">
             <ImageView
-                android:layout_width="64px"
+                android:layout_width="@dimen/sc_mm_64"
                 android:id="@+id/iv_find_message_total"
-                android:layout_height="54px"
-                android:paddingRight="12px"
-                android:paddingTop="12px"
+                android:layout_height="@dimen/sc_mm_54"
+                android:paddingRight="@dimen/sc_mm_12"
+                android:paddingTop="@dimen/sc_mm_12"
                 android:src="@drawable/home_mes_icon"/>
         </FrameLayout>
     </RelativeLayout>
 
-</com.amkj.dmsh.views.autoviews.AutoToolbar>
+</android.support.v7.widget.Toolbar>

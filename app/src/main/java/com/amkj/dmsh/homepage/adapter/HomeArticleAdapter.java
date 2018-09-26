@@ -9,10 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.zhy.autolayout.utils.AutoUtils;
@@ -27,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/7/28
- * class description:请输入类描述
+ * class description:首页-文章
  */
 
 public class HomeArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, HomeArticleAdapter.ArticleCoverViewHolder> {
@@ -77,7 +77,7 @@ public class HomeArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, Ho
         helper.itemView.setTag(communalArticleBean);
     }
 
-    public class ArticleCoverViewHolder extends BaseViewHolderHelper{
+    public class ArticleCoverViewHolder extends BaseViewHolder {
         TextView tv_article_view_count;
         public ArticleCoverViewHolder(View view) {
             super(view);

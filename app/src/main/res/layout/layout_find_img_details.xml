@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content">--><!--<LinearLayout--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:paddingBottom="28px"--><!--android:background="@color/white"--><!--android:focusable="true"--><!--android:focusableInTouchMode="true"--><!--android:orientation="vertical">-->
+<?xml version="1.0" encoding="utf-8"?><!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content">--><!--<LinearLayout--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:paddingBottom="@dimen/sc_mm_28"--><!--android:background="@color/white"--><!--android:focusable="true"--><!--android:focusableInTouchMode="true"--><!--android:orientation="vertical">-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="30px"
+        android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/gap_right">
 
         <include layout="@layout/layout_invitation_user" />
@@ -21,18 +21,18 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingLeft="30px"
+        android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/gap_right">
 
         <emojicon.EmojiconTextView
             android:id="@+id/tv_find_img_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
+
             android:gravity="center_vertical"
             android:lineSpacingExtra="@dimen/dimen_5_dp"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="30px"
+            android:textSize="@dimen/sc_mm_30"
             app:emojiconAlignment="baseline"
             app:emojiconSize="17sp"
             app:trimLines="5" />
@@ -42,7 +42,7 @@
         android:id="@+id/rv_img_find"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25px"
+        android:layout_marginTop="@dimen/sc_mm_25"
         android:orientation="vertical"
         android:scrollbars="none" />
 
@@ -50,9 +50,9 @@
         android:id="@+id/rel_tag_layout_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20px"
-        android:layout_marginTop="28px"
-        android:paddingLeft="30px"
+        android:layout_marginBottom="@dimen/sc_mm_20"
+        android:layout_marginTop="@dimen/sc_mm_28"
+        android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/gap_right">
 
         <include

@@ -2,22 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/white"
-    android:paddingLeft="30px"
+    android:paddingLeft="@dimen/sc_mm_30"
     android:paddingRight="@dimen/gap_right"
-    android:layout_height="104px">
+    android:layout_height="@dimen/sc_mm_104">
     <TextView
         android:layout_width="wrap_content"
         android:gravity="center_vertical"
         android:id="@+id/tv_mes_push_type_name"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:layout_centerVertical="true"
         android:textColor="@color/text_black_t"
         android:layout_height="wrap_content" />
     <ImageView
-        android:layout_width="102px"
+        android:layout_width="@dimen/sc_mm_102"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:id="@+id/iv_mes_push_type_clo_open"
         android:src="@drawable/sel_mes_icon_open_close_green"
-        android:layout_height="62px" />
+        android:layout_height="@dimen/sc_mm_62" />
 </RelativeLayout>

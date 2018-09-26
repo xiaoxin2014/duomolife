@@ -6,10 +6,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity.HabitTypeBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:兴趣类型
  */
 
-public class MineHabitTypeAdapter extends BaseQuickAdapter<HabitTypeBean, BaseViewHolderHelper> {
+public class MineHabitTypeAdapter extends BaseQuickAdapter<HabitTypeBean, BaseViewHolder> {
     private final Context context;
 
     public MineHabitTypeAdapter(Context context, @Nullable List<HabitTypeBean> habitTypeList) {
@@ -33,7 +33,7 @@ public class MineHabitTypeAdapter extends BaseQuickAdapter<HabitTypeBean, BaseVi
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, HabitTypeBean habitTypeBean) {
+    protected void convert(BaseViewHolder helper, HabitTypeBean habitTypeBean) {
         ImageView iv_habit_type = helper.getView(R.id.iv_habit_type);
         ImageView iv_round_habit_type_fg = helper.getView(R.id.iv_round_habit_type_fg);
         GlideImageLoaderUtil.loadRoundImg(context, iv_habit_type, habitTypeBean.getImg()

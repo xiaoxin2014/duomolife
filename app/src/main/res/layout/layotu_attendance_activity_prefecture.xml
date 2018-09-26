@@ -11,15 +11,15 @@
         android:layout_width="match_parent"
         android:id="@+id/tv_activity_prefecture"
         android:textColor="@color/text_black_t"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:text="更多专区"
         android:paddingLeft="@dimen/gap_left"
         android:gravity="center_vertical"
-        android:layout_height="100px" />
+        android:layout_height="@dimen/sc_mm_100" />
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_below="@id/tv_activity_prefecture"
         android:id="@+id/rv_activity_prefecture"
-        android:layout_marginBottom="50px"
+        android:layout_marginBottom="@dimen/sc_mm_50"
         android:layout_height="wrap_content"/>
 </RelativeLayout>

@@ -12,14 +12,14 @@
         android:id="@+id/tv_count_time_before"
         android:layout_width="wrap_content"
         android:text="剩 "
-        android:textSize="26px"
+        android:textSize="@dimen/sc_mm_26"
         android:gravity="center_vertical"
         android:textColor="@color/text_login_gray_s"
         android:layout_height="wrap_content" />
     <cn.iwgang.countdownview.CountdownView
         android:id="@+id/cv_countdownTime_direct"
         android:layout_width="wrap_content"
-        android:layout_height="30px"
+        android:layout_height="@dimen/sc_mm_30"
         android:layout_gravity="center_vertical"
         app:isConvertDaysToHours="false"
         app:isShowMillisecond="false"
@@ -29,16 +29,16 @@
         app:isShowSecond="true"
         app:suffixGravity="center"
         app:suffixTextColor="@color/text_login_blue_z"
-        app:suffixTextSize="28px"
+        app:suffixTextSize="@dimen/sc_mm_28"
         app:isSuffixTextBold="true"
         app:timeTextColor="@color/text_login_blue_z"
         app:isTimeTextBold="true"
-        app:timeTextSize="28px"/>
+        app:timeTextSize="@dimen/sc_mm_28"/>
     <TextView
         android:id="@+id/tv_count_time_after"
         android:layout_width="wrap_content"
         android:text=" 自动关闭"
-        android:textSize="26px"
+        android:textSize="@dimen/sc_mm_26"
         android:gravity="center_vertical"
         android:textColor="@color/text_login_gray_s"
         android:layout_height="wrap_content" />

@@ -25,7 +25,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20px"
+            android:paddingTop="@dimen/sc_mm_20"
             android:orientation="vertical">
 
 
@@ -33,10 +33,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="86px"
+                android:layout_marginTop="@dimen/sc_mm_86"
                 android:orientation="vertical"
-                android:paddingLeft="119px"
-                android:paddingRight="119px">
+                android:paddingLeft="@dimen/sc_mm_119"
+                android:paddingRight="@dimen/sc_mm_119">
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -59,10 +59,10 @@
                             android:singleLine="true"
                             android:inputType="phone|number"
                             android:maxLength="11"
-                            android:minHeight="100px"
+                            android:minHeight="@dimen/sc_mm_100"
                             android:textColor="@color/login_text_color"
                             android:textColorHint="@color/text_gray_hint_n"
-                            android:textSize="28px" />
+                            android:textSize="@dimen/sc_mm_28" />
 
                         <EditText
                             android:id="@+id/edit_login_password"
@@ -73,10 +73,10 @@
                             android:singleLine="true"
                             android:inputType="textPassword"
                             android:maxLines="1"
-                            android:minHeight="100px"
+                            android:minHeight="@dimen/sc_mm_100"
                             android:textColor="@color/login_text_color"
                             android:textColorHint="@color/text_gray_hint_n"
-                            android:textSize="28px" />
+                            android:textSize="@dimen/sc_mm_28" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -97,10 +97,10 @@
                             android:singleLine="true"
                             android:inputType="number|phone"
                             android:maxLength="11"
-                            android:minHeight="100px"
+                            android:minHeight="@dimen/sc_mm_100"
                             android:textColor="@color/home_text_color"
                             android:textColorHint="@color/text_gray_hint_n"
-                            android:textSize="28px" />
+                            android:textSize="@dimen/sc_mm_28" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -119,10 +119,10 @@
                                 android:singleLine="true"
                                 android:inputType="number|phone"
                                 android:maxLength="6"
-                                android:minHeight="100px"
+                                android:minHeight="@dimen/sc_mm_100"
                                 android:textColor="@color/home_text_color"
                                 android:textColorHint="@color/text_gray_hint_n"
-                                android:textSize="28px" />
+                                android:textSize="@dimen/sc_mm_28" />
 
                             <FrameLayout
                                 android:layout_width="wrap_content"
@@ -132,18 +132,18 @@
                                 <TextView
                                     android:id="@+id/tv_login_send_code"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="100px"
+                                    android:layout_height="@dimen/sc_mm_100"
                                     android:layout_gravity="center"
-                                    android:clickable="true"
+
                                     android:gravity="center_vertical"
                                     android:paddingRight="@dimen/gap_right"
                                     android:textColor="@color/selector_font_blue_hint_gray"
-                                    android:textSize="24px" />
+                                    android:textSize="@dimen/sc_mm_24" />
 
                                 <ProgressBar
                                     android:id="@+id/reg_login_code_gif_view"
-                                    android:layout_width="60px"
-                                    android:layout_height="60px"
+                                    android:layout_width="@dimen/sc_mm_60"
+                                    android:layout_height="@dimen/sc_mm_60"
                                     android:layout_gravity="center"
                                     android:indeterminateBehavior="repeat"
                                     android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
@@ -163,39 +163,39 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:clickable="true"
-                        android:paddingBottom="18px"
-                        android:paddingRight="18px"
-                        android:paddingTop="28px"
+
+                        android:paddingBottom="@dimen/sc_mm_18"
+                        android:paddingRight="@dimen/sc_mm_18"
+                        android:paddingTop="@dimen/sc_mm_28"
                         android:text="注册"
                         android:textColor="@color/textColor_blue"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
 
                     <TextView
                         android:id="@+id/tv_ming_login_forget_password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:clickable="true"
-                        android:paddingBottom="18px"
-                        android:paddingLeft="18px"
-                        android:paddingTop="28px"
+
+                        android:paddingBottom="@dimen/sc_mm_18"
+                        android:paddingLeft="@dimen/sc_mm_18"
+                        android:paddingTop="@dimen/sc_mm_28"
                         android:text="忘记密码?"
                         android:textColor="@color/textColor_blue"
-                        android:textSize="30px" />
+                        android:textSize="@dimen/sc_mm_30" />
                 </RelativeLayout>
 
                 <TextView
                     android:id="@+id/tv_mine_Login"
                     android:layout_width="match_parent"
-                    android:layout_height="80px"
-                    android:layout_marginTop="79px"
+                    android:layout_height="@dimen/sc_mm_80"
+                    android:layout_marginTop="@dimen/sc_mm_79"
                     android:background="@drawable/login_bt_bg"
-                    android:clickable="true"
+
                     android:gravity="center"
                     android:text="登 录"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="32px" />
+                    android:textSize="@dimen/sc_mm_32" />
             </LinearLayout>
 
             <TextView
@@ -203,23 +203,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="22px"
+                android:layout_marginTop="@dimen/sc_mm_22"
                 android:gravity="center"
-                android:padding="10px"
-                android:clickable="true"
+                android:padding="@dimen/sc_mm_10"
+
                 android:text="验证码登录"
                 android:textColor="@color/text_login_blue_z"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="93px"
+                android:layout_marginTop="@dimen/sc_mm_93"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingLeft="120px"
-                android:paddingRight="120px">
+                android:paddingLeft="@dimen/sc_mm_120"
+                android:paddingRight="@dimen/sc_mm_120">
 
                 <View
                     android:layout_width="0px"
@@ -230,11 +230,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="38px"
-                    android:paddingRight="38px"
+                    android:paddingLeft="@dimen/sc_mm_38"
+                    android:paddingRight="@dimen/sc_mm_38"
                     android:text="OR"
                     android:textColor="@color/login_text_color"
-                    android:textSize="24px" />
+                    android:textSize="@dimen/sc_mm_24" />
 
                 <View
                     android:layout_width="0px"
@@ -246,9 +246,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="130px"
-                android:layout_marginRight="130px"
-                android:layout_marginTop="74px"
+                android:layout_marginLeft="@dimen/sc_mm_130"
+                android:layout_marginRight="@dimen/sc_mm_130"
+                android:layout_marginTop="@dimen/sc_mm_74"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -256,26 +256,26 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
+
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/rImg_login_way_weChat"
-                        android:layout_width="78px"
-                        android:layout_height="62px"
+                        android:layout_width="@dimen/sc_mm_78"
+                        android:layout_height="@dimen/sc_mm_62"
                         android:src="@drawable/login_wechat"
-                        app:layout_auto_basewidth="height" />
+                         />
 
                     <TextView
                         android:id="@+id/tv_login_way_weChat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22px"
-                        android:clickable="true"
+                        android:layout_marginTop="@dimen/sc_mm_22"
+
                         android:text="微信"
                         android:textColor="@color/login_text_color"
-                        android:textSize="26px" />
+                        android:textSize="@dimen/sc_mm_26" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -288,20 +288,20 @@
 
                     <ImageView
                         android:id="@+id/rImg_login_way_qq"
-                        android:layout_width="63px"
-                        android:layout_height="65px"
+                        android:layout_width="@dimen/sc_mm_63"
+                        android:layout_height="@dimen/sc_mm_65"
                         android:src="@drawable/login_qq"
-                        app:layout_auto_basewidth="height" />
+                         />
 
                     <TextView
                         android:id="@+id/tv_login_way_qq"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22px"
-                        android:clickable="true"
+                        android:layout_marginTop="@dimen/sc_mm_22"
+
                         android:text="QQ"
                         android:textColor="@color/login_text_color"
-                        android:textSize="26px" />
+                        android:textSize="@dimen/sc_mm_26" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -314,20 +314,20 @@
 
                     <ImageView
                         android:id="@+id/rImg_login_way_weiBo"
-                        android:layout_width="79px"
-                        android:layout_height="62px"
+                        android:layout_width="@dimen/sc_mm_79"
+                        android:layout_height="@dimen/sc_mm_62"
                         android:src="@drawable/login_weibo"
-                        app:layout_auto_basewidth="height" />
+                         />
 
                     <TextView
                         android:id="@+id/tv_login_way_weiBo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22px"
-                        android:clickable="true"
+                        android:layout_marginTop="@dimen/sc_mm_22"
+
                         android:text="微博"
                         android:textColor="@color/login_text_color"
-                        android:textSize="26px" />
+                        android:textSize="@dimen/sc_mm_26" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

@@ -2,23 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:background="@color/transparent"
-    android:clickable="true"
+
     android:layout_height="wrap_content">
     <LinearLayout
-        android:layout_width="240px"
+        android:layout_width="@dimen/sc_mm_240"
         android:orientation="vertical"
         android:background = "@drawable/indent_pop_bg"
-        android:paddingTop="18px"
+        android:paddingTop="@dimen/sc_mm_18"
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
-            android:paddingLeft="24px"
+            android:paddingLeft="@dimen/sc_mm_24"
             android:gravity="center_vertical"
-            android:clickable="true"
+
             android:id="@+id/ll_indent_pop_service"
             android:orientation="horizontal"
             android:paddingRight="@dimen/gap_right"
-            android:layout_height="80px">
+            android:layout_height="@dimen/sc_mm_80">
             <ImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/icon_service"
@@ -27,10 +27,10 @@
             <TextView
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="40px"
+                android:layout_marginLeft="@dimen/sc_mm_40"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:text="客服"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -40,13 +40,13 @@
             android:layout_height="@dimen/dimen_0p5_dp"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:paddingLeft="24px"
+            android:paddingLeft="@dimen/sc_mm_24"
             android:id="@+id/ll_indent_pop_mes"
-            android:clickable="true"
+
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingRight="@dimen/gap_right"
-            android:layout_height="80px">
+            android:layout_height="@dimen/sc_mm_80">
             <ImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/icon_mes"
@@ -55,10 +55,10 @@
             <TextView
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="40px"
+                android:layout_marginLeft="@dimen/sc_mm_40"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:text="消息"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -68,13 +68,13 @@
             android:layout_height="@dimen/dimen_0p5_dp"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:paddingLeft="24px"
-            android:clickable="true"
+            android:paddingLeft="@dimen/sc_mm_24"
+
             android:id="@+id/ll_indent_pop_quality"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingRight="@dimen/gap_right"
-            android:layout_height="80px">
+            android:layout_height="@dimen/sc_mm_80">
             <ImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/icon_quality"
@@ -83,10 +83,10 @@
             <TextView
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="40px"
+                android:layout_marginLeft="@dimen/sc_mm_40"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:text="良品"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -96,13 +96,13 @@
             android:layout_height="@dimen/dimen_0p5_dp"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:paddingLeft="24px"
+            android:paddingLeft="@dimen/sc_mm_24"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:clickable="true"
+
             android:id="@+id/ll_indent_pop_mine"
             android:paddingRight="@dimen/gap_right"
-            android:layout_height="80px">
+            android:layout_height="@dimen/sc_mm_80">
             <ImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/icon_mine"
@@ -111,10 +111,10 @@
             <TextView
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="40px"
+                android:layout_marginLeft="@dimen/sc_mm_40"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="30px"
+                android:textSize="@dimen/sc_mm_30"
                 android:text="我"
                 android:layout_height="wrap_content" />
         </LinearLayout>

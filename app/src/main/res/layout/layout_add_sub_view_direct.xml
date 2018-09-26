@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="124px"
+    android:layout_height="@dimen/sc_mm_124"
     android:layout_centerVertical="true">
     <!--android:background="@color/white"-->
     <TextView
@@ -11,42 +11,42 @@
         android:text="购买数量"
         android:id="@+id/tv_direct_number_layout"
         android:textColor="@color/home_text_color"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:layout_height="wrap_content" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_height="60px"
+        android:layout_height="@dimen/sc_mm_60"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        app:layout_auto_basewidth = "height">
+        >
         <ImageView
             android:id="@+id/img_integration_details_credits_minus"
-            android:layout_width="60px"
+            android:layout_width="@dimen/sc_mm_60"
             android:layout_height="match_parent"
-            android:paddingLeft="14px"
-            android:paddingRight="14px"
+            android:paddingLeft="@dimen/sc_mm_14"
+            android:paddingRight="@dimen/sc_mm_14"
             android:src="@drawable/bitmap_sub"/>
 
         <TextView
             android:id="@+id/tv_integration_details_credits_count"
-            android:minWidth="122px"
+            android:minWidth="@dimen/sc_mm_122"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="1"
             android:textColor="@color/home_text_color"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <ImageView
             android:id="@+id/img_integration_details_credits_add"
-            android:layout_width="60px"
+            android:layout_width="@dimen/sc_mm_60"
             android:layout_height="match_parent"
-            android:clickable="true"
-            android:paddingLeft="14px"
-            android:paddingRight="14px"
+
+            android:paddingLeft="@dimen/sc_mm_14"
+            android:paddingRight="@dimen/sc_mm_14"
             android:src="@drawable/bitmap_add"/>
     </LinearLayout>
 

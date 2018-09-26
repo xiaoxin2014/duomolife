@@ -3,7 +3,7 @@
     android:id="@+id/loadingStateRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
+
     android:background="#f1f3f7">
 
 

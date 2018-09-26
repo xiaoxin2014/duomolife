@@ -22,7 +22,6 @@ import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -43,6 +42,7 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyco.tablayout.CommonTabLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -244,8 +244,7 @@ public class QualityNewProActivity extends BaseActivity {
             }
         });
 //        时间轴
-        productPopWindow = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null);
-        AutoUtils.autoSize(productPopWindow);
+        productPopWindow = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null,false);
         popupWindowView = new PopupWindowView();
         ButterKnife.bind(popupWindowView, productPopWindow);
         popupWindowView.initView();
@@ -529,13 +528,13 @@ public class QualityNewProActivity extends BaseActivity {
         }
     }
 
-    private class TimeShaftAdapter extends BaseQuickAdapter<QNewProTimeShaftBean, BaseViewHolderHelper> {
+    private class TimeShaftAdapter extends BaseQuickAdapter<QNewProTimeShaftBean, BaseViewHolder> {
         public TimeShaftAdapter(List<QNewProTimeShaftBean> timeShaftList) {
             super(R.layout.adapter_tv_time_shaft, timeShaftList);
         }
 
         @Override
-        protected void convert(BaseViewHolderHelper helper, QNewProTimeShaftBean qNewProTimeShaftBean) {
+        protected void convert(BaseViewHolder helper, QNewProTimeShaftBean qNewProTimeShaftBean) {
             TextView tv_ql_new_pro_time_tag = helper.getView(R.id.tv_ql_new_pro_time_tag);
             tv_ql_new_pro_time_tag.setText((getStrings(qNewProTimeShaftBean.getNewReleaseDay()) + "天"));
             tv_ql_new_pro_time_tag.setSelected(qNewProTimeShaftBean.isSelected());

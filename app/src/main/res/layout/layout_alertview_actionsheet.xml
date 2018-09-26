@@ -51,7 +51,7 @@
         android:paddingTop="@dimen/dp_10"
         android:paddingBottom="@dimen/dp_10"
         android:background="@drawable/bg_actionsheet_cancel"
-        android:clickable="true"
+
         android:gravity="center"
         android:textColor="@color/textColor_alert_button_cancel"
         android:textSize="@dimen/textSize_alert_button"

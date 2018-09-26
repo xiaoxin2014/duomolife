@@ -5,14 +5,13 @@
     android:id="@+id/ll_indent_address_null"
     android:background="@color/white"
     android:visibility="gone"
-    android:layout_height="165px">
+    android:layout_height="@dimen/sc_mm_165">
     <TextView
         android:layout_width="match_parent"
         android:gravity="center"
         android:id="@+id/tv_lv_top"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:text="请添加收货地址"
-        android:clickable="true"
         android:layout_height="match_parent"/>
 </LinearLayout>

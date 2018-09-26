@@ -13,7 +13,7 @@
     <com.flyco.tablayout.CommonTabLayout
         android:id="@+id/ctb_qt_pro_type"
         android:layout_width="match_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/sc_mm_88"
         tl:tl_divider_color="@color/text_gray_c"
         tl:tl_divider_padding="@dimen/dimen_15_dp"
         tl:tl_divider_width="@dimen/dimen_1dp"

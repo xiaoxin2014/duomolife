@@ -19,7 +19,7 @@
         android:layout_height="@dimen/dimen_5_dp"
         android:background="@color/bg_color" />
     <android.support.v7.widget.RecyclerView
-        android:paddingTop="12px"
+        android:paddingTop="@dimen/sc_mm_12"
         android:id="@+id/recycler_shop_time_content_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

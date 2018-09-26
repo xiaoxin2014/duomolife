@@ -5,8 +5,7 @@
     android:id="@+id/smart_refresh_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior"
-    >
+    cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <com.scwang.smartrefresh.layout.header.ClassicsHeader
         android:layout_width="match_parent"
@@ -33,23 +32,21 @@
                     app:contentScrim="@android:color/white"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                    <com.zhy.autolayout.AutoLinearLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <com.zhy.autolayout.AutoRelativeLayout
+                        <RelativeLayout
                             android:id="@+id/rel_home_page"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="118px">
+                            android:layout_marginTop="@dimen/sc_mm_118">
 
-                            <!--<include layout="@layout/layout_al_gp_sp_banner" />-->
                             <include layout="@layout/layout_al_new_sp_banner" />
 
-
                             <include layout="@layout/layout_home_marquee" />
-                        </com.zhy.autolayout.AutoRelativeLayout>
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -63,34 +60,31 @@
                             <android.support.v7.widget.RecyclerView
                                 android:id="@+id/rv_home_activity"
                                 android:layout_width="match_parent"
+                                android:padding="@dimen/sc_mm_10"
+                                android:background="@color/white"
                                 android:layout_height="wrap_content"
                                 android:nestedScrollingEnabled="false"
                                 android:scrollbars="none" />
                         </LinearLayout>
-                    </com.zhy.autolayout.AutoLinearLayout>
+                    </LinearLayout>
 
                     <include layout="@layout/layout_home_page" />
                 </android.support.design.widget.CollapsingToolbarLayout>
 
-                <RelativeLayout
+                <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/std_home_art_type"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/std_home_art_type"
-                        android:layout_width="match_parent"
-                        android:layout_height="88px"
-                        android:background="@color/white"
-                        tl:tl_indicator_color="@color/text_login_blue_z"
-                        tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
-                        tl:tl_indicator_gravity="BOTTOM"
-                        tl:tl_indicator_height="@dimen/dimen_2dp"
-                        tl:tl_indicator_style="NORMAL"
-                        tl:tl_indicator_width_equal_title="true"
-                        tl:tl_textSelectColor="@color/text_login_blue_z"
-                        tl:tl_textUnselectColor="@color/text_login_gray_s"
-                        tl:tl_textsize="15sp" />
-                </RelativeLayout>
+                    android:layout_height="@dimen/sc_mm_88"
+                    android:background="@color/white"
+                    tl:tl_indicator_color="@color/text_login_blue_z"
+                    tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
+                    tl:tl_indicator_gravity="BOTTOM"
+                    tl:tl_indicator_height="@dimen/sc_mm_2"
+                    tl:tl_indicator_style="NORMAL"
+                    tl:tl_indicator_width_equal_title="true"
+                    tl:tl_textSelectColor="@color/text_login_blue_z"
+                    tl:tl_textUnselectColor="@color/text_login_gray_s"
+                    tl:tl_textsize="@dimen/sc_mm_15" />
             </android.support.design.widget.AppBarLayout>
 
             <android.support.v4.view.ViewPager
@@ -99,6 +93,7 @@
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
         </android.support.design.widget.CoordinatorLayout>
+
         <include layout="@layout/layout_float_ad" />
     </FrameLayout>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

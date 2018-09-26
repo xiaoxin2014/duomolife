@@ -3,5 +3,5 @@
     android:id="@+id/iv_pro_act_next"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="24px"
+    android:layout_marginRight="@dimen/sc_mm_24"
     android:src="@drawable/black_next_icon" />

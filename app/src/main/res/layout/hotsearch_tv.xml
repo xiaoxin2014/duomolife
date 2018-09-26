@@ -11,5 +11,5 @@
         android:background="@drawable/hot_search_textview_bg"
         android:text="热门"
         android:textColor="@color/sel_font_blue_black_sel"
-        android:textSize="26px"/>
+        android:textSize="@dimen/sc_mm_26"/>
 </LinearLayout>

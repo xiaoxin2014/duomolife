@@ -4,10 +4,10 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.dominant.bean.QualityBuyListEntity.QualityBuyListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:请输入类描述
  */
 
-public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, BaseViewHolderHelper> {
+public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, BaseViewHolder> {
     private final Context context;
 
     public QualityBuyListAdapter(Context context, List<QualityBuyListBean> qualityBuyListBeanList) {
@@ -31,7 +31,7 @@ public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, 
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, QualityBuyListBean qualityBuyListBean) {
+    protected void convert(BaseViewHolder helper, QualityBuyListBean qualityBuyListBean) {
         GlideImageLoaderUtil.loadFitCenter(context, (ImageView) helper.getView(R.id.iv_ql_bl_product), qualityBuyListBean.getPicUrl());
         helper.setText(R.id.tv_ql_bl_pro_name, getStrings(qualityBuyListBean.getName()))
                 .setText(R.id.tv_ql_bl_pro_rec, "推荐理由：" + getStrings(qualityBuyListBean.getRecommendReason()))

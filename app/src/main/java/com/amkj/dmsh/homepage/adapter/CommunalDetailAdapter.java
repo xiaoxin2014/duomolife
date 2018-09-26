@@ -31,7 +31,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
@@ -50,6 +49,7 @@ import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
@@ -728,7 +728,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         }
     }
 
-    public class CommunalHolderHelper extends BaseViewHolderHelper {
+    public class CommunalHolderHelper extends BaseViewHolder {
         RecyclerView communal_recycler_wrap;
 
         public CommunalHolderHelper(View view) {

@@ -9,14 +9,14 @@
         android:layout_width="match_parent"
         android:background="@color/bg_color"
         android:id="@+id/lrv_fore_show_time"
-        android:layout_height="337px"
-        android:paddingLeft="60px"
-        android:paddingRight="60px"
+        android:layout_height="@dimen/sc_mm_337"
+        android:paddingLeft="@dimen/sc_mm_60"
+        android:paddingRight="@dimen/sc_mm_60"
         android:scrollbars="none"
         android:clipToPadding="false"
         android:clipChildren="false"
         app:rvp_triggerOffset="0.1"
         app:rvp_singlePageFling="true"
-        app:layout_auto_basewidth = "height"/>
+        />
     <include layout="@layout/layout_communal_recycler_wrap"/>
 </LinearLayout>

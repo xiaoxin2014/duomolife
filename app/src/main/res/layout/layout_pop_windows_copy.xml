@@ -8,7 +8,7 @@
         android:id="@+id/tv_communal_copy_text"
         android:background="@drawable/border_rect_solid_gray"
         android:textSize="@dimen/dimen_12dp"
-        android:clickable="true"
+
         android:text="复制"
         android:layout_height="wrap_content"/>
 </FrameLayout>

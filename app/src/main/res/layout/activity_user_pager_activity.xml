@@ -25,18 +25,18 @@
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <com.zhy.autolayout.AutoLinearLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <include layout="@layout/activity_mine_pager_activity_header" />
-                </com.zhy.autolayout.AutoLinearLayout>
+                </LinearLayout>
 
                 <include layout="@layout/layout_user_page_header" />
             </android.support.design.widget.CollapsingToolbarLayout>
 
-            <com.zhy.autolayout.AutoLinearLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -47,14 +47,14 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="88px"
+                    android:layout_height="@dimen/sc_mm_88"
                     android:background="@color/white"
-                    android:paddingLeft="59px"
-                    android:paddingRight="59px">
+                    android:paddingLeft="@dimen/sc_mm_59"
+                    android:paddingRight="@dimen/sc_mm_59">
 
                     <include layout="@layout/layout_slid_check_blue_un_black" />
                 </RelativeLayout>
-            </com.zhy.autolayout.AutoLinearLayout>
+            </LinearLayout>
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager

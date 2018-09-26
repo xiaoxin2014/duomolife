@@ -2,9 +2,9 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_integral_product_exchange"
     android:layout_width="match_parent"
-    android:layout_height="98px"
+    android:layout_height="@dimen/sc_mm_98"
     android:background="@drawable/sel_nor_red_un_gray"
     android:gravity="center"
     android:text="立即兑换"
     android:textColor="@color/white"
-    android:textSize="34px" />
+    android:textSize="@dimen/sc_mm_34" />

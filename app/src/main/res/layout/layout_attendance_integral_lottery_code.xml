@@ -4,9 +4,9 @@
     android:background="@color/translucence"
     android:layout_height="match_parent">
     <LinearLayout
-        android:layout_width="540px"
+        android:layout_width="@dimen/sc_mm_540"
         android:layout_centerInParent="true"
-        android:layout_height="350px"
+        android:layout_height="@dimen/sc_mm_350"
         android:gravity="center_vertical"
         android:divider="@drawable/divider_ll_0_5_dp"
         android:showDividers="middle"
@@ -15,27 +15,27 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:paddingBottom="30px"
+            android:paddingBottom="@dimen/sc_mm_30"
             android:layout_height="0dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/tv_integral_lottery_title"
-                android:textSize="34px"
-                android:paddingLeft="50px"
+                android:textSize="@dimen/sc_mm_34"
+                android:paddingLeft="@dimen/sc_mm_50"
                 android:text="我的夺宝码"
-                android:paddingRight="40px"
-                android:layout_marginTop="36px"
+                android:paddingRight="@dimen/sc_mm_40"
+                android:layout_marginTop="@dimen/sc_mm_36"
                 android:textColor="@color/text_black_t"
                 android:layout_height="wrap_content" />
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_below="@id/tv_integral_lottery_title"
-                android:layout_marginLeft="50px"
-                android:layout_marginRight="40px"
+                android:layout_marginLeft="@dimen/sc_mm_50"
+                android:layout_marginRight="@dimen/sc_mm_40"
                 android:id="@+id/rv_integral_lottery_code"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="26px"
+                android:layout_marginTop="@dimen/sc_mm_26"
                 android:layout_height="match_parent"/>
         </RelativeLayout>
         <LinearLayout
@@ -43,13 +43,13 @@
             android:orientation="horizontal"
             android:divider="@drawable/divider_ll_0_5_dp"
             android:showDividers="middle"
-            android:layout_height="88px" >
+            android:layout_height="@dimen/sc_mm_88" >
             <TextView
                 android:layout_width="0px"
                 android:layout_weight="1"
                 android:layout_centerInParent="true"
                 android:id="@+id/tv_integral_lottery_history_award"
-                android:textSize="34px"
+                android:textSize="@dimen/sc_mm_34"
                 android:gravity="center"
                 android:text="往期中奖"
                 android:textColor="@color/text_login_gray_s"
@@ -59,7 +59,7 @@
                 android:layout_weight="1"
                 android:layout_centerInParent="true"
                 android:id="@+id/tv_integral_lottery_invite"
-                android:textSize="32px"
+                android:textSize="@dimen/sc_mm_32"
                 android:gravity="center"
                 android:text="邀请好友"
                 android:textColor="@color/text_login_blue_z"

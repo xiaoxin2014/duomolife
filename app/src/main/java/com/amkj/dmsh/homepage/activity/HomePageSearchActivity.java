@@ -99,7 +99,6 @@ public class HomePageSearchActivity extends BaseActivity {
                 View view = LayoutInflater.from(HomePageSearchActivity.this).inflate(R.layout.hotsearch_tv, null, false);
                 TextView textView = (TextView) view.findViewById(R.id.tv_search_tag);
                 view.setPadding(0, 20, 24, 0);
-                AutoUtils.autoSize(view);
                 textView.setText(getStrings(historyTag));
                 return view;
             }
@@ -124,7 +123,6 @@ public class HomePageSearchActivity extends BaseActivity {
                     textView.setSelected(false);
                 }
 //                view.setPadding(0, 20, 24, 0);
-                AutoUtils.autoSize(view);
                 textView.setText(hotSearchTagBean.getTag_name());
                 return view;
             }

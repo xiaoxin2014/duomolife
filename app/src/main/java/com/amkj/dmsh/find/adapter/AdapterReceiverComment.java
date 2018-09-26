@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -22,6 +21,7 @@ import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -43,7 +43,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 /**
  * Created by atd48 on 2016/7/14.
  */
-public class AdapterReceiverComment extends BaseMultiItemQuickAdapter<ArticleCommentBean, BaseViewHolderHelper> {
+public class AdapterReceiverComment extends BaseMultiItemQuickAdapter<ArticleCommentBean, BaseViewHolder> {
     private final Context context;
 
     public AdapterReceiverComment(Context context, List<ArticleCommentBean> articleCommentList) {
@@ -54,7 +54,7 @@ public class AdapterReceiverComment extends BaseMultiItemQuickAdapter<ArticleCom
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, final ArticleCommentBean articleCommentBean) {
+    protected void convert(BaseViewHolder helper, final ArticleCommentBean articleCommentBean) {
         switch (helper.getItemViewType()) {
             case ArticleCommentBean.NORMAL_CODE:
                 helper.setText(R.id.tv_user_proName, getStrings(articleCommentBean.getNickname()))

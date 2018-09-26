@@ -4,9 +4,9 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PresentProductInfoBean;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
  * class description:赠品适配器 单文本 --商品详情赠品 优惠券
  */
 
-public class ProductTextAdapter extends BaseMultiItemQuickAdapter<PresentProductInfoBean, BaseViewHolderHelper> {
+public class ProductTextAdapter extends BaseMultiItemQuickAdapter<PresentProductInfoBean, BaseViewHolder> {
 
     public ProductTextAdapter(List<PresentProductInfoBean> productInfoBeans) {
         super(productInfoBeans);
@@ -36,7 +36,7 @@ public class ProductTextAdapter extends BaseMultiItemQuickAdapter<PresentProduct
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, PresentProductInfoBean productInfoBean) {
+    protected void convert(BaseViewHolder helper, PresentProductInfoBean productInfoBean) {
         switch (productInfoBean.getItemType()) {
             case TYPE_1:
                 CheckBox cb_red_communal_text = helper.getView(R.id.cb_red_communal_text);

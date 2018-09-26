@@ -31,16 +31,16 @@
                 <emojicon.EmojiconEditText
                     android:id="@+id/et_appeal_reason"
                     android:layout_width="match_parent"
-                    android:minHeight="70px"
+                    android:minHeight="@dimen/sc_mm_70"
                     android:layout_height="wrap_content"
                     android:background="@drawable/border_bottom_line"
                     android:gravity="center_vertical"
                     android:hint="申诉理由"
-                    android:paddingLeft="28px"
-                    android:paddingRight="28px"
+                    android:paddingLeft="@dimen/sc_mm_28"
+                    android:paddingRight="@dimen/sc_mm_28"
                     android:textColor="@color/home_text_color"
                     android:textColorHint="@color/text_hint_gray_ae"
-                    android:textSize="24px" />
+                    android:textSize="@dimen/sc_mm_24" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,12 +57,12 @@
                         android:textColor="@color/home_text_color"
                         android:textColorHint="@color/text_hint_gray_ae"
                         android:hint="请填写问题描述"
-                        android:minHeight="205px"
-                        android:paddingLeft="28px"
-                        android:paddingRight="28px"
-                        android:paddingTop="25px"
-                        android:paddingBottom="25px"
-                        android:textSize="24px" />
+                        android:minHeight="@dimen/sc_mm_205"
+                        android:paddingLeft="@dimen/sc_mm_28"
+                        android:paddingRight="@dimen/sc_mm_28"
+                        android:paddingTop="@dimen/sc_mm_25"
+                        android:paddingBottom="@dimen/sc_mm_25"
+                        android:textSize="@dimen/sc_mm_24" />
 
                     <android.support.v7.widget.RecyclerView
                         android:layout_width="wrap_content"
@@ -70,7 +70,7 @@
                         android:id="@+id/rv_sale_return_img"
                         android:layout_height="wrap_content"
                         android:scrollbars="none"
-                        android:paddingRight="26px"/>
+                        android:paddingRight="@dimen/sc_mm_26"/>
                 </LinearLayout>
 
                 <View
@@ -83,18 +83,18 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/viewStub"
                     android:layout_gravity="center"
-                    android:layout_marginTop="42px"
+                    android:layout_marginTop="@dimen/sc_mm_42"
                     android:text="如有其它疑问，请拨打服务电话：400-000-1019"
                     android:textColor="@color/home_text_color"
-                    android:textSize="24px" />
+                    android:textSize="@dimen/sc_mm_24" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/viewStub"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="16px"
-                    android:layout_marginTop="16px"
+                    android:layout_marginBottom="@dimen/sc_mm_16"
+                    android:layout_marginTop="@dimen/sc_mm_16"
                     android:text="服务时间：周一至周日：09:00-18:00"
                     android:textColor="@color/home_text_color"
                     android:textSize="12sp" />

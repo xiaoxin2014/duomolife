@@ -5,9 +5,9 @@ import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:优惠信息
  */
 
-public class IndentDiscountAdapter extends BaseQuickAdapter<PriceInfoBean, BaseViewHolderHelper> {
+public class IndentDiscountAdapter extends BaseQuickAdapter<PriceInfoBean, BaseViewHolder> {
     private String DEFAULT_COLOR = "#333333";
 
     public IndentDiscountAdapter(List<PriceInfoBean> priceInfoList) {
@@ -30,7 +30,7 @@ public class IndentDiscountAdapter extends BaseQuickAdapter<PriceInfoBean, BaseV
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, PriceInfoBean priceInfoBean) {
+    protected void convert(BaseViewHolder helper, PriceInfoBean priceInfoBean) {
         TextView tv_indent_discount_price = helper.getView(R.id.tv_indent_discount_price);
         helper.setText(R.id.tv_indent_discount_name, getStrings(priceInfoBean.getName()));
         try {

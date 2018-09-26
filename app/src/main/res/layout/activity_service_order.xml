@@ -7,28 +7,28 @@
     <LinearLayout
         android:id="@+id/ll_service_order"
         android:layout_width="match_parent"
-        android:layout_height="226px"
+        android:layout_height="@dimen/sc_mm_226"
         android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="20px"
-        android:paddingRight="20px">
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_20">
 
         <ImageView
             android:id="@+id/iv_service_order_pic"
-            android:layout_width="161px"
-            android:layout_height="161px"
+            android:layout_width="@dimen/sc_mm_161"
+            android:layout_height="@dimen/sc_mm_161"
             android:scaleType="centerCrop"
-            app:layout_auto_basewidth="height" />
+             />
 
         <LinearLayout
             android:id="@+id/ll_service_order_click"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="true"
+
             android:orientation="vertical"
-            android:paddingLeft="20px">
+            android:paddingLeft="@dimen/sc_mm_20">
 
             <TextView
                 android:id="@+id/tv_service_order_create_time"
@@ -37,54 +37,54 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <TextView
                 android:id="@+id/tv_service_order_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10px"
+                android:layout_marginTop="@dimen/sc_mm_10"
                 android:ellipsize="end"
                 android:lines="1"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <TextView
                 android:id="@+id/tv_service_order_pro_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10px"
+                android:layout_marginTop="@dimen/sc_mm_10"
                 android:ellipsize="end"
                 android:lines="1"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <TextView
                 android:id="@+id/tv_service_order_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10px"
+                android:layout_marginTop="@dimen/sc_mm_10"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_send_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20px"
+            android:layout_marginLeft="@dimen/sc_mm_20"
             android:background="@drawable/border_cir_four_bg_blue"
-            android:clickable="true"
+
             android:gravity="center"
-            android:paddingBottom="10px"
-            android:paddingLeft="20px"
-            android:paddingRight="20px"
-            android:paddingTop="10px"
+            android:paddingBottom="@dimen/sc_mm_10"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:paddingRight="@dimen/sc_mm_20"
+            android:paddingTop="@dimen/sc_mm_10"
             android:text="发 送"
             android:textColor="@color/white"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:visibility="gone" />
     </LinearLayout>
 </RelativeLayout>

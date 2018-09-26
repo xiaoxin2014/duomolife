@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom|right"
-    android:layout_marginBottom="189px"
-    android:layout_marginRight="15px">
+    android:layout_marginBottom="@dimen/sc_mm_189"
+    android:layout_marginRight="@dimen/sc_mm_15">
 
     <ImageView
         android:id="@+id/iv_find_release"
-        android:layout_width="102px"
-        android:layout_height="102px"
+        android:layout_width="@dimen/sc_mm_102"
+        android:layout_height="@dimen/sc_mm_102"
         android:gravity="center"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
-        android:src="@drawable/find_camera"
-        app:layout_auto_basewidth="height"/>
-</com.zhy.autolayout.AutoLinearLayout>
+        android:src="@drawable/find_camera"/>
+</LinearLayout>

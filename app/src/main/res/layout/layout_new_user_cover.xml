@@ -10,8 +10,8 @@
     android:orientation="vertical">
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_marginBottom="45px"
-        android:padding="24px"
+        android:layout_marginBottom="@dimen/sc_mm_45"
+        android:padding="@dimen/sc_mm_24"
         android:layout_height="wrap_content">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_below="@id/communal_recycler_wrap"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="45px"
-                android:textSize="32px"
+                android:layout_marginTop="@dimen/sc_mm_45"
+                android:textSize="@dimen/sc_mm_32"
                 android:text="领取成功"
                 android:textColor="@color/text_black_t"
                 android:layout_height="wrap_content" />
@@ -37,28 +37,28 @@
             android:adjustViewBounds="true"/>
     </FrameLayout>
     <TextView
-        android:layout_width="420px"
+        android:layout_width="@dimen/sc_mm_420"
         android:gravity="center"
         android:id="@+id/tv_new_user_get_coupon"
         android:textColor="@color/white"
         android:text="立即领取"
-        android:textSize="34px"
+        android:textSize="@dimen/sc_mm_34"
         android:background="@drawable/border_cir_42_bg_red_ffae"
-        android:layout_height="85px" />
+        android:layout_height="@dimen/sc_mm_85" />
     <TextView
         android:layout_width="wrap_content"
-        android:paddingTop="30px"
-        android:paddingBottom="30px"
+        android:paddingTop="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_30"
         android:text="查看我的优惠券>"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:id="@+id/tv_look_mine_coupon"
         android:textColor="@color/text_black_t"
         android:layout_height="wrap_content" />
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="32px"
-        android:layout_marginBottom="30px"
-        android:layout_marginTop="30px"
+        android:textSize="@dimen/sc_mm_32"
+        android:layout_marginBottom="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_30"
         android:textColor="@color/text_login_gray_s"
         android:text="- 新人专享 -"
         android:layout_height="wrap_content" />

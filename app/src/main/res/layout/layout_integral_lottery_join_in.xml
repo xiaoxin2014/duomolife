@@ -6,11 +6,11 @@
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tv_integral_lottery_join_in"
-        android:layout_width="420px"
-        android:layout_height="85px"
+        android:layout_width="@dimen/sc_mm_420"
+        android:layout_height="@dimen/sc_mm_85"
         android:background="@drawable/border_cir_42_border_yel_fs"
         android:gravity="center"
         android:text="立即参与"
         android:textColor="@color/yellow_bg_fsae"
-        android:textSize="34px" />
+        android:textSize="@dimen/sc_mm_34" />
 </RelativeLayout>

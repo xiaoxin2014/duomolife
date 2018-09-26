@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -49,9 +50,6 @@ import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.MarginTopAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,6 +65,7 @@ import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
@@ -153,7 +152,7 @@ public class FindFragment extends BaseFragment {
             loadData();
             EventBus.getDefault().post(new EventMessage("refreshFindData", 1));
         });
-        badge = ConstantMethod.getTopBadge(getActivity(), fra_find_message_total);
+        badge = getTopBadge(getActivity(), fra_find_message_total);
         setStatusColor();
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
@@ -161,11 +160,9 @@ public class FindFragment extends BaseFragment {
             @Override
             public void onGlobalLayout() {
                 ll_find_header.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                AutoLayoutHelper.AutoLayoutParams autoLayoutHelper = (AutoLayoutHelper.AutoLayoutParams) ll_find_header.getLayoutParams();
-                AutoLayoutInfo autoLayoutInfo = autoLayoutHelper.getAutoLayoutInfo();
-                float measuredHeight = tl_find_header.getMeasuredHeight() * (1336f / screenHeight);
-                autoLayoutInfo.addAttr(new MarginTopAttr((int) measuredHeight, 0, 1));
-                ll_find_header.setLayoutParams(ll_find_header.getLayoutParams());
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) ll_find_header.getLayoutParams();
+                layoutParams.setMargins(0,tl_find_header.getMeasuredHeight(),0,0);
+                ll_find_header.setLayoutParams(layoutParams);
             }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

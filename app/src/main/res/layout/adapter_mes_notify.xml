@@ -5,12 +5,12 @@
     android:layout_height="wrap_content"
     android:background="@color/light_gray_f"
     android:orientation="vertical"
-    android:paddingLeft="30px"
-    android:paddingRight="30px">
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingRight="@dimen/sc_mm_30">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="88px">
+        android:layout_height="@dimen/sc_mm_88">
 
         <TextView
             android:id="@+id/tv_mes_notify_time"
@@ -19,9 +19,9 @@
             android:layout_centerInParent="true"
             android:background="@drawable/border_cir_four_bg_all_gray"
             android:gravity="center_vertical"
-            android:padding="12px"
+            android:padding="@dimen/sc_mm_12"
             android:textColor="@color/white"
-            android:textSize="26px" />
+            android:textSize="@dimen/sc_mm_26" />
     </RelativeLayout>
 
     <LinearLayout
@@ -29,27 +29,27 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingBottom="30px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px">
+        android:paddingBottom="@dimen/sc_mm_30"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30">
 
         <TextView
             android:id="@+id/tv_mes_notify_type_name"
             android:layout_width="match_parent"
-            android:layout_height="88px"
+            android:layout_height="@dimen/sc_mm_88"
             android:gravity="center_vertical"
             android:textColor="@color/text_black_t"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
         <TextView
             android:id="@+id/tv_mes_notify_product_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20px"
+            android:layout_marginBottom="@dimen/sc_mm_20"
             android:gravity="center_vertical"
             android:visibility="gone"
             android:lineSpacingExtra="@dimen/dimen_7_dp"
             android:textColor="@color/text_black_t"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,22 +57,22 @@
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:id="@+id/fl_mes_sys"
-                android:layout_marginRight="26px"
+                android:layout_marginRight="@dimen/sc_mm_26"
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/iv_mes_notify_cover_pro"
-                    android:layout_width="120px"
-                    android:layout_height="120px"
+                    android:layout_width="@dimen/sc_mm_120"
+                    android:layout_height="@dimen/sc_mm_120"
                     android:visibility="visible"
                     android:scaleType="fitCenter"
-                    app:layout_auto_basewidth="height" />
+                     />
                 <ImageView
                     android:id="@+id/iv_mes_notify_cover_icon"
-                    android:layout_width="120px"
-                    android:layout_height="70px"
+                    android:layout_width="@dimen/sc_mm_120"
+                    android:layout_height="@dimen/sc_mm_70"
                     android:visibility="gone"
                     android:scaleType="fitCenter"
-                    app:layout_auto_basewidth="height" />
+                     />
             </FrameLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -87,10 +87,10 @@
                     android:ellipsize="end"
                     android:id="@+id/tv_mes_notify_content"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="32px"
+                    android:layout_marginTop="@dimen/sc_mm_32"
                     android:id="@+id/rel_product_price"
                     android:visibility="gone"
                     android:layout_below="@id/tv_mes_notify_content"
@@ -104,30 +104,30 @@
                         android:id="@+id/tv_mes_product_price"
                         android:text="￥268.00"
                         android:textColor="@color/text_normal_red"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="40px"
+                        android:layout_marginLeft="@dimen/sc_mm_40"
                         android:layout_toRightOf="@id/tv_mes_product_price"
                         android:lines="1"
                         android:ellipsize="end"
                         android:id="@+id/tv_mes_product_market_price"
                         android:text="￥268.00"
                         android:textColor="@color/text_login_gray_s"
-                        android:textSize="28px" />
+                        android:textSize="@dimen/sc_mm_28" />
                 </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginTop="12px"
+            android:layout_marginTop="@dimen/sc_mm_12"
             android:layout_below="@id/tv_mes_indent_content"
             android:id="@+id/tv_mes_notify_look"
             android:layout_alignParentRight="true"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:textColor="@color/text_login_blue_z"
             android:text="立即查看"
             android:layout_height="wrap_content" />

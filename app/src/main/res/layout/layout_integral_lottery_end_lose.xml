@@ -7,11 +7,11 @@
     <include layout="@layout/layout_integral_lottery_prize"/>
     <TextView
         android:layout_width="match_parent"
-        android:paddingTop="40px"
+        android:paddingTop="@dimen/sc_mm_40"
         android:visibility="visible"
         android:gravity="center_vertical"
         android:textColor="@color/yellow_bg_fsae"
-        android:textSize="34px"
+        android:textSize="@dimen/sc_mm_34"
         android:text="我的夺宝码"
         android:drawableRight="@drawable/att_integ_next"
         android:id="@+id/tv_integral_lottery_mine_code"

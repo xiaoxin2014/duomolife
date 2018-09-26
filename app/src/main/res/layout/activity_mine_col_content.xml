@@ -11,9 +11,9 @@
     <include layout="@layout/activity_domolife_header"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:paddingLeft="59px"
-        android:paddingRight="59px"
-        android:layout_height="78px">
+        android:paddingLeft="@dimen/sc_mm_59"
+        android:paddingRight="@dimen/sc_mm_59"
+        android:layout_height="@dimen/sc_mm_78">
         <include layout="@layout/layout_slid_check_blue_un_black"/>
     </RelativeLayout>
     <android.support.v4.view.ViewPager

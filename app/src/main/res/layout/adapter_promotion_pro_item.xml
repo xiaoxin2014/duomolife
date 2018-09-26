@@ -6,10 +6,9 @@
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:id="@+id/rel_goods_layout"
-        android:layout_height="360px"
-        android:padding="1px"
-        android:background="@drawable/border_rect_four_gray_c_one_bg_white"
-        app:layout_auto_basewidth="height">
+        android:layout_height="@dimen/sc_mm_360"
+        android:padding="@dimen/sc_mm_1"
+        android:background="@drawable/border_rect_four_gray_c_one_bg_white">
         <ImageView
             android:id="@+id/img_springSale_product_image"
             android:layout_width="match_parent"
@@ -18,36 +17,36 @@
         <ImageView
             android:layout_centerInParent="true"
             android:id="@+id/img_spring_sale_tag_out"
-            android:layout_width="172px"
+            android:layout_width="@dimen/sc_mm_172"
             android:visibility="gone"
             android:src="@drawable/goods_sold_out"
-            android:layout_height="172px" />
+            android:layout_height="@dimen/sc_mm_172" />
     </RelativeLayout>
     <TextView
-        android:layout_marginLeft="12px"
-        android:layout_marginRight="12px"
+        android:layout_marginLeft="@dimen/sc_mm_12"
+        android:layout_marginRight="@dimen/sc_mm_12"
         android:id="@+id/tv_springSale_introduce"
         android:layout_width="match_parent"
-        android:layout_marginTop="16px"
+        android:layout_marginTop="@dimen/sc_mm_16"
         android:layout_height="wrap_content"
         android:lines="2"
         android:ellipsize="end"
-        android:layout_below="@id/rel_goods_layout"
+        android:layout_below="@+id/rel_goods_layout"
         android:gravity="center_vertical"
         android:text="电热蚊香一体器"
         android:textColor="@color/text_black_t"
-        android:lineSpacingExtra="@dimen/dimen_7_dp"
-        android:textSize="24px" />
+        android:lineSpacingExtra="@dimen/sc_mm_7"
+        android:textSize="@dimen/sc_mm_24" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12px"
-        android:layout_marginRight="12px"
+        android:layout_marginLeft="@dimen/sc_mm_12"
+        android:layout_marginRight="@dimen/sc_mm_12"
         android:gravity="center_vertical"
         android:layout_below="@id/tv_springSale_introduce"
         android:orientation="horizontal"
-        android:layout_marginTop="30px"
-        android:layout_marginBottom="38px">
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_marginBottom="@dimen/sc_mm_38">
 
         <TextView
             android:id="@+id/tv_product_promotion_price"
@@ -56,28 +55,28 @@
             android:text="$666.00"
             android:gravity="center_vertical"
             android:textColor="@color/text_normal_red"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
         <!--<ImageView
-            android:layout_width="44px"
-            android:padding="5px"
+            android:layout_width="@dimen/sc_mm_44"
+            android:padding="@dimen/sc_mm_5"
             android:id="@+id/iv_pro_time_warm"
             android:visibility="gone"
             android:src="@drawable/sel_time_warm"
-            android:layout_height="44px" />-->
+            android:layout_height="@dimen/sc_mm_44" />-->
         <TextView
             android:layout_width="wrap_content"
-            android:textSize="22px"
+            android:textSize="@dimen/sc_mm_22"
             android:textColor="@color/white"
             android:gravity="center_vertical"
-            android:paddingLeft="15px"
-            android:paddingRight="15px"
-            android:paddingTop="4px"
-            android:paddingBottom="4px"
+            android:paddingLeft="@dimen/sc_mm_15"
+            android:paddingRight="@dimen/sc_mm_15"
+            android:paddingTop="@dimen/sc_mm_4"
+            android:paddingBottom="@dimen/sc_mm_4"
             android:id="@+id/tv_product_promotion_join_count"
             android:visibility="gone"
             android:singleLine="true"
             android:ellipsize="end"
-            android:layout_marginLeft="16px"
+            android:layout_marginLeft="@dimen/sc_mm_16"
             android:background="@drawable/border_circle_4_yellow"
             android:layout_height="wrap_content" />
     </LinearLayout>

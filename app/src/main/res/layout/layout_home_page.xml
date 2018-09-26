@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:id="@+id/tb_tool_home"
-    android:minHeight="108px"
+    android:minHeight="@dimen/sc_mm_108"
     app:layout_collapseMode="pin"
     app:contentInsetStart="0dp">
     <LinearLayout
@@ -13,33 +13,33 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/gap_left"
         android:gravity="center_vertical"
-        android:layout_height="88px">
+        android:layout_height="@dimen/sc_mm_88">
         <TextView
-            android:paddingLeft="20px"
-            android:layout_width="wrap_content"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:layout_width="@dimen/sc_mm_0"
             android:layout_weight="1"
             android:id="@+id/tv_home_search"
-            android:textSize="24px"
+            android:textSize="@dimen/sc_mm_24"
             android:drawableLeft="@drawable/search_light_gray_icon"
-            android:drawablePadding="@dimen/dimen_8_dp"
+            android:drawablePadding="@dimen/sc_mm_8"
             android:background="@drawable/border_civ_3dp_light_gray"
             android:gravity="center_vertical"
             android:text="搜索美好生活"
             android:textColor="@color/text_gray_hint_n"
-            android:layout_height="56px" />
+            android:layout_height="@dimen/sc_mm_56" />
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_marginRight="18px"
-            android:layout_marginLeft="31px"
+            android:layout_marginRight="@dimen/sc_mm_18"
+            android:layout_marginLeft="@dimen/sc_mm_31"
             android:id="@+id/fra_home_message_total"
             android:layout_height="wrap_content">
             <ImageView
-                android:layout_width="64px"
+                android:layout_width="@dimen/sc_mm_64"
                 android:id="@+id/iv_home_message_total"
-                android:layout_height="54px"
-                android:paddingRight="12px"
-                android:paddingTop="12px"
+                android:layout_height="@dimen/sc_mm_54"
+                android:paddingRight="@dimen/sc_mm_12"
+                android:paddingTop="@dimen/sc_mm_12"
                 android:src="@drawable/home_mes_icon"/>
         </FrameLayout>
     </LinearLayout>
-</com.amkj.dmsh.views.autoviews.AutoToolbar>
+</android.support.v7.widget.Toolbar>

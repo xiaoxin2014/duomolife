@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amkj.dmsh.views.autoviews.AutoToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="88px"
+    android:layout_height="@dimen/sc_mm_88"
     android:background="@color/white"
     android:minHeight="?attr/actionBarSize"
     app:contentInsetStart="0dp">
@@ -16,8 +16,8 @@
         <com.amkj.dmsh.views.EditTextWithClear
             android:id="@+id/et_search_input"
             android:layout_width="0dp"
-            android:layout_height="66px"
-            android:layout_marginLeft="24px"
+            android:layout_height="@dimen/sc_mm_66"
+            android:layout_marginLeft="@dimen/sc_mm_24"
             android:layout_weight="1"
             android:background="@drawable/border_civ_3dp_light_gray"
             android:drawableLeft="@drawable/search_light_gray_icon"
@@ -26,23 +26,23 @@
             android:imeOptions="actionSearch"
             android:singleLine="true"
             android:textCursorDrawable="@color/text_black_t"
-            android:paddingLeft="14px"
-            android:paddingRight="14px"
+            android:paddingLeft="@dimen/sc_mm_14"
+            android:paddingRight="@dimen/sc_mm_14"
             android:textColor="@color/home_text_color"
             android:textColorHint="@color/text_hint_gray_ae"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <TextView
             android:id="@+id/tv_home_search_cancel"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:clickable="true"
+
             android:gravity="center"
-            android:paddingLeft="30px"
-            android:paddingRight="30px"
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_30"
             android:text="取消"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="30px" />
+            android:textSize="@dimen/sc_mm_30" />
     </LinearLayout>
-</com.amkj.dmsh.views.autoviews.AutoToolbar>
+</android.support.v7.widget.Toolbar>

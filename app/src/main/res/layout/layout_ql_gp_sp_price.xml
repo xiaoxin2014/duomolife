@@ -12,21 +12,21 @@
         android:drawableLeft="@drawable/ql_gp_sp_per"
         android:drawablePadding="@dimen/dimen_5_dp"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="24px" />
+        android:textSize="@dimen/sc_mm_24" />
 
     <TextView
         android:id="@+id/tv_gp_sp_per_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="18px"
+        android:layout_marginLeft="@dimen/sc_mm_18"
         android:textColor="@color/text_normal_red"
-        android:textSize="30px" />
+        android:textSize="@dimen/sc_mm_30" />
 
     <TextView
         android:id="@+id/tv_gp_sp_nor_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30px"
+        android:layout_marginLeft="@dimen/sc_mm_30"
         android:textColor="@color/text_gray_hint_n"
-        android:textSize="24px" />
+        android:textSize="@dimen/sc_mm_24" />
 </LinearLayout>

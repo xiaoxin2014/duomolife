@@ -10,8 +10,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="84px"
-        android:paddingRight="84px"
+        android:paddingLeft="@dimen/sc_mm_84"
+        android:paddingRight="@dimen/sc_mm_84"
         android:layout_weight="1">
 
         <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading" />
@@ -20,22 +20,22 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="40px"
-        android:paddingLeft="84px"
-        android:paddingRight="84px"
+        android:paddingBottom="@dimen/sc_mm_40"
+        android:paddingLeft="@dimen/sc_mm_84"
+        android:paddingRight="@dimen/sc_mm_84"
         android:id="@+id/rel_habit_type"
         android:visibility="gone"
-        android:paddingTop="40px">
+        android:paddingTop="@dimen/sc_mm_40">
 
         <TextView
             android:id="@+id/tv_habit_type_confirm"
             android:layout_width="match_parent"
-            android:layout_height="80px"
+            android:layout_height="@dimen/sc_mm_80"
             android:background="@drawable/border_civ_four_solid_blue_sev"
-            android:clickable="true"
+
             android:gravity="center"
             android:text="确定"
             android:textColor="@color/white"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
     </RelativeLayout>
 </LinearLayout>

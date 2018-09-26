@@ -809,6 +809,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".mine.activity.MineLoginActivity"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".mine.activity.RegisterAccountActivity"

@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityOverseasDetailsActivity;
@@ -18,6 +17,7 @@ import com.amkj.dmsh.homepage.adapter.DuMoLifeHorRecyclerAdapter;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, BaseViewHolderHelper> {
+public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, BaseViewHolder> {
     private final Context context;
     private final String type;
     private List<DMLGoodsBean> goodsList;
@@ -41,7 +41,7 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, final DMLThemeBean dMLThemeBean) {
+    protected void convert(BaseViewHolder helper, final DMLThemeBean dMLThemeBean) {
         ImageView iv_cover_bg_header_img = helper.getView(R.id.iv_cover_bg_header_img);
         GlideImageLoaderUtil.loadCenterCrop(context, iv_cover_bg_header_img, dMLThemeBean.getPicUrl());
         goodsList = new ArrayList<>();

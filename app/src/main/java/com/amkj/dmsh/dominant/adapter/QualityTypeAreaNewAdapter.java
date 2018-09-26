@@ -9,11 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity.QualityHomeTypeBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.HeightAttr;
 import com.zhy.autolayout.attr.WidthAttr;
@@ -33,7 +33,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:请输入类描述
  */
 
-public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<QualityHomeTypeBean, BaseViewHolderHelper> {
+public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<QualityHomeTypeBean, BaseViewHolder> {
     private final Context context;
     private final List<QualityHomeTypeBean> qualityHomeTypeList;
     private int widthPx;
@@ -48,7 +48,7 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
     }
 
     @Override
-    protected void convert(final BaseViewHolderHelper helper, QualityHomeTypeBean qualityHomeTypeBean) {
+    protected void convert(final BaseViewHolder helper, QualityHomeTypeBean qualityHomeTypeBean) {
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_1:
             case ConstantVariable.TYPE_2:

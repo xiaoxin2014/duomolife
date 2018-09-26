@@ -11,7 +11,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_shop_details"
             android:layout_width="match_parent"
-            android:paddingTop="22px"
+            android:paddingTop="@dimen/sc_mm_22"
             android:layout_height="wrap_content"
             android:scrollbars="none"/>
         <com.melnykov.fab.FloatingActionButton

@@ -11,14 +11,14 @@
         android:paddingLeft="@dimen/gap_left"
         android:paddingRight="@dimen/gap_right"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:visibility="gone"
         android:lineSpacingExtra="@dimen/dp_4"
         android:gravity="center_vertical"
         android:text="@string/text_oversea_hint"
         android:lines="2"
         android:background="@color/text_blue_e_thre"
-        android:layout_height="90px" />
+        android:layout_height="@dimen/sc_mm_90" />
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"

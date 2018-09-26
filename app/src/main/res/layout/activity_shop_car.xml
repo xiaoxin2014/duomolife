@@ -28,8 +28,8 @@
             <RelativeLayout
                 android:id="@+id/rel_shop_car_bottom"
                 android:layout_width="match_parent"
-                android:layout_height="98px"
-                android:paddingTop="1px"
+                android:layout_height="@dimen/sc_mm_98"
+                android:paddingTop="@dimen/sc_mm_1"
                 android:background="@drawable/border_top_line"
                 android:layout_gravity="bottom">
 

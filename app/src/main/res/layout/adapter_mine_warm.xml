@@ -10,9 +10,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/sc_mm_88"
         android:gravity="center_vertical"
-        android:layout_marginLeft="16px">
+        android:layout_marginLeft="@dimen/sc_mm_16">
 
         <include layout="@layout/layout_countdown_time_hours_red" />
     </RelativeLayout>
@@ -22,25 +22,25 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:paddingBottom="30px"
+        android:paddingBottom="@dimen/sc_mm_30"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
-        android:paddingTop="30px">
+        android:paddingTop="@dimen/sc_mm_30">
 
 
         <ImageView
             android:id="@+id/img_mine_warm_product"
-            android:layout_width="174px"
-            android:layout_height="174px"
+            android:layout_width="@dimen/sc_mm_174"
+            android:layout_height="@dimen/sc_mm_174"
             android:scaleType="centerCrop"
-            app:layout_auto_basewidth="height" />
+             />
 
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="176px"
+            android:layout_height="@dimen/sc_mm_176"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="30px">
+            android:layout_marginLeft="@dimen/sc_mm_30">
 
             <TextView
                 android:id="@+id/tv_mine_warm_product_name"
@@ -50,7 +50,7 @@
                 android:lineSpacingExtra="2dp"
                 android:lines="2"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,17 +66,17 @@
                     android:ellipsize="end"
                     android:layout_weight="1"
                     android:textColor="@color/text_black_t"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
 
                 <TextView
                     android:id="@+id/tv_mine_warm_set_status"
-                    android:layout_width="160px"
-                    android:layout_height="58px"
+                    android:layout_width="@dimen/sc_mm_160"
+                    android:layout_height="@dimen/sc_mm_58"
                     android:background="@drawable/selector_status_mine_warm"
-                    android:clickable="true"
+
                     android:gravity="center"
                     android:textColor="@color/selector_font_white_gray"
-                    android:textSize="28px" />
+                    android:textSize="@dimen/sc_mm_28" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

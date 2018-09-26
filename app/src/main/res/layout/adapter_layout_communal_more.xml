@@ -5,10 +5,10 @@
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/sc_mm_88"
         android:layout_centerInParent="true"
         android:textColor="@color/text_black_t"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:gravity="center"
         android:text="更多同类商品推荐"
         android:id="@+id/tv_communal_more"/>

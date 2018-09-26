@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120px"
+    android:layout_height="@dimen/sc_mm_120"
     android:orientation="horizontal"
     android:background="@color/white"
     android:gravity="center_vertical">
@@ -14,28 +14,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:id="@+id/tv_integral_detail_title"
-            android:textSize="28px"
+            android:textSize="@dimen/sc_mm_28"
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/text_black_t"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginTop="18px"
+            android:layout_marginTop="@dimen/sc_mm_18"
             android:ellipsize="end"
             android:lines="1"
             android:layout_below="@id/tv_integral_detail_title"
             android:id="@+id/tv_integral_detail_time"
-            android:textSize="24px"
+            android:textSize="@dimen/sc_mm_24"
             android:textColor="@color/text_gray_hint_n"
             android:layout_height="wrap_content" />
     </RelativeLayout>
     <TextView
         android:layout_width="wrap_content"
-        android:layout_marginLeft="30px"
+        android:layout_marginLeft="@dimen/sc_mm_30"
         android:layout_marginRight="@dimen/gap_right"
         android:id="@+id/tv_integral_detail_score"
-        android:textSize="34px"
+        android:textSize="@dimen/sc_mm_34"
         android:textColor="@color/text_login_blue_z"
         android:layout_height="wrap_content" />
 </LinearLayout>

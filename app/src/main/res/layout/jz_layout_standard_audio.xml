@@ -9,16 +9,16 @@
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginLeft="46px"
-            android:layout_marginRight="46px"
-            android:paddingRight="30px"
+            android:layout_marginLeft="@dimen/sc_mm_46"
+            android:layout_marginRight="@dimen/sc_mm_46"
+            android:paddingRight="@dimen/sc_mm_30"
             android:gravity="center_vertical"
-            android:layout_height="195px">
+            android:layout_height="@dimen/sc_mm_195">
             <ImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/sel_audio_player_icon"
-                android:layout_marginLeft="30px"
-                android:layout_marginRight="30px"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:layout_marginRight="@dimen/sc_mm_30"
                 android:id="@+id/ib_audio_player"
                 android:layout_centerVertical="true"
                 android:background="@color/white"
@@ -35,17 +35,17 @@
                     android:textColor="@color/text_black_t"
                     android:lines="1"
                     android:ellipsize="end"
-                    android:textSize="28px"
+                    android:textSize="@dimen/sc_mm_28"
                     android:text="灵魂有香气的女子"
                     android:layout_height="wrap_content" />
                 <TextView
                     android:layout_width="match_parent"
                     android:id="@+id/tv_audio_player_source"
-                    android:layout_marginTop="20px"
+                    android:layout_marginTop="@dimen/sc_mm_20"
                     android:textColor="@color/text_login_gray_s"
                     android:lines="1"
                     android:ellipsize="end"
-                    android:textSize="24px"
+                    android:textSize="@dimen/sc_mm_24"
                     android:layout_height="wrap_content" />
                 <SeekBar
                     android:id="@+id/bottom_seek_progress"
@@ -53,7 +53,7 @@
                     android:layout_height="17dp"
                     android:background="@null"
                     android:max="100"
-                    android:layout_marginTop="21px"
+                    android:layout_marginTop="@dimen/sc_mm_21"
                     android:minHeight="1dp"
                     android:paddingBottom="8dp"
                     android:paddingTop="8dp"
@@ -63,12 +63,12 @@
                     android:thumb="@null" />
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="13px"
+                    android:layout_marginTop="@dimen/sc_mm_13"
                     android:layout_height="wrap_content">
                     <TextView
                         android:layout_width="wrap_content"
                         android:id="@+id/current"
-                        android:textSize="24px"
+                        android:textSize="@dimen/sc_mm_24"
                         android:text="00:00"
                         android:textColor="@color/text_gray_hint_n"
                         android:layout_height="wrap_content" />
@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:id="@+id/total"
                         android:layout_alignParentRight="true"
-                        android:textSize="24px"
+                        android:textSize="@dimen/sc_mm_24"
                         android:text="00:00"
                         android:textColor="@color/text_gray_hint_n"
                         android:layout_height="wrap_content" />

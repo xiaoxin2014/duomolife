@@ -9,15 +9,15 @@
     android:orientation="horizontal">
     <TextView
         android:layout_width="wrap_content"
-        android:layout_marginLeft="10px"
+        android:layout_marginLeft="@dimen/sc_mm_10"
         android:text="剩"
-        android:textSize="28px"
+        android:textSize="@dimen/sc_mm_28"
         android:id="@+id/tv_count_time_before_hours"
         android:gravity="center"
         android:textColor="@color/selector_font_red_gray"
         android:layout_height="wrap_content" />
     <cn.iwgang.countdownview.CountdownView
-        android:paddingLeft="16px"
+        android:paddingLeft="@dimen/sc_mm_16"
         android:id="@+id/cv_countdownTime_red_hours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         app:isShowSecond="true"
         app:suffixGravity="center"
         app:suffixTextColor="@color/text_red_color"
-        app:suffixTextSize="28px"
+        app:suffixTextSize="@dimen/sc_mm_28"
         app:timeTextColor="@color/text_red_color"
-        app:timeTextSize="28px" />
+        app:timeTextSize="@dimen/sc_mm_28" />
 </LinearLayout>

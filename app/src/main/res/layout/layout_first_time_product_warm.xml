@@ -5,23 +5,23 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="540px"
+        android:layout_width="@dimen/sc_mm_540"
         android:layout_height="wrap_content"
         android:background="@drawable/border_cir_7dp_str_gray_c_bg_white"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="1px">
+        android:padding="@dimen/sc_mm_1">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="105px"
+            android:layout_height="@dimen/sc_mm_105"
             android:background="@color/transparent"
             android:gravity="center"
             android:text="消息提醒设置"
             android:textColor="@color/text_black_t"
-            android:textSize="32px" />
+            android:textSize="@dimen/sc_mm_32" />
 
-        <com.amkj.dmsh.views.autoviews.AutoRadioGroup
+        <RadioGroup
             android:id="@+id/rp_time_pro_warm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,65 +30,65 @@
 
             <RadioButton
                 style="@style/MessageWarm"
-                android:layout_height="105px"
+                android:layout_height="@dimen/sc_mm_105"
                 android:background="@drawable/border_top_bottom_line"
                 android:drawableLeft="@drawable/sel_time_warm_blue"
                 android:drawablePadding="@dimen/dimen_40_dp"
                 android:gravity="center"
-                android:paddingLeft="77px"
-                android:paddingRight="198px"
+                android:paddingLeft="@dimen/sc_mm_77"
+                android:paddingRight="@dimen/sc_mm_198"
                 android:text="提前3分钟"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <RadioButton
                 style="@style/MessageWarm"
-                android:layout_height="105px"
+                android:layout_height="@dimen/sc_mm_105"
                 android:drawableLeft="@drawable/sel_time_warm_blue"
                 android:drawablePadding="@dimen/dimen_40_dp"
                 android:gravity="center"
-                android:paddingLeft="77px"
-                android:paddingRight="198px"
+                android:paddingLeft="@dimen/sc_mm_77"
+                android:paddingRight="@dimen/sc_mm_198"
                 android:text="提前5分钟"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <RadioButton
                 style="@style/MessageWarm"
-                android:layout_height="105px"
+                android:layout_height="@dimen/sc_mm_105"
                 android:drawableLeft="@drawable/sel_time_warm_blue"
                 android:drawablePadding="@dimen/dimen_40_dp"
                 android:gravity="center"
-                android:paddingLeft="77px"
-                android:paddingRight="198px"
+                android:paddingLeft="@dimen/sc_mm_77"
+                android:paddingRight="@dimen/sc_mm_198"
                 android:text="提前10分钟"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <RadioButton
                 style="@style/MessageWarm"
-                android:layout_height="105px"
+                android:layout_height="@dimen/sc_mm_105"
                 android:drawableLeft="@drawable/sel_time_warm_blue"
                 android:drawablePadding="@dimen/dimen_40_dp"
                 android:gravity="center"
-                android:paddingLeft="77px"
-                android:paddingRight="198px"
+                android:paddingLeft="@dimen/sc_mm_77"
+                android:paddingRight="@dimen/sc_mm_198"
                 android:text="提前30分钟"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
+                android:textSize="@dimen/sc_mm_28" />
 
             <RadioButton
                 style="@style/MessageWarm"
-                android:layout_height="105px"
+                android:layout_height="@dimen/sc_mm_105"
                 android:background="@color/transparent"
                 android:drawableLeft="@drawable/sel_time_warm_blue"
                 android:drawablePadding="@dimen/dimen_40_dp"
                 android:gravity="center"
-                android:paddingLeft="77px"
-                android:paddingRight="198px"
+                android:paddingLeft="@dimen/sc_mm_77"
+                android:paddingRight="@dimen/sc_mm_198"
                 android:text="提前60分钟"
                 android:textColor="@color/text_black_t"
-                android:textSize="28px" />
-        </com.amkj.dmsh.views.autoviews.AutoRadioGroup>
+                android:textSize="@dimen/sc_mm_28" />
+        </RadioGroup>
     </LinearLayout>
 </LinearLayout>

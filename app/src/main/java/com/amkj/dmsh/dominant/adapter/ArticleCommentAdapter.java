@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -28,6 +27,7 @@ import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -206,7 +206,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
         return "0";
     }
 
-    public class ArticleViewHolder extends BaseViewHolderHelper {
+    public class ArticleViewHolder extends BaseViewHolder {
         RecyclerView communal_recycler_wrap;
 
         public ArticleViewHolder(View view) {

@@ -8,17 +8,17 @@
     <include layout="@layout/layout_direct_indent_write_header_address"/>
     <include layout="@layout/adapter_integral_lottery_award"/>
     <TextView
-        android:layout_width="710px"
+        android:layout_width="@dimen/sc_mm_710"
         android:id="@+id/tv_integral_lottery_award_confirm_get"
         android:layout_gravity="center"
         android:background="@drawable/sel_enable_red_nor_gray_cir_five"
-        android:textSize="32px"
+        android:textSize="@dimen/sc_mm_32"
         android:visibility="gone"
-        android:layout_marginTop="40px"
+        android:layout_marginTop="@dimen/sc_mm_40"
         android:gravity="center"
         android:textColor="@color/white"
         android:text="确认"
-        android:layout_height="80px" />
+        android:layout_height="@dimen/sc_mm_80" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

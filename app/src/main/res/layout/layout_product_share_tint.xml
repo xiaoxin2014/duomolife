@@ -7,9 +7,9 @@
         android:layout_width="wrap_content"
         android:background="@drawable/share_show_dialog"
         android:textColor="@color/white"
-        android:textSize="24px"
+        android:textSize="@dimen/sc_mm_24"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="13px"
+        android:layout_marginRight="@dimen/sc_mm_13"
         android:gravity="center"
         android:text="推荐有惊喜"
         android:layout_height="wrap_content" />

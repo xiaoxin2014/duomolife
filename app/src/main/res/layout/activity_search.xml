@@ -29,20 +29,20 @@
                     android:layout_width="match_parent"
                     android:paddingLeft="@dimen/gap_left"
                     android:gravity="center_vertical"
-                    android:layout_height="80px">
+                    android:layout_height="@dimen/sc_mm_80">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="60px"
+                        android:layout_height="@dimen/sc_mm_60"
                         android:textColor="@color/text_black_t"
-                        android:textSize="28px"
+                        android:textSize="@dimen/sc_mm_28"
                         android:gravity="center_vertical"
                         android:text="搜索历史"
                         android:layout_centerVertical="true"
                         android:layout_alignParentLeft="true" />
                     <ImageView
                         android:layout_width="wrap_content"
-                        android:paddingLeft="20px"
-                        android:paddingRight="20px"
+                        android:paddingLeft="@dimen/sc_mm_20"
+                        android:paddingRight="@dimen/sc_mm_20"
                         android:id="@+id/iv_search_record"
                         android:layout_alignParentRight="true"
                         android:src="@drawable/search_trush_icon"
@@ -50,8 +50,8 @@
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_marginLeft="26px"
-                    android:layout_marginRight="26px"
+                    android:layout_marginLeft="@dimen/sc_mm_26"
+                    android:layout_marginRight="@dimen/sc_mm_26"
                     android:layout_height="wrap_content">
                     <com.amkj.dmsh.views.flowlayout.TagFlowLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/tfl_search_history"
@@ -65,28 +65,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/ll_search_hot"
-                android:layout_marginTop="20px"
+                android:layout_marginTop="@dimen/sc_mm_20"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:paddingLeft="@dimen/gap_left"
                     android:gravity="center_vertical"
-                    android:layout_height="80px">
+                    android:layout_height="@dimen/sc_mm_80">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_height="60px"
+                        android:layout_height="@dimen/sc_mm_60"
                         android:textColor="@color/text_black_t"
-                        android:textSize="28px"
+                        android:textSize="@dimen/sc_mm_28"
                         android:gravity="center_vertical"
                         android:layout_centerVertical="true"
                         android:text="热门搜索" />
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_marginLeft="26px"
-                    android:layout_marginRight="26px"
+                    android:layout_marginLeft="@dimen/sc_mm_26"
+                    android:layout_marginRight="@dimen/sc_mm_26"
                     android:layout_height="wrap_content">
                     <com.amkj.dmsh.views.flowlayout.TagFlowLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/tfl_search_hot"
@@ -98,17 +98,17 @@
             </LinearLayout>
             <com.amkj.dmsh.views.DrawableCenterTextView
                 android:layout_width="match_parent"
-                android:layout_marginTop="30px"
+                android:layout_marginTop="@dimen/sc_mm_30"
                 android:background="@color/light_gray_f"
                 android:gravity="center_vertical"
                 android:drawablePadding="@dimen/dimen_10_dp"
                 android:drawableLeft="@drawable/search_leave_mes_icon"
                 android:textColor="@color/text_login_gray_s"
-                android:clickable="true"
+
                 android:id="@+id/tv_search_leave_mes"
                 android:text="@string/search_leave_mes"
-                android:textSize="28px"
-                android:layout_height="88px" />
+                android:textSize="@dimen/sc_mm_28"
+                android:layout_height="@dimen/sc_mm_88" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

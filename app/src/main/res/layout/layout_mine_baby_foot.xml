@@ -6,32 +6,32 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
     <TextView
-        android:layout_width="570px"
+        android:layout_width="@dimen/sc_mm_570"
         android:id="@+id/tv_mine_baby_foot_sex"
-        android:textSize="28px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
+        android:textSize="@dimen/sc_mm_28"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30"
         android:textColorHint="@color/text_gray_hint_n"
         android:hint="请选择宝宝性别"
         android:gravity="center_vertical"
         android:drawableRight="@drawable/sel_bt_top_bot_blue_icon"
         android:textColor="@color/text_black_t"
         android:background="@drawable/border_circle_four_blue_sev_bg_white"
-        android:layout_marginBottom="40px"
-        android:layout_height="88px"
-        android:clickable="true"/>
+        android:layout_marginBottom="@dimen/sc_mm_40"
+        android:layout_height="@dimen/sc_mm_88"
+        />
     <TextView
-        android:layout_width="570px"
+        android:layout_width="@dimen/sc_mm_570"
         android:id="@+id/tv_mine_baby_time"
-        android:textSize="28px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
+        android:textSize="@dimen/sc_mm_28"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30"
         android:textColorHint="@color/text_gray_hint_n"
         android:hint="请选择宝宝生日"
         android:gravity="center_vertical"
         android:background="@drawable/border_circle_four_blue_sev_bg_white"
         android:drawableRight="@drawable/sel_bt_top_bot_blue_icon"
         android:textColor="@color/text_black_t"
-        android:layout_height="88px"
-        android:clickable="true"/>
+        android:layout_height="@dimen/sc_mm_88"
+        />
 </LinearLayout>

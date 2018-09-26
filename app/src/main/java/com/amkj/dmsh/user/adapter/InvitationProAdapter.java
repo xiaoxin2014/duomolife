@@ -4,11 +4,11 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:关联商品
  */
 
-public class InvitationProAdapter extends BaseMultiItemQuickAdapter<RelevanceProBean, BaseViewHolderHelper> {
+public class InvitationProAdapter extends BaseMultiItemQuickAdapter<RelevanceProBean, BaseViewHolder> {
     private final Context context;
 
     public InvitationProAdapter(Context context, List<RelevanceProBean> relevanceProList) {
@@ -34,7 +34,7 @@ public class InvitationProAdapter extends BaseMultiItemQuickAdapter<RelevancePro
     }
 
     @Override
-    protected void convert(BaseViewHolderHelper helper, RelevanceProBean relevanceProBean) {
+    protected void convert(BaseViewHolder helper, RelevanceProBean relevanceProBean) {
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_0:
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_inv_pro), relevanceProBean.getPictureUrl());

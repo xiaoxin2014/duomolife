@@ -30,7 +30,6 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,8 +164,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                                 case 3:
                                 case 4:
                                     if (userId > 0) {
-                                        View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null);
-                                        AutoUtils.autoSize(indentPopWindow);
+                                        View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null,false);
                                         PopupWindowView popupWindowView = new PopupWindowView();
                                         ButterKnife.bind(popupWindowView, indentPopWindow);
                                         mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(QualityGroupShopMineActivity.this)

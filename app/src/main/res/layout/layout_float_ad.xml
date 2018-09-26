@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/iv_float_ad_icon"
-    android:layout_width="71dp"
-    android:layout_height="60dp"
+    android:layout_width="@dimen/sc_mm_142"
+    android:layout_height="@dimen/sc_mm_120"
     android:layout_gravity="right|bottom"
-    android:layout_marginBottom="30dp"
-    android:layout_marginRight="@dimen/dimen_15_dp"
+    android:layout_marginBottom="@dimen/sc_mm_60"
+    android:layout_marginRight="@dimen/sc_mm_30"
     android:scaleType="fitCenter"
     android:visibility="gone" />

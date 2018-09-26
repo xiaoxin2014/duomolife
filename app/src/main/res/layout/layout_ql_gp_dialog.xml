@@ -12,14 +12,14 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="68px"
+            android:layout_height="@dimen/sc_mm_68"
             android:id="@+id/tv_title_text"
             android:background="@drawable/border_bottom_line"
             android:gravity="center_vertical"
-            android:paddingLeft="30px"
+            android:paddingLeft="@dimen/sc_mm_30"
             android:text="购前须知"
             android:textColor="@color/text_black_t"
-            android:textSize="28px" />
+            android:textSize="@dimen/sc_mm_28" />
     </FrameLayout>
 
     <RelativeLayout
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingLeft="36px">
+        android:paddingLeft="@dimen/sc_mm_36">
 
         <include layout="@layout/activity_hot_search_tag" />
     </RelativeLayout>
@@ -39,17 +39,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15px"
-            android:paddingBottom="30px"
+            android:layout_marginTop="@dimen/sc_mm_15"
+            android:paddingBottom="@dimen/sc_mm_30"
             android:orientation="vertical">
             <include layout="@layout/layout_communal_recycler_wrap"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="1"
-                android:paddingLeft="30px"
+                android:paddingLeft="@dimen/sc_mm_30"
                 android:paddingRight="@dimen/gap_right"
                 android:lineSpacingExtra="@dimen/dimen_3_dp"
-                android:textSize="24px"
+                android:textSize="@dimen/sc_mm_24"
                 android:ellipsize="end"
                 android:id="@+id/tv_pro_buy_detail_text"
                 android:textColor="@color/text_login_gray_s"

@@ -9,7 +9,7 @@
     <include layout="@layout/layout_integral_lottery_prize"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="40px"
+        android:layout_marginTop="@dimen/sc_mm_40"
         android:id="@+id/rel_integral_lottery_prize"
         android:gravity="center_vertical"
         android:layout_height="wrap_content">
@@ -18,14 +18,14 @@
             android:gravity="center_vertical"
             android:textColor="@color/yellow_bg_fsae"
             android:layout_centerVertical="true"
-            android:textSize="34px"
+            android:textSize="@dimen/sc_mm_34"
             android:text="去领取"
-            android:paddingRight="80px"
+            android:paddingRight="@dimen/sc_mm_80"
             android:id="@+id/tv_integral_lottery_get_prize"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_width="wrap_content"
-            android:textSize="24px"
+            android:textSize="@dimen/sc_mm_24"
             android:layout_centerVertical="true"
             android:textColor="@color/text_gray_hint_n"
             android:drawableRight="@drawable/att_integ_next"

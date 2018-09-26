@@ -6,15 +6,15 @@
     <include layout="@layout/layout_communal_refresh_recycler_base"/>
     <TextView
         android:layout_width="wrap_content"
-        android:minWidth="136px"
-        android:paddingLeft="12px"
-        android:paddingRight="20px"
+        android:minWidth="@dimen/sc_mm_136"
+        android:paddingLeft="@dimen/sc_mm_12"
+        android:paddingRight="@dimen/sc_mm_20"
         android:id="@+id/tv_time_product_shaft"
-        android:layout_marginTop="350px"
+        android:layout_marginTop="@dimen/sc_mm_350"
         android:visibility="gone"
         android:gravity="center"
-        android:textSize="26px"
+        android:textSize="@dimen/sc_mm_26"
         android:background="@color/bg_trans_80_ffs_pink"
         android:textColor="@color/white"
-        android:layout_height="50px" />
+        android:layout_height="@dimen/sc_mm_50" />
 </FrameLayout>
