@@ -908,11 +908,17 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     String imageUrl = jsonObject.getString("imageUrl");
                     String content = jsonObject.getString("content");
                     String url = jsonObject.getString("url");
+                    String routineUrl = null;
+                    try {
+                        routineUrl = jsonObject.getString("routineUrl");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     new UMShareAction(DoMoLifeCommunalActivity.this
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
                             , TextUtils.isEmpty(content) ? "" : content
-                            , url);
+                            , url,routineUrl);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

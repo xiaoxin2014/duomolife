@@ -598,7 +598,8 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     , shopBuyDetailBean.getCoverImgUrl()
                     , "每周优选"
                     , "摸透你的心，为你精选最应季最实用最优质的热门精品"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html");
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html"
+                    ,"pages/weekly_optimization/weekly_optimization");
         }
     }
 }

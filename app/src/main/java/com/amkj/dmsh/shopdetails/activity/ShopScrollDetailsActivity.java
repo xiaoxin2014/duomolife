@@ -154,7 +154,6 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODU
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 ;
-;
 
 /**
  * @author LGuiPeng
@@ -768,21 +767,21 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         showToast(ShopScrollDetailsActivity.this, shopDetailsEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopDetailsEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, shopDetailsEntity);
             }
 
             @Override
             public void netClose() {
                 smart_ql_sp_pro_details.finishRefresh();
                 showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopDetailsEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, shopDetailsEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_ql_sp_pro_details.finishRefresh();
                 showToast(ShopScrollDetailsActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,shopDetailsEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, shopDetailsEntity);
             }
         });
     }
@@ -1891,7 +1890,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 alertDialog.setCanceledOnTouchOutside(true);
                 alertDialog.show();
                 TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                int dialogHeight = (int) (app.getScreenHeight() * 0.4 + 1);
+                int dialogHeight = (int) (app.getScreenHeight() * 0.5 + 1);
                 Window window = alertDialog.getWindow();
                 window.getDecorView().setPadding(0, 0, 0, 0);
                 window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
@@ -2115,9 +2114,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals("01")) {
-                        showToast(ShopScrollDetailsActivity.this, requestStatus.getIsNotice() == 1?"已取消通知" : "已设置通知");
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
-                    }else{
+                        showToast(ShopScrollDetailsActivity.this, requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
+                    } else {
                         showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
                     }
                 }
@@ -2166,7 +2165,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     , shopPropertyBean.getPicUrl()
                     , "我在多么生活看中了" + shopPropertyBean.getName()
                     , getStrings(shopPropertyBean.getSubtitle())
-                    , sharePageUrl + shopPropertyBean.getId());
+                    , sharePageUrl + shopPropertyBean.getId()
+                    , "pages/goodsDetails/goodsDetails?id=" + shopPropertyBean.getId());
         }
         tv_product_share_tint.setVisibility(GONE);
     }
@@ -2180,9 +2180,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             startActivity(intent);
         }
     }
+
     @OnClick(R.id.iv_ql_shop_pro_cp_tag)
     void unallowedCoupon() {
-        showToast(ShopScrollDetailsActivity.this,"该商品不支持使用优惠券！");
+        showToast(ShopScrollDetailsActivity.this, "该商品不支持使用优惠券！");
     }
 
     private void getConstant() {

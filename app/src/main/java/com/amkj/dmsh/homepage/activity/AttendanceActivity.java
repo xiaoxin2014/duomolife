@@ -39,7 +39,6 @@ import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;

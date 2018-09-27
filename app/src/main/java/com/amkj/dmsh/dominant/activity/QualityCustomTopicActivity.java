@@ -452,7 +452,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     , likedProductBean.getPicUrl()
                     , "推荐你看看这个"
                     , "我在多么生活发现这几样好物，性价比不错，还包邮"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType);
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType
+                    , "pages/handpick/handpick?id=" + productType);
         }
     }
 

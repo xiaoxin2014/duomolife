@@ -329,15 +329,6 @@
             </intent-filter>
         </activity>
         <!--自营商品详情-->
-        <activity
-            android:name=".shopdetails.activity.ShopScrollDetailsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="ShopScrollDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <!--商品推荐-->
         <activity
             android:name=".shopdetails.activity.ProRecommendActivity"

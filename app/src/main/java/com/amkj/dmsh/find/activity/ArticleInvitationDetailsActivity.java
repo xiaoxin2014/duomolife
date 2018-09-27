@@ -51,7 +51,6 @@ import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean.R
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity;
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;

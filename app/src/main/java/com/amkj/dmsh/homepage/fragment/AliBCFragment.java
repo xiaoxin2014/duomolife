@@ -133,112 +133,113 @@ public class AliBCFragment extends BaseFragment {
         tv_header_shared.setVisibility(View.GONE);
         tv_life_back.setVisibility(View.GONE);
         tl_normal_bar.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(webUrl)) {
+        if (TextUtils.isEmpty(webUrl)) {
+            return;
+        }
 //        自适应屏幕大小
-            web_fragment_communal.getSettings().setUseWideViewPort(true);
-            web_fragment_communal.getSettings().setLoadWithOverviewMode(true);
-            WebSettings webSettings = web_fragment_communal.getSettings();
-            //设置WebView属性，能够执行Javascript脚本
-            webSettings.setJavaScriptEnabled(true);
-            //设置可以访问文件
-            webSettings.setAllowFileAccess(true);
-            //设置支持缩放
-            webSettings.setBuiltInZoomControls(false);
-            web_fragment_communal.setWebChromeClient(new MyWebChromeClient());
-            //加载需要显示的网页
-            if (NetWorkUtils.checkNet(getActivity())) {
-                webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-            } else {
-                webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-            }
-            web_fragment_communal.getSettings().setUserAgentString(web_fragment_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
+        web_fragment_communal.getSettings().setUseWideViewPort(true);
+        web_fragment_communal.getSettings().setLoadWithOverviewMode(true);
+        WebSettings webSettings = web_fragment_communal.getSettings();
+        //设置WebView属性，能够执行Javascript脚本
+        webSettings.setJavaScriptEnabled(true);
+        //设置可以访问文件
+        webSettings.setAllowFileAccess(true);
+        //设置支持缩放
+        webSettings.setBuiltInZoomControls(false);
+        web_fragment_communal.setWebChromeClient(new MyWebChromeClient());
+        //加载需要显示的网页
+        if (NetWorkUtils.checkNet(getActivity())) {
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        } else {
+            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        }
+        web_fragment_communal.getSettings().setUserAgentString(web_fragment_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
 //        js交互
-            web_fragment_communal.addJavascriptInterface(new JsData(getActivity()), "JsToAndroid");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        web_fragment_communal.addJavascriptInterface(new JsData(getActivity()), "JsToAndroid");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        //设置Web视图
+        web_fragment_communal.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
             }
-            web_fragment_communal.loadUrl(webUrl);
-            //设置Web视图
-            web_fragment_communal.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                    handler.proceed();
-                }
 
-                @Override
-                public void onPageFinished(final WebView view, final String url) {
+            @Override
+            public void onPageFinished(final WebView view, final String url) {
 //                    是否显示顶部导航栏
-                    if (view.canGoBack()) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String showType = headerBarMap.get(url);
-                                if (!TextUtils.isEmpty(showType) && showType.equals("1")) {
-                                    tl_normal_bar.setVisibility(View.VISIBLE);
-                                } else {
-                                    tl_normal_bar.setVisibility(View.GONE);
-                                }
+                if (view.canGoBack()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String showType = headerBarMap.get(url);
+                            if (!TextUtils.isEmpty(showType) && showType.equals("1")) {
+                                tl_normal_bar.setVisibility(View.VISIBLE);
+                            } else {
+                                tl_normal_bar.setVisibility(View.GONE);
+                            }
 
 //                    是否显示分享
-                                String showShareType = shareDataMap.get(url);
-                                if (!TextUtils.isEmpty(showShareType) && showShareType.equals("1")) {
-                                    tv_header_shared.setVisibility(View.VISIBLE);
-                                } else {
-                                    tv_header_shared.setVisibility(View.GONE);
-                                }
+                            String showShareType = shareDataMap.get(url);
+                            if (!TextUtils.isEmpty(showShareType) && showShareType.equals("1")) {
+                                tv_header_shared.setVisibility(View.VISIBLE);
+                            } else {
+                                tv_header_shared.setVisibility(View.GONE);
+                            }
 
 //                    修改顶栏标题
-                                String headTitle = titleMap.get(url);
-                                if (!TextUtils.isEmpty(headTitle) && headTitle.toString().trim().length() > 0) {
-                                    tv_header_title.setText(getStrings(headTitle));
-                                } else {
-                                    tv_header_title.setText("");
-                                }
-
-                                if (!view.canGoBack()) {
-                                    tv_life_back.setVisibility(View.GONE);
-                                }
+                            String headTitle = titleMap.get(url);
+                            if (!TextUtils.isEmpty(headTitle) && headTitle.toString().trim().length() > 0) {
+                                tv_header_title.setText(getStrings(headTitle));
+                            } else {
+                                tv_header_title.setText("");
                             }
-                        });
-                    }
-                    if (RefreshState.Refreshing.equals(smart_fragment_web.getState())) {
-                        smart_fragment_web.finishRefresh();
-                    }
-                    super.onPageFinished(view, url);
-                }
-                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    String url = request.getUrl().toString();
-                    try{
-                        if(!url.startsWith("http://") && !url.startsWith("https://")){
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            startActivity(intent);
-                            return true;
-                        }
-                    }catch (Exception e){//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
-                        return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
-                    }
-                    view.loadUrl(url);
-                    return true;
-                }
 
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    try{
-                        if(!url.startsWith("http://") && !url.startsWith("https://")){
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            startActivity(intent);
-                            return true;
+                            if (!view.canGoBack()) {
+                                tv_life_back.setVisibility(View.GONE);
+                            }
                         }
-                    }catch (Exception e){//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
-                        return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
-                    }
-                    view.loadUrl(url);
-                    return true;
+                    });
                 }
-            });
-        }
+                if (RefreshState.Refreshing.equals(smart_fragment_web.getState())) {
+                    smart_fragment_web.finishRefresh();
+                }
+                super.onPageFinished(view, url);
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                try {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                        return true;
+                    }
+                } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                    return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
+                }
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                try {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                        return true;
+                    }
+                } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                    return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
+                }
+                view.loadUrl(url);
+                return true;
+            }
+        });
         web_fragment_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
             @Override
             public void onScroll(int dx, int dy) {
@@ -289,6 +290,7 @@ public class AliBCFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        web_fragment_communal.loadUrl(webUrl);
     }
 
     @Override
@@ -386,7 +388,6 @@ public class AliBCFragment extends BaseFragment {
             builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    Log.v("onJsAlert", "keyCode==" + keyCode + "event=" + event);
                     return true;
                 }
             });
@@ -648,6 +649,7 @@ public class AliBCFragment extends BaseFragment {
 
         /**
          * 打开相册
+         *
          * @param jsIdentifying js标识
          */
         @JavascriptInterface
@@ -804,7 +806,6 @@ public class AliBCFragment extends BaseFragment {
     }
 
     /**
-     *
      * @param jsUrl
      */
     private void webViewJs(@NonNull String jsUrl) {
@@ -823,6 +824,7 @@ public class AliBCFragment extends BaseFragment {
             }
         });
     }
+
     @Override
     public void onDestroy() {
         if (handler != null) {

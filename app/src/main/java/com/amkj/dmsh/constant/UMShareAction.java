@@ -10,15 +10,16 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
+import com.amkj.dmsh.utils.alertdialog.ShareIconTitleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMMin;
 import com.umeng.socialize.media.UMWeb;
 import com.umeng.socialize.shareboard.ShareBoardConfig;
-import com.umeng.socialize.shareboard.SnsPlatform;
-import com.umeng.socialize.utils.ShareBoardlistener;
 
 import static com.amkj.dmsh.constant.ConstantMethod.shareRewardSuccess;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -32,13 +33,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
  */
 
 public class UMShareAction {
-    //    分享链接
-    private final SHARE_MEDIA[] displayList = new SHARE_MEDIA[]{
-            SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.SINA,
-            SHARE_MEDIA.QQ};
-    private Context context;
+    private Activity context;
     final static String FinalOSSThumbFormat = "?@80h_80w.jpg";
     private OnShareSuccessListener onShareSuccessListener;
+    private AlertDialogShareHelper alertDialogShareHelper;
+    private boolean isSharing = false;
+    private String routineUrl;
+    private static String routineId = "gh_cdbcf7765273";
 
     /**
      * UMImage image = new UMImage(ShareActivity.this, "imageurl");//网络图片
@@ -46,16 +47,41 @@ public class UMShareAction {
      * UMImage image = new UMImage(ShareActivity.this, R.drawable.xxx);//资源文件
      * UMImage image = new UMImage(ShareActivity.this, bitmap);//bitmap文件
      * UMImage image = new UMImage(ShareActivity.this, byte[]);//字节流
+     * 分享内容
+     * @param context
+     * @param imgUrl
+     * @param title
+     * @param description
+     * @param urlLink
      */
-    public UMShareAction(final Context context, String imgUrl, final String title, final String description, final String urlLink) {
+    public UMShareAction(final Activity context, String imgUrl,
+                         final String title, final String description, final String urlLink) {
+        this(context,imgUrl,title,description,urlLink,null);
+    }
+
+    /**
+     * 分享内容 加载图片
+     * @param context
+     * @param imgUrl
+     * @param title
+     * @param description
+     * @param urlLink 正常地址
+     * @param routineUrl 小程序地址
+     */
+    public UMShareAction(final Activity context, String imgUrl,
+                         final String title, final String description, final String urlLink,String routineUrl) {
         this.context = context;
-        if(!TextUtils.isEmpty(imgUrl)){
+        if(!TextUtils.isEmpty(routineUrl)){
+            this.routineUrl = routineUrl;
+        }
+        if (!TextUtils.isEmpty(imgUrl)) {
 //        图片
             GlideImageLoaderUtil.loadFinishImgDrawable(context, !TextUtils.isEmpty(imgUrl) ?
                     imgUrl + FinalOSSThumbFormat
                     : "", new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                 @Override
-                public void onStart() {}
+                public void onStart() {
+                }
 
                 @Override
                 public void onSuccess(Bitmap bitmap) {
@@ -67,25 +93,35 @@ public class UMShareAction {
                     setShareImage(new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
                 }
             });
-        }else{
+        } else {
             setShareImage(new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
         }
     }
-
     /**
      * 分享
+     *
      * @param context
      * @param drawable
      * @param title
      * @param description
      * @param urlLink
      */
-    public UMShareAction(final Context context, int drawable, final String title, final String description, final String urlLink) {
+    public UMShareAction(final Activity context, int drawable,
+                         final String title, final String description, final String urlLink) {
         this.context = context;
-        setShareImage(new UMImage(context, drawable),context,urlLink,title,description);
+        setShareImage(new UMImage(context, drawable), context, urlLink, title, description);
     }
 
-    private void setShareImage(@NonNull UMImage umImage, Context context, String urlLink, String title, String description) {
+    /**
+     * 设置分享信息
+     * @param umImage
+     * @param context
+     * @param urlLink
+     * @param title
+     * @param description
+     */
+    private void setShareImage(@NonNull UMImage umImage, Activity context,
+                               String urlLink, String title, String description) {
         umImage.compressFormat = Bitmap.CompressFormat.PNG;
         //        链接地址
         final UMWeb web = new UMWeb(!TextUtils.isEmpty(urlLink) ? urlLink : "");
@@ -98,47 +134,77 @@ public class UMShareAction {
         config.setTitleText("分享");
         config.setIndicatorVisibility(false);
         config.setCancelButtonVisibility(false);
-        new ShareAction((Activity) context)
-//                        分享平台
-                .setDisplayList(displayList)
-//                        自定义按钮
-                .addButton("复制链接", "umeng_share_c_url", "umeng_socialize_copyurl", "umeng_socialize_copyurl")
-                .setShareboardclickCallback(new ShareBoardlistener() {
-                    @Override
-                    public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
-                        if (snsPlatform.mKeyword.equals("umeng_share_c_url")) {
+        alertDialogShareHelper = new AlertDialogShareHelper(context);
+        alertDialogShareHelper.show();
+        alertDialogShareHelper.setAlertSelectShareListener(new AlertDialogShareHelper.AlertSelectShareListener() {
+            @Override
+            public void selectShare(ShareIconTitleBean shareIconTitleBean) {
+                alertDialogShareHelper.setLoading(0);
+                if(!isSharing){
+                    isSharing = true;
+                    switch (shareIconTitleBean.getSharePlatformType()) {
+                        case POCKET:
                             ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData mClipData = ClipData.newPlainText("Label", !TextUtils.isEmpty(urlLink) ? urlLink : "多么生活");
                             cmb.setPrimaryClip(mClipData);
                             showToast(context, R.string.copy_url_success);
-                        } else {
-                            if (share_media != null) {
-                                if (share_media.equals(SHARE_MEDIA.SINA)) {
-                                    new ShareAction((Activity) context).setPlatform(share_media)
-                                            .withText((!TextUtils.isEmpty(title) ? title : "")
-                                                    + (!TextUtils.isEmpty(description) ? description : "")
-                                                    + (!TextUtils.isEmpty(urlLink) ? urlLink : "多么生活"))
-                                            .withMedia(umImage)
-                                            .setCallback(umShareListener)
-                                            .share();
-                                } else {
-//                        分享链接
-                                    new ShareAction((Activity) context).setPlatform(share_media)
-                                            .withMedia(web)
-                                            .setCallback(umShareListener)
-                                            .share();
-                                }
+                            if (alertDialogShareHelper != null) {
+                                alertDialogShareHelper.dismiss();
                             }
-                        }
+                            alertDialogShareHelper.setLoading(1);
+                            break;
+                        case SINA:
+                            new ShareAction(context).setPlatform(shareIconTitleBean.getSharePlatformType())
+                                    .withText((!TextUtils.isEmpty(title) ? title : "")
+                                            + (!TextUtils.isEmpty(description) ? description : "")
+                                            + (!TextUtils.isEmpty(urlLink) ? urlLink : "多么生活"))
+                                    .withMedia(umImage)
+                                    .setCallback(umShareListener)
+                                    .share();
+                            break;
+                        case WEIXIN:
+                            if(!TextUtils.isEmpty(routineUrl)){
+                                UMMin umMin = new UMMin(urlLink);
+                                //兼容低版本的网页链接
+                                umMin.setThumb(umImage);
+                                // 小程序消息封面图片
+                                umMin.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");
+                                // 小程序消息title
+                                umMin.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");
+                                // 小程序消息描述
+                                umMin.setPath(routineUrl);
+                                //小程序页面路径
+                                umMin.setUserName(routineId);
+                                // 小程序原始id,在微信平台查询
+                                new ShareAction(context)
+                                        .withMedia(umMin)
+                                        .setPlatform(shareIconTitleBean.getSharePlatformType())
+                                        .setCallback(umShareListener).share();
+                            }else{
+                                //                        分享链接
+                                new ShareAction(context).setPlatform(shareIconTitleBean.getSharePlatformType())
+                                        .withMedia(web)
+                                        .setCallback(umShareListener)
+                                        .share();
+                            }
+                            break;
+                        default:
+                            //                        分享链接
+                            new ShareAction(context).setPlatform(shareIconTitleBean.getSharePlatformType())
+                                    .withMedia(web)
+                                    .setCallback(umShareListener)
+                                    .share();
+                            break;
                     }
-
-                })
-                .open(config);
+                }
+            }
+        });
     }
 
     private UMShareListener umShareListener = new UMShareListener() {
         @Override
         public void onStart(SHARE_MEDIA share_media) {
+            alertDialogShareHelper.setLoading(1);
         }
 
         @Override
@@ -147,25 +213,35 @@ public class UMShareAction {
             if (onShareSuccessListener != null) {
                 onShareSuccessListener.onShareSuccess();
             }
+            if (alertDialogShareHelper != null) {
+                alertDialogShareHelper.dismiss();
+            }
+            isSharing = false;
 //            分享成功调用后台接口
             if (userId > 0) {
-                shareRewardSuccess(userId,context);
+                shareRewardSuccess(userId, context);
             }
         }
 
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
+            isSharing = false;
             showToast(context, getPlatFormText(platform) + " 分享失败,请检查是否安装该应用");
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
+            isSharing = false;
             showToast(context, getPlatFormText(platform) + " 分享取消了");
+            if (alertDialogShareHelper != null) {
+                alertDialogShareHelper.dismiss();
+            }
         }
     };
 
     /**
      * 返回分享平台名字
+     *
      * @param platform 平台
      * @return
      */

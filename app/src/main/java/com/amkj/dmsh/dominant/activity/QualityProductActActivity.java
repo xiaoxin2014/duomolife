@@ -439,7 +439,8 @@ public class QualityProductActActivity extends BaseActivity {
                     , likedProductBean.getPicUrl()
                     , getStrings(likedProductEntity.getTitle())
                     , getStrings(likedProductEntity.getActivityDesc())
-                    , BASE_SHARE_PAGE_TWO + "m/template/common/activitySpecial.html?id=" + likedProductBean.getActivityCode());
+                    , BASE_SHARE_PAGE_TWO + "m/template/common/activitySpecial.html?id=" + likedProductBean.getActivityCode()
+                    ,"pages/activitySpecial/activitySpecial?id="+likedProductBean.getActivityCode());
         }
     }
 
