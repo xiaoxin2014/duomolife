@@ -2114,9 +2114,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
                     if (requestStatus.getCode().equals("01")) {
+                        showToast(ShopScrollDetailsActivity.this, requestStatus.getIsNotice() == 1?"已取消通知" : "已设置通知");
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
+                    }else{
+                        showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
                     }
                 }
             }

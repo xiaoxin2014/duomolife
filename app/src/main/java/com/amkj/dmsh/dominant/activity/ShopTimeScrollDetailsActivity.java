@@ -330,7 +330,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        getProductDetailsData();
+                        tvTimeProductDetailsWarm.setText("设置提醒");
+                        productDetailBean.setRemind(false);
+                        showToast(mAppContext,"已取消提醒");
                     } else {
                         showToast(ShopTimeScrollDetailsActivity.this, status.getMsg());
                     }
@@ -360,7 +362,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        getProductDetailsData();
+                        tvTimeProductDetailsWarm.setText("取消提醒");
+                        showToast(mAppContext,"已设置提醒");
+                        productDetailBean.setRemind(true);
                     } else {
                         showToast(ShopTimeScrollDetailsActivity.this, status.getMsg());
                     }

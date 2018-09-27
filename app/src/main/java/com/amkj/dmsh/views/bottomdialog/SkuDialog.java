@@ -1469,14 +1469,16 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    showToast(baseAct, requestStatus.getMsg());
                     if (requestStatus.getCode().equals("01")) {
+                        showToast(baseAct, requestStatus.getIsNotice() == 1?"已取消通知" : "已设置通知");
                         if (isShowSingle) {
                             skuDialogView.bt_direct_attribute_buy.setText(requestStatus.getIsNotice() == 1 ? baseAct.getText(R.string.sku_notice) : baseAct.getText(R.string.sku_cancel_notice));
                         } else {
                             skuDialogView.bt_direct_attribute_car.setText(requestStatus.getIsNotice() == 1 ? baseAct.getText(R.string.sku_notice) : baseAct.getText(R.string.sku_cancel_notice));
                         }
                         skuSaleBean.setIsNotice(requestStatus.getIsNotice());
+                    }else{
+                        showToast(baseAct, requestStatus.getMsg());
                     }
                 }
             }
