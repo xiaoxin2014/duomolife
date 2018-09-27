@@ -54,7 +54,6 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
@@ -93,6 +92,7 @@ import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -738,7 +738,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 tvPromotionProductTimeStatus.setText("距结束");
             }
             ctPromotionProductTime.updateShow(timeMillis);
-            android.util.Log.d("限时特惠商品倒计时--》", "setCountTime: "+ctPromotionProductTime.getSecond());
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -757,9 +756,10 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     }
 
     private void skipNewTaoBao() {
-        if (thirdId != null || thirdUrl != null) {
+        if (!TextUtils.isEmpty(thirdId) || !TextUtils.isEmpty(thirdUrl)) {
             setClickProductTotal();
-            if (thirdId != null) {
+            if ((productDetailBean != null && productDetailBean.getTaoBao() == 1)
+                    || !TextUtils.isEmpty(thirdId)) {
                 AlibcLogin alibcLogin = AlibcLogin.getInstance();
                 alibcLogin.showLogin(new AlibcLoginCallback() {
                     @Override
@@ -773,11 +773,59 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     }
                 });
             } else {
-                skipNewShopDetails();
+                //                     网页地址
+                Intent intent = new Intent();
+                intent.setClass(ShopTimeScrollDetailsActivity.this, DoMoLifeCommunalActivity.class);
+                intent.putExtra("loadUrl", thirdUrl);
+                startActivity(intent);
             }
         } else {
             showToast(this, "地址缺失");
         }
+    }
+
+    private void skipNewShopDetails() {
+//                    跳转淘宝商品详情
+        if(TextUtils.isEmpty(thirdId)&&TextUtils.isEmpty(thirdUrl)){
+            showToast(mAppContext,"地址缺失，请联系客服");
+            return;
+        }
+        /**
+         * 打开电商组件, 使用默认的webview打开
+         *
+         * @param activity             必填
+         * @param tradePage            页面类型,必填，不可为null，详情见下面tradePage类型介绍
+         * @param showParams           show参数
+         * @param taokeParams          淘客参数
+         * @param trackParam           yhhpass参数
+         * @param tradeProcessCallback 交易流程的回调，必填，不允许为null；
+         * @return 0标识跳转到手淘打开了, 1标识用h5打开,-1标识出错
+         */
+        //提供给三方传递配置参数
+        Map<String, String> exParams = new HashMap<>();
+        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
+        //设置页面打开方式
+        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
+        //实例化商品详情 itemID打开page
+        AlibcBasePage ordersPage = null;
+        if (!TextUtils.isEmpty(thirdId)) {
+            ordersPage = new AlibcDetailPage(thirdId);
+        } else {
+            ordersPage = new AlibcPage(thirdUrl);
+        }
+
+        AlibcTrade.show(ShopTimeScrollDetailsActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
+            @Override
+            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
+                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
+                showToast(ShopTimeScrollDetailsActivity.this, msg);
+            }
+        });
     }
 
     /**
@@ -790,57 +838,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             params.put("id", productId);
             XUtil.Post(url, params, new MyCallBack<String>() {
             });
-        }
-    }
-
-    private void skipNewShopDetails() {
-//                    跳转淘宝商品详情
-        if (!TextUtils.isEmpty(thirdId)) {
-            /**
-             * 打开电商组件, 使用默认的webview打开
-             *
-             * @param activity             必填
-             * @param tradePage            页面类型,必填，不可为null，详情见下面tradePage类型介绍
-             * @param showParams           show参数
-             * @param taokeParams          淘客参数
-             * @param trackParam           yhhpass参数
-             * @param tradeProcessCallback 交易流程的回调，必填，不允许为null；
-             * @return 0标识跳转到手淘打开了, 1标识用h5打开,-1标识出错
-             */
-            //提供给三方传递配置参数
-            Map<String, String> exParams = new HashMap<>();
-            exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-            //设置页面打开方式
-            AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-            //实例化商品详情 itemID打开page
-            AlibcBasePage ordersPage = null;
-            if (thirdId != null) {
-                ordersPage = new AlibcDetailPage(thirdId);
-            } else {
-                ordersPage = new AlibcPage(thirdUrl);
-            }
-//            AlibcTaokeParams taokeParams = new AlibcTaokeParams();
-//            taokeParams.pid = "mm_113346569_43964046_400008826";
-
-            AlibcTrade.show(ShopTimeScrollDetailsActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-                @Override
-                public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                    //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-                    showToast(ShopTimeScrollDetailsActivity.this, "获取详情成功");
-                }
-
-                @Override
-                public void onFailure(int code, String msg) {
-                    //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-                    showToast(ShopTimeScrollDetailsActivity.this, msg);
-                }
-            });
-        } else if (!TextUtils.isEmpty(thirdUrl)) {
-//                     网页地址
-            Intent intent = new Intent();
-            intent.setClass(ShopTimeScrollDetailsActivity.this, DoMoLifeCommunalActivity.class);
-            intent.putExtra("loadUrl", thirdUrl);
-            startActivity(intent);
         }
     }
 
@@ -896,12 +893,10 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
                 //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
 //                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
             }
 
             @Override
             public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
 //                showToast(ShopTimeScrollDetailsActivity.this, msg);
             }

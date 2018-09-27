@@ -76,7 +76,8 @@ public class PromotionProductDetailEntity extends BaseTimeEntity {
         private String subtitle;
         private String images;
         private int quantity;
-        private int isTaobao;
+        @SerializedName("isTaobao")
+        private int taoBao;
         private String waterRemark;
         //        参团点击数
         private String flashBuyClickCount;
@@ -250,12 +251,12 @@ public class PromotionProductDetailEntity extends BaseTimeEntity {
             this.quantity = quantity;
         }
 
-        public int getIsTaobao() {
-            return isTaobao;
+        public int getTaoBao() {
+            return taoBao;
         }
 
-        public void setIsTaobao(int isTaobao) {
-            this.isTaobao = isTaobao;
+        public void setTaoBao(int taoBao) {
+            this.taoBao = taoBao;
         }
 
         public String getFlashBuyClickCount() {
