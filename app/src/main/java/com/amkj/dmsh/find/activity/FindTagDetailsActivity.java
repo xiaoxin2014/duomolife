@@ -31,6 +31,7 @@ import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TopTa
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;

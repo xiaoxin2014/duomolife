@@ -14,6 +14,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityOverseasDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.DuMoLifeHorRecyclerAdapter;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;

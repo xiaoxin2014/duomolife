@@ -27,6 +27,7 @@ import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.utils.DensityUtil;

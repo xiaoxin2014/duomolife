@@ -33,6 +33,7 @@ import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;

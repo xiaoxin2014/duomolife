@@ -43,6 +43,7 @@ import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.utils.CommonUtils;

@@ -11,9 +11,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.BaseViewHolderHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.zhy.autolayout.utils.AutoUtils;
 
@@ -133,7 +133,7 @@ public class AlertDialogShareHelper {
         void selectShare(ShareIconTitleBean shareIconTitleBean);
     }
 
-    private class ShareIconTitleAdapter extends BaseQuickAdapter<ShareIconTitleBean, BaseViewHolderHelper> {
+    private class ShareIconTitleAdapter extends BaseQuickAdapter<ShareIconTitleBean, BaseViewHolder> {
         private final Context context;
 
         public ShareIconTitleAdapter(Context context, List<ShareIconTitleBean> iconTitleList) {
@@ -142,7 +142,7 @@ public class AlertDialogShareHelper {
         }
 
         @Override
-        protected void convert(BaseViewHolderHelper helper, ShareIconTitleBean shareIconTitleBean) {
+        protected void convert(BaseViewHolder helper, ShareIconTitleBean shareIconTitleBean) {
             GlideImageLoaderUtil.loadFitCenter(context, helper.getView(R.id.iv_share_icon),
                     "android.resource://com.amkj.dmsh/drawable/" + shareIconTitleBean.getShareIconResId());
             helper.setText(R.id.tv_share_title, getStrings(shareIconTitleBean.getShareTitle()))

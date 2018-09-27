@@ -39,6 +39,7 @@ import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;

@@ -36,6 +36,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalDescriptionEntity;
 import com.amkj.dmsh.homepage.bean.CommunalDescriptionEntity.CommunalDescriptionBean;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;

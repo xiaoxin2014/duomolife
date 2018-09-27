@@ -39,6 +39,7 @@ import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;

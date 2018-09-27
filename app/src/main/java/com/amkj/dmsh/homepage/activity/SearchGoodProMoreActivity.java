@@ -14,6 +14,7 @@ import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;

@@ -52,6 +52,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
