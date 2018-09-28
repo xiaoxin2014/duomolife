@@ -85,31 +85,6 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
                         iv_type_center.setLayoutParams(layoutParams);
                     }
                 });
-//                if (qualityHomeTypeList.size() == 3 && layoutPosition == 0) {
-//                    fl_type_center.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//                        @Override
-//                        public void onGlobalLayout() {
-//                            fl_type_center.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                            AutoLayoutHelper.AutoLayoutParams layoutParams = (AutoLayoutHelper.AutoLayoutParams) fl_type_center.getLayoutParams();
-//                            AutoLayoutInfo autoLayoutInfo = layoutParams.getAutoLayoutInfo();
-//                            autoLayoutInfo.addAttr(new WidthAttr(375, 0, 0));
-//                            ViewGroup.LayoutParams layoutParamsF = fl_type_center.getLayoutParams();
-//                            fl_type_center.setLayoutParams(layoutParamsF);
-//                        }
-//                    });
-//                } else {
-//                    fl_type_center.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//                        @Override
-//                        public void onGlobalLayout() {
-//                            fl_type_center.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                            AutoLayoutHelper.AutoLayoutParams layoutParams = (AutoLayoutHelper.AutoLayoutParams) fl_type_center.getLayoutParams();
-//                            AutoLayoutInfo autoLayoutInfo = layoutParams.getAutoLayoutInfo();
-//                            autoLayoutInfo.addAttr(new HeightAttr(192, 1, 0));
-//                            ViewGroup.LayoutParams layoutParamsF = fl_type_center.getLayoutParams();
-//                            fl_type_center.setLayoutParams(layoutParamsF);
-//                        }
-//                    });
-//                }
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_type_center), qualityHomeTypeBean.getPicUrl());
                 TextView tv_type_center_name = helper.getView(R.id.tv_type_center_name);
                 try {
