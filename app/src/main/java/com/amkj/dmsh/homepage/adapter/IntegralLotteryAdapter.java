@@ -36,8 +36,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
-import com.zhy.autolayout.attr.Attrs;
-import com.zhy.autolayout.attr.AutoAttr;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -58,7 +56,9 @@ import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
@@ -402,12 +402,12 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             wait = inflater.inflate(R.layout.layout_integral_lottery_wait, (ViewGroup) view, false);
             if (ct_integral_lottery_time != null) {
                 DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-                dynamic.setSuffixTextSize(AutoUtils.getPercentWidthSize(28));
-                dynamic.setTimeTextSize(AutoUtils.getPercentWidthSize(28));
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
                 dynamic.setSuffixGravity(Gravity.CENTER);
                 DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
                 backgroundInfo.setColor(context.getResources().getColor(R.color.gray_d))
-                        .setBorderRadius((float) AutoUtils.getPercentWidthSize(8))
+                        .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext,8))
                         .setBorderColor(context.getResources().getColor(R.color.gray_d))
                         .setShowTimeBgBorder(true);
                 dynamic.setBackgroundInfo(backgroundInfo);
@@ -419,10 +419,10 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
     private ImageView createImageView(WinListBean winListBean) {
         CircleImageView imageView = new CircleImageView(context);
-        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(60, 60);
-        layoutParams.rightMargin = 24;
+        int size = AutoSizeUtils.mm2px(mAppContext,60);
+        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(size, size);
+        layoutParams.rightMargin = AutoSizeUtils.mm2px(mAppContext,24);
         imageView.setLayoutParams(layoutParams);
-        AutoUtils.auto(imageView, Attrs.WIDTH | Attrs.HEIGHT, AutoAttr.BASE_WIDTH);
         GlideImageLoaderUtil.loadHeaderImg(context, imageView, getStrings(winListBean.getAvatar()));
         return imageView;
     }

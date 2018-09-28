@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -35,11 +36,9 @@ import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.autoviews.AutoToolbar;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,8 +52,10 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -78,7 +79,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tvHeaderShared;
     @BindView(R.id.tl_normal_bar)
-    AutoToolbar tlNormalBar;
+    Toolbar tlNormalBar;
     @BindView(R.id.ll_indent_address_empty_default)
     LinearLayout ll_indent_address_empty_default;
     //    进关信息提示
@@ -314,7 +315,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             //        @用户昵称
             redNum.setTextColor(getResources().getColor(R.color.text_normal_red));
             redNum.setUnderlined(false);
-            redNum.setTextSize(AutoUtils.getPercentWidthSize(32));
+            redNum.setTextSize(AutoSizeUtils.mm2px(mAppContext,32));
             redNum.setHighlightAlpha(0f);
             LinkBuilder.on(tvIntegralProductPrice)
                     .addLink(redNum)

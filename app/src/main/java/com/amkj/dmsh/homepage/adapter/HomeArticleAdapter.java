@@ -15,10 +15,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -85,7 +87,7 @@ public class HomeArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, Ho
             if(tv_article_view_count!=null){
                 GradientDrawable drawable = new GradientDrawable();
                 drawable.setShape(GradientDrawable.RECTANGLE);
-                int radius = (int) AutoUtils.getPercentWidth1px() * 40;
+                int radius = AutoSizeUtils.mm2px(mAppContext,40);
                 drawable.setCornerRadius(radius);
                 try {
                     drawable.setColor(0x7f000000);

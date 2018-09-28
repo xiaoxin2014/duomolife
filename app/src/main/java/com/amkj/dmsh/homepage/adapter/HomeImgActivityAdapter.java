@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
-import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
@@ -28,7 +27,7 @@ public class HomeImgActivityAdapter extends BaseQuickAdapter<CommunalADActivityB
 
     @Override
     protected void convert(BaseViewHolder helper, CommunalADActivityBean communalADActivityBean) {
-        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_home_img_activity), communalADActivityBean.getPicUrl());
+        GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_home_img_activity), communalADActivityBean.getPicUrl());
         helper.itemView.setTag(communalADActivityBean);
     }
 }

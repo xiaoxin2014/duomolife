@@ -32,7 +32,6 @@ import com.amkj.dmsh.views.flowlayout.TagAdapter;
 import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,8 +47,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -213,10 +214,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 @Override
                 public View getView(FlowLayout parent, int position, MemberListBean memberListBean) {
                     View view = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_gp_join_avator, parent, false);
-                    AutoUtils.auto(view);
                     ImageView imageView = (ImageView) view.findViewById(R.id.iv_dm_gp_open_ava);
                     TextView tv_dm_gp_name = (TextView) view.findViewById(R.id.tv_dm_gp_name);
-                    GlideImageLoaderUtil.loadRoundImg(DoMoGroupJoinShareActivity.this, imageView, memberListBean.getAvatar(), (int) (AutoUtils.getPercentWidth1px() * 100));
+                    GlideImageLoaderUtil.loadRoundImg(DoMoGroupJoinShareActivity.this, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext,100));
                     String name = getStrings(memberListBean.getNickname());
                     if (name.length() > 7) {
                         name = name.substring(0, 7) + "...";

@@ -64,7 +64,6 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,8 +78,10 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import emojicon.EmojiconEditText;
 import emojicon.EmojiconTextView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -714,7 +715,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                     public View getView(FlowLayout parent, int position, String s) {
                         TextView tv_tag = (TextView) LayoutInflater.from(ArticleDetailsImgActivity.this).inflate(R.layout.product_tag_tv, parent, false);
                         tv_tag.setTag(R.id.tag_obj, detailsBean.getTagsList());
-                        tv_tag.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(24));
+                        tv_tag.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
                         if (position == 0) {
                             Drawable drawable = getResources().getDrawable(R.drawable.tag_label_icon);
                             // 这一步必须要做,否则不会显示.

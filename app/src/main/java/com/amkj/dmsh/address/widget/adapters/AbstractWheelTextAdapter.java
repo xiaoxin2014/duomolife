@@ -25,7 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.zhy.autolayout.utils.AutoUtils;
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Abstract wheel adapter provides common functionality for adapters.
@@ -219,7 +221,7 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
                     text = "";
                 }
                 textView.setText(text);
-                textView.setPadding(0, (int) (AutoUtils.getPercentWidth1px() * 10), 0, (int) (AutoUtils.getPercentWidth1px() * 10));
+                textView.setPadding(0, AutoSizeUtils.mm2px(mAppContext,10), 0, AutoSizeUtils.mm2px(mAppContext,10));
                 if (itemResourceId == TEXT_VIEW_ITEM_RESOURCE) {
                     configureTextView(textView);
                 }
@@ -249,7 +251,7 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
     protected void configureTextView(TextView view) {
         view.setTextColor(textColor);
         view.setGravity(Gravity.CENTER);
-        view.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * textSize);
+        view.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,textSize));
         view.setEllipsize(TextUtils.TruncateAt.END);
         view.setLines(1);
 //        view.setCompoundDrawablePadding(20);

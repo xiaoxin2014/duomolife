@@ -68,7 +68,6 @@ import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -90,6 +89,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -209,12 +209,12 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
         });
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setSuffixTextSize(AutoUtils.getPercentWidthSize(26));
-        dynamic.setTimeTextSize(AutoUtils.getPercentWidthSize(26));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,26));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,26));
         dynamic.setSuffixGravity(Gravity.CENTER);
         DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
         backgroundInfo.setColor(getResources().getColor(R.color.text_pink_red))
-                .setBorderRadius((float) AutoUtils.getPercentWidthSize(8))
+                .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext,8))
                 .setBorderColor(getResources().getColor(R.color.text_pink_red))
                 .setShowTimeBgBorder(true);
         dynamic.setBackgroundInfo(backgroundInfo);
@@ -224,7 +224,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             customTabEntities.add(new TabEntity(promotionProduct[i], 0, 0));
         }
         ctbPromotionProduct.setTabData(customTabEntities);
-        ctbPromotionProduct.setTextSize(AutoUtils.getPercentWidthSize(28));
+        ctbPromotionProduct.setTextSize(AutoSizeUtils.mm2px(mAppContext,28));
         ctbPromotionProduct.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {

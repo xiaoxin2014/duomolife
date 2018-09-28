@@ -18,7 +18,6 @@ import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +26,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
 ;
@@ -56,7 +57,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
-        stl_direct_logistics_details.setTextsize(AutoUtils.getPercentWidth1px() * 28);
+        stl_direct_logistics_details.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
     }
 
     private void setLogisticsData(DirectLogisticsBean directLogisticsBean) {

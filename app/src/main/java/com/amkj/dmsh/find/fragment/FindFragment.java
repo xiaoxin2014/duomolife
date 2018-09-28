@@ -50,7 +50,6 @@ import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.HttpException;
@@ -62,8 +61,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -133,7 +134,7 @@ public class FindFragment extends BaseFragment {
         tl_find_header.setSelected(true);
         findPagerAdapter = new FindPagerAdapter(getChildFragmentManager(), FIND_TYPE, null);
         viewPager.setAdapter(findPagerAdapter);
-        std_find_art_type.setTextsize(AutoUtils.getPercentWidthSize(28));
+        std_find_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
         std_find_art_type.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
         std_find_art_type.setViewPager(viewPager);
         std_find_art_type.setOnTabSelectListener(new OnTabSelectListener() {

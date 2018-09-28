@@ -35,7 +35,6 @@ import com.luck.picture.lib.entity.LocalMediaC;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yanzhenjie.permission.Permission;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,13 +43,15 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
+;
 ;
 
 
@@ -120,8 +121,8 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
                 }
             }
         });
-        coverImgWidth = AutoUtils.getPercentWidthSize(750);
-        coverImgHeight = AutoUtils.getPercentWidthSize(480);
+        coverImgWidth = AutoSizeUtils.mm2px(mAppContext,750);
+        coverImgHeight = AutoSizeUtils.mm2px(mAppContext,480);
     }
 
     private void setBgImgUrl(final String imgUrl) {

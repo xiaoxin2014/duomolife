@@ -6,7 +6,7 @@
     android:layout_centerVertical="true"
     android:layout_marginRight="@dimen/sc_mm_40"
     android:drawableLeft="@drawable/ql_gp_tag_icon"
-    android:drawablePadding="@dimen/dimen_8_dp"
+    android:drawablePadding="@dimen/sc_mm_8"
     android:gravity="center"
     android:textColor="@color/text_gray_hint_n"
     android:textSize="@dimen/sc_mm_24" />

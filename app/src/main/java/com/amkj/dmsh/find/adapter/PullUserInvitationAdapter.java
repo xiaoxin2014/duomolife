@@ -40,12 +40,14 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -223,7 +225,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                 public View getView(FlowLayout parent, int position, String s) {
                     View view = LayoutInflater.from(context).inflate(R.layout.product_tag_tv, null, false);
                     TextView textView = (TextView) view.findViewById(R.id.tv_product_tag);
-                    textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(24));
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
                     textView.setTag(R.id.tag_obj, invitationDetailBean.getTags());
                     if (position == 0) {
                         Drawable drawable = context.getResources().getDrawable(R.drawable.tag_label_icon);

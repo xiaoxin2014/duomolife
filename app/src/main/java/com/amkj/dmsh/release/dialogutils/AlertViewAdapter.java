@@ -11,9 +11,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Created by Sai on 15/8/9.
@@ -75,12 +78,12 @@ public class AlertViewAdapter extends BaseAdapter {
         public void UpdateUI(Context context, String data, int position) {
             tvAlert.setText(data);
             if (otherDataList != null && otherDataList.contains(data)) {
-                tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getOthSize() > 0
-                        ? alertInitView.getOthSize() : 28));
+                tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getOthSize() > 0
+                        ? alertInitView.getOthSize() : 28)));
                 tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getOthColorValue())?alertInitView.getOthColorValue():"#ff5e6b"));
             } else {
-                tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getNorSize() > 0
-                        ? alertInitView.getNorSize() : 28));
+                tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getNorSize() > 0
+                        ? alertInitView.getNorSize() : 28)));
                 tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getNorColorValue())?alertInitView.getNorColorValue():"#0a88fa"));
             }
         }

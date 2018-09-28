@@ -43,7 +43,6 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.DensityUtil;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
@@ -56,7 +55,6 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 import com.zzhoujay.richtext.ImageHolder;
 import com.zzhoujay.richtext.RichText;
 import com.zzhoujay.richtext.RichTextConfig;
@@ -74,8 +72,9 @@ import java.util.regex.Pattern;
 
 import cn.jzvd.JZVideoPlayer;
 import emojicon.EmojiconTextView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -113,7 +112,6 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO
 public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDetailObjectBean, CommunalDetailAdapter.CommunalHolderHelper> implements View.OnClickListener {
     private final Context context;
     private final int screenWidth;
-    private final int screenOriginalWidth;
     private final KProgressHUD loadHud;
     private final float density;
     //    换行
@@ -193,7 +191,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenWidth = app.getScreenWidth();
         density = app.getDensity();
-        screenOriginalWidth = 750;
         loadHud = KProgressHUD.create(context)
                 .setCancellable(false)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
@@ -287,7 +284,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 link.setTextColor(context.getResources().getColor(R.color.white))
                         .setUnderlined(false)
                         .setHighlightAlpha(0f)
-                        .setTextSize(AutoUtils.getPercentWidthSize(74))
+                        .setTextSize(AutoSizeUtils.mm2px(mAppContext,74))
                         .setOnClickListener(null);
                 LinkBuilder.on(tv_tb_coupon_price)
                         .addLink(link)
@@ -410,13 +407,14 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             }
                         }
                         tv_content_type.setGravity(Gravity.LEFT);
-                        tv_content_type.setTextSize(AutoUtils.getPercentWidth1px() * 30);
+
+                        tv_content_type.setTextSize(TypedValue.COMPLEX_UNIT_PX,AutoSizeUtils.mm2px(context,30));
                         tv_content_type.setTextColor(context.getResources().getColor(R.color.home_text_color));
                         ViewGroup.LayoutParams layoutParams = tv_content_type.getLayoutParams();
                         tv_content_type.setText("");
                         if (content.contains(br)
                                 && ((lineStyleIndex > 0 && !Pattern.compile("[\u4e00-\u9fa5]").matcher(content).find()))) {
-                            layoutParams.height = DensityUtil.dip2px(context, 12);
+                            layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 12);
                             tv_content_type.setLayoutParams(layoutParams);
                         } else {
                             if (layoutParams.height != -2) {
@@ -424,17 +422,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 tv_content_type.setLayoutParams(layoutParams);
                             }
 
-//                匹配字体大小
-                            List<String> fontSizeValue = getStyleValue(content, content.indexOf(font_size));
-                            if (fontSizeValue != null && fontSizeValue.size() > 0) {
-                                String number = fontSizeValue.get(0);
-                                if (getFloatNumber(number) > 0) {
-                                    tv_content_type.setTextSize(AutoUtils.getPercentWidth1px() * getFloatNumber(number));
-                                }
-                            }
                             //                匹配间距
                             if (detailObjectBean.getFirstLinePadding()) {
-                                tv_content_type.setPadding(0, (int) (AutoUtils.getPercentWidth1px() * 10), 0, 0);
+                                tv_content_type.setPadding(0, AutoSizeUtils.mm2px(mAppContext,10), 0, 0);
                             }
 //                    匹配字体颜色
                             List<String> fontColorValue = getStyleValue(content, content.indexOf(text_color));
@@ -492,8 +482,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 
                             @Override
                             public void onSizeReady(ImageHolder holder, int imageWidth, int imageHeight, ImageHolder.SizeHolder sizeHolder) {
-                                int height = (int) (imageHeight * ((screenOriginalWidth * 1f) / imageWidth + 1));
-                                holder.setWidth(screenOriginalWidth);
+                                int height = (int) (imageHeight * ((screenWidth * 1f) / imageWidth + 1));
+                                holder.setWidth(screenWidth);
                                 holder.setHeight(height);
                             }
 
@@ -515,7 +505,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 
                             @Override
                             public void onFailure(ImageHolder holder, Exception e) {
-                                holder.setSize(screenWidth, (int) (AutoUtils.getPercentWidth1px() * 400));
+                                holder.setSize(screenWidth, AutoSizeUtils.mm2px(mAppContext,400));
                                 super.onFailure(holder, e);
                             }
                         })
@@ -563,10 +553,10 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 
     private TextView createTagView(TagsBean tagsBean) {
         TextView textView = new TextView(context);
-        textView.setPadding((int) (AutoUtils.getPercentWidth1px() * 10), (int) (AutoUtils.getPercentWidth1px() * 10), (int) (AutoUtils.getPercentWidth1px() * 10), (int) (AutoUtils.getPercentWidth1px() * 10));
+        textView.setPadding(AutoSizeUtils.mm2px(mAppContext,10), AutoSizeUtils.mm2px(mAppContext,10), AutoSizeUtils.mm2px(mAppContext,10), AutoSizeUtils.mm2px(mAppContext,10));
         textView.setBackground(context.getResources().getDrawable(R.drawable.border_cir_1dp5_s_ff));
         textView.setTextColor(context.getResources().getColor(R.color.text_login_gray_s));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(24));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
         textView.setText(getStrings(tagsBean.getTag_name()));
         textView.setTag(tagsBean);
         textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));

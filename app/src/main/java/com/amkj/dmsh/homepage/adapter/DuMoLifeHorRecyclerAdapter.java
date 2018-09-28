@@ -2,26 +2,26 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.Attrs;
-import com.zhy.autolayout.attr.HeightAttr;
-import com.zhy.autolayout.attr.WidthAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
-import com.zhy.autolayout.utils.AutoUtils;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -37,7 +37,8 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
         super(goodList);
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_duomolife_hor_recycle_item);
         addItemType(ConstantVariable.TYPE_1, R.layout.adapter_dml_hor_recycle_look_more);
-        screenWidth = (int) ((750 - AutoUtils.getPercentWidth1px() * 20 * 5) / 2.5f);
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenWidth = (int) ((app.getScreenWidth() - AutoSizeUtils.mm2px(mAppContext,20 * 5) / 2.5f));
         this.context = context;
     }
 
@@ -66,22 +67,18 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
                     @Override
                     public void onGlobalLayout() {
                         rel_hor_welfare_img.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        AutoLayoutHelper.AutoLayoutParams layoutParams =
-                                (AutoLayoutHelper.AutoLayoutParams) rel_hor_welfare_img.getLayoutParams();
-                        AutoLayoutInfo autoLayoutInfo = layoutParams.getAutoLayoutInfo();
-                        autoLayoutInfo.addAttr(new WidthAttr(screenWidth, 0, 0));
-                        autoLayoutInfo.addAttr(new HeightAttr(screenWidth, Attrs.WIDTH, 0));
-                        rel_hor_welfare_img.setLayoutParams(rel_hor_welfare_img.getLayoutParams());
+                        ViewGroup.LayoutParams layoutParams = rel_hor_welfare_img.getLayoutParams();
+                        layoutParams.width = screenWidth;
+                        rel_hor_welfare_img.setLayoutParams(layoutParams);
                     }
                 });
                 ll_hor_welfare_text.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         ll_hor_welfare_text.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        AutoLayoutHelper.AutoLayoutParams layoutParentParams =
-                                (AutoLayoutHelper.AutoLayoutParams) ll_hor_welfare_text.getLayoutParams();
-                        AutoLayoutInfo autoLayoutParentInfo = layoutParentParams.getAutoLayoutInfo();
-                        autoLayoutParentInfo.addAttr(new WidthAttr(screenWidth, 0, 0));
+                        ViewGroup.LayoutParams layoutParams = ll_hor_welfare_text.getLayoutParams();
+                        layoutParams.width = screenWidth;
+                        ll_hor_welfare_text.setLayoutParams(layoutParams);
                         ll_hor_welfare_text.setLayoutParams(ll_hor_welfare_text.getLayoutParams());
                     }
                 });
@@ -90,11 +87,9 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
                     @Override
                     public void onGlobalLayout() {
                         rel_dnl_hor_layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        AutoLayoutHelper.AutoLayoutParams layoutParams =
-                                (AutoLayoutHelper.AutoLayoutParams) rel_dnl_hor_layout.getLayoutParams();
-                        AutoLayoutInfo autoLayoutInfo = layoutParams.getAutoLayoutInfo();
-                        autoLayoutInfo.addAttr(new WidthAttr(screenWidth, 0, 0));
-                        autoLayoutInfo.addAttr(new HeightAttr(screenWidth, Attrs.WIDTH, 0));
+                        ViewGroup.LayoutParams layoutParams = rel_dnl_hor_layout.getLayoutParams();
+                        layoutParams.width = screenWidth;
+                        rel_dnl_hor_layout.setLayoutParams(layoutParams);
                         rel_dnl_hor_layout.setLayoutParams(rel_dnl_hor_layout.getLayoutParams());
                     }
                 });

@@ -81,7 +81,6 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -111,6 +110,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 
@@ -565,15 +565,15 @@ public class ConstantMethod {
     }
 
     public static Badge getBadge(Context context, View view) {
-        return getBadge(context, view, AutoUtils.getPercentWidthSize(15), AutoUtils.getPercentWidthSize(20));
+        return getBadge(context, view, AutoSizeUtils.mm2px(mAppContext,15), AutoSizeUtils.mm2px(mAppContext,20));
     }
 
     public static Badge getBadge(Context context, View view, int offsetX, int offsetY) {
         Badge badge = new QBadgeView(context).bindTarget(view);
         badge.setBadgeGravity(Gravity.END | Gravity.TOP);
         badge.setGravityOffset(offsetX, offsetY, false);
-        badge.setBadgePadding(AutoUtils.getPercentWidthSize(3), false);
-        badge.setBadgeTextSize(AutoUtils.getPercentWidthSize(18), false);
+        badge.setBadgePadding(AutoSizeUtils.mm2px(mAppContext,3), false);
+        badge.setBadgeTextSize(AutoSizeUtils.mm2px(mAppContext,18), false);
         badge.setBadgeBackgroundColor(context.getResources().getColor(R.color.text_normal_red));
         return badge;
     }

@@ -9,10 +9,12 @@ import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBe
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
@@ -48,7 +50,7 @@ public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<Quality
                     , qualityNewUserShopBean.getPicUrl());
             TextView tv_qt_pro_wait_buy = helper.getView(R.id.tv_qt_pro_wait_buy);
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadius(AutoUtils.getPercentWidthSize(16));
+            gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext,16));
             gradientDrawable.setColor(context.getResources().getColor(R.color.yellow_bg_ffae));
             tv_qt_pro_wait_buy.setBackground(gradientDrawable);
             helper.setGone(R.id.iv_com_pro_tag_out, qualityNewUserShopBean.getQuantity() < 1)

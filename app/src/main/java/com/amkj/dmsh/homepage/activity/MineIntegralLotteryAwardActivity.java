@@ -20,7 +20,6 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -73,7 +74,7 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
         header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("我的奖励");
         communal_recycler.setBackgroundColor(getResources().getColor(R.color.light_gray_f));
-        communal_recycler.setPadding(0, AutoUtils.getPercentWidthSize(10), 0, 0);
+        communal_recycler.setPadding(0, AutoSizeUtils.mm2px(mAppContext,10), 0, 0);
         communal_recycler.setLayoutManager(new LinearLayoutManager(MineIntegralLotteryAwardActivity.this));
         integralLotteryAwardAdapter = new IntegralLotteryAwardAdapter(MineIntegralLotteryAwardActivity.this, lotteryInfoListBeanList);
         communal_recycler.setAdapter(integralLotteryAwardAdapter);

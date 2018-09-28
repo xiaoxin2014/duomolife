@@ -28,7 +28,6 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +37,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -212,7 +213,7 @@ public class IntegralDetailActivity extends BaseActivity {
         PieChart pie_detail_section;
 
         public void initViews() {
-            pie_detail_section.setTransparentCircleRadius(AutoUtils.getPercentWidthSize(150));
+            pie_detail_section.setTransparentCircleRadius(AutoSizeUtils.mm2px(mAppContext,150));
 //            实心圆 去除半透明
             pie_detail_section.setHoleRadius(0f);
             pie_detail_section.setTransparentCircleRadius(0f);
@@ -287,7 +288,7 @@ public class IntegralDetailActivity extends BaseActivity {
         PieData pieData = new PieData(pieDataSet);
         pieData.setDrawValues(false);            //设置是否显示数据实体(百分比，true:以下属性才有意义)
 //        pieData.setValueTextColor(R.color.text_login_gray_s);  //设置所有DataSet内数据实体（百分比）的文本颜色
-//        pieData.setValueTextSize(AutoUtils.getPercentWidthSize(24));          //设置所有DataSet内数据实体（百分比）的文本字体大小
+//        pieData.setValueTextSize(AutoSizeUtils.mm2px(mAppContext,24));          //设置所有DataSet内数据实体（百分比）的文本字体大小
 
 //        pieData.setValueFormatter(new PercentFormatter());//设置所有DataSet内数据实体（百分比）的文本字体格式
         integralDetailChart.pie_detail_section.setData(pieData);

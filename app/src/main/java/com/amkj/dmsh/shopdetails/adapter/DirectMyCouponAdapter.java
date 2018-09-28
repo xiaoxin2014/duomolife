@@ -11,7 +11,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +18,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getCurrentTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -54,7 +56,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
             TextView tv_coupon_type = helper.getView(R.id.tv_coupon_type);
             GradientDrawable drawable = new GradientDrawable();
             drawable.setShape(GradientDrawable.RECTANGLE);
-            int radius = (int) (AutoUtils.getPercentWidth1px() * 8);
+            int radius = AutoSizeUtils.mm2px(mAppContext,8);
             drawable.setCornerRadius(radius);
             try {
                 drawable.setColor(Color.parseColor((!TextUtils.isEmpty(directCouponBean.getModeBgColor()) ?
@@ -159,7 +161,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
             if (tv_coupon_used != null) {
                 GradientDrawable drawable = new GradientDrawable();
                 drawable.setShape(GradientDrawable.RECTANGLE);
-                int radius = (int) (AutoUtils.getPercentWidth1px() * 21);
+                int radius = AutoSizeUtils.mm2px(mAppContext,21);
                 drawable.setCornerRadius(radius);
                 drawable.setColor(mContext.getResources().getColor(R.color.text_normal_red));
                 tv_coupon_used.setBackground(drawable);

@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="center_vertical"
-        android:lineSpacingExtra="@dimen/dimen_3_dp"
-
+        android:lineSpacingExtra="@dimen/sc_mm_6"
         android:textColor="@color/home_text_color"
         android:textSize="@dimen/sc_mm_30"
         app:emojiconSize = "17sp"/>

@@ -29,7 +29,6 @@ import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,7 +38,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.JZVideoPlayer;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -108,7 +109,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
         }
         findPagerAdapter = new FindPagerAdapter(getSupportFragmentManager(), TOPIC_TYPE, topicId);
         find_topic_container.setAdapter(findPagerAdapter);
-        std_find_topic_art_type.setTextsize(AutoUtils.getPercentWidthSize(32));
+        std_find_topic_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,32));
         std_find_topic_art_type.setViewPager(find_topic_container);
         smart_refresh_find.setOnRefreshListener((refreshLayout) -> {
             loadData();

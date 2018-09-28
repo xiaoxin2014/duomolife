@@ -9,10 +9,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.homepage.adapter.IntegralProductTypeAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * @author LGuiPeng
@@ -44,8 +46,8 @@ public class IntegralProductShopActivity extends BaseActivity{
         header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("积分商城");
         tl_normal_bar.setSelected(true);
-        std_integral_product.setTextsize(AutoUtils.getPercentWidth1px() * 30);
-        std_integral_product.setTabPadding(AutoUtils.getPercentWidth1px() * 30);
+        std_integral_product.setTextsize(AutoSizeUtils.mm2px(mAppContext,30));
+        std_integral_product.setTabPadding(AutoSizeUtils.mm2px(mAppContext,30));
         IntegralProductTypeAdapter integralProductType = new IntegralProductTypeAdapter(getSupportFragmentManager(), integralType);
         vp_integral_product.setAdapter(integralProductType);
         std_integral_product.setViewPager(vp_integral_product, integralType);

@@ -12,10 +12,12 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.gongwen.marqueen.MarqueeFactory;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.regex.Pattern;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 
@@ -37,12 +39,11 @@ public class AttendanceMarqueeView extends MarqueeFactory<LinearLayout, LogListB
 
     @Override
     protected LinearLayout generateMarqueeItemView(LogListBean logListBean) {
-        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.layout_attendance_marquee, null);
-        AutoUtils.auto(view);
+        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.layout_attendance_marquee, null,false);
         ImageView iv_attendance_avatar = view.findViewById(R.id.iv_attendance_avatar);
         TextView tv_attendance_nick_name = view.findViewById(R.id.tv_attendance_nick_name);
         TextView tv_attendance_score = view.findViewById(R.id.tv_attendance_score);
-        GlideImageLoaderUtil.loadRoundImg(mContext,iv_attendance_avatar,getStrings(logListBean.getAvatar()),AutoUtils.getPercentWidthSize(30),R.drawable.default_ava_img);
+        GlideImageLoaderUtil.loadRoundImg(mContext,iv_attendance_avatar,getStrings(logListBean.getAvatar()), AutoSizeUtils.mm2px(mAppContext,30),R.drawable.default_ava_img);
         String nickName = getStrings(logListBean.getNickname());
         tv_attendance_nick_name.setText(nickName);
         String integralScore = String.format(mContext.getResources().getString(R.string.integral_score_marquee),logListBean.getScore());
@@ -50,7 +51,7 @@ public class AttendanceMarqueeView extends MarqueeFactory<LinearLayout, LogListB
         link.setTextColor(0xfff6c004);
         link.setUnderlined(false);
         link.setHighlightAlpha(0f);
-        link.setTextSize(AutoUtils.getPercentWidthSize(30));
+        link.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
         tv_attendance_score.setText(integralScore);
         LinkBuilder.on(tv_attendance_score)
                 .setText(integralScore)

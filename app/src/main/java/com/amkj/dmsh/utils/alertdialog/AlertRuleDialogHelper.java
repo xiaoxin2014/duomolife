@@ -13,11 +13,13 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
@@ -50,7 +52,6 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
         rv_communal_rule.setLayoutManager(new LinearLayoutManager(context));
         integralRuleAdapter = new CommunalDetailAdapter(context, ruleList);
         rv_communal_rule.setAdapter(integralRuleAdapter);
-        AutoUtils.auto(dialogView);
         builder.setCancelable(false);
         ruleAlertView = builder.create();
     }
@@ -74,7 +75,7 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
             if(window!=null){
                 window.setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoUtils.getPercentWidthSize(500);
+                params.width = AutoSizeUtils.mm2px(mAppContext,500);
                 window.setAttributes(params);
                 window.setContentView(dialogView);
             }

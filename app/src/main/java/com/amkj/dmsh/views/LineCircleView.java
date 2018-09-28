@@ -9,7 +9,10 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 
 /**
@@ -55,7 +58,7 @@ public class LineCircleView extends View {
         paint.setColor(lineSelColor);
         float centerPoint = height / 2f;
         if (borderWidth < 3) {
-            borderWidth = AutoUtils.getPercentWidth1px() * borderWidth;
+            borderWidth = AutoSizeUtils.mm2px(mAppContext,borderWidth);
         }
         paint.setStrokeWidth(borderWidth);
         if (drawLineAll) {

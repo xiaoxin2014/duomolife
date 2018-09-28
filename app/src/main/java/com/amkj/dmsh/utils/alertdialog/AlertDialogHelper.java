@@ -9,8 +9,10 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
@@ -45,7 +47,6 @@ public class AlertDialogHelper implements View.OnClickListener {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_video_network, null, false);
-        AutoUtils.auto(dialogView);
         builder.setCancelable(true);
         tv_alert_title = dialogView.findViewById(R.id.tv_alert_title);
         tv_alert_message = dialogView.findViewById(R.id.tv_alert_message);
@@ -209,7 +210,7 @@ public class AlertDialogHelper implements View.OnClickListener {
             if (window != null) {
                 window.setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoUtils.getPercentWidthSize(500);
+                params.width = AutoSizeUtils.mm2px(mAppContext,500);
                 window.setAttributes(params);
                 window.setContentView(dialogView);
             }

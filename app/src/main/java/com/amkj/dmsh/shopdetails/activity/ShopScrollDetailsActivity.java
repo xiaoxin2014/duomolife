@@ -99,7 +99,6 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -119,6 +118,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
@@ -325,12 +325,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_count_time_before_white.setTextColor(getResources().getColor(R.color.text_black_t));
-        tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(24));
+        tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         dynamic.setTimeTextColor(0xff333333);
         dynamic.setSuffixTextColor(0xff333333);
-        dynamic.setSuffixTextSize(AutoUtils.getPercentWidthSize(18));
-        dynamic.setTimeTextSize(AutoUtils.getPercentWidthSize(24));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,18));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,24));
         dynamic.setSuffixDay(getStrings(" 天 "));
         dynamic.setShowDay(true);
         dynamic.setSuffixGravity(Gravity.CENTER);
@@ -504,9 +504,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         for (int i = 0; i < detailTabData.length; i++) {
             tabData.add(new TabEntity(detailTabData[i], 0, 0));
         }
-        ctb_qt_pro_details.setTextSize(AutoUtils.getPercentWidthSize(30));
-        ctb_qt_pro_details.setIndicatorWidth(AutoUtils.getPercentWidth1px() * 28 * 2);
-        ctb_qt_pro_details.setTabPadding(AutoUtils.getPercentWidth1px() * 20);
+        ctb_qt_pro_details.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
+        ctb_qt_pro_details.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext,28 * 2));
+        ctb_qt_pro_details.setTabPadding(AutoSizeUtils.mm2px(mAppContext,20));
         ctb_qt_pro_details.setTabData(tabData);
         ctb_qt_pro_details.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -557,7 +557,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
 
         GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadius(AutoUtils.getPercentWidth1px() * 55);
+        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext,55));
         gradientDrawable.setColor(getResources().getColor(R.color.yellow_bg_ffae));
         tv_group_product.setBackground(gradientDrawable);
         if (isShowTint) {
@@ -892,7 +892,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             Link numberLink = new Link(Pattern.compile(REGEX_NUM));
             numberLink.setTextColor(Color.parseColor("#ffffff"));
             numberLink.setUnderlined(false);
-            numberLink.setTextSize(AutoUtils.getPercentWidthSize(26));
+            numberLink.setTextSize(AutoSizeUtils.mm2px(mAppContext,26));
             numberLink.setHighlightAlpha(0f);
             LinkBuilder.on(tv_group_product)
                     .addLink(numberLink)
@@ -1078,7 +1078,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     @Override
                     public View getView(FlowLayout parent, int position, String s) {
                         View view = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                        AutoUtils.auto(view);
                         TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
                         tagsView.setText(getStrings(s));
                         return view;
@@ -1440,7 +1439,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_ql_sp_pro_sc_price.setText(activityPrice);
             Link link = new Link(activityPriceTag);
             link.setTextColor(Color.parseColor("#ff5a6b"));
-            link.setTextSize(AutoUtils.getPercentWidthSize(22));
+            link.setTextSize(AutoSizeUtils.mm2px(mAppContext,22));
             link.setBgColor(Color.parseColor("#ffffff"));
             link.setUnderlined(false);
             link.setHighlightAlpha(0f);
@@ -1541,7 +1540,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     @Override
                     public View getView(FlowLayout parent, int position, String s) {
                         View view = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                        AutoUtils.auto(view);
                         TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
                         tagsView.setText(getStrings(s));
                         return view;

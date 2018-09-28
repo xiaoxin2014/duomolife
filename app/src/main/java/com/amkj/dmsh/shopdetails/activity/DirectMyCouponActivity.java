@@ -12,13 +12,14 @@ import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.adapter.CouponStatusAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
@@ -49,7 +50,7 @@ public class DirectMyCouponActivity extends BaseActivity {
         getLoginStatus();
         tv_header_titleAll.setText("优惠券");
         header_shared.setVisibility(View.INVISIBLE);
-        stdMineCoupon.setTextsize(AutoUtils.getPercentWidthSize(28));
+        stdMineCoupon.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
         CouponStatusAdapter couponStatusAdapter = new CouponStatusAdapter(getSupportFragmentManager());
         vpMineCoupon.setAdapter(couponStatusAdapter);
         stdMineCoupon.setViewPager(vpMineCoupon);

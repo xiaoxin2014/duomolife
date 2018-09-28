@@ -175,7 +175,7 @@
                                         android:layout_height="@dimen/sc_mm_68"
 
                                         android:drawableLeft="@drawable/inte_mon_icon"
-                                        android:drawablePadding="@dimen/dimen_5_dp"
+                                        android:drawablePadding="@dimen/sc_mm_5"
                                         android:drawableRight="@drawable/ql_ques_icon"
                                         android:gravity="center_vertical"
                                         android:paddingLeft="@dimen/gap_left"
@@ -204,10 +204,10 @@
                             <LinearLayout
                                 android:id="@+id/ll_sp_pro_sku_value"
                                 android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_120"
+                                android:layout_height="@dimen/sc_mm_100"
                                 android:background="@color/light_gray_f"
                                 android:orientation="horizontal"
-                                android:paddingTop="@dimen/dimen_10_dp">
+                                android:paddingTop="@dimen/sc_mm_10">
 
                                 <TextView
                                     android:id="@+id/tv_ql_sp_pro_sku"

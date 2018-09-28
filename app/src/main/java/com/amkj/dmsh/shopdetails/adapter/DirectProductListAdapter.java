@@ -41,7 +41,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +51,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -225,7 +227,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         tv_direct_indent_pro_price.setSelected(true);
                         Link link = new Link(productInfoBean.getActivityPriceDesc());
                         link.setTextColor(Color.parseColor("#ff5a6b"));
-                        link.setTextSize(AutoUtils.getPercentWidthSize(22));
+                        link.setTextSize(AutoSizeUtils.mm2px(mAppContext,22));
                         link.setBgColor(Color.parseColor("#ffffff"));
                         link.setUnderlined(false);
                         link.setHighlightAlpha(0f);

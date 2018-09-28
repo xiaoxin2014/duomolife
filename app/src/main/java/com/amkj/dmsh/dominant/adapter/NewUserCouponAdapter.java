@@ -9,11 +9,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
@@ -43,7 +45,7 @@ public class NewUserCouponAdapter extends BaseQuickAdapter<CouponGiftBean, BaseV
                 .setTextColor(0xff333333)
                 .setUnderlined(false)
                 .setHighlightAlpha(0f)
-                .setTextSize(AutoUtils.getPercentWidthSize(50));
+                .setTextSize(AutoSizeUtils.mm2px(mAppContext,50));
         LinkBuilder.on(tv_new_user_coupon_amount)
                 .addLink(link).build();
         helper.setText(R.id.tv_new_user_start_fee, couponGiftBean.getStartFee() > 0

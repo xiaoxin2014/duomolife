@@ -28,7 +28,6 @@
             android:id="@+id/tv_act_topic_rule_skip"
             android:textColor="@color/text_normal_red"
             android:gravity="center"
-
             android:visibility="gone"
             android:background="@drawable/border_cir_ten_nor_red_solid_w"
             android:layout_height="@dimen/sc_mm_82" />

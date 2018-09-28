@@ -15,11 +15,12 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentPagerAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
@@ -45,7 +46,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
         getLoginStatus();
         Intent intent = getIntent();
         type = intent.getStringExtra("tab");
-        communal_stl_tab.setTextsize(AutoUtils.getPercentWidth1px() * 28);
+        communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
         communal_stl_tab.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
         indentPagerAdapter = new IndentPagerAdapter(getSupportFragmentManager());
         vp_indent_container.setAdapter(indentPagerAdapter);

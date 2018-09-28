@@ -448,7 +448,6 @@ public class QyServiceUtils {
             productIndentAdapter = new ProductIndentAdapter(context, orderListBeanList);
             communal_recycler.setAdapter(productIndentAdapter);
             View indentHeaderView = LayoutInflater.from(context).inflate(R.layout.dialog_service_indent_header, null, false);
-//            AutoUtils.auto(indentHeaderView);
             ImageView iv_close_dialog = indentHeaderView.findViewById(R.id.iv_close_dialog);
             iv_close_dialog.setOnClickListener(new View.OnClickListener() {
                 @Override

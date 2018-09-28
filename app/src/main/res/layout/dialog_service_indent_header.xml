@@ -10,11 +10,11 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
-        android:textSize="13dp"
+        android:textSize="@dimen/sc_mm_26"
         android:id="@+id/tv_service_header_text"
         android:textColor="@color/text_login_gray_s"
         android:text="请选择你要咨询的订单"
-        android:layout_height="@dimen/dimen_30_dp" />
+        android:layout_height="@dimen/sc_mm_60" />
     <ImageView
         android:layout_width="wrap_content"
         android:paddingRight="@dimen/gap_right"
@@ -22,5 +22,5 @@
         android:src="@drawable/marquee_close"
         android:id="@+id/iv_close_dialog"
         android:padding="@dimen/dimen_5_dp"
-        android:layout_height="@dimen/dimen_30_dp" />
+        android:layout_height="@dimen/sc_mm_60" />
 </LinearLayout>

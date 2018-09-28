@@ -18,10 +18,12 @@ import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.HeightAttr;
 import com.zhy.autolayout.attr.WidthAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -80,7 +82,7 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
                         autoLayoutInfo.addAttr(new HeightAttr(widthPx, 1, 0));
                         FrameLayout.LayoutParams layoutParamsV = (FrameLayout.LayoutParams) iv_type_center.getLayoutParams();
                         if (qualityHomeTypeList.size() == 5 && layoutPosition == 0) {
-                            layoutParamsV.setMargins(0, 0, (int) (AutoUtils.getPercentWidth1px() * 47), 0);
+                            layoutParamsV.setMargins(0, 0, AutoSizeUtils.mm2px(mAppContext,47), 0);
                         } else {
                             layoutParamsV.setMargins(0, 0, 0, 0);
                         }

@@ -48,7 +48,6 @@ import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +57,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import razerdp.basepopup.BasePopupWindow;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
@@ -136,8 +137,8 @@ public class QualityTypeProductActivity extends BaseActivity {
     protected void initViews() {
         tl_quality_type_bar.setSelected(true);
         ctb_qt_tab_product_type.setVisibility(View.GONE);
-        ctb_qt_tab_product_type.setTabPadding(AutoUtils.getPercentWidth1px() * 44);
-        ctb_qt_tab_product_type.setTextSize(AutoUtils.getPercentWidthSize(32));
+        ctb_qt_tab_product_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext,44));
+        ctb_qt_tab_product_type.setTextSize(AutoSizeUtils.mm2px(mAppContext,32));
         Intent intent = getIntent();
         if (intent != null) {
             qualityTypeBeanChange = new QualityTypeBean();
@@ -147,7 +148,7 @@ public class QualityTypeProductActivity extends BaseActivity {
             qualityTypeBeanChange.setName(getStrings(intent.getStringExtra(CATEGORY_NAME)));
         }
         if (qualityTypeBeanChange != null) {
-            ctb_qt_tab_product_type.setIndicatorWidth((int) (AutoUtils.getPercentWidthSize(32) * 4.5));
+            ctb_qt_tab_product_type.setIndicatorWidth((int) (AutoSizeUtils.mm2px(mAppContext,32) * 4.5));
         }
 
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityTypeProductActivity.this, 2));
@@ -747,7 +748,7 @@ public class QualityTypeProductActivity extends BaseActivity {
         public void initViews() {
             if (communal_recycler_wrap != null) {
                 communal_recycler_wrap.setBackgroundColor(getResources().getColor(R.color.gray_bg));
-                communal_recycler_wrap.setPadding((int) (AutoUtils.getPercentWidth1px() * 20), 0, 0, (int) (AutoUtils.getPercentWidth1px() * 20));
+                communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext,20), 0, 0, AutoSizeUtils.mm2px(mAppContext,20));
                 // 这一步必须要做,否则不会显示.
                 communal_recycler_wrap.setLayoutManager(new GridLayoutManager(QualityTypeProductActivity.this, 4));
                 childProductTypeAdapter = new ChildProductTypeAdapter(childTypeList);

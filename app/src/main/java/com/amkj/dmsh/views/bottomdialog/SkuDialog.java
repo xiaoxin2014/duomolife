@@ -45,7 +45,6 @@ import com.google.gson.Gson;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.HeightAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,8 +61,10 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.inflate;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.formatFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -373,7 +374,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 && editGoodsSkuBean.getPresentProductInfoList().size() > 0) {
             communal_recycler_wrap.setVisibility(View.VISIBLE);
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(baseAct));
-            communal_recycler_wrap.setPadding((int) AutoUtils.getPercentWidth1px() * 30, 0, (int) AutoUtils.getPercentWidth1px() * 24, 0);
+            communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext,30), 0, AutoSizeUtils.mm2px(mAppContext,24), 0);
             if (presentProAdapter == null) {
                 presentProductInfoList.clear();
                 for (PresentProductInfoBean presentProductInfoBean : editGoodsSkuBean.getPresentProductInfoList()) {
@@ -545,7 +546,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             numCount = editGoodsSkuBean.getOldCount();
         }
         rel_rect_count.setVisibility(numCount<1?View.GONE:View.VISIBLE);
-        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX,AutoUtils.getPercentWidthSize(28));
+        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX,AutoSizeUtils.mm2px(mAppContext,28));
         rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
         setPresentData();
         rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);

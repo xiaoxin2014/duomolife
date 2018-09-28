@@ -11,14 +11,13 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
-import com.zhy.autolayout.attr.Attrs;
-import com.zhy.autolayout.attr.AutoAttr;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
@@ -59,10 +58,10 @@ public class IntegralLotteryAwardHistoryAdapter extends BaseQuickAdapter<Previou
 
     private ImageView createImageView(WinListBean winListBean) {
         CircleImageView imageView = new CircleImageView(context);
-        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(60, 60);
-        layoutParams.rightMargin = 24;
+        int size = AutoSizeUtils.mm2px(mAppContext,60);
+        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(size, size);
+        layoutParams.rightMargin = AutoSizeUtils.mm2px(mAppContext,24);
         imageView.setLayoutParams(layoutParams);
-        AutoUtils.auto(imageView, Attrs.WIDTH | Attrs.HEIGHT, AutoAttr.BASE_WIDTH);
         GlideImageLoaderUtil.loadHeaderImg(context, imageView, getStrings(winListBean.getAvatar()));
         return imageView;
     }

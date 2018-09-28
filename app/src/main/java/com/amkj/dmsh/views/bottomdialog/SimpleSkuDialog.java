@@ -30,7 +30,6 @@ import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.zhy.autolayout.AutoLayoutInfo;
 import com.zhy.autolayout.attr.HeightAttr;
 import com.zhy.autolayout.utils.AutoLayoutHelper;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +46,10 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.inflate;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -248,7 +249,7 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
         }
         rel_rect_count.setVisibility(numCount < 1 ? View.GONE : View.VISIBLE);
         rectAddAndSubViewDirect.tv_direct_number_layout.setText("数量");
-        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX,AutoUtils.getPercentWidthSize(28));
+        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,28));
         rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
         rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);
         rectAddAndSubViewDirect.setOnNumChangeListener(new RectAddAndSubViewDirect.OnNumChangeListener() {

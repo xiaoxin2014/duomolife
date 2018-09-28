@@ -379,7 +379,9 @@ public class GlideImageLoaderUtil {
         if (null != context) {
             Glide.with(context.getApplicationContext()).load(imgUrl)
                     .apply(new RequestOptions().placeholder(R.drawable.load_loading_image)
-                            .error(R.drawable.load_loading_image))
+                            .error(R.drawable.load_loading_image)
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .override(Target.SIZE_ORIGINAL))
                     .into(imageView);
         }
     }

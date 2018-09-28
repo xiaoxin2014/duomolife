@@ -31,7 +31,6 @@ import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,7 +39,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
@@ -97,7 +98,7 @@ public class UserPagerActivity extends BaseActivity {
         tv_user_report.setVisibility(View.GONE);
         Intent intent = getIntent();
         userId = intent.getStringExtra("userId");
-        communal_stl_tab.setTextsize(AutoUtils.getPercentWidth1px() * 30);
+        communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,30));
         UserPageAdapter userPageAdapter = new UserPageAdapter(getSupportFragmentManager(), userId);
         vp_user_container.setAdapter(userPageAdapter);
         communal_stl_tab.setViewPager(vp_user_container);

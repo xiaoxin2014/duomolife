@@ -8,10 +8,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.mine.adapter.MineContentPageAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * @author LGuiPeng
@@ -36,7 +38,7 @@ public class MineCollectContentActivity extends BaseActivity {
     protected void initViews() {
         tv_header_titleAll.setText("收藏内容");
         tv_header_shared.setVisibility(View.GONE);
-        communal_stl_tab.setTextsize(AutoUtils.getPercentWidth1px() * 28);
+        communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
         MineContentPageAdapter mineContentPageAdapter = new MineContentPageAdapter(getSupportFragmentManager());
         vp_content_contain.setAdapter(mineContentPageAdapter);
         communal_stl_tab.setViewPager(vp_content_contain);

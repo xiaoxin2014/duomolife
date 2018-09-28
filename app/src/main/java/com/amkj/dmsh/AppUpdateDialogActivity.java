@@ -17,13 +17,14 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.utils.ServiceDownUtils;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getAppendNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
@@ -75,7 +76,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
         Window window = getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams params = window.getAttributes();
-        params.width = AutoUtils.getPercentWidthSize(500);
+        params.width = AutoSizeUtils.mm2px(mAppContext,500);
         window.setAttributes(params);
         Intent intent = getIntent();
         downLink = intent.getStringExtra(VERSION_DOWN_LINK);

@@ -38,7 +38,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -50,7 +49,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -178,8 +179,8 @@ public class SpringSaleFragment extends BaseFragment {
             }
         }, communal_recycler);
         GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
-                , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});
+        gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
+                , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
         gradientDrawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
         tv_time_product_shaft.setBackground(gradientDrawable);
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -499,8 +500,8 @@ public class SpringSaleFragment extends BaseFragment {
         void initPopView() {
             communal_recycler_wrap_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
-                    , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});
+            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
+                    , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
             gradientDrawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
             communal_recycler_wrap_wrap.setBackground(gradientDrawable);
             timeShaftRecordAdapter = new TimeShaftRecordAdapter(timeShaftList);

@@ -27,7 +27,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
@@ -66,7 +68,7 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
         params.put("data", data);
 //        插入历史记录
         insertHistoryData(data);
-        sliding_search_bar.setTextsize(AutoUtils.getPercentWidth1px() * 26);
+        sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext,26));
         sliding_search_bar.setIndicatorHeight(AutoUtils.getPercentHeight1px() * 2);
         searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
         vp_search_details_container.setAdapter(searchTabPageAdapter);

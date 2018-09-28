@@ -43,7 +43,6 @@ import com.amkj.dmsh.views.SystemBarHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.xutils.ex.HttpException;
 
@@ -54,9 +53,11 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -208,8 +209,8 @@ public class QualityFragment extends BaseFragment {
                 productTypeAdapter.notifyDataSetChanged();
             }
         });
-        std_quality_type.setTextsize(AutoUtils.getPercentWidth1px() * 28);
-        std_quality_type.setTabPadding(AutoUtils.getPercentWidth1px() * 30);
+        std_quality_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+        std_quality_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext,30));
         setStatusColor();
         badge = getBadge(getActivity(), fl_shop_car_quality);
     }

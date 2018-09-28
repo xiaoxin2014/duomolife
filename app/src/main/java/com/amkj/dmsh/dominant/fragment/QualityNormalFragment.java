@@ -37,7 +37,6 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -48,8 +47,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
@@ -346,7 +347,7 @@ public class QualityNormalFragment extends BaseFragment {
         public void initViews() {
             if (communal_recycler_wrap != null) {
                 communal_recycler_wrap.setBackgroundColor(getResources().getColor(R.color.gray_bg));
-                communal_recycler_wrap.setPadding((int) (AutoUtils.getPercentWidth1px() * 20), 0, 0, (int) (AutoUtils.getPercentWidth1px() * 20));
+                communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext,20), 0, 0, AutoSizeUtils.mm2px(mAppContext,20));
                 // 这一步必须要做,否则不会显示.
                 communal_recycler_wrap.setLayoutManager(new GridLayoutManager(getActivity(), 4));
                 childProductTypeAdapter = new ChildProductTypeAdapter(childTypeList);

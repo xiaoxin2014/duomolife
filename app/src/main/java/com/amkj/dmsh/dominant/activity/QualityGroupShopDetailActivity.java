@@ -76,7 +76,6 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -95,8 +94,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -281,7 +282,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
         changePage("ImgArticleShop");
         ctb_ql_gp_sp_tab.setTabData(tabs);
-        ctb_ql_gp_sp_tab.setTextSize(AutoUtils.getPercentWidth1px() * 30);
+        ctb_ql_gp_sp_tab.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
         ctb_ql_gp_sp_tab.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
@@ -589,7 +590,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 @Override
                 public View getView(FlowLayout parent, int position, String s) {
                     View view = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                    AutoUtils.auto(view);
                     TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
                     tagsView.setText(getStrings(s));
                     return tagsView;
@@ -866,7 +866,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 @Override
                 public View getView(FlowLayout parent, int position, String s) {
                     View view = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                    AutoUtils.auto(view);
                     TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
                     tagsView.setText(getStrings(s));
                     return view;

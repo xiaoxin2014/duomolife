@@ -59,7 +59,6 @@ import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +69,9 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDataFormatWeek;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -799,7 +800,7 @@ public class AttendanceActivity extends BaseActivity {
             marquee_attendance_text.setInAndOutAnim(R.anim.in_bottom, R.anim.out_top);
             GradientDrawable gradientDrawable = new GradientDrawable();
             gradientDrawable.setShape(GradientDrawable.RECTANGLE);
-            int radius = (int) (AutoUtils.getPercentWidth1px() * 30);
+            int radius = AutoSizeUtils.mm2px(mAppContext,30);
             gradientDrawable.setCornerRadius(radius);
             try {
                 gradientDrawable.setColor(getResources().getColor(R.color.light_gray_f));

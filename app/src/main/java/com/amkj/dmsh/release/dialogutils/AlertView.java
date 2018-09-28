@@ -28,6 +28,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+
 /**
  * Created by Sai on 15/8/9.
  * 精仿iOSAlertViewController控件
@@ -196,7 +200,7 @@ public class AlertView {
             tvAlertTitle.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(msg)) {
-            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSize(alertInitView.getMsgSize() > 0 ? (int) alertInitView.getMsgSize() : 26));
+            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,alertInitView.getMsgSize() > 0 ? (int) alertInitView.getMsgSize() : 26));
             tvAlertMsg.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getMsgColorValue()) ? alertInitView.getMsgColorValue() : "#666666"));
             tvAlertMsg.setText(msg);
         } else {
@@ -214,8 +218,8 @@ public class AlertView {
             View itemView = LayoutInflater.from(context).inflate(R.layout.item_alertbutton, null);
             TextView tvAlert = (TextView) itemView.findViewById(R.id.tvAlert);
             tvAlert.setText(cancelStr);
-            tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getCancelSize() > 0
-                    ? alertInitView.getCancelSize() : 28));
+            tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getCancelSize() > 0
+                    ? alertInitView.getCancelSize() : 28)));
             tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getCancelColorValue()) ? alertInitView.getCancelColorValue() : "#666666"));
             tvAlert.setClickable(true);
             tvAlert.setTypeface(Typeface.DEFAULT_BOLD);
@@ -248,8 +252,8 @@ public class AlertView {
         initListView(alertInitView);
         TextView tvAlertCancel = (TextView) contentContainer.findViewById(R.id.tvAlertCancel);
         if (cancelStr != null) {
-            tvAlertCancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getCancelSize() > 0
-                    ? alertInitView.getCancelSize() : 28));
+            tvAlertCancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getCancelSize() > 0
+                    ? alertInitView.getCancelSize() : 28)));
             tvAlertCancel.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getCancelColorValue()) ? alertInitView.getCancelColorValue() : "#666666"));
             tvAlertCancel.setVisibility(View.VISIBLE);
             tvAlertCancel.setText(cancelStr);
@@ -305,23 +309,23 @@ public class AlertView {
                 //取消按钮的样式
                 if (data.equals(cancelStr)) {
                     tvAlert.setTypeface(Typeface.DEFAULT_BOLD);
-                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getCancelSize() > 0
-                            ? alertInitView.getCancelSize() : 26));
+                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getCancelSize() > 0
+                            ? alertInitView.getCancelSize() : 26)));
                     tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getCancelColorValue()) ? alertInitView.getCancelColorValue() : "#666666"));
                     tvAlert.setOnClickListener(new OnTextClickListener(CANCELPOSITION));
                     position = position - 1;
                 } else if (data.equals(determine)) {
                     tvAlert.setTypeface(Typeface.DEFAULT_BOLD);
-                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getCancelSize() > 0
-                            ? alertInitView.getCancelSize() : 26));
+                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getCancelSize() > 0
+                            ? alertInitView.getCancelSize() : 26)));
                     tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getDetColorValue()) ? alertInitView.getDetColorValue() : "#0a88fa"));
                 } else if (mAlertOtherData != null && mAlertOtherData.contains(data)) { //正常item
-                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getOthSize() > 0
-                            ? alertInitView.getOthSize() : 26));
+                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getOthSize() > 0
+                            ? alertInitView.getOthSize() : 26)));
                     tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getOthColorValue()) ? alertInitView.getOthColorValue() : "#ff5e6b"));
                 } else {
-                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidth1px() * (alertInitView.getNorSize() > 0
-                            ? alertInitView.getNorSize() : 26));
+                    tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getNorSize() > 0
+                            ? alertInitView.getNorSize() : 26)));
                     tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getNorColorValue()) ? alertInitView.getNorColorValue() : "#0a88fa"));
                 }
                 tvAlert.setOnClickListener(new OnTextClickListener(position));

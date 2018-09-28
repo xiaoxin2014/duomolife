@@ -11,11 +11,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -56,7 +57,7 @@ public class IntegralProductIndentActivity extends BaseActivity {
 
     private void setFragmentAdapter() {
         if(userId>0){
-            stl_integral_indent.setTextsize(AutoUtils.getPercentWidthSize(28));
+            stl_integral_indent.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
             vp_integral_indent_container.setAdapter(new IntegralIndentPagerAdapter(getSupportFragmentManager()));
             stl_integral_indent.setViewPager(vp_integral_indent_container);
         }

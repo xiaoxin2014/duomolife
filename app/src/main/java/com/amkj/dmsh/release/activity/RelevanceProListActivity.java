@@ -14,7 +14,6 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.release.adapter.RelevanceProductStatusAdapter;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -23,7 +22,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.selRelevanceProduct;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -77,7 +78,7 @@ public class RelevanceProListActivity extends BaseActivity {
             showToast(RelevanceProListActivity.this, R.string.variable_exception);
             finish();
         }
-        std_relevance_product.setTextsize(AutoUtils.getPercentWidthSize(28));
+        std_relevance_product.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
         RelevanceProductStatusAdapter couponStatusAdapter = new RelevanceProductStatusAdapter(getSupportFragmentManager(), relevanceSelProList);
         vp_relevance_product.setAdapter(couponStatusAdapter);
         std_relevance_product.setViewPager(vp_relevance_product);

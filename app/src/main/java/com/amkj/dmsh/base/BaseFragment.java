@@ -22,7 +22,6 @@ import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +35,9 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -121,7 +123,7 @@ public abstract class BaseFragment extends Fragment {
         mUnBinder = ButterKnife.bind(this, view);
         loadHud = KProgressHUD.create(getActivity())
                 .setCancellable(false)
-                .setSize((int) (AutoUtils.getPercentWidth1px() * 50), (int) (AutoUtils.getPercentWidth1px() * 50))
+                .setSize(AutoSizeUtils.mm2px(mAppContext,50), AutoSizeUtils.mm2px(mAppContext,50))
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
         if (isAddLoad()) {
             // 重新加载逻辑

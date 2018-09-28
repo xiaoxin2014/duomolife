@@ -11,7 +11,10 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 public class LabelView extends View {
     private String mTextContent;
@@ -67,7 +70,7 @@ public class LabelView extends View {
     }
 
     public void setTextSize(int textSize) {
-        mTextSize = AutoUtils.getPercentWidthSize(textSize);
+        mTextSize = AutoSizeUtils.mm2px(mAppContext,textSize);
         invalidate();
     }
 

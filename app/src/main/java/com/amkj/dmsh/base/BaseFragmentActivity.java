@@ -22,7 +22,6 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.autolayout.AutoLayoutActivity;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,8 +33,10 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.jzvd.JZVideoPlayer;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -57,7 +58,7 @@ public abstract class BaseFragmentActivity extends AutoLayoutActivity {
         loadHud = KProgressHUD.create(this)
                 .setCancellable(true)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setSize((int) (AutoUtils.getPercentWidth1px() * 50), (int) (AutoUtils.getPercentWidth1px() * 50));
+                .setSize(AutoSizeUtils.mm2px(mAppContext,50), AutoSizeUtils.mm2px(mAppContext,50));
 //                .setDimAmount(0.5f)
         initViews();
         // 注册当前Activity为订阅者

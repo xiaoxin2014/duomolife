@@ -11,10 +11,12 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
@@ -60,7 +62,7 @@ public class RecyclerArticleAdapter extends BaseQuickAdapter<CommunalArticleBean
         TextView tv_com_art_view_count = holder.getView(R.id.tv_com_art_view_count);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = (int) AutoUtils.getPercentWidth1px() * 40;
+        int radius = AutoSizeUtils.mm2px(mAppContext,40);
         drawable.setCornerRadius(radius);
         try {
             drawable.setColor(0x7f000000);

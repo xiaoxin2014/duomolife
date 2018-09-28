@@ -64,7 +64,6 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,9 +76,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import emojicon.EmojiconTextView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -95,6 +95,7 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
+;
 ;
 
 public class IntegralScrollDetailsActivity extends BaseActivity {
@@ -201,9 +202,9 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         for (int i = 0; i < detailTabData.length; i++) {
             tabData.add(new TabEntity(detailTabData[i], 0, 0));
         }
-        ctbQtProDetails.setTextSize(AutoUtils.getPercentWidthSize(30));
-        ctbQtProDetails.setIndicatorWidth(AutoUtils.getPercentWidth1px() * 28 * 2);
-        ctbQtProDetails.setTabPadding(AutoUtils.getPercentWidth1px() * 20);
+        ctbQtProDetails.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
+        ctbQtProDetails.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext,28 * 2));
+        ctbQtProDetails.setTabPadding(AutoSizeUtils.mm2px(mAppContext,20));
         ctbQtProDetails.setTabData(tabData);
         ctbQtProDetails.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -461,7 +462,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         //        @用户昵称
         redNum.setTextColor(getResources().getColor(R.color.text_normal_red));
         redNum.setUnderlined(false);
-        redNum.setTextSize(AutoUtils.getPercentWidthSize(34));
+        redNum.setTextSize(AutoSizeUtils.mm2px(mAppContext,34));
         redNum.setHighlightAlpha(0f);
         LinkBuilder.on(tv_integration_details_price)
                 .addLink(redNum)
@@ -575,7 +576,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         View tagView = LayoutInflater.from(IntegralScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, flex_integral_tag, false);
         TextView tv_ql_gp_tag = tagView.findViewById(R.id.tv_ql_gp_tag);
         tv_ql_gp_tag.setText(getStringFilter(tagsName));
-        AutoUtils.auto(tagView);
         return tagView;
     }
 

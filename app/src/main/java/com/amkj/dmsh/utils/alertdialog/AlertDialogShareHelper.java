@@ -15,7 +15,6 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,6 @@ public class AlertDialogShareHelper {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_share, null, false);
-        AutoUtils.auto(dialogView);
         loadView = dialogView.findViewById(R.id.rel_share_loading);
         builder.setCancelable(true);
 //        三个数组必须一一对应

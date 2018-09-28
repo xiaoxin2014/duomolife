@@ -8,10 +8,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.mine.adapter.GoodsSalePagerAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Created by atd48 on 2016/8/24.
@@ -40,7 +42,7 @@ public class DirectGoodsSaleAfterActivity extends BaseActivity {
         tv_header_titleAll.setText("退货/售后");
         GoodsSalePagerAdapter salePagerAdapter = new GoodsSalePagerAdapter(getSupportFragmentManager());
         vp_dm_indent_container.setAdapter(salePagerAdapter);
-        slidingBar.setTextsize(AutoUtils.getPercentWidth1px() * 28);
+        slidingBar.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
         slidingBar.setViewPager(vp_dm_indent_container);
 }
 

@@ -59,8 +59,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -134,8 +136,8 @@ public class QualityNewProActivity extends BaseActivity {
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         GradientDrawable drawable = new GradientDrawable();
-        drawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25
-                , AutoUtils.getPercentWidth1px() * 25, AutoUtils.getPercentWidth1px() * 25, 0, 0});
+        drawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
+                , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
         drawable.setColor(0x7f000000);
         tv_ql_new_pro_time_tag.setBackground(drawable);
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityNewProActivity.this, 2));
@@ -492,8 +494,8 @@ public class QualityNewProActivity extends BaseActivity {
         public void initView() {
             communal_recycler_wrap_wrap.setLayoutManager(new LinearLayoutManager(QualityNewProActivity.this));
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentWidth1px() * 15, AutoUtils.getPercentWidth1px() * 15
-                    , AutoUtils.getPercentWidth1px() * 15, AutoUtils.getPercentWidth1px() * 15, 0, 0});
+            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,15), AutoSizeUtils.mm2px(mAppContext,15)
+                    , AutoSizeUtils.mm2px(mAppContext,15), AutoSizeUtils.mm2px(mAppContext,15), 0, 0});
             gradientDrawable.setColor(0x7f000000);
             communal_recycler_wrap_wrap.setBackground(gradientDrawable);
             timeShaftAdapter = new TimeShaftAdapter(timeShaftList);

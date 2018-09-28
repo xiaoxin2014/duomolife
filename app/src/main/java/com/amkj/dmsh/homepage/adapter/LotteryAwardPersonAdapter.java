@@ -7,10 +7,12 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinLis
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
@@ -30,7 +32,7 @@ public class LotteryAwardPersonAdapter extends BaseQuickAdapter<WinListBean,Base
 
     @Override
     protected void convert(BaseViewHolder helper, WinListBean winListBean) {
-        GlideImageLoaderUtil.loadRoundImg(context,helper.getView(R.id.iv_lottery_award_person),winListBean.getAvatar(), AutoUtils.getPercentWidthSize(40),R.drawable.default_ava_img);
+        GlideImageLoaderUtil.loadRoundImg(context,helper.getView(R.id.iv_lottery_award_person),winListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext,40),R.drawable.default_ava_img);
         helper.setText(R.id.tv_lottery_award_person_name,getStrings(winListBean.getNickName()))
                 .setText(R.id.tv_lottery_award_person_code,getStrings(winListBean.getWinningCode()))
                 .itemView.setTag(winListBean);

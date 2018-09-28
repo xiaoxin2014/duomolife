@@ -24,9 +24,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.zhy.autolayout.utils.AutoUtils;
-
 import java.util.ArrayList;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Abstract wheel adapter provides common functionality for adapters.
@@ -113,8 +115,8 @@ public abstract class AbstractWheelTextAdapterTime extends AbstractWheelAdapter 
         itemResourceId = itemResource;
         itemTextResourceId = itemTextResource;
         this.currentIndex = currentIndex;
-        this.maxsize = (int) (AutoUtils.getPercentWidth1px() * maxsize);
-        this.minsize = (int) (AutoUtils.getPercentWidth1px() * minsize);
+        this.maxsize = AutoSizeUtils.mm2px(mAppContext,maxsize);
+        this.minsize = AutoSizeUtils.mm2px(mAppContext,minsize);
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }

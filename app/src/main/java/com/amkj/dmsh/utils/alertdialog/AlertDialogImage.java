@@ -10,8 +10,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
@@ -35,7 +37,6 @@ public class AlertDialogImage {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_image, null, false);
         iv_ad_image = dialogView.findViewById(R.id.iv_ad_image);
-        AutoUtils.auto(dialogView);
         builder.setCancelable(true);
         imageAlertDialog = builder.create();
         iv_ad_image.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +74,7 @@ public class AlertDialogImage {
             if (window != null) {
                 window.setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoUtils.getPercentWidthSize(500);
+                params.width = AutoSizeUtils.mm2px(mAppContext,500);
                 window.setAttributes(params);
                 window.setContentView(dialogView);
             }

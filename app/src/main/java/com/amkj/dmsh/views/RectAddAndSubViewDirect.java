@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -139,7 +140,7 @@ public class RectAddAndSubViewDirect extends LinearLayout {
     public void setNumberTextColor(int textColor, int textSize) {
         if (tv_direct_number_layout != null) {
             tv_direct_number_layout.setTextColor(textColor);
-            tv_direct_number_layout.setTextSize(textSize);
+            tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize);
         }
     }
 
