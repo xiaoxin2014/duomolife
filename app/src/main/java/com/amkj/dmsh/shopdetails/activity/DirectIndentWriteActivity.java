@@ -702,7 +702,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
-                constantMethod.showImportantToast(getApplication(), "支付成功");
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付成功");
 //                跳转订单完成页
                 if (type.equals(INDENT_GROUP_SHOP)) {
                     switch (groupShopDetailsBean.getGpStatus()) {
@@ -729,13 +729,13 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        constantMethod.showImportantToast(getApplication(), "未安装微信或微信版本过低");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        constantMethod.showImportantToast(getApplication(), "参数错误");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        constantMethod.showImportantToast(getApplication(), "支付失败");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付失败");
                         break;
                 }
                 payError();
@@ -744,7 +744,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onCancel() {
                 payError();
-                constantMethod.showImportantToast(getApplication(), "支付取消");
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付取消");
             }
         });
     }
@@ -937,7 +937,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                constantMethod.showImportantToast(getApplication(), "支付成功");
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付成功");
 //                跳转订单完成页
                 if (type.equals(INDENT_GROUP_SHOP)) {
                     switch (groupShopDetailsBean.getGpStatus()) {
@@ -964,26 +964,26 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onDealing() {
-                constantMethod.showImportantToast(getApplication(), "支付处理中...");
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        constantMethod.showImportantToast(getApplication(), "支付失败:支付结果解析错误");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付失败:支付结果解析错误");
                         break;
 
                     case AliPay.ERROR_NETWORK:
-                        constantMethod.showImportantToast(getApplication(), "支付失败:网络连接错误");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付失败:网络连接错误");
                         break;
 
                     case AliPay.ERROR_PAY:
-                        constantMethod.showImportantToast(getApplication(), "支付错误:支付码支付失败");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付错误:支付码支付失败");
                         break;
 
                     default:
-                        constantMethod.showImportantToast(getApplication(), "支付错误");
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付错误");
                         break;
                 }
                 payError();
@@ -992,7 +992,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onCancel() {
                 payError();
-                constantMethod.showImportantToast(getApplication(), "支付取消");
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付取消");
             }
         }).doPay();
     }

@@ -2596,11 +2596,11 @@ public class ConstantMethod {
      * @param context
      * @param resId
      */
-    public void showImportantToast(Context context, int resId) {
+    public void showImportantToast(Activity context, int resId) {
         showImportantToast(context, context.getResources().getString(resId));
     }
 
-    public void showImportantToast(Context context, String hintText) {
+    public void showImportantToast(Activity context, String hintText) {
         int notificationEnabledValue = 1;
         if (Build.VERSION.SDK_INT >= KITKAT) {
             notificationEnabledValue = NotificationManagerCompat.from(context).areNotificationsEnabled() ? 1 : 0;
