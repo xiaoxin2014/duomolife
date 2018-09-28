@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * @author LGuiPeng
@@ -29,6 +30,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  */
 public class AlertRuleDialogHelper implements View.OnClickListener {
 
+    private final Context context;
     private AlertDialog ruleAlertView;
     private View dialogView;
     private CommunalDetailAdapter integralRuleAdapter;
@@ -38,6 +40,7 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
     private boolean isFirstSet = true;
 
     public AlertRuleDialogHelper (Context context) {
+        this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.attendance_integral_rule, null, false);
         tv_integral_rule_title = dialogView.findViewById(R.id.tv_integral_rule_title);
@@ -62,7 +65,10 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
     }
 
     public void show(){
-        ruleAlertView.show();
+        if (!ruleAlertView.isShowing()
+                && isContextExisted(context)) {
+            ruleAlertView.show();
+        }
         if(isFirstSet){
             Window window = ruleAlertView.getWindow();
             if(window!=null){

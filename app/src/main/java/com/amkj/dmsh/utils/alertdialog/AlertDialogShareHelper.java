@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * @author LGuiPeng
@@ -31,6 +32,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  */
 public class AlertDialogShareHelper {
     private final View loadView;
+    private final Context context;
     private boolean isFirstSet;
     private AlertSelectShareListener alertSelectShareListener;
     private AlertDialog shareAlertDialog;
@@ -45,6 +47,7 @@ public class AlertDialogShareHelper {
             SHARE_MEDIA.QQ, SHARE_MEDIA.SINA, SHARE_MEDIA.POCKET};
 
     public AlertDialogShareHelper(Context context) {
+        this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_share, null, false);
         AutoUtils.auto(dialogView);
@@ -86,7 +89,8 @@ public class AlertDialogShareHelper {
      * 展示dialog
      */
     public void show() {
-        if (!shareAlertDialog.isShowing()) {
+        if (!shareAlertDialog.isShowing()
+                &&isContextExisted(context)) {
             shareAlertDialog.show();
         }
         if (loadView != null) {

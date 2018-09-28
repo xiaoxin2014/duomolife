@@ -28,6 +28,7 @@ import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -66,9 +67,6 @@ import com.amkj.dmsh.views.HtmlWebView;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -101,8 +99,6 @@ import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
  * class description:公用嵌入web
  */
 public class DoMoLifeCommunalActivity extends BaseActivity {
-    @BindView(R.id.smart_communal_web)
-    RefreshLayout smart_communal_web;
     @BindView(R.id.web_communal)
     HtmlWebView web_communal;
     @BindView(R.id.tv_web_back)
@@ -187,6 +183,17 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 handler.proceed();
             }
 
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }
+
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
 //                iv_close_reload_page.setVisibility(View.VISIBLE);
@@ -226,9 +233,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                         }
                     });
                 }
-                if (RefreshState.Refreshing.equals(smart_communal_web.getState())) {
-                    smart_communal_web.finishRefresh();
-                }
                 super.onPageFinished(view, url);
             }
 
@@ -236,13 +240,13 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
-                try{
-                    if(!url.startsWith("http://") && !url.startsWith("https://")){
+                try {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(intent);
                         return true;
                     }
-                }catch (Exception e){//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                     return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
                 view.loadUrl(url);
@@ -251,13 +255,13 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                try{
-                    if(!url.startsWith("http://") && !url.startsWith("https://")){
+                try {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(intent);
                         return true;
                     }
-                }catch (Exception e){//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                     return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
                 view.loadUrl(url);
@@ -283,31 +287,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             });
             constantMethod.getPermissions(DoMoLifeCommunalActivity.this.getApplicationContext(), Permission.Group.STORAGE);
         });
-        web_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
-            @Override
-            public void onScroll(int dx, int dy) {
-                if (dy < 2) {
-                    setWebRefreshStatus(1);
-                } else {
-                    setWebRefreshStatus(0);
-                }
-            }
-        });
-        smart_communal_web.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                web_communal.reload();
-            }
-        });
     }
 
-    private void setWebRefreshStatus(int refreshStatus) {
-        if(!TextUtils.isEmpty(this.refreshStatus)){
-            smart_communal_web.setEnableRefresh(this.refreshStatus.contains("1"));
-        }else{
-            smart_communal_web.setEnableRefresh(refreshStatus == 1);
-        }
-    }
     /**
      * 文件下载
      *
@@ -436,6 +417,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
+
     /**
      * 选择图片上传
      *
@@ -472,6 +454,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             }
         });
     }
+
     @OnClick(R.id.tv_web_back)
     void finish(View view) {
         if (web_communal.canGoBack()) {
@@ -627,11 +610,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100) {
-                if (RefreshState.Refreshing.equals(smart_communal_web.getState())) {
-                    smart_communal_web.finishRefresh();
-                }
-            }
         }
     }
 
@@ -757,7 +735,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
         @JavascriptInterface
         public void setRefreshStatus(String refreshStatus) {
-            if(!TextUtils.isEmpty(refreshStatus)){
+            if (!TextUtils.isEmpty(refreshStatus)) {
                 DoMoLifeCommunalActivity.this.refreshStatus = refreshStatus;
             }
         }
@@ -870,7 +848,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     }
 
     /**
-     *
      * @param jsUrl
      */
     private void webViewJs(@NonNull String jsUrl) {
@@ -897,6 +874,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
         super.onDestroy();
     }
+
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -918,7 +896,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
                             , TextUtils.isEmpty(content) ? "" : content
-                            , url,routineUrl);
+                            , url, routineUrl);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

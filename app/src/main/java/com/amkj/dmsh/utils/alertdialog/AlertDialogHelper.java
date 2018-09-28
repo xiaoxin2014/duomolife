@@ -13,6 +13,7 @@ import com.zhy.autolayout.utils.AutoUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * @author LGuiPeng
@@ -107,6 +108,17 @@ public class AlertDialogHelper implements View.OnClickListener {
     }
 
     /**
+     * 设置描述信息
+     * @param msgResId
+     * @return
+     */
+    public AlertDialogHelper setMsg(int msgResId) {
+        this.msg = context.getResources().getString(msgResId);
+        tv_alert_message.setText(getStrings(msg));
+        return this;
+    }
+
+    /**
      * 设置meg文本位置显示
      * @param msgTextGravity
      * @return
@@ -188,7 +200,8 @@ public class AlertDialogHelper implements View.OnClickListener {
      * 展示dialog
      */
     public void show() {
-        if(!defaultAlertDialog.isShowing()){
+        if(!defaultAlertDialog.isShowing()
+                && isContextExisted(context)){
             defaultAlertDialog.show();
         }
         if (isFirstSet) {

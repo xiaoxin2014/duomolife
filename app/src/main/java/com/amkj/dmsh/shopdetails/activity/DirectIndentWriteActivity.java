@@ -92,7 +92,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
@@ -183,6 +182,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     protected void initViews() {
         getLoginStatus(this);
         isOversea = false;
+        constantMethod = new ConstantMethod();
         tv_header_titleAll.setText("订单填写");
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
@@ -278,7 +278,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                showToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
             }
         });
         pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
@@ -315,16 +315,16 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                         loadHud.show();
                         getIndentDiscounts(false);
                     } else if (directReBuyGoods.getCode().equals(EMPTY_CODE)) {
-                        showToast(DirectIndentWriteActivity.this, R.string.invalidData);
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
                     } else {
-                        showToast(DirectIndentWriteActivity.this, directReBuyGoods.getMsg());
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, directReBuyGoods.getMsg());
                     }
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DirectIndentWriteActivity.this, R.string.invalidData);
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
                 super.onError(ex, isOnCallback);
             }
         });
@@ -365,9 +365,9 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     }
                 }
             } else if (addressId == 0) {
-                showToast(this, "收货地址为空");
+                constantMethod.showImportantToast(this, "收货地址为空");
             } else {
-                showToast(this, "商品选择错误");
+                constantMethod.showImportantToast(this, "商品选择错误");
             }
         } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
             if (userId > 0) {
@@ -392,7 +392,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                         }
                     }
                 } else {
-                    showToast(this, "收货地址为空");
+                    constantMethod.showImportantToast(this, "收货地址为空");
                 }
             } else {
                 getLoginStatus(this);
@@ -406,9 +406,9 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     && pullHeaderView.et_oversea_card.getText().toString().length() > 0) {
                 createIndent(payWay, productInfoList);
             } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_name.getText().toString())) {
-                showToast(this, R.string.input_name);
+                constantMethod.showImportantToast(this, R.string.input_name);
             } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_card.getText().toString())) {
-                showToast(this, R.string.input_card);
+                constantMethod.showImportantToast(this, R.string.input_card);
             }
         } else {
             createIndent(payWay, productInfoList);
@@ -466,7 +466,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             orderCreateNo = qualityWeChatIndent.getResult().getNo();
                             recordIndentTrack(orderCreateNo);
                         } else {
-                            showToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
                 } else {
@@ -478,7 +478,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             orderCreateNo = qualityAliPayIndent.getResult().getNo();
                             recordIndentTrack(orderCreateNo);
                         } else {
-                            showToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                         }
                     }
                 }
@@ -487,7 +487,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
                 tv_indent_write_commit.setEnabled(true);
                 super.onError(ex, isOnCallback);
             }
@@ -511,7 +511,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult().getPayKey());
                         } else {
-                            showToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
@@ -522,7 +522,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult().getPayKey());
                         } else {
-                            showToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
@@ -532,7 +532,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
                 tv_indent_write_commit.setEnabled(true);
                 super.onError(ex, isOnCallback);
             }
@@ -632,7 +632,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             orderCreateNo = qualityWeChatIndent.getResult().getNo();
                             recordIndentTrack(orderCreateNo);
                         } else {
-                            showToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
 //                            赠品送完刷新数据
                             if (qualityWeChatIndent.getResult() != null) {
                                 presentStatusUpdate(qualityWeChatIndent.getResult().getCode());
@@ -652,7 +652,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             if (qualityAliPayIndent.getResult() != null) {
                                 presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
                             }
-                            showToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                         }
                     }
                 }
@@ -664,7 +664,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
                 tv_indent_write_commit.setEnabled(true);
                 super.onError(ex, isOnCallback);
             }
@@ -702,7 +702,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(getApplication(), "支付成功");
+                constantMethod.showImportantToast(getApplication(), "支付成功");
 //                跳转订单完成页
                 if (type.equals(INDENT_GROUP_SHOP)) {
                     switch (groupShopDetailsBean.getGpStatus()) {
@@ -729,13 +729,13 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        showToast(getApplication(), "未安装微信或微信版本过低");
+                        constantMethod.showImportantToast(getApplication(), "未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        showToast(getApplication(), "参数错误");
+                        constantMethod.showImportantToast(getApplication(), "参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        showToast(getApplication(), "支付失败");
+                        constantMethod.showImportantToast(getApplication(), "支付失败");
                         break;
                 }
                 payError();
@@ -744,7 +744,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onCancel() {
                 payError();
-                showToast(getApplication(), "支付取消");
+                constantMethod.showImportantToast(getApplication(), "支付取消");
             }
         });
     }
@@ -937,7 +937,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(getApplication(), "支付成功");
+                constantMethod.showImportantToast(getApplication(), "支付成功");
 //                跳转订单完成页
                 if (type.equals(INDENT_GROUP_SHOP)) {
                     switch (groupShopDetailsBean.getGpStatus()) {
@@ -964,26 +964,26 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onDealing() {
-                showToast(getApplication(), "支付处理中...");
+                constantMethod.showImportantToast(getApplication(), "支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        showToast(getApplication(), "支付失败:支付结果解析错误");
+                        constantMethod.showImportantToast(getApplication(), "支付失败:支付结果解析错误");
                         break;
 
                     case AliPay.ERROR_NETWORK:
-                        showToast(getApplication(), "支付失败:网络连接错误");
+                        constantMethod.showImportantToast(getApplication(), "支付失败:网络连接错误");
                         break;
 
                     case AliPay.ERROR_PAY:
-                        showToast(getApplication(), "支付错误:支付码支付失败");
+                        constantMethod.showImportantToast(getApplication(), "支付错误:支付码支付失败");
                         break;
 
                     default:
-                        showToast(getApplication(), "支付错误");
+                        constantMethod.showImportantToast(getApplication(), "支付错误");
                         break;
                 }
                 payError();
@@ -992,7 +992,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onCancel() {
                 payError();
-                showToast(getApplication(), "支付取消");
+                constantMethod.showImportantToast(getApplication(), "支付取消");
             }
         }).doPay();
     }
@@ -1158,7 +1158,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 //                @Override
 //                public void onError(Throwable ex, boolean isOnCallback) {
 //                    super.onError(ex, isOnCallback);
-//                    showToast(DirectIndentWriteActivity.this, R.string.do_failed);
+//                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
 //                }
 //            });
 //        }
@@ -1264,7 +1264,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     } else if (addressInfoEntity.getCode().equals("02")) {
                         setAddressData(null);
                     } else {
-                        showToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -1285,7 +1285,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                     } else if (addressInfoEntity.getCode().equals("02")) {
                         setAddressData(null);
                     } else {
-                        showToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -1544,7 +1544,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         void selectFavorable() {
             if(indentDiscountsBean!=null){
                 if(indentDiscountsBean.getProductIsUsable()==0){
-                    showToast(DirectIndentWriteActivity.this,"该商品不支持使用优惠券！");
+                    constantMethod.showImportantToast(DirectIndentWriteActivity.this,"该商品不支持使用优惠券！");
                 }else if(indentDiscountsBean.getProductIsUsable()==1){
                     if (TextUtils.isEmpty(orderCreateNo)) {
                         if (!type.equals(INDENT_DETAILS_TYPE)) {

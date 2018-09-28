@@ -237,17 +237,16 @@ public class DirectPaySuccessActivity extends BaseActivity {
                                 GlideImageLoaderUtil.loadFinishImgDrawable(DirectPaySuccessActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
                                     public void onSuccess(Bitmap bitmap) {
-                                        if (alertImageAdDialog == null) {
-                                            alertDialogAdImage = new AlertDialogImage();
-                                            alertImageAdDialog = alertDialogAdImage.createAlertDialog(DirectPaySuccessActivity.this);
+                                        if (alertDialogAdImage == null) {
+                                            alertDialogAdImage = new AlertDialogImage(DirectPaySuccessActivity.this);
                                         }
-                                        alertImageAdDialog.show();
+                                        alertDialogAdImage.show();
                                         alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                                             @Override
                                             public void imageClick() {
                                                 adClickTotal(communalADActivityBean.getObjectId());
                                                 setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
-                                                alertImageAdDialog.dismiss();
+                                                alertDialogAdImage.dismiss();
                                             }
                                         });
                                         alertDialogAdImage.setImage(bitmap);

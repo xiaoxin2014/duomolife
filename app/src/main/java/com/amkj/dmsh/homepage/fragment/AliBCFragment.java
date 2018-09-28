@@ -58,9 +58,6 @@ import com.amkj.dmsh.views.SystemBarHelper;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -107,8 +104,6 @@ public class AliBCFragment extends BaseFragment {
     Toolbar tl_normal_bar;
     @BindView(R.id.web_fragment_communal)
     HtmlWebView web_fragment_communal;
-    @BindView(R.id.smart_fragment_web)
-    RefreshLayout smart_fragment_web;
     private String webUrl;
     private int uid;
     private String shareData;
@@ -202,9 +197,6 @@ public class AliBCFragment extends BaseFragment {
                         }
                     });
                 }
-                if (RefreshState.Refreshing.equals(smart_fragment_web.getState())) {
-                    smart_fragment_web.finishRefresh();
-                }
                 super.onPageFinished(view, url);
             }
 
@@ -240,32 +232,8 @@ public class AliBCFragment extends BaseFragment {
                 return true;
             }
         });
-        web_fragment_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
-            @Override
-            public void onScroll(int dx, int dy) {
-                if (dy < 2) {
-                    setWebRefreshStatus(1);
-                } else {
-                    setWebRefreshStatus(0);
-                }
-            }
-        });
-        smart_fragment_web.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                web_fragment_communal.reload();
-            }
-        });
         if (paddingStatus.contains("true")) {
             setStatusColor();
-        }
-    }
-
-    private void setWebRefreshStatus(int refreshStatus) {
-        if (!TextUtils.isEmpty(this.refreshStatus)) {
-            smart_fragment_web.setEnableRefresh(this.refreshStatus.contains("1"));
-        } else {
-            smart_fragment_web.setEnableRefresh(refreshStatus == 1);
         }
     }
 
@@ -495,11 +463,6 @@ public class AliBCFragment extends BaseFragment {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100) {
-                if (RefreshState.Refreshing.equals(smart_fragment_web.getState())) {
-                    smart_fragment_web.finishRefresh();
-                }
-            }
         }
 
         @Override
@@ -790,11 +753,17 @@ public class AliBCFragment extends BaseFragment {
             String imageUrl = jsonObject.getString("imageUrl");
             String content = jsonObject.getString("content");
             String url = jsonObject.getString("url");
+            String routineUrl = null;
+            try {
+                routineUrl = jsonObject.getString("routineUrl");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             new UMShareAction(getActivity()
                     , imageUrl
                     , TextUtils.isEmpty(title) ? "多么生活" : title
                     , TextUtils.isEmpty(content) ? "" : content
-                    , url);
+                    , url,routineUrl);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -23,7 +23,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.NotificationManagerCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -115,6 +115,7 @@ import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.os.Build.VERSION_CODES.KITKAT;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlParameterTransform;
@@ -161,6 +162,7 @@ public class ConstantMethod {
     public static int userId = 0;
     public static boolean NEW_USER_DIALOG = true;
     private AlertDialogHelper alertDialogHelper;
+    private AlertDialogHelper alertImportDialogHelper;
 
 
     //    判断变量是否为空
@@ -245,6 +247,21 @@ public class ConstantMethod {
             price = "0";
         }
         return String.format(context.getResources().getString(R.string.money_price_chn), price);
+    }
+
+    /**
+     * @param context
+     * @param textString
+     * @return
+     */
+    public static String getStringsFormat(Context context, int resStringId, String textString) {
+        if(context==null){
+            return "";
+        }
+        if(resStringId<=0){
+            return "";
+        }
+        return String.format(context.getResources().getString(resStringId), getStrings(textString));
     }
 
     /**
@@ -877,16 +894,15 @@ public class ConstantMethod {
                     GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getSrc(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
                         public void onSuccess(Bitmap bitmap) {
-                            AlertDialogImage alertDialogAdImage = new AlertDialogImage();
-                            AlertDialog alertImageAdDialog = alertDialogAdImage.createAlertDialog(context);
-                            alertImageAdDialog.show();
+                            AlertDialogImage alertDialogAdImage = new AlertDialogImage(context);
+                            alertDialogAdImage.show();
                             alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                                 @Override
                                 public void imageClick() {
                                     Intent intent = new Intent(context, DoMoLifeLotteryActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     context.startActivity(intent);
-                                    alertImageAdDialog.dismiss();
+                                    alertDialogAdImage.dismiss();
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);
@@ -1824,47 +1840,42 @@ public class ConstantMethod {
                                 && !TextUtils.isEmpty(requestStatus.getImgUrl())
                                 && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
                             //                                    弹窗
-                            if (isContextExisted(context)) {
-                                GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                    @Override
-                                    public void onSuccess(Bitmap bitmap) {
-                                        if (isContextExisted(context)) {
-                                            AlertDialogImage alertDialogImage = new AlertDialogImage();
-                                            AlertDialog alertImageDialog = alertDialogImage.createAlertDialog(context);
-                                            alertImageDialog.show();
-                                            alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                                @Override
-                                                public void imageClick() {
-                                                    Intent intent = new Intent();
-                                                    switch (requestStatus.getUserType()) {
-                                                        case 1: //新人用户
-                                                            intent.setClass(context, QualityNewUserActivity.class);
-                                                            context.startActivity(intent);
-                                                            break;
+                            GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                @Override
+                                public void onSuccess(Bitmap bitmap) {
+                                    AlertDialogImage alertDialogImage = new AlertDialogImage(context);
+                                    alertDialogImage.show();
+                                    alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                                        @Override
+                                        public void imageClick() {
+                                            Intent intent = new Intent();
+                                            switch (requestStatus.getUserType()) {
+                                                case 1: //新人用户
+                                                    intent.setClass(context, QualityNewUserActivity.class);
+                                                    context.startActivity(intent);
+                                                    break;
 //                                                    领取优惠券
-                                                        case 2:
-                                                        case 3:
-                                                            getNewUserCoupon(context, requestStatus.getCouponId());
-                                                            break;
-                                                    }
-                                                    alertImageDialog.dismiss();
-                                                }
-                                            });
-                                            alertDialogImage.setImage(bitmap);
+                                                case 2:
+                                                case 3:
+                                                    getNewUserCoupon(context, requestStatus.getCouponId());
+                                                    break;
+                                            }
+                                            alertDialogImage.dismiss();
                                         }
-                                    }
+                                    });
+                                    alertDialogImage.setImage(bitmap);
+                                }
 
-                                    @Override
-                                    public void onStart() {
+                                @Override
+                                public void onStart() {
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void onError(Drawable errorDrawable) {
+                                @Override
+                                public void onError(Drawable errorDrawable) {
 
-                                    }
-                                });
-                            }
+                                }
+                            });
                         }
                     }
                 }
@@ -2580,12 +2591,47 @@ public class ConstantMethod {
     }
 
     /**
+     * 重要通知提示
+     *
+     * @param context
+     * @param resId
+     */
+    public void showImportantToast(Context context, int resId) {
+        showImportantToast(context, context.getResources().getString(resId));
+    }
+
+    public void showImportantToast(Context context, String hintText) {
+        int notificationEnabledValue = 1;
+        if (Build.VERSION.SDK_INT >= KITKAT) {
+            notificationEnabledValue = NotificationManagerCompat.from(context).areNotificationsEnabled() ? 1 : 0;
+        }
+        // 允许通知权限则尽量用系统toast
+        // 没有通知权限或者是可点击的toast则使用自定义toast
+        if (notificationEnabledValue > 0) {
+            showToast(context, hintText);
+        } else {
+            if (alertImportDialogHelper == null) {
+                alertImportDialogHelper = new AlertDialogHelper(context)
+                        .setSingleButton(true)
+                        .setConfirmText("确认")
+                        .setConfirmTextColor(context.getResources().getColor(R.color.text_login_gray_s))
+                        .setTitle("提示")
+                        .setTitleGravity(Gravity.CENTER)
+                        .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z));
+            }
+            alertImportDialogHelper.setMsg(hintText);
+            alertImportDialogHelper.show();
+        }
+    }
+
+
+    /**
      * 正则
      */
     public static String replaceBlank(String str) {
         String dest = "";
         if (str != null) {
-            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Pattern p = Pattern.compile("\\s*|\\t|\\r|\\n");
             Matcher m = p.matcher(str);
             dest = m.replaceAll("");
         }

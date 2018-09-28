@@ -19,7 +19,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -171,7 +170,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     private ConstantMethod constantMethod;
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
-    private AlertDialog alertImageAdDialog;
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
@@ -1081,17 +1079,16 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                                 GlideImageLoaderUtil.loadFinishImgDrawable(MainActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
                                     public void onSuccess(Bitmap bitmap) {
-                                        if (alertImageAdDialog == null) {
-                                            alertDialogAdImage = new AlertDialogImage();
-                                            alertImageAdDialog = alertDialogAdImage.createAlertDialog(MainActivity.this);
+                                        if (alertDialogAdImage == null) {
+                                            alertDialogAdImage = new AlertDialogImage(MainActivity.this);
                                         }
-                                        alertImageAdDialog.show();
+                                        alertDialogAdImage.show();
                                         alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                                             @Override
                                             public void imageClick() {
                                                 adClickTotal(communalADActivityBean.getObjectId());
                                                 setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
-                                                alertImageAdDialog.dismiss();
+                                                alertDialogAdImage.dismiss();
                                             }
                                         });
                                         alertDialogAdImage.setImage(bitmap);

@@ -38,9 +38,6 @@ import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.HtmlWebView;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import org.json.JSONException;
@@ -65,8 +62,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  */
 public class DoMoLifeLotteryActivity extends BaseActivity {
     public static final String LOTTERY_URL = "http://www.domolife.cn/m/template/home/lottery.html";
-    @BindView(R.id.smart_communal_web)
-    RefreshLayout smart_communal_web;
     @BindView(R.id.web_communal)
     HtmlWebView web_communal;
     @BindView(R.id.tv_web_title)
@@ -150,37 +145,9 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (RefreshState.Refreshing.equals(smart_communal_web.getState())) {
-                    smart_communal_web.finishRefresh();
-                }
                 super.onPageFinished(view, url);
             }
         });
-
-        web_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
-            @Override
-            public void onScroll(int dx, int dy) {
-                if (dy < 2) {
-                    setWebRefreshStatus(1);
-                } else {
-                    setWebRefreshStatus(0);
-                }
-            }
-        });
-        smart_communal_web.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                web_communal.reload();
-            }
-        });
-    }
-
-    private void setWebRefreshStatus(int refreshStatus) {
-        if(!TextUtils.isEmpty(this.refreshStatus)){
-            smart_communal_web.setEnableRefresh(this.refreshStatus.contains("1"));
-        }else{
-            smart_communal_web.setEnableRefresh(refreshStatus == 1);
-        }
     }
 
     private String getRandomString(int length) { //length表示生成字符串的长度
@@ -424,11 +391,6 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100) {
-                if (RefreshState.Refreshing.equals(smart_communal_web.getState())) {
-                    smart_communal_web.finishRefresh();
-                }
-            }
         }
 
         @Override
@@ -445,9 +407,10 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         public void onRequestFocus(WebView view) {
             super.onRequestFocus(view);
         }
+
     }
-    
-    
+
+
     public class JsData {
         private Context context;
 

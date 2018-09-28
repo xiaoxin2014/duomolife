@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.zhy.autolayout.utils.AutoUtils;
 
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -21,37 +23,33 @@ import com.zhy.autolayout.utils.AutoUtils;
  */
 public class AlertDialogImage {
 
+    private final Context context;
     private ImageView iv_ad_image;
     private AlertImageClickListener alertImageClickListener;
+    private AlertDialog imageAlertDialog;
+    private View dialogView;
+    private boolean isFirstSet;
 
-    public AlertDialog createAlertDialog(Context context){
+    public AlertDialogImage(Context context) {
+        this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        final View dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_image, null, false);
+        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_image, null, false);
         iv_ad_image = dialogView.findViewById(R.id.iv_ad_image);
         AutoUtils.auto(dialogView);
         builder.setCancelable(true);
-        AlertDialog imageAlertDialog = builder.create();
-        imageAlertDialog.show();
-        Window window = imageAlertDialog.getWindow();
-        if(window!=null){
-            window.setBackgroundDrawableResource(android.R.color.transparent);
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.width = AutoUtils.getPercentWidthSize(500);
-            window.setAttributes(params);
-            window.setContentView(dialogView);
-        }
+        imageAlertDialog = builder.create();
         iv_ad_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(alertImageClickListener!=null){
+                if (alertImageClickListener != null) {
                     alertImageClickListener.imageClick();
                 }
             }
         });
-        return imageAlertDialog;
+        isFirstSet = true;
     }
 
-    public void setImage(Bitmap bitmap){
+    public void setImage(Bitmap bitmap) {
         iv_ad_image.setImageBitmap(bitmap);
     }
 
@@ -61,5 +59,31 @@ public class AlertDialogImage {
 
     public interface AlertImageClickListener {
         void imageClick();
+    }
+
+    /**
+     * 展示dialog
+     */
+    public void show() {
+        if (!imageAlertDialog.isShowing()&& isContextExisted(context)) {
+            imageAlertDialog.show();
+        }
+        if (isFirstSet) {
+            Window window = imageAlertDialog.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawableResource(android.R.color.transparent);
+                WindowManager.LayoutParams params = window.getAttributes();
+                params.width = AutoUtils.getPercentWidthSize(500);
+                window.setAttributes(params);
+                window.setContentView(dialogView);
+            }
+        }
+        isFirstSet = false;
+    }
+
+    public void dismiss() {
+        if (imageAlertDialog != null && imageAlertDialog.isShowing()) {
+            imageAlertDialog.dismiss();
+        }
     }
 }
