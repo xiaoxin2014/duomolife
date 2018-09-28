@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -14,10 +15,6 @@ import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity.QualityHomeTypeBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.HeightAttr;
-import com.zhy.autolayout.attr.WidthAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
 
 import java.util.List;
 
@@ -61,8 +58,8 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
                     @Override
                     public void onGlobalLayout() {
                         iv_type_center.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        AutoLayoutHelper.AutoLayoutParams layoutParams = (AutoLayoutHelper.AutoLayoutParams) iv_type_center.getLayoutParams();
-                        AutoLayoutInfo autoLayoutInfo = layoutParams.getAutoLayoutInfo();
+                        iv_type_center.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) iv_type_center.getLayoutParams();
                         if (qualityHomeTypeList.size() == 5) {
                             if (layoutPosition == 0) {
                                 widthPx = 148;
@@ -78,15 +75,14 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
                                 widthPx = 142;
                             }
                         }
-                        autoLayoutInfo.addAttr(new WidthAttr(widthPx, 0, 0));
-                        autoLayoutInfo.addAttr(new HeightAttr(widthPx, 1, 0));
-                        FrameLayout.LayoutParams layoutParamsV = (FrameLayout.LayoutParams) iv_type_center.getLayoutParams();
+                        layoutParams.width = widthPx;
+                        layoutParams.height = widthPx;
                         if (qualityHomeTypeList.size() == 5 && layoutPosition == 0) {
-                            layoutParamsV.setMargins(0, 0, AutoSizeUtils.mm2px(mAppContext,47), 0);
+                            layoutParams.setMargins(0, 0, AutoSizeUtils.mm2px(mAppContext,47), 0);
                         } else {
-                            layoutParamsV.setMargins(0, 0, 0, 0);
+                            layoutParams.setMargins(0, 0, 0, 0);
                         }
-                        iv_type_center.setLayoutParams(layoutParamsV);
+                        iv_type_center.setLayoutParams(layoutParams);
                     }
                 });
 //                if (qualityHomeTypeList.size() == 3 && layoutPosition == 0) {

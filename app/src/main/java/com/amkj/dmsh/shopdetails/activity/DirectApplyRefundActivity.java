@@ -59,7 +59,6 @@ import com.luck.picture.lib.entity.LocalMediaC;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +73,7 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -252,7 +252,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
             rel_up_evidence.setVisibility(View.VISIBLE);
             //        图片
             TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-            if (app.getScreenWidth() >= AutoUtils.getPercentWidthSizeBigger(600)) {
+            if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext,600)) {
                 rv_apply_refund_img.setLayoutManager(new GridLayoutManager(DirectApplyRefundActivity.this, 5));
             } else {
                 rv_apply_refund_img.setLayoutManager(new GridLayoutManager(DirectApplyRefundActivity.this, 3));

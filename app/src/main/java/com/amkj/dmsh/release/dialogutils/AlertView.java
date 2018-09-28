@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -193,7 +192,7 @@ public class AlertView {
         tvAlertTitle = (TextView) viewGroup.findViewById(R.id.tvAlertTitle);
         tvAlertMsg = (TextView) viewGroup.findViewById(R.id.tvAlertMsg);
         if (title != null) {
-            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoUtils.getPercentWidthSizeBigger(alertInitView.getTitleSize() > 0 ? (int) alertInitView.getTitleSize() : 28));
+            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,alertInitView.getTitleSize() > 0 ? (int) alertInitView.getTitleSize() : 28));
             tvAlertTitle.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getTitleColorValue()) ? alertInitView.getTitleColorValue() : "#333333"));
             tvAlertTitle.setText(title);
         } else {

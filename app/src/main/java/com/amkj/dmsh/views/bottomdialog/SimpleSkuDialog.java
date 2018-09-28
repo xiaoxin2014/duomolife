@@ -27,9 +27,6 @@ import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropsBe
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.HeightAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -166,10 +163,9 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                     @Override
                     public void onGlobalLayout() {
                         scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        AutoLayoutHelper.AutoLayoutParams autoLayoutParams = (AutoLayoutHelper.AutoLayoutParams) scrollView.getLayoutParams();
-                        AutoLayoutInfo autoLayoutInfo = autoLayoutParams.getAutoLayoutInfo();
-                        autoLayoutInfo.addAttr(new HeightAttr(600, 0, 1));
-                        scrollView.setLayoutParams(scrollView.getLayoutParams());
+                        ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
+                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext,600);
+                        scrollView.setLayoutParams(layoutParams);
                     }
                 });
             }

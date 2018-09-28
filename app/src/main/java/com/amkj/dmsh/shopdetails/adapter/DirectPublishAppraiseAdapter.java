@@ -29,13 +29,14 @@ import com.luck.picture.lib.config.PictureConfigC;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
-import com.zhy.autolayout.utils.AutoUtils;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
 
 ;
@@ -88,7 +89,7 @@ public class DirectPublishAppraiseAdapter extends BaseQuickAdapter<DirectApprais
         } else {
             mDataPathAll.add(mDataPath);
         }
-        if (screenWidth >= AutoUtils.getPercentWidthSizeBigger(600)) {
+        if (screenWidth >= AutoSizeUtils.mm2px(mAppContext,600)) {
             rv_product_eva.setLayoutManager(new GridLayoutManager(context, 5));
         } else {
             rv_product_eva.setLayoutManager(new GridLayoutManager(context, 3));

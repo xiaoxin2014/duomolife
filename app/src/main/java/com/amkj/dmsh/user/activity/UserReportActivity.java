@@ -37,7 +37,6 @@ import com.luck.picture.lib.entity.LocalMediaC;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +45,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
@@ -90,7 +91,7 @@ public class UserReportActivity extends BaseActivity{
         header_shared.setText("提交");
         getLoginStatus();
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        if (app.getScreenWidth() >= AutoUtils.getPercentWidthSizeBigger(600)) {
+        if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext,600)) {
             rv_sug_img_show.setLayoutManager(new GridLayoutManager(UserReportActivity.this, 5));
         } else {
             rv_sug_img_show.setLayoutManager(new GridLayoutManager(UserReportActivity.this, 3));

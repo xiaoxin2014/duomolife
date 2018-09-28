@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.Url;
@@ -21,7 +22,6 @@ import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
-import com.zhy.autolayout.AutoLayoutActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,7 +43,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 ;
 
-public abstract class BaseFragmentActivity extends AutoLayoutActivity {
+public abstract class BaseFragmentActivity extends AppCompatActivity {
     public KProgressHUD loadHud;
     private Unbinder mUnBinder;
     private BadgeDesktopReceiver badgeDesktopReceiver;

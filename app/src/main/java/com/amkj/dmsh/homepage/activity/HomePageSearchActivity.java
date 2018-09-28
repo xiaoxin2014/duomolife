@@ -26,7 +26,6 @@ import com.amkj.dmsh.views.flowlayout.FlowLayout;
 import com.amkj.dmsh.views.flowlayout.TagAdapter;
 import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.google.gson.Gson;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

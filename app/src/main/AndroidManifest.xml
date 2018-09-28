@@ -1057,12 +1057,6 @@
         <meta-data
             android:name="linkedme.sdk.key"
             android:value="576097e25440399c5fabbbbaa1ce989d" />
-        <meta-data
-            android:name="design_width"
-            android:value="750" />
-        <meta-data
-            android:name="design_height"
-            android:value="1336" />
         <!--autosize屏幕适配-->
         <meta-data
             android:name="design_width_in_dp"

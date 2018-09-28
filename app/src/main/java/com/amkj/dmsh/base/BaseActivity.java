@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,7 +30,6 @@ import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
-import com.zhy.autolayout.AutoLayoutActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,7 +49,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 ;
 
-public abstract class BaseActivity extends AutoLayoutActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     public KProgressHUD loadHud;
     private BadgeDesktopReceiver badgeDesktopReceiver;
     public TotalPersonalTrajectory totalPersonalTrajectory;

@@ -244,7 +244,6 @@ dependencies {
     implementation 'q.rorbin:badgeview:1.1.2'
 
     //    自动适配屏幕
-    implementation 'com.zhy:autolayout:1.4.5'
     implementation 'me.jessyan:autosize:0.9.5'
 
     //    BaseRecyclerViewAdapter

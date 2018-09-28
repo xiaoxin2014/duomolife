@@ -43,7 +43,6 @@ import com.luck.picture.lib.entity.LocalMediaC;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -126,7 +127,7 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
             dataPath.add(ConstantVariable.DEFAULT_ADD_IMG);
         }
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        if (app.getScreenWidth() >= AutoUtils.getPercentWidthSizeBigger(600)) {
+        if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext,600)) {
             rv_sale_return_img.setLayoutManager(new GridLayoutManager(SalesReturnAppealActivity.this, 5));
         } else {
             rv_sale_return_img.setLayoutManager(new GridLayoutManager(SalesReturnAppealActivity.this, 3));

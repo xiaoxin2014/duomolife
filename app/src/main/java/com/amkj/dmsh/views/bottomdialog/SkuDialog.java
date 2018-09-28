@@ -42,9 +42,6 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.google.gson.Gson;
-import com.zhy.autolayout.AutoLayoutInfo;
-import com.zhy.autolayout.attr.HeightAttr;
-import com.zhy.autolayout.utils.AutoLayoutHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -234,10 +231,9 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     @Override
                     public void onGlobalLayout() {
                         scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        AutoLayoutHelper.AutoLayoutParams autoLayoutParams = (AutoLayoutHelper.AutoLayoutParams) scrollView.getLayoutParams();
-                        AutoLayoutInfo autoLayoutInfo = autoLayoutParams.getAutoLayoutInfo();
-                        autoLayoutInfo.addAttr(new HeightAttr(600,0,1));
-                        scrollView.setLayoutParams(scrollView.getLayoutParams());
+                        ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
+                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext,600);
+                        scrollView.setLayoutParams(layoutParams);
                     }
                 });
             }

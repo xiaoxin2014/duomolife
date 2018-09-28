@@ -16,7 +16,6 @@ import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.SearchTabPageAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -69,7 +68,7 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
 //        插入历史记录
         insertHistoryData(data);
         sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext,26));
-        sliding_search_bar.setIndicatorHeight(AutoUtils.getPercentHeight1px() * 2);
+        sliding_search_bar.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 2));
         searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
         vp_search_details_container.setAdapter(searchTabPageAdapter);
         sliding_search_bar.setViewPager(vp_search_details_container);

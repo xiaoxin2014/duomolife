@@ -49,7 +49,6 @@ import com.melnykov.fab.FloatingActionButton;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -473,7 +472,7 @@ public class QualityNewProActivity extends BaseActivity {
                     }
                 })
                 .create()
-                .showAsDropDown(view, 0, (int) (-AutoUtils.getPercentHeight1px() * 50));
+                .showAsDropDown(view, 0, -AutoSizeUtils.mm2px(mAppContext, 50));
     }
 
     @OnClick(R.id.iv_img_service)

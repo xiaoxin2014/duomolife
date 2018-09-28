@@ -18,7 +18,6 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
-import com.zhy.autolayout.utils.AutoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -32,7 +31,9 @@ import java.util.Map;
 
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -135,8 +136,8 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                         .setText(R.id.tv_count_time_before_white, "距结束");
                 TextView tv_ql_gp_sp_join = helper.getView(R.id.tv_ql_gp_sp_join);
                 GradientDrawable drawable = new GradientDrawable();
-                drawable.setCornerRadii(new float[]{0, 0, AutoUtils.getPercentHeight1px() * 40, AutoUtils.getPercentHeight1px() * 40
-                        , AutoUtils.getPercentHeight1px() * 40, AutoUtils.getPercentHeight1px() * 40, 0, 0});
+                drawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext, 40), AutoSizeUtils.mm2px(mAppContext, 40)
+                        , AutoSizeUtils.mm2px(mAppContext, 40), AutoSizeUtils.mm2px(mAppContext, 40), 0, 0});
                 drawable.setColor(context.getResources().getColor(R.color.text_normal_red));
                 tv_ql_gp_sp_join.setBackground(drawable);
                 tv_ql_gp_sp_join.setText(groupShopJoinBean.getRange() == 1 ? R.string.join_new_group : R.string.join_group);

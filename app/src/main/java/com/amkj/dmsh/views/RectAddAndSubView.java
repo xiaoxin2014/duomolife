@@ -6,13 +6,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.zhy.autolayout.AutoLinearLayout;
 
 
-public class RectAddAndSubView extends AutoLinearLayout {
+public class RectAddAndSubView extends LinearLayout {
     private Context context = getContext();//上下文
     private OnNumChangeListener onNumChangeListener;
 
