@@ -30,6 +30,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.ali.auth.third.ui.context.CallbackContext;
+import com.amkj.dmsh.address.AddressUtils;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
@@ -847,9 +848,24 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                             edit.putString("version", requestStatus.getVersion());
                             edit.apply();
                             getAddressData();
+                        }else{
+                            //        地址初始化
+                            AddressUtils.getQyInstance().initAddress();
                         }
+                    }else{
+                        //        地址初始化
+                        AddressUtils.getQyInstance().initAddress();
                     }
+                }else{
+                    //        地址初始化
+                    AddressUtils.getQyInstance().initAddress();
                 }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                //        地址初始化
+                AddressUtils.getQyInstance().initAddress();
             }
         });
     }
@@ -868,8 +884,19 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                     e.printStackTrace();
                 }
                 if (code.equals("01")) {
+                    //        地址初始化
+                    AddressUtils.getQyInstance().initAddress(adsPath);
                     FileStreamUtils.writeFileFromString(adsPath, result, false);
+                }else{
+                    //        地址初始化
+                    AddressUtils.getQyInstance().initAddress();
                 }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                //        地址初始化
+                AddressUtils.getQyInstance().initAddress();
             }
         });
     }

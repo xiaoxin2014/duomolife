@@ -100,45 +100,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public static String BUCKET_NAME = "domolifes";
     public static String OSS_URL;
     public ClientConfiguration conf;
-    /**
-     * 所有省
-     */
-    public ProvinceModel[] mProvinceData;
-    /**
-     * key - 省 value - 市
-     */
-    public Map<Integer, CityModel[]> mCitiesDataMap = new HashMap<>();
-
-    /**
-     * key - 市 values - 区
-     */
-    public Map<Integer, DistrictModel[]> mDistrictDataMap = new HashMap<>();
-
-    /**
-     * key - 区 values - 邮编
-     */
-    public Map<Integer, String> mZipCodeDataMap = new HashMap<>();
-    /**
-     * 当前省的名称
-     */
-    public int mCurrentProvinceId;
-    /**
-     * 当前市的名称
-     */
-    public int mCurrentCityId;
-
-    /**
-     * 当前区的名称
-     */
-    public int mCurrentDistrictId;
-    /**
-     * 当前区的邮政编码
-     */
-    public String mCurrentZipCode = "";
     public IWXAPI api;
     public static int screenWidth;
     private int screenHeight;
-    private Thread thread;
     private String analyzeKey = "A1M12V8YKBTI";
     public static final String INIT_TAG = "初始化";            //安全加密和安全签名使用的秘钥在jpg中对应的key
     private float density;
@@ -255,19 +219,13 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            createExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    initProvinceData();
-                }
-            });
-            createExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    initTotalAction();
-                }
-            });
         }
+        createExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                initTotalAction();
+            }
+        });
 //        oss初始化
         initOSS();
         // 初始化xUtils
@@ -517,32 +475,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         return "";
     }
 
-
-    //    地址初始化
-    protected void initProvinceData() {
-        String adsPath = mAppContext.getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt";
-        if (new File(adsPath).exists()) {
-            try {
-                Gson gson = new Gson();
-                AddressInfo addressInfo = gson.fromJson(FileStreamUtils.readFile2String(adsPath), AddressInfo.class);
-                setAddressData(addressInfo);
-            } catch (JsonSyntaxException e) {
-                try {
-                    getAssetAdsData();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                getAssetAdsData();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     /**
      * @throws IOException
      */
@@ -567,127 +499,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         }
     }
 
-    /**
-     * @throws IOException
-     */
-    private void getAssetAdsData() throws IOException {
-        AssetManager asset = mAppContext.getAssets();
-        InputStream input = asset.open("area.json");
-        Gson gson = new Gson();
-        AddressInfo addressInfo = gson.fromJson(new InputStreamReader(input), AddressInfo.class);
-        input.close();
-        setAddressData(addressInfo);
-    }
 
-    private void setAddressData(AddressInfo addressInfo) {
-        try {
-            Comparator<AddressBean> comparator = (lhs, rhs) -> {
-                if (lhs.getId() < rhs.getId()) {
-                    return -1;
-                }
-                return 1;
-            };
-            List<AddressBean> addressList = addressInfo.getArea();
-            Collections.sort(addressList, comparator);
-//            全部省市县的集合
-            List<AddressBean> provinceAddressList = new ArrayList<>();
-            List<AddressBean> cityAddressList = new ArrayList<>();
-            List<AddressBean> districtAddressList = new ArrayList<>();
-            for (AddressBean address : addressList) {
-                if (address.getType() == 2 && address.getParent_id() == 1) {
-//                获取省
-                    provinceAddressList.add(address);
-//                    省级排序
-//                    Collections.sort(provinceTestList, comparator);
-                } else if (address.getType() == 3) {
-//                    获取市
-                    cityAddressList.add(address);
-//                    市级排序
-//                    Collections.sort(cityTestList, comparator);
-                } else if (address.getType() == 4) {
-//                    获取县
-                    districtAddressList.add(address);
-//                    县级排序
-//                    Collections.sort(districtTestList, comparator);
-                }
-            }
-            mProvinceData = new ProvinceModel[provinceAddressList.size()];
-            ProvinceModel provinceModel;
-            CityModel cityModel;
-            DistrictModel districtModel;
-//            省集合 包含每个市集合
-            List<ProvinceModel> provinceModelList = new ArrayList<>();
-//            市集合 包含每个县
-            List<CityModel> cityModelList;
-//          县
-            List<DistrictModel> districtModelList;
-            for (int i = 0; i < provinceAddressList.size(); i++) {
-                cityModelList = new ArrayList<>();
-                provinceModel = new ProvinceModel();
-//                获取当前省的市
-                for (int j = 0; j < cityAddressList.size(); j++) {
-                    cityModel = new CityModel();
-                    // 遍历省下面的所有市的数据
-                    if (cityAddressList.get(j).getParent_id() == provinceAddressList.get(i).getId()) {
-//                        设置cityModel数据
-                        cityModel.setId(cityAddressList.get(j).getId());
-                        cityModel.setName(cityAddressList.get(j).getName());
-                        cityModel.setZip(cityAddressList.get(j).getZip());
-                        cityModelList.add(cityModel);
-                    }
-                }
-                provinceModel.setName(provinceAddressList.get(i).getName());
-                provinceModel.setId(provinceAddressList.get(i).getId());
-                provinceModel.setCityList(cityModelList);
-                provinceModelList.add(provinceModel);
-// 遍历所有省的数据
-                mProvinceData[i] = provinceModelList.get(i);
-                CityModel[] cities = new CityModel[cityModelList.size()];
-                for (int j = 0; j < cityModelList.size(); j++) {
-                    districtModelList = new ArrayList<>();
-                    cities[j] = cityModelList.get(j);
-//                    获取市下面的县集合
-                    for (int k = 0; k < districtAddressList.size(); k++) {
-                        districtModel = new DistrictModel();
-                        if (districtAddressList.get(k).getParent_id() == cityModelList.get(j).getId()) {
-//                        设置districtModel数据
-                            districtModel.setName(districtAddressList.get(k).getName());
-                            districtModel.setId(districtAddressList.get(k).getId());
-                            districtModel.setZip(districtAddressList.get(k).getZip());
-                            districtModelList.add(districtModel);
-                        }
-                    }
-                    cityModelList.get(j).setDistrictList(districtModelList);
-                    DistrictModel[] districtArray = new DistrictModel[districtModelList.size()];
-                    for (int k = 0; k < districtModelList.size(); k++) {
-                        // 遍历市下面所有区/县的数据
-                        districtModel = districtModelList.get(k);
-                        // 区/县对于的邮编，保存到mZipcodeDatasMap
-                        mZipCodeDataMap.put(districtModelList.get(k).getId(), districtModelList.get(k).getZip());
-                        districtArray[k] = districtModel;
-                    }
-                    // 市-区/县的数据，保存到mDistrictDatasMap
-                    mDistrictDataMap.put(cities[j].getId(), districtArray);
-                }
-                // 省-市的数据，保存到mCitisDatasMap
-                mCitiesDataMap.put(provinceModelList.get(i).getId(), cities);
-            }
-            // 获取解析出来的数据
-            //*/ 初始化默认选中的省、市、区
-            if (!provinceModelList.isEmpty()) {
-                mCurrentProvinceId = provinceModelList.get(0).getId();
-                List<CityModel> cityList = provinceModelList.get(0).getCityList();
-                if (cityList != null && !cityList.isEmpty()) {
-                    mCurrentCityId = cityList.get(0).getId();
-                    List<DistrictModel> districtList = cityList.get(0).getDistrictList();
-                    mCurrentDistrictId = districtList.get(0).getId();
-                    mCurrentZipCode = districtList.get(0).getZip();
-                }
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
 
     public IWXAPI getApi() {
         if (api == null) {
@@ -795,46 +607,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         }
         parameterMap.put(webParameter, locationParameter);
         return parameterMap;
-    }
-
-    //      所有省
-    public ProvinceModel[] getAllProvince() {
-        return mProvinceData;
-    }
-
-    //    当前市的名称
-    public int getCurrentCity() {
-        return mCurrentCityId;
-    }
-
-    //    当前县的名称
-    public int getCurrentDistrict() {
-        return mCurrentDistrictId;
-    }
-
-    //    当前邮政编码
-    public String getCurrentZipCode() {
-        return mCurrentZipCode;
-    }
-
-    //    邮政Map
-    public Map<Integer, String> getZipCodeDataMap() {
-        return mZipCodeDataMap;
-    }
-
-    //    市-县
-    public Map<Integer, DistrictModel[]> getCityDistrict() {
-        return mDistrictDataMap;
-    }
-
-    //   省 -市
-    public Map<Integer, CityModel[]> getCitiesDataMap() {
-        return mCitiesDataMap;
-    }
-
-    //   当前省名字
-    public int getCurrentProvince() {
-        return mCurrentProvinceId;
     }
 
     public OSS getOSS() {

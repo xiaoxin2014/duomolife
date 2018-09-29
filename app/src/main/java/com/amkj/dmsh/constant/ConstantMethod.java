@@ -2587,7 +2587,7 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
-        showToast(context, context.getString(resId));
+        showToast(context, context.getResources().getString(resId));
     }
 
     /**

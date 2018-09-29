@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.address.AddressUtils;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.address.bean.CityModel;
@@ -22,7 +23,6 @@ import com.amkj.dmsh.address.widget.OnWheelChangedListener;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -112,15 +112,15 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     }
 
     private void initAddress() {
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        mProvinceData = app.getAllProvince();
-        mDistrictDataMap = app.getCityDistrict();
-        mCurrentCityId = app.getCurrentCity();
-        mCurrentDistrictId = app.getCurrentDistrict();
-        mZipDataMap = app.getZipCodeDataMap();
-        mCitiesDataMap = app.getCitiesDataMap();
-        mCurrentProvinceId = app.getCurrentProvince();
-        if (mProvinceData == null) {
+        AddressUtils addressUtils = AddressUtils.getQyInstance();
+        mProvinceData = addressUtils.getAllProvince();
+        mDistrictDataMap = addressUtils.getCityDistrict();
+        mCurrentCityId = addressUtils.getCurrentCity();
+        mCurrentDistrictId = addressUtils.getCurrentDistrict();
+        mZipDataMap = addressUtils.getZipCodeDataMap();
+        mCitiesDataMap = addressUtils.getCitiesDataMap();
+        mCurrentProvinceId = addressUtils.getCurrentProvince();
+        if (mProvinceData == null||mDistrictDataMap==null||mZipDataMap==null||mCitiesDataMap==null) {
             finish();
         }
     }

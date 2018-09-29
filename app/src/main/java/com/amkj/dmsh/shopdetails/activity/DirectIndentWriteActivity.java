@@ -1089,23 +1089,23 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                             setDiscountsInfo(indentDiscountsBean);
                         }
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
 
                 @Override
                 public void netClose() {
                     loadHud.dismiss();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
                     loadHud.dismiss();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
             });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSir(loadService,indentDiscountsEntity);
+        } else {
+            NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
         }
     }
 
@@ -1542,10 +1542,10 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         //        优惠券选择
         @OnClick(R.id.ll_layout_coupon)
         void selectFavorable() {
-            if(indentDiscountsBean!=null){
-                if(indentDiscountsBean.getProductIsUsable()==0){
-                    constantMethod.showImportantToast(DirectIndentWriteActivity.this,"该商品不支持使用优惠券！");
-                }else if(indentDiscountsBean.getProductIsUsable()==1){
+            if (indentDiscountsBean != null) {
+                if (indentDiscountsBean.getProductIsUsable() == 0) {
+                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, "该商品不支持使用优惠券！");
+                } else if (indentDiscountsBean.getProductIsUsable() == 1) {
                     if (TextUtils.isEmpty(orderCreateNo)) {
                         if (!type.equals(INDENT_DETAILS_TYPE)) {
                             Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
@@ -1597,8 +1597,10 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
     @Override
     protected void onDestroy() {
-        if(constantMethod!=null){
-            constantMethod.alertImportDialogHelper.dismiss();
+        if (constantMethod != null) {
+            if (constantMethod.alertImportDialogHelper != null) {
+                constantMethod.alertImportDialogHelper.dismiss();
+            }
         }
         super.onDestroy();
     }
