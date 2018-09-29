@@ -1594,4 +1594,12 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         }
         return super.onKeyDown(keyCode, event);//继续执行父类其他点击事件
     }
+
+    @Override
+    protected void onDestroy() {
+        if(constantMethod!=null){
+            constantMethod.alertImportDialogHelper.dismiss();
+        }
+        super.onDestroy();
+    }
 }

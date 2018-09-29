@@ -162,7 +162,7 @@ public class ConstantMethod {
     public static int userId = 0;
     public static boolean NEW_USER_DIALOG = true;
     private AlertDialogHelper alertDialogHelper;
-    private AlertDialogHelper alertImportDialogHelper;
+    public AlertDialogHelper alertImportDialogHelper;
 
 
     //    判断变量是否为空
@@ -2620,7 +2620,9 @@ public class ConstantMethod {
                         .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z));
             }
             alertImportDialogHelper.setMsg(hintText);
-            alertImportDialogHelper.show();
+            if(!context.isFinishing()){
+                alertImportDialogHelper.show();
+            }
         }
     }
 
