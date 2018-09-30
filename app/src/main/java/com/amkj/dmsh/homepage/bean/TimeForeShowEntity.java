@@ -93,7 +93,6 @@ public class TimeForeShowEntity extends BaseTimeEntity{
 
         private String endTime;
         private String flashBuyClickCount;
-        private int id;
         private int isRemind;
         private String marketPrice;
         private String maxPrice;
@@ -121,14 +120,6 @@ public class TimeForeShowEntity extends BaseTimeEntity{
 
         public void setFlashBuyClickCount(String flashBuyClickCount) {
             this.flashBuyClickCount = flashBuyClickCount;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
         }
 
         public int getIsRemind() {

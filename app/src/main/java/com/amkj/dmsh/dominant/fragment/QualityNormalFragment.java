@@ -30,6 +30,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -98,6 +99,7 @@ public class QualityNormalFragment extends BaseFragment {
     private ChildProductTypeAdapter childProductTypeAdapter;
     private CBViewHolderCreator cbViewHolderCreator;
     private UserLikedProductEntity likedProductEntity;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -166,6 +168,7 @@ public class QualityNormalFragment extends BaseFragment {
             }
         });
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), String.valueOf(qualityTypeBeanChange.getId()));
+        removeExistUtils = new RemoveExistUtils();
     }
 
     @Override
@@ -296,12 +299,13 @@ public class QualityNormalFragment extends BaseFragment {
                 qualityTypeProductAdapter.loadMoreComplete();
                 if (page == 1) {
                     typeDetails.clear();
+                    removeExistUtils.clearData();
                 }
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                        typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
                     } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         qualityTypeProductAdapter.loadMoreEnd();
                     } else {

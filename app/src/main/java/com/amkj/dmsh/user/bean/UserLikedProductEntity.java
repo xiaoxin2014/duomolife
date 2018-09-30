@@ -164,7 +164,6 @@ public class UserLikedProductEntity extends BaseEntity{
 
     public static class LikedProductBean extends Attribute implements MultiItemEntity {
         private String savepath;
-        private int id;
         private String title;
         private int favor_num;
         private int favorNum;
@@ -178,7 +177,6 @@ public class UserLikedProductEntity extends BaseEntity{
         private String name;
         private String subtitle;
         private int quantity = 1;
-        private int productId;
         private int itemType;
         private String tagContent;
         private String sellStatus;
@@ -262,14 +260,6 @@ public class UserLikedProductEntity extends BaseEntity{
             this.itemType = itemType;
         }
 
-        public int getProductId() {
-            return productId;
-        }
-
-        public void setProductId(int productId) {
-            this.productId = productId;
-        }
-
         public int getQuantity() {
             return quantity;
         }
@@ -340,14 +330,6 @@ public class UserLikedProductEntity extends BaseEntity{
 
         public void setSavepath(String savepath) {
             this.savepath = savepath;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
         }
 
         public String getTitle() {

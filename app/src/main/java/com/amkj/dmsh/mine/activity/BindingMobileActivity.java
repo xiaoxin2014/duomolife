@@ -26,14 +26,11 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
-import com.tencent.stat.StatConfig;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONObject;
 
@@ -45,7 +42,6 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
@@ -271,12 +267,6 @@ public class BindingMobileActivity extends BaseActivity {
                                 }
                             }
                             savePersonalInfoCache(BindingMobileActivity.this, savePersonalInfoBean);
-                            StatConfig.setCustomUserId(BindingMobileActivity.this, String.valueOf(communalUserInfo.getUid()));
-                            //        友盟统计
-                            MobclickAgent.onProfileSignIn(String.valueOf(communalUserInfo.getUid()));
-                            //                            绑定JPush
-                            bindJPush(communalUserInfo.getUid());
-                            QyServiceUtils.getQyInstance().loginQyUserInfo(BindingMobileActivity.this, communalUserInfo.getUid(), communalUserInfo.getNickname(), communalUserInfo.getMobile(), communalUserInfo.getAvatar());
                             showToast(BindingMobileActivity.this, "绑定成功");
                             Intent intent = new Intent(BindingMobileActivity.this, RegisterSelSexActivity.class);
                             startActivity(intent);

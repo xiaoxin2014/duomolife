@@ -25,14 +25,11 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
-import com.tencent.stat.StatConfig;
-import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +42,6 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUniqueId;
@@ -202,14 +198,6 @@ public class RegisterAccountActivity extends BaseActivity {
                         savePersonalInfoBean.setUid(registerUserInfoBean.getUid());
                         savePersonalInfoBean.setLogin(true);
                         savePersonalInfoCache(RegisterAccountActivity.this, savePersonalInfoBean);
-//                        移动分析账号统计
-                        StatConfig.setCustomUserId(RegisterAccountActivity.this, String.valueOf(registerUserInfoBean.getUid()));
-//        友盟统计
-                        MobclickAgent.onProfileSignIn(String.valueOf(registerUserInfoBean.getUid()));
-                        //                            绑定JPush
-                        bindJPush(registerUserInfoBean.getUid());
-//                        七鱼客服登录
-                        QyServiceUtils.getQyInstance().loginQyUserInfo(RegisterAccountActivity.this, registerUserInfoBean.getUid(), registerUserInfoBean.getNickname(), registerUserInfoBean.getMobile(), registerUserInfoBean.getAvatar());
                         Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                         startActivity(intent);
                         finish();

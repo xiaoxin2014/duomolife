@@ -26,6 +26,7 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -82,6 +83,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
     private float screenHeight;
     private QualityTypeEntity.QualityTypeBean qualityTypeBean;
     private UserLikedProductEntity likedProduct;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -157,6 +159,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                 page++;
                 getDetailsProduct();
             } else {
+                getSameTypeProData();
                 adapterProduct.setEnableLoadMore(false);
             }
         }, communal_recycler);
@@ -193,6 +196,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
             }
             communal_recycler.smoothScrollToPosition(0);
         });
+        removeExistUtils = new RemoveExistUtils();
     }
 
     //设置显示
@@ -242,24 +246,19 @@ public class SearchDetailsProductFragment extends BaseFragment {
                     adapterProduct.loadMoreComplete();
                     if (page == 1) {
                         productSearList.clear();
+                        proRecommendList.clear();
+                        removeExistUtils.clearData();
                     }
                     Gson gson = new Gson();
                     likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProduct != null) {
                         if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                            productSearList.addAll(likedProduct.getLikedProductBeanList());
+                            productSearList.addAll(removeExistUtils.removeExistList(likedProduct.getLikedProductBeanList()));
                         } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), likedProduct.getMsg());
                         }
                         setEmptyUI();
                         adapterProduct.notifyDataSetChanged();
-                        /**
-                         * 限定条件，推荐只能被调用一次
-                         */
-                        if (DEFAULT_TOTAL_COUNT * page > productSearList.size()
-                                && proRecommendList.size() < 1) {
-                            getSameTypeProData();
-                        }
                     }
                     NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                 }
@@ -339,9 +338,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                                 proRecommendList.add(likedProductBean);
                             }
                             proRecommendList.addAll(likedProduct.getLikedProductBeanList());
-//                            取并集
-                            productSearList.removeAll(proRecommendList);
-                            productSearList.addAll(proRecommendList);
+                            productSearList.addAll(removeExistUtils.removeExistList(proRecommendList));
                         } else if (!likedProduct.getCode().equals("02")) {
                             showToast(getActivity(), likedProduct.getMsg());
                         }

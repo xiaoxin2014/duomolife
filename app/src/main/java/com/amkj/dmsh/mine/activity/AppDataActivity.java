@@ -17,7 +17,6 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -31,7 +30,6 @@ import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.google.gson.Gson;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,9 +41,10 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.NEW_USER_DIALOG;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
+import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.unBindJPush;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 ;
@@ -177,7 +176,7 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     }
 
     private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
+        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             uid = personalInfo.getUid();
         } else {
@@ -190,17 +189,8 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     @Override
     public void onAlertItemClick(Object o, int position) {
         if (o == exitAccount && position != AlertView.CANCELPOSITION) {
-//            注销账号 关闭账号统计
-            MobclickAgent.onProfileSignOff();
-//            解绑JPush
-            unBindJPush();
-            QyServiceUtils.getQyInstance().logoutQyUser();
             NEW_USER_DIALOG = true;
-            SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
-            SharedPreferences.Editor edit = loginStatus.edit();
-            edit.putBoolean("isLogin", false);
-            edit.putInt("uid", 0);
-            edit.apply();
+            savePersonalInfoCache(AppDataActivity.this,new SavePersonalInfoBean(false));
             showToast(this, "注销成功");
             exitNewTaoBaoAccount();
 //            exitOldTaoBaoAccount();

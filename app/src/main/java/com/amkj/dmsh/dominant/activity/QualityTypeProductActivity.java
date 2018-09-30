@@ -36,6 +36,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -127,6 +128,7 @@ public class QualityTypeProductActivity extends BaseActivity {
     private ChildProductTypeAdapter childProductTypeAdapter;
     private CBViewHolderCreator cbViewHolderCreator;
     private UserLikedProductEntity likedProductEntity;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -239,6 +241,7 @@ public class QualityTypeProductActivity extends BaseActivity {
         });
         typeSortView = LayoutInflater.from(QualityTypeProductActivity.this).inflate(R.layout.layout_type_sort_text_header, null, false);
         totalPersonalTrajectory = insertNewTotalData(this, String.valueOf(qualityTypeBeanChange.getId()));
+        removeExistUtils = new RemoveExistUtils();
     }
 
     private void scrollHeader() {
@@ -623,12 +626,13 @@ public class QualityTypeProductActivity extends BaseActivity {
                 qualityTypeProductAdapter.loadMoreComplete();
                 if (page == 1) {
                     typeDetails.clear();
+                    removeExistUtils.clearData();
                 }
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                        typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
                     } else {
                         qualityTypeProductAdapter.loadMoreEnd();
                         showToast(QualityTypeProductActivity.this, likedProductEntity.getMsg());

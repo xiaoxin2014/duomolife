@@ -28,6 +28,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -85,6 +86,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
     private View headerView;
     private CommunalDetailAdapter communalDetailAdapter;
     private UserLikedProductEntity userLikedProductEntity;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -198,6 +200,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
             }
         });
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), productType);
+        removeExistUtils = new RemoveExistUtils();
     }
 
     @Override
@@ -296,18 +299,19 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 qualityTypeProductAdapter.loadMoreComplete();
                 if (page == 1) {
                     customProList.clear();
+                    removeExistUtils.clearData();
                 }
                 Gson gson = new Gson();
                 userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (userLikedProductEntity != null) {
                     if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        customProList.addAll(userLikedProductEntity.getLikedProductBeanList());
+                        customProList.addAll(removeExistUtils.removeExistList(userLikedProductEntity.getLikedProductBeanList()));
                     } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), userLikedProductEntity.getMsg());
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
             }
 
             @Override
@@ -315,7 +319,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
             }
 
             @Override
@@ -323,7 +327,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,customProList, userLikedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
             }
         });
     }

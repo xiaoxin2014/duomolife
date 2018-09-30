@@ -32,6 +32,7 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeShaftBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeShaftRecordBean;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -108,6 +109,7 @@ public class SpringSaleFragment extends BaseFragment {
     private PopupWindow popupWindow;
     private boolean isClickSelect;
     private int[] location = new int[2];
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -222,6 +224,7 @@ public class SpringSaleFragment extends BaseFragment {
         ButterKnife.bind(popupShaftViewHelper, timeShaftView);
         popupShaftViewHelper.initPopView();
         springSaleRecyclerAdapter.openLoadAnimation(null);
+        removeExistUtils = new RemoveExistUtils();
 
     }
 
@@ -279,6 +282,7 @@ public class SpringSaleFragment extends BaseFragment {
                             saleTimeTotalList.clear();
                             isShowClearData = false;
                             timeShaftList.clear();
+                            removeExistUtils.clearData();
                         }
                         Gson gson = new Gson();
                         timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
@@ -308,7 +312,7 @@ public class SpringSaleFragment extends BaseFragment {
 //                                商品列表
                                 if (timeForeShowEntity.getTimeForeShowList() != null
                                         && timeForeShowEntity.getTimeForeShowList().size() > 0) {
-                                    saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
+                                    saleTimeTotalList.addAll(removeExistUtils.removeExistList(timeForeShowEntity.getTimeForeShowList()));
                                 }
 //                                品牌团
                                 if (timeForeShowEntity.getTimeTopicBean() != null && timeForeShowEntity.getTimeTopicBean().getId() > 0) {

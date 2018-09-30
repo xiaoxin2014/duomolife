@@ -77,6 +77,8 @@ import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
+import com.tencent.stat.StatConfig;
+import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -1624,6 +1626,15 @@ public class ConstantMethod {
     public static void savePersonalInfoCache(Context context, SavePersonalInfoBean savePersonalInfo) {
         if (savePersonalInfo != null && savePersonalInfo.isLogin()) {
             userId = savePersonalInfo.getUid();
+//            登录成功 三方账号登录
+            StatConfig.setCustomUserId(context, String.valueOf(savePersonalInfo.getUid()));
+            //        友盟统计
+            MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
+            //        绑定JPush
+            bindJPush(savePersonalInfo.getUid());
+            QyServiceUtils.getQyInstance().loginQyUserInfo(context, savePersonalInfo.getUid()
+                    , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
+
             SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
             edit.putBoolean("isLogin", true);
@@ -1644,13 +1655,16 @@ public class ConstantMethod {
             EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
         } else {
             userId = 0;
-            SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
-            SharedPreferences.Editor edit = loginStatus.edit();
-            edit.putBoolean("isLogin", false);
-            edit.clear();
-            edit.apply();
 //            七鱼注销
             QyServiceUtils.getQyInstance().logoutQyUser();
+            //            注销账号 关闭账号统计
+            MobclickAgent.onProfileSignOff();
+//            解绑JPush
+            unBindJPush();
+            SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+            SharedPreferences.Editor edit = loginStatus.edit();
+            edit.clear();
+            edit.apply();
         }
     }
 

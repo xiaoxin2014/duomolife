@@ -20,6 +20,13 @@ public class SavePersonalInfoBean {
     private String unionId;
     private boolean isLogin;
 
+    public SavePersonalInfoBean() {
+    }
+
+    public SavePersonalInfoBean(boolean isLogin) {
+        this.isLogin = isLogin;
+    }
+
     public int getUid() {
         return uid;
     }

@@ -45,7 +45,7 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     public AlertDialogHelper(Context context) {
         this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.service_dialog_theme);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_video_network, null, false);
         builder.setCancelable(true);
         tv_alert_title = dialogView.findViewById(R.id.tv_alert_title);

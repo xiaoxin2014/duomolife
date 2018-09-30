@@ -1,15 +1,16 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2018/9/14
- * version 1.0
- * class description:请输入类描述
+ * version 3.1.6
+ * class description:新版限时特惠
  */
-public class BaseTimeProductTopicBean implements MultiItemEntity {
+public class BaseTimeProductTopicBean extends BaseRemoveExistProductBean implements MultiItemEntity {
     private int itemType;
     @Override
     public int getItemType() {

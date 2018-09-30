@@ -29,6 +29,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.multitypejson.MultiTypeJsonParser;
@@ -87,6 +88,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private QualityGoodNewProAdapter qualityGoodNewProAdapter;
     private QualityTypeView qualityTypeView;
     private CBViewHolderCreator cbViewHolderCreator;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -139,7 +141,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                     case "product":
                         LikedProductBean likedProductBean = (LikedProductBean) attribute;
                         Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(likedProductBean.getProductId()));
+                        intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
                         startActivity(intent);
                         break;
                     case "ad":
@@ -175,6 +177,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
             }
         });
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName());
+        removeExistUtils = new RemoveExistUtils();
     }
 
     @Override
@@ -303,48 +306,49 @@ public class QualityDefaultNewFragment extends BaseFragment {
         params.put("version", 1);
         NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                qualityGoodNewProAdapter.loadMoreComplete();
-                if (page == 1) {
-                    goodsProList.clear();
-                }
-                MultiTypeJsonParser<Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<Attribute>()
-                        .registerTypeElementName("objectType")
-                        .registerTargetClass(Attribute.class)
-                        .registerTypeElementValueWithClassType("product", LikedProductBean.class)
-                        .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
-                        .build();
-                QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
-                if (qualityGoodProductEntity != null) {
-                    if (qualityGoodProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        goodsProList.addAll(qualityGoodProductEntity.getGoodProductList());
-                    } else if (qualityGoodProductEntity.getCode().equals(EMPTY_CODE)) {
-                        qualityGoodNewProAdapter.loadMoreEnd();
-                    } else {
-                        qualityGoodNewProAdapter.loadMoreEnd();
-                        showToast(getActivity(), qualityGoodProductEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGoodNewProAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            goodsProList.clear();
+                            removeExistUtils.clearData();
+                        }
+                        MultiTypeJsonParser<Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<Attribute>()
+                                .registerTypeElementName("objectType")
+                                .registerTargetClass(Attribute.class)
+                                .registerTypeElementValueWithClassType("product", LikedProductBean.class)
+                                .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
+                                .build();
+                        QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
+                        if (qualityGoodProductEntity != null) {
+                            if (qualityGoodProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                goodsProList.addAll(removeExistUtils.removeExistList(qualityGoodProductEntity.getGoodProductList()));
+                            } else if (qualityGoodProductEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityGoodNewProAdapter.loadMoreEnd();
+                            } else {
+                                qualityGoodNewProAdapter.loadMoreEnd();
+                                showToast(getActivity(), qualityGoodProductEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                        qualityGoodNewProAdapter.notifyDataSetChanged();
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                qualityGoodNewProAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityGoodNewProAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGoodNewProAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityGoodNewProAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGoodNewProAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    }
+                });
     }
 
     private void getCenterType() {

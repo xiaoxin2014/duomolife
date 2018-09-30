@@ -159,7 +159,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
                 if (likedProductBean != null) {
                     Intent intent = new Intent(QualityTypeHotSaleProActivity.this, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getProductId()));
+                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
                     startActivity(intent);
                 }
             }

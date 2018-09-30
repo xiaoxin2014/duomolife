@@ -1,15 +1,10 @@
 package com.amkj.dmsh.mine.activity;
 
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +13,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -27,19 +23,15 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData.OtherAccountBean;
-import com.amkj.dmsh.mine.bean.FirstLoginEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
-import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
@@ -49,13 +41,14 @@ import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
@@ -212,9 +205,6 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         savePersonalInfo.setUid(communalUserInfoBean.getUid());
         savePersonalInfo.setLogin(true);
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
-//                            绑定JPush
-        bindJPush(communalUserInfoBean.getUid());
-        QyServiceUtils.getQyInstance().loginQyUserInfo(this, communalUserInfoBean.getUid(), communalUserInfoBean.getNickname(), communalUserInfoBean.getMobile(), communalUserInfoBean.getAvatar());
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
         Intent data = new Intent();
@@ -227,58 +217,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
     }
 
     private void isFirstLogin() {
-        String url = Url.BASE_URL + Url.FIRST_LOGIN_APP;
-        XUtil.Get(url, null, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                FirstLoginEntity firstLoginEntity = gson.fromJson(result, FirstLoginEntity.class);
-                if (firstLoginEntity.getCode().equals("01")
-                        && firstLoginEntity.getFirstLoginBean() != null
-                        && !TextUtils.isEmpty(firstLoginEntity.getFirstLoginBean().getImages())) {
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getApplicationContext(), R.style.CustomTransDialog);
-                    final View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_dialog_image, null, false);
-                    final ImageView iv_dialog_login = (ImageView) dialogView.findViewById(R.id.iv_dialog_login);
-                    alertDialog.setView(dialogView);
-                    final AlertDialog dialog = alertDialog.create();
-                    dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                    dialog.setCanceledOnTouchOutside(true);//点击屏幕不消失
-                    String imageUrl = firstLoginEntity.getFirstLoginBean().getImages();
-                    if (!TextUtils.isEmpty(imageUrl) && imageUrl.contains(OSS_URL)) {
-                        imageUrl = imageUrl + Url.OSS_IMG_FORMAT;
-                    }
-                    GlideImageLoaderUtil.loadFinishImgDrawable(getApplicationContext(), imageUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                        @Override
-                        public void onStart() {
-                        }
-
-                        @Override
-                        public void onError(Drawable errorDrawable) {
-                        }
-
-                        @Override
-                        public void onSuccess(Bitmap bitmap) {
-                            iv_dialog_login.setImageBitmap(bitmap);
-                            dialog.show();
-                        }
-                    });
-                    iv_dialog_login.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                            Intent intent = new Intent(getApplicationContext(), DirectMyCouponActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-            }
-        });
-
+        EventBus.getDefault().post(new EventMessage("loginShowDialog",""));
     }
 
     // 授权登录
@@ -417,9 +356,8 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                                 savePersonalInfo.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                             }
                             savePersonalInfo.setLogin(true);
+                            savePersonalInfo.setPhoneNum(getStrings(otherAccountBindInfo.getMobile()));
                             savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
-//                        七鱼客服登录
-                            QyServiceUtils.getQyInstance().loginQyUserInfo(MineLoginActivity.this, otherAccountBean.getUid(), otherAccountBean.getNickname(), "", otherAccountBean.getAvatar());
 //                            跳转传递信息
                             Intent data = new Intent();
                             Bundle bundle = new Bundle();

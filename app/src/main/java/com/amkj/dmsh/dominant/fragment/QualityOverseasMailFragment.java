@@ -33,6 +33,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -102,6 +103,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
     private View headerView;
     private CBViewHolderCreator cbViewHolderCreator;
     private DMLThemeEntity dmlThemeEntity;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -208,6 +210,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
         qualityOsMailHeaderAdapter = new QualityOsMailHeaderAdapter(getActivity(), themeList, "overseas");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityOsMailHeaderAdapter);
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), categoryId);
+        removeExistUtils = new RemoveExistUtils();
     }
 
     //    海外直邮商品列表
@@ -227,12 +230,13 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     if (productPage == 1) {
                         //重新加载数据
                         typeDetails.clear();
+                        removeExistUtils.clearData();
                     }
                     Gson gson = new Gson();
                     UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
                         if (likedProductEntity.getCode().equals("01")) {
-                            typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                            typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         } else if (likedProductEntity.getCode().equals("02")) {
                             isLoadProData = false;

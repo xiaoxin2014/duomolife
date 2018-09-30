@@ -1,5 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class QualityGoodProductEntity {
         this.goodProductList = goodProductList;
     }
 
-    public static class Attribute{
+    public static class Attribute extends BaseRemoveExistProductBean{
         protected String objectType;
 
         public String getObjectType() {

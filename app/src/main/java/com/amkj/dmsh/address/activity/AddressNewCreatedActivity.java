@@ -29,7 +29,6 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -323,8 +322,11 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         if (mProvinceData != null) {
             provinceName = new String[mProvinceData.length];
             for (int i = 0; i < mProvinceData.length; i++) {
-                if(!TextUtils.isEmpty(mProvinceData[i].getName())){
-                    provinceName[i] = mProvinceData[i].getName();
+                ProvinceModel mProvinceDatum = mProvinceData[i];
+                if(mProvinceDatum!=null){
+                    if(!TextUtils.isEmpty(mProvinceData[i].getName())){
+                        provinceName[i] = mProvinceData[i].getName();
+                    }
                 }
             }
             id_province.setViewAdapter(new ArrayWheelAdapter<>(AddressNewCreatedActivity.this, provinceName));

@@ -420,14 +420,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         edit.apply();
     }
 
-    private void loginClassQYService(CommunalUserInfoBean communalUserInfoBean) {
-        QyServiceUtils.getQyInstance().loginQyUserInfo(MainActivity.this
-                , communalUserInfoBean.getUid()
-                , getStrings(communalUserInfoBean.getNickname())
-                , getStrings(communalUserInfoBean.getMobile())
-                , communalUserInfoBean.getAvatar());
-    }
-
     private void skipDefaultNum(int i) {
         switch (i) {
             case 0:
@@ -778,7 +770,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                     if (minePageData != null) {
                         CommunalUserInfoBean communalUserInfoBean = minePageData.getCommunalUserInfoBean();
                         if (minePageData.getCode().equals(SUCCESS_CODE)) {
-                            loginClassQYService(communalUserInfoBean);
                             getLoginStatusTime();
 //                            上传设备信息
                             setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
