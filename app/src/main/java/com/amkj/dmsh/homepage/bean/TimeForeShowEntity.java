@@ -42,18 +42,8 @@ public class TimeForeShowEntity extends BaseTimeEntity{
          * picUrl : string
          * title : string
          */
-
-        private int id;
         private String picUrl;
         private String title;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
 
         public String getPicUrl() {
             return picUrl;
