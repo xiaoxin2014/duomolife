@@ -35,7 +35,10 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.iwgang.countdownview.CountdownView;
+import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
@@ -142,6 +145,10 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         View footView = layoutInflater.inflate(R.layout.layout_indent_item_foot, helper.communal_recycler_wrap, false);
         IntentHView intentHView = new IntentHView();
         ButterKnife.bind(intentHView, headerView);
+        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        intentHView.cv_countdownTime_direct.dynamicShow(dynamic.build());
         IntentFView intentFView = new IntentFView();
         ButterKnife.bind(intentFView, footView);
         directProductListAdapter.addHeaderView(headerView);

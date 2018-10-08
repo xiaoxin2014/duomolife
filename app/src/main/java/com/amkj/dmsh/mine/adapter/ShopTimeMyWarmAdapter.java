@@ -27,7 +27,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.iwgang.countdownview.CountdownView;
+import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -200,6 +203,11 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
                 .setText(R.id.tv_mine_warm_product_price, "￥" + mineWarmBean.getPrice())
                 .addOnClickListener(R.id.tv_mine_warm_set_status).setTag(R.id.tv_mine_warm_set_status, mineWarmBean);
         CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);
+        DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
+        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        cv_countdownTime_red_hours.dynamicShow(dynamicDetails.build());
+
         setCountTime(mineWarmBean,cv_countdownTime_red_hours);
         setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(),cv_countdownTime_red_hours);
         helper.itemView.setTag(mineWarmBean);

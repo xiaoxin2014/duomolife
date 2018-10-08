@@ -26,8 +26,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.iwgang.countdownview.CountdownView;
+import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 
 /**
  * @author LGuiPeng
@@ -142,7 +146,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                 e.printStackTrace();
             }
         }
-        if(!ConstantMethod.isEndOrStartTimeAddSeconds(qualityGroupBean.getCurrentTime()
+        if(!isEndOrStartTimeAddSeconds(qualityGroupBean.getCurrentTime()
                 ,qualityGroupBean.getGpEndTime()
                 ,qualityGroupBean.getAddSecond())){
             cv_countdownTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
@@ -193,6 +197,10 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                 .setGone(R.id.tv_ql_gp_sp_new, qualityGroupBean.getRange() == 1 );
         tv_gp_sp_count.setSelected(qualityGroupBean.getGpProductQuantity() > 0);
         CountdownView ct_communal_time_details = helper.getView(R.id.ct_communal_time_details);
+        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        ct_communal_time_details.dynamicShow(dynamic.build());
         setCountTime(qualityGroupBean,ct_communal_time_details);
         setCountDownView(helper.getAdapterPosition()-getHeaderLayoutCount(),ct_communal_time_details);
         helper.itemView.setTag(qualityGroupBean);

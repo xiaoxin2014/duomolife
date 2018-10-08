@@ -95,6 +95,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import cn.iwgang.countdownview.CountdownView;
+import cn.iwgang.countdownview.DynamicConfig;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -205,6 +207,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         View headerView = LayoutInflater.from(DirectExchangeDetailsActivity.this).inflate(R.layout.layout_direct_details_top_default, (ViewGroup) communal_recycler.getParent(), false);
         lvHeaderView = new LvHeaderView();
         ButterKnife.bind(lvHeaderView, headerView);
+        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        lvHeaderView.cv_countdownTime_direct.dynamicShow(dynamic.build());
         View footView = LayoutInflater.from(DirectExchangeDetailsActivity.this).inflate(R.layout.layout_direct_details_bottom_default, (ViewGroup) communal_recycler.getParent(), false);
         lvFootView = new LvFootView();
         ButterKnife.bind(lvFootView, footView);

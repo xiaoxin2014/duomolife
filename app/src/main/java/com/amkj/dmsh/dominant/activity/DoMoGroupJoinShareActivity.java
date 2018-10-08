@@ -98,6 +98,10 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         View headerView = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_ql_gp_sp_join_share, null);
         groupShareJoinView = new GroupShareJoinView();
         ButterKnife.bind(groupShareJoinView, headerView);
+        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        groupShareJoinView.ct_time_communal_show_bg.dynamicShow(dynamic.build());
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         gpRuleDetailsAdapter = new CommunalDetailAdapter(DoMoGroupJoinShareActivity.this, gpRuleList);
         gpRuleDetailsAdapter.addHeaderView(headerView);

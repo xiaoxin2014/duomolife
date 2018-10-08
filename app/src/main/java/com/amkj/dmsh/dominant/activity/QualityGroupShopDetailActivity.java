@@ -303,6 +303,11 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         Drawable drawable = getResources().getDrawable(R.drawable.clock_time_icon_b);
         drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight()); //设置边界
         tv_pro_time_detail_status.setCompoundDrawables(drawable, null, null, null);
+
+        DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
+        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
     }
 
     private void changePage(String tag) {

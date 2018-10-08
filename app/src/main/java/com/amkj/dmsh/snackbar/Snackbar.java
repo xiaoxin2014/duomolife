@@ -131,7 +131,7 @@ public final class Snackbar extends BaseTransientBottomBar<Snackbar> {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final SnackbarContentLayout content =
                 (SnackbarContentLayout) inflater.inflate(
-                        R.layout.design_layout_snackbar_include, parent, false);
+                        R.layout.design_layout_snackbar_include_new, parent, false);
         final Snackbar snackbar = new Snackbar(parent, content, content);
         snackbar.setText(text);
         snackbar.setDuration(duration);

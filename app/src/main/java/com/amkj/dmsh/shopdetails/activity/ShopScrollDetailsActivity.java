@@ -326,6 +326,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     protected void initViews() {
         tv_count_time_before_white.setTextColor(getResources().getColor(R.color.text_black_t));
         tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
+        DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
+        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
+
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         dynamic.setTimeTextColor(0xff333333);
         dynamic.setSuffixTextColor(0xff333333);

@@ -127,6 +127,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
 
     @Override
     protected void convert(BaseViewHolder helper, GroupShopJoinBean groupShopJoinBean) {
+        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_0:
                 GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.cir_ql_gp_ava), groupShopJoinBean.getAvatar());
@@ -142,6 +143,9 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 tv_ql_gp_sp_join.setBackground(drawable);
                 tv_ql_gp_sp_join.setText(groupShopJoinBean.getRange() == 1 ? R.string.join_new_group : R.string.join_group);
                 CountdownView cv_countdownTime_white_hours = helper.getView(R.id.cv_countdownTime_white_hours);
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+                cv_countdownTime_white_hours.dynamicShow(dynamic.build());
                 setGroupOpenCountTime(cv_countdownTime_white_hours, groupShopJoinBean);
                 setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_white_hours);
                 helper.itemView.setTag(groupShopJoinBean);
@@ -151,9 +155,10 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                         .setTag(R.id.ct_time_communal_show_bg, groupShopJoinBean)
                         .setGone(R.id.ct_time_communal_show_bg, isJoinGroupEnd(groupShopJoinBean));
                 CountdownView ct_time_communal_show_bg = helper.getView(R.id.ct_time_communal_show_bg);
-                DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
                 dynamic.setTimeTextColor(0xffffffff);
                 dynamic.setSuffixTextColor(0xff333333);
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
                 DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
                 backgroundInfo.setColor(context.getResources().getColor(R.color.text_normal_red));
                 dynamic.setBackgroundInfo(backgroundInfo);
@@ -169,6 +174,9 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
                 communal_recycler_wrap.setLayoutManager(flexboxLayoutManager);
                 CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                cv_countdownTime_red_hours.dynamicShow(dynamic.build());
                 GroupTagAdapter groupTagAdapter = new GroupTagAdapter(context,groupShopJoinBean.getMemberListBeans());
                 communal_recycler_wrap.setAdapter(groupTagAdapter);
                 TextView tv_count_time_before_hours = helper.getView(R.id.tv_count_time_before_hours);

@@ -118,9 +118,6 @@ public class SpringSaleFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        if (showTimeList == null || showTimeList.size() < 1) {
-            return;
-        }
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         springSaleRecyclerAdapter = new SpringSaleRecyclerAdapterNew(getActivity(), saleTimeTotalList);
         springSaleRecyclerAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
@@ -253,6 +250,7 @@ public class SpringSaleFragment extends BaseFragment {
             getProductData();
         } else {
             NetLoadUtils.getQyInstance().showLoadSirEmpty(loadService);
+            getTopRecommendData();
         }
     }
 
@@ -402,6 +400,7 @@ public class SpringSaleFragment extends BaseFragment {
                         timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
+                                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                                 if (timeForeShowEntity.getTimeForeShowList() != null
                                         && timeForeShowEntity.getTimeForeShowList().size() > 0) {
                                     BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();

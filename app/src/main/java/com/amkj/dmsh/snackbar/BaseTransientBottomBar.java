@@ -29,7 +29,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
-import android.support.design.R;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.view.ViewCompat;
@@ -45,6 +44,8 @@ import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+
+import com.amkj.dmsh.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -252,7 +253,7 @@ public abstract class BaseTransientBottomBar<B extends BaseTransientBottomBar<B>
         // in the extending Snackbar class. This is to prevent breakage of apps that have custom
         // coordinator layout behaviors that depend on that layout.
         mView = (SnackbarBaseLayout) inflater.inflate(
-                R.layout.design_layout_snackbar, mTargetParent, false);
+                R.layout.design_layout_snackbar_new, mTargetParent, false);
         mView.addView(content);
 
         ViewCompat.setAccessibilityLiveRegion(mView,

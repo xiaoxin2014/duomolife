@@ -23,11 +23,6 @@ import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
-import com.amkj.dmsh.address.bean.AddressInfo;
-import com.amkj.dmsh.address.bean.AddressInfo.AddressBean;
-import com.amkj.dmsh.address.bean.CityModel;
-import com.amkj.dmsh.address.bean.DistrictModel;
-import com.amkj.dmsh.address.bean.ProvinceModel;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
@@ -37,8 +32,6 @@ import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.Log;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.kingja.loadsir.core.LoadSir;
 import com.leon.channel.helper.ChannelReaderUtil;
 import com.microquation.linkedme.android.LinkedME;
@@ -56,16 +49,11 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
-import org.lasque.tusdk.core.TuSdk;
 import org.xutils.x;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -214,8 +202,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             //      友盟初始化
             youMengInit();
             try {
-                TuSdk.enableDebugLog(isDebugTag);
-                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
+//                TuSdk.enableDebugLog(isDebugTag);
+//                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
             } catch (Exception e) {
                 e.printStackTrace();
             }
