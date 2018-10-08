@@ -38,7 +38,7 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_duomolife_hor_recycle_item);
         addItemType(ConstantVariable.TYPE_1, R.layout.adapter_dml_hor_recycle_look_more);
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenWidth = (int) ((app.getScreenWidth() - AutoSizeUtils.mm2px(mAppContext,20 * 5) / 2.5f));
+        screenWidth = (int) ((app.getScreenWidth() - AutoSizeUtils.mm2px(mAppContext,20 * 5)) / 2.5f);
         this.context = context;
     }
 
@@ -69,6 +69,7 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
                         rel_hor_welfare_img.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         ViewGroup.LayoutParams layoutParams = rel_hor_welfare_img.getLayoutParams();
                         layoutParams.width = screenWidth;
+                        layoutParams.height = screenWidth;
                         rel_hor_welfare_img.setLayoutParams(layoutParams);
                     }
                 });
@@ -89,6 +90,7 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
                         rel_dnl_hor_layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         ViewGroup.LayoutParams layoutParams = rel_dnl_hor_layout.getLayoutParams();
                         layoutParams.width = screenWidth;
+                        layoutParams.height = screenWidth;
                         rel_dnl_hor_layout.setLayoutParams(layoutParams);
                         rel_dnl_hor_layout.setLayoutParams(rel_dnl_hor_layout.getLayoutParams());
                     }

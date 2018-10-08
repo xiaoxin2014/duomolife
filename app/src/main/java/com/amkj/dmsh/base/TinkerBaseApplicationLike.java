@@ -39,12 +39,16 @@ import com.mob.MobSDK;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.stat.MtaSDkException;
 import com.tencent.stat.StatService;
+import com.tencent.tinker.anno.DefaultLifeCycle;
+import com.tencent.tinker.lib.tinker.Tinker;
 import com.tencent.tinker.loader.app.DefaultApplicationLike;
+import com.tencent.tinker.loader.shareutil.ShareConstants;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
@@ -79,6 +83,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
  * version 3.1.7
  * class description:Tinker集成
  */
+@SuppressWarnings("unused")
+@DefaultLifeCycle(application = "com.amkj.dmsh.base.TinkerBaseApplication",
+        flags = ShareConstants.TINKER_ENABLE_ALL,
+        loadVerifyFlag = false)
 public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public OSS oss;
     private final String MobAPPKEY = "1693fa0f7b0a0";
@@ -119,6 +127,15 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
         // 安装tinker
         Beta.installTinker(this);
+        //should set before tinker is installed
+        TinkerManager.setUpgradeRetryEnable(true);
+
+        //optional set logIml, or you can use default debug log
+
+        //installTinker after load multiDex
+        //or you can put com.tencent.tinker.** to main dex
+        TinkerManager.installTinker(this);
+        Tinker tinker = Tinker.with(getApplication());
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

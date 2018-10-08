@@ -35,7 +35,6 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
@@ -86,12 +85,15 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 ;
@@ -311,7 +313,7 @@ public class MineDataFragment extends BaseFragment {
 
     /**
      * 更新客服未读消息
-//     * @param serviceTotalCount 未读消息条数
+     * //     * @param serviceTotalCount 未读消息条数
      */
     private void setServiceUnread(int serviceTotalCount) {
         if (mineTypeList.size() > 7) {
@@ -323,6 +325,7 @@ public class MineDataFragment extends BaseFragment {
             typeMineAdapter.notifyItemChanged(7);
         }
     }
+
     private void setStatusColor() {
         SystemBarHelper.setStatusBarDarkMode(getActivity());
         SystemBarHelper.setPadding(getActivity(), rel_header_mine);
@@ -333,7 +336,6 @@ public class MineDataFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getLoginStatus();
-        getDuoMeIndentDataCount();
         getMineAd();
     }
 
@@ -343,16 +345,15 @@ public class MineDataFragment extends BaseFragment {
             avatar = personalInfo.getAvatar();
             getNetDataInfo();
         } else {
-            initLoggedView();
-            setBottomCount(null);
+            setErrorUserData();
         }
     }
 
     private void setData(final CommunalUserInfoEntity.CommunalUserInfoBean userData) {
         tv_mine_name.setText(getStrings(userData.getNickname()));
-        tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count),userData.getFllow()));
-        tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count),userData.getFans()));
-        tv_mine_inv_count.setText(String.format(getResources().getString(R.string.mine_invitation_count),userData.getDocumentcount()));
+        tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count), userData.getFllow()));
+        tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count), userData.getFans()));
+        tv_mine_inv_count.setText(String.format(getResources().getString(R.string.mine_invitation_count), userData.getDocumentcount()));
         tv_mine_score.setText(("积分：" + userData.getScore()));
         GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(userData.getAvatar())
                 ? ImageConverterUtils.getFormatImg(userData.getAvatar()) : "");
@@ -492,25 +493,32 @@ public class MineDataFragment extends BaseFragment {
 
     private void getNetDataInfo() {
         String url = Url.BASE_URL + Url.MINE_PAGE;
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                 , params, new NetLoadUtils.NetLoadListener() {
                     @Override
                     public void onSuccess(String result) {
-                        getUserDataInfo(result, false);
+                        getUserDataInfo(result);
                     }
 
                     @Override
                     public void netClose() {
-
+                        setErrorUserData();
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-
+                        setErrorUserData();
                     }
                 });
+    }
+
+    private void setErrorUserData() {
+        initLoggedView();
+        setBottomCount(null);
+        userId = 0;
+        savePersonalInfoCache(getActivity(), null);
     }
 
     //    我的模块 广告
@@ -575,21 +583,23 @@ public class MineDataFragment extends BaseFragment {
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
     }
 
-    private void getUserDataInfo(String result, boolean isCache) {
+    private void getUserDataInfo(String result) {
         Gson gson = new Gson();
         CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
         communalUserInfoBean = minePageData.getCommunalUserInfoBean();
         if (communalUserInfoBean != null) {
-            if (minePageData.getCode().equals("01")) {
+            if (minePageData.getCode().equals(SUCCESS_CODE)) {
                 ll_mime_no_login.setVisibility(View.GONE);
                 ll_mine_login.setVisibility(View.VISIBLE);
                 setData(communalUserInfoBean);
+                getDuoMeIndentDataCount();
             } else {
-                initLoggedView();
-                if (!isCache) {
-                    showToast(getActivity(), minePageData.getMsg());
-                }
+                setErrorUserData();
+                showToast(getActivity(), minePageData.getMsg());
             }
+        }else{
+            setErrorUserData();
+            showToast(getActivity(), minePageData.getMsg());
         }
     }
 
@@ -670,7 +680,7 @@ public class MineDataFragment extends BaseFragment {
     @OnClick(R.id.tv_no_login_show)
     void skipLogin(View view) {
         Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-        startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
+        startActivityForResult(intent, IS_LOGIN_CODE);
     }
 
     //    跳转签到
