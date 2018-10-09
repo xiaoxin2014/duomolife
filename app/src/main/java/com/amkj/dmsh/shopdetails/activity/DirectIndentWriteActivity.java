@@ -271,7 +271,9 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onNumChange(View view, int stype, int num) {
                 if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != num) {
-                    NetLoadUtils.getQyInstance().showLoadSirTranslucenceLoading(loadService);
+                    if(loadHud!=null){
+                        loadHud.show();
+                    }
                     discountBeanList.get(0).setCount(num);
                     getIndentDiscounts(false);
                 }
@@ -1081,7 +1083,9 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
                 @Override
                 public void onSuccess(String result) {
-                    loadHud.dismiss();
+                    if(loadHud!=null){
+                        loadHud.dismiss();
+                    }
                     Gson gson = new Gson();
                     indentDiscountsEntity = gson.fromJson(result, IndentDiscountsEntity.class);
                     if (indentDiscountsEntity != null) {
@@ -1095,17 +1099,24 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
                 @Override
                 public void netClose() {
-                    loadHud.dismiss();
+                    if(loadHud!=null){
+                        loadHud.dismiss();
+                    }
                     NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    loadHud.dismiss();
+                    if(loadHud!=null){
+                        loadHud.dismiss();
+                    }
                     NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
             });
         } else {
+            if(loadHud!=null){
+                loadHud.dismiss();
+            }
             NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
         }
     }

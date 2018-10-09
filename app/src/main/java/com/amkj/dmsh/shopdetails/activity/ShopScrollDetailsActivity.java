@@ -385,7 +385,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     }
                     break;
             }
-
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShopScrollDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
         rv_product_details.setLayoutManager(linearLayoutManager);

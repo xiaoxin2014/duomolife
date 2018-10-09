@@ -105,16 +105,18 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), goodsBean.getPicUrl());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(goodsBean.getName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(goodsBean.getSaleSkuValue()));
-                tv_direct_indent_product_price.setSelected(true);
+                tv_direct_indent_product_price.setSelected(false);
                 setIndentProStatus(helper, goodsBean);
+                String priceChnText;
                 if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
-                    helper.setText(R.id.tv_direct_indent_pro_price, context.getString(R.string.combine_price) + getStringsChNPrice(context,goodsBean.getPrice()))
-                            .setGone(R.id.tv_direct_pro_count, goodsBean.getStatus() == 0)
+                    helper.setGone(R.id.tv_direct_pro_count, goodsBean.getStatus() == 0)
                             .setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
+                    priceChnText = context.getString(R.string.combine_price) + getStringsChNPrice(context,goodsBean.getPrice());
                 } else {
-                    helper.setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context,goodsBean.getPrice()))
-                            .setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
+                    priceChnText = getStringsChNPrice(context,goodsBean.getPrice());
+                    helper.setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
                 }
+                tv_direct_indent_product_price.setText(priceChnText);
                 if (goodsBean.getCombineProductInfoList() != null
                         || goodsBean.getPresentProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
@@ -402,6 +404,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         switch (type) {
             case INDENT_TYPE:
                 TextView tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);
+                tv_dir_indent_pro_status.setTextColor(context.getResources().getColor(R.color.text_login_gray_s));
                 FrameLayout fl_dir_indent_pro_status = helper.getView(R.id.fl_dir_indent_pro_status);
                 OrderListBean.GoodsBean goodsBean = (OrderListBean.GoodsBean) obj;
                 tv_dir_indent_pro_status.setEnabled(false);

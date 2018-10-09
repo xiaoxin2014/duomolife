@@ -125,7 +125,6 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
         communal_recycler.setAdapter(doMoIndentListAdapter);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-
 //                滚动距离置0
             scrollY = 0;
             loadData();

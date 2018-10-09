@@ -22,6 +22,6 @@ public class NetLoadTranslucenceCallback extends Callback {
 
     @Override
     protected void onViewCreate(Context context, View view) {
-        view.findViewById(R.id.fl_net_loading).setBackgroundColor(context.getResources().getColor(R.color.translucence));
+        view.findViewById(R.id.fl_net_loading).setBackgroundColor(context.getResources().getColor(R.color.transparent));
     }
 }

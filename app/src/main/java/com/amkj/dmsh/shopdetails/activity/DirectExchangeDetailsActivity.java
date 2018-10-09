@@ -103,6 +103,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
@@ -512,7 +513,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             goodsBeanList.set(0, orderProductInfoBean);
             setTimeDown(orderProductInfoBean);
 //            创建时间加倒计时间 大于等于当前时间 展示倒计时
-            if (ConstantMethod.isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
+            if (!isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
                     , orderProductInfoBean.getCurrentTime()
                     , orderProductInfoBean.getSecond())) {
                 constantMethod.createSchedule();
@@ -1483,7 +1484,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 }
                 lvHeaderView.cv_countdownTime_direct.updateShow(dateCreate.getTime() + overTime
                         - dateCurrent.getTime());
-                if (ConstantMethod.isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
+                if (!isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
                         , orderProductInfoBean.getCurrentTime()
                         , orderProductInfoBean.getSecond())) {
                     lvHeaderView.cv_countdownTime_direct.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {

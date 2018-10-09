@@ -138,7 +138,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             getSingleDouble(true, false, "确定", 0);
         }
         if (!isShowSingle) {
-            getSingleDouble(true, false, "确定", noticeType);
+            getSingleDouble(true, editGoodsSkuBean != null && editGoodsSkuBean.isSellStatus(), "确定", noticeType);
         }
         if (!dialog.isShowing()) {
             dialog.show();
@@ -362,7 +362,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 }
             }
         }
-        getSingleDouble(isShowSingle, false, "", noticeType);
+        getSingleDouble(isShowSingle, editGoodsSkuBean!=null&&editGoodsSkuBean.isSellStatus(), "", noticeType);
     }
 
     private void setPresentData() {
@@ -1249,7 +1249,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     if (numQuantity > skuSaleBean.getQuantity()) {
                         rectAddAndSubViewDirect.setNum(skuSaleBean.getQuantity());
                     }
-                    getSingleDouble(isShowSingle, false, "确定", skuSaleBean.getIsNotice());
+                    getSingleDouble(isShowSingle, editGoodsSkuBean!=null&&editGoodsSkuBean.isSellStatus(), "确定", skuSaleBean.getIsNotice());
                     for (ProductParameterTypeBean pro : productParameterTypeBeanList) {
                         for (ProductParameterValueBean productValue : pro.getValues()) {
                             if (valuesAppend.toString().contains(String.valueOf(productValue.getPropId()))) {

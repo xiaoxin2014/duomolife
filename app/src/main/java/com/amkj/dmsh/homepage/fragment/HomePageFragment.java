@@ -35,10 +35,9 @@ import com.amkj.dmsh.homepage.adapter.RecyclerHotAdapterNew;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
+import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
-import com.amkj.dmsh.snackbar.BaseTransientBottomBar;
-import com.amkj.dmsh.snackbar.Snackbar;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
@@ -659,9 +658,8 @@ public class HomePageFragment extends BaseFragment {
     //    跳转消息
     @OnClick(R.id.iv_home_message_total)
     void skipMessage(View view) {
-//        Intent intent = new Intent(getActivity(), MessageActivity.class);
-//        startActivity(intent);
-        Snackbar.make(view,"snackbar 点击", BaseTransientBottomBar.LENGTH_LONG).show();
+        Intent intent = new Intent(getActivity(), MessageActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.iv_float_ad_icon)

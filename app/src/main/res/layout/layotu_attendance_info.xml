@@ -51,7 +51,6 @@
         android:layout_gravity="center_horizontal"
         android:drawablePadding="@dimen/dimen_16_dp"
         android:drawableRight="@drawable/attendance_ques"
-        android:text="40000"
         android:textColor="@color/light_blue_n"
         android:textSize="@dimen/sc_mm_60" />
 

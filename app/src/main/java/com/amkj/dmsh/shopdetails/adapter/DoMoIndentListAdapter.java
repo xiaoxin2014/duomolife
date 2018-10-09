@@ -40,12 +40,12 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
-import static com.amkj.dmsh.constant.ConstantVariable.DEL;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
@@ -146,8 +146,8 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         IntentHView intentHView = new IntentHView();
         ButterKnife.bind(intentHView, headerView);
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
         intentHView.cv_countdownTime_direct.dynamicShow(dynamic.build());
         IntentFView intentFView = new IntentFView();
         ButterKnife.bind(intentFView, footView);
@@ -158,7 +158,10 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         setIntentStatus(intentHView, intentFView, orderListBean);
         if (0 <= orderListBean.getStatus() && orderListBean.getStatus() < 10) {
             //            展示倒计时
-            if (!TextUtils.isEmpty(orderListBean.getCurrentTime())) {
+            if (!TextUtils.isEmpty(orderListBean.getCurrentTime())
+                    &&!isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
+                    , orderListBean.getCurrentTime()
+                    , orderListBean.getSecond())) {
                 intentHView.ll_direct_count_time.setVisibility(View.VISIBLE);
                 sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), intentHView);
                 setCountTime(intentHView, orderListBean);
@@ -183,25 +186,9 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     private void setIntentStatus(IntentHView intentHView, IntentFView intentFView, final OrderListBean orderListBean) {
         int statusCode = orderListBean.getStatus();
         intentHView.tv_indent_type_show.setText(getStrings(ConstantVariable.INDENT_PRO_STATUS.get(String.valueOf(statusCode))));
-        if (-20 <= statusCode && statusCode < -10) {
-//            订单取消
-            intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
-            intentFView.tv_border_first_gray.setText("删除订单");
-            intentFView.tv_border_first_gray.setTag(R.id.tag_first, DEL);
-            intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
-            intentFView.tv_border_first_gray.setOnClickListener(this);
-//            再次购买
-            intentFView.tv_border_second_blue.setVisibility(View.GONE);
-        } else if (statusCode == -10) {
+        if (-20 <= statusCode && statusCode <= -10 || (-26 <= statusCode&& statusCode<= -24)) {
             intentFView.ll_indent_bottom.setVisibility(View.GONE);
-        } else if (statusCode == -25 || statusCode == -26 || statusCode == -24) {//交易关闭 拼团失败 -》删除订单
-            intentFView.tv_border_second_blue.setVisibility(View.GONE);
-            intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
-            intentFView.tv_border_first_gray.setText("删除订单");
-            intentFView.tv_border_first_gray.setTag(R.id.tag_first, DEL);
-            intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
-            intentFView.tv_border_first_gray.setOnClickListener(this);
-        } else if (0 <= statusCode && statusCode < 10) {
+        }else if (0 <= statusCode && statusCode < 10) {
 //          头部状态栏
             intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
 //          底栏 件数
@@ -236,9 +223,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 boolean isRefund = true;
                 for (int i = 0; i < orderListBean.getGoods().size(); i++) {
                     OrderListBean.GoodsBean goodsBean = orderListBean.getGoods().get(i);
-                    if (goodsBean.getStatus() == 10) {
-                        continue;
-                    } else {
+                    if (goodsBean.getStatus() != 10) {
                         isRefund = false;
                         break;
                     }
@@ -280,15 +265,10 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                     intentFView.tv_border_first_gray.setText("晒单赢积分");
                     intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
                     intentFView.tv_border_first_gray.setOnClickListener(this);
+                    intentFView.tv_border_second_blue.setVisibility(View.GONE);
                 } else {
-                    intentFView.tv_border_first_gray.setVisibility(View.GONE);
+                    intentFView.ll_indent_bottom.setVisibility(View.GONE);
                 }
-//                删除
-                intentFView.tv_border_second_blue.setVisibility(View.VISIBLE);
-                intentFView.tv_border_second_blue.setText("删除订单");
-                intentFView.tv_border_second_blue.setTag(R.id.tag_first, DEL);
-                intentFView.tv_border_second_blue.setTag(R.id.tag_second, orderListBean);
-                intentFView.tv_border_second_blue.setOnClickListener(this);
             } else {
                 boolean isShowEvaluate = false;
                 //            列表暂时不展示发票信息
@@ -348,7 +328,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (ConstantMethod.isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
+        if (!isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
                 , orderListBean.getCurrentTime()
                 , orderListBean.getSecond())) {
             holder.cv_countdownTime_direct.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
@@ -358,6 +338,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 }
             });
         } else {
+            holder.cv_countdownTime_direct.setVisibility(View.GONE);
             holder.tv_indent_type_show.setText("已关闭");
         }
     }
