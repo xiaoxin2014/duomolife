@@ -15,9 +15,9 @@
         <com.amkj.dmsh.views.RectAddAndSubViewDirect
             android:id="@+id/rect_indent_number"
             android:layout_width="match_parent"
-            android:visibility="gone"
-            android:paddingLeft="@dimen/gap_left"
-            android:paddingRight="@dimen/gap_right"
+            android:visibility="visible"
+            android:layout_marginLeft="@dimen/gap_left"
+            android:layout_marginRight="@dimen/gap_right"
             android:gravity="center_vertical"
             android:layout_height="@dimen/sc_mm_88"/>
         <LinearLayout

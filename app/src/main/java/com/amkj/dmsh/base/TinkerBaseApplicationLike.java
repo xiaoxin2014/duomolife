@@ -27,6 +27,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
+import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
@@ -289,6 +290,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         LoadSir.beginBuilder()
                 .addCallback(new NetErrorCallback())//网络错误
                 .addCallback(new NetLoadCallback())//加载中
+                .addCallback(new NetLoadTranslucenceCallback())//加载中 半透明
                 .addCallback(new NetEmptyCallback())//空值
                 .setDefaultCallback(NetLoadCallback.class)//设置默认状态页
                 .commit();

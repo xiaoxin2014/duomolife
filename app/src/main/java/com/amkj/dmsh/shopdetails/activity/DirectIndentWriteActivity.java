@@ -271,6 +271,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onNumChange(View view, int stype, int num) {
                 if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != num) {
+                    NetLoadUtils.getQyInstance().showLoadSirTranslucenceLoading(loadService);
                     discountBeanList.get(0).setCount(num);
                     getIndentDiscounts(false);
                 }

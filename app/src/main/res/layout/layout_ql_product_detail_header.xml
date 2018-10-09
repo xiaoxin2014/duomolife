@@ -5,7 +5,8 @@
     android:layout_height="@dimen/sc_mm_88"
     android:id="@+id/tl_quality_bar"
     android:background="@drawable/sel_bg_border_gray_white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tl:contentInsetStart="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,7 +19,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-
             android:drawableLeft="@drawable/common_back_btn_nor"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/gap_left"

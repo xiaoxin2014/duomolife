@@ -7,6 +7,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
+import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -221,6 +222,16 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     public void showLoadSirLoading(LoadService loadService) {
         if (loadService != null) {
             loadService.showCallback(NetLoadCallback.class);
+        }
+    }
+
+    /**
+     * 半透明加载 用于已加载数据，再次加载请求数据
+     * @param loadService
+     */
+    public void showLoadSirTranslucenceLoading(LoadService loadService) {
+        if (loadService != null) {
+            loadService.showCallback(NetLoadTranslucenceCallback.class);
         }
     }
     public void showLoadSirEmpty(LoadService loadService) {
