@@ -176,7 +176,6 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(context, DirectExchangeDetailsActivity.class);
                 intent.putExtra("orderNo", orderListBean.getNo());
-                intent.putExtra("uid", orderListBean.getUserId());
                 context.startActivity(intent);
             }
         });
