@@ -164,7 +164,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     public static String OriginalImgUrl = "OriginalImgUrl";
     private SharedPreferences sharedPreferences;
     //    地址存储路径
-    private String adsPath = "";
     private int screenHeight;
     private Fragment fragment;
     private boolean isChecked;
@@ -233,7 +232,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
 //            打开app时间统计
 //            加载OSS配置
             getOSSConfig();
-            adsPath = getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt";
 //            获取地址版本
             getAddressVersion();
 //            获取图标更新
@@ -876,8 +874,8 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 }
                 if (code.equals("01")) {
                     //        地址初始化
-                    AddressUtils.getQyInstance().initAddress(adsPath);
-                    FileStreamUtils.writeFileFromString(adsPath, result, false);
+                    AddressUtils.getQyInstance().initAddress(result);
+                    FileStreamUtils.writeFileFromString(getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt", result, false);
                 }else{
                     //        地址初始化
                     AddressUtils.getQyInstance().initAddress();

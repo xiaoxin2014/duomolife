@@ -52,7 +52,6 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
@@ -127,6 +126,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
@@ -376,11 +376,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     break;
                 case R.id.tv_eva_count:
                     goodsCommentBean = (GoodsCommentBean) view.getTag();
-                    if (goodsCommentBean != null) {
+                    if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
                         if (userId > 0) {
                             setProductEvaLike(view);
                         } else {
-                            getLoginStatus();
+                            getLoginStatus(ShopScrollDetailsActivity.this);
                         }
                     }
                     break;
@@ -421,7 +421,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            getLoginStatus();
+                            getLoginStatus(ShopScrollDetailsActivity.this);
                         }
                     }
                     break;
@@ -438,7 +438,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            getLoginStatus();
+                            getLoginStatus(ShopScrollDetailsActivity.this);
                         }
                     }
                     break;
@@ -454,7 +454,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             constantMethod.addShopCarGetSku(ShopScrollDetailsActivity.this, baseAddCarProInfoBean, loadHud);
                         } else {
                             loadHud.dismiss();
-                            getLoginStatus();
+                            getLoginStatus(ShopScrollDetailsActivity.this);
                         }
                     }
                     break;
@@ -740,6 +740,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             public void onError(Throwable ex, boolean isOnCallback) {
             }
         });
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
@@ -1754,13 +1755,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-    private void getLoginStatus() {
-        if (userId < 1) {
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -1979,7 +1973,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             });
         } else {
-            getLoginStatus();
+            getLoginStatus(ShopScrollDetailsActivity.this);
         }
     }
 
@@ -1991,7 +1985,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(ShopScrollDetailsActivity.this);
             }
         } else {
             showToast(ShopScrollDetailsActivity.this, "地址缺失");
@@ -2097,7 +2091,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 addGoodsToCar();
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(ShopScrollDetailsActivity.this);
         }
     }
 
@@ -2136,7 +2130,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             buyGoIt();
         } else {
-            getLoginStatus();
+            getLoginStatus(ShopScrollDetailsActivity.this);
         }
     }
 
@@ -2149,7 +2143,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 goCollectPro();
             }
         } else {
-            getLoginStatus();
+            getLoginStatus(ShopScrollDetailsActivity.this);
         }
     }
 

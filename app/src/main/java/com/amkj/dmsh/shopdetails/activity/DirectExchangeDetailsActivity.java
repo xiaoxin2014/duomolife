@@ -759,33 +759,33 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                     if (!TextUtils.isEmpty(orderDetailBean.getTotalScore())) {
                         String scoreTotal = String.format(getResources().getString(R.string.appraise_integral_score)
                                 , orderDetailBean.getTotalScore());
-                        tv_indent_border_first_gray.setText(scoreTotal);
+                        tv_indent_border_second_blue.setText(scoreTotal);
                         Pattern p = Pattern.compile(REGEX_NUM);
                         Link redNum = new Link(p);
                         //        @用户昵称
                         redNum.setTextColor(Color.parseColor("#ff5e5e"));
                         redNum.setUnderlined(false);
                         redNum.setHighlightAlpha(0f);
-                        LinkBuilder.on(tv_indent_border_first_gray)
+                        LinkBuilder.on(tv_indent_border_second_blue)
                                 .setText(scoreTotal)
                                 .addLink(redNum)
                                 .build();
                     } else {
-                        tv_indent_border_first_gray.setText(R.string.appraise_integral);
+                        tv_indent_border_second_blue.setText(R.string.appraise_integral);
                     }
-                    tv_indent_border_first_gray.setVisibility(View.VISIBLE);
-                    tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_APPRAISE);
-                    tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
-                    tv_indent_border_first_gray.setOnClickListener(this);
+                    tv_indent_border_second_blue.setVisibility(View.VISIBLE);
+                    tv_indent_border_second_blue.setTag(R.id.tag_first, PRO_APPRAISE);
+                    tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
+                    tv_indent_border_second_blue.setOnClickListener(this);
                 } else {
-                    tv_indent_border_first_gray.setVisibility(View.GONE);
+                    tv_indent_border_second_blue.setVisibility(View.GONE);
                 }
-                tv_indent_border_second_blue.setVisibility(View.VISIBLE);
-                tv_indent_border_second_blue.setText("发票详情");
+                tv_indent_border_first_gray.setVisibility(View.VISIBLE);
+                tv_indent_border_first_gray.setText("发票详情");
 //            发票详情
-                tv_indent_border_second_blue.setTag(R.id.tag_first, PRO_INVOICE);
-                tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
-                tv_indent_border_second_blue.setOnClickListener(this);
+                tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_INVOICE);
+                tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
+                tv_indent_border_first_gray.setOnClickListener(this);
             }
         } else {
             ll_indent_detail_bottom.setVisibility(GONE);

@@ -23,7 +23,6 @@ import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBea
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity.IndentInvoiceBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -41,13 +40,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
+;
 ;
 
 
@@ -117,17 +118,6 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
             directProductListAdapter.setEnableLoadMore(false);
         });
         communal_recycler.setAdapter(directProductListAdapter);
-        directProductListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                OrderProductInfoBean orderProductInfoBean = (OrderProductInfoBean) view.getTag();
-                if (orderProductInfoBean != null) {
-                    Intent intent = new Intent(DirectIndentInvoiceActivity.this, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(orderProductInfoBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
         if (orderDetailBean != null) {
             setOrderDetailBean(orderDetailBean);
         }
@@ -138,7 +128,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         lvHeaderView.tv_indent_invoice_orderID.setText("订单编号：" + getStrings(orderDetailBean.getNo()));
         lvHeaderView.tv_indent_invoice_orderTime.setText("下单时间：" + getStrings(orderDetailBean.getCreateTime()));
         lvHeaderView.tv_indent_invoice_header_type.setText(INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())));
-        lvFootView.tv_indent_direct_pay_price.setText("￥" + orderDetailBean.getPayAmount());
+        lvFootView.tv_indent_direct_pay_price.setText(getStringsChNPrice(DirectIndentInvoiceActivity.this,orderDetailBean.getPayAmount()));
         for (int i = 0; i < orderDetailBean.getGoodDetails().size(); i++) {
             GoodsDetailBean goodsDetailBean = orderDetailBean.getGoodDetails().get(i);
             for (int j = 0; j < goodsDetailBean.getOrderProductInfoList().size(); j++) {
@@ -154,7 +144,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
                 goodsBeanList.set(goodsBeanList.size() - 1, orderProductInfoBean);
             }
         }
-        directProductListAdapter.setNewData(goodsBeanList);
+        directProductListAdapter.notifyDataSetChanged();
     }
 
     @Override

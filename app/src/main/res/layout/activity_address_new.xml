@@ -47,6 +47,7 @@
                     android:hint="手机号"
                     android:textSize="@dimen/sc_mm_30"
                     android:id="@+id/et_address_mobile"
+                    android:inputType="phone"
                     android:textColorHint="@color/text_gray_hint_n"
                     android:textColor="@color/text_black_t"
                     android:paddingLeft="@dimen/gap_left"
@@ -56,7 +57,6 @@
                     android:gravity="center_vertical"
                     android:background="@color/white"
                     android:hint="所在地区"
-
                     android:textSize="@dimen/sc_mm_30"
                     android:id="@+id/tv_address_district"
                     android:textColorHint="@color/text_gray_hint_n"

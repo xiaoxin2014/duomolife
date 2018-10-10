@@ -257,7 +257,8 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         || productInfoBean.getPresentProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
                     preComProInfoBeanList.clear();
-                    if (productInfoBean.getPresentProductInfoList() != null && productInfoBean.getPresentProductInfoList().size() > 0) {
+                    if (productInfoBean.getPresentProductInfoList() != null
+                            && productInfoBean.getPresentProductInfoList().size() > 0) {
                         preComProInfoBeanList.addAll(productInfoBean.getPresentProductInfoList());
                     }
                     if (productInfoBean.getCombineProductInfoList() != null && productInfoBean.getCombineProductInfoList().size() > 0) {
@@ -338,9 +339,17 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
                     preComProInfoBeanList.clear();
 //                    发票只展示组合购商品
-                    if (orderProductInfoBean.getCombineProductInfoList() != null && orderProductInfoBean.getCombineProductInfoList().size() > 0) {
-                        for (int i = 0; i < orderProductInfoBean.getCombineProductInfoList().size(); i++) {
-                            CartProductInfoBean cartProductInfoBean = orderProductInfoBean.getCombineProductInfoList().get(i);
+                    if (orderProductInfoBean.getPresentProductInfoList() != null
+                            && orderProductInfoBean.getPresentProductInfoList().size() > 0) {
+                        for (CartProductInfoBean cartProductInfoBean:orderProductInfoBean.getPresentProductInfoList()) {
+                            cartProductInfoBean.setItemType(TYPE_0);
+                            preComProInfoBeanList.add(cartProductInfoBean);
+                        }
+                    }
+
+                    if (orderProductInfoBean.getCombineProductInfoList() != null
+                            && orderProductInfoBean.getCombineProductInfoList().size() > 0) {
+                        for (CartProductInfoBean cartProductInfoBean:orderProductInfoBean.getCombineProductInfoList()) {
                             cartProductInfoBean.setItemType(TYPE_0);
                             preComProInfoBeanList.add(cartProductInfoBean);
                         }

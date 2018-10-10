@@ -40,6 +40,7 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import cn.jzvd.JZVideoPlayer;
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -122,6 +123,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        AutoSize.autoConvertDensityOfGlobal(this);
 //        友盟统计
         MobclickAgent.onResume(this);
 //        腾讯分析

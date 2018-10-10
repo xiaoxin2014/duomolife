@@ -10,13 +10,13 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.NetLoadUtils;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
@@ -31,6 +31,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
@@ -105,7 +106,7 @@ public class DirectProductEvaluationActivity extends BaseActivity {
                         break;
                     case R.id.tv_eva_count:
                         goodsCommentBean = (GoodsCommentBean) view.getTag();
-                        if (goodsCommentBean != null) {
+                        if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
                             if (userId > 0) {
                                 setProductEvaLike(view);
                             } else {
@@ -213,9 +214,10 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        XUtil.Post(url, params, null);
+        XUtil.Post(url, params, new MyCallBack<String>(){});
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
-        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        tv_eva_like.setText(getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
 
     @OnClick(R.id.tv_life_back)

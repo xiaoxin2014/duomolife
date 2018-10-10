@@ -173,6 +173,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         webSettings.setUserAgentString(web_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
+        web_communal.setLayerType(View.LAYER_TYPE_HARDWARE,null);//开启硬件加速
 //        js交互
         web_communal.addJavascriptInterface(new JsData(DoMoLifeCommunalActivity.this), "JsToAndroid");
         web_communal.loadUrl(loadUrl);

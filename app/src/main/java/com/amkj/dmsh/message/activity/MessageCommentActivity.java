@@ -253,7 +253,6 @@ public class MessageCommentActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
             params.put("currentPage", page);
-            params.put("version", 2);
             NetLoadUtils.getQyInstance().loadNetDataPost(MessageCommentActivity.this, url
                     , params, new NetLoadUtils.NetLoadListener() {
                 @Override

@@ -264,7 +264,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                         break;
                     case R.id.tv_eva_count:
                         goodsCommentBean = (GoodsCommentBean) view.getTag();
-                        if (goodsCommentBean != null) {
+                        if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
                             if (userId > 0) {
                                 setProductEvaLike(view);
                             } else {
@@ -369,15 +369,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
-        });
+        XUtil.Post(url, params, new MyCallBack<String>() {});
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }

@@ -35,6 +35,7 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -270,6 +271,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        AutoSize.autoConvertDensityOfGlobal(getActivity());
 //       fragment标记页面的开始
         StatService.trackBeginPage(getActivity(), getClass().getName());
 //        友盟统计

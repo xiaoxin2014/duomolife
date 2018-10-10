@@ -83,6 +83,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -362,6 +363,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         tvEvaCount.setText(goodsCommentBean.getLikeNum() > 0
                 ? goodsCommentBean.getLikeNum() + "" : "赞");
         tvEvaCount.setSelected(goodsCommentBean.isFavor());
+        tvEvaCount.setTag(goodsCommentBean);
         tvEvaUserName.setText(getStrings(goodsCommentBean.getNickname()));
         if (!TextUtils.isEmpty(goodsCommentBean.getContent())) {
             tvDirectEvaluation.setVisibility(View.VISIBLE);
@@ -801,5 +803,37 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     , "积分商品"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId());
         }
+    }
+
+    @OnClick(R.id.tv_eva_count)
+    void evaFavorCount(View view){
+        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
+        if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
+            if (userId > 0) {
+                setProductEvaLike(view);
+            } else {
+                getLoginStatus(this);
+            }
+        }
+    }
+    private void setProductEvaLike(View view) {
+        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
+        TextView tv_eva_like = (TextView) view;
+        String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", goodsCommentBean.getId());
+        params.put("uid", userId);
+        XUtil.Post(url, params, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+        });
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        tv_eva_like.setSelected(!tv_eva_like.isSelected());
+        tv_eva_like.setText(getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
 }
