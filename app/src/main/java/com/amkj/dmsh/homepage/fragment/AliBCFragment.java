@@ -141,6 +141,8 @@ public class AliBCFragment extends BaseFragment {
         webSettings.setAllowFileAccess(true);
         //设置支持缩放
         webSettings.setBuiltInZoomControls(false);
+        //设置支持H5 DomStorage
+        webSettings.setDomStorageEnabled(true);
         web_fragment_communal.setWebChromeClient(new MyWebChromeClient());
         //加载需要显示的网页
         if (NetWorkUtils.checkNet(getActivity())) {

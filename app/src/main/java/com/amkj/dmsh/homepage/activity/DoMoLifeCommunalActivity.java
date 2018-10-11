@@ -152,6 +152,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         webSettings.setAllowFileAccess(true);
         //设置支持缩放
         webSettings.setBuiltInZoomControls(false);
+        //设置支持H5 DomStorage
+        webSettings.setDomStorageEnabled(true);
         web_communal.setWebChromeClient(new MyWebChromeClient()/*{
             @Override
             public void onProgressChanged(WebView view, int newProgress) {

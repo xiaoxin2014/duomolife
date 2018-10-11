@@ -175,9 +175,9 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     private Map<String, String> refundTypeMap = new HashMap<>();
     private DirectApplyRefundBean refundBean;
     public final String APPLY_TYPE = "服务类型*";
-    public final String APPLY_REASON = "退款原因*";
-    public final String APPLY_PRICE = "退款金额*";
+    public final String APPLY_REASON = "退款理由*";
     public final String REPAIR_CONTENT = "问题描述*";
+    public final String REFUND_CONTENT = "退款说明";
     private DirectProductListAdapter indentProAdapter;
     private List<DirectRefundProBean> proList = new ArrayList<>();
     //    退款类型
@@ -379,6 +379,19 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
 
     private void setRefundApplyData(RefundApplyBean refundApplyBean) {
 //        退款金额说明
+        String priceName;
+        if (refundApplyBean.getRefundIntegralPrice() > 0) {
+            float moneyPrice = getFloatNumber(refundApplyBean.getRefundPrice());
+            if (moneyPrice > 0) {
+                priceName = String.format(getResources().getString(R.string.integral_product_and_price)
+                        , refundApplyBean.getRefundIntegralPrice(), getStrings(refundApplyBean.getRefundPrice()));
+            } else {
+                priceName = String.format(getResources().getString(R.string.integral_indent_product_price)
+                        , refundApplyBean.getRefundIntegralPrice());
+            }
+        } else {
+            priceName = getStringsChNPrice(DirectApplyRefundActivity.this, refundApplyBean.getRefundPrice());
+        }
         if (!TextUtils.isEmpty(refundApplyBean.getRefundMsg())) {
             tv_dir_indent_apply_msg.setVisibility(VISIBLE);
             String refundMsg = refundApplyBean.getRefundMsg();
@@ -394,21 +407,8 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
         } else {
             tv_dir_indent_apply_msg.setVisibility(View.GONE);
             //        退款金额
-            String priceName;
-            if (refundApplyBean.getRefundIntegralPrice() > 0) {
-                float moneyPrice = getFloatNumber(refundApplyBean.getRefundPrice());
-                if (moneyPrice > 0) {
-                    priceName = String.format(getResources().getString(R.string.integral_product_and_price)
-                            , refundApplyBean.getRefundIntegralPrice(), getStrings(refundApplyBean.getRefundPrice()));
-                } else {
-                    priceName = String.format(getResources().getString(R.string.integral_indent_product_price)
-                            , refundApplyBean.getRefundIntegralPrice());
-                }
-            } else {
-                priceName = getStringsChNPrice(DirectApplyRefundActivity.this, refundApplyBean.getRefundPrice());
-            }
-            tv_dir_indent_apply_price.setText(("退款金额：" + priceName));
         }
+        tv_dir_indent_apply_price.setText(("退款金额：" + priceName));
 
         //使用迭代器，获取key
         if (refundApplyBean.getRefundType() != null) {
@@ -1012,7 +1012,7 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                             break;
                         default:
 //                            退款 退货退款
-                            tv_indent_reply_reason_tint.setText("退款说明");
+                            tv_indent_reply_reason_tint.setText(REFUND_CONTENT);
                             ll_refund_price.setVisibility(View.VISIBLE);
                             rel_repair_address.setVisibility(View.GONE);
                             break;

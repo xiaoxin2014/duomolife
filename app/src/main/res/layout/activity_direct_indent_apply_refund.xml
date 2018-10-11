@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:id="@+id/ll_refund_price"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/tv_dir_indent_apply_price"
@@ -77,15 +77,14 @@
                         android:layout_marginLeft="@dimen/gap_left"
                         android:lineSpacingExtra="@dimen/dimen_6_dp"
                         android:textColor="@color/text_gray_hint_n"
-                        android:textSize="@dimen/sc_mm_24"
-                        android:visibility="gone" />
+                        android:textSize="@dimen/sc_mm_24"/>
 
                     <TextView
                         android:id="@+id/tv_dir_indent_apply_reason"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/sc_mm_30"
-                        android:text="退款原因"
+                        android:text="退款理由"
                         android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_28" />
 
@@ -109,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sc_mm_30"
-                    android:text="问题描述"
+                    android:text="退款说明"
                     android:id="@+id/tv_indent_reply_reason_tint"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_28" />
