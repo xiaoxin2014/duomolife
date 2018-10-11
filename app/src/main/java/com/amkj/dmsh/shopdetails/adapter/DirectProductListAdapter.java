@@ -59,6 +59,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
+import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
@@ -413,7 +414,6 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         switch (type) {
             case INDENT_TYPE:
                 TextView tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);
-                tv_dir_indent_pro_status.setTextColor(context.getResources().getColor(R.color.text_login_gray_s));
                 FrameLayout fl_dir_indent_pro_status = helper.getView(R.id.fl_dir_indent_pro_status);
                 OrderListBean.GoodsBean goodsBean = (OrderListBean.GoodsBean) obj;
                 tv_dir_indent_pro_status.setEnabled(false);
@@ -433,8 +433,9 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 break;
             case INDENT_DETAILS_TYPE:
                 OrderProductInfoBean orderProductInfoBean = (OrderProductInfoBean) obj;
-                tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);
                 fl_dir_indent_pro_status = helper.getView(R.id.fl_dir_indent_pro_status);
+                tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);
+
                 if (orderProductInfoBean.getStatus() == 10) {
                     fl_dir_indent_pro_status.setVisibility(View.VISIBLE);
                     tv_dir_indent_pro_status.setEnabled(true);
@@ -478,6 +479,15 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 intent.putExtra("orderProductId", String.valueOf(cartProductInfoBean.getOrderProductId()));
                 intent.putExtra("orderRefundProductId", String.valueOf(cartProductInfoBean.getOrderRefundProductId()));
                 intent.putExtra(REFUND_TYPE, REFUND_TYPE);
+                context.startActivity(intent);
+            }
+        }else if(50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58){
+            if (cartProductInfoBean.getOrderRefundProductId() > 0) {
+                intent.setClass(context, DoMoRefundDetailActivity.class);
+                intent.putExtra("no", cartProductInfoBean.getOrderNo());
+                intent.putExtra("orderProductId", String.valueOf(cartProductInfoBean.getOrderProductId()));
+                intent.putExtra("orderRefundProductId", String.valueOf(cartProductInfoBean.getOrderRefundProductId()));
+                intent.putExtra(REFUND_TYPE, REFUND_REPAIR);
                 context.startActivity(intent);
             }
         } else if (cartProductInfoBean.getStatus() <= 40 && 30 <= cartProductInfoBean.getStatus()) {

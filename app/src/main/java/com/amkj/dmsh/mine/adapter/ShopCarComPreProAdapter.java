@@ -63,7 +63,7 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                             .setText(R.id.tv_cart_cp_price, ("￥" + getStrings(cartProductInfoBean.getPrice())))
                             .itemView.setTag(cartProductInfoBean);
                     if (!TextUtils.isEmpty(cartProductInfoBean.getIndentType())) {
-                        SetIndentProStatus(helper, cartProductInfoBean);
+                        setIndentProStatus(helper, cartProductInfoBean);
                     }
                 }
                 helper.setGone(R.id.tv_cart_com_pre_count, cartProductInfoBean.getCount() > 0)
@@ -94,7 +94,8 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
         }
     }
 
-    private void SetIndentProStatus(BaseViewHolder helper, CartProductInfoBean cartProductInfoBean) {
+    private void setIndentProStatus(BaseViewHolder helper, CartProductInfoBean cartProductInfoBean) {
+        TextView tv_indent_com_pre_pro_status = helper.getView(R.id.tv_indent_com_pre_pro_status);
         switch (cartProductInfoBean.getIndentType()) {
             case INDENT_TYPE:
                 if (cartProductInfoBean.getStatus() == 11 || cartProductInfoBean.getStatus() == 13) {
@@ -102,17 +103,23 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
                 } else if (cartProductInfoBean.getStatus() == -10 ||
                         cartProductInfoBean.getStatus() <= -26 && -40 <= cartProductInfoBean.getStatus()) {
-                    TextView tv_indent_com_pre_pro_status = helper.getView(R.id.tv_indent_com_pre_pro_status);
                     tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
                     tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
+                }else if (cartProductInfoBean.getStatus() == -10 ||
+                        cartProductInfoBean.getStatus() <= -30 && -40 <= cartProductInfoBean.getStatus()
+                        || 50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58) {
+                    tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
+                    tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
+                            INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
+                    tv_indent_com_pre_pro_status.setEnabled(true);
                     tv_indent_com_pre_pro_status.setSelected(true);
+                    helper.addOnClickListener(R.id.tv_indent_com_pre_pro_status).setTag(R.id.tv_indent_com_pre_pro_status, cartProductInfoBean);
                 } else {
                     helper.setGone(R.id.tv_indent_com_pre_pro_status, false);
                 }
                 break;
             case INDENT_DETAILS_TYPE:
-                TextView tv_indent_com_pre_pro_status = helper.getView(R.id.tv_indent_com_pre_pro_status);
                 if (cartProductInfoBean.getStatus() == 10) {
                     tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
                     tv_indent_com_pre_pro_status.setEnabled(true);
@@ -132,7 +139,8 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                     tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
                 } else if (cartProductInfoBean.getStatus() == -10 ||
-                        cartProductInfoBean.getStatus() <= -30 && -40 <= cartProductInfoBean.getStatus()) {
+                        cartProductInfoBean.getStatus() <= -30 && -40 <= cartProductInfoBean.getStatus()
+                        || 50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58) {
                     tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
                     tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");

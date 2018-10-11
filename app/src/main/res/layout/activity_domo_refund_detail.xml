@@ -86,7 +86,6 @@
                         android:textSize="@dimen/sc_mm_24" />
                 </LinearLayout>
             </RelativeLayout>
-
             <LinearLayout
                 android:id="@+id/ll_refund_logistic"
                 android:layout_width="match_parent"
@@ -97,47 +96,7 @@
                 android:showDividers="end"
                 android:visibility="gone">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/gap_left"
-                    android:paddingRight="@dimen/gap_right">
-
-                    <TextView
-                        android:id="@+id/tv_refund_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="收货地址:"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_28" />
-                    <TextView
-                        android:layout_toRightOf="@id/tv_refund_add"
-                        android:id="@+id/tv_repair_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingExtra="@dimen/sc_mm_8"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_28" />
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sc_mm_10"
-                        android:layout_toRightOf="@id/tv_refund_add"
-                        android:layout_below="@id/tv_repair_address"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/tv_repair_consignee_phone"
-                            android:layout_width="0px"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/text_black_t"
-                            android:layout_marginRight="@dimen/sc_mm_12"
-                            android:textSize="@dimen/sc_mm_28" />
-                        <include layout="@layout/layout_communal_copy_text_button"/>
-                    </LinearLayout>
-                </RelativeLayout>
+                <include layout="@layout/layout_indent_refund_address"/>
 
                 <TextView
                     android:id="@+id/tv_refund_logistic"
@@ -166,13 +125,14 @@
                     android:textColor="@color/text_black_t"
                     android:textColorHint="@color/text_gray_c"
                     android:textSize="@dimen/sc_mm_28" />
-
+                <!--为了兼容退货退款显示物流信息 所以加bottom-->
                 <TextView
                     android:id="@+id/tv_refund_logistic_no"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sc_mm_30"
                     android:paddingLeft="@dimen/gap_left"
+                    android:layout_marginBottom="@dimen/sc_mm_20"
                     android:text="物流单号*"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_28" />
@@ -185,7 +145,6 @@
                     android:layout_marginBottom="@dimen/sc_mm_40"
                     android:layout_marginLeft="@dimen/gap_left"
                     android:layout_marginRight="@dimen/gap_right"
-                    android:layout_marginTop="@dimen/sc_mm_20"
                     android:paddingLeft="@dimen/sc_mm_30"
                     android:background="@drawable/border_cir_4dp_gray_bg"
                     android:gravity="center_vertical"
@@ -226,10 +185,10 @@
                         android:textSize="@dimen/sc_mm_28" />
                 </RelativeLayout>
             </LinearLayout>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/rel_refund_product"
                 android:background="@drawable/border_bottom_line">
 
                 <include layout="@layout/layout_direct_indent_product_item" />

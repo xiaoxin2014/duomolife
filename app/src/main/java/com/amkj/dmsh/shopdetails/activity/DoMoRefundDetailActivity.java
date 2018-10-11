@@ -40,6 +40,7 @@ import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundGoodsAddressBean;
+import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.ExpressInfoBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundPayInfoBean;
 import com.amkj.dmsh.shopdetails.bean.RefundLogisticEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
@@ -62,7 +63,9 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static android.widget.LinearLayout.SHOW_DIVIDER_END;
+import static android.widget.LinearLayout.SHOW_DIVIDER_NONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -78,6 +81,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
+;
 ;
 
 /**
@@ -145,6 +149,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     //    售后类型数据
     @BindView(R.id.rv_refund_type)
     RecyclerView rv_refund_type;
+//    维修通过审核不需要展示
+    @BindView(R.id.rel_refund_product)
+    RelativeLayout rel_refund_product;
     //    底栏申请
     @BindView(R.id.ll_refund_bottom)
     LinearLayout ll_refund_bottom;
@@ -447,6 +454,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
      * @param refundDetailBean
      */
     private void setRefundDetailData(RefundDetailBean refundDetailBean) {
+        rel_refund_product.setVisibility(View.VISIBLE);
+        rv_refund_type.setVisibility(View.VISIBLE);
+        ll_refund_logistic.setShowDividers(SHOW_DIVIDER_END);
         tv_refund_detail_status.setText(getStrings(refundDetailBean.getStatusName()));
         if (refundDetailBean.getAutoUndoRefundGoodsTime() > 0) {
             setRefundTime(refundDetailBean);
@@ -503,6 +513,11 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                     tv_refund_second.setVisibility(View.GONE);
                     break;
                 case 51:
+//                    维修通过审核不需要展示商品信息跟售后信息
+                    rel_refund_product.setVisibility(View.GONE);
+                    rv_refund_type.setVisibility(View.GONE);
+                    ll_refund_logistic.setShowDividers(SHOW_DIVIDER_NONE);
+
                     ll_refund_bottom.setVisibility(View.VISIBLE);
                     tv_refund_first.setVisibility(View.VISIBLE);
                     tv_refund_first.setText("撤销申请");
@@ -588,6 +603,23 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
                         tv_repair_consignee_phone.setText((refundGoodsAddress.getRefundGoodsReceiver() + "\t" + refundGoodsAddress.getRefundGoodsPhone()));
                         repairAddress = getStrings(refundGoodsAddress.getRefundGoodsAddress()) + "\t" + refundGoodsAddress.getRefundGoodsReceiver() + "\t" + refundGoodsAddress.getRefundGoodsPhone();
                     }
+                }else if(refundDetailBean.getStatus() == -35){
+                    ll_refund_logistic.setVisibility(View.VISIBLE);
+                    tv_refund_logistic_sel.setVisibility(View.GONE);
+                    et_refund_logistic_no.setVisibility(View.GONE);
+                    rel_repair_logistic_fee.setVisibility(View.GONE);
+                    RefundGoodsAddressBean refundGoodsAddress = refundDetailBean.getRefundGoodsAddress();
+                    ExpressInfoBean expressInfo = refundDetailBean.getExpressInfo();
+                    if (refundGoodsAddress != null) {
+                        tv_refund_address.setText(getStrings(refundGoodsAddress.getRefundGoodsAddress()));
+                        tv_repair_consignee_phone.setText((refundGoodsAddress.getRefundGoodsReceiver() + "\t" + refundGoodsAddress.getRefundGoodsPhone()));
+                        repairAddress = getStrings(refundGoodsAddress.getRefundGoodsAddress()) + "\t" + refundGoodsAddress.getRefundGoodsReceiver() + "\t"
+                                + refundGoodsAddress.getRefundGoodsPhone();
+                    }
+                    if(expressInfo!=null){
+                        tv_refund_logistic.setText(getString(R.string.refund_pass_express_company,getStrings(expressInfo.getExpressCompany())));
+                        tv_refund_logistic_no.setText(getString(R.string.refund_pass_express_no,getStrings(expressInfo.getExpressNo())));
+                    }
                 } else {
                     ll_refund_logistic.setVisibility(View.GONE);
                 }
@@ -668,7 +700,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
      */
     private void setRefundTime(final RefundDetailBean refundDetailBean) {
         //            创建时间加倒计时间 大于等于当前时间 展示倒计时
-        if (!isEndOrStartTimeAddSeconds(refundDetailBean.getUpdateTime()
+        if (isEndOrStartTimeAddSeconds(refundDetailBean.getUpdateTime()
                 , refundDetailBean.getCurrentTime()
                 , refundDetailBean.getAutoUndoRefundGoodsTime())) {
             setReFundTimeDown(refundDetailBean);

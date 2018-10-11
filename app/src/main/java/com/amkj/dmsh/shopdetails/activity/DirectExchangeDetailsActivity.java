@@ -397,6 +397,8 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             }
         });
     }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -505,6 +507,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             }
         }
         getConstant();
+        setIntentStatus(indentInfoDetailBean);
         if (!TextUtils.isEmpty(infoDetailEntity.getCurrentTime()) && goodsBeanList.size() > 0) {
             final OrderProductInfoBean orderProductInfoBean = goodsBeanList.get(0);
             orderProductInfoBean.setCurrentTime(infoDetailEntity.getCurrentTime());
@@ -513,7 +516,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             goodsBeanList.set(0, orderProductInfoBean);
             setTimeDown(orderProductInfoBean);
 //            创建时间加倒计时间 大于等于当前时间 展示倒计时
-            if (!isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
+            if (isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
                     , orderProductInfoBean.getCurrentTime()
                     , orderProductInfoBean.getSecond())) {
                 constantMethod.createSchedule();
@@ -537,7 +540,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
  */
         lvHeaderView.img_skip_address.setVisibility(GONE);
         lvHeaderView.tv_indent_detail_status.setText(getStrings(INDENT_PRO_STATUS.get(String.valueOf(statusCode))));
-        setIntentStatus(indentInfoDetailBean);
 //        收件人名字
         lvHeaderView.tv_consignee_name.setText(orderDetailBean.getConsignee());
 //        收件人手机号码
@@ -1484,7 +1486,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 }
                 lvHeaderView.cv_countdownTime_direct.updateShow(dateCreate.getTime() + overTime
                         - dateCurrent.getTime());
-                if (!isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
+                if (isEndOrStartTimeAddSeconds(orderProductInfoBean.getOrderCreateTime()
                         , orderProductInfoBean.getCurrentTime()
                         , orderProductInfoBean.getSecond())) {
                     lvHeaderView.cv_countdownTime_direct.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
@@ -1496,6 +1498,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                     });
                 } else {
                     lvHeaderView.cv_countdownTime_direct.setOnCountdownEndListener(null);
+                    lvHeaderView.ll_direct_count_time.setVisibility(GONE);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

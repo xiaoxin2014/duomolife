@@ -149,7 +149,7 @@
                         android:paddingLeft="@dimen/sc_mm_15"
                         android:paddingRight="@dimen/sc_mm_15"
                         android:paddingTop="@dimen/sc_mm_10"
-                        android:textColor="@color/sel_indent_blue_z_gray_n"
+                        android:textColor="@color/text_gray_hint_n"
                         android:textSize="@dimen/sc_mm_28"
                         android:visibility="visible" />
                 </FrameLayout>

@@ -110,7 +110,7 @@ public class AppUpdateUtils {
                                     if (appVersionBean.getShowPop() == 1) {
                                         openDialog(appVersionBean,false);
                                     }
-                                } else if (!isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
+                                } else if (isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
                                     setAppUpdateData(appVersionEntity, sharedPreferences);
                                     openDialog(appVersionBean,false);
                                 }

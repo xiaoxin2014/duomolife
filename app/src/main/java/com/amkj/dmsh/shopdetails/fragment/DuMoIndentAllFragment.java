@@ -24,14 +24,18 @@ import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
+import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
+import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
+import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -70,6 +74,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
+import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
@@ -201,8 +206,40 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                         cancelOrderDialog.show();
                         break;
                     case CANCEL_PAY_ORDER:
-                        intent.setClass(getActivity(), DirectExchangeDetailsActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
+                        DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
+                        refundBean.setType(3);
+                        refundBean.setOrderNo(orderListBean.getNo());
+                        List<DirectRefundProBean> directProList = new ArrayList<>();
+                        List<CartProductInfoBean> cartProductInfoList;
+                        DirectRefundProBean directRefundProBean;
+                        for (int i = 0; i < orderListBean.getGoods().size(); i++) {
+                            GoodsBean goodsBean = orderListBean.getGoods().get(i);
+                            cartProductInfoList = new ArrayList<>();
+                            directRefundProBean = new DirectRefundProBean();
+                            directRefundProBean.setId(goodsBean.getId());
+                            directRefundProBean.setOrderProductId(goodsBean.getOrderProductId());
+                            directRefundProBean.setCount(goodsBean.getCount());
+                            directRefundProBean.setName(goodsBean.getName());
+                            directRefundProBean.setPicUrl(goodsBean.getPicUrl());
+                            directRefundProBean.setSaleSkuValue(goodsBean.getSaleSkuValue());
+                            directRefundProBean.setPrice(goodsBean.getPrice());
+                            if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
+                                cartProductInfoList.addAll(goodsBean.getPresentProductInfoList());
+                            }
+                            if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
+                                cartProductInfoList.addAll(goodsBean.getCombineProductInfoList());
+                            }
+                            if (cartProductInfoList.size() > 0) {
+                                directRefundProBean.setCartProductInfoList(cartProductInfoList);
+                            }
+                            directProList.add(directRefundProBean);
+                        }
+                        refundBean.setDirectRefundProList(directProList);
+                        intent.setClass(getActivity(), DirectApplyRefundActivity.class);
+                        intent.putExtra(REFUND_TYPE, REFUND_TYPE);
+                        bundle = new Bundle();
+                        bundle.putParcelable("refundPro", refundBean);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                         break;
                     case PAY:
@@ -235,7 +272,7 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
 //                        评价
                         directAppraisePassList.clear();
                         for (int i = 0; i < orderListBean.getGoods().size(); i++) {
-                            OrderListBean.GoodsBean goodBean = orderListBean.getGoods().get(i);
+                            GoodsBean goodBean = orderListBean.getGoods().get(i);
                             if (goodBean.getCombineProductInfoList() != null
                                     && goodBean.getCombineProductInfoList().size() > 0) {
                                 for (int k = 0; k < goodBean.getCombineProductInfoList().size(); k++) {
@@ -349,21 +386,21 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                     showToast(getActivity(), msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
         });
     }

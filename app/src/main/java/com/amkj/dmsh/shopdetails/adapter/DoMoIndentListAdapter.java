@@ -159,13 +159,15 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         if (0 <= orderListBean.getStatus() && orderListBean.getStatus() < 10) {
             //            展示倒计时
             if (!TextUtils.isEmpty(orderListBean.getCurrentTime())
-                    &&!isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
+                    &&isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
                     , orderListBean.getCurrentTime()
                     , orderListBean.getSecond())) {
+                intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
                 intentHView.ll_direct_count_time.setVisibility(View.VISIBLE);
                 sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), intentHView);
                 setCountTime(intentHView, orderListBean);
             } else {
+                intentHView.tv_direct_indent_create_time.setVisibility(View.VISIBLE);
                 intentHView.ll_direct_count_time.setVisibility(View.GONE);
             }
         }
@@ -188,8 +190,6 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         if (-20 <= statusCode && statusCode <= -10 || (-26 <= statusCode&& statusCode<= -24)) {
             intentFView.ll_indent_bottom.setVisibility(View.GONE);
         }else if (0 <= statusCode && statusCode < 10) {
-//          头部状态栏
-            intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
 //          底栏 件数
             intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
             intentFView.tv_border_second_blue.setVisibility(View.VISIBLE);
@@ -327,7 +327,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (!isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
+        if (isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
                 , orderListBean.getCurrentTime()
                 , orderListBean.getSecond())) {
             holder.cv_countdownTime_direct.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
