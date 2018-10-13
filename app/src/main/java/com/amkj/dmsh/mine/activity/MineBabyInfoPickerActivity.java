@@ -104,8 +104,8 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
 
         communal_recycler.setLayoutManager(new GridLayoutManager(MineBabyInfoPickerActivity.this, 3));
         mineBabyInfoAdapter = new MineBabyInfoAdapter(MineBabyInfoPickerActivity.this, babyBeanList);
-        View headerView = LayoutInflater.from(MineBabyInfoPickerActivity.this).inflate(R.layout.layout_mine_baby_header, null);
-        View footView = LayoutInflater.from(MineBabyInfoPickerActivity.this).inflate(R.layout.layout_mine_baby_foot, null);
+        View headerView = LayoutInflater.from(MineBabyInfoPickerActivity.this).inflate(R.layout.layout_mine_baby_header, null,false);
+        View footView = LayoutInflater.from(MineBabyInfoPickerActivity.this).inflate(R.layout.layout_mine_baby_foot, null,false);
         mineBabyFootView = new MineBabyFootView();
         ButterKnife.bind(mineBabyFootView, footView);
         mineBabyInfoAdapter.addHeaderView(headerView);
@@ -123,7 +123,7 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
             babyBeanList.set(babyBean.getBaby_status() - 1, babyNewBean);
             babyStatus = babyBean.getBaby_status();
             setFootViewShow();
-            mineBabyFootView.tv_mine_baby_foot_sex.setText(mineBabySexList.get(babyBean.getSex() > 0 ? 0 : 1).getPickerViewText());
+            mineBabyFootView.tv_mine_baby_foot_sex.setText(mineBabySexList.get(babyBean.getSex() > 0 ? 1 : 0).getPickerViewText());
             mineBabyFootView.tv_mine_baby_time.setText(getStrings(babyBean.getBirthday()));
         } else {
             BabyBean babyBean = babyBeanList.get(0);
@@ -382,7 +382,7 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
                     //因为系统Calendar的月份是从0-11的,所以如果是调用Calendar的set方法来设置时间,月份的范围也要是从0-11
                     Calendar selectedDate = Calendar.getInstance();
                     Calendar startDate = Calendar.getInstance();
-                    startDate.set(startDate.get(Calendar.YEAR) - 18, 0, 1);
+                    startDate.set(startDate.get(Calendar.YEAR) - 30, 0, 1);
                     Calendar endDate = Calendar.getInstance();
                     //时间选择器
                     //选中事件回调

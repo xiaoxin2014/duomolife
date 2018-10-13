@@ -13,12 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
@@ -58,6 +56,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
@@ -79,20 +78,11 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     private final String type;
     private final Context context;
     private List<CartProductInfoBean> preComProInfoBeanList = new ArrayList<>();
-    private int uid;
 
     public DirectProductListAdapter(Context context, List list, String type) {
         super(R.layout.layout_direct_indent_product_item, list);
         this.context = context;
         this.type = type;
-        getUserId();
-    }
-
-    private void getUserId() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(context);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        }
     }
 
     @Override
@@ -136,7 +126,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                             preComProInfoBeanList.add(cartProductInfoBean);
                         }
                     }
-                    setComPreData(helper, preComProInfoBeanList, true, true, true);
+                    setComPreData(helper, preComProInfoBeanList, true, true, false);
                 } else {
                     helper.setGone(R.id.rel_indent_com_pre_pro, false);
                 }
@@ -368,7 +358,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
      * @param helper
      * @param presentProductInfoBeanList 组合赠品集合
      * @param isParentClick              是否可点击父级跳转
-     * @param isChildrenClick            是否可点击父子控件跳转
+     * @param isChildrenClick            是否可点击子控件跳转
      */
     private void setComPreData(BaseViewHolder helper, List<CartProductInfoBean> presentProductInfoBeanList
             , boolean isParentClick, final boolean isSkipIndentDetail, boolean isChildrenClick) {
@@ -414,6 +404,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         switch (type) {
             case INDENT_TYPE:
                 TextView tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);
+                tv_dir_indent_pro_status.setBackground(null);
                 FrameLayout fl_dir_indent_pro_status = helper.getView(R.id.fl_dir_indent_pro_status);
                 OrderListBean.GoodsBean goodsBean = (OrderListBean.GoodsBean) obj;
                 tv_dir_indent_pro_status.setEnabled(false);
@@ -516,11 +507,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     }
 
     private void requestRefundData(final CartProductInfoBean cartProductInfoBean) {
-        getUserId();
         String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND_CHECK;
         Map<String, Object> params = new HashMap<>();
         params.put("no", cartProductInfoBean.getOrderNo());
-        params.put("userId", uid);
+        params.put("userId", userId);
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", cartProductInfoBean.getId());

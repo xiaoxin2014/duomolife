@@ -352,10 +352,9 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
             } else {
                 //控制时间范围(如果不设置范围，则使用默认时间1900-2100年，此段代码可注释)
                 //因为系统Calendar的月份是从0-11的,所以如果是调用Calendar的set方法来设置时间,月份的范围也要是从0-11
-                Calendar selectedDate = Calendar.getInstance();
+                Calendar currentTime = Calendar.getInstance();
                 Calendar startDate = Calendar.getInstance();
-                startDate.set(startDate.get(Calendar.YEAR) - 48, 0, 1);
-                Calendar endDate = Calendar.getInstance();
+                startDate.set(1900, 0, 1);
                 //时间选择器
                 //选中事件回调
                 // 这里回调过来的v,就是show()方法里面所添加的 View 参数，如果show的时候没有添加参数，v则为null
@@ -398,8 +397,8 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
                         .setDividerColor(Color.parseColor("#666666"))
                         .setContentTextSize(24)
                         .setBackgroundId(0x00FFFFFF)
-                        .setDate(selectedDate)
-                        .setRangDate(startDate, endDate)
+                        .setDate(currentTime)
+                        .setRangDate(startDate, currentTime)
                         .setOutSideCancelable(false)
                         .setLayoutRes(R.layout.mine_baby_date_custom, new CustomListener() {
                             @Override

@@ -16,6 +16,7 @@ import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
@@ -172,6 +173,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 communal_recycler_wrap.setNestedScrollingEnabled(false);
                 FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
                 flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
+                flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP);
                 communal_recycler_wrap.setLayoutManager(flexboxLayoutManager);
                 CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);
                 dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));

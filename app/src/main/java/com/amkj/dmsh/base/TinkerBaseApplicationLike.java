@@ -230,10 +230,11 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             @Override
             public void run() {
                 initTotalAction();
+                //        oss初始化
+                initOSS();
             }
         });
-//        oss初始化
-        initOSS();
+
         // 初始化xUtils
         x.Ext.init(getApplication());
         //shareSDK

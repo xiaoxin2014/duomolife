@@ -126,8 +126,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRO_INVOICE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
 ;
 
@@ -337,6 +340,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                         if (orderProductInfoBean.getCombineProductInfoList() != null
                                 && orderProductInfoBean.getCombineProductInfoList().size() > 0) {
                             directRefundProBean.setCartProductInfoList(orderProductInfoBean.getCombineProductInfoList());
+                        }
+                        if (orderProductInfoBean.getPresentProductInfoList() != null
+                                && orderProductInfoBean.getPresentProductInfoList().size() > 0) {
+                            directRefundProBean.setCartProductInfoList(orderProductInfoBean.getPresentProductInfoList());
                         }
                         List<DirectRefundProBean> directProList = new ArrayList<>();
                         directProList.add(directRefundProBean);
@@ -653,42 +660,65 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             tv_indent_border_second_blue.setTag(R.id.tag_first, BUY_AGAIN);
             tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
             tv_indent_border_second_blue.setOnClickListener(this);
-        } else if (10 == statusCode) {
-            //            取消订单 待发货
-            for (int i = 0; i < goodDetails.size(); i++) {
-                List<OrderProductInfoBean> orderProductInfoList = goodDetails.get(i).getOrderProductInfoList();
-                for (int j = 0; j < orderProductInfoList.size(); j++) {
-                    int status = orderProductInfoList.get(j).getStatus();
-                    if (status == 10) {
-                        ll_indent_detail_bottom.setVisibility(View.VISIBLE);
-                        break;
+        } else if (10 <= statusCode && statusCode < 20) {
+            if (10 == statusCode) {
+                //            取消订单 待发货
+                boolean isRefund = true;
+                for (int i = 0; i < goodDetails.size(); i++) {
+                    List<OrderProductInfoBean> orderProductInfoList = goodDetails.get(i).getOrderProductInfoList();
+                    for (int j = 0; j < orderProductInfoList.size(); j++) {
+                        int status = orderProductInfoList.get(j).getStatus();
+                        if (status != 10) {
+                            isRefund = false;
+                            break;
+                        }
                     }
+                }if (isRefund) {
+//            取消订单
+                    ll_indent_detail_bottom.setVisibility(View.VISIBLE);
+                    tv_indent_border_second_blue.setVisibility(GONE);
+                    tv_indent_border_first_gray.setVisibility(View.VISIBLE);
+                    tv_indent_border_first_gray.setText("取消订单");
+                    tv_indent_border_first_gray.setTag(R.id.tag_first, CANCEL_PAY_ORDER);
+                    tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
+                    tv_indent_border_first_gray.setOnClickListener(this);
+                } else {
+                    //            不可取消订单
+                    ll_indent_detail_bottom.setVisibility(View.GONE);
+                    tv_indent_border_second_blue.setVisibility(GONE);
+                    tv_indent_border_first_gray.setVisibility(View.GONE);
                 }
+
+            } else if (statusCode == 14) {
+                ll_indent_detail_bottom.setVisibility(View.VISIBLE);
+                tv_indent_border_second_blue.setVisibility(View.VISIBLE);
+                tv_indent_border_first_gray.setVisibility(View.GONE);
+                tv_indent_border_second_blue.setText("邀请参团");
+                tv_indent_border_second_blue.setTag(R.id.tag_first, INVITE_GROUP);
+                tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
+                tv_indent_border_second_blue.setOnClickListener(this);
+            } else if (12 == statusCode) {
+                ll_indent_detail_bottom.setVisibility(View.VISIBLE);
+                tv_indent_border_second_blue.setVisibility(View.GONE);
+                tv_indent_border_first_gray.setVisibility(View.VISIBLE);
+                tv_indent_border_first_gray.setText("查看物流");
+                tv_indent_border_first_gray.setTag(R.id.tag_first, LITTER_CONSIGN);
+                tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
+                tv_indent_border_first_gray.setOnClickListener(this);
+            } else {
+//            不可取消订单
+                ll_indent_detail_bottom.setVisibility(View.GONE);
+                tv_indent_border_second_blue.setVisibility(View.GONE);
+                tv_indent_border_first_gray.setVisibility(View.GONE);
             }
-            tv_indent_border_second_blue.setVisibility(GONE);
-            tv_indent_border_first_gray.setVisibility(View.VISIBLE);
-            tv_indent_border_first_gray.setText("取消订单");
-            tv_indent_border_first_gray.setTag(R.id.tag_first, CANCEL_PAY_ORDER);
-            tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
-            tv_indent_border_first_gray.setOnClickListener(this);
-        } else if (statusCode == 14) {
-            ll_indent_detail_bottom.setVisibility(View.VISIBLE);
-            tv_indent_border_second_blue.setVisibility(View.VISIBLE);
-            tv_indent_border_first_gray.setVisibility(View.GONE);
-            tv_indent_border_second_blue.setText("邀请参团");
-            tv_indent_border_second_blue.setTag(R.id.tag_first, INVITE_GROUP);
-            tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
-            tv_indent_border_second_blue.setOnClickListener(this);
-        } else if (12 == statusCode) {
-            ll_indent_detail_bottom.setVisibility(View.VISIBLE);
-            tv_indent_border_second_blue.setVisibility(View.GONE);
-            tv_indent_border_first_gray.setVisibility(View.VISIBLE);
-            tv_indent_border_first_gray.setText("查看物流");
-            tv_indent_border_first_gray.setTag(R.id.tag_first, LITTER_CONSIGN);
-            tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
-            tv_indent_border_first_gray.setOnClickListener(this);
-        } else if (statusCode == -10 || 10 < statusCode && statusCode < 20) {
-            ll_indent_detail_bottom.setVisibility(GONE);
+            if(orderDetailBean.isWaitDeliveryFlag()){
+                ll_indent_detail_bottom.setVisibility(View.VISIBLE);
+                tv_indent_border_second_blue.setVisibility(View.VISIBLE);
+                tv_indent_border_second_blue.setText("提醒发货");
+                tv_indent_border_second_blue.setTag(R.id.tag_first, REMIND_DELIVERY);
+                tv_indent_border_second_blue.setTag(R.id.tag_second, orderDetailBean);
+                tv_indent_border_second_blue.setOnClickListener(this);
+            }
         } else if (statusCode == -25 || statusCode == -26 || statusCode == -24) {//交易关闭 拼团失败 -》删除订单
             ll_indent_detail_bottom.setVisibility(View.VISIBLE);
             tv_indent_border_second_blue.setVisibility(GONE);
@@ -835,6 +865,12 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                 cancelOrderDialog = new AlertView(alertSettingBean, DirectExchangeDetailsActivity.this, DirectExchangeDetailsActivity.this);
                 cancelOrderDialog.setCancelable(true);
                 cancelOrderDialog.show();
+                break;
+            case REMIND_DELIVERY:
+                if(loadHud!=null){
+                    loadHud.show();
+                }
+                setRemindDelivery(orderDetailBean);
                 break;
             //    取消订单 待发货
             case CANCEL_PAY_ORDER:
@@ -1512,5 +1548,49 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
         if (constantMethod == null) {
             constantMethod = new ConstantMethod();
         }
+    }
+
+    /**
+     * 设置催发货
+     * @param orderDetailBean
+     */
+    private void setRemindDelivery(OrderDetailBean orderDetailBean) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        params.put("orderNo",orderDetailBean.getNo());
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, BASE_URL+Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        orderDetailBean.setWaitDeliveryFlag(false);
+                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
+                    }else{
+                        showToast(mAppContext,requestStatus.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.do_failed);
+            }
+        });
     }
 }

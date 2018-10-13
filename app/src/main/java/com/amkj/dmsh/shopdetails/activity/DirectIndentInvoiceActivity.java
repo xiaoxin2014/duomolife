@@ -128,7 +128,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         lvHeaderView.tv_indent_invoice_orderID.setText("订单编号：" + getStrings(orderDetailBean.getNo()));
         lvHeaderView.tv_indent_invoice_orderTime.setText("下单时间：" + getStrings(orderDetailBean.getCreateTime()));
         lvHeaderView.tv_indent_invoice_header_type.setText(INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())));
-        lvFootView.tv_indent_direct_pay_price.setText(getStringsChNPrice(DirectIndentInvoiceActivity.this,orderDetailBean.getPayAmount()));
+        lvFootView.tv_indent_direct_pay_price.setText(getStringsChNPrice(DirectIndentInvoiceActivity.this, orderDetailBean.getPayAmount()));
         for (int i = 0; i < orderDetailBean.getGoodDetails().size(); i++) {
             GoodsDetailBean goodsDetailBean = orderDetailBean.getGoodDetails().get(i);
             for (int j = 0; j < goodsDetailBean.getOrderProductInfoList().size(); j++) {
@@ -206,25 +206,45 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
     }
 
     private void setInvoiceInfo(IndentInvoiceBean indentInvoiceBean) {
-        if (indentInvoiceBean.getInvoice().getStatus() == 2) {
-            lvFootView.ll_draw_up_invoice.setVisibility(View.VISIBLE);
-            lvFootView.ll_wait_no_invoice.setVisibility(View.GONE);
-            lvFootView.tv_indent_invoice_status.setText(indentInvoiceBean.getStatus().get(indentInvoiceBean.getInvoice().getStatus() + ""));
-            lvFootView.tv_indent_invoice_type.setText(indentInvoiceBean.getType().get(indentInvoiceBean.getInvoice().getType() + ""));
-            lvFootView.tv_indent_invoice_detail.setText(getStrings(indentInvoiceBean.getInvoice().getContent()));
-            lvFootView.tv_indent_invoice_title.setText(getStrings(indentInvoiceBean.getInvoice().getTitle()));
-            lvFootView.tv_indent_invoice_status_check.setTag(indentInvoiceBean);
-        } else {
+        IndentInvoiceBean.InvoiceBean invoiceBean = indentInvoiceBean.getInvoice();
+        Map<String, String> invoiceBeanStatus = indentInvoiceBean.getStatus();
+        Map<String, String> invoiceBeanType = indentInvoiceBean.getType();
+        if (invoiceBean == null || invoiceBeanStatus == null || invoiceBeanType == null) {
             lvFootView.ll_draw_up_invoice.setVisibility(View.GONE);
-            lvFootView.ll_wait_no_invoice.setVisibility(View.VISIBLE);
-            if (indentInvoiceBean.getInvoice().getStatus() == 1) {
-                lvFootView.tv_indent_w_n_invoice_status_check.setVisibility(View.GONE);
-                lvFootView.tv_indent_w_n_invoice_status.setSelected(true);
-            } else {
-                lvFootView.tv_indent_w_n_invoice_status_check.setVisibility(View.VISIBLE);
-            }
-            lvFootView.tv_indent_w_n_invoice_status_check.setTag(indentInvoiceBean);
-            lvFootView.tv_indent_w_n_invoice_status.setText(indentInvoiceBean.getStatus().get(indentInvoiceBean.getInvoice().getStatus() + ""));
+            return;
+        }
+        switch (invoiceBean.getStatus()) {
+            case 1:
+            case 2:
+                lvFootView.ll_indent_invoice_type.setVisibility(View.VISIBLE);
+                lvFootView.ll_indent_invoice_detail.setVisibility(View.VISIBLE);
+                lvFootView.ll_indent_invoice_title.setVisibility(View.VISIBLE);
+                lvFootView.tv_indent_invoice_type.setText(invoiceBeanType.get(String.valueOf(invoiceBean.getType())));
+                lvFootView.tv_indent_invoice_detail.setText(getStrings(invoiceBean.getContent()));
+                lvFootView.tv_indent_invoice_title.setText(getStrings(invoiceBean.getTitle()));
+                if (invoiceBean.getStatus() == 2) {
+                    lvFootView.tv_indent_invoice_status.setText(invoiceBeanStatus.get(String.valueOf(invoiceBean.getStatus())));
+                    lvFootView.tv_indent_invoice_status_check.setText("(下载)");
+                    lvFootView.tv_indent_invoice_status_check.setEnabled(true);
+                    lvFootView.tv_indent_invoice_status_check.setTextColor(getResources().getColor(R.color.promotion_blue));
+                    lvFootView.tv_indent_invoice_status_check.setTag(indentInvoiceBean);
+                } else {
+                    lvFootView.tv_indent_invoice_status.setText("");
+                    lvFootView.tv_indent_invoice_status_check.setEnabled(false);
+                    lvFootView.tv_indent_invoice_status_check.setTextColor(getResources().getColor(R.color.text_b_red_color));
+                    lvFootView.tv_indent_invoice_status_check.setText(invoiceBeanStatus.get(String.valueOf(invoiceBean.getStatus())));
+                }
+                break;
+            default:
+                lvFootView.ll_indent_invoice_type.setVisibility(View.GONE);
+                lvFootView.ll_indent_invoice_detail.setVisibility(View.GONE);
+                lvFootView.ll_indent_invoice_title.setVisibility(View.GONE);
+                lvFootView.tv_indent_invoice_status_check.setEnabled(true);
+                lvFootView.tv_indent_invoice_status_check.setTag(indentInvoiceBean);
+                lvFootView.tv_indent_invoice_status_check.setTextColor(getResources().getColor(R.color.green_base));
+                lvFootView.tv_indent_invoice_status_check.setText("(去开发票)");
+                lvFootView.tv_indent_invoice_status.setText(invoiceBeanStatus.get(String.valueOf(invoiceBean.getStatus())));
+                break;
         }
     }
 
@@ -257,30 +277,26 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         @BindView(R.id.tv_indent_invoice_status)
         TextView tv_indent_invoice_status;
         //        发票类型
+        @BindView(R.id.ll_indent_invoice_type)
+        LinearLayout ll_indent_invoice_type;
         @BindView(R.id.tv_indent_invoice_type)
         TextView tv_indent_invoice_type;
         //        发票内容
+        @BindView(R.id.ll_indent_invoice_detail)
+        LinearLayout ll_indent_invoice_detail;
         @BindView(R.id.tv_indent_invoice_detail)
         TextView tv_indent_invoice_detail;
         //        发票抬头
+        @BindView(R.id.ll_indent_invoice_title)
+        LinearLayout ll_indent_invoice_title;
         @BindView(R.id.tv_indent_invoice_title)
         TextView tv_indent_invoice_title;
         //        查看
         @BindView(R.id.tv_indent_invoice_status_check)
         TextView tv_indent_invoice_status_check;
 
-        //        未开 待开
-        @BindView(R.id.ll_wait_no_invoice)
-        LinearLayout ll_wait_no_invoice;
-        //        发票状态
-        @BindView(R.id.tv_indent_w_n_invoice_status)
-        TextView tv_indent_w_n_invoice_status;
-        //        查看 未开
-        @BindView(R.id.tv_indent_w_n_invoice_status_check)
-        TextView tv_indent_w_n_invoice_status_check;
-
         //        发票查看
-        @OnClick({R.id.tv_indent_invoice_status_check, R.id.tv_indent_w_n_invoice_status_check})
+        @OnClick({R.id.tv_indent_invoice_status_check})
         void checkInvoice(View view) {
             IndentInvoiceBean indentInvoiceBean = (IndentInvoiceBean) view.getTag();
             if (indentInvoiceBean != null) {

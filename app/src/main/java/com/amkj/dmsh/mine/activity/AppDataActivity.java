@@ -3,9 +3,8 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,10 +20,8 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.FileCacheUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
@@ -53,7 +50,7 @@ import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
  * Created by atd48 on 2016/8/18.
  * app资料配置
  */
-public class AppDataActivity extends BaseActivity implements OnAlertItemClickListener {
+public class AppDataActivity extends BaseActivity{
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tl_normal_bar)
@@ -72,11 +69,12 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     @BindView(R.id.tv_set_clear_cache)
     TextView tv_set_clear_cache;
     private int uid;
-    private AlertView exitAccount;
     private AddressInfoBean addressInfoBean;
     private String Img_PATH;
     private List<File> files = new ArrayList<>();
     private boolean isPause;
+    private AlertDialogHelper alertDialogHelper;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_persional_data_setting;
@@ -160,19 +158,29 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
     //退出登录
     @OnClick(R.id.tv_set_account_exit)
     void offLine(View view) {
-        if (exitAccount == null) {
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("确定");
-            alertData.setFirstDet(false);
-            alertData.setMsg("确定要退出当前账号？");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            exitAccount = new AlertView(alertSettingBean, this, this);
-            exitAccount.setCancelable(true);
+        if(alertDialogHelper==null){
+            alertDialogHelper = new AlertDialogHelper(AppDataActivity.this);
+            alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("确定要退出当前账号？").setCancelText("取消").setConfirmText("确定")
+                    .setConfirmTextColor(getResources().getColor(R.color.text_login_gray_s));
+            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    NEW_USER_DIALOG = true;
+                    savePersonalInfoCache(AppDataActivity.this,null);
+                    showToast(AppDataActivity.this, "注销成功");
+                    exitNewTaoBaoAccount();
+//        清除账号 修改我的页面
+                    finish();
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
         }
-        exitAccount.show();
+        alertDialogHelper.show();
     }
 
     private void isLoginStatus() {
@@ -183,19 +191,6 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
             uid = 0;
             ll_mine_personal.setVisibility(View.GONE);
             tv_set_account_exit.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == exitAccount && position != AlertView.CANCELPOSITION) {
-            NEW_USER_DIALOG = true;
-            savePersonalInfoCache(AppDataActivity.this,new SavePersonalInfoBean(false));
-            showToast(this, "注销成功");
-            exitNewTaoBaoAccount();
-//            exitOldTaoBaoAccount();
-//        清除账号 修改我的页面
-            finish();
         }
     }
 
@@ -212,30 +207,6 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
                 showToast(AppDataActivity.this, "退出登录失败 " + code + msg);
             }
         });
-    }
-
-    private final Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            if (msg.arg1 == 66) {
-                try {
-                    GlideImageLoaderUtil.clearMemoryByActivity(AppDataActivity.this);
-                    SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.clear().apply();
-                    tv_set_clear_cache.setText(FileCacheUtils.getCacheListSize(files));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return false;
-        }
-    });
-
-    @Override
-    protected void onDestroy() {
-        mHandler.removeCallbacksAndMessages(null);
-        super.onDestroy();
     }
 
     @Override
@@ -318,9 +289,11 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
 //                       七鱼客服清除缓存
                         QyServiceUtils.getQyInstance().clearQyCache();
                         PictureFileUtils.deleteCacheDirFile(AppDataActivity.this);
-                        Message message = mHandler.obtainMessage();
-                        message.arg1 = 66;
-                        mHandler.sendMessage(message);
+                        GlideImageLoaderUtil.clearMemoryByActivity(AppDataActivity.this);
+                        SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor edit = sharedPreferences.edit();
+                        edit.clear().apply();
+                        tv_set_clear_cache.setText(FileCacheUtils.getCacheListSize(files));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -339,4 +312,11 @@ public class AppDataActivity extends BaseActivity implements OnAlertItemClickLis
         finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(alertDialogHelper!=null&&alertDialogHelper.getAlertDialog().isShowing()){
+            alertDialogHelper.dismiss();
+        }
+    }
 }

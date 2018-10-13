@@ -40,6 +40,7 @@ import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity.GroupShopCommunalInfoBean;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.QuantityStatusBean;
 import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
@@ -101,6 +102,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -264,7 +266,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                         break;
                     case R.id.tv_eva_count:
                         goodsCommentBean = (GoodsCommentBean) view.getTag();
-                        if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
+                        if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
                             if (userId > 0) {
                                 setProductEvaLike(view);
                             } else {
@@ -282,7 +284,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
         changePage("ImgArticleShop");
         ctb_ql_gp_sp_tab.setTabData(tabs);
-        ctb_ql_gp_sp_tab.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
+        ctb_ql_gp_sp_tab.setTextSize(AutoSizeUtils.mm2px(mAppContext, 30));
         ctb_ql_gp_sp_tab.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
@@ -305,8 +307,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         tv_pro_time_detail_status.setCompoundDrawables(drawable, null, null, null);
 
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
-        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
-        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
     }
 
@@ -369,7 +371,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {});
+        XUtil.Post(url, params, new MyCallBack<String>() {
+        });
         goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
@@ -701,30 +704,36 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
         tv_ql_sp_pro_name.setText(getStrings(groupShopDetailsBean.getName()));
         tv_gp_sp_per_count.setText(getStrings(groupShopDetailsBean.getGpType()));
-        tv_gp_sp_per_price.setText("￥" + groupShopDetailsBean.getGpPrice());
+        tv_gp_sp_per_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
         tv_gp_sp_nor_price.setText("单买价 ￥" + groupShopDetailsBean.getPrice());
         tv_sp_details_ol_buy.setText("单独购买");
-        tv_sp_details_ol_buy_price.setText("￥" + groupShopDetailsBean.getPrice());
-        if (groupShopDetailsBean.getQuantityStatus() != null && groupShopDetailsBean.getQuantityStatus().getQuantityStatusId() == 1002) {
-            ll_group_buy.setEnabled(true);
-            tv_sp_details_join_buy_price.setEnabled(true);
-            tv_sp_details_join_count.setEnabled(true);
-            tv_sp_details_join_buy_price.setText("￥" + groupShopDetailsBean.getGpPrice());
-            tv_sp_details_join_count.setText(getStrings(groupShopDetailsBean.getGpType()));
-        } else if (groupShopDetailsBean.getQuantityStatus() != null && groupShopDetailsBean.getQuantityStatus().getQuantityStatusId() == 1001) {
-            GroupShopDetailsBean.QuantityStatusBean quantityStatus = groupShopDetailsBean.getQuantityStatus();
-            ll_group_buy.setEnabled(false);
-            tv_sp_details_join_buy_price.setEnabled(false);
-            tv_sp_details_join_count.setEnabled(false);
-            tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
-            tv_sp_details_join_count.setText("逛逛其它");
-        } else if (groupShopDetailsBean.getQuantityStatus() != null && groupShopDetailsBean.getQuantityStatus().getQuantityStatusId() == 1003) {
-            GroupShopDetailsBean.QuantityStatusBean quantityStatus = groupShopDetailsBean.getQuantityStatus();
-            ll_group_buy.setEnabled(false);
-            tv_sp_details_join_buy_price.setEnabled(false);
-            tv_sp_details_join_count.setEnabled(false);
-            tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
-            tv_sp_details_join_count.setVisibility(GONE);
+        tv_sp_details_ol_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getPrice()));
+        if (groupShopDetailsBean.getQuantityStatus() == null) {
+            return;
+        }
+        QuantityStatusBean quantityStatus = groupShopDetailsBean.getQuantityStatus();
+        switch (quantityStatus.getQuantityStatusId()) {
+            case 1002:
+                ll_group_buy.setEnabled(true);
+                tv_sp_details_join_buy_price.setEnabled(true);
+                tv_sp_details_join_count.setEnabled(true);
+                tv_sp_details_join_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
+                tv_sp_details_join_count.setText(getStrings(groupShopDetailsBean.getGpType()));
+                break;
+            case 1001:
+                ll_group_buy.setEnabled(false);
+                tv_sp_details_join_buy_price.setEnabled(false);
+                tv_sp_details_join_count.setEnabled(false);
+                tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
+                tv_sp_details_join_count.setText("逛逛其它");
+                break;
+            case 1003:
+                ll_group_buy.setEnabled(false);
+                tv_sp_details_join_buy_price.setEnabled(false);
+                tv_sp_details_join_count.setEnabled(false);
+                tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
+                tv_sp_details_join_count.setText("逛逛其它");
+                break;
         }
     }
 
@@ -899,7 +908,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     void skipService(View view) {
         if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
             skipServiceDataInfo(shopDetailsEntity.getGroupShopDetailsBean());
-        }else{
+        } else {
             skipServiceDataInfo(null);
         }
     }

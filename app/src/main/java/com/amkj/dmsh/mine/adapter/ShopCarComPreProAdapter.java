@@ -102,20 +102,12 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                     helper.setGone(R.id.tv_indent_com_pre_pro_status, true).setText(R.id.tv_indent_com_pre_pro_status, INDENT_PRO_STATUS != null ?
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
                 } else if (cartProductInfoBean.getStatus() == -10 ||
-                        cartProductInfoBean.getStatus() <= -26 && -40 <= cartProductInfoBean.getStatus()) {
-                    tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
-                    tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
-                            INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
-                }else if (cartProductInfoBean.getStatus() == -10 ||
-                        cartProductInfoBean.getStatus() <= -30 && -40 <= cartProductInfoBean.getStatus()
+                        cartProductInfoBean.getStatus() <= -26 && -40 <= cartProductInfoBean.getStatus()
                         || 50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58) {
                     tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
                     tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
-                    tv_indent_com_pre_pro_status.setEnabled(true);
-                    tv_indent_com_pre_pro_status.setSelected(true);
-                    helper.addOnClickListener(R.id.tv_indent_com_pre_pro_status).setTag(R.id.tv_indent_com_pre_pro_status, cartProductInfoBean);
-                } else {
+                }else {
                     helper.setGone(R.id.tv_indent_com_pre_pro_status, false);
                 }
                 break;
@@ -132,14 +124,13 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                     tv_indent_com_pre_pro_status.setSelected(false);
                     tv_indent_com_pre_pro_status.setText("申请售后");
                     helper.addOnClickListener(R.id.tv_indent_com_pre_pro_status).setTag(R.id.tv_indent_com_pre_pro_status, cartProductInfoBean);
-                } else if (cartProductInfoBean.getStatus() == 11 || cartProductInfoBean.getStatus() == 13) {
+                } else if (cartProductInfoBean.getStatus() == 11 || cartProductInfoBean.getStatus() == 13||cartProductInfoBean.getStatus() == -10) {
                     tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
                     tv_indent_com_pre_pro_status.setEnabled(false);
                     tv_indent_com_pre_pro_status.setSelected(false);
                     tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?
                             INDENT_PRO_STATUS.get(String.valueOf(cartProductInfoBean.getStatus())) : "");
-                } else if (cartProductInfoBean.getStatus() == -10 ||
-                        cartProductInfoBean.getStatus() <= -30 && -40 <= cartProductInfoBean.getStatus()
+                } else if (cartProductInfoBean.getStatus() <= -30 && -40 <= cartProductInfoBean.getStatus()
                         || 50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58) {
                     tv_indent_com_pre_pro_status.setVisibility(View.VISIBLE);
                     tv_indent_com_pre_pro_status.setText(INDENT_PRO_STATUS != null ?

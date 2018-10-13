@@ -282,9 +282,9 @@ public class Url {
     //    限时特惠 新
 //    限时特惠时间轴
     public static final String TIME_SHOW_SHAFT = "api/goods/flashSale/getTimeAxisV2";
-//    限时特惠 商品列表
+    //    限时特惠 商品列表
     public static final String TIME_SHOW_PRODUCT_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
-//    限时特惠top推荐
+    //    限时特惠top推荐
     public static final String TIME_SHOW_PRO_TOP_PRODUCT = "api/goods/flashSale/getGoodsRecommend";
     //    是否设置过提醒
     public static final String TIME_SHOW_PRO_WARM = "api/my/remind/getHadRemind";
@@ -343,6 +343,8 @@ public class Url {
     public static final String Q_INQUIRY_FINISH = "api/goods/order/getWaitEvaluate";
     //查询良品待发货订单
     public static final String Q_INQUIRY_WAIT_SEND = "api/goods/order/getWaitDelivery";
+    //    待发货 催单
+    public static final String Q_INQUIRY_WAIT_SEND_EXPEDITING = "api/goods/order/urgeOrder";
     //查询良品待付款订单
     public static final String Q_INQUIRY_WAIT_PAY = "api/goods/order/getWaitPay";
     //查询良品已发货订单
@@ -519,6 +521,10 @@ public class Url {
     public static final String QUALITY_NEW_USER_GET_COUPON = "api/goods/newuser/getCouponByNewUser";
     //    热销单品
     public static final String QUALITY_HOT_SALE_LIST = "api/goods/hot/sale/getHotGoods";
+    //    热销单品时间轴
+    public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
+    //    新版热销单品 时间轴
+    public static final String QUALITY_HOT_SALE_LIST_NEW = "api/goods/getHotGoodsNew";
     //    多么研究所
     public static final String Q_DML_SEARCH_LIST = "api/goods/lifesearch/getDocumentList";
     //    多么优选评论

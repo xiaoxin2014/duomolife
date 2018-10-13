@@ -87,6 +87,8 @@ public class ConstantVariable {
     public static final String PAY = "pay";
     //    整单退款查询去向
     public static final String REFUND_TO_WHERE = "refundToWhere";
+//    提醒发货
+    public static final String REMIND_DELIVERY = "remindDelivery";
     //    查看物流
     public static final String CHECK_LOG = "checkLogistics";
     //    确认订单

@@ -25,7 +25,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  */
 public class AlertDialogImage {
 
-    private final Context context;
+    private Context context;
     private ImageView iv_ad_image;
     private AlertImageClickListener alertImageClickListener;
     private AlertDialog imageAlertDialog;
@@ -33,6 +33,9 @@ public class AlertDialogImage {
     private boolean isFirstSet;
 
     public AlertDialogImage(Context context) {
+        if(isContextExisted(context)){
+            return;
+        }
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_image, null, false);

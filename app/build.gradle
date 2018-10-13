@@ -3,7 +3,7 @@ apply plugin: 'channel'
 // 依赖插件脚本
 apply from: 'tinker-support.gradle'
 android {
-    compileSdkVersion 27
+    compileSdkVersion versions.compileSdk
     defaultConfig {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
@@ -64,7 +64,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '27.0.3'
+    buildToolsVersion versions.buildTools
 }
 /*直接编译生成多渠道包*/
 channel {
@@ -272,7 +272,7 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
 
     //    网易七鱼
-    implementation 'com.qiyukf.unicorn:unicorn:4.4.0'
+//    implementation 'com.qiyukf.unicorn:unicorn:4.4.0'
     implementation project(':RecyclerViewPager')
     implementation project(':FlycoTabLayout_Lib')
     implementation project(':pinneditem')
@@ -285,4 +285,5 @@ dependencies {
     implementation project(':ShortcutBadger')
     implementation project(':convenientbanner')
     implementation project(':jiaozivideoplayer')
+    implementation project(':unicorn')
 }

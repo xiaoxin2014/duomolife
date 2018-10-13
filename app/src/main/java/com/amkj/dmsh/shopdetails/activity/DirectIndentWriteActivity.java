@@ -1213,7 +1213,8 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                 productInfoList.set(productInfoList.size() - 1, activityProductInfoBean);
             }
         }
-        if (productInfoList.size() > 0 && productInfoList.size() < 2) {
+        if (!INDENT_GROUP_SHOP.equals(type)
+                &&productInfoList.size() > 0 && productInfoList.size() < 2) {
             ActivityProductInfoBean activityProductInfoBean = productInfoList.get(0);
             pullFootView.rect_indent_number.setVisibility(VISIBLE);
             pullFootView.rect_indent_number.setNum(activityProductInfoBean.getCount());

@@ -1,18 +1,19 @@
+
 ext.versions = [
         code           : 7,
         name           : '1.1.4',
 
         minSdk         : 16,
-        targetSdk      : 27,
-        compileSdk     : 27,
+        targetSdk      : 28,
+        compileSdk     : 28,
 
         // Library versions
-        supportLibs    : '27.1.1',
+        supportLibs    : '28.0.0',
+        buildTools     : '27.0.3',
         nineOldAndroids: '2.4.0',
         materialicons  : '1.0.1',
         stickyheaders  : '0.5.0'
 ]
-
 ext.libraries = [
         supportRecyclerView: "com.android.support:recyclerview-v7:$versions.supportLibs",
         supportAppCompat   : "com.android.support:appcompat-v7:$versions.supportLibs",

@@ -40,7 +40,7 @@ public class MineBabyInfoAdapter extends BaseQuickAdapter<BabyBean, BaseViewHold
             e.printStackTrace();
         }
         iv_baby_info_img.getDrawable().setLevel(babyBean.getBaby_status() > 0 ? 1 : 0);
-        tv_baby_info_status.setSelected(babyBean.getBaby_status() > 0 ? true : false);
+        tv_baby_info_status.setSelected(babyBean.getBaby_status() > 0);
         tv_baby_info_status.setText(getStrings(babyBean.getStatusName()));
         helper.itemView.setTag(babyBean);
         helper.itemView.setTag(R.id.iv_tag, iv_baby_info_img);

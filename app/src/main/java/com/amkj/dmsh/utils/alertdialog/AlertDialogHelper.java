@@ -87,6 +87,15 @@ public class AlertDialogHelper implements View.OnClickListener {
     }
 
     /**
+     * 设置标题是否展示
+     * @param visibility
+     * @return
+     */
+    public AlertDialogHelper setTitleVisibility(int visibility) {
+        tv_alert_title.setVisibility(View.GONE);
+        return this;
+    }
+    /**
      * 设置标题位置显示
      * @param gravity
      * @return

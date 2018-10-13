@@ -255,7 +255,6 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
                                 bundle = new Bundle();
                                 bundle.putParcelableArrayList("appraiseData", (ArrayList<? extends Parcelable>) directAppraisePassList);
                                 intent.putExtras(bundle);
-                                intent.putExtra("uid", orderListBean.getUserId());
                                 intent.putExtra("orderNo", orderListBean.getNo());
                                 startActivity(intent);
                             }

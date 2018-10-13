@@ -31,6 +31,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
+import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -85,7 +86,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -152,7 +152,7 @@ public class MineDataFragment extends BaseFragment {
     @BindView(R.id.tv_personal_data_sup)
     public TextView tv_personal_data_sup;
     private final int LOGIN_REQ_CODE = 66;
-    private CommunalUserInfoEntity.CommunalUserInfoBean communalUserInfoBean;
+    private CommunalUserInfoBean communalUserInfoBean;
     private MineTypeAdapter typeMineAdapter;
     private List<QualityTypeBean> mineTypeList = new ArrayList();
     private final String[] typeMineName = {"购物车", "优惠券", "分享赚", "积分订单", "秒杀提醒", "收藏商品", "收藏内容", "客服",};
@@ -165,7 +165,6 @@ public class MineDataFragment extends BaseFragment {
     private final String[] typeIndentPic = {"i_tb_icon", "i_w_pay_icon", "i_w_send_icon", "i_w_appraise_icon", "i_s_af_icon"};
     //    跳转登录请求码
     private QualityTypeBean qualityTypeBean;
-    private String avatar;
     private CBViewHolderCreator cbViewHolderCreator;
     private QyServiceUtils qyInstance;
 
@@ -342,14 +341,17 @@ public class MineDataFragment extends BaseFragment {
     private void getLoginStatus() {
         SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
         if (personalInfo.isLogin()) {
-            avatar = personalInfo.getAvatar();
             getNetDataInfo();
         } else {
-            setErrorUserData();
+            try {
+                setErrorUserData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void setData(final CommunalUserInfoEntity.CommunalUserInfoBean userData) {
+    private void setData(final CommunalUserInfoBean userData) {
         tv_mine_name.setText(getStrings(userData.getNickname()));
         tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count), userData.getFllow()));
         tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count), userData.getFans()));
@@ -373,7 +375,7 @@ public class MineDataFragment extends BaseFragment {
      *
      * @param userData
      */
-    private void setBottomCount(CommunalUserInfoEntity.CommunalUserInfoBean userData) {
+    private void setBottomCount(CommunalUserInfoBean userData) {
         if (userData != null && mineTypeList.size() > 3) {
             if (userData.getCartTotal() > 0) {
                 mineTypeList.get(0).setType(userData.getCartTotal());
@@ -390,13 +392,16 @@ public class MineDataFragment extends BaseFragment {
             } else {
                 mineTypeList.get(3).setType(0);
             }
+            typeMineAdapter.notifyDataSetChanged();
         } else {
             for (int i = 0; i < mineTypeList.size(); i++) {
                 QualityTypeBean qualityTypeBean = mineTypeList.get(i);
                 qualityTypeBean.setType(0);
             }
+            if(mineTypeList.size()>=4){
+                typeMineAdapter.notifyItemRangeChanged(0,4);
+            }
         }
-        typeMineAdapter.notifyDataSetChanged();
     }
 
     //启动客服，登录
@@ -429,13 +434,12 @@ public class MineDataFragment extends BaseFragment {
     private void isLoginStatus() {
         SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
         if (personalInfo.isLogin()) {
-            avatar = personalInfo.getAvatar();
             ConstantMethod constantMethod = new ConstantMethod();
             constantMethod.getNewUserCouponDialog(getActivity());
         }
     }
 
-    private void getDuoMeIndentDataCount() {
+    private void getDoMeIndentDataCount() {
         if (userId > 0) {
             String url = Url.BASE_URL + Url.Q_QUERY_INDENT_COUNT;
             Map<String, Object> params = new HashMap<>();
@@ -488,7 +492,7 @@ public class MineDataFragment extends BaseFragment {
             //退货售后
             indentTypeList.get(4).setType(totalCount);
         }
-        indentTypeAdapter.setNewData(indentTypeList);
+        indentTypeAdapter.notifyDataSetChanged();
     }
 
     private void getNetDataInfo() {
@@ -517,8 +521,7 @@ public class MineDataFragment extends BaseFragment {
     private void setErrorUserData() {
         initLoggedView();
         setBottomCount(null);
-        userId = 0;
-        savePersonalInfoCache(getActivity(), null);
+        getDoMeIndentDataCount();
     }
 
     //    我的模块 广告
@@ -592,7 +595,7 @@ public class MineDataFragment extends BaseFragment {
                 ll_mime_no_login.setVisibility(View.GONE);
                 ll_mine_login.setVisibility(View.VISIBLE);
                 setData(communalUserInfoBean);
-                getDuoMeIndentDataCount();
+                getDoMeIndentDataCount();
             } else {
                 setErrorUserData();
                 showToast(getActivity(), minePageData.getMsg());
@@ -604,9 +607,7 @@ public class MineDataFragment extends BaseFragment {
     }
 
     public void skipLoginPage() {
-        Intent intent = new Intent();
-        intent.setClass(getActivity(), MineLoginActivity.class);
-        startActivityForResult(intent, LOGIN_REQ_CODE);
+        ConstantMethod.getLoginStatus(this);
     }
 
     // 个人资料设置 -》头像设置

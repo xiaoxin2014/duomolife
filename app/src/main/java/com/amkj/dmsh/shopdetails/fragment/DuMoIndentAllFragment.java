@@ -75,7 +75,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
 ;
 ;
@@ -190,6 +193,12 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                         intent.setClass(getActivity(), DirectIndentWriteActivity.class);
                         intent.putExtra("orderNo", orderListBean.getNo());
                         startActivity(intent);
+                        break;
+                    case REMIND_DELIVERY:
+                        if(loadHud!=null){
+                            loadHud.show();
+                        }
+                        setRemindDelivery(orderBean);
                         break;
                     case CANCEL_ORDER:
 //                        取消订单
@@ -523,6 +532,50 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
         } else {
             showToast(getActivity(), R.string.unConnectedNetwork);
         }
+    }
+
+    /**
+     * 设置催发货
+     * @param orderBean
+     */
+    private void setRemindDelivery(OrderListBean orderBean) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        params.put("orderNo",orderBean.getNo());
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL+Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        orderBean.setWaitDeliveryFlag(false);
+                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
+                    }else{
+                        showToast(mAppContext,requestStatus.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.do_failed);
+            }
+        });
     }
 
     /**

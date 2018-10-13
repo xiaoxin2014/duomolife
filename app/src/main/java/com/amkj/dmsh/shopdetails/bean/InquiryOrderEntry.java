@@ -103,6 +103,8 @@ public class InquiryOrderEntry extends BaseEntity{
             private String no;
             private String consignee;
             private String deliveryAmount;
+            @SerializedName("waitdeliveryFlag")
+            private boolean waitDeliveryFlag;
             private String payTime;
             private int id;
             private String amount;
@@ -303,6 +305,14 @@ public class InquiryOrderEntry extends BaseEntity{
 
             public void setGoods(List<GoodsBean> goods) {
                 this.goods = goods;
+            }
+
+            public boolean isWaitDeliveryFlag() {
+                return waitDeliveryFlag;
+            }
+
+            public void setWaitDeliveryFlag(boolean waitDeliveryFlag) {
+                this.waitDeliveryFlag = waitDeliveryFlag;
             }
 
             public static class GoodsBean implements Parcelable {

@@ -37,7 +37,9 @@ public class MineTypeAdapter extends BaseQuickAdapter<QualityTypeBean, MineTypeA
     protected void convert(TypeViewHolderHelper helper, QualityTypeBean qualityTypeBean) {
         Badge badge = helper.badge;
         if (badge != null) {
-            badge.setBadgeNumber(qualityTypeBean.getType());
+            if(badge.getBadgeNumber()!=qualityTypeBean.getType()){
+                badge.setBadgeNumber(qualityTypeBean.getType());
+            }
         }
         try {
             helper.iv_mine_type_icon.setImageResource(context.getResources().getIdentifier(qualityTypeBean.getPicUrl(), "drawable", "com.amkj.dmsh"));

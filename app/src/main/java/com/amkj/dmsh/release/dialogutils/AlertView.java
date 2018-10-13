@@ -192,14 +192,14 @@ public class AlertView {
         tvAlertTitle = (TextView) viewGroup.findViewById(R.id.tvAlertTitle);
         tvAlertMsg = (TextView) viewGroup.findViewById(R.id.tvAlertMsg);
         if (title != null) {
-            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,alertInitView.getTitleSize() > 0 ? (int) alertInitView.getTitleSize() : 28));
+            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,alertInitView.getTitleSize() > 0 ? (int) alertInitView.getTitleSize() : 30));
             tvAlertTitle.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getTitleColorValue()) ? alertInitView.getTitleColorValue() : "#333333"));
             tvAlertTitle.setText(title);
         } else {
             tvAlertTitle.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(msg)) {
-            tvAlertTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,alertInitView.getMsgSize() > 0 ? (int) alertInitView.getMsgSize() : 26));
+            tvAlertMsg.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,alertInitView.getMsgSize() > 0 ? (int) alertInitView.getMsgSize() : 28));
             tvAlertMsg.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getMsgColorValue()) ? alertInitView.getMsgColorValue() : "#666666"));
             tvAlertMsg.setText(msg);
         } else {
@@ -218,7 +218,7 @@ public class AlertView {
             TextView tvAlert = (TextView) itemView.findViewById(R.id.tvAlert);
             tvAlert.setText(cancelStr);
             tvAlert.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getCancelSize() > 0
-                    ? alertInitView.getCancelSize() : 28)));
+                    ? alertInitView.getCancelSize() : 26)));
             tvAlert.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getCancelColorValue()) ? alertInitView.getCancelColorValue() : "#666666"));
             tvAlert.setClickable(true);
             tvAlert.setTypeface(Typeface.DEFAULT_BOLD);
@@ -252,7 +252,7 @@ public class AlertView {
         TextView tvAlertCancel = (TextView) contentContainer.findViewById(R.id.tvAlertCancel);
         if (cancelStr != null) {
             tvAlertCancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,(alertInitView.getCancelSize() > 0
-                    ? alertInitView.getCancelSize() : 28)));
+                    ? alertInitView.getCancelSize() : 26)));
             tvAlertCancel.setTextColor(Color.parseColor(!TextUtils.isEmpty(alertInitView.getCancelColorValue()) ? alertInitView.getCancelColorValue() : "#666666"));
             tvAlertCancel.setVisibility(View.VISIBLE);
             tvAlertCancel.setText(cancelStr);

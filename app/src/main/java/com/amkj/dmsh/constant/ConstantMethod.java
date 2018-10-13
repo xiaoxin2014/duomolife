@@ -47,7 +47,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -83,8 +82,6 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -1652,7 +1649,6 @@ public class ConstantMethod {
                 edit.putString("UNION_ID", getStrings(savePersonalInfo.getUnionId()));
             }
             edit.apply();
-            EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
         } else {
             userId = 0;
 //            七鱼注销
@@ -1854,42 +1850,44 @@ public class ConstantMethod {
                                 && !TextUtils.isEmpty(requestStatus.getImgUrl())
                                 && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
                             //                                    弹窗
-                            GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                @Override
-                                public void onSuccess(Bitmap bitmap) {
-                                    AlertDialogImage alertDialogImage = new AlertDialogImage(context);
-                                    alertDialogImage.show();
-                                    alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                        @Override
-                                        public void imageClick() {
-                                            Intent intent = new Intent();
-                                            switch (requestStatus.getUserType()) {
-                                                case 1: //新人用户
-                                                    intent.setClass(context, QualityNewUserActivity.class);
-                                                    context.startActivity(intent);
-                                                    break;
+                            if(isContextExisted(context)){
+                                GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                    @Override
+                                    public void onSuccess(Bitmap bitmap) {
+                                        AlertDialogImage alertDialogImage = new AlertDialogImage(context);
+                                        alertDialogImage.show();
+                                        alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                                            @Override
+                                            public void imageClick() {
+                                                Intent intent = new Intent();
+                                                switch (requestStatus.getUserType()) {
+                                                    case 1: //新人用户
+                                                        intent.setClass(context, QualityNewUserActivity.class);
+                                                        context.startActivity(intent);
+                                                        break;
 //                                                    领取优惠券
-                                                case 2:
-                                                case 3:
-                                                    getNewUserCoupon(context, requestStatus.getCouponId());
-                                                    break;
+                                                    case 2:
+                                                    case 3:
+                                                        getNewUserCoupon(context, requestStatus.getCouponId());
+                                                        break;
+                                                }
+                                                alertDialogImage.dismiss();
                                             }
-                                            alertDialogImage.dismiss();
-                                        }
-                                    });
-                                    alertDialogImage.setImage(bitmap);
-                                }
+                                        });
+                                        alertDialogImage.setImage(bitmap);
+                                    }
 
-                                @Override
-                                public void onStart() {
+                                    @Override
+                                    public void onStart() {
 
-                                }
+                                    }
 
-                                @Override
-                                public void onError(Drawable errorDrawable) {
+                                    @Override
+                                    public void onError(Drawable errorDrawable) {
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
                     }
                 }

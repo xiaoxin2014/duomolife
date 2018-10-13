@@ -112,6 +112,8 @@ public class IndentInfoDetailEntity extends BaseEntity{
             private String consignee;
             private String address;
             private String deliveryAmount;
+            @SerializedName("waitdeliveryFlag")
+            private boolean waitDeliveryFlag;
             private String mobile;
             private String remark;
             private int userId;
@@ -130,6 +132,14 @@ public class IndentInfoDetailEntity extends BaseEntity{
             private List<GoodsDetailBean> goodDetails;
             @SerializedName("priceInfo")
             private List<PriceInfoBean> priceInfoList;
+
+            public boolean isWaitDeliveryFlag() {
+                return waitDeliveryFlag;
+            }
+
+            public void setWaitDeliveryFlag(boolean waitDeliveryFlag) {
+                this.waitDeliveryFlag = waitDeliveryFlag;
+            }
 
             public boolean isCoupon() {
                 return isCoupon;

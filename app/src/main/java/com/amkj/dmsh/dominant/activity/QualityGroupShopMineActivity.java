@@ -17,6 +17,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
+import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
@@ -164,7 +165,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                                 case 3:
                                 case 4:
                                     if (userId > 0) {
-                                        View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null,false);
+                                        View indentPopWindow = getLayoutInflater().inflate(R.layout.layout_indent_pay_pop, null, false);
                                         PopupWindowView popupWindowView = new PopupWindowView();
                                         ButterKnife.bind(popupWindowView, indentPopWindow);
                                         mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(QualityGroupShopMineActivity.this)
@@ -182,28 +183,26 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                             }
                             break;
                         case R.id.tv_ql_gp_mine_details:
-//                            Intent intent = new Intent(QualityGroupShopMineActivity.this, DirectExchangeDetailsActivity.class);
-//                            intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
-//                            startActivity(intent);
-                            Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
-                            intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
-                            intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
-                            intent.putExtra("invitePartnerJoin", true);
+                            Intent intent = new Intent(QualityGroupShopMineActivity.this, DirectExchangeDetailsActivity.class);
+                            intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
                             startActivity(intent);
                             break;
                     }
                 }
-                qualityGroupMineAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
-                        if (qualityGroupMineBean != null) {
-                            Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
-                            intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
-                            startActivity(intent);
-                        }
-                    }
-                });
+            }
+        });
+
+        qualityGroupMineAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
+                if (qualityGroupMineBean != null) {
+                    Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
+                    intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
+                    intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
+                    intent.putExtra("invitePartnerJoin", true);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -351,7 +350,6 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 //                    , null, getStrings(qualityGroupMineBean.getOrderNo()), getStrings(qualityGroupMineBean.getGpPrice()));
 //        }
 //    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -363,6 +361,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         page = 1;
         getData();
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -372,6 +371,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void getData() {
         String url = Url.BASE_URL + Url.GROUP_MINE_INDENT;
@@ -381,47 +381,47 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                qualityGroupMineAdapter.loadMoreComplete();
-                if (page == 1) {
-                    qualityGroupMineList.clear();
-                }
-                Gson gson = new Gson();
-                qualityGroupMineEntity = gson.fromJson(result, QualityGroupMineEntity.class);
-                if (qualityGroupMineEntity != null) {
-                    if (qualityGroupMineEntity.getCode().equals(SUCCESS_CODE)) {
-                        for (int i = 0; i < qualityGroupMineEntity.getQualityGroupMineBeanList().size(); i++) {
-                            QualityGroupMineBean qualityGroupMineBean = qualityGroupMineEntity.getQualityGroupMineBeanList().get(i);
-                            qualityGroupMineBean.setGpStatusMsg(qualityGroupMineEntity.getStatus()
-                                    .get(String.valueOf(qualityGroupMineBean.getGpStatus())));
-                            qualityGroupMineList.add(qualityGroupMineBean);
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGroupMineAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            qualityGroupMineList.clear();
                         }
-                    } else if (!qualityGroupMineEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
+                        Gson gson = new Gson();
+                        qualityGroupMineEntity = gson.fromJson(result, QualityGroupMineEntity.class);
+                        if (qualityGroupMineEntity != null) {
+                            if (qualityGroupMineEntity.getCode().equals(SUCCESS_CODE)) {
+                                for (int i = 0; i < qualityGroupMineEntity.getQualityGroupMineBeanList().size(); i++) {
+                                    QualityGroupMineBean qualityGroupMineBean = qualityGroupMineEntity.getQualityGroupMineBeanList().get(i);
+                                    qualityGroupMineBean.setGpStatusMsg(qualityGroupMineEntity.getStatus()
+                                            .get(String.valueOf(qualityGroupMineBean.getGpStatus())));
+                                    qualityGroupMineList.add(qualityGroupMineBean);
+                                }
+                            } else if (!qualityGroupMineEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
+                            }
+                            qualityGroupMineAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
                     }
-                    qualityGroupMineAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
-            }
 
-            @Override
-            public void netClose() {
-                qualityGroupMineAdapter.loadMoreComplete();
-                smart_communal_refresh.finishRefresh();
-                showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
-            }
+                    @Override
+                    public void netClose() {
+                        qualityGroupMineAdapter.loadMoreComplete();
+                        smart_communal_refresh.finishRefresh();
+                        showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityGroupMineAdapter.loadMoreComplete();
-                showToast(QualityGroupShopMineActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupMineList, qualityGroupMineEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGroupMineAdapter.loadMoreComplete();
+                        showToast(QualityGroupShopMineActivity.this, R.string.connectedFaile);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
+                    }
+                });
     }
 
     @Override

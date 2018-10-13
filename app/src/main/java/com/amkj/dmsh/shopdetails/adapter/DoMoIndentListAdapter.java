@@ -51,6 +51,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TYPE;
 
 ;
@@ -209,14 +210,6 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
             intentFView.tv_border_second_blue.setTag(R.id.tag_first, INVITE_GROUP);
             intentFView.tv_border_second_blue.setTag(R.id.tag_second, orderListBean);
             intentFView.tv_border_second_blue.setOnClickListener(this);
-        } else if (12 == statusCode) {
-            intentFView.ll_indent_bottom.setVisibility(View.VISIBLE);
-            intentFView.tv_border_second_blue.setVisibility(View.GONE);
-            intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
-            intentFView.tv_border_first_gray.setText("查看物流");
-            intentFView.tv_border_first_gray.setTag(R.id.tag_first, LITTER_CONSIGN);
-            intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
-            intentFView.tv_border_first_gray.setOnClickListener(this);
         } else if (10 <= statusCode && statusCode < 20) {
             if (10 == statusCode) {
                 boolean isRefund = true;
@@ -229,6 +222,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 }
                 if (isRefund) {
 //            取消订单
+                    intentFView.ll_indent_bottom.setVisibility(View.VISIBLE);
                     intentFView.tv_border_second_blue.setVisibility(View.GONE);
                     intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
                     intentFView.tv_border_first_gray.setText("取消订单");
@@ -238,10 +232,30 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 } else {
                     //            不可取消订单
                     intentFView.ll_indent_bottom.setVisibility(View.GONE);
+                    intentFView.tv_border_second_blue.setVisibility(View.GONE);
+                    intentFView.tv_border_first_gray.setVisibility(View.GONE);
                 }
+            } else if (12 == statusCode) {
+                intentFView.ll_indent_bottom.setVisibility(View.VISIBLE);
+                intentFView.tv_border_second_blue.setVisibility(View.GONE);
+                intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
+                intentFView.tv_border_first_gray.setText("查看物流");
+                intentFView.tv_border_first_gray.setTag(R.id.tag_first, LITTER_CONSIGN);
+                intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
+                intentFView.tv_border_first_gray.setOnClickListener(this);
             } else {
 //            不可取消订单
                 intentFView.ll_indent_bottom.setVisibility(View.GONE);
+                intentFView.tv_border_second_blue.setVisibility(View.GONE);
+                intentFView.tv_border_first_gray.setVisibility(View.GONE);
+            }
+            if(orderListBean.isWaitDeliveryFlag()){
+                intentFView.ll_indent_bottom.setVisibility(View.VISIBLE);
+                intentFView.tv_border_second_blue.setVisibility(View.VISIBLE);
+                intentFView.tv_border_second_blue.setText("提醒发货");
+                intentFView.tv_border_second_blue.setTag(R.id.tag_first, REMIND_DELIVERY);
+                intentFView.tv_border_second_blue.setTag(R.id.tag_second, orderListBean);
+                intentFView.tv_border_second_blue.setOnClickListener(this);
             }
         } else if (20 <= statusCode && statusCode < 30) {
             intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);

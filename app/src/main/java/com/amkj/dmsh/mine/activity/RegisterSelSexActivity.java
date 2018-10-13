@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
@@ -24,6 +25,8 @@ import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -161,6 +164,7 @@ public class RegisterSelSexActivity extends BaseActivity {
                                 savePersonalInfoBean.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
                                 savePersonalInfoBean.setUid(communalUserInfoBean.getUid());
                                 savePersonalInfoBean.setLogin(true);
+                                EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                                 savePersonalInfoCache(RegisterSelSexActivity.this, savePersonalInfoBean);
                             }
                             Intent intent = new Intent(RegisterSelSexActivity.this, MainActivity.class);

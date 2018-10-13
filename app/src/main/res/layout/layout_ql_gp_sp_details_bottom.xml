@@ -21,8 +21,6 @@
             android:id="@+id/tv_sp_details_ol_buy_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:text="￥300"
             android:ellipsize="end"
             android:layout_marginBottom="@dimen/sc_mm_15"
             android:textColor="@color/white"
@@ -54,8 +52,6 @@
             android:id="@+id/tv_sp_details_join_buy_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:text="￥288"
             android:maxLines="1"
             android:ellipsize="end"
             android:layout_marginBottom="@dimen/sc_mm_15"
@@ -66,7 +62,6 @@
             android:id="@+id/tv_sp_details_join_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2人团"
             android:maxLines="1"
             android:ellipsize="end"
             android:textColor="@color/white"

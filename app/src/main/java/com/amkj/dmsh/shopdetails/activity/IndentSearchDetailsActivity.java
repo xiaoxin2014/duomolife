@@ -63,6 +63,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
+import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
@@ -213,6 +214,12 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                         cancelOrderDialog = new AlertView(alertSettingBean, IndentSearchDetailsActivity.this, IndentSearchDetailsActivity.this);
                         cancelOrderDialog.setCancelable(true);
                         cancelOrderDialog.show();
+                        break;
+                    case REMIND_DELIVERY:
+                        if(loadHud!=null){
+                            loadHud.show();
+                        }
+                        setRemindDelivery(orderListBean);
                         break;
                     case PAY:
                         intent.setClass(IndentSearchDetailsActivity.this, DirectExchangeDetailsActivity.class);
@@ -488,5 +495,49 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         QyServiceUtils.getQyInstance()
                 .openQyServiceChat(IndentSearchDetailsActivity.this
                         , "订单搜索","");
+    }
+
+    /**
+     * 设置催发货
+     * @param orderBean
+     */
+    private void setRemindDelivery(OrderListBean orderBean) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        params.put("orderNo",orderBean.getNo());
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, Url.Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        orderBean.setWaitDeliveryFlag(false);
+                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
+                    }else{
+                        showToast(mAppContext,requestStatus.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.do_failed);
+            }
+        });
     }
 }

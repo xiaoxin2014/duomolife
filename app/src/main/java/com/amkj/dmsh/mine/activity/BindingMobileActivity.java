@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -32,6 +33,7 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -266,6 +268,7 @@ public class BindingMobileActivity extends BaseActivity {
                                     savePersonalInfoBean.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                                 }
                             }
+                            EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                             savePersonalInfoCache(BindingMobileActivity.this, savePersonalInfoBean);
                             showToast(BindingMobileActivity.this, "绑定成功");
                             Intent intent = new Intent(BindingMobileActivity.this, RegisterSelSexActivity.class);

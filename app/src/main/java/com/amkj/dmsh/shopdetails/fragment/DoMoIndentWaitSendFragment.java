@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,16 +11,21 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
-import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
+import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
+import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
+import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -51,7 +57,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
+import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
 ;
 ;
@@ -159,9 +169,47 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                         intent.putExtra("orderNo", orderListBean.getNo());
                         startActivity(intent);
                         break;
+                    case REMIND_DELIVERY:
+                        if(loadHud!=null){
+                            loadHud.show();
+                        }
+                        setRemindDelivery(orderListBean);
+                        break;
                     case CANCEL_PAY_ORDER:
-                        intent.setClass(getActivity(), DirectExchangeDetailsActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
+                        DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
+                        refundBean.setType(3);
+                        refundBean.setOrderNo(orderListBean.getNo());
+                        List<DirectRefundProBean> directProList = new ArrayList<>();
+                        List<CartProductInfoBean> cartProductInfoList;
+                        DirectRefundProBean directRefundProBean;
+                        for (int i = 0; i < orderListBean.getGoods().size(); i++) {
+                            GoodsBean goodsBean = orderListBean.getGoods().get(i);
+                            cartProductInfoList = new ArrayList<>();
+                            directRefundProBean = new DirectRefundProBean();
+                            directRefundProBean.setId(goodsBean.getId());
+                            directRefundProBean.setOrderProductId(goodsBean.getOrderProductId());
+                            directRefundProBean.setCount(goodsBean.getCount());
+                            directRefundProBean.setName(goodsBean.getName());
+                            directRefundProBean.setPicUrl(goodsBean.getPicUrl());
+                            directRefundProBean.setSaleSkuValue(goodsBean.getSaleSkuValue());
+                            directRefundProBean.setPrice(goodsBean.getPrice());
+                            if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
+                                cartProductInfoList.addAll(goodsBean.getPresentProductInfoList());
+                            }
+                            if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
+                                cartProductInfoList.addAll(goodsBean.getCombineProductInfoList());
+                            }
+                            if (cartProductInfoList.size() > 0) {
+                                directRefundProBean.setCartProductInfoList(cartProductInfoList);
+                            }
+                            directProList.add(directRefundProBean);
+                        }
+                        refundBean.setDirectRefundProList(directProList);
+                        intent.setClass(getActivity(), DirectApplyRefundActivity.class);
+                        intent.putExtra(REFUND_TYPE, REFUND_TYPE);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("refundPro", refundBean);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                         break;
                     case INVITE_GROUP:
@@ -197,7 +245,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
     }
 
     private void getWaitSendData() {
-        String url = Url.BASE_URL + Url.Q_INQUIRY_WAIT_SEND;
+        String url = BASE_URL + Url.Q_INQUIRY_WAIT_SEND;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", DEFAULT_TOTAL_COUNT);
@@ -256,7 +304,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
      * @param no
      */
     private void getInviteGroupInfo(String no) {
-        String url = Url.BASE_URL + Url.GROUP_MINE_SHARE;
+        String url = BASE_URL + Url.GROUP_MINE_SHARE;
         if (NetWorkUtils.checkNet(getActivity())) {
             if (loadHud != null) {
                 loadHud.show();
@@ -291,7 +339,49 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
             showToast(getActivity(), R.string.unConnectedNetwork);
         }
     }
+    /**
+     * 设置催发货
+     * @param orderBean
+     */
+    private void setRemindDelivery(OrderListBean orderBean) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        params.put("orderNo",orderBean.getNo());
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL+Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        orderBean.setWaitDeliveryFlag(false);
+                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
+                    }else{
+                        showToast(mAppContext,requestStatus.getMsg());
+                    }
+                }
+            }
 
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(mAppContext,R.string.do_failed);
+            }
+        });
+    }
     /**
      * 邀请参团
      *

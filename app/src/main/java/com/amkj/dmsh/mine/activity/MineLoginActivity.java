@@ -194,9 +194,6 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         MobclickAgent.onProfileSignIn(String.valueOf(communalUserInfoBean.getUid()));
 
         showToast(MineLoginActivity.this, R.string.login_success);
-        if (communalUserInfoBean.getFirstAppLogin() == 1) {
-            isFirstLogin();
-        }
 //        保存个人信息
         SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
         savePersonalInfo.setAvatar(getStrings(communalUserInfoBean.getAvatar()));
@@ -204,6 +201,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         savePersonalInfo.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
         savePersonalInfo.setUid(communalUserInfoBean.getUid());
         savePersonalInfo.setLogin(true);
+        EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
@@ -214,10 +212,6 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         setResult(RESULT_OK, data);
         finish();
         overridePendingTransition(0, 0);
-    }
-
-    private void isFirstLogin() {
-        EventBus.getDefault().post(new EventMessage("loginShowDialog",""));
     }
 
     // 授权登录
@@ -355,6 +349,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                             if (OTHER_WECHAT.equals(getStrings(otherAccountBindInfo.getType()))) {
                                 savePersonalInfo.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                             }
+                            EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                             savePersonalInfo.setLogin(true);
                             savePersonalInfo.setPhoneNum(getStrings(otherAccountBindInfo.getMobile()));
                             savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
@@ -549,6 +544,9 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(alertDialogHelper!=null){
+            alertDialogHelper.dismiss();
+        }
     }
 
     //  切换登录方式
