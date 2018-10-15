@@ -39,7 +39,7 @@ public class UMShareAction {
     private AlertDialogShareHelper alertDialogShareHelper;
     private boolean isSharing = false;
     private String routineUrl;
-    private static String routineId = "gh_cdbcf7765273";
+    public static String routineId = "gh_cdbcf7765273";
 
     /**
      * UMImage image = new UMImage(ShareActivity.this, "imageurl");//网络图片
@@ -187,6 +187,10 @@ public class UMShareAction {
                                         .setCallback(umShareListener)
                                         .share();
                             }
+                            break;
+//                            保存图片
+                        case MORE:
+
                             break;
                         default:
                             //                        分享链接

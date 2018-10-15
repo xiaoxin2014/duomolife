@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -36,6 +35,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 
 ;
 
@@ -57,9 +61,9 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
         super(groupShopJoinList);
         this.context = context;
         this.groupShopJoinList = groupShopJoinList;
-        addItemType(ConstantVariable.TYPE_0, R.layout.adapter_layout_ql_group);
-        addItemType(ConstantVariable.TYPE_1, R.layout.adapter_layout_ql_group_join);
-        addItemType(ConstantVariable.TYPE_2, R.layout.adapter_layout_ql_group_share);
+        addItemType(TYPE_0, R.layout.adapter_layout_ql_group);
+        addItemType(TYPE_1, R.layout.adapter_layout_ql_group_join);
+        addItemType(TYPE_2, R.layout.adapter_layout_ql_group_share);
         getConstant();
     }
 
@@ -72,10 +76,18 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
     @Override
     public int getItemCount() {
         if (groupShopJoinList != null && groupShopJoinList.size() > 0) {
-            constantMethod.createSchedule();
+            boolean hasUnfinished = false;
             for (int i = 0; i < groupShopJoinList.size(); i++) {
                 GroupShopJoinBean groupShopJoinBean = groupShopJoinList.get(i);
-                beanMap.put(i, groupShopJoinBean);
+                if(!isEndOrStartTime(groupShopJoinBean.getGpEndTime(),groupShopJoinBean.getGpCreateTime())){
+                    beanMap.put(i, groupShopJoinBean);
+                    if(!hasUnfinished){
+                        hasUnfinished = true;
+                    }
+                }
+            }
+            if(hasUnfinished){
+                constantMethod.createSchedule();
             }
         }
         return super.getItemCount();
@@ -111,7 +123,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
         for (int i = 0; i < sparseArray.size(); i++) {
             CountdownView countdownView = (CountdownView) sparseArray.get(sparseArray.keyAt(i));
             GroupShopJoinBean groupShopJoinBean = beanMap.get(sparseArray.keyAt(i));
-            if (groupShopJoinBean.getItemType() == ConstantVariable.TYPE_1) {
+            if (groupShopJoinBean.getItemType() == TYPE_1) {
                 setJoinGroupCountTime(countdownView, groupShopJoinBean);
             } else {
                 setGroupOpenCountTime(countdownView, groupShopJoinBean);
@@ -130,7 +142,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
     protected void convert(BaseViewHolder helper, GroupShopJoinBean groupShopJoinBean) {
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         switch (helper.getItemViewType()) {
-            case ConstantVariable.TYPE_0:
+            case TYPE_0:
                 GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.cir_ql_gp_ava), groupShopJoinBean.getAvatar());
                 helper.setText(R.id.tv_ql_gp_name, getStrings(groupShopJoinBean.getNickname()))
                         .setText(R.id.tv_join_dif_per_count, getStrings("还差一人成团"))
@@ -151,7 +163,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_white_hours);
                 helper.itemView.setTag(groupShopJoinBean);
                 break;
-            case ConstantVariable.TYPE_1:
+            case TYPE_1:
                 helper.setText(R.id.tv_show_communal_time_status, isJoinGroupEnd(groupShopJoinBean) ? "距结束：" : "已结束")
                         .setTag(R.id.ct_time_communal_show_bg, groupShopJoinBean)
                         .setGone(R.id.ct_time_communal_show_bg, isJoinGroupEnd(groupShopJoinBean));
@@ -167,7 +179,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 setJoinGroupCountTime(ct_time_communal_show_bg, groupShopJoinBean);
                 setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), ct_time_communal_show_bg);
                 break;
-            case ConstantVariable.TYPE_2:
+            case TYPE_2:
                 RecyclerView communal_recycler_wrap = helper.getView(R.id.communal_recycler_wrap);
                 helper.setGone(R.id.ll_communal_count_time,true);
                 communal_recycler_wrap.setNestedScrollingEnabled(false);
@@ -261,7 +273,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                     e.printStackTrace();
                 }
             }
-            if (!ConstantMethod.isEndOrStartTimeAddSeconds(groupShopJoinBean.getCurrentTime()
+            if (!isEndOrStartTimeAddSeconds(groupShopJoinBean.getCurrentTime()
                     , groupShopJoinBean.getGpEndTime()
                     , groupShopJoinBean.getSecond())) {
                 cv_countdownTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
@@ -297,7 +309,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             if (startTime != null && endTime != null && endTime.getTime() > startTime.getTime()) {
                 countdownView.updateShow(endTime.getTime() - startTime.getTime() - groupShopJoinBean.getSecond() * 1000);
             }
-            if (!ConstantMethod.isEndOrStartTimeAddSeconds(groupShopJoinBean.getCurrentTime()
+            if (!isEndOrStartTimeAddSeconds(groupShopJoinBean.getCurrentTime()
                     , groupShopJoinBean.getGpEndTime()
                     , groupShopJoinBean.getSecond())) {
                 countdownView.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {

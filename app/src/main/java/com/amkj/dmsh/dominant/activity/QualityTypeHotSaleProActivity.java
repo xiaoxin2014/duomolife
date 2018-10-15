@@ -14,20 +14,26 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityHotSaleAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity.HotSaleShaftBean;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
+import com.bigkoo.convenientbanner.holder.Holder;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +46,7 @@ import q.rorbin.badgeview.Badge;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.screenWidth;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -79,6 +86,8 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     ViewPager vpDominantHotSale;
     private Badge badge;
     private QualityHotSaleShaftEntity qualityHotSaleShaftEntity;
+    private CBViewHolderCreator cbViewHolderCreator;
+    private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
 
     @Override
     protected int getContentView() {
@@ -129,8 +138,63 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        getHotSaleAd();
         getQualityProductShaft();
         getCarCount();
+    }
+
+    private void getHotSaleAd() {
+        String url = Url.BASE_URL + Url.QUALITY_HOT_SALE_AD;
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeHotSaleProActivity.this, url
+                , null, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        adBeanList.clear();
+                        Gson gson = new Gson();
+                        CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+                        if (qualityAdLoop != null) {
+                            if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
+                                adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
+                                if (cbViewHolderCreator == null) {
+                                    cbViewHolderCreator = new CBViewHolderCreator() {
+                                        @Override
+                                        public Holder createHolder(View itemView) {
+                                            return new CommunalAdHolderView(itemView, QualityTypeHotSaleProActivity.this, true);
+                                        }
+
+                                        @Override
+                                        public int getLayoutId() {
+                                            return R.layout.layout_ad_image_video;
+                                        }
+                                    };
+                                }
+                                adCommunalBanner.setPages(QualityTypeHotSaleProActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+                                        .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                        .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+                            }
+                            if (adBeanList.size() > 0) {
+                                relCommunalBanner.setVisibility(View.VISIBLE);
+                            } else {
+                                relCommunalBanner.setVisibility(View.GONE);
+                            }
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                        }
+                    }
+
+                    @Override
+                    public void netClose() {
+                        smart_refresh_hot_sale.finishRefresh();
+                        showToast(QualityTypeHotSaleProActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_refresh_hot_sale.finishRefresh();
+                        showToast(QualityTypeHotSaleProActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                    }
+                });
     }
 
     private void getQualityProductShaft() {

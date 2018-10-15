@@ -463,7 +463,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 if (invitePartnerJoin) {
                                     groupShopJoinBean.setGpCreateTime(qualityGroupShareEntity.getCurrentTime());
                                     List<MemberListBean> memberListBeans = new ArrayList<>(qualityGroupShareBean.getMemberList());
-                                    for (int i = 0; i < (qualityGroupShareBean.getMemberCount() - qualityGroupShareBean.getMemberList().size()); i++) {
+                                    int leftParticipant = qualityGroupShareBean.getMemberCount() - qualityGroupShareBean.getMemberList().size();
+                                    for (int i = 0; i < leftParticipant; i++) {
                                         MemberListBean memberListBean = new MemberListBean();
                                         memberListBean.setAvatar("android.resource://com.amkj.dmsh/drawable/" + R.drawable.dm_gp_join);
                                         memberListBeans.add(memberListBean);
@@ -471,6 +472,13 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                     groupShopJoinBean.setItemType(TYPE_2);
                                     groupShopJoinBean.setMemberListBeans(memberListBeans);
                                     tv_sp_details_join_buy_price.setVisibility(GONE);
+                                    if(leftParticipant<1){
+                                        ll_group_buy.setEnabled(false);
+                                        groupShopJoinBean.setGpEndTime(qualityGroupShareEntity.getCurrentTime());
+                                    }else{
+                                        groupShopJoinBean.setGpEndTime(qualityGroupShareBean.getGpEndTime());
+                                        ll_group_buy.setEnabled(true);
+                                    }
                                     tv_sp_details_join_count.setText("邀请好友");
                                     tv_sp_details_ol_buy_price.setVisibility(GONE);
                                     tv_sp_details_ol_buy.setText("全部拼团");
@@ -481,7 +489,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 }
                                 groupShopJoinBean.setGpInfoId(qualityGroupShareBean.getGpInfoId());
                                 groupShopJoinBean.setGpRecordId(Integer.parseInt(qualityGroupShareBean.getGpRecordId()));
-                                groupShopJoinBean.setGpEndTime(qualityGroupShareBean.getGpEndTime());
                                 groupShopJoinList.add(groupShopJoinBean);
                                 shopJoinGroupView.joinGroupAdapter.removeAllHeaderView();
                                 if (groupShopJoinList.size() > 0) {
@@ -490,8 +497,12 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 shopJoinGroupView.joinGroupAdapter.setNewData(groupShopJoinList);
                             } else if (qualityGroupShareEntity.getCode().equals("02")) {
                                 showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
+                                ll_group_buy.setEnabled(false);
+                                tv_sp_details_join_count.setText("拼团失败");
                             } else {
                                 showToast(QualityGroupShopDetailActivity.this, qualityGroupShareEntity.getMsg());
+                                ll_group_buy.setEnabled(false);
+                                tv_sp_details_join_count.setText("拼团失败");
                             }
                         }
                     }
@@ -711,29 +722,25 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         if (groupShopDetailsBean.getQuantityStatus() == null) {
             return;
         }
-        QuantityStatusBean quantityStatus = groupShopDetailsBean.getQuantityStatus();
-        switch (quantityStatus.getQuantityStatusId()) {
-            case 1002:
-                ll_group_buy.setEnabled(true);
-                tv_sp_details_join_buy_price.setEnabled(true);
-                tv_sp_details_join_count.setEnabled(true);
-                tv_sp_details_join_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
-                tv_sp_details_join_count.setText(getStrings(groupShopDetailsBean.getGpType()));
-                break;
-            case 1001:
-                ll_group_buy.setEnabled(false);
-                tv_sp_details_join_buy_price.setEnabled(false);
-                tv_sp_details_join_count.setEnabled(false);
-                tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
-                tv_sp_details_join_count.setText("逛逛其它");
-                break;
-            case 1003:
-                ll_group_buy.setEnabled(false);
-                tv_sp_details_join_buy_price.setEnabled(false);
-                tv_sp_details_join_count.setEnabled(false);
-                tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
-                tv_sp_details_join_count.setText("逛逛其它");
-                break;
+        if(!invitePartnerJoin){
+            QuantityStatusBean quantityStatus = groupShopDetailsBean.getQuantityStatus();
+            switch (quantityStatus.getQuantityStatusId()) {
+                case 1002:
+                    ll_group_buy.setEnabled(true);
+                    tv_sp_details_join_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
+                    tv_sp_details_join_count.setText(getStrings(groupShopDetailsBean.getGpType()));
+                    break;
+                case 1001:
+                    ll_group_buy.setEnabled(false);
+                    tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
+                    tv_sp_details_join_count.setText("逛逛其它");
+                    break;
+                case 1003:
+                    ll_group_buy.setEnabled(false);
+                    tv_sp_details_join_buy_price.setText(getStrings(quantityStatus.getQuantityStatusMsg()));
+                    tv_sp_details_join_count.setText("逛逛其它");
+                    break;
+            }
         }
     }
 
@@ -926,7 +933,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     }
 
     //  开团
-    @OnClick({R.id.ll_group_buy, R.id.tv_sp_details_join_buy_price, R.id.tv_sp_details_join_count})
+    @OnClick(R.id.ll_group_buy)
     void skipBuy(View view) {
         if (userId > 0) {
 //            去参团
@@ -955,7 +962,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.ll_alone_buy, R.id.tv_sp_details_ol_buy_price, R.id.tv_sp_details_ol_buy})
+    @OnClick(R.id.ll_alone_buy)
     void skipAloneBuy(View view) {
         if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
             if (invitePartnerJoin) {

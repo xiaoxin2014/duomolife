@@ -81,7 +81,6 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     private QualityGroupMineBean qualityGroupMineBean;
     private QualityCreateWeChatPayIndentBean qualityWeChatIndent;
     private QualityCreateAliPayIndentBean qualityAliPayIndent;
-    private boolean isOnPause;
     private QualityGroupMineEntity qualityGroupMineEntity;
 
     @Override
@@ -196,12 +195,14 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
-                if (qualityGroupMineBean != null) {
+                if (qualityGroupMineBean != null&&(qualityGroupMineBean.getGpStatus()==1||qualityGroupMineBean.getGpStatus()==2)) {
                     Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
                     intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
                     intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
                     intent.putExtra("invitePartnerJoin", true);
                     startActivity(intent);
+                }else{
+                    showToast(QualityGroupShopMineActivity.this,"已结束拼团");
                 }
             }
         });

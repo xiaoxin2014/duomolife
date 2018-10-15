@@ -32,5 +32,5 @@ android {
 dependencies {
     implementation "com.android.support:appcompat-v7:$versions.supportLibs"
     implementation "com.android.support:recyclerview-v7:$versions.supportLibs"
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
 }

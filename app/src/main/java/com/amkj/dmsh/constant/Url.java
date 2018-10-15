@@ -521,6 +521,8 @@ public class Url {
     public static final String QUALITY_NEW_USER_GET_COUPON = "api/goods/newuser/getCouponByNewUser";
     //    热销单品
     public static final String QUALITY_HOT_SALE_LIST = "api/goods/hot/sale/getHotGoods";
+    //    热销单品广告位
+    public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
     public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
     //    新版热销单品 时间轴

@@ -14,6 +14,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import static com.amkj.dmsh.R.id.tv_ql_gp_mine_inv_join;
+import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -53,7 +54,7 @@ public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBe
         }
         TextView tv_ql_mine_status = helper.getView(R.id.tv_ql_mine_status);
         if (qualityGroupMineBean.getGpStatus() == 1) {
-            tv_ql_mine_status.setText("拼团中，还差" + qualityGroupMineBean.getLeftParticipant() + "人");
+            tv_ql_mine_status.setText(getIntegralFormat(context,R.string.group_residue_join_count,qualityGroupMineBean.getLeftParticipant()));
             tv_ql_mine_status.setSelected(true);
         } else {
             tv_ql_mine_status.setSelected(false);

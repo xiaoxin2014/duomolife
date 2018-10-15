@@ -272,7 +272,7 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
 
     //    网易七鱼
-//    implementation 'com.qiyukf.unicorn:unicorn:4.4.0'
+    implementation 'com.qiyukf.unicorn:unicorn:4.5.0'
     implementation project(':RecyclerViewPager')
     implementation project(':FlycoTabLayout_Lib')
     implementation project(':pinneditem')
@@ -285,5 +285,4 @@ dependencies {
     implementation project(':ShortcutBadger')
     implementation project(':convenientbanner')
     implementation project(':jiaozivideoplayer')
-    implementation project(':unicorn')
 }

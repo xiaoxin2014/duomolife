@@ -165,6 +165,8 @@
     <!--拼团-->
     <string name="share_join_group">邀请好友一起来拼团吧\n还差%1$d人就可拼团成功，快去分享给好友吧</string>
     <string name="group_buy_count">已团%1$d件</string>
+    <string name="group_residue_join_count">"拼团中，还差%1$d人</string>
+
     <!--评论提示-->
     <string name="comment_article_hint">给小编留言互动，入选送积分</string>
     <string name="comment_article_send_success">小编收到啦(*╹▽╹*)</string>

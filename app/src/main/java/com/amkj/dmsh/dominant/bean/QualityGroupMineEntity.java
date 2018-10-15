@@ -106,6 +106,8 @@ public class QualityGroupMineEntity extends BaseEntity{
         private String createTime;
         private String orderNo;
         private int leftParticipant;
+        @SerializedName("gp_type")
+        private int gpType;
 
         public int getLeftParticipant() {
             return leftParticipant;
@@ -113,6 +115,14 @@ public class QualityGroupMineEntity extends BaseEntity{
 
         public void setLeftParticipant(int leftParticipant) {
             this.leftParticipant = leftParticipant;
+        }
+
+        public int getGpType() {
+            return gpType;
+        }
+
+        public void setGpType(int gpType) {
+            this.gpType = gpType;
         }
 
         public String getOrderNo() {

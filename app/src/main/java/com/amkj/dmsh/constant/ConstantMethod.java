@@ -45,6 +45,8 @@ import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -76,6 +78,9 @@ import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.stat.StatConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.Action;
@@ -119,6 +124,7 @@ import static com.ali.auth.third.core.context.KernelContext.getApplicationContex
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlParameterTransform;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlTransform;
+import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -138,6 +144,7 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_DELETE;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
+import static com.amkj.dmsh.constant.UMShareAction.routineId;
 
 /**
  * @author LGuiPeng
@@ -182,7 +189,7 @@ public class ConstantMethod {
     private static String filterSpecial(String text) {
         Pattern p = Pattern.compile(REGEX_SPACE_CHAR);
         Matcher m = p.matcher(text);
-        text =  m.replaceAll("");
+        text = m.replaceAll("");
         return text;
     }
 
@@ -254,13 +261,30 @@ public class ConstantMethod {
      * @return
      */
     public static String getStringsFormat(Context context, int resStringId, String textString) {
-        if(context==null){
+        if (context == null) {
             return "";
         }
-        if(resStringId<=0){
+        if (resStringId <= 0) {
             return "";
         }
         return String.format(context.getResources().getString(resStringId), getStrings(textString));
+    }
+
+    /**
+     *
+     * @param context
+     * @param resStringId
+     * @param number
+     * @return
+     */
+    public static String getIntegralFormat(Context context, int resStringId, @NonNull int number) {
+        if (context == null) {
+            return "";
+        }
+        if (resStringId <= 0) {
+            return "";
+        }
+        return String.format(context.getResources().getString(resStringId), number);
     }
 
     /**
@@ -333,8 +357,11 @@ public class ConstantMethod {
      * @param isCloseActivity 是否关闭当前页面跳转
      */
     public static void setSkipPath(Context context, String link, boolean isCloseActivity) {
-        String subUrl;
+        String subUrl = null;
         String prefix = "app://";
+        String smallRoutine = "minip://";
+        link = getStringFilter(link);
+        boolean isMiniRoutine = false;
         if (context != null) {
             Context applicationContext = context.getApplicationContext();
             if (!TextUtils.isEmpty(link)) {
@@ -362,6 +389,34 @@ public class ConstantMethod {
                         subUrl = link.substring(prefixLength, link.length()).trim();
                         intent.setAction(subUrl);
                     }
+                }else if(link.contains(smallRoutine)){
+                    int smallRoutineStart = link.indexOf(smallRoutine) + smallRoutine.length();
+                    // 填应用AppId
+                    IWXAPI api = WXAPIFactory.createWXAPI(context, APP_ID);
+                    WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
+                    req.userName = routineId; // 填小程序原始id
+                    String jsonData = link.substring(smallRoutineStart).trim();
+                    int versionType = 0;
+                    if(!TextUtils.isEmpty(jsonData)){
+                        try {
+                            JSONObject jsonObject = JSON.parseObject(jsonData);
+                            if(jsonObject!=null){
+                                String page = jsonObject.getString("pages");
+                                if(!TextUtils.isEmpty(page)){
+                                    req.path = page;
+                                }
+                                versionType = jsonObject.getInteger("type");
+                                if(versionType>2){
+                                    versionType = 0;
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    req.miniprogramType = versionType;// 可选打开 开发版，体验版和正式版
+                    api.sendReq(req);
+                    isMiniRoutine = true;
                 } else {
                     String webUrl;
                     if (link.contains("?")) {
@@ -397,20 +452,22 @@ public class ConstantMethod {
                         intent.putExtra("loadUrl", link);
                     }
                 }
-                try {
-                    if (link.contains("taobao")) {
-                        skipAliBCWebView(link, context);
-                    } else {
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        applicationContext.startActivity(intent);
-                        if (isCloseActivity) {
-                            ((Activity) context).finish();
-                            ((Activity) context).overridePendingTransition(0, 0);
+                if(!isMiniRoutine){
+                    try {
+                        if (link.contains("taobao")) {
+                            skipAliBCWebView(link, context);
+                        } else {
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            applicationContext.startActivity(intent);
+                            if (isCloseActivity) {
+                                ((Activity) context).finish();
+                                ((Activity) context).overridePendingTransition(0, 0);
+                            }
                         }
+                    } catch (Exception e) {
+                        skipMainActivity(context);
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    skipMainActivity(context);
-                    e.printStackTrace();
                 }
             }
         }
@@ -564,15 +621,15 @@ public class ConstantMethod {
     }
 
     public static Badge getBadge(Context context, View view) {
-        return getBadge(context, view, AutoSizeUtils.mm2px(mAppContext,15), AutoSizeUtils.mm2px(mAppContext,20));
+        return getBadge(context, view, AutoSizeUtils.mm2px(mAppContext, 15), AutoSizeUtils.mm2px(mAppContext, 20));
     }
 
     public static Badge getBadge(Context context, View view, int offsetX, int offsetY) {
         Badge badge = new QBadgeView(context).bindTarget(view);
         badge.setBadgeGravity(Gravity.END | Gravity.TOP);
         badge.setGravityOffset(offsetX, offsetY, false);
-        badge.setBadgePadding(AutoSizeUtils.mm2px(mAppContext,3), false);
-        badge.setBadgeTextSize(AutoSizeUtils.mm2px(mAppContext,18), false);
+        badge.setBadgePadding(AutoSizeUtils.mm2px(mAppContext, 3), false);
+        badge.setBadgeTextSize(AutoSizeUtils.mm2px(mAppContext, 18), false);
         badge.setBadgeBackgroundColor(context.getResources().getColor(R.color.text_normal_red));
         return badge;
     }
@@ -1564,7 +1621,7 @@ public class ConstantMethod {
                 return m.replaceAll("");
             }
         };
-        editText.setFilters(new InputFilter[]{strSpaceFilter,emojiFilter, specialCharFilter});
+        editText.setFilters(new InputFilter[]{strSpaceFilter, emojiFilter, specialCharFilter});
     }
 
 
@@ -1850,7 +1907,7 @@ public class ConstantMethod {
                                 && !TextUtils.isEmpty(requestStatus.getImgUrl())
                                 && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
                             //                                    弹窗
-                            if(isContextExisted(context)){
+                            if (isContextExisted(context)) {
                                 GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
                                     public void onSuccess(Bitmap bitmap) {
@@ -2632,7 +2689,7 @@ public class ConstantMethod {
                         .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z));
             }
             alertImportDialogHelper.setMsg(hintText);
-            if(!context.isFinishing()){
+            if (!context.isFinishing()) {
                 alertImportDialogHelper.show();
             }
         }
