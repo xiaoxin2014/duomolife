@@ -169,6 +169,7 @@ public class ConstantMethod {
     public static boolean NEW_USER_DIALOG = true;
     private AlertDialogHelper alertDialogHelper;
     public AlertDialogHelper alertImportDialogHelper;
+//    private AlertDialogHelper alertDialogRequestHelper;
 
 
     //    判断变量是否为空
@@ -271,7 +272,6 @@ public class ConstantMethod {
     }
 
     /**
-     *
      * @param context
      * @param resStringId
      * @param number
@@ -389,7 +389,7 @@ public class ConstantMethod {
                         subUrl = link.substring(prefixLength, link.length()).trim();
                         intent.setAction(subUrl);
                     }
-                }else if(link.contains(smallRoutine)){
+                } else if (link.contains(smallRoutine)) {
                     int smallRoutineStart = link.indexOf(smallRoutine) + smallRoutine.length();
                     // 填应用AppId
                     IWXAPI api = WXAPIFactory.createWXAPI(context, APP_ID);
@@ -397,16 +397,16 @@ public class ConstantMethod {
                     req.userName = routineId; // 填小程序原始id
                     String jsonData = link.substring(smallRoutineStart).trim();
                     int versionType = 0;
-                    if(!TextUtils.isEmpty(jsonData)){
+                    if (!TextUtils.isEmpty(jsonData)) {
                         try {
                             JSONObject jsonObject = JSON.parseObject(jsonData);
-                            if(jsonObject!=null){
+                            if (jsonObject != null) {
                                 String page = jsonObject.getString("pages");
-                                if(!TextUtils.isEmpty(page)){
+                                if (!TextUtils.isEmpty(page)) {
                                     req.path = page;
                                 }
                                 versionType = jsonObject.getInteger("type");
-                                if(versionType>2){
+                                if (versionType > 2) {
                                     versionType = 0;
                                 }
                             }
@@ -452,7 +452,7 @@ public class ConstantMethod {
                         intent.putExtra("loadUrl", link);
                     }
                 }
-                if(!isMiniRoutine){
+                if (!isMiniRoutine) {
                     try {
                         if (link.contains("taobao")) {
                             skipAliBCWebView(link, context);
@@ -1076,12 +1076,7 @@ public class ConstantMethod {
                         if (AndPermission.hasAlwaysDeniedPermission(context, permissions)) {
                             // 这里使用一个Dialog展示没有这些权限应用程序无法继续运行，询问用户是否去设置中授权。
                             if (alertDialogHelper == null) {
-                                alertDialogHelper = new AlertDialogHelper(context)
-                                        .setTitle("权限提示")
-                                        .setMsg("还缺少 " + TextUtils.join(" ", Permission.transformText(context, data))
-                                                + " 重要权限，为了不影响使用，请到设置-应用管理打开权限")
-                                        .setSingleButton(true)
-                                        .setConfirmText("去设置");
+                                alertDialogHelper = new AlertDialogHelper(context);
                                 alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                     @Override
                                     public void confirm() {
@@ -1109,6 +1104,11 @@ public class ConstantMethod {
                                     }
                                 });
                             }
+                            alertDialogHelper.setTitle("权限提示")
+                                    .setMsg("还缺少 " + TextUtils.join(" ", Permission.transformText(context, data))
+                                            + " 重要权限，为了不影响使用，请到设置-应用管理打开权限")
+                                    .setSingleButton(true)
+                                    .setConfirmText("去设置");
                             alertDialogHelper.show();
 
                         }
@@ -1122,39 +1122,36 @@ public class ConstantMethod {
                         }
                     }
                 })
-                /*.rationale(new Rationale<List<String>>() {
+                /*.rationale(new Rationale<List<String>>() { //如果拒绝了权限 弹窗提醒用户是否取消授权
                     @Override
                     public void showRationale(Context context, List<String> data, RequestExecutor executor) {
-//                        if(data!=null&&data.size()>1){
-//                            executor.execute();
-//                            // 这里使用一个Dialog询问用户是否继续授权。
-//                            AlertDialogHelper alertDialogTitleConfirmCancel = new AlertDialogHelper();
-//                            alertDialogTitleConfirmCancel.setAlertClickListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-//                                @Override
-//                                public void confirm() {
-//                                    // 如果用户继续：
-//                                    executor.execute();
-//                                    if(permissionAlertView!=null&&permissionAlertView.isShowing()){
-//                                        permissionAlertView.dismiss();
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void cancel() {
-//                                    // 如果用户中断：
-//                                    executor.cancel();
-//                                }
-//                            });
-//                            permissionAlertView = alertDialogTitleConfirmCancel.createAlertDialog(context
-//                                    , "还缺少一些必要的权限，为了不影响使用，是否继续申请权限", "继续"
-//                                    , "", false);
-//                            permissionAlertView.show();
-//                        }else{
-//                            executor.execute();
-//                        }
-                        executor.execute();
+                        if (data != null) {
+                            if (alertDialogRequestHelper == null) {
+                                alertDialogRequestHelper = new AlertDialogHelper(context);
+                                alertDialogRequestHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                    @Override
+                                    public void confirm() {
+                                        // 如果用户继续：
+                                        executor.execute();
+                                    }
+
+                                    @Override
+                                    public void cancel() {
+                                        // 如果用户中断：
+                                        executor.cancel();
+                                    }
+                                });
+                            }
+                            alertDialogRequestHelper.setTitle("权限提示")
+                                    .setMsg("还缺少一些必要的权限，为了不影响使用，是否继续申请权限")
+                                    .setConfirmText("继续").setCancelText("取消")
+                                    .setCancelTextColor(context.getResources().getColor(R.color.text_gray_hint_n));
+                            alertDialogRequestHelper.show();
+                        } else {
+                            executor.cancel();
+                        }
                     }
-//                })*/
+                })*/
                 .start();
     }
 

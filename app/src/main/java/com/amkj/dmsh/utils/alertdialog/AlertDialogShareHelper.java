@@ -39,9 +39,9 @@ public class AlertDialogShareHelper {
     private AlertDialog shareAlertDialog;
     private View dialogView;
     private List<ShareIconTitleBean> iconTitleList = new ArrayList<>();
-    private Integer [] shareIcon = {R.drawable.umeng_socialize_wechat,R.drawable.umeng_socialize_wxcircle
-            ,  R.drawable.umeng_socialize_qq, R.drawable.umeng_socialize_sina
-            , R.drawable.umeng_socialize_copyurl, R.drawable.umeng_socialize_copyurl};
+    private Integer [] shareIcon = {R.drawable.share_wechat_icon,R.drawable.share_circle_icon
+            ,  R.drawable.share_qq_icon, R.drawable.share_sina_icon
+            , R.drawable.share_copy_icon, R.drawable.share_save_icon};
     private String[] shareTitle = { "微信","微信朋友圈", "QQ", "微博", "复制链接","保存图片"};
     //
     private SHARE_MEDIA[] sharePlatform = {SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE,

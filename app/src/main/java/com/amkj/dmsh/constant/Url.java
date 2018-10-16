@@ -640,6 +640,8 @@ public class Url {
      */
     //    多么订单商品
     public static final String REL_INDENT_PRO = "api/find/getOrderGoodsList";
+    //    分享保存图片
+    public static final String SHARE_SAVE_IMAGE_URL = "api/miniprogram/createMiniProductSharePic";
     //    购物车商品
     public static final String REL_SHOP_CAR_PRO = "api/find/getCartGoodsList";
     //    收藏商品

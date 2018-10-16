@@ -2,7 +2,6 @@ package com.amkj.dmsh.dominant.initviews;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.animation.Animation;
 
 import com.amkj.dmsh.R;
 
@@ -21,24 +20,9 @@ public class BottomPopWindows extends BasePopupWindow {
     public BottomPopWindows(Activity context) {
         super(context);
     }
-
+    
     @Override
-    protected Animation initShowAnimation() {
-        return null;
-    }
-
-    @Override
-    public View getClickToDismissView() {
-        return getPopupWindowView();
-    }
-
-    @Override
-    public View onCreatePopupView() {
+    public View onCreateContentView() {
         return createPopupById(R.layout.product_type_popwindow);
-    }
-
-    @Override
-    public View initAnimaView() {
-        return null;
     }
 }

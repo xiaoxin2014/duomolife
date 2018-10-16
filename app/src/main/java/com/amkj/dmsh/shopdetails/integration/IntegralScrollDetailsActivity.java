@@ -519,7 +519,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 SkuSaleBean skuSaleBean = productInfoBean.getSkuSale().get(0);
                 integralPopWindows = new IntegralPopWindows(IntegralScrollDetailsActivity.this);
                 integralPopWindows.setPopupWindowFullScreen(true);
-                View popupWindowView = integralPopWindows.getPopupWindowView();
+                View popupWindowView = integralPopWindows.getContentView();
                 RectAddAndSubViewCommunal rectAddAndSubViewCommunal = popupWindowView.findViewById(R.id.rect_integral_product_number);
                 TextView tv_integral_product_exchange = popupWindowView.findViewById(R.id.tv_integral_product_exchange);
                 rectAddAndSubViewCommunal.setMaxNum(skuSaleBean.getQuantity());

@@ -14,16 +14,18 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.MinePassword;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -38,6 +40,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
+import static com.amkj.dmsh.utils.NetWorkUtils.isConnectedByState;
 
 ;
 
@@ -137,14 +143,51 @@ public class FoundPasswordActivity extends BaseActivity {
     void sendSmsCode(View view) {
         String phoneNumber = edit_binding_mobile.getText().toString().trim();
         if (phoneNumber.length() == 11) {
-            //            请求验证码
-            tv_bind_send_code.setVisibility(View.GONE);
-            reg_bind_code_gif_view.setVisibility(View.VISIBLE);
-            if (NetWorkUtils.isConnectedByState(FoundPasswordActivity.this)) {
-                SMSSDK.getVerificationCode("86", phoneNumber);
-            } else {
-                showToast(this, R.string.unConnectedNetwork);
-            }
+//            判断手机号是否注册
+            Map<String, Object> params = new HashMap<>();
+            params.put("mobile", phoneNumber);
+            NetLoadUtils.getQyInstance().loadNetDataPost(this, BASE_URL + CHECK_PHONE_IS_REG,params , new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    String code = "";
+                    String msg = "";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = (String) jsonObject.get("code");
+                        msg = (String) jsonObject.get("msg");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (code.equals(SUCCESS_CODE)) {
+                        Gson gson = new Gson();
+                        RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
+                        if (status != null && status.getRegisterFlag() == 1) {
+                            if (isConnectedByState(FoundPasswordActivity.this)) {
+                                //            请求验证码
+                                tv_bind_send_code.setVisibility(View.GONE);
+                                reg_bind_code_gif_view.setVisibility(View.VISIBLE);
+                                SMSSDK.getVerificationCode("86", phoneNumber);
+                            } else {
+                                showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                            }
+                        } else if (status != null && status.getRegisterFlag() != 1) {
+                            showToast(FoundPasswordActivity.this, status.getResult());
+                        }
+                    } else {
+                        showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                    }
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                }
+            });
         } else if (phoneNumber.length() < 11) {
             showToast(this, "手机号码有误，请重新输入");
         }
@@ -157,7 +200,7 @@ public class FoundPasswordActivity extends BaseActivity {
         String msgCode = edit_get_code.getText().toString().trim();
         if (phoneNumber.length() == 11 && !TextUtils.isEmpty(msgCode)) {
             //            提交验证码
-            if (NetWorkUtils.isConnectedByState(FoundPasswordActivity.this)) {
+            if (isConnectedByState(FoundPasswordActivity.this)) {
                 if (loadHud != null) {
                     loadHud.show();
                 }
@@ -180,7 +223,7 @@ public class FoundPasswordActivity extends BaseActivity {
             loadHud.show();
         }
         String passwordNewLock = PasswordEncrypt.getEncryptedPassword(newPassword);
-        String url = Url.BASE_URL + Url.MINE_RESET_PASSWORD;
+        String url = BASE_URL + Url.MINE_RESET_PASSWORD;
         Map<String, Object> params = new HashMap<>();
         params.put("mobile", phoneNumber);
         params.put("newPassword", passwordNewLock);

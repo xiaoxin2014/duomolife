@@ -2,7 +2,6 @@ package com.amkj.dmsh.shopdetails.integration.initview;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.animation.Animation;
 
 import com.amkj.dmsh.R;
 
@@ -23,22 +22,7 @@ public class IntegralPopWindows extends BasePopupWindow {
     }
 
     @Override
-    protected Animation initShowAnimation() {
-        return null;
-    }
-
-    @Override
-    public View getClickToDismissView() {
-        return getPopupWindowView();
-    }
-
-    @Override
-    public View onCreatePopupView() {
+    public View onCreateContentView() {
         return createPopupById(R.layout.popwindow_product_integral);
-    }
-
-    @Override
-    public View initAnimaView() {
-        return null;
     }
 }

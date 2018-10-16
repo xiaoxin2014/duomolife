@@ -7,10 +7,11 @@ import android.os.Bundle;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
-import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+
+import static com.tencent.mm.opensdk.constants.ConstantsAPI.COMMAND_PAY_BY_WX;
 
 ;
 
@@ -43,7 +44,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onResp(BaseResp baseResp) {
-        if (baseResp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+        if (baseResp.getType() == COMMAND_PAY_BY_WX) {
             if (WXPay.getInstance() != null) {
                 WXPay.getInstance().onResp(baseResp.errCode);
                 finish();

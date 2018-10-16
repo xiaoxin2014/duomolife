@@ -2,7 +2,6 @@ package com.amkj.dmsh.homepage.initviews;
 
 import android.content.Context;
 import android.view.View;
-import android.view.animation.Animation;
 
 import com.amkj.dmsh.R;
 
@@ -22,22 +21,7 @@ public class AttendanceLotteryCodePopWindow extends BasePopupWindow {
     }
 
     @Override
-    protected Animation initShowAnimation() {
-        return null;
-    }
-
-    @Override
-    public View getClickToDismissView() {
-        return getPopupWindowView();
-    }
-
-    @Override
-    public View onCreatePopupView() {
+    public View onCreateContentView() {
         return createPopupById(R.layout.layout_attendance_integral_lottery_code);
-    }
-
-    @Override
-    public View initAnimaView() {
-        return null;
     }
 }

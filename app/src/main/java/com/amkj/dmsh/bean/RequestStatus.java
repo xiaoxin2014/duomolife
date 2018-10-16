@@ -149,6 +149,15 @@ public class RequestStatus {
         private String resultCode;
         private String resultMsg;
         private int collectSize;
+        private String imgUrl;
+
+        public String getImgUrl() {
+            return imgUrl;
+        }
+
+        public void setImgUrl(String imgUrl) {
+            this.imgUrl = imgUrl;
+        }
 
         public int getCollectSize() {
             return collectSize;

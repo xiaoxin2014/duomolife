@@ -268,7 +268,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                 setTabIcon(true);
                 return true;
             });
-            final View popupWindowView = bottomPopWindows.getPopupWindowView();
+            final View popupWindowView = bottomPopWindows.getContentView();
             RecyclerView communal_recycler_wrap = (RecyclerView) popupWindowView.findViewById(R.id.communal_recycler_wrap);
             communal_recycler_wrap.setLayoutManager(new GridLayoutManager(QualityTypeProductActivity.this, 4));
             productTypeSortAdapter = new ProductTypeSortAdapter(qualityTypeBeans);

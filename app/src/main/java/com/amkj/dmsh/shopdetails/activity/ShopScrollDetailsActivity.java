@@ -325,17 +325,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_count_time_before_white.setTextColor(getResources().getColor(R.color.text_black_t));
-        tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
+        tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 24));
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
-        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
-        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
 
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         dynamic.setTimeTextColor(0xff333333);
         dynamic.setSuffixTextColor(0xff333333);
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,18));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,24));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 18));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 24));
         dynamic.setSuffixDay(getStrings(" 天 "));
         dynamic.setShowDay(true);
         dynamic.setSuffixGravity(Gravity.CENTER);
@@ -376,7 +376,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     break;
                 case R.id.tv_eva_count:
                     goodsCommentBean = (GoodsCommentBean) view.getTag();
-                    if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
+                    if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
                         if (userId > 0) {
                             setProductEvaLike(view);
                         } else {
@@ -508,9 +508,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         for (int i = 0; i < detailTabData.length; i++) {
             tabData.add(new TabEntity(detailTabData[i], 0, 0));
         }
-        ctb_qt_pro_details.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
-        ctb_qt_pro_details.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext,28 * 2));
-        ctb_qt_pro_details.setTabPadding(AutoSizeUtils.mm2px(mAppContext,20));
+        ctb_qt_pro_details.setTextSize(AutoSizeUtils.mm2px(mAppContext, 30));
+        ctb_qt_pro_details.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext, 28 * 2));
+        ctb_qt_pro_details.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 20));
         ctb_qt_pro_details.setTabData(tabData);
         ctb_qt_pro_details.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -561,7 +561,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
 
         GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext,55));
+        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext, 55));
         gradientDrawable.setColor(getResources().getColor(R.color.yellow_bg_ffae));
         tv_group_product.setBackground(gradientDrawable);
         if (isShowTint) {
@@ -897,7 +897,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             Link numberLink = new Link(Pattern.compile(REGEX_NUM));
             numberLink.setTextColor(Color.parseColor("#ffffff"));
             numberLink.setUnderlined(false);
-            numberLink.setTextSize(AutoSizeUtils.mm2px(mAppContext,26));
+            numberLink.setTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
             numberLink.setHighlightAlpha(0f);
             LinkBuilder.on(tv_group_product)
                     .addLink(numberLink)
@@ -1444,7 +1444,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_ql_sp_pro_sc_price.setText(activityPrice);
             Link link = new Link(activityPriceTag);
             link.setTextColor(Color.parseColor("#ff5a6b"));
-            link.setTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+            link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
             link.setBgColor(Color.parseColor("#ffffff"));
             link.setUnderlined(false);
             link.setHighlightAlpha(0f);
@@ -2162,7 +2162,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     , "我在多么生活看中了" + shopPropertyBean.getName()
                     , getStrings(shopPropertyBean.getSubtitle())
                     , sharePageUrl + shopPropertyBean.getId()
-                    , "pages/goodsDetails/goodsDetails?id=" + shopPropertyBean.getId());
+                    , "pages/goodsDetails/goodsDetails?id=" + shopPropertyBean.getId()
+                    , shopPropertyBean.getId(), true);
         }
         tv_product_share_tint.setVisibility(GONE);
     }
@@ -2178,7 +2179,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.iv_ql_shop_pro_cp_tag)
-    void unallowedCoupon() {
+    void unAllowedCoupon() {
         showToast(ShopScrollDetailsActivity.this, "该商品不支持使用优惠券！");
     }
 

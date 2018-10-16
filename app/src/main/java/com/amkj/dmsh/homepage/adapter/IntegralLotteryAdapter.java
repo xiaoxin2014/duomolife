@@ -101,8 +101,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
      */
     private void setLotteryCodePopWindows() {
         attendanceLotteryCodePopWindow = new AttendanceLotteryCodePopWindow(context);
-        attendanceLotteryCodePopWindow.setDismissWhenTouchOutside(true);
-        View popupWindowView = attendanceLotteryCodePopWindow.getPopupWindowView();
+        attendanceLotteryCodePopWindow.getPopupWindow().setOutsideTouchable(true);
+        View popupWindowView = attendanceLotteryCodePopWindow.getContentView();
         attendanceLotteryCode = new AttendanceLotteryCode();
         ButterKnife.bind(attendanceLotteryCode, popupWindowView);
         attendanceLotteryCode.initViews();
