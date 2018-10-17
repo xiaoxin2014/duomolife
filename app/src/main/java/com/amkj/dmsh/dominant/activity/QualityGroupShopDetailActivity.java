@@ -211,6 +211,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private CBViewHolderCreator cbViewHolderCreator;
     private boolean invitePartnerJoin;
     private GroupShopDetailsBean groupShopDetailsBean;
+    private String orderNo;
 
     @Override
     protected int getContentView() {
@@ -223,6 +224,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         Intent intent = getIntent();
         gpInfoId = intent.getStringExtra("gpInfoId");
         gpRecordId = intent.getStringExtra("gpRecordId");
+        orderNo = intent.getStringExtra("orderNo");
         invitePartnerJoin = intent.getBooleanExtra("invitePartnerJoin", false);
         smart_refresh_ql_sp_details.setOnRefreshListener((refreshLayout) -> loadData());
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
@@ -946,8 +948,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             , qualityGroupShareBean.getName()
                             , getStrings(qualityGroupShareBean.getSubtitle())
                             , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                            + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?gpInfoId="+ qualityGroupShareBean.getGpInfoId()
-                            + "&gpRecordId=" + qualityGroupShareBean.getGpRecordId());
+                            + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupShareBean.getGpInfoId()
+                            + (TextUtils.isEmpty(orderNo)?"&gpRecordId=" + qualityGroupShareBean.getGpRecordId():"&order="+orderNo));
                 } else {
                     isCanJoinGroup(null, qualityGroupShareEntity, shareJoinGroup);
                 }

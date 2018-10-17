@@ -92,15 +92,15 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
         smart_scroll_communal_refresh.setOnRefreshListener((refreshLayout) ->
-            loadData()
+                loadData()
         );
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoGroupJoinShareActivity.this));
         View headerView = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_ql_gp_sp_join_share, null);
         groupShareJoinView = new GroupShareJoinView();
         ButterKnife.bind(groupShareJoinView, headerView);
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
         groupShareJoinView.ct_time_communal_show_bg.dynamicShow(dynamic.build());
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         gpRuleDetailsAdapter = new CommunalDetailAdapter(DoMoGroupJoinShareActivity.this, gpRuleList);
@@ -143,7 +143,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private void setCommunalInfo(GroupShopCommunalInfoBean groupShopCommunalInfoBean) {
         List<CommunalDetailBean> gpRuleBeanList = groupShopCommunalInfoBean.getGpRule();
 //        拼团规则
-        if (gpRuleBeanList!=null&&gpRuleBeanList.size() > 0) {
+        if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
             gpRuleList.clear();
             gpRuleList.addAll(getDetailsDataList(gpRuleBeanList));
             gpRuleDetailsAdapter.notifyDataSetChanged();
@@ -156,37 +156,37 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         params.put("orderNo", orderNo);
         NetLoadUtils.getQyInstance().loadNetDataPost(DoMoGroupJoinShareActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_scroll_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
-                qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                if (qualityGroupShareEntity != null) {
-                    if (qualityGroupShareEntity.getCode().equals("01")) {
-                        setGpDataInfo(qualityGroupShareEntity);
-                    } else if (qualityGroupShareEntity.getCode().equals("02")) {
-                        showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-                    } else {
-                        showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_scroll_communal_refresh.finishRefresh();
+                        Gson gson = new Gson();
+                        qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
+                        if (qualityGroupShareEntity != null) {
+                            if (qualityGroupShareEntity.getCode().equals("01")) {
+                                setGpDataInfo(qualityGroupShareEntity);
+                            } else if (qualityGroupShareEntity.getCode().equals("02")) {
+                                showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
+                            } else {
+                                showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_scroll_communal_refresh.finishRefresh();
-                showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_scroll_communal_refresh.finishRefresh();
+                        showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_scroll_communal_refresh.finishRefresh();
-                showToast(DoMoGroupJoinShareActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupShareBean,qualityGroupShareEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_scroll_communal_refresh.finishRefresh();
+                        showToast(DoMoGroupJoinShareActivity.this, R.string.connectedFaile);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
+                    }
+                });
     }
 
     private void setGpDataInfo(final QualityGroupShareEntity qualityGroupShareEntity) {
@@ -209,8 +209,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 memberListBean.setAvatar("android.resource://com.amkj.dmsh/drawable/" + R.drawable.dm_gp_join);
                 memberList.add(memberListBean);
             }
-        }else{
-            showToast(DoMoGroupJoinShareActivity.this,"拼团信息获取失败，请刷新重试");
+        } else {
+            showToast(DoMoGroupJoinShareActivity.this, "拼团信息获取失败，请刷新重试");
         }
         if (memberList != null && memberList.size() > 0) {
             groupShareJoinView.rel_group_join_share.setVisibility(View.VISIBLE);
@@ -220,7 +220,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     View view = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_gp_join_avator, parent, false);
                     ImageView imageView = (ImageView) view.findViewById(R.id.iv_dm_gp_open_ava);
                     TextView tv_dm_gp_name = (TextView) view.findViewById(R.id.tv_dm_gp_name);
-                    GlideImageLoaderUtil.loadRoundImg(DoMoGroupJoinShareActivity.this, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext,100));
+                    GlideImageLoaderUtil.loadRoundImg(DoMoGroupJoinShareActivity.this, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 100));
                     String name = getStrings(memberListBean.getNickname());
                     if (name.length() > 7) {
                         name = name.substring(0, 7) + "...";
@@ -229,7 +229,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     return view;
                 }
             });
-        }else{
+        } else {
             groupShareJoinView.rel_group_join_share.setVisibility(GONE);
         }
         gpRuleDetailsAdapter.notifyDataSetChanged();
@@ -324,6 +324,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         //        单买价
         @BindView(R.id.tv_gp_ql_share_only_price)
         TextView tv_gp_ql_share_only_price;
+
         //    页面分享
         @OnClick(R.id.tv_join_share)
         void sendShare(View view) {
@@ -333,8 +334,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                         , qualityGroupShareBean.getName()
                         , getStrings(qualityGroupShareBean.getSubtitle())
                         , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                        + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?gpInfoId="+ qualityGroupShareBean.getGpInfoId()
-                        + "&gpRecordId=" + qualityGroupShareBean.getGpRecordId());
+                        + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
+                        + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
             }
         }
     }
@@ -353,8 +354,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     , qualityGroupShareBean.getName()
                     , getStrings(qualityGroupShareBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                    + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?gpInfoId="+ qualityGroupShareBean.getGpInfoId()
-                    + "&gpRecordId=" + qualityGroupShareBean.getGpRecordId());
+                    + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
+                    + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
         }
     }
 

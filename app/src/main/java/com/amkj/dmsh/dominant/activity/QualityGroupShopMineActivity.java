@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -199,6 +200,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
                     intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
                     intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
+                    intent.putExtra("orderNo",qualityGroupMineBean.getOrderNo());
                     intent.putExtra("invitePartnerJoin", true);
                     startActivity(intent);
                 }else{
@@ -215,8 +217,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     , qualityGroupMineBean.getName()
                     , getStrings(qualityGroupMineBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupMineBean.getGpInfoId()
-                    + "&order=" + qualityGroupMineBean.getOrderNo()
-                    + "&record=" + qualityGroupMineBean.getGpRecordId());
+                    + "&record=" + qualityGroupMineBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupMineBean.getGpInfoId()
+                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo())?"&gpRecordId=" + qualityGroupMineBean.getGpRecordId():"&order="+qualityGroupMineBean.getOrderNo()));
         }
     }
 

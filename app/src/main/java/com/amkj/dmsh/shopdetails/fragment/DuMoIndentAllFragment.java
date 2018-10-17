@@ -516,7 +516,7 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                     if (qualityGroupShareEntity != null) {
                         if (qualityGroupShareEntity.getCode().equals("01")) {
                             QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            invitePartnerGroup(qualityGroupShareBean);
+                            invitePartnerGroup(qualityGroupShareBean,no);
                         }
                     }
                 }
@@ -582,14 +582,16 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
      * 邀请参团
      *
      * @param qualityGroupShareBean 参团信息
+     * @param orderNo
      */
-    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean) {
+    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean, String orderNo) {
         new UMShareAction(getActivity()
                 , qualityGroupShareBean.getGpPicUrl()
                 , qualityGroupShareBean.getName()
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId());
+                + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupShareBean.getGpInfoId()
+                + (TextUtils.isEmpty(orderNo)?"&gpRecordId=" + qualityGroupShareBean.getGpRecordId():"&order="+orderNo));
     }
 
     public void onPause() {

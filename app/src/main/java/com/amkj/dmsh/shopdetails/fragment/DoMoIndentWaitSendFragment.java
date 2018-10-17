@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -322,7 +323,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                     if (qualityGroupShareEntity != null) {
                         if (qualityGroupShareEntity.getCode().equals("01")) {
                             QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            invitePartnerGroup(qualityGroupShareBean);
+                            invitePartnerGroup(qualityGroupShareBean,no);
                         }
                     }
                 }
@@ -387,12 +388,13 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
      *
      * @param qualityGroupShareBean 参团信息
      */
-    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean) {
+    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean,String orderNo) {
         new UMShareAction(getActivity()
                 , qualityGroupShareBean.getGpPicUrl()
                 , qualityGroupShareBean.getName()
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId());
+                + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupShareBean.getGpInfoId()
+                + (TextUtils.isEmpty(orderNo)?"&gpRecordId=" + qualityGroupShareBean.getGpRecordId():"&order="+orderNo));
     }
 }
