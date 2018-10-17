@@ -145,6 +145,7 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
+import static com.yanzhenjie.permission.AndPermission.getFileUri;
 
 /**
  * @author LGuiPeng
@@ -401,7 +402,7 @@ public class ConstantMethod {
                         try {
                             JSONObject jsonObject = JSON.parseObject(jsonData);
                             if (jsonObject != null) {
-                                String page = jsonObject.getString("pages");
+                                String page = jsonObject.getString("page");
                                 if (!TextUtils.isEmpty(page)) {
                                     req.path = page;
                                 }
@@ -2054,12 +2055,20 @@ public class ConstantMethod {
     }
 
     private static void allowInstallApps(Context context, File appFile) {
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(appFile),
-                "application/vnd.android.package-archive");
-        context.startActivity(intent);
+        if(appFile!=null&&appFile.exists()){
+            Intent intent = new Intent();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }else{
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(getFileUri(context, appFile),
+                    "application/vnd.android.package-archive");
+            context.startActivity(intent);
+        }else{
+            showToast(context,"该文件已删除，请重新下载");
+        }
     }
 
     public interface OnAddCarListener {

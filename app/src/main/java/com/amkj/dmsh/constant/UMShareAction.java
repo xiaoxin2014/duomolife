@@ -354,7 +354,9 @@ public class UMShareAction {
 
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            showToast(context, getPlatFormText(platform) + " 分享成功啦");
+            if (platform != SHARE_MEDIA.WEIXIN && platform != SHARE_MEDIA.WEIXIN_CIRCLE) {
+                showToast(context, getPlatFormText(platform) + " 分享成功啦");
+            }
             if (onShareSuccessListener != null) {
                 onShareSuccessListener.onShareSuccess();
             }

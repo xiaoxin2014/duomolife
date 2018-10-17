@@ -33,7 +33,7 @@ public class AlertDialogImage {
     private boolean isFirstSet;
 
     public AlertDialogImage(Context context) {
-        if(isContextExisted(context)){
+        if(!isContextExisted(context)){
             return;
         }
         this.context = context;

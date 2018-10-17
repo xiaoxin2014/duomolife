@@ -928,7 +928,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     , !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage()
                     , groupShopDetailsBean.getName()
                     , "超值两人团，好货又便宜。"
-                    , sharePageUrl + groupShopDetailsBean.getGpInfoId());
+                    , sharePageUrl + groupShopDetailsBean.getGpInfoId(),"pages/groupDetails/groupDetails?id="+groupShopDetailsBean.getGpInfoId());
         }
     }
 
@@ -946,7 +946,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             , qualityGroupShareBean.getName()
                             , getStrings(qualityGroupShareBean.getSubtitle())
                             , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                            + "&record=" + qualityGroupShareBean.getGpRecordId());
+                            + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?gpInfoId="+ qualityGroupShareBean.getGpInfoId()
+                            + "&gpRecordId=" + qualityGroupShareBean.getGpRecordId());
                 } else {
                     isCanJoinGroup(null, qualityGroupShareEntity, shareJoinGroup);
                 }

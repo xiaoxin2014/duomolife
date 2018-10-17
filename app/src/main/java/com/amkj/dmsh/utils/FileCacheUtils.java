@@ -167,7 +167,23 @@ public class FileCacheUtils {
             }
         }
     }
-
+    public static void deleteFile(String filePath) {
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                File file = new File(filePath);
+                if (file.isDirectory()) {// 如果下面还有文件
+                    File files[] = file.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        deleteFolderFile(files[i].getAbsolutePath(), true);
+                    }
+                }else if(file.exists()){
+                    file.delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * 格式化单位
      *

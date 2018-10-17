@@ -206,10 +206,12 @@ public class SpringSaleFragment extends BaseFragment {
                 if (!isClickSelect) {
                     GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();//可见范围内的第一项的位置
-                    BaseTimeProductTopicBean baseTimeProductTopicBean = saleTimeTotalList.get(firstVisibleItemPosition);
-                    if (baseTimeProductTopicBean.getItemType() == TYPE_2) {
-                        TimeShaftBean timeShaftBean = (TimeShaftBean) baseTimeProductTopicBean;
-                        setTimeShaftSelect(timeShaftBean.getTimeDayWeek());
+                    if(firstVisibleItemPosition<saleTimeTotalList.size()){
+                        BaseTimeProductTopicBean baseTimeProductTopicBean = saleTimeTotalList.get(firstVisibleItemPosition);
+                        if (baseTimeProductTopicBean.getItemType() == TYPE_2) {
+                            TimeShaftBean timeShaftBean = (TimeShaftBean) baseTimeProductTopicBean;
+                            setTimeShaftSelect(timeShaftBean.getTimeDayWeek());
+                        }
                     }
                 } else {
                     isClickSelect = false;

@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.ServiceDownUtils;
 
 import java.io.File;
@@ -29,7 +31,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getAppendNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
-import static com.amkj.dmsh.constant.ConstantMethod.isHeightVersion;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
@@ -59,12 +60,13 @@ public class AppUpdateDialogActivity extends BaseActivity {
     TextView tvAppVersionTotalNumber;
     @BindView(R.id.ll_app_version_down_total)
     LinearLayout llAppVersionDownTotal;
-    private boolean exists;
+    @BindView(R.id.rel_layout_update_version)
+    RelativeLayout rel_layout_update_version;
     private boolean constraintUpdate;
     private String downLink;
     private String saveAppPath;
-    private File downAppFile;
     private ConstantMethod constantMethod;
+    private String filePath;
 
     @Override
     protected int getContentView() {
@@ -90,14 +92,12 @@ public class AppUpdateDialogActivity extends BaseActivity {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             saveAppPath = Environment.getExternalStorageDirectory() + "/download" + (
                     downLink.contains("/") ? downLink.substring(downLink.lastIndexOf("/")) : "domolife.apk");
-            downAppFile = new File(saveAppPath);
-//        是否已下载当前版本
-            exists = downAppFile.exists();
+            FileCacheUtils.deleteFile(saveAppPath);
         }
         tvAppVersionDescription.setMovementMethod(ScrollingMovementMethod.getInstance());
         tvAppVersionDescription.setText(isMandatoryUpdate ? (!TextUtils.isEmpty(mandatoryDescription) ?
                 getStrings(mandatoryDescription) : getStrings(versionDescription)) : getStrings(versionDescription));
-        tvAppVersionUpdate.setText(exists ? "安装" : "更新");
+        tvAppVersionUpdate.setText("更新");
         tvAppVersionInfo.setText(("多么生活 " + getStrings(appCurrentVersion)));
 //        是否强制更新的版本
         if (isMandatoryUpdate) {
@@ -115,15 +115,8 @@ public class AppUpdateDialogActivity extends BaseActivity {
 
     @OnClick(R.id.tv_app_version_update)
     void updateInstall() {
-        if (exists) {
-            if (isHeightVersion(AppUpdateDialogActivity.this, saveAppPath)) {
-                installApps(AppUpdateDialogActivity.this, downAppFile);
-            } else {
-                showToast(AppUpdateDialogActivity.this, R.string.app_version_tint);
-                finish();
-            }
-        } else if (!TextUtils.isEmpty(downLink)) {
-            if(constantMethod==null){
+        if (!TextUtils.isEmpty(downLink)) {
+            if (constantMethod == null) {
                 constantMethod = new ConstantMethod();
             }
             constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
@@ -140,7 +133,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
                         intent.putExtra("isInstallApp", true);
                     }
                     AppUpdateDialogActivity.this.startService(intent);
-                    if(!constraintUpdate){
+                    if (!constraintUpdate) {
                         finish();
                     }
                 }
@@ -186,20 +179,36 @@ public class AppUpdateDialogActivity extends BaseActivity {
             tvAppVersionUpdate.setVisibility(View.GONE);
             seekBarAppVersionTotal.setProgress(total);
             tvAppVersionTotalNumber.setText(((total > 100 ? 100 : total) + "%"));
-        }else if(message.type.equals("finishUpdateDialog")){
+        } else if (message.type.equals("finishUpdateDialog")) {
             finish();
+        }else if(message.type.equals("downSuccess")){
+            filePath = (String) message.result;
+            if(!TextUtils.isEmpty(filePath)){
+                rel_layout_update_version.setClickable(true);
+            }
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(constraintUpdate){
+            if (constraintUpdate) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 点击安装
+     */
+    @OnClick(value = R.id.rel_layout_update_version)
+    void updateVersion(){
+        if(!TextUtils.isEmpty(filePath)){
+            rel_layout_update_version.setClickable(false);
+            installApps(this,new File(filePath));
+        }
     }
 }

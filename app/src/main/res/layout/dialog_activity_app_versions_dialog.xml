@@ -8,6 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/rel_layout_update_version"
         android:layout_centerInParent="true"
         android:background="@drawable/border_rect_15dp_bg_white"
 

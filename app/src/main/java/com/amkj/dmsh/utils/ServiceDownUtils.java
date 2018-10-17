@@ -69,7 +69,8 @@ public class ServiceDownUtils extends Service {
 
             @Override
             public void onSuccess(File file) {
-                if (isInstallApp && file.getAbsolutePath().contains(".apk")) {
+                if (isInstallApp
+                        && file.getAbsolutePath().contains(".apk")) {
                     openFile(file, ServiceDownUtils.this);
                     stopSelf();
                 }
@@ -86,6 +87,7 @@ public class ServiceDownUtils extends Service {
     //打开当前APK程序代码
     public void openFile(File file, Context context) {
         if (isHeightVersion(context, file.getAbsolutePath())) {
+            EventBus.getDefault().post(new EventMessage("downSuccess",file.getAbsolutePath()));
             installApps(context,file);
         }else{
             EventBus.getDefault().post(new EventMessage("finishUpdateDialog","updateVersion"));

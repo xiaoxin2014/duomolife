@@ -333,7 +333,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                         , qualityGroupShareBean.getName()
                         , getStrings(qualityGroupShareBean.getSubtitle())
                         , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                        + "&record=" + qualityGroupShareBean.getGpRecordId());
+                        + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?gpInfoId="+ qualityGroupShareBean.getGpInfoId()
+                        + "&gpRecordId=" + qualityGroupShareBean.getGpRecordId());
             }
         }
     }
@@ -352,7 +353,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     , qualityGroupShareBean.getName()
                     , getStrings(qualityGroupShareBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                    + "&record=" + qualityGroupShareBean.getGpRecordId());
+                    + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?gpInfoId="+ qualityGroupShareBean.getGpInfoId()
+                    + "&gpRecordId=" + qualityGroupShareBean.getGpRecordId());
         }
     }
 
