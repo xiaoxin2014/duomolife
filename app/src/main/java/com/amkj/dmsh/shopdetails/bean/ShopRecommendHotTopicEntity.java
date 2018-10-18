@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -61,8 +62,8 @@ public class ShopRecommendHotTopicEntity extends BaseEntity{
          * title : 鲜8纯芝麻酱1瓶+黑芝麻油1瓶装
          * activity_code : XSG1512975268
          */
-
-        private String path;
+        @SerializedName(value = "path",alternate = "pic_url")
+        private String picUrl;
         private int quantity;
         private int category_id;
         private int type_id;
@@ -83,20 +84,20 @@ public class ShopRecommendHotTopicEntity extends BaseEntity{
          */
 
         private String androidLink;
-        private String pic_url;
         private String type;
+        private List<MarketLabelBean> marketLabelList;
 
         public static ShopRecommendHotTopicBean objectFromData(String str) {
 
             return new Gson().fromJson(str, ShopRecommendHotTopicBean.class);
         }
 
-        public String getPath() {
-            return path;
+        public String getPicUrl() {
+            return picUrl;
         }
 
-        public void setPath(String path) {
-            this.path = path;
+        public void setPicUrl(String picUrl) {
+            this.picUrl = picUrl;
         }
 
         public int getQuantity() {
@@ -188,20 +189,20 @@ public class ShopRecommendHotTopicEntity extends BaseEntity{
             this.androidLink = androidLink;
         }
 
-        public String getPic_url() {
-            return pic_url;
-        }
-
-        public void setPic_url(String pic_url) {
-            this.pic_url = pic_url;
-        }
-
         public String getType() {
             return type;
         }
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public List<MarketLabelBean> getMarketLabelList() {
+            return marketLabelList;
+        }
+
+        public void setMarketLabelList(List<MarketLabelBean> marketLabelList) {
+            this.marketLabelList = marketLabelList;
         }
     }
 }

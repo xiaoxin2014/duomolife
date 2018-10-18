@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -141,6 +142,7 @@ public class ShopDetailsEntity extends BaseEntity{
         @SerializedName("couponJson")
         private List<CouponJsonBean> couponJsonList;
         private String flashBuyClickCount;
+        private List<MarketLabelBean> marketLabelList;
 
         public static ShopPropertyBean objectFromData(String str) {
 
@@ -617,6 +619,14 @@ public class ShopDetailsEntity extends BaseEntity{
 
         public void setCouponJsonList(List<CouponJsonBean> couponJsonList) {
             this.couponJsonList = couponJsonList;
+        }
+
+        public List<MarketLabelBean> getMarketLabelList() {
+            return marketLabelList;
+        }
+
+        public void setMarketLabelList(List<MarketLabelBean> marketLabelList) {
+            this.marketLabelList = marketLabelList;
         }
 
         public static class TagsBean {

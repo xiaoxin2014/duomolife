@@ -39,7 +39,7 @@
 
             <TextView
                 android:layout_marginTop="@dimen/sc_mm_22"
-                android:id="@+id/tv_ql_bl_pro_rec"
+                android:id="@+id/tv_ql_bl_product_recommend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

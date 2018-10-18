@@ -765,7 +765,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
                         getShopProComment(shopPropertyBean);
-//                            getShopService(shopPropertyBean);
                         getRecommendData();
                         setProData(shopPropertyBean);
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
@@ -1011,7 +1010,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 marketPriceTag = String.format(getString(R.string.money_price_chn), shopProperty.getMarketPrice());
             } else {
                 tv_new_user_tag.setVisibility(GONE);
-                marketPriceTag = "市场参考价 ￥" + shopProperty.getMarketPrice();
+                marketPriceTag = "￥" + shopProperty.getMarketPrice();
             }
             tv_ql_sp_pro_sc_market_price.setText(marketPriceTag);
         }

@@ -35,19 +35,13 @@
                 android:textColor="@color/text_black_t"
                 android:textSize="@dimen/sc_mm_28" />
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/tv_ql_bl_product_recommend"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_ql_bl_pro_rec"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/sc_mm_22"
-                    android:textColor="@color/sel_font_red_n_gray"
-                    android:textSize="@dimen/sc_mm_24" />
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_16"
+                android:textColor="@color/sel_font_red_n_gray"
+                android:textSize="@dimen/sc_mm_24" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,6 +68,7 @@
                     android:padding="@dimen/sc_mm_15"
                     android:src="@drawable/sel_ql_shop_b_car" />
             </LinearLayout>
+            <include  layout="@layout/layout_communal_market_label_flex"/>
         </LinearLayout>
     </LinearLayout>
     <include layout="@layout/layout_communal_pro_out_img"/>

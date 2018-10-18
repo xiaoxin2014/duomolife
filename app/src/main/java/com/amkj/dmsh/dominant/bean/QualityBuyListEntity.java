@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -49,6 +50,7 @@ public class QualityBuyListEntity extends BaseEntity{
         private int id;
         private boolean inCart;
         private String activityCode;
+        private List<MarketLabelBean> marketLabelList;
 
         public String getActivityCode() {
             return activityCode;
@@ -72,6 +74,14 @@ public class QualityBuyListEntity extends BaseEntity{
 
         public void setQuantity(int quantity) {
             this.quantity = quantity;
+        }
+
+        public List<MarketLabelBean> getMarketLabelList() {
+            return marketLabelList;
+        }
+
+        public void setMarketLabelList(List<MarketLabelBean> marketLabelList) {
+            this.marketLabelList = marketLabelList;
         }
 
         public String getPrice() {

@@ -212,7 +212,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             case TYPE_GOODS_WEL:
                 GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) holder.getView(R.id.iv_ql_bl_product), detailObjectBean.getPicUrl());
                 holder.setText(R.id.tv_ql_bl_pro_name, getStrings(detailObjectBean.getName()))
-                        .setText(R.id.tv_ql_bl_pro_rec, "")
+                        .setText(R.id.tv_ql_bl_product_recommend, "")
                         .setText(R.id.tv_ql_bl_pro_price, "￥ " + detailObjectBean.getPrice())
                         .setGone(R.id.iv_ql_bl_add_car, detailObjectBean.getItemTypeId() == 1)
                         .addOnClickListener(R.id.iv_ql_bl_add_car).setTag(R.id.iv_ql_bl_add_car, detailObjectBean);

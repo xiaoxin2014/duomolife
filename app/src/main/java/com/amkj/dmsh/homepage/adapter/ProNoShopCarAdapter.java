@@ -3,9 +3,7 @@ package com.amkj.dmsh.homepage.adapter;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -17,12 +15,11 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
-import me.jessyan.autosize.utils.AutoSizeUtils;
-
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.createLabelText;
 
 ;
 
@@ -63,20 +60,23 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                                 getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
                         .setText(R.id.tv_qt_pro_price, "￥" + likedProductBean.getPrice())
-                        .setGone(R.id.tv_qt_pro_wait_buy, getStrings(likedProductBean.getSellStatus()).equals("待售"))
-                        .setGone(R.id.tv_qt_pro_activity_tag, !TextUtils.isEmpty(likedProductBean.getTagContent()))
-                        .setText(R.id.tv_qt_pro_activity_tag, getStrings(likedProductBean.getTagContent()))
                         .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
-                        .setGone(R.id.iv_pro_add_car, false)
-                        .setGone(R.id.tv_communal_pro_red_tag, !TextUtils.isEmpty(likedProductBean.getActivityTag()))
-                        .setText(R.id.tv_communal_pro_red_tag, getStrings(likedProductBean.getActivityTag()));
+                        .setGone(R.id.iv_pro_add_car, false);
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
-                if(likedProductBean.getMarketLabelList()!=null
-                        &&likedProductBean.getMarketLabelList().size()>0){
+                if(!TextUtils.isEmpty(likedProductBean.getActivityTag())||(likedProductBean.getMarketLabelList()!=null
+                        &&likedProductBean.getMarketLabelList().size()>0)){
                     fbl_market_label.setVisibility(View.VISIBLE);
                     fbl_market_label.removeAllViews();
-                    for (MarketLabelBean marketLabelBean:likedProductBean.getMarketLabelList()) {
-                        fbl_market_label.addView(createLabelText(marketLabelBean));
+                    if(!TextUtils.isEmpty(likedProductBean.getActivityTag())){
+                        fbl_market_label.addView(createLabelText(context,likedProductBean.getActivityTag(),1));
+                    }
+                    if(likedProductBean.getMarketLabelList()!=null
+                            &&likedProductBean.getMarketLabelList().size()>0){
+                        for (MarketLabelBean marketLabelBean:likedProductBean.getMarketLabelList()) {
+                            if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
+                                fbl_market_label.addView(createLabelText(context,marketLabelBean.getTitle(),0));
+                            }
+                        }
                     }
                 }else{
                     fbl_market_label.setVisibility(View.GONE);
@@ -84,19 +84,5 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                 helper.itemView.setTag(likedProductBean);
                 break;
         }
-    }
-
-    private View createLabelText(MarketLabelBean marketLabelBean) {
-        TextView textView = new TextView(context);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        textView.setLayoutParams(layoutParams);
-        int tenLeftRight = AutoSizeUtils.mm2px(context, 10);
-        int fiveTopBottom = AutoSizeUtils.mm2px(context, 5);
-        textView.setPadding(tenLeftRight,fiveTopBottom,tenLeftRight,fiveTopBottom);
-        textView.setTextColor(context.getResources().getColor(R.color.white));
-        textView.setBackgroundColor(context.getResources().getColor(R.color.text_pink_red));
-        textView.setText(getStrings(marketLabelBean.getTitle()));
-        textView.setTextSize(AutoSizeUtils.mm2px(context,22));
-        return textView;
     }
 }

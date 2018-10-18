@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/fl_product_details"
-        android:layout_below="@+id/tl_quality_bar"
+        android:layout_below="@id/tl_quality_bar"
         android:focusableInTouchMode="true">
 
         <LinearLayout
@@ -20,16 +20,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/smart_ql_sp_pro_details"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1">
+            <!--<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:id="@+id/smart_ql_sp_pro_details"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0px"-->
+                <!--android:layout_weight="1">-->
 
-                <com.scwang.smartrefresh.layout.header.ClassicsHeader
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <!--<com.scwang.smartrefresh.layout.header.ClassicsHeader-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
 
                 <android.support.v4.widget.NestedScrollView
                     android:id="@+id/scroll_pro"
@@ -92,18 +91,30 @@
 
                                 <include layout="@layout/layout_act_topic_time" />
                             </RelativeLayout>
-
-                            <TextView
-                                android:id="@+id/tv_ql_sp_pro_sc_name"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/sc_mm_18"
-                                android:maxLines="2"
-                                android:visibility="visible"
-                                android:paddingLeft="@dimen/gap_left"
-                                android:paddingRight="@dimen/gap_right"
-                                android:textColor="@color/text_black_t"
-                                android:textSize="@dimen/sc_mm_32" />
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_ql_sp_pro_sc_name"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/sc_mm_18"
+                                    android:maxLines="2"
+                                    android:visibility="visible"
+                                    android:paddingLeft="@dimen/gap_left"
+                                    android:paddingRight="@dimen/gap_right"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_32" />
+                                <ImageView
+                                    android:id="@+id/iv_ql_shop_pro_cp_tag"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/no_use_coupon_icon"
+                                    android:visibility="gone" />
+                            </LinearLayout>
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -123,82 +134,36 @@
                                     android:textColor="@color/text_red_color"
                                     android:textSize="@dimen/sc_mm_32" />
                                 <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_marginLeft="@dimen/sc_mm_24"
-                                    android:padding="@dimen/sc_mm_4"
-                                    android:id="@+id/tv_new_user_tag"
-                                    android:textSize="@dimen/sc_mm_22"
-                                    android:text="新人专享"
-                                    android:visibility="gone"
-                                    android:layout_alignParentBottom="true"
-                                    android:background="@drawable/border_circle_4_s_red"
-                                    android:textColor="@color/white"
-                                    android:layout_toRightOf="@id/tv_ql_sp_pro_sc_price"
-                                    android:layout_height="wrap_content" />
-                                <TextView
                                     android:id="@+id/tv_ql_sp_pro_sc_market_price"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginLeft="@dimen/sc_mm_38"
-                                    android:layout_toRightOf="@id/tv_new_user_tag"
+                                    android:layout_toRightOf="@id/tv_ql_sp_pro_sc_price"
                                     android:textColor="@color/text_gray_hint_n"
                                     android:textSize="@dimen/sc_mm_22" />
-
-                                <ImageView
-                                    android:id="@+id/iv_ql_shop_pro_cp_tag"
+                                <TextView
+                                    android:id="@+id/tv_ql_sp_pro_sc_integral_hint"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="true"
+                                    android:layout_height="@dimen/sc_mm_68"
                                     android:layout_alignParentRight="true"
-                                    android:src="@drawable/no_use_coupon_icon"
-                                    android:visibility="gone" />
+                                    android:layout_centerVertical="true"
+                                    android:drawableLeft="@drawable/inte_mon_icon"
+                                    android:drawablePadding="@dimen/sc_mm_5"
+                                    android:drawableRight="@drawable/ql_ques_icon"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="@dimen/gap_left"
+                                    android:paddingRight="@dimen/gap_right"
+                                    android:textColor="@color/text_login_gray_s"
+                                    android:textSize="@dimen/sc_mm_24" />
                             </RelativeLayout>
 
-                            <LinearLayout
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/rv_shop_details_text_communal"
                                 android:layout_width="match_parent"
+                                android:layout_marginLeft="@dimen/gap_left"
                                 android:layout_height="wrap_content"
-                                android:background="@color/white"
-                                android:divider="@drawable/divider_ll_0_5_dp"
-                                android:orientation="vertical"
-                                android:showDividers="middle">
-
-                                <RelativeLayout
-                                    android:id="@+id/rel_ql_sp_integral"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <TextView
-                                        android:id="@+id/tv_ql_sp_pro_sc_integral_hint"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="@dimen/sc_mm_68"
-
-                                        android:drawableLeft="@drawable/inte_mon_icon"
-                                        android:drawablePadding="@dimen/sc_mm_5"
-                                        android:drawableRight="@drawable/ql_ques_icon"
-                                        android:gravity="center_vertical"
-                                        android:paddingLeft="@dimen/gap_left"
-                                        android:paddingRight="@dimen/gap_right"
-                                        android:text="购买可获得5积分"
-                                        android:textColor="@color/text_login_gray_s"
-                                        android:textSize="@dimen/sc_mm_24" />
-                                </RelativeLayout>
-
-                                <RelativeLayout
-                                    android:id="@+id/rel_pro_pre"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="@dimen/gap_left"
-                                    android:background="@color/white">
-
-                                    <android.support.v7.widget.RecyclerView
-                                        android:id="@+id/rv_shop_details_text_communal"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:scrollbars="none" />
-
-                                </RelativeLayout>
-                            </LinearLayout>
+                                android:scrollbars="none" />
 
                             <LinearLayout
                                 android:id="@+id/ll_sp_pro_sku_value"
@@ -214,7 +179,6 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:background="@color/white"
-
                                     android:drawableRight="@drawable/right_btn_nor"
                                     android:gravity="center_vertical|left"
                                     android:paddingLeft="@dimen/gap_left"
@@ -230,7 +194,6 @@
                                 android:layout_height="wrap_content"
                                 android:background="@color/light_gray_f"
                                 android:paddingTop="@dimen/dimen_10_dp">
-
                                 <include layout="@layout/layout_communal_recycler_wrap" />
                             </RelativeLayout>
 
@@ -306,7 +269,7 @@
                             android:scrollbars="none" />
                     </LinearLayout>
                 </android.support.v4.widget.NestedScrollView>
-            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            <!--</com.scwang.smartrefresh.layout.SmartRefreshLayout>-->
 
             <include layout="@layout/layout_shop_details_bottom" />
         </LinearLayout>
