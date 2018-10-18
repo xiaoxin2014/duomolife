@@ -187,6 +187,7 @@ public class UserLikedProductEntity extends BaseEntity{
         private int buyIntegral;
         private String waterRemark;
         private String activityTag;
+        private List<MarketLabelBean> marketLabelList;
 
         public int getBuyIntegral() {
             return buyIntegral;
@@ -202,6 +203,14 @@ public class UserLikedProductEntity extends BaseEntity{
 
         public void setWaterRemark(String waterRemark) {
             this.waterRemark = waterRemark;
+        }
+
+        public List<MarketLabelBean> getMarketLabelList() {
+            return marketLabelList;
+        }
+
+        public void setMarketLabelList(List<MarketLabelBean> marketLabelList) {
+            this.marketLabelList = marketLabelList;
         }
 
         public int getCategory_id() {
@@ -362,6 +371,27 @@ public class UserLikedProductEntity extends BaseEntity{
 
         public void setExt(String ext) {
             this.ext = ext;
+        }
+
+        public static class MarketLabelBean {
+            private int id;
+            private String title;
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
         }
     }
 }

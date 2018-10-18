@@ -2,15 +2,22 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
@@ -63,8 +70,33 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                         .setGone(R.id.iv_pro_add_car, false)
                         .setGone(R.id.tv_communal_pro_red_tag, !TextUtils.isEmpty(likedProductBean.getActivityTag()))
                         .setText(R.id.tv_communal_pro_red_tag, getStrings(likedProductBean.getActivityTag()));
+                FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
+                if(likedProductBean.getMarketLabelList()!=null
+                        &&likedProductBean.getMarketLabelList().size()>0){
+                    fbl_market_label.setVisibility(View.VISIBLE);
+                    fbl_market_label.removeAllViews();
+                    for (MarketLabelBean marketLabelBean:likedProductBean.getMarketLabelList()) {
+                        fbl_market_label.addView(createLabelText(marketLabelBean));
+                    }
+                }else{
+                    fbl_market_label.setVisibility(View.GONE);
+                }
                 helper.itemView.setTag(likedProductBean);
                 break;
         }
+    }
+
+    private View createLabelText(MarketLabelBean marketLabelBean) {
+        TextView textView = new TextView(context);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(layoutParams);
+        int tenLeftRight = AutoSizeUtils.mm2px(context, 10);
+        int fiveTopBottom = AutoSizeUtils.mm2px(context, 5);
+        textView.setPadding(tenLeftRight,fiveTopBottom,tenLeftRight,fiveTopBottom);
+        textView.setTextColor(context.getResources().getColor(R.color.white));
+        textView.setBackgroundColor(context.getResources().getColor(R.color.text_pink_red));
+        textView.setText(getStrings(marketLabelBean.getTitle()));
+        textView.setTextSize(AutoSizeUtils.mm2px(context,22));
+        return textView;
     }
 }

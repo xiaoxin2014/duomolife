@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,13 +39,23 @@
             </RelativeLayout>
             <include layout="@layout/layout_communal_pro_out_img"/>
         </RelativeLayout>
-
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:id="@+id/fbl_market_label"
+            android:visibility="gone"
+            app:dividerDrawable="@drawable/item_divider_img_white"
+            app:showDivider="middle"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:layout_marginLeft="@dimen/sc_mm_8"
+            android:layout_below="@id/rel_goods_layout"
+            android:layout_height="wrap_content">
+        </com.google.android.flexbox.FlexboxLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/rel_goods_layout"
+            android:layout_below="@id/fbl_market_label"
             android:paddingLeft="@dimen/sc_mm_8"
-            android:layout_marginTop="@dimen/sc_mm_20">
+            android:layout_marginTop="@dimen/sc_mm_16">
             <include layout="@layout/layout_communal_pro_tag_red"/>
             <TextView
                 android:id="@+id/tv_qt_pro_descrip"
