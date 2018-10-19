@@ -76,6 +76,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
@@ -89,6 +90,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.klinker.android.link_builder.Link;
@@ -151,6 +153,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 ;
@@ -176,8 +179,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //            商品价格
     @BindView(R.id.tv_ql_sp_pro_sc_price)
     TextView tv_ql_sp_pro_sc_price;
-    @BindView(R.id.tv_new_user_tag)
-    TextView tv_new_user_tag;
     //            市场价格
     @BindView(R.id.tv_ql_sp_pro_sc_market_price)
     TextView tv_ql_sp_pro_sc_market_price;
@@ -193,9 +194,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //    计时器状态
     @BindView(R.id.ct_pro_show_time_detail)
     CountdownView ct_pro_show_time_detail;
-    //    积分展示
-    @BindView(R.id.rel_ql_sp_integral)
-    RelativeLayout rel_ql_sp_integral;
+    @BindView(R.id.fbl_details_market_label)
+    FlexboxLayout fbl_details_market_label;
     //    标签布局
     @BindView(R.id.ll_layout_pro_sc_tag)
     LinearLayout ll_layout_pro_sc_tag;
@@ -249,20 +249,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.tv_sp_details_collect)
     TextView tv_sp_details_collect;
     //  营销活动规则
-    @BindView(R.id.rel_pro_act_detail)
-    RelativeLayout rel_pro_act_detail;
+    @BindView(R.id.ll_product_activity_detail)
+    LinearLayout ll_product_activity_detail;
     @BindView(R.id.tv_communal_pro_red_tag)
     TextView tv_communal_pro_tag;
-    @BindView(R.id.tv_pro_act_desc)
-    TextView tv_pro_act_desc;
+    @BindView(R.id.tv_product_activity_description)
+    TextView tv_product_activity_description;
     //        结束时间
+    @BindView(R.id.ll_communal_time_hours)
+    LinearLayout ll_communal_time_hours;
     @BindView(R.id.tv_count_time_before_white)
     TextView tv_count_time_before_white;
     @BindView(R.id.cv_countdownTime_white_hours)
     CountdownView cv_countdownTime_white_hours;
-    //    是否有赠品
-    @BindView(R.id.rel_pro_pre)
-    RelativeLayout rel_pro_pre;
     //    赠品信息
     @BindView(R.id.rv_shop_details_text_communal)
     RecyclerView rv_shop_details_text_communal;
@@ -766,7 +765,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
                         getShopProComment(shopPropertyBean);
                         getRecommendData();
-                        setProData(shopPropertyBean);
+                        setProductData(shopPropertyBean);
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ShopScrollDetailsActivity.this, shopDetailsEntity.getMsg());
                     }
@@ -845,7 +844,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    private void setProData(final ShopPropertyBean shopProperty) {
+    private void setProductData(final ShopPropertyBean shopProperty) {
         String[] images = shopProperty.getImages().split(",");
 //        视频video
         imagesVideoList.clear();
@@ -959,30 +958,39 @@ public class ShopScrollDetailsActivity extends BaseActivity {
          */
         if (!TextUtils.isEmpty(shopProperty.getActivityTag()) && shopDetailsEntity.getShopPropertyBean() != null
                 && shopDetailsEntity.getShopPropertyBean().getActivityStartTime() != null) {
-            rel_pro_act_detail.setVisibility(VISIBLE);
+            ll_product_activity_detail.setVisibility(VISIBLE);
             tv_communal_pro_tag.setVisibility(VISIBLE);
             tv_communal_pro_tag.setText(getStrings(shopProperty.getActivityTag()));
-            if (!TextUtils.isEmpty(shopProperty.getActivityRule()) && shopProperty.getActivityRule().trim().length() > 0) {
-                tv_pro_act_desc.setText(getStrings(shopProperty.getActivityRule()));
-            } else {
-                tv_pro_act_desc.setVisibility(GONE);
-            }
-            setActCountTime();
-            if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime()
-                    , shopPropertyBean.getActivityEndTime())) {
-                getConstant();
-                constantMethod.createSchedule();
-                constantMethod.setRefreshTimeListener(() -> {
-                    shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
-                    setActCountTime();
-                });
-            } else {
-                if (constantMethod != null) {
-                    constantMethod.stopSchedule();
+            if(!TextUtils.isEmpty(shopPropertyBean.getActivityCode())
+                    && shopPropertyBean.getActivityCode().contains("XSG")){
+                tv_product_activity_description.setText("");
+                setActCountTime();
+                if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime()
+                        , shopPropertyBean.getActivityEndTime())) {
+                    ll_communal_time_hours.setVisibility(VISIBLE);
+                    getConstant();
+                    constantMethod.createSchedule();
+                    constantMethod.setRefreshTimeListener(() -> {
+                        shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
+                        setActCountTime();
+                    });
+                } else {
+                    if (constantMethod != null) {
+                        constantMethod.stopSchedule();
+                    }
+                    ll_communal_time_hours.setVisibility(GONE);
+                }
+            }else{
+                ll_communal_time_hours.setVisibility(GONE);
+                if (!TextUtils.isEmpty(shopProperty.getActivityRule())
+                        && shopProperty.getActivityRule().trim().length() > 0) {
+                    tv_product_activity_description.setText(getStrings(shopProperty.getActivityRule()));
+                } else {
+                    tv_product_activity_description.setText("");
                 }
             }
         } else {
-            rel_pro_act_detail.setVisibility(View.GONE);
+            ll_product_activity_detail.setVisibility(View.GONE);
             tv_communal_pro_tag.setVisibility(View.GONE);
         }
 
@@ -1004,15 +1012,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .addLink(link)
                     .build();
         } else {
-            String marketPriceTag;
-            if (!TextUtils.isEmpty(shopProperty.getNewUserTag())) {
-                tv_new_user_tag.setVisibility(VISIBLE);
-                marketPriceTag = String.format(getString(R.string.money_price_chn), shopProperty.getMarketPrice());
-            } else {
-                tv_new_user_tag.setVisibility(GONE);
-                marketPriceTag = "￥" + shopProperty.getMarketPrice();
-            }
-            tv_ql_sp_pro_sc_market_price.setText(marketPriceTag);
+            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_price_chn), shopProperty.getMarketPrice()));
         }
         if (!TextUtils.isEmpty(shopProperty.getPresentIds())) {
             setPresentProData(shopProperty.getPresentIds());
@@ -1038,17 +1038,28 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
             presentProAdapter.notifyDataSetChanged();
             if (presentProductInfoBeans.size() > 0) {
-                rel_pro_pre.setVisibility(VISIBLE);
+                rv_shop_details_text_communal.setVisibility(VISIBLE);
             } else {
-                rel_pro_pre.setVisibility(View.GONE);
+                rv_shop_details_text_communal.setVisibility(View.GONE);
             }
         }
+        if(shopPropertyBean.getMarketLabelList()!=null&&shopProperty.getMarketLabelList().size()>0){
+            fbl_details_market_label.setVisibility(VISIBLE);
+            fbl_details_market_label.removeAllViews();
+            for (MarketLabelBean marketLabelBean:shopPropertyBean.getMarketLabelList()) {
+                marketLabelBean.setLabelCode(0);
+                fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this,marketLabelBean));
+            }
+        }else{
+            fbl_details_market_label.setVisibility(GONE);
+        }
+
         setSkuProp(shopProperty);
 //        商品名字
         tv_ql_sp_pro_sc_name.setText(shopProperty.getName());
 //      购买可获积分
         if (shopProperty.getBuyIntergral() > 0) {
-            rel_ql_sp_integral.setVisibility(VISIBLE);
+            tv_ql_sp_pro_sc_integral_hint.setVisibility(VISIBLE);
             String integralHint = String.format(getString(R.string.buy_get_integral_tint), shopProperty.getBuyIntergral());
             tv_ql_sp_pro_sc_integral_hint.setText(integralHint);
             String regex = "[1-9]\\d*\\.?\\d*";
@@ -1063,7 +1074,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .addLink(redNum)
                     .build();
         } else {
-            rel_ql_sp_integral.setVisibility(View.GONE);
+            tv_ql_sp_pro_sc_integral_hint.setVisibility(View.GONE);
         }
 //        标签设置
         final List<String> tagArray = new ArrayList<>();
@@ -1409,7 +1420,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
      */
     private void setPresentProData(String presentProData) {
         if (!TextUtils.isEmpty(presentProData) && shopPropertyBean != null) {
-            rel_pro_pre.setVisibility(VISIBLE);
+            rv_shop_details_text_communal.setVisibility(VISIBLE);
             String[] preIds = presentProData.split(",");
             if (preIds.length > 0) {
                 presentProductInfoBeans.clear();
@@ -1430,7 +1441,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
             presentProAdapter.notifyDataSetChanged();
         } else {
-            rel_pro_pre.setVisibility(View.GONE);
+            rv_shop_details_text_communal.setVisibility(View.GONE);
         }
     }
 
@@ -1870,7 +1881,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
      *
      * @param view
      */
-    @OnClick(R.id.ll_act_topic_time)
+    @OnClick(R.id.ll_product_activity_detail)
     void openActivityRule(View view) {
         if (shopPropertyBean != null) {
             if (alertDialog == null) {

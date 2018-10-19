@@ -519,12 +519,12 @@ public class Url {
     public static final String QUALITY_NEW_USER_COVER = "api/goods/newuser/getNewUserImg";
     //    新人领取优惠券礼包
     public static final String QUALITY_NEW_USER_GET_COUPON = "api/goods/newuser/getCouponByNewUser";
-    //    热销单品
-    public static final String QUALITY_HOT_SALE_LIST = "api/goods/hot/sale/getHotGoods";
     //    热销单品广告位
     public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
     public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
+//    标签详情商品
+    public static final String QUALITY_PRODUCT_LABEL = "api/goods/getProductListByLabelId";
     //    新版热销单品 时间轴
     public static final String QUALITY_HOT_SALE_LIST_NEW = "api/goods/getHotGoodsNew";
     //    多么研究所

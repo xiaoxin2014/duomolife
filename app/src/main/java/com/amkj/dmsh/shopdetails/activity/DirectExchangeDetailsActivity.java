@@ -660,7 +660,15 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
             tv_indent_border_second_blue.setTag(R.id.tag_first, BUY_AGAIN);
             tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
             tv_indent_border_second_blue.setOnClickListener(this);
-        } else if (10 <= statusCode && statusCode < 20) {
+        }else if (statusCode == 14) {
+            ll_indent_detail_bottom.setVisibility(View.VISIBLE);
+            tv_indent_border_second_blue.setVisibility(View.VISIBLE);
+            tv_indent_border_first_gray.setVisibility(View.GONE);
+            tv_indent_border_second_blue.setText("邀请参团");
+            tv_indent_border_second_blue.setTag(R.id.tag_first, INVITE_GROUP);
+            tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
+            tv_indent_border_second_blue.setOnClickListener(this);
+        }  else if (10 <= statusCode && statusCode < 20) {
             if (10 == statusCode) {
                 //            取消订单 待发货
                 boolean isRefund = true;
@@ -689,14 +697,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements OnAle
                     tv_indent_border_first_gray.setVisibility(View.GONE);
                 }
 
-            } else if (statusCode == 14) {
-                ll_indent_detail_bottom.setVisibility(View.VISIBLE);
-                tv_indent_border_second_blue.setVisibility(View.VISIBLE);
-                tv_indent_border_first_gray.setVisibility(View.GONE);
-                tv_indent_border_second_blue.setText("邀请参团");
-                tv_indent_border_second_blue.setTag(R.id.tag_first, INVITE_GROUP);
-                tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
-                tv_indent_border_second_blue.setOnClickListener(this);
             } else if (12 == statusCode) {
                 ll_indent_detail_bottom.setVisibility(View.VISIBLE);
                 tv_indent_border_second_blue.setVisibility(View.GONE);

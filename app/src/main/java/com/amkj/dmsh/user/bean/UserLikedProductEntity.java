@@ -376,6 +376,10 @@ public class UserLikedProductEntity extends BaseEntity{
         public static class MarketLabelBean {
             private int id;
             private String title;
+//            自定义属性 1 为活动标签 0 为营销标签
+            private int labelCode;
+//            活动标签专属属性
+            private String activityCode;
 
             public int getId() {
                 return id;
@@ -391,6 +395,22 @@ public class UserLikedProductEntity extends BaseEntity{
 
             public void setTitle(String title) {
                 this.title = title;
+            }
+
+            public int getLabelCode() {
+                return labelCode;
+            }
+
+            public void setLabelCode(int labelCode) {
+                this.labelCode = labelCode;
+            }
+
+            public String getActivityCode() {
+                return activityCode;
+            }
+
+            public void setActivityCode(String activityCode) {
+                this.activityCode = activityCode;
             }
         }
     }

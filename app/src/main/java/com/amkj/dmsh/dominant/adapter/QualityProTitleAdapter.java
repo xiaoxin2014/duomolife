@@ -16,7 +16,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.createLabelText;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -51,13 +51,13 @@ public class QualityProTitleAdapter extends BaseQuickAdapter<LikedProductBean, B
             fbl_market_label.setVisibility(View.VISIBLE);
             fbl_market_label.removeAllViews();
             if(!TextUtils.isEmpty(likedProductBean.getActivityTag())){
-                fbl_market_label.addView(createLabelText(context,likedProductBean.getActivityTag(),1));
+                fbl_market_label.addView(getLabelInstance().createLabelText(context,likedProductBean.getActivityTag(),1));
             }
             if(likedProductBean.getMarketLabelList()!=null
                     &&likedProductBean.getMarketLabelList().size()>0){
                 for (MarketLabelBean marketLabelBean:likedProductBean.getMarketLabelList()) {
                     if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                        fbl_market_label.addView(createLabelText(context,marketLabelBean.getTitle(),0));
+                        fbl_market_label.addView(getLabelInstance().createLabelText(context,marketLabelBean.getTitle(),0));
                     }
                 }
             }

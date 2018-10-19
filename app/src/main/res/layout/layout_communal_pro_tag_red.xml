@@ -8,9 +8,10 @@
     android:background="@drawable/border_circle_two_str_solid_red"
     android:gravity="center"
     android:paddingBottom="@dimen/sc_mm_2"
+    android:text="999999999"
     android:paddingLeft="@dimen/sc_mm_5"
     android:paddingRight="@dimen/sc_mm_5"
     android:paddingTop="@dimen/sc_mm_2"
     android:textColor="@color/white"
     android:textSize="@dimen/sc_mm_24"
-    android:visibility="gone" />
+    android:visibility="visible" />

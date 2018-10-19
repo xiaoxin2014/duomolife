@@ -22,7 +22,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.createLabelText;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -90,7 +90,7 @@ public class ShopRecommendHotTopicAdapter extends BaseMultiItemQuickAdapter<Shop
                     fbl_market_label.removeAllViews();
                         for (MarketLabelBean marketLabelBean:shopRecommendHotTopicBean.getMarketLabelList()) {
                             if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                                fbl_market_label.addView(createLabelText(context,marketLabelBean.getTitle(),0));
+                                fbl_market_label.addView(getLabelInstance().createLabelText(context,marketLabelBean.getTitle(),0));
                             }
                         }
                 }else{

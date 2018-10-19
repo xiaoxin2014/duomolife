@@ -20,7 +20,7 @@
         android:paddingRight="@dimen/sc_mm_10"
         android:layout_weight="1">
         <TextView
-            android:id="@+id/tv_pro_act_desc"
+            android:id="@+id/tv_product_activity_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/tv_communal_pro_red_tag"
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/sc_mm_16"
-            android:layout_below="@id/tv_pro_act_desc"
+            android:layout_below="@id/tv_product_activity_description"
             android:id="@+id/tv_pro_act_s_end_time"
             android:layout_height="wrap_content"
             android:textColor="@color/text_login_gray_s"

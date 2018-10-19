@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/text_light_pink_da"
-
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/sc_mm_12"
@@ -20,7 +19,7 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/tv_pro_act_desc"
+            android:id="@+id/tv_product_activity_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/sc_mm_10"
@@ -31,7 +30,7 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_below="@id/tv_pro_act_desc"
+            android:layout_below="@id/tv_product_activity_description"
             android:layout_marginTop="@dimen/sc_mm_12"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -43,5 +42,6 @@
     </RelativeLayout>
 
 
-    <include layout="@layout/layout_comm_next_right" />
+    <include
+        layout="@layout/layout_comm_next_right" />
 </LinearLayout>

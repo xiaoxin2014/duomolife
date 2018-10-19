@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 去重utils
+ * 去重utils 不能采用单例模式
  */
 public class RemoveExistUtils<T extends BaseRemoveExistProductBean> {
     private Set<Integer> existIdSet;
@@ -38,6 +38,9 @@ public class RemoveExistUtils<T extends BaseRemoveExistProductBean> {
         return reserveList;
     }
 
+    /**
+     * 刷新清除保存的Id
+     */
     public void clearData() {
         if(existIdSet!=null){
             existIdSet.clear();

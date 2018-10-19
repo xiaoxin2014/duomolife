@@ -35,9 +35,9 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
+import com.amkj.dmsh.bean.MainIconBean;
 import com.amkj.dmsh.bean.MainNavEntity;
 import com.amkj.dmsh.bean.MainNavEntity.MainNavBean;
 import com.amkj.dmsh.bean.OSSConfigEntity;
@@ -77,7 +77,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -122,7 +121,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.MAIN_HOME;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_TIME;
-import static com.amkj.dmsh.constant.ConstantVariable.MAIN_WEB;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK;
 import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK_TIME;
@@ -155,7 +153,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     private String[] SERVER = {"正式库", "测试库", "泽钦", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2"};
     private AlertView mAlertViewExt;
     private EditText etName;
-    private static Map<String, Integer> iconMap = new HashMap<>();
+    private List<MainIconBean> iconDataList = new ArrayList<>();
     private List<CommunalADActivityBean> adActivityList = new ArrayList<>();
     public static final String ImgKey = "ImgPath";
     public static final String TimeKey = "ShowSeconds";
@@ -164,7 +162,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     public static String OriginalImgUrl = "OriginalImgUrl";
     private SharedPreferences sharedPreferences;
     //    地址存储路径
-    private int screenHeight;
     private Fragment fragment;
     private boolean isChecked;
     private ConstantMethod constantMethod;
@@ -174,7 +171,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if ("skipMinePage".equals(message.type)) {
-            changePage(ConstantVariable.MAIN_MINE, null);
+            changePage(MAIN_MINE);
         } else if (message.type.equals("loginShowDialog")) {
             if (constantMethod == null) {
                 constantMethod = new ConstantMethod();
@@ -200,24 +197,20 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         if (type != null && type.equals("BindOtherAccount")) {
             if (userId > 0) {
                 //登陆成功，加载信息
-                changePage(ConstantVariable.MAIN_MINE, null);
+                changePage(MAIN_MINE);
             }
         } else if (skipPage != null && skipPage.equals("1")) {
-            params.clear();
             String webUrl = intent.getStringExtra("webUrl");
-            if (!TextUtils.isEmpty(webUrl)) {
-                params.put("webUrl", webUrl);
-            }
             String indexShowLight = intent.getStringExtra("indexShowLight");
 //            导航栏显示高亮
+            int index = 0;
             if (!TextUtils.isEmpty(indexShowLight)) {
-                int index = Integer.parseInt(indexShowLight);
-                RadioButton rb = (RadioButton) rp_bottom_main.getChildAt(index > 4 ? 0 : index);
-                rb.setChecked(true);
+                index = Integer.parseInt(indexShowLight);
             }
-            changePage(intent.getStringExtra("type"), params);
+            changePage(new MainIconBean(index > 4 ? 4 : index, webUrl));
         } else if (!TextUtils.isEmpty(type)) {
-            changePage(intent.getStringExtra("type"), null);
+            String iconType = intent.getStringExtra("type");
+            changePage(iconType);
         } else {
             initMainPage();
         }
@@ -253,28 +246,12 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
             isChecked = true;
             for (int i = 0; i < group.getChildCount(); i++) {
                 RadioButton rb = (RadioButton) group.getChildAt(i);
-                String mainPage = (String) rb.getTag(R.id.main_page);
+                MainIconBean mainIconBean = (MainIconBean) rb.getTag(R.id.main_page);
                 rb.setOnClickListener(MainActivity.this);
                 if (rb.getId() == checkedId) {
                     rb.setChecked(true);
-                    if (!TextUtils.isEmpty(mainPage)) {
-                        try {
-                            params.clear();
-                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(mainPage);
-                            boolean isUrl = false;
-                            while (matcher.find()) {
-                                isUrl = true;
-                            }
-                            if (isUrl) {
-                                params.put("loadUrl", mainPage);
-                                changePage(MAIN_WEB, params);
-                            } else {
-                                changePage(mainPage, null);
-                            }
-                        } catch (Exception e) {
-                            skipDefaultNum(i);
-                            e.printStackTrace();
-                        }
+                    if (mainIconBean != null) {
+                        changePage(mainIconBean);
                     } else {
                         skipDefaultNum(i);
                     }
@@ -419,29 +396,32 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     }
 
     private void skipDefaultNum(int i) {
+        String iconUrl;
         switch (i) {
             case 0:
-                changePage(MAIN_HOME, null);
+                iconUrl = MAIN_HOME;
                 break;
             case 1:
-                changePage(MAIN_QUALITY, null);
+                iconUrl = MAIN_QUALITY;
                 break;
             case 2:
-                changePage(MAIN_TIME, null);
+                iconUrl = MAIN_TIME;
                 break;
             case 3:
-                changePage(MAIN_FIND, null);
+                iconUrl = MAIN_FIND;
                 break;
             case 4:
-                changePage(MAIN_MINE, null);
+                iconUrl = MAIN_MINE;
+                break;
+            default:
+                iconUrl = "";
                 break;
         }
+        changePage(new MainIconBean(i,iconUrl));
     }
 
     private void setNavData() {
-        iconMap.clear();
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
+        iconDataList.clear();
         SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
         String modifyTime = sharedPreferences.getString("modifyTime", "");
         if (!TextUtils.isEmpty(modifyTime)) {
@@ -506,15 +486,13 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
      *
      * @param rb
      * @param mainNavBean
-     * @param position
      */
     private void initDownNavData(RadioButton rb, MainNavBean mainNavBean, int position) {
         String picPath = getPicPath(mainNavBean.getPicUrl());
         String picSecondPath = getPicPath(mainNavBean.getPicUrlSecond());
         if (fileIsExist(picPath) && fileIsExist(picSecondPath)) {
             setDownBitmap(rb, picPath, picSecondPath);
-            rb.setTag(R.id.main_page, getStrings(getNovType(mainNavBean.getAndroidLink())));
-            iconMap.put(getStrings(getIcMapType(mainNavBean.getAndroidLink())), position);
+            setDynamicButtonData(rb, mainNavBean, position);
             rb.setText(getStrings(mainNavBean.getTitle()));
         } else if (fileIsExist(picPath) || fileIsExist(picSecondPath)) {
 //            设置相同Icon
@@ -523,12 +501,26 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
             } else {
                 setDownBitmap(rb, picSecondPath, picSecondPath);
             }
-            rb.setTag(R.id.main_page, getStrings(getNovType(mainNavBean.getAndroidLink())));
-            iconMap.put(getStrings(getIcMapType(mainNavBean.getAndroidLink())), position);
+            setDynamicButtonData(rb, mainNavBean, position);
             rb.setText(getStrings(mainNavBean.getTitle()));
         } else {
             setNormalIcon(position, rb);
         }
+    }
+
+    /**
+     * 设置button动态数据
+     *
+     * @param button
+     * @param mainNavBean
+     * @param position
+     */
+    private void setDynamicButtonData(RadioButton button, MainNavBean mainNavBean, int position) {
+        MainIconBean mainIconBean = new MainIconBean(position
+                , getStrings(getNovIconUrl(mainNavBean.getAndroidLink()))
+        );
+        button.setTag(R.id.main_page, mainIconBean);
+        iconDataList.add(mainIconBean);
     }
 
     /**
@@ -537,7 +529,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
      * @param androidLink
      * @return
      */
-    private String getNovType(String androidLink) {
+    private String getNovIconUrl(String androidLink) {
         Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
         while (matcher.find()) {
             androidLink = matcher.group();
@@ -546,17 +538,19 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     }
 
     /**
-     * map 存储网页类型
-     *
-     * @param linkType
+     * 是否网页地址
+     * @param androidLink
      * @return
      */
-    private String getIcMapType(String linkType) {
-        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(linkType);
-        while (matcher.find()) {
-            linkType = MAIN_WEB;
+    private boolean isWebUrl(String androidLink) {
+        if(TextUtils.isEmpty(androidLink)){
+            return false;
         }
-        return linkType;
+        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
+        while (matcher.find()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -570,9 +564,9 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         Bitmap bitmap = BitmapFactory.decodeFile(picPath);
         Bitmap secBitmap = BitmapFactory.decodeFile(picSecondPath);
         StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(null,secBitmap));
-        drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(null,bitmap));
-        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48)); //设置边界
+        drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(null, secBitmap));
+        drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(null, bitmap));
+        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48), AutoSizeUtils.mm2px(mAppContext, 48)); //设置边界
         rb.setCompoundDrawables(null, drawable, null, null);
     }
 
@@ -596,41 +590,42 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     private void setNormalIcon(int i, RadioButton rb) {
         switch (i) {
             case 0:
-                rb.setTag(R.id.main_page, MAIN_HOME);
-                iconMap.put(MAIN_HOME, i);
+                setDefaultButtonData(i, rb, MAIN_HOME);
                 Drawable drawable = getResources().getDrawable(R.drawable.selector_bottom_home_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 1:
-                rb.setTag(R.id.main_page, MAIN_QUALITY);
-                iconMap.put(MAIN_QUALITY, i);
+                setDefaultButtonData(i, rb, MAIN_QUALITY);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_quality_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 2:
-                rb.setTag(R.id.main_page, MAIN_TIME);
-                iconMap.put(MAIN_TIME, i);
+                setDefaultButtonData(i, rb, MAIN_TIME);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_time_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 3:
-                rb.setTag(R.id.main_page, MAIN_FIND);
-                iconMap.put(MAIN_FIND, i);
+                setDefaultButtonData(i, rb, MAIN_FIND);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_find_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 4:
-                rb.setTag(R.id.main_page, MAIN_MINE);
-                iconMap.put(MAIN_MINE, i);
+                setDefaultButtonData(i, rb, MAIN_MINE);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_mine_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48), AutoSizeUtils.mm2px(mAppContext,48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
         }
+    }
+
+    private void setDefaultButtonData(int position, RadioButton rb, String mainHome) {
+        MainIconBean mainIconBean = new MainIconBean(position, mainHome);
+        rb.setTag(R.id.main_page, mainIconBean);
+        iconDataList.add(mainIconBean);
     }
 
     /**
@@ -837,15 +832,15 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                             edit.putString("version", requestStatus.getVersion());
                             edit.apply();
                             getAddressData();
-                        }else{
+                        } else {
                             //        地址初始化
                             AddressUtils.getQyInstance().initAddress();
                         }
-                    }else{
+                    } else {
                         //        地址初始化
                         AddressUtils.getQyInstance().initAddress();
                     }
-                }else{
+                } else {
                     //        地址初始化
                     AddressUtils.getQyInstance().initAddress();
                 }
@@ -876,7 +871,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                     //        地址初始化
                     AddressUtils.getQyInstance().initAddress(result);
                     FileStreamUtils.writeFileFromString(getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt", result, false);
-                }else{
+                } else {
                     //        地址初始化
                     AddressUtils.getQyInstance().initAddress();
                 }
@@ -1137,25 +1132,46 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case MINE_REQ_CODE:
-                changePage(ConstantVariable.MAIN_MINE, null);
+                changePage(MAIN_MINE);
                 break;
         }
         CallbackContext.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initMainPage() {
-        changePage(MAIN_HOME, null);
+        if (iconDataList.size() > 0) {
+            changePage(iconDataList.get(0));
+        } else {
+            changePage(new MainIconBean(0, MAIN_HOME));
+        }
     }
 
     private Fragment lastFragment = null;
 
-    private void changePage(String tag, Map<String, String> params) {
-        try {
-            int lightIndex = iconMap.get(tag) != null ? iconMap.get(tag) : 0;
-            if (lightIndex < rp_bottom_main.getChildCount()) {
-                RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(lightIndex);
-                radioButton.setChecked(true);
+    /**
+     * 适配
+     *
+     * @param tag
+     */
+    private void changePage(String tag) {
+        for (int i = 0; i < rp_bottom_main.getChildCount(); i++) {
+            RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(i);
+            MainIconBean mainIconBean = (MainIconBean) radioButton.getTag(R.id.main_page);
+            if (getStrings(tag).equals(getStrings(mainIconBean.getIconUrl()))) {
+                changePage(mainIconBean);
+                break;
+            } else if (rp_bottom_main.getChildCount() - 1 == i) {
+                changePage(new MainIconBean(0,tag));
             }
+        }
+    }
+
+    private void changePage(@NonNull MainIconBean mainIconBean) {
+        try {
+            String tag = mainIconBean.getIconUrl();
+            RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(mainIconBean.getPosition() > rp_bottom_main.getChildCount() - 1 ?
+                    rp_bottom_main.getChildCount() - 1 : mainIconBean.getPosition());
+            radioButton.setChecked(true);
             fragment = fragmentManager.findFragmentByTag(tag);
             transaction = fragmentManager.beginTransaction();
             if (fragment != null && fragment.isAdded()) {
@@ -1166,29 +1182,31 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 lastFragment = fragment;
                 fragment.onResume();
             } else {
-                switch (tag) {
-                    case MAIN_HOME:
-                        fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
-                        break;
-                    case ConstantVariable.MAIN_QUALITY:
-                        fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
-                        break;
-                    case ConstantVariable.MAIN_TIME:
-                        fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);
-                        break;
-                    case ConstantVariable.MAIN_FIND:
-                        fragment = BaseFragment.newInstance(FindFragment.class, null, null);
-                        break;
-                    case ConstantVariable.MAIN_MINE:
-                        fragment = BaseFragment.newInstance(MineDataFragment.class, null, null);
-                        break;
-                    case MAIN_WEB:
-                        params.put("paddingStatus", "true");
-                        fragment = BaseFragment.newInstance(AliBCFragment.class, params, null);
-                        break;
-                    default:
-                        fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
-                        break;
+                if (isWebUrl(tag)) {
+                    params.put("paddingStatus", "true");
+                    params.put("loadUrl", getStrings(mainIconBean.getIconUrl()));
+                    fragment = BaseFragment.newInstance(AliBCFragment.class, params, null);
+                }else{
+                    switch (tag) {
+                        case MAIN_HOME:
+                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
+                            break;
+                        case MAIN_QUALITY:
+                            fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
+                            break;
+                        case MAIN_TIME:
+                            fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);
+                            break;
+                        case MAIN_FIND:
+                            fragment = BaseFragment.newInstance(FindFragment.class, null, null);
+                            break;
+                        case MAIN_MINE:
+                            fragment = BaseFragment.newInstance(MineDataFragment.class, null, null);
+                            break;
+                        default:
+                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
+                            break;
+                    }
                 }
                 if (lastFragment != null) {
                     if (fragment.isAdded()) {
@@ -1266,9 +1284,9 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
 
     @Override
     public void onClick(View v) {
-        String mainPage = (String) v.getTag(R.id.main_page);
-        if (!TextUtils.isEmpty(mainPage) && !isChecked) {
-            changePage(mainPage, params);
+        MainIconBean mainIconBean = (MainIconBean) v.getTag(R.id.main_page);
+        if (mainIconBean!=null && !isChecked) {
+            changePage(mainIconBean);
         }
         isChecked = false;
     }

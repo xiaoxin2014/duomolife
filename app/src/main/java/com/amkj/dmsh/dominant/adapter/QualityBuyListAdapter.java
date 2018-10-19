@@ -16,7 +16,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.createLabelText;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -54,7 +54,7 @@ public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, 
                     &&qualityBuyListBean.getMarketLabelList().size()>0){
                 for (MarketLabelBean marketLabelBean:qualityBuyListBean.getMarketLabelList()) {
                     if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                        fbl_market_label.addView(createLabelText(context,marketLabelBean.getTitle(),0));
+                        fbl_market_label.addView(getLabelInstance().createLabelText(context,marketLabelBean.getTitle(),0));
                     }
                 }
             }
