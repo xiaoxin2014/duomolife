@@ -152,7 +152,6 @@
                     android:textSize="@dimen/sc_mm_30" />
                 <RelativeLayout
                     android:layout_width="match_parent"
-
                     android:id="@+id/rel_mine_cache"
                     android:layout_height="@dimen/sc_mm_114">
                     <TextView
@@ -169,7 +168,6 @@
                         android:gravity="center_vertical"
                         android:paddingRight="@dimen/sc_mm_36"
                         android:text="0.00B"
-
                         android:textSize="@dimen/sc_mm_28"
                         android:id="@+id/tv_set_clear_cache"
                         android:layout_height="match_parent" />

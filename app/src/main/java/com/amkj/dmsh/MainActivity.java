@@ -504,7 +504,10 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
             setDynamicButtonData(rb, mainNavBean, position);
             rb.setText(getStrings(mainNavBean.getTitle()));
         } else {
+//            如果数据已存在，文件不存在，重新保存图片 下次生效
             setNormalIcon(position, rb);
+            saveNavIcon(mainNavBean.getPicUrl());
+            saveNavIcon(mainNavBean.getPicUrlSecond());
         }
     }
 

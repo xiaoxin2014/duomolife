@@ -274,10 +274,13 @@ public class AppDataActivity extends BaseActivity{
     }
 
     //    清理缓存
-    @OnClick({R.id.rel_mine_cache, R.id.tv_set_clear_cache})
+    @OnClick({R.id.rel_mine_cache})
     void clearAppCache(View view) {
         try {
             if (getFolderSize(new File(Img_PATH)) > 0 || getFolderSize(AppDataActivity.this.getCacheDir()) > 0) {
+//                点击清除-》子线程清除数据 禁用点击 手动改为已清除
+                tv_set_clear_cache.setText("0.0kb");
+                view.setEnabled(false);
                 createExecutor().execute(() -> {
                     try {
                         if (getFolderSize(new File(Img_PATH)) > 0) {
@@ -293,7 +296,6 @@ public class AppDataActivity extends BaseActivity{
                         SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
                         SharedPreferences.Editor edit = sharedPreferences.edit();
                         edit.clear().apply();
-                        tv_set_clear_cache.setText(FileCacheUtils.getCacheListSize(files));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
