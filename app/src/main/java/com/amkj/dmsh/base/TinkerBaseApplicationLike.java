@@ -113,8 +113,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public static Context mAppContext;
 
     public TinkerBaseApplicationLike(Application application, int tinkerFlags,
-                                 boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
-                                 long applicationStartMillisTime, Intent tinkerResultIntent) {
+                                     boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
+                                     long applicationStartMillisTime, Intent tinkerResultIntent) {
         super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
     }
 
@@ -213,15 +213,16 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             int selectServer = sharedPreferences.getInt("selectServer", 0);
             new Url(mAppContext, selectServer);
         }
-        initNewAliBaiC();
+
         if (isAppMainProcess()) {
             //        七鱼客服初始化
             initQYService();
             //      友盟初始化
             youMengInit();
+            initNewAliBaiC();
             try {
-//                TuSdk.enableDebugLog(isDebugTag);
-//                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
+                TuSdk.enableDebugLog(isDebugTag);
+                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -506,7 +507,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             e.printStackTrace();
         }
     }
-
 
 
     public IWXAPI getApi() {

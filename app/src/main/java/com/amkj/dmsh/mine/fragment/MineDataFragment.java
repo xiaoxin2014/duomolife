@@ -392,16 +392,13 @@ public class MineDataFragment extends BaseFragment {
             } else {
                 mineTypeList.get(3).setType(0);
             }
-            typeMineAdapter.notifyDataSetChanged();
         } else {
             for (int i = 0; i < mineTypeList.size(); i++) {
                 QualityTypeBean qualityTypeBean = mineTypeList.get(i);
                 qualityTypeBean.setType(0);
             }
-            if(mineTypeList.size()>=4){
-                typeMineAdapter.notifyItemRangeChanged(0,4);
-            }
         }
+        typeMineAdapter.notifyDataSetChanged();
     }
 
     //启动客服，登录
