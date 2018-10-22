@@ -569,50 +569,62 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
 
     @OnClick({R.id.ll_layout_weChat, R.id.rImg_login_way_weChat, R.id.tv_login_way_weChat})
     void openWeChat(View view) {
-        //弹窗 打开微信
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-        alertData.setCancelStr("取消");
-        alertData.setDetermineStr("打开");
-        alertData.setFirstDet(true);
-        alertData.setMsg("“多么生活”想要打开“微信”");
-        alertSettingBean.setStyle(AlertView.Style.Alert);
-        alertSettingBean.setAlertData(alertData);
-        weChatDialog = new AlertView(alertSettingBean, this, this);
-        weChatDialog.setCancelable(true);
-        weChatDialog.show();
+        if(weChatDialog == null){
+            //弹窗 打开微信
+            AlertSettingBean alertSettingBean = new AlertSettingBean();
+            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
+            alertData.setCancelStr("取消");
+            alertData.setDetermineStr("打开");
+            alertData.setFirstDet(true);
+            alertData.setMsg("“多么生活”想要打开“微信”");
+            alertSettingBean.setStyle(AlertView.Style.Alert);
+            alertSettingBean.setAlertData(alertData);
+            weChatDialog = new AlertView(alertSettingBean, this, this);
+            weChatDialog.setCancelable(true);
+        }
+        if(!weChatDialog.isShowing()){
+            weChatDialog.show();
+        }
     }
 
     @OnClick({R.id.ll_layout_qq, R.id.rImg_login_way_qq, R.id.tv_login_way_qq})
     void openQQ(View view) {
-        //弹窗 打开QQ
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-        alertData.setCancelStr("取消");
-        alertData.setDetermineStr("打开");
-        alertData.setFirstDet(true);
-        alertData.setMsg("“多么生活”想要打开“QQ”");
-        alertSettingBean.setStyle(AlertView.Style.Alert);
-        alertSettingBean.setAlertData(alertData);
-        qqDialog = new AlertView(alertSettingBean, this, this);
-        qqDialog.setCancelable(true);
-        qqDialog.show();
+        if(qqDialog==null){
+            //弹窗 打开QQ
+            AlertSettingBean alertSettingBean = new AlertSettingBean();
+            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
+            alertData.setCancelStr("取消");
+            alertData.setDetermineStr("打开");
+            alertData.setFirstDet(true);
+            alertData.setMsg("“多么生活”想要打开“QQ”");
+            alertSettingBean.setStyle(AlertView.Style.Alert);
+            alertSettingBean.setAlertData(alertData);
+            qqDialog = new AlertView(alertSettingBean, this, this);
+            qqDialog.setCancelable(true);
+        }
+        if(!qqDialog.isShowing()){
+            qqDialog.show();
+        }
     }
 
     @OnClick({R.id.ll_layout_weiBo, R.id.rImg_login_way_weiBo, R.id.tv_login_way_weiBo})
     void openSina(View view) {
-        //弹窗 打开新浪
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-        alertData.setCancelStr("取消");
-        alertData.setDetermineStr("打开");
-        alertData.setFirstDet(true);
-        alertData.setMsg("“多么生活”想要打开“微博”");
-        alertSettingBean.setStyle(AlertView.Style.Alert);
-        alertSettingBean.setAlertData(alertData);
-        sinaDialog = new AlertView(alertSettingBean, this, this);
-        sinaDialog.setCancelable(true);
-        sinaDialog.show();
+        if(sinaDialog==null){
+            //弹窗 打开新浪
+            AlertSettingBean alertSettingBean = new AlertSettingBean();
+            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
+            alertData.setCancelStr("取消");
+            alertData.setDetermineStr("打开");
+            alertData.setFirstDet(true);
+            alertData.setMsg("“多么生活”想要打开“微博”");
+            alertSettingBean.setStyle(AlertView.Style.Alert);
+            alertSettingBean.setAlertData(alertData);
+            sinaDialog = new AlertView(alertSettingBean, this, this);
+            sinaDialog.setCancelable(true);
+        }
+        if(!sinaDialog.isShowing()){
+            sinaDialog.show();
+        }
     }
 
     @OnClick(R.id.iv_blue_close)

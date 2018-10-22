@@ -54,6 +54,7 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
+import org.lasque.tusdk.core.TuSdk;
 import org.xutils.x;
 
 import java.io.File;

@@ -101,6 +101,7 @@ public class AlertView {
         initData(alertSettingBean.getAlertData());
         initViews(alertSettingBean.getAlertInitView() == null ? new AlertSettingBean.AlertInitView() : alertSettingBean.getAlertInitView());
         init();
+        setCancelable(true);
     }
 
     /**
@@ -469,6 +470,12 @@ public class AlertView {
         } else {
             view.setOnTouchListener(null);
         }
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                return;
+            }
+        });
         return this;
     }
 
