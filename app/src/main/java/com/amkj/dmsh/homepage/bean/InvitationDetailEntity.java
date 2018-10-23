@@ -4,9 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
+import com.amkj.dmsh.homepage.bean.InvitationOfficialEntity.InvitationArticleBean.DescriptionBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
-import com.amkj.dmsh.homepage.bean.InvitationOfficialEntity.InvitationArticleBean.DescriptionBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -348,27 +350,6 @@ public class InvitationDetailEntity extends BaseEntity{
 
             public void setNickname(String nickname) {
                 this.nickname = nickname;
-            }
-        }
-
-        public static class TagsBean {
-            private String tag_name;
-            private int tag_id;
-
-            public String getTag_name() {
-                return tag_name;
-            }
-
-            public void setTag_name(String tag_name) {
-                this.tag_name = tag_name;
-            }
-
-            public int getTag_id() {
-                return tag_id;
-            }
-
-            public void setTag_id(int tag_id) {
-                this.tag_id = tag_id;
             }
         }
 

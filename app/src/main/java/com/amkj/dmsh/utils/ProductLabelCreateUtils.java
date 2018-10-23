@@ -2,9 +2,11 @@ package com.amkj.dmsh.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.activity.ProductLabelDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
+import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
+import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 
@@ -46,6 +50,8 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
     }
 
     /**
+     * 商品列表
+     *
      * @param context
      * @param labelText
      * @param labelCode 1 为红色 活动 0 为黄色 营销
@@ -74,6 +80,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
     }
 
     /**
+     * 商品详情可点击 营销标签
      *
      * @param context
      * @param marketLabelBean 活动 营销
@@ -99,7 +106,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
         gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(context, 4));
         textView.setTextColor(colorValue);
         textView.setBackground(gradientDrawable);
-        textView.setText(getStringsFormat(context,R.string.communal_go_string,getStrings(marketLabelBean.getTitle())));
+        textView.setText(getStringsFormat(context, R.string.communal_go_string, getStrings(marketLabelBean.getTitle())));
         textView.setTag(marketLabelBean);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 24));
         textView.setOnClickListener(this);
@@ -111,17 +118,63 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
         MarketLabelBean marketLabelBean = (MarketLabelBean) view.getTag();
         if (marketLabelBean != null) {
             Intent intent = new Intent();
-            if(marketLabelBean.getId() > 0){
-                intent.setClass(context,ProductLabelDetailActivity.class);
-                intent.putExtra("productLabelId",String.valueOf(marketLabelBean.getId()));
-            }else if(!TextUtils.isEmpty(marketLabelBean.getActivityCode())){
+            if (marketLabelBean.getId() > 0) {
+                intent.setClass(context, ProductLabelDetailActivity.class);
+                intent.putExtra("productLabelId", String.valueOf(marketLabelBean.getId()));
+            } else if (!TextUtils.isEmpty(marketLabelBean.getActivityCode())) {
                 intent.setClass(context, QualityProductActActivity.class);
                 intent.putExtra("activityCode", marketLabelBean.getActivityCode());
-            }else{
+            } else {
                 return;
             }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
+    }
+
+    /**
+     * 配置商品标签
+     *
+     * @param context
+     * @param productTag
+     * @return
+     */
+    public TextView createProductTag(Context context, String productTag) {
+        TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.layout_ql_gp_tag, null, false);
+        textView.setText(getStrings(productTag));
+        return textView;
+    }
+
+    /**
+     * 文章标签
+     * @param context
+     * @param tagsBean
+     * @param showIcon
+     * @return
+     */
+    public TextView createArticleClickTag(Context context, TagsBean tagsBean,boolean showIcon) {
+        TextView tv_tag = (TextView) LayoutInflater.from(context).inflate(R.layout.product_tag_tv, null, false);
+        tv_tag.setTag(R.id.tag_obj, tagsBean);
+        if (showIcon) {
+            Drawable drawable = context.getResources().getDrawable(R.drawable.tag_label_icon);
+            // 这一步必须要做,否则不会显示.
+            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+            tv_tag.setCompoundDrawables(drawable, null, null, null);
+            tv_tag.setCompoundDrawablePadding(AutoSizeUtils.mm2px(context,8));
+        }
+        tv_tag.setText(getStrings(tagsBean.getTag_name()));
+        tv_tag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TagsBean tagsBean = (TagsBean) v.getTag(R.id.tag_obj);
+                if(tagsBean!=null){
+                    Intent intent = new Intent(context, FindTagDetailsActivity.class);
+                    intent.putExtra("tagId", String.valueOf(tagsBean.getTag_id()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            }
+        });
+        return tv_tag;
     }
 }

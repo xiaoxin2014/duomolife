@@ -62,9 +62,6 @@ import com.amkj.dmsh.shopdetails.fragment.DirectImgArticleFragment;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.flowlayout.FlowLayout;
-import com.amkj.dmsh.views.flowlayout.TagAdapter;
-import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -72,6 +69,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -108,6 +106,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -150,8 +149,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //    标签布局
     @BindView(R.id.ll_layout_pro_tag)
     LinearLayout ll_layout_pro_tag;
-    @BindView(R.id.hotSearch)
-    TagFlowLayout hotTagSearch;
+    @BindView(R.id.flex_communal_tag)
+    FlexboxLayout flex_communal_tag;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.communal_recycler_wrap)
@@ -312,6 +311,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
+        flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
+        flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
     }
 
     private void changePage(String tag) {
@@ -474,10 +475,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                     groupShopJoinBean.setItemType(TYPE_2);
                                     groupShopJoinBean.setMemberListBeans(memberListBeans);
                                     tv_sp_details_join_buy_price.setVisibility(GONE);
-                                    if(leftParticipant<1){
+                                    if (leftParticipant < 1) {
                                         ll_group_buy.setEnabled(false);
                                         groupShopJoinBean.setGpEndTime(qualityGroupShareEntity.getCurrentTime());
-                                    }else{
+                                    } else {
                                         groupShopJoinBean.setGpEndTime(qualityGroupShareBean.getGpEndTime());
                                         ll_group_buy.setEnabled(true);
                                     }
@@ -592,23 +593,13 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             gpRuleList.addAll(getDetailsDataList(groupShopCommunalInfoBean.getGpRule()));
             shopCommentHeaderView.gpRuleDetailsAdapter.notifyDataSetChanged();
         }
-//        标签
-        final List<String> tags = new ArrayList<>();
         final String[] tagArray = groupShopCommunalInfoBean.getServicePromiseTitle().split(",");
         if (tagArray.length > 0) {
             ll_layout_pro_tag.setVisibility(View.VISIBLE);
+            flex_communal_tag.removeAllViews();
             for (int i = 0; i < (tagArray.length > 3 ? 3 : tagArray.length); i++) {
-                tags.add(tagArray[i]);
+                flex_communal_tag.addView(getLabelInstance().createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
             }
-            hotTagSearch.setAdapter(new TagAdapter<String>(tags) {
-                @Override
-                public View getView(FlowLayout parent, int position, String s) {
-                    View view = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                    TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
-                    tagsView.setText(getStrings(s));
-                    return tagsView;
-                }
-            });
         } else {
             ll_layout_pro_tag.setVisibility(GONE);
         }
@@ -724,7 +715,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         if (groupShopDetailsBean.getQuantityStatus() == null) {
             return;
         }
-        if(!invitePartnerJoin){
+        if (!invitePartnerJoin) {
             QuantityStatusBean quantityStatus = groupShopDetailsBean.getQuantityStatus();
             switch (quantityStatus.getQuantityStatusId()) {
                 case 1002:
@@ -832,7 +823,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.iv_ql_gp_sp_dig)
+    @OnClick(R.id.ll_layout_pro_tag)
     void openDialog(View view) {
         if (groupShopCommunalInfoEntity != null) {
             if (alertDialog == null) {
@@ -857,8 +848,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     }
 
     private void initDialogView(View dialogView) {
-        TagFlowLayout hotSearch = (TagFlowLayout) dialogView.findViewById(R.id.hotSearch);
-        RelativeLayout rel_ql_dialog = (RelativeLayout) dialogView.findViewById(R.id.rel_ql_dialog);
+        FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
         RecyclerView communal_recycler_wrap = (RecyclerView) dialogView.findViewById(R.id.communal_recycler_wrap);
         TextView tv_pro_buy_detail_text = (TextView) dialogView.findViewById(R.id.tv_pro_buy_detail_text);
         TextView tv_title_text = (TextView) dialogView.findViewById(R.id.tv_title_text);
@@ -871,24 +861,17 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
         GroupShopCommunalInfoBean groupShopCommunalInfoBean = groupShopCommunalInfoEntity.getGroupShopCommunalInfoBean();
         //        标签
-        final List<String> tags = new ArrayList<>();
         final String[] tagArray = groupShopCommunalInfoBean.getServicePromiseTitle().split(",");
         if (tagArray.length > 0) {
-            rel_ql_dialog.setVisibility(View.VISIBLE);
+            flex_communal_tag.setVisibility(View.VISIBLE);
+            flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
+            flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+            flex_communal_tag.removeAllViews();
             for (int i = 0; i < tagArray.length; i++) {
-                tags.add(tagArray[i]);
+                flex_communal_tag.addView(getLabelInstance().createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
             }
-            hotSearch.setAdapter(new TagAdapter<String>(tagArray) {
-                @Override
-                public View getView(FlowLayout parent, int position, String s) {
-                    View view = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                    TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
-                    tagsView.setText(getStrings(s));
-                    return view;
-                }
-            });
         } else {
-            rel_ql_dialog.setVisibility(GONE);
+            flex_communal_tag.setVisibility(GONE);
         }
 
         List<GroupShopCommunalInfoBean.ServicePromiseBean> gpRuleBeanList = groupShopCommunalInfoBean.getServicePromise();
@@ -930,7 +913,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     , !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage()
                     , groupShopDetailsBean.getName()
                     , "超值两人团，好货又便宜。"
-                    , sharePageUrl + groupShopDetailsBean.getGpInfoId(),"pages/groupDetails/groupDetails?id="+groupShopDetailsBean.getGpInfoId());
+                    , sharePageUrl + groupShopDetailsBean.getGpInfoId(), "pages/groupDetails/groupDetails?id=" + groupShopDetailsBean.getGpInfoId());
         }
     }
 
@@ -948,8 +931,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             , qualityGroupShareBean.getName()
                             , getStrings(qualityGroupShareBean.getSubtitle())
                             , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                            + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupShareBean.getGpInfoId()
-                            + (TextUtils.isEmpty(orderNo)?"&gpRecordId=" + qualityGroupShareBean.getGpRecordId():"&order="+orderNo));
+                            + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
+                            + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
                 } else {
                     isCanJoinGroup(null, qualityGroupShareEntity, shareJoinGroup);
                 }

@@ -83,6 +83,7 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -651,7 +652,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         @JavascriptInterface
         public void skipAlibc(String urlType) {
             if (!TextUtils.isEmpty(urlType)) {
-                Map<String, String> urlParams = ConstantMethod.getOnlyUrlParams(urlType);
+                Map<String, String> urlParams = getOnlyUrlParams(urlType);
                 String url = urlParams.get("url");
                 String thirdId = urlParams.get("thirdId");
                 if (!TextUtils.isEmpty(url) || !TextUtils.isEmpty(thirdId)) {

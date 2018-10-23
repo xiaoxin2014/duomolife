@@ -28,7 +28,6 @@
             android:id="@+id/tv_find_img_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:gravity="center_vertical"
             android:lineSpacingExtra="@dimen/dimen_5_dp"
             android:textColor="@color/text_login_gray_s"
@@ -55,10 +54,7 @@
         android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/gap_right">
 
-        <include
-            layout="@layout/activity_hot_search_tag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <include layout="@layout/layout_communal_flexbox" />
     </RelativeLayout>
 
     <include layout="@layout/layout_communal_recycler_wrap" />

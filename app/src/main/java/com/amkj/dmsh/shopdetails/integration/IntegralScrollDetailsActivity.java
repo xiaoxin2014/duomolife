@@ -94,6 +94,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 ;
@@ -146,8 +147,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     EmojiconTextView emoDirectEvaReply;
     @BindView(R.id.ll_eva_comment_reply)
     LinearLayout llEvaCommentReply;
-    @BindView(R.id.flex_integral_tag)
-    FlexboxLayout flex_integral_tag;
+    @BindView(R.id.flex_communal_tag)
+    FlexboxLayout flex_communal_tag;
 
 
     @BindView(R.id.communal_recycler_wrap)
@@ -492,16 +493,16 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
             }
             final String[] tagSelected = productInfoBean.getTagIds().split(",");
             if (tagSelected.length > 0) {
-                flex_integral_tag.setVisibility(View.VISIBLE);
-                flex_integral_tag.removeAllViews();
+                flex_communal_tag.setVisibility(View.VISIBLE);
+                flex_communal_tag.removeAllViews();
                 for (String tagName : tagSelected) {
-                    flex_integral_tag.addView(createTagView(tagMap.get(Integer.parseInt(tagName))));
+                    flex_communal_tag.addView(getLabelInstance().createProductTag(IntegralScrollDetailsActivity.this,tagMap.get(Integer.parseInt(tagName))));
                 }
             } else {
-                flex_integral_tag.setVisibility(View.GONE);
+                flex_communal_tag.setVisibility(View.GONE);
             }
         } else {
-            flex_integral_tag.setVisibility(View.GONE);
+            flex_communal_tag.setVisibility(View.GONE);
         }
         if (productInfoBean.getSkuSale().size() > 1) {
             EditGoodsSkuBean editGoodsSkuBean = new EditGoodsSkuBean();
@@ -575,7 +576,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     private View createTagView(String tagsName) {
-        View tagView = LayoutInflater.from(IntegralScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, flex_integral_tag, false);
+        View tagView = LayoutInflater.from(IntegralScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, flex_communal_tag, false);
         TextView tv_ql_gp_tag = tagView.findViewById(R.id.tv_ql_gp_tag);
         tv_ql_gp_tag.setText(getStringFilter(tagsName));
         return tagView;

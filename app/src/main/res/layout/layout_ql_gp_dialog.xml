@@ -11,49 +11,51 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/tv_title_text"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_68"
-            android:id="@+id/tv_title_text"
             android:background="@drawable/border_bottom_line"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingLeft="@dimen/gap_left"
             android:text="购前须知"
             android:textColor="@color/text_black_t"
             android:textSize="@dimen/sc_mm_28" />
     </FrameLayout>
 
-    <RelativeLayout
-        android:id="@+id/rel_ql_dialog"
+    <include
+        layout="@layout/layout_communal_flexbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingLeft="@dimen/sc_mm_36">
-
-        <include layout="@layout/activity_hot_search_tag" />
-    </RelativeLayout>
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
+        android:layout_marginBottom="@dimen/sc_mm_20"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sc_mm_15"
-            android:paddingBottom="@dimen/sc_mm_30"
-            android:orientation="vertical">
-            <include layout="@layout/layout_communal_recycler_wrap"/>
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/sc_mm_30">
+
+            <include layout="@layout/layout_communal_recycler_wrap" />
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:paddingLeft="@dimen/sc_mm_30"
-                android:paddingRight="@dimen/gap_right"
-                android:lineSpacingExtra="@dimen/dimen_3_dp"
-                android:textSize="@dimen/sc_mm_24"
-                android:ellipsize="end"
                 android:id="@+id/tv_pro_buy_detail_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:lineSpacingExtra="@dimen/dimen_3_dp"
+                android:paddingLeft="@dimen/gap_left"
+                android:paddingRight="@dimen/gap_right"
                 android:textColor="@color/text_login_gray_s"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/sc_mm_24" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

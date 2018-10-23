@@ -109,11 +109,7 @@
                 android:layout_marginRight="@dimen/sc_mm_10"
                 android:visibility="invisible">
 
-                <include
-                    android:layout_centerVertical="true"
-                    layout="@layout/activity_hot_search_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <include layout="@layout/layout_communal_flexbox" />
             </RelativeLayout>
 
             <include layout="@layout/layout_com_art_bottom" />

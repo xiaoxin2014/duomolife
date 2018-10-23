@@ -37,13 +37,12 @@
             <include layout="@layout/layout_product_comment_eva"/>
             <include layout="@layout/adapter_direct_evaluation"/>
         </LinearLayout>
-        <com.google.android.flexbox.FlexboxLayout
+        <include
+            android:layout_marginLeft="@dimen/gap_left"
             android:layout_width="match_parent"
-            android:id="@+id/flex_integral_tag"
-            android:paddingLeft="@dimen/sc_mm_30"
-            android:paddingRight="@dimen/sc_mm_26"
             android:layout_height="wrap_content"
-            app:flexWrap="wrap"/>
+            android:layout_marginRight="@dimen/gap_right"
+            layout="@layout/layout_communal_flexbox"/>
     </LinearLayout>
     <include layout="@layout/layout_communal_recycler_wrap"/>
 </LinearLayout>

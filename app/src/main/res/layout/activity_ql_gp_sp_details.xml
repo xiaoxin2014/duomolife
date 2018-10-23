@@ -68,8 +68,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sc_mm_20"
                             android:gravity="center_vertical"
-                            android:paddingLeft="@dimen/sc_mm_30"
-                            android:paddingRight="@dimen/sc_mm_30">
+                            android:paddingLeft="@dimen/gap_left"
+                            android:paddingRight="@dimen/gap_right">
 
                             <TextView
                                 android:id="@+id/tv_open_pro_label"
@@ -99,8 +99,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sc_mm_18"
                             android:maxLines="2"
-                            android:paddingLeft="@dimen/sc_mm_30"
-                            android:paddingRight="@dimen/sc_mm_30"
+                            android:paddingLeft="@dimen/gap_left"
+                            android:paddingRight="@dimen/gap_right"
                             android:text="商品名字商品名字"
                             android:textColor="@color/text_black_t"
                             android:textSize="@dimen/sc_mm_28" />
@@ -109,8 +109,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sc_mm_28"
-                            android:paddingLeft="@dimen/sc_mm_30"
-                            android:paddingRight="@dimen/sc_mm_20">
+                            android:paddingLeft="@dimen/gap_left"
+                            android:paddingRight="@dimen/gap_right">
 
                             <include layout="@layout/layout_ql_gp_sp_price" />
                         </RelativeLayout>
@@ -129,16 +129,12 @@
                                 android:layout_marginTop="@dimen/sc_mm_21"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal"
-                                android:paddingLeft="@dimen/sc_mm_36">
+                                android:paddingLeft="@dimen/gap_left">
 
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                <include android:layout_width="0px"
                                     android:layout_weight="1"
-                                    android:gravity="center">
-
-                                    <include layout="@layout/activity_hot_search_tag" />
-                                </RelativeLayout>
+                                    android:layout_height="wrap_content"
+                                    layout="@layout/layout_communal_flexbox"/>
 
                                 <ImageView
                                     android:id="@+id/iv_ql_gp_sp_dig"
@@ -146,7 +142,7 @@
                                     android:layout_height="wrap_content"
                                     android:minHeight="@dimen/sc_mm_68"
                                     android:paddingLeft="@dimen/sc_mm_10"
-                                    android:paddingRight="@dimen/sc_mm_26"
+                                    android:paddingRight="@dimen/gap_right"
                                     android:src="@drawable/right_btn_nor" />
                             </LinearLayout>
 
@@ -173,7 +169,8 @@
                         <FrameLayout
                             android:id="@+id/fl_ql_sp_container"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/sc_mm_300"/>
                     </LinearLayout>
                 </android.support.v4.widget.NestedScrollView>
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>

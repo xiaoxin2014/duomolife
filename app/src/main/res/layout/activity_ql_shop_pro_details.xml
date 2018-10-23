@@ -285,9 +285,13 @@
                                 android:layout_weight="1"
                                 android:background="@color/white"
                                 android:gravity="center"
-                                android:paddingLeft="@dimen/gap_left">
+                                android:id="@+id/rel_product_tag"
+                                android:paddingTop="@dimen/sc_mm_15"
+                                android:paddingBottom="@dimen/sc_mm_15"
+                                android:paddingLeft="@dimen/gap_left"
+                                android:paddingRight="@dimen/gap_right">
 
-                                <include layout="@layout/activity_hot_search_tag" />
+                                <include layout="@layout/layout_communal_flexbox" />
                             </RelativeLayout>
                         </LinearLayout>
                     </LinearLayout>

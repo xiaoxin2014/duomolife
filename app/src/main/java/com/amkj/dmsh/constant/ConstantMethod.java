@@ -364,7 +364,6 @@ public class ConstantMethod {
         link = getStringFilter(link);
         boolean isMiniRoutine = false;
         if (context != null) {
-            Context applicationContext = context.getApplicationContext();
             if (!TextUtils.isEmpty(link)) {
                 Intent intent = new Intent();
 //                    app内部网址
@@ -449,7 +448,7 @@ public class ConstantMethod {
                         setSkipPath(context, skipUrl, isCloseActivity);
                         return;
                     } else {
-                        intent.setClass(applicationContext, DoMoLifeCommunalActivity.class);
+                        intent.setClass(context, DoMoLifeCommunalActivity.class);
                         intent.putExtra("loadUrl", link);
                     }
                 }
@@ -459,7 +458,11 @@ public class ConstantMethod {
                             skipAliBCWebView(link, context);
                         } else {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            applicationContext.startActivity(intent);
+                            if(intent.resolveActivity(context.getPackageManager())!=null){
+                                context.startActivity(intent);
+                            }else{
+                                skipMainActivity(context);
+                            }
                             if (isCloseActivity) {
                                 ((Activity) context).finish();
                                 ((Activity) context).overridePendingTransition(0, 0);

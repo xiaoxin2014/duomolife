@@ -80,9 +80,6 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLab
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.amkj.dmsh.views.flowlayout.FlowLayout;
-import com.amkj.dmsh.views.flowlayout.TagAdapter;
-import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -199,8 +196,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //    标签布局
     @BindView(R.id.ll_layout_pro_sc_tag)
     LinearLayout ll_layout_pro_sc_tag;
-    @BindView(R.id.hotSearch)
-    TagFlowLayout hotTagSearch;
+    @BindView(R.id.flex_communal_tag)
+    FlexboxLayout flex_communal_tag;
     //    售前内容
     @BindView(R.id.ll_pro_buy_before)
     LinearLayout ll_pro_buy_before;
@@ -1076,8 +1073,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_ql_sp_pro_sc_integral_hint.setVisibility(View.GONE);
         }
-//        标签设置
-        final List<String> tagArray = new ArrayList<>();
         if (shopProperty.getTags() != null && shopProperty.getTagIds() != null) {
             final Map<Integer, String> tagMap = new HashMap<>();
             for (TagsBean tagsBean : shopProperty.getTags()) {
@@ -1086,18 +1081,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             final String[] tagSelected = shopProperty.getTagIds().split(",");
             if (tagSelected.length > 0) {
                 ll_layout_pro_sc_tag.setVisibility(VISIBLE);
+                flex_communal_tag.removeAllViews();
                 for (int i = 0; i < (tagSelected.length > 3 ? 3 : tagSelected.length); i++) {
-                    tagArray.add(getStrings(tagMap.get(Integer.parseInt(tagSelected[i]))));
+                    flex_communal_tag.addView(getLabelInstance().createProductTag(ShopScrollDetailsActivity.this
+                            ,getStrings(tagMap.get(Integer.parseInt(tagSelected[i])))));
                 }
-                hotTagSearch.setAdapter(new TagAdapter<String>(tagArray) {
-                    @Override
-                    public View getView(FlowLayout parent, int position, String s) {
-                        View view = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                        TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
-                        tagsView.setText(getStrings(s));
-                        return view;
-                    }
-                });
             } else {
                 ll_layout_pro_sc_tag.setVisibility(GONE);
             }
@@ -1522,8 +1510,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     private void initDialogView(View dialogView) {
-        TagFlowLayout hotSearch = (TagFlowLayout) dialogView.findViewById(R.id.hotSearch);
-        RelativeLayout rel_ql_dialog = (RelativeLayout) dialogView.findViewById(R.id.rel_ql_dialog);
+        FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
         TextView tv_pro_buy_detail_text = (TextView) dialogView.findViewById(R.id.tv_pro_buy_detail_text);
         RecyclerView communal_recycler_wrap = (RecyclerView) dialogView.findViewById(R.id.communal_recycler_wrap);
         communal_recycler_wrap.setVisibility(GONE);
@@ -1547,24 +1534,21 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (shopPropertyBean.getTags() != null && shopPropertyBean.getTagIds() != null) {
             final String[] tagSelected = shopPropertyBean.getTagIds().split(",");
             if (tagSelected.length > 0) {
-                rel_ql_dialog.setVisibility(VISIBLE);
+                flex_communal_tag.setVisibility(VISIBLE);
                 for (int i = 0; i < (shopPropertyBean.getTags().size() > 3 ? 3 : shopPropertyBean.getTags().size()); i++) {
                     tagArray.add(shopPropertyBean.getTags().get(i).getName());
                 }
-                hotSearch.setAdapter(new TagAdapter<String>(tagArray) {
-                    @Override
-                    public View getView(FlowLayout parent, int position, String s) {
-                        View view = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, parent, false);
-                        TextView tagsView = (TextView) view.findViewById(R.id.tv_ql_gp_tag);
-                        tagsView.setText(getStrings(s));
-                        return view;
-                    }
-                });
+                flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
+                flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+                flex_communal_tag.removeAllViews();
+                for (int i = 0; i < tagArray.size(); i++) {
+                    flex_communal_tag.addView(getLabelInstance().createProductTag(ShopScrollDetailsActivity.this, tagArray.get(i)));
+                }
             } else {
-                rel_ql_dialog.setVisibility(GONE);
+                flex_communal_tag.setVisibility(GONE);
             }
         } else {
-            rel_ql_dialog.setVisibility(GONE);
+            flex_communal_tag.setVisibility(GONE);
         }
     }
 

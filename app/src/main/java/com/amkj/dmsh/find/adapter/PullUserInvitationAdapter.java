@@ -3,12 +3,9 @@ package com.amkj.dmsh.find.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,7 +16,6 @@ import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.XFLinearLayoutManager;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
 import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
@@ -30,14 +26,11 @@ import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
-import com.amkj.dmsh.utils.DensityUtil;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.views.flowlayout.FlowLayout;
-import com.amkj.dmsh.views.flowlayout.TagAdapter;
-import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.flexbox.FlexboxLayout;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -45,9 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import me.jessyan.autosize.utils.AutoSizeUtils;
-
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -56,6 +46,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.find.activity.FindTopicDetailsActivity.TOPIC_TYPE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -92,7 +83,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
         helper.tv_inv_live_content.setTag(invitationDetailBean);
 //        标签布局
         final RelativeLayout rel_tag_layout = helper.getView(R.id.rel_tag_layout);
-        TagFlowLayout searchLayout = helper.getView(R.id.hotSearch);
+        FlexboxLayout flex_communal_tag = helper.getView(R.id.flex_communal_tag);
         if (type.equals("帖子")) {
             //个人主页 帖子
             tv_live_attention.setVisibility(View.VISIBLE);
@@ -214,49 +205,14 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                 }
                 break;
         }
-        List<String> tags = new ArrayList<>();
         if (invitationDetailBean.getTags() != null && invitationDetailBean.getTags().size() > 0) {
             rel_tag_layout.setVisibility(View.VISIBLE);
-            for (int i = 0; i < (invitationDetailBean.getTags().size() > 4 ? 4 : invitationDetailBean.getTags().size()); i++) {
-                tags.add(invitationDetailBean.getTags().get(i).getTag_name());
+            flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+            flex_communal_tag.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
+            flex_communal_tag.removeAllViews();
+            for (int i = 0; i < invitationDetailBean.getTags().size(); i++) {
+                flex_communal_tag.addView(getLabelInstance().createArticleClickTag(context,invitationDetailBean.getTags().get(i),i==0));
             }
-            searchLayout.setAdapter(new TagAdapter<String>(tags) {
-                @Override
-                public View getView(FlowLayout parent, int position, String s) {
-                    View view = LayoutInflater.from(context).inflate(R.layout.product_tag_tv, null, false);
-                    TextView textView = (TextView) view.findViewById(R.id.tv_product_tag);
-                    textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
-                    textView.setTag(R.id.tag_obj, invitationDetailBean.getTags());
-                    if (position == 0) {
-                        Drawable drawable = context.getResources().getDrawable(R.drawable.tag_label_icon);
-                        // 这一步必须要做,否则不会显示.
-                        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                        textView.setCompoundDrawables(drawable, null, null, null);
-                        textView.setCompoundDrawablePadding(DensityUtil.dip2px(context, 5));
-                    } else {
-                        view.setPadding(DensityUtil.dip2px(context, 10), 0, 0, 0);
-                    }
-                    textView.setText(s);
-                    return view;
-                }
-            });
-            searchLayout.setOnTagClickListener((view, position, parent) -> {
-                TextView textView = (TextView) view;
-                String name = textView.getText().toString();
-                List<InvitationDetailBean.TagsBean> tagsBeanList = (List<InvitationDetailBean.TagsBean>) textView.getTag(R.id.tag_obj);
-                if (tagsBeanList != null) {
-                    for (int i = 0; i < tagsBeanList.size(); i++) {
-                        InvitationDetailBean.TagsBean tagsBean = tagsBeanList.get(i);
-                        if (getStrings(name).equals(getStrings(tagsBean.getTag_name()))) {
-                            Intent intent = new Intent(context, FindTagDetailsActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("tagId", String.valueOf(tagsBean.getTag_id()));
-                            context.startActivity(intent);
-                        }
-                    }
-                }
-                return true;
-            });
         } else {
             rel_tag_layout.setVisibility(View.INVISIBLE);
         }

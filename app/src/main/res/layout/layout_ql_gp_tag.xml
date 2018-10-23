@@ -4,9 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="@dimen/sc_mm_68"
     android:layout_centerVertical="true"
-    android:layout_marginRight="@dimen/sc_mm_40"
     android:drawableLeft="@drawable/ql_gp_tag_icon"
     android:drawablePadding="@dimen/sc_mm_8"
     android:gravity="center"
     android:textColor="@color/text_gray_hint_n"
     android:textSize="@dimen/sc_mm_24" />
+<!--android:layout_marginRight="@dimen/sc_mm_40"-->
