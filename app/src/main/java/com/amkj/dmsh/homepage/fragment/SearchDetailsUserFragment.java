@@ -21,7 +21,7 @@ import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 

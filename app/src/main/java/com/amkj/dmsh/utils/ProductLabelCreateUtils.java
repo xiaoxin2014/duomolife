@@ -2,25 +2,28 @@ package com.amkj.dmsh.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.activity.ProductLabelDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
+import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 
@@ -140,28 +143,34 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
      * @return
      */
     public TextView createProductTag(Context context, String productTag) {
-        TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.layout_ql_gp_tag, null, false);
+        TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.layout_product_tag, null, false);
         textView.setText(getStrings(productTag));
         return textView;
+    }
+
+    /**
+     * 文章标签图标
+     * @param context
+     * @return
+     */
+    public View createArticleIcon(Context context){
+        ImageView iv_label = new ImageView(context);
+        iv_label.setImageResource(R.drawable.tag_label_icon);
+        iv_label.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return iv_label;
     }
 
     /**
      * 文章标签
      * @param context
      * @param tagsBean
-     * @param showIcon
      * @return
      */
-    public TextView createArticleClickTag(Context context, TagsBean tagsBean,boolean showIcon) {
-        TextView tv_tag = (TextView) LayoutInflater.from(context).inflate(R.layout.product_tag_tv, null, false);
+    public TextView createArticleClickTag(Context context, TagsBean tagsBean) {
+        TextView tv_tag = (TextView) LayoutInflater.from(context).inflate(R.layout.layout_article_tag, null, false);
+        int tagPadding = AutoSizeUtils.mm2px(context, 10);
+        tv_tag.setPadding(tagPadding,tagPadding,tagPadding,tagPadding);
         tv_tag.setTag(R.id.tag_obj, tagsBean);
-        if (showIcon) {
-            Drawable drawable = context.getResources().getDrawable(R.drawable.tag_label_icon);
-            // 这一步必须要做,否则不会显示.
-            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-            tv_tag.setCompoundDrawables(drawable, null, null, null);
-            tv_tag.setCompoundDrawablePadding(AutoSizeUtils.mm2px(context,8));
-        }
         tv_tag.setText(getStrings(tagsBean.getTag_name()));
         tv_tag.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,5 +185,40 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
             }
         });
         return tv_tag;
+    }
+
+    /**
+     * 配置开团用户信息
+     * @param context
+     * @param memberListBean
+     * @return
+     */
+    public View createOpenGroupUserInfo(Context context, MemberListBean memberListBean) {
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_gp_join_avator, null, false);
+        ImageView imageView = (ImageView) view.findViewById(R.id.iv_dm_gp_open_ava);
+        TextView tv_dm_gp_name = (TextView) view.findViewById(R.id.tv_dm_gp_name);
+        GlideImageLoaderUtil.loadRoundImg(context, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 80));
+        String name = getStrings(memberListBean.getNickname());
+        if (name.length() > 7) {
+            name = name.substring(0, 7) + "...";
+        }
+        tv_dm_gp_name.setText(name);
+        return view;
+    }
+
+    /**
+     * 配置搜索记录
+     * @param context
+     * @param historyTag
+     * @return
+     */
+    public TextView createHistorySearchRecord(Context context,String historyTag){
+        TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.layoyt_hotsearch_tag, null, false);
+        int leftRightValue = AutoSizeUtils.mm2px(context, 10);
+        int topBottomValue = AutoSizeUtils.mm2px(context, 7);
+        textView.setPadding(leftRightValue, topBottomValue, leftRightValue, topBottomValue);
+        textView.setText(getStrings(historyTag));
+        textView.setTag(historyTag);
+        return textView;
     }
 }

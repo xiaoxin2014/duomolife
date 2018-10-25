@@ -19,7 +19,7 @@ import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -14,10 +14,10 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 

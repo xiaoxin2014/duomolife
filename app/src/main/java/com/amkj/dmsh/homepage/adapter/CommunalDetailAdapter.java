@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,7 +31,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
@@ -53,7 +51,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zzhoujay.richtext.ImageHolder;
 import com.zzhoujay.richtext.RichText;
@@ -103,6 +101,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_RELEVANCE_PRODUCT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -311,15 +310,20 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case TYPE_PRODUCT_TAG:
                 FlexboxLayout flexboxLayout = holder.getView(R.id.flex_communal_tag);
+                flexboxLayout.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+                flexboxLayout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
                 flexboxLayout.removeAllViews();
-                ImageView iv_label = new ImageView(context);
-                iv_label.setImageResource(R.drawable.tag_label_icon);
-                iv_label.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                flexboxLayout.addView(iv_label);
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) flexboxLayout.getLayoutParams();
+                marginLayoutParams.setMargins((int) context.getResources().getDimension(R.dimen.gap_left),0,0,0);
+                flexboxLayout.setLayoutParams(marginLayoutParams);
                 List<TagsBean> tagsBeans = detailObjectBean.getTagsBeans();
-                for (TagsBean tagsBean : tagsBeans) {
+                for (int i = 0; i < tagsBeans.size(); i++) {
+                    if(i ==0){
+                        flexboxLayout.addView(getLabelInstance().createArticleIcon(context));
+                    }
+                    TagsBean tagsBean = tagsBeans.get(i);
                     if (!TextUtils.isEmpty(tagsBean.getTag_name())) {
-                        flexboxLayout.addView(createTagView(tagsBean));
+                        flexboxLayout.addView(getLabelInstance().createArticleClickTag(context,tagsBean));
                     }
                 }
                 break;
@@ -549,35 +553,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             default:
                 break;
         }
-    }
-
-    private TextView createTagView(TagsBean tagsBean) {
-        TextView textView = new TextView(context);
-        textView.setPadding(AutoSizeUtils.mm2px(mAppContext,10), AutoSizeUtils.mm2px(mAppContext,10), AutoSizeUtils.mm2px(mAppContext,10), AutoSizeUtils.mm2px(mAppContext,10));
-        textView.setBackground(context.getResources().getDrawable(R.drawable.border_cir_1dp5_s_ff));
-        textView.setTextColor(context.getResources().getColor(R.color.text_login_gray_s));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,24));
-        textView.setText(getStrings(tagsBean.getTag_name()));
-        textView.setTag(tagsBean);
-        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        textView.setOnClickListener((v) -> {
-            TagsBean tag = (TagsBean) v.getTag();
-            if (tag != null) {
-                Intent intent = new Intent(context, FindTagDetailsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("tagId", String.valueOf(tagsBean.getTag_id()));
-                context.startActivity(intent);
-            }
-        });
-        return textView;
-    }
-
-
-    public int getFontHeight(float fontSize) {
-        Paint paint = new Paint();
-        paint.setTextSize(fontSize);
-        Paint.FontMetrics fm = paint.getFontMetrics();
-        return (int) Math.ceil(fm.descent - fm.top) + 2;
     }
 
     /**

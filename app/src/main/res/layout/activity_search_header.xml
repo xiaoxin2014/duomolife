@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_88"
     android:background="@color/white"
-    android:minHeight="?attr/actionBarSize"
     app:contentInsetStart="0dp">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +15,7 @@
             android:id="@+id/et_search_input"
             android:layout_width="0dp"
             android:layout_height="@dimen/sc_mm_66"
-            android:layout_marginLeft="@dimen/sc_mm_24"
+            android:layout_marginLeft="@dimen/gap_left"
             android:layout_weight="1"
             android:background="@drawable/border_civ_3dp_light_gray"
             android:drawableLeft="@drawable/search_light_gray_icon"
@@ -37,12 +35,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-
             android:gravity="center"
             android:paddingLeft="@dimen/sc_mm_30"
-            android:paddingRight="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/gap_right"
             android:text="取消"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_30" />
     </LinearLayout>
+
 </android.support.v7.widget.Toolbar>

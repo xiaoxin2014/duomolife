@@ -3,9 +3,9 @@ package com.amkj.dmsh.homepage.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -20,11 +20,14 @@ import com.amkj.dmsh.bean.HotSearchTagEntity.HotSearchTagBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
+import com.amkj.dmsh.homepage.adapter.HotSearchAdapter;
 import com.amkj.dmsh.shopdetails.activity.IndentSearchDetailsActivity;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.flowlayout.FlowLayout;
-import com.amkj.dmsh.views.flowlayout.TagAdapter;
-import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxItemDecoration;
+import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -35,12 +38,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -53,23 +57,22 @@ public class HomePageSearchActivity extends BaseActivity {
     //    最近搜索
     @BindView(R.id.ll_search_history)
     public LinearLayout ll_search_history;
-    @BindView(R.id.tfl_search_history)
-    public TagFlowLayout tfl_search_history;
+    @BindView(R.id.flex_communal_tag)
+    public FlexboxLayout flex_communal_tag;
     //    热门搜索
     @BindView(R.id.ll_search_hot)
     public LinearLayout ll_search_hot;
-    @BindView(R.id.tfl_search_hot)
-    public TagFlowLayout tfl_search_hot;
+    @BindView(R.id.communal_recycler_wrap)
+    public RecyclerView communal_recycler_wrap;
     private List<HotSearchTagBean> hotSearchList = new ArrayList<>();
     private LinkedList<String> dataHistoryList = new LinkedList<>();
     private String searchType = "allSearch";
     private String SAVE_NAME = "SearchHistory";
-    private TagAdapter tagHistoryAdapter;
-    private TagAdapter hotSearchAdapter;
+    private HotSearchAdapter hotSearchAdapter;
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_search;
+        return R.layout.activity_communal_search;
     }
     @Override
     protected void initViews() {
@@ -92,51 +95,29 @@ public class HomePageSearchActivity extends BaseActivity {
                 return false;
             }
         });
-        tagHistoryAdapter = new TagAdapter<String>(dataHistoryList) {
-            @Override
-            public View getView(FlowLayout parent, int position, String historyTag) {
-                View view = LayoutInflater.from(HomePageSearchActivity.this).inflate(R.layout.hotsearch_tv, null, false);
-                TextView textView = (TextView) view.findViewById(R.id.tv_search_tag);
-                view.setPadding(0, 20, 24, 0);
-                textView.setText(getStrings(historyTag));
-                return view;
-            }
-        };
+        flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+        flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
         getHistoryData();
-        tfl_search_history.setAdapter(tagHistoryAdapter);
-        tfl_search_history.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
+        communal_recycler_wrap.setNestedScrollingEnabled(false);
+        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(this);
+        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP);
+        communal_recycler_wrap.setLayoutManager(flexboxLayoutManager);
+        FlexboxItemDecoration flexboxItemDecoration = new FlexboxItemDecoration(HomePageSearchActivity.this);
+        flexboxItemDecoration.setDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
+        communal_recycler_wrap.addItemDecoration(flexboxItemDecoration);
+        hotSearchAdapter = new HotSearchAdapter(hotSearchList);
+        communal_recycler_wrap.setAdapter(hotSearchAdapter);
+        hotSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public boolean onTagClick(View view, int position, FlowLayout parent) {
-                getTagResult(dataHistoryList.get(position));
-                return false;
-            }
-        });
-        hotSearchAdapter = new TagAdapter<HotSearchTagBean>(hotSearchList) {
-            @Override
-            public View getView(FlowLayout parent, int position, HotSearchTagBean hotSearchTagBean) {
-                View view = LayoutInflater.from(HomePageSearchActivity.this).inflate(R.layout.hotsearch_tv, null, false);
-                TextView textView = (TextView) view.findViewById(R.id.tv_search_tag);
-                if (!TextUtils.isEmpty(hotSearchTagBean.getAndroid_link())) {
-                    textView.setSelected(true);
-                } else {
-                    textView.setSelected(false);
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                HotSearchTagBean hotSearchTagBean = (HotSearchTagBean) view.getTag();
+                if(hotSearchTagBean!=null){
+                    if (!TextUtils.isEmpty(hotSearchTagBean.getAndroid_link())) {
+                        setSkipPath(HomePageSearchActivity.this, hotSearchTagBean.getAndroid_link(), false);
+                    } else {
+                        getTagResult(hotSearchTagBean.getTag_name());
+                    }
                 }
-//                view.setPadding(0, 20, 24, 0);
-                textView.setText(hotSearchTagBean.getTag_name());
-                return view;
-            }
-        };
-        tfl_search_hot.setAdapter(hotSearchAdapter);
-        tfl_search_hot.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
-            @Override
-            public boolean onTagClick(View view, int position, FlowLayout parent) {
-                HotSearchTagBean hotSearchTagBean = hotSearchList.get(position);
-                if (!TextUtils.isEmpty(hotSearchTagBean.getAndroid_link())) {
-                    setSkipPath(HomePageSearchActivity.this, hotSearchTagBean.getAndroid_link(), false);
-                } else {
-                    getTagResult(hotSearchTagBean.getTag_name());
-                }
-                return false;
             }
         });
     }
@@ -186,16 +167,7 @@ public class HomePageSearchActivity extends BaseActivity {
             dataHistoryList.addFirst(text);
         }
         listHistoryDataSave.setDataList(searchType, dataHistoryList);
-        tagHistoryAdapter.notifyDataChanged();
-    }
-
-    //
-    private void getHistory() {
-        if (dataHistoryList.size() > 0) {
-            ll_search_history.setVisibility(View.VISIBLE);
-        } else {
-            ll_search_history.setVisibility(View.GONE);
-        }
+        getHistoryData();
     }
 
     //    查询全部数据
@@ -203,9 +175,26 @@ public class HomePageSearchActivity extends BaseActivity {
         dataHistoryList.clear();
         try {
             ListHistoryDataSave listHistoryDataSave = new ListHistoryDataSave(HomePageSearchActivity.this, SAVE_NAME);
-            dataHistoryList.addAll(listHistoryDataSave.<String>getDataList(searchType));
-            tagHistoryAdapter.notifyDataChanged();
-            getHistory();
+            dataHistoryList.addAll(listHistoryDataSave.getDataList(searchType));
+            if (dataHistoryList.size() > 0) {
+                ll_search_history.setVisibility(View.VISIBLE);
+                flex_communal_tag.removeAllViews();
+                for (String historyData :dataHistoryList) {
+                    TextView historySearchView = getLabelInstance().createHistorySearchRecord(HomePageSearchActivity.this, historyData);
+                    historySearchView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String tag = (String) v.getTag();
+                            if(!TextUtils.isEmpty(tag)){
+                                getTagResult(tag);
+                            }
+                        }
+                    });
+                    flex_communal_tag.addView(historySearchView);
+                }
+            } else {
+                ll_search_history.setVisibility(View.GONE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -233,7 +222,7 @@ public class HomePageSearchActivity extends BaseActivity {
     }
 
     //  清除历史记录
-    @OnClick(R.id.iv_search_record)
+    @OnClick(R.id.tv_search_history_hint)
     void deleteHistoryData(View view) {
         ListHistoryDataSave listHistoryDataSave = new ListHistoryDataSave(HomePageSearchActivity.this, SAVE_NAME);
         listHistoryDataSave.delDataList(searchType);
@@ -252,13 +241,15 @@ public class HomePageSearchActivity extends BaseActivity {
                     Gson gson = new Gson();
                     HotSearchTagEntity hotSearchTagEntity = gson.fromJson(result, HotSearchTagEntity.class);
                     if (hotSearchTagEntity != null) {
-                        if (hotSearchTagEntity.getCode().equals("01")) {
+                        if (hotSearchTagEntity.getCode().equals(SUCCESS_CODE)) {
                             hotSearchList.addAll(hotSearchTagEntity.getHotSearchTagList());
                         }
                     }
-                    hotSearchAdapter.notifyDataChanged();
+                    hotSearchAdapter.notifyDataSetChanged();
                     if (hotSearchList.size() < 1) {
                         ll_search_hot.setVisibility(View.GONE);
+                    }else{
+                        ll_search_hot.setVisibility(View.VISIBLE);
                     }
                 }
 

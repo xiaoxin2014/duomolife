@@ -576,7 +576,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     private View createTagView(String tagsName) {
-        View tagView = LayoutInflater.from(IntegralScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_tag, flex_communal_tag, false);
+        View tagView = LayoutInflater.from(IntegralScrollDetailsActivity.this).inflate(R.layout.layout_product_tag, flex_communal_tag, false);
         TextView tv_ql_gp_tag = tagView.findViewById(R.id.tv_ql_gp_tag);
         tv_ql_gp_tag.setText(getStringFilter(tagsName));
         return tagView;

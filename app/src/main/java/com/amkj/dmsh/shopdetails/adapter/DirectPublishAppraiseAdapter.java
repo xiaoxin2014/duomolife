@@ -26,7 +26,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.luck.picture.lib.config.PictureConfigC;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
 import org.greenrobot.eventbus.EventBus;

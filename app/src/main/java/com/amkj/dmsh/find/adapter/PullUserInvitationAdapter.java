@@ -211,7 +211,10 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
             flex_communal_tag.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
             flex_communal_tag.removeAllViews();
             for (int i = 0; i < invitationDetailBean.getTags().size(); i++) {
-                flex_communal_tag.addView(getLabelInstance().createArticleClickTag(context,invitationDetailBean.getTags().get(i),i==0));
+                if (i == 0) {
+                    flex_communal_tag.addView(getLabelInstance().createArticleIcon(context));
+                }
+                flex_communal_tag.addView(getLabelInstance().createArticleClickTag(context, invitationDetailBean.getTags().get(i)));
             }
         } else {
             rel_tag_layout.setVisibility(View.INVISIBLE);

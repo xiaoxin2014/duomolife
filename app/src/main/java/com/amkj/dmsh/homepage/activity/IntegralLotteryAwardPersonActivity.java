@@ -13,8 +13,8 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.homepage.adapter.LotteryAwardPersonAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinListBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 
 import java.util.List;
 

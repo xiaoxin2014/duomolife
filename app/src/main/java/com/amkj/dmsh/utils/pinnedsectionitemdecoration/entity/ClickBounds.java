@@ -1,4 +1,4 @@
-package com.oushangfeng.pinnedsectionitemdecoration.entity;
+package com.amkj.dmsh.utils.pinnedsectionitemdecoration.entity;
 
 import android.view.View;
 

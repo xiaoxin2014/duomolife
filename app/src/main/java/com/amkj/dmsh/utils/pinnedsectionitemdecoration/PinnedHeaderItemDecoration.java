@@ -1,4 +1,4 @@
-package com.oushangfeng.pinnedsectionitemdecoration;
+package com.amkj.dmsh.utils.pinnedsectionitemdecoration;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -12,9 +12,10 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.oushangfeng.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
-import com.oushangfeng.pinnedsectionitemdecoration.callback.OnItemTouchListener;
-import com.oushangfeng.pinnedsectionitemdecoration.utils.DividerHelper;
+import com.amkj.dmsh.R;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.callback.OnItemTouchListener;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.utils.DividerHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -107,7 +108,7 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         if (mDrawable == null) {
-            mDrawable = ContextCompat.getDrawable(parent.getContext(), mDividerId != 0 ? mDividerId : R.drawable.divider);
+            mDrawable = ContextCompat.getDrawable(parent.getContext(), mDividerId != 0 ? mDividerId : R.drawable.item_divider_five_gray_f);
         }
 
         if (parent.getLayoutManager() instanceof GridLayoutManager) {

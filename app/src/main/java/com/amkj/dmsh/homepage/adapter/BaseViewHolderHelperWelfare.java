@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 
 /**
  * @author LGuiPeng

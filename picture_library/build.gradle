@@ -27,11 +27,11 @@ dependencies {
     //noinspection GradleCompatible
     implementation "com.android.support:appcompat-v7:$versions.supportLibs"
     implementation "com.android.support:recyclerview-v7:$versions.supportLibs"
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     //    gif展示
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.12'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation project(':ucrop')
 }

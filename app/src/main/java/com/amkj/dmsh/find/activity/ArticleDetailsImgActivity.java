@@ -48,13 +48,13 @@ import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
@@ -703,7 +703,10 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
                 flex_communal_tag.removeAllViews();
                 for (int i = 0; i < detailsBean.getTagsList().size(); i++) {
-                    flex_communal_tag.addView(getLabelInstance().createArticleClickTag(ArticleDetailsImgActivity.this,detailsBean.getTagsList().get(i),i==0));
+                    if(i ==0){
+                        flex_communal_tag.addView(getLabelInstance().createArticleIcon(ArticleDetailsImgActivity.this));
+                    }
+                    flex_communal_tag.addView(getLabelInstance().createArticleClickTag(ArticleDetailsImgActivity.this,detailsBean.getTagsList().get(i)));
                 }
             } else {
                 rel_tag_layout_img.setVisibility(View.GONE);

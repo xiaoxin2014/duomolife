@@ -24,7 +24,7 @@ import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity.IndentInvoiceBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.google.gson.Gson;
-import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONException;

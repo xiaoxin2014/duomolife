@@ -37,19 +37,15 @@
             android:textColor="@color/text_black_t"
             android:textSize="@dimen/sc_mm_28" />
 
-        <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rel_group_join_share"
+            android:layout_marginLeft="@dimen/gap_left"
+            android:layout_marginRight="@dimen/gap_right"
             android:layout_marginTop="@dimen/sc_mm_44"
             android:gravity="center">
-            <com.amkj.dmsh.views.flowlayout.TagFlowLayout
-                android:id="@+id/tag_gp_tag_ava"
-                app:max_select="-1"
-                app:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </com.amkj.dmsh.views.flowlayout.TagFlowLayout>
+            <include layout="@layout/layout_communal_flexbox"/>
         </RelativeLayout>
         <TextView
             android:layout_marginTop="@dimen/sc_mm_44"

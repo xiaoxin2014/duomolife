@@ -5,15 +5,6 @@
         <enum name="circle" value="0" />
         <enum name="round" value="1" />
     </attr>
-    <declare-styleable name="FlowLayout">
-        <attr name="horizontalSpacing" format="dimension" />
-        <attr name="verticalSpacing" format="dimension" />
-        <attr name="orientation" format="enum">
-            <enum name="horizontal" value="0" />
-            <enum name="vertical" value="1" />
-        </attr>
-        <attr name="debugDraw" format="boolean" />
-    </declare-styleable>
     <declare-styleable name="FlowLayout_LayoutParams">
         <attr name="layout_newLine" format="boolean" />
         <attr name="layout_horizontalSpacing" format="dimension" />
@@ -22,15 +13,6 @@
     <declare-styleable name="RoundImageView1">
         <attr name="radius" />
         <attr name="type" />
-    </declare-styleable>
-    <declare-styleable name="TagFlowLayout">
-        <attr name="auto_select_effect" format="boolean"></attr>
-        <attr name="max_select" format="integer"></attr>
-        <attr name="gravity">
-            <enum name="left" value="-1" />
-            <enum name="center" value="0" />
-            <enum name="right" value="1" />
-        </attr>
     </declare-styleable>
     <declare-styleable name="BadgedImageView">
         <attr name="badgeColor" format="color|reference" />

@@ -27,9 +27,8 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.flowlayout.FlowLayout;
-import com.amkj.dmsh.views.flowlayout.TagAdapter;
-import com.amkj.dmsh.views.flowlayout.TagFlowLayout;
+import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.flexbox.JustifyContent;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -54,6 +53,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -214,21 +214,14 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         }
         if (memberList != null && memberList.size() > 0) {
             groupShareJoinView.rel_group_join_share.setVisibility(View.VISIBLE);
-            groupShareJoinView.tag_group_user_ava.setAdapter(new TagAdapter<MemberListBean>(memberList) {
-                @Override
-                public View getView(FlowLayout parent, int position, MemberListBean memberListBean) {
-                    View view = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_gp_join_avator, parent, false);
-                    ImageView imageView = (ImageView) view.findViewById(R.id.iv_dm_gp_open_ava);
-                    TextView tv_dm_gp_name = (TextView) view.findViewById(R.id.tv_dm_gp_name);
-                    GlideImageLoaderUtil.loadRoundImg(DoMoGroupJoinShareActivity.this, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 100));
-                    String name = getStrings(memberListBean.getNickname());
-                    if (name.length() > 7) {
-                        name = name.substring(0, 7) + "...";
-                    }
-                    tv_dm_gp_name.setText(name);
-                    return view;
-                }
-            });
+            groupShareJoinView.flex_communal_tag.setJustifyContent(JustifyContent.CENTER);
+            groupShareJoinView.flex_communal_tag.removeAllViews();
+            groupShareJoinView.flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+            groupShareJoinView.flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
+            for (int i = 0; i < memberList.size(); i++) {
+                groupShareJoinView.flex_communal_tag.addView(getLabelInstance()
+                        .createOpenGroupUserInfo(DoMoGroupJoinShareActivity.this,memberList.get(i)));
+            }
         } else {
             groupShareJoinView.rel_group_join_share.setVisibility(GONE);
         }
@@ -301,8 +294,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         @BindView(R.id.rel_group_join_share)
         RelativeLayout rel_group_join_share;
         //        人数头像
-        @BindView(R.id.tag_gp_tag_ava)
-        TagFlowLayout tag_group_user_ava;
+        @BindView(R.id.flex_communal_tag)
+        FlexboxLayout flex_communal_tag;
         //        创建时间
         @BindView(R.id.tv_gp_ql_share_product_c_time)
         TextView tv_gp_ql_share_product_c_time;

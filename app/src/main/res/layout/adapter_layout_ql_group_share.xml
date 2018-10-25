@@ -4,16 +4,16 @@
     android:background="@color/white"
     android:paddingTop="@dimen/sc_mm_40"
     android:layout_height="wrap_content">
-    <include layout="@layout/layout_communal_recycler_wrap"
-        android:paddingLeft="@dimen/sc_mm_60"
-        android:paddingRight="@dimen/sc_mm_60"
+    <include layout="@layout/layout_communal_flexbox"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
         android:layout_marginBottom="@dimen/sc_mm_50"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <include android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/sc_mm_40"
-        android:layout_below="@+id/communal_recycler_wrap"
+        android:layout_below="@+id/flex_communal_tag"
         android:layout_centerHorizontal="true"
         layout="@layout/layout_countdown_time_hours_red"/>
     <View

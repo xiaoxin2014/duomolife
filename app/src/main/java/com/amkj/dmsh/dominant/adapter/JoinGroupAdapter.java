@@ -15,8 +15,7 @@ import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -79,14 +79,14 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             boolean hasUnfinished = false;
             for (int i = 0; i < groupShopJoinList.size(); i++) {
                 GroupShopJoinBean groupShopJoinBean = groupShopJoinList.get(i);
-                if(!isEndOrStartTime(groupShopJoinBean.getGpEndTime(),groupShopJoinBean.getGpCreateTime())){
+                if (isEndOrStartTime(groupShopJoinBean.getGpEndTime(), groupShopJoinBean.getCurrentTime())) {
                     beanMap.put(i, groupShopJoinBean);
-                    if(!hasUnfinished){
+                    if (!hasUnfinished) {
                         hasUnfinished = true;
                     }
                 }
             }
-            if(hasUnfinished){
+            if (hasUnfinished) {
                 constantMethod.createSchedule();
             }
         }
@@ -156,8 +156,8 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 tv_ql_gp_sp_join.setBackground(drawable);
                 tv_ql_gp_sp_join.setText(groupShopJoinBean.getRange() == 1 ? R.string.join_new_group : R.string.join_group);
                 CountdownView cv_countdownTime_white_hours = helper.getView(R.id.cv_countdownTime_white_hours);
-                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
-                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
                 cv_countdownTime_white_hours.dynamicShow(dynamic.build());
                 setGroupOpenCountTime(cv_countdownTime_white_hours, groupShopJoinBean);
                 setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_white_hours);
@@ -170,8 +170,8 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 CountdownView ct_time_communal_show_bg = helper.getView(R.id.ct_time_communal_show_bg);
                 dynamic.setTimeTextColor(0xffffffff);
                 dynamic.setSuffixTextColor(0xff333333);
-                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
-                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
                 DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
                 backgroundInfo.setColor(context.getResources().getColor(R.color.text_normal_red));
                 dynamic.setBackgroundInfo(backgroundInfo);
@@ -180,25 +180,26 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), ct_time_communal_show_bg);
                 break;
             case TYPE_2:
-                RecyclerView communal_recycler_wrap = helper.getView(R.id.communal_recycler_wrap);
-                helper.setGone(R.id.ll_communal_count_time,true);
-                communal_recycler_wrap.setNestedScrollingEnabled(false);
-                FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
-                flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
-                flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP);
-                communal_recycler_wrap.setLayoutManager(flexboxLayoutManager);
+                FlexboxLayout flex_communal_tag = helper.getView(R.id.flex_communal_tag);
+                helper.setGone(R.id.ll_communal_count_time, true);
+                flex_communal_tag.setJustifyContent(JustifyContent.CENTER);
+                flex_communal_tag.removeAllViews();
+                flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+                flex_communal_tag.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
+                for (int i = 0; i < groupShopJoinBean.getMemberListBeans().size(); i++) {
+                    flex_communal_tag.addView(getLabelInstance()
+                            .createOpenGroupUserInfo(context, groupShopJoinBean.getMemberListBeans().get(i)));
+                }
                 CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);
-                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
-                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
                 cv_countdownTime_red_hours.dynamicShow(dynamic.build());
-                GroupTagAdapter groupTagAdapter = new GroupTagAdapter(context,groupShopJoinBean.getMemberListBeans());
-                communal_recycler_wrap.setAdapter(groupTagAdapter);
                 TextView tv_count_time_before_hours = helper.getView(R.id.tv_count_time_before_hours);
                 tv_count_time_before_hours.setTextColor(context.getResources().getColor(R.color.text_red_color));
                 helper.setText(R.id.tv_count_time_before_hours, "剩余")
                         .setTag(R.id.cv_countdownTime_red_hours, groupShopJoinBean)
                         .setGone(R.id.cv_countdownTime_red_hours, isJoinGroupEnd(groupShopJoinBean))
-                        .setGone(R.id.ll_communal_count_time,isJoinGroupEnd(groupShopJoinBean));
+                        .setGone(R.id.ll_communal_count_time, isJoinGroupEnd(groupShopJoinBean));
                 setJoinGroupCountTime(cv_countdownTime_red_hours, groupShopJoinBean);
                 setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_red_hours);
                 break;
@@ -243,7 +244,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             if (isTimeStart(groupShopJoinBean)) {
                 try {
                     //格式化结束时间
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                     Date dateEnd = formatter.parse(groupShopJoinBean.getGpEndTime());
                     Date dateCurrent;
                     if (!TextUtils.isEmpty(groupShopJoinBean.getCurrentTime())) {
@@ -259,7 +260,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             } else {
                 try {
                     //格式化开始时间
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                     Date dateStart = formatter.parse(groupShopJoinBean.getGpCreateTime());
                     Date dateCurrent;
                     if (!TextUtils.isEmpty(groupShopJoinBean.getCurrentTime())) {
@@ -296,7 +297,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
      */
     public void setJoinGroupCountTime(final CountdownView countdownView, GroupShopJoinBean groupShopJoinBean) {
         //格式化结束时间
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         Date startTime;
         Date endTime;
         try {
@@ -327,7 +328,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
     private boolean isTimeStart(GroupShopJoinBean qualityGroupBean) {
         try {
             //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             Date dateStart = formatter.parse(qualityGroupBean.getGpCreateTime());
             Date dateCurrent;
             if (!TextUtils.isEmpty(qualityGroupBean.getCurrentTime())) {
