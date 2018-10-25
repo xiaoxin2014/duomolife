@@ -126,6 +126,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
@@ -289,7 +290,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private DirectEvaluationAdapter directEvaluationAdapter;
     private ShopRecommendHotTopicAdapter shopRecommendHotTopicAdapter;
     private ShopCommentHeaderView shopCommentHeaderView;
-    private AlertDialog alertDialog;
+    private AlertDialog alertRuleDialog;
     private String productId;
     private ShopDetailsEntity shopDetailsEntity;
     private ShopPropertyBean shopPropertyBean;
@@ -1082,9 +1083,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (tagSelected.length > 0) {
                 ll_layout_pro_sc_tag.setVisibility(VISIBLE);
                 flex_communal_tag.removeAllViews();
-                for (int i = 0; i < (tagSelected.length > 3 ? 3 : tagSelected.length); i++) {
-                    flex_communal_tag.addView(getLabelInstance().createProductTag(ShopScrollDetailsActivity.this
-                            ,getStrings(tagMap.get(Integer.parseInt(tagSelected[i])))));
+                for (int i = 0; i < tagSelected.length; i++) {
+                    String tagName = tagMap.get(Integer.parseInt(tagSelected[i]));
+                    if(!TextUtils.isEmpty(tagName)){
+                        flex_communal_tag.addView(getLabelInstance().createProductTag(ShopScrollDetailsActivity.this
+                                ,getStringFilter(tagName)));
+                    }
                 }
             } else {
                 ll_layout_pro_sc_tag.setVisibility(GONE);
@@ -1484,74 +1488,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-
-    @OnClick(R.id.ll_layout_pro_sc_tag)
-    void openDialog(View view) {
-        if (shopPropertyBean != null) {
-            if (alertDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ShopScrollDetailsActivity.this, R.style.CustomTransDialog);
-                View dialogView = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_ql_gp_dialog, communal_recycler_wrap, false);
-                initDialogView(dialogView);
-                alertDialog = builder.create();
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.show();
-                TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                int dialogHeight = (int) (app.getScreenHeight() * 0.5 + 1);
-                Window window = alertDialog.getWindow();
-                window.getDecorView().setPadding(0, 0, 0, 0);
-                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
-                window.setGravity(Gravity.BOTTOM);//底部出现
-                window.setContentView(dialogView);
-            } else {
-                alertDialog.show();
-            }
-        }
-    }
-
-    private void initDialogView(View dialogView) {
-        FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
-        TextView tv_pro_buy_detail_text = (TextView) dialogView.findViewById(R.id.tv_pro_buy_detail_text);
-        RecyclerView communal_recycler_wrap = (RecyclerView) dialogView.findViewById(R.id.communal_recycler_wrap);
-        communal_recycler_wrap.setVisibility(GONE);
-        TextView tv_title_text = (TextView) dialogView.findViewById(R.id.tv_title_text);
-        tv_title_text.setText("购前须知");
-        if (shopPropertyBean.getPreSaleInfo() != null && shopPropertyBean.getPreSaleInfo().size() > 0) {
-            String buyDetailText = "";
-            for (int i = 0; i < shopPropertyBean.getPreSaleInfo().size(); i++) {
-                if (i == shopPropertyBean.getPreSaleInfo().size() - 1) {
-                    buyDetailText += shopPropertyBean.getPreSaleInfo().get(i) + "。";
-                } else {
-                    buyDetailText += shopPropertyBean.getPreSaleInfo().get(i) + ";  ";
-                }
-            }
-            tv_pro_buy_detail_text.setText(buyDetailText);
-        } else {
-            tv_pro_buy_detail_text.setText("");
-        }
-        //        标签
-        final List<String> tagArray = new ArrayList<>();
-        if (shopPropertyBean.getTags() != null && shopPropertyBean.getTagIds() != null) {
-            final String[] tagSelected = shopPropertyBean.getTagIds().split(",");
-            if (tagSelected.length > 0) {
-                flex_communal_tag.setVisibility(VISIBLE);
-                for (int i = 0; i < (shopPropertyBean.getTags().size() > 3 ? 3 : shopPropertyBean.getTags().size()); i++) {
-                    tagArray.add(shopPropertyBean.getTags().get(i).getName());
-                }
-                flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
-                flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
-                flex_communal_tag.removeAllViews();
-                for (int i = 0; i < tagArray.size(); i++) {
-                    flex_communal_tag.addView(getLabelInstance().createProductTag(ShopScrollDetailsActivity.this, tagArray.get(i)));
-                }
-            } else {
-                flex_communal_tag.setVisibility(GONE);
-            }
-        } else {
-            flex_communal_tag.setVisibility(GONE);
-        }
-    }
-
     //    七鱼客服
     private void skipServiceDataInfo() {
         QyProductIndentInfo qyProductIndentInfo = null;
@@ -1868,26 +1804,26 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @OnClick(R.id.ll_product_activity_detail)
     void openActivityRule(View view) {
         if (shopPropertyBean != null) {
-            if (alertDialog == null) {
+            if (alertRuleDialog == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ShopScrollDetailsActivity.this, R.style.CustomTransDialog);
                 View dialogView = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_act_topic_rule, null, false);
                 ruleDialog = new RuleDialogView();
                 ButterKnife.bind(ruleDialog, dialogView);
                 ruleDialog.initViews();
                 ruleDialog.setData();
-                alertDialog = builder.create();
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.show();
+                alertRuleDialog = builder.create();
+                alertRuleDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                alertRuleDialog.setCanceledOnTouchOutside(true);
+                alertRuleDialog.show();
                 TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                 int dialogHeight = (int) (app.getScreenHeight() * 0.5 + 1);
-                Window window = alertDialog.getWindow();
+                Window window = alertRuleDialog.getWindow();
                 window.getDecorView().setPadding(0, 0, 0, 0);
                 window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
                 window.setGravity(Gravity.BOTTOM);//底部出现
                 window.setContentView(dialogView);
             } else {
-                alertDialog.show();
+                alertRuleDialog.show();
             }
         }
     }
@@ -1927,7 +1863,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         void skipActivity() {
             if (shopPropertyBean != null
                     && !TextUtils.isEmpty(shopPropertyBean.getActivityCode())) {
-                alertDialog.dismiss();
+                alertRuleDialog.dismiss();
                 Intent intent = new Intent(ShopScrollDetailsActivity.this, QualityProductActActivity.class);
                 intent.putExtra("activityCode", getStrings(shopPropertyBean.getActivityCode()));
                 startActivity(intent);

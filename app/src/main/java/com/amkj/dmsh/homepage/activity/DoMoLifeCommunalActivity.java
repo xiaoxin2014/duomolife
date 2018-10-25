@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -136,7 +135,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         return R.layout.activity_communal_webview;
     }
 
-    @SuppressLint({"AddJavascriptInterface", "SetJavaScriptEnabled"})
     @Override
     protected void initViews() {
         tv_web_shared.setVisibility(View.GONE);
@@ -292,6 +290,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             constantMethod.getPermissions(DoMoLifeCommunalActivity.this.getApplicationContext(), Permission.Group.STORAGE);
         });
     }
+
 
     /**
      * 文件下载

@@ -60,6 +60,8 @@ import org.xutils.x;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -138,6 +140,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         //or you can put com.tencent.tinker.** to main dex
         TinkerManager.installTinker(this);
         Tinker tinker = Tinker.with(getApplication());
+        fixTimeOut();
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -624,5 +627,24 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
     public Context getContext() {
         return mAppContext;
+    }
+
+    /**
+     *  修复AssetManager.finalize() timed out
+     */
+    private void fixTimeOut() {
+        try {
+            Class clazz = Class.forName("java.lang.Daemons$FinalizerWatchdogDaemon");
+            Method method = clazz.getSuperclass().getDeclaredMethod("stop");
+            method.setAccessible(true);
+
+            Field field = clazz.getDeclaredField("INSTANCE");
+            field.setAccessible(true);
+
+            method.invoke(field.get(null));
+
+        }catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }

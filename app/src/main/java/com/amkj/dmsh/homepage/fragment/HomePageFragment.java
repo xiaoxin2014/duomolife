@@ -391,7 +391,6 @@ public class HomePageFragment extends BaseFragment {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 hasError = true;
-                home_title_collapsing_view.setEnabled(true);
 //                showToast(x.app(), ex.getMessage());
                 if (ex instanceof HttpException) { //网络错误
                     HttpException httpEx = (HttpException) ex;

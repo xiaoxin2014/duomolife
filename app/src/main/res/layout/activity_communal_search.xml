@@ -54,18 +54,6 @@
                     android:text="热门搜索" />
                 <include layout="@layout/layout_communal_recycler_wrap"/>
             </LinearLayout>
-            <com.amkj.dmsh.views.DrawableCenterTextView
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/sc_mm_30"
-                android:background="@color/light_gray_f"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/dimen_10_dp"
-                android:drawableLeft="@drawable/search_leave_mes_icon"
-                android:textColor="@color/text_login_gray_s"
-                android:id="@+id/tv_search_leave_mes"
-                android:text="@string/search_leave_mes"
-                android:textSize="@dimen/sc_mm_28"
-                android:layout_height="@dimen/sc_mm_88" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

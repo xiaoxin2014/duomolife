@@ -243,6 +243,8 @@ public class Url {
     public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
     //意见反馈
     public static final String MINE_FEEDBACK = "api/my/addFeedBack";
+//    意见反馈类型
+    public static final String MINE_FEEDBACK_TYPE = "api/my/getFeedBackType";
     //    检查该号码是否已注册
     public static final String CHECK_PHONE_IS_REG = "api/my/checkRegMobile";
     //    是否是第一次登录App

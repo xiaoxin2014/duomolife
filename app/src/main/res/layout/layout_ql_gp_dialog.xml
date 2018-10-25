@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:layout_marginTop="@dimen/sc_mm_20"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
         android:layout_marginBottom="@dimen/sc_mm_20"/>

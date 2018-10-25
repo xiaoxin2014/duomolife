@@ -205,8 +205,11 @@ public class SpringSaleFragment extends BaseFragment {
                 }
                 if (!isClickSelect) {
                     GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                    if(layoutManager == null){
+                        return;
+                    }
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();//可见范围内的第一项的位置
-                    if(firstVisibleItemPosition<saleTimeTotalList.size()){
+                    if(firstVisibleItemPosition>=0&&firstVisibleItemPosition<saleTimeTotalList.size()){
                         BaseTimeProductTopicBean baseTimeProductTopicBean = saleTimeTotalList.get(firstVisibleItemPosition);
                         if (baseTimeProductTopicBean.getItemType() == TYPE_2) {
                             TimeShaftBean timeShaftBean = (TimeShaftBean) baseTimeProductTopicBean;

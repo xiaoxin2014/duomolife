@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -22,18 +26,21 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
+import com.amkj.dmsh.mine.adapter.SuggestionFeedBackTypeAdapter;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.mine.bean.SuggestionTypeEntity;
+import com.amkj.dmsh.mine.bean.SuggestionTypeEntity.FeedBackTypeBean;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
 
@@ -48,8 +55,13 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.MINE_FEEDBACK_TYPE;
 import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
 
 ;
@@ -74,8 +86,11 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     private ArrayList<String> dataPath = new ArrayList<>();
     private final int REQUEST_PERMISSIONS = 60;
     private final int SUBMIT_FEEDBACK_CODE = 120;
+    private List<FeedBackTypeBean> feedBackTypeBeans = new ArrayList<>();
     private int maxSelImg = 5;
     private int adapterPosition;
+    private AlertDialog selectAlertView;
+    private SuggestionFeedBackTypeAdapter suggestionFeedBackAdapter;
 
     @Override
     protected int getContentView() {
@@ -186,6 +201,39 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         finish();
     }
 
+    /**
+     * 提交反馈
+     * @param view
+     */
+    @OnClick(R.id.tv_suggestion_type)
+    void commitSuggestion(View view) {
+        if(feedBackTypeBeans.size()>0){
+            if(selectAlertView == null){
+                AlertDialog.Builder builder = new AlertDialog.Builder(SuggestionFeedBackActivity.this,R.style.service_dialog_theme);
+                View dialogView = LayoutInflater.from(SuggestionFeedBackActivity.this).inflate(R.layout.alert_suggestion_feedback_type, null, false);
+                RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
+                communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(SuggestionFeedBackActivity.this));
+                suggestionFeedBackAdapter = new SuggestionFeedBackTypeAdapter(feedBackTypeBeans);
+                communal_recycler_wrap.setAdapter(suggestionFeedBackAdapter);
+                communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+                        // 设置分隔线资源ID
+                        .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                        // 开启绘制分隔线，默认关闭
+                        .enableDivider(true)
+                        // 是否关闭标签点击事件，默认开启
+                        .disableHeaderClick(false)
+                        // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
+                        .setHeaderClickListener(null)
+                        .create());
+                builder.setView(dialogView);
+                selectAlertView = builder.create();
+            }
+            if(!selectAlertView.isShowing()){
+                selectAlertView.show();
+            }
+        }
+    }
+
     @OnClick(R.id.tv_header_shared)
     void submitSuggestion(View view) {
         if (!TextUtils.isEmpty(emoji_mine_suggestion_feed_back.getText().toString().trim())) {
@@ -235,7 +283,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     private void sendSuggestionData(List<String> data) {
         //图片地址
         StringBuffer imgPath = new StringBuffer();
-        String url = Url.BASE_URL + Url.MINE_FEEDBACK;
+        String url = BASE_URL + Url.MINE_FEEDBACK;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", uid);
         params.put("remark", emoji_mine_suggestion_feed_back.getText().toString().trim());
@@ -331,8 +379,36 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         }
     }
 
+
     @Override
     protected void loadData() {
-    }
+        if(userId>0){
+            String url = BASE_URL+MINE_FEEDBACK_TYPE;
+            Map<String,Object> params = new HashMap<>();
+            params.put("uid",userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    SuggestionTypeEntity suggestionTypeEntity = new Gson().fromJson(result, SuggestionTypeEntity.class);
+                    if(suggestionTypeEntity!=null){
+                        if(SUCCESS_CODE.equals(suggestionTypeEntity.getCode())){
+                            feedBackTypeBeans.addAll(suggestionTypeEntity.getFeedBackTypeList());
+                        }else{
+                            showToast(SuggestionFeedBackActivity.this,getStrings(suggestionTypeEntity.getMsg()));
+                        }
+                    }
+                }
 
+                @Override
+                public void netClose() {
+                    showToast(SuggestionFeedBackActivity.this,R.string.unConnectedNetwork);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    showToast(SuggestionFeedBackActivity.this,R.string.invalidData);
+                }
+            });
+        }
+    }
 }

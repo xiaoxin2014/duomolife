@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="@dimen/sc_mm_34"
+        android:textColor="@color/text_black_t"
+        android:text="选择反馈问题"
+        android:gravity="center"
+        android:background="@drawable/border_bottom_line"
+        android:layout_height="@dimen/sc_mm_100" />
+    <include
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/layout_communal_recycler_wrap"/>
+</LinearLayout>

@@ -271,10 +271,4 @@ public class HomePageSearchActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick(R.id.tv_search_leave_mes)
-    void leaveMes(View view) {
-        Intent intent = new Intent(HomePageSearchActivity.this, SearchLeaveMessageActivity.class);
-        startActivity(intent);
-    }
-
 }

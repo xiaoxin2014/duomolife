@@ -64,7 +64,7 @@ public class PersonalBgImgActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQ_MINE_BG) {
+        if (requestCode == REQ_MINE_BG) {
             String imgUrl = data.getStringExtra("imgUrl");
             if (!TextUtils.isEmpty(imgUrl)) {
                 GlideImageLoaderUtil.loadCenterCrop(PersonalBgImgActivity.this, iv_mine_bg_img, imgUrl);

@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/smart_refresh_hot_sale"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical">
+    android:focusableInTouchMode="true">
 
-    <include layout="@layout/layout_ql_cart_share_header" />
-
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
         android:layout_width="match_parent"
-        android:id="@+id/smart_refresh_hot_sale"
-        android:layout_weight="1"
-        android:layout_height="0dp">
+        android:layout_height="wrap_content" />
 
-        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@android:color/white"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <include layout="@layout/layout_al_new_sp_banner" />
+                <include layout="@layout/layout_al_new_sp_banner" />
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+            <include layout="@layout/layout_ql_cart_share_header" />
 
             <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/std_dominant_hot_sale"
@@ -36,11 +42,12 @@
                 tl:tl_textSelectColor="@color/text_normal_red"
                 tl:tl_textUnselectColor="@color/text_black_t"
                 tl:tl_textsize="15sp" />
+        </android.support.design.widget.AppBarLayout>
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vp_dominant_hot_sale"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-</LinearLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_dominant_hot_sale"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </android.support.design.widget.CoordinatorLayout>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

@@ -92,6 +92,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
@@ -674,9 +675,6 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         });
     }
 
-    //    赠品送完
-    private final String PresentCode = "10023";
-
     /**
      * 创建订单返回状态
      *
@@ -684,7 +682,8 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
      */
     private void presentStatusUpdate(String codeStatus) {
         try {
-            if (PresentCode.equals(codeStatus)) {
+//            赠品赠完
+            if ("10023".equals(codeStatus)) {
                 getIndentDiscounts(false);
             }
         } catch (Exception e) {
@@ -705,7 +704,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付成功");
+                showToast(DirectIndentWriteActivity.this, "支付成功");
 //                跳转订单完成页
                 if (type.equals(INDENT_GROUP_SHOP)) {
                     switch (groupShopDetailsBean.getGpStatus()) {
@@ -732,13 +731,13 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "未安装微信或微信版本过低");
+                        showToast(DirectIndentWriteActivity.this, "未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "参数错误");
+                        showToast(DirectIndentWriteActivity.this, "参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付失败");
+                        showToast(DirectIndentWriteActivity.this, "支付失败");
                         break;
                 }
                 payError();
@@ -747,7 +746,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onCancel() {
                 payError();
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付取消");
+                showToast(DirectIndentWriteActivity.this, "支付取消");
             }
         });
     }
@@ -940,7 +939,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付成功");
+                showToast(DirectIndentWriteActivity.this, "支付成功");
 //                跳转订单完成页
                 if (type.equals(INDENT_GROUP_SHOP)) {
                     switch (groupShopDetailsBean.getGpStatus()) {
@@ -967,26 +966,26 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onDealing() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付处理中...");
+                showToast(DirectIndentWriteActivity.this, "支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付失败:支付结果解析错误");
+                        showToast(DirectIndentWriteActivity.this, "支付失败:支付结果解析错误");
                         break;
 
                     case AliPay.ERROR_NETWORK:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付失败:网络连接错误");
+                        showToast(DirectIndentWriteActivity.this, "支付失败:网络连接错误");
                         break;
 
                     case AliPay.ERROR_PAY:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付错误:支付码支付失败");
+                        showToast(DirectIndentWriteActivity.this, "支付错误:支付码支付失败");
                         break;
 
                     default:
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付错误");
+                        showToast(DirectIndentWriteActivity.this, "支付错误");
                         break;
                 }
                 payError();

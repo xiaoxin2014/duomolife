@@ -182,8 +182,10 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
 
     @Override
     protected void loadData() {
-        page = 1;
-        getCollectPro();
+        if(userId>0){
+            page = 1;
+            getCollectPro();
+        }
     }
 
     @Override

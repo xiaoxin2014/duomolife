@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -122,12 +121,12 @@ public class AliBCFragment extends BaseFragment {
         return R.layout.fragment_web_ali_bc_activity;
     }
 
-    @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
     protected void initViews() {
         tv_header_shared.setVisibility(View.GONE);
         tv_life_back.setVisibility(View.GONE);
         tl_normal_bar.setVisibility(View.GONE);
+        ll_web_ali.setBackgroundColor(getResources().getColor(R.color.transparent));
         if (TextUtils.isEmpty(webUrl)) {
             return;
         }
@@ -240,7 +239,7 @@ public class AliBCFragment extends BaseFragment {
     }
 
     private void setStatusColor() {
-        SystemBarHelper.setPadding(getActivity(), tl_normal_bar);
+        SystemBarHelper.setPadding(getActivity(), ll_web_ali);
         SystemBarHelper.immersiveStatusBar(getActivity());
     }
 
