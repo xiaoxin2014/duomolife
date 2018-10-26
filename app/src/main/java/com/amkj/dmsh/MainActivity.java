@@ -636,7 +636,12 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
      */
     private void getMainIconData() {
         String url = Url.BASE_URL + Url.H_BOTTOM_ICON;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String,Object> params = new HashMap<>();
+        /**
+         * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
+         */
+        params.put("version",2);
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -659,6 +664,16 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                         }
                     }
                 }
+            }
+
+            @Override
+            public void netClose() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
             }
         });
     }

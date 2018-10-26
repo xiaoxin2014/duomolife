@@ -48,6 +48,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -113,7 +114,6 @@ public class AliBCFragment extends BaseFragment {
     //    顶部导航
     private Map<String, String> headerBarMap = new HashMap<>();
     private String paddingStatus;
-    private String refreshStatus;
     private String jsIdentifying;
 
     @Override
@@ -518,6 +518,13 @@ public class AliBCFragment extends BaseFragment {
             }
         }
 
+        //      跳转客服
+        @JavascriptInterface
+        public void skipService() {
+            QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+            qyServiceUtils.openQyServiceChat(getActivity(), "web：","");
+        }
+
         //      顶栏导航是否展示
         @JavascriptInterface
         public void isShowHeadBar(final String showData) {
@@ -604,13 +611,6 @@ public class AliBCFragment extends BaseFragment {
             }
         }
 
-        @JavascriptInterface
-        public void setRefreshStatus(String refreshStatus) {
-            if (!TextUtils.isEmpty(refreshStatus)) {
-                AliBCFragment.this.refreshStatus = refreshStatus;
-            }
-        }
-
         /**
          * 打开相册
          *
@@ -643,6 +643,7 @@ public class AliBCFragment extends BaseFragment {
         SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
         if (personalInfo.isLogin()) {
             uid = personalInfo.getUid();
+            transmitUid();
         } else {
             //未登录跳转登录页
             Intent intent = new Intent(getActivity(), MineLoginActivity.class);
@@ -764,7 +765,7 @@ public class AliBCFragment extends BaseFragment {
                     , imageUrl
                     , TextUtils.isEmpty(title) ? "多么生活" : title
                     , TextUtils.isEmpty(content) ? "" : content
-                    , url,routineUrl);
+                    , url, routineUrl);
         } catch (JSONException e) {
             e.printStackTrace();
         }

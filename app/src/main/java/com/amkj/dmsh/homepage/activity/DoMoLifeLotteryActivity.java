@@ -36,6 +36,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.umeng.socialize.UMShareAPI;
@@ -443,6 +444,13 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             if(!TextUtils.isEmpty(refreshStatus)){
                 DoMoLifeLotteryActivity.this.refreshStatus = refreshStatus;
             }
+        }
+
+        //      跳转客服
+        @JavascriptInterface
+        public void skipService() {
+            QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+            qyServiceUtils.openQyServiceChat(DoMoLifeLotteryActivity.this, "web：","");
         }
     }
 

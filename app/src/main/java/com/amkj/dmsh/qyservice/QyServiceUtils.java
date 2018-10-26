@@ -21,9 +21,9 @@ import com.amkj.dmsh.dominant.activity.QualityNewProActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.qiyukf.unicorn.api.OnMessageItemClickListener;
 import com.qiyukf.unicorn.api.ProductDetail;
@@ -47,6 +47,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -329,16 +332,16 @@ public class QyServiceUtils {
     class ProductIndentHelper {
         private ProductIndentAdapter productIndentAdapter;
         private final AlertDialog imageAlertDialog;
+        private View indentDialogView;
 
         public ProductIndentHelper(Context context) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.service_dialog_theme);
-            View view = LayoutInflater.from(context).inflate(R.layout.layout_communal_recycler, null, false);
-            RecyclerView communal_recycler = view.findViewById(R.id.communal_recycler);
+            indentDialogView = LayoutInflater.from(context).inflate(R.layout.alert_qy_indent, null, false);
+            RecyclerView communal_recycler = indentDialogView.findViewById(R.id.communal_recycler);
             communal_recycler.setLayoutManager(new LinearLayoutManager(context));
             productIndentAdapter = new ProductIndentAdapter(context, orderListBeanList);
             communal_recycler.setAdapter(productIndentAdapter);
-            View indentHeaderView = LayoutInflater.from(context).inflate(R.layout.dialog_service_indent_header, null, false);
-            ImageView iv_close_dialog = indentHeaderView.findViewById(R.id.iv_close_dialog);
+            ImageView iv_close_dialog = indentDialogView.findViewById(R.id.iv_close_dialog);
             iv_close_dialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -355,7 +358,6 @@ public class QyServiceUtils {
                     // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                     .setHeaderClickListener(null)
                     .create());
-            productIndentAdapter.addHeaderView(indentHeaderView);
             productIndentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -390,10 +392,10 @@ public class QyServiceUtils {
                 window.setBackgroundDrawableResource(R.color.translucence);
                 WindowManager.LayoutParams params = window.getAttributes();
                 params.width = WindowManager.LayoutParams.MATCH_PARENT;
-//                params.height = AutoUtils.getPercentHeightSize(700);
+                params.height = AutoSizeUtils.mm2px(mAppContext,600);
                 window.setGravity(Gravity.BOTTOM);
                 window.setAttributes(params);
-                window.setContentView(view);
+                window.setContentView(indentDialogView);
             }
         }
 

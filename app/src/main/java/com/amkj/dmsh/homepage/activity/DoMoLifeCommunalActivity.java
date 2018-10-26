@@ -57,6 +57,7 @@ import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -662,6 +663,13 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             } else {
                 showToast(context, R.string.unConnectedNetwork);
             }
+        }
+
+        //      跳转客服
+        @JavascriptInterface
+        public void skipService() {
+            QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
+            qyServiceUtils.openQyServiceChat(DoMoLifeCommunalActivity.this, "web：","");
         }
 
         //      顶栏导航是否展示

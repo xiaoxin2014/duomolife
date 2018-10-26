@@ -9,8 +9,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -209,7 +212,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     void commitSuggestion(View view) {
         if(feedBackTypeBeans.size()>0){
             if(selectAlertView == null){
-                AlertDialog.Builder builder = new AlertDialog.Builder(SuggestionFeedBackActivity.this,R.style.service_dialog_theme);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SuggestionFeedBackActivity.this,R.style.Theme_AppCompat_Dialog);
                 View dialogView = LayoutInflater.from(SuggestionFeedBackActivity.this).inflate(R.layout.alert_suggestion_feedback_type, null, false);
                 RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
                 communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(SuggestionFeedBackActivity.this));
@@ -225,8 +228,17 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                         // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                         .setHeaderClickListener(null)
                         .create());
-                builder.setView(dialogView);
                 selectAlertView = builder.create();
+                Window window = selectAlertView.getWindow();
+                if (window != null) {
+                    window.setBackgroundDrawableResource(R.color.translucence);
+                    WindowManager.LayoutParams attributes = window.getAttributes();
+                    attributes.width = WindowManager.LayoutParams.MATCH_PARENT;
+                    attributes.height = 750;
+                    window.setAttributes(attributes);
+                    window.setGravity(Gravity.BOTTOM);
+                    window.setContentView(view);
+                }
             }
             if(!selectAlertView.isShowing()){
                 selectAlertView.show();

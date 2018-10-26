@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:background="@color/light_gray_f"
     android:orientation="horizontal"
-    android:layout_height="wrap_content">
+    android:layout_height="@dimen/sc_mm_60">
     <TextView
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -17,10 +17,8 @@
         android:layout_height="@dimen/sc_mm_60" />
     <ImageView
         android:layout_width="wrap_content"
-        android:paddingRight="@dimen/gap_right"
-        android:paddingLeft="@dimen/gap_left"
         android:src="@drawable/marquee_close"
         android:id="@+id/iv_close_dialog"
-        android:padding="@dimen/dimen_5_dp"
+        android:padding="@dimen/sc_mm_18"
         android:layout_height="@dimen/sc_mm_60" />
 </LinearLayout>
