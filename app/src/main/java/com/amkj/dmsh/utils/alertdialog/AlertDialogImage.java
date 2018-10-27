@@ -69,6 +69,9 @@ public class AlertDialogImage {
      * 展示dialog
      */
     public void show() {
+        if(imageAlertDialog==null){
+            return;
+        }
         if (!imageAlertDialog.isShowing()&& isContextExisted(context)) {
             imageAlertDialog.show();
         }

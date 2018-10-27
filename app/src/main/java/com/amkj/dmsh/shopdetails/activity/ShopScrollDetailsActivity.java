@@ -16,7 +16,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +35,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.NetLoadUtils;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -79,6 +77,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -92,9 +91,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
@@ -125,6 +122,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -300,7 +298,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private Badge badge;
     //    private View proTitleView;
     private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/proprietary.html?id=";
-    private RuleDialogView ruleDialog;
     private ConstantMethod constantMethod;
     private boolean isWaitSellStatus;
     private ProductTextAdapter presentProAdapter;
@@ -327,7 +324,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
-
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         dynamic.setTimeTextColor(0xff333333);
         dynamic.setSuffixTextColor(0xff333333);
@@ -1044,6 +1040,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if(shopPropertyBean.getMarketLabelList()!=null&&shopProperty.getMarketLabelList().size()>0){
             fbl_details_market_label.setVisibility(VISIBLE);
             fbl_details_market_label.removeAllViews();
+            if (!TextUtils.isEmpty(shopProperty.getActivityTag())) {
+                MarketLabelBean marketLabelBean = new MarketLabelBean();
+                marketLabelBean.setTitle(shopProperty.getActivityTag());
+                marketLabelBean.setActivityCode(getStrings(shopPropertyBean.getActivityCode()));
+                marketLabelBean.setLabelCode(1);
+                fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this,marketLabelBean));
+            }
             for (MarketLabelBean marketLabelBean:shopPropertyBean.getMarketLabelList()) {
                 marketLabelBean.setLabelCode(0);
                 fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this,marketLabelBean));
@@ -1058,8 +1061,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 //      购买可获积分
         if (shopProperty.getBuyIntergral() > 0) {
             tv_ql_sp_pro_sc_integral_hint.setVisibility(VISIBLE);
-            String integralHint = String.format(getString(R.string.buy_get_integral_tint), shopProperty.getBuyIntergral());
-            tv_ql_sp_pro_sc_integral_hint.setText(integralHint);
+            String integralFormat = getIntegralFormat(ShopScrollDetailsActivity.this, R.string.buy_get_integral_tint, shopProperty.getBuyIntergral());
+            tv_ql_sp_pro_sc_integral_hint.setText(integralFormat);
             String regex = "[1-9]\\d*\\.?\\d*";
             Pattern p = Pattern.compile(regex);
             Link redNum = new Link(p);
@@ -1068,7 +1071,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             redNum.setUnderlined(false);
             redNum.setHighlightAlpha(0f);
             LinkBuilder.on(tv_ql_sp_pro_sc_integral_hint)
-                    .setText(integralHint)
+                    .setText(integralFormat)
                     .addLink(redNum)
                     .build();
         } else {
@@ -1804,70 +1807,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @OnClick(R.id.ll_product_activity_detail)
     void openActivityRule(View view) {
         if (shopPropertyBean != null) {
-            if (alertRuleDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ShopScrollDetailsActivity.this, R.style.CustomTransDialog);
-                View dialogView = LayoutInflater.from(ShopScrollDetailsActivity.this).inflate(R.layout.layout_act_topic_rule, null, false);
-                ruleDialog = new RuleDialogView();
-                ButterKnife.bind(ruleDialog, dialogView);
-                ruleDialog.initViews();
-                ruleDialog.setData();
-                alertRuleDialog = builder.create();
-                alertRuleDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertRuleDialog.setCanceledOnTouchOutside(true);
-                alertRuleDialog.show();
-                TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                int dialogHeight = (int) (app.getScreenHeight() * 0.5 + 1);
-                Window window = alertRuleDialog.getWindow();
-                window.getDecorView().setPadding(0, 0, 0, 0);
-                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
-                window.setGravity(Gravity.BOTTOM);//底部出现
-                window.setContentView(dialogView);
-            } else {
-                alertRuleDialog.show();
-            }
-        }
-    }
-
-    class RuleDialogView {
-        @BindView(R.id.tv_act_topic_rule_title)
-        TextView tv_act_topic_rule_title;
-        @BindView(R.id.tv_act_topic_rule_skip)
-        TextView tv_act_topic_rule_skip;
-        @BindView(R.id.communal_recycler)
-        RecyclerView communal_recycler;
-        CommunalDetailAdapter actRuleDetailsAdapter;
-        List<CommunalDetailObjectBean> communalDetailBeanList = new ArrayList<>();
-
-        public void initViews() {
-            tv_act_topic_rule_skip.setVisibility(VISIBLE);
-            communal_recycler.setNestedScrollingEnabled(false);
-            communal_recycler.setLayoutManager(new LinearLayoutManager(ShopScrollDetailsActivity.this));
-            communal_recycler.setNestedScrollingEnabled(false);
-            actRuleDetailsAdapter = new CommunalDetailAdapter(ShopScrollDetailsActivity.this, communalDetailBeanList);
-            communal_recycler.setLayoutManager(new LinearLayoutManager(ShopScrollDetailsActivity.this));
-            communal_recycler.setAdapter(actRuleDetailsAdapter);
-        }
-
-        public void setData() {
-            tv_act_topic_rule_title.setText("活动规则");
-            tv_act_topic_rule_skip.setText(String.format(getResources().getString(R.string.skip_topic)
-                    , getStrings(shopPropertyBean.getActivityTag())));
-            if (shopPropertyBean.getActivityRuleDetailList() != null && shopPropertyBean.getActivityRuleDetailList().size() > 0) {
-                communalDetailBeanList.clear();
-                communalDetailBeanList.addAll(getDetailsDataList(shopPropertyBean.getActivityRuleDetailList()));
-                actRuleDetailsAdapter.notifyDataSetChanged();
-            }
-        }
-
-        @OnClick(R.id.tv_act_topic_rule_skip)
-        void skipActivity() {
-            if (shopPropertyBean != null
-                    && !TextUtils.isEmpty(shopPropertyBean.getActivityCode())) {
-                alertRuleDialog.dismiss();
-                Intent intent = new Intent(ShopScrollDetailsActivity.this, QualityProductActActivity.class);
-                intent.putExtra("activityCode", getStrings(shopPropertyBean.getActivityCode()));
-                startActivity(intent);
-            }
+            Intent intent = new Intent(ShopScrollDetailsActivity.this, QualityProductActActivity.class);
+            intent.putExtra("activityCode", getStrings(shopPropertyBean.getActivityCode()));
+            startActivity(intent);
         }
     }
 

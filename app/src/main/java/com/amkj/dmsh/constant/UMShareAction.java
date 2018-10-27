@@ -29,7 +29,6 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMMin;
 import com.umeng.socialize.media.UMWeb;
-import com.umeng.socialize.shareboard.ShareBoardConfig;
 
 import java.io.File;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getThumbImgUrl;
 
 /**
  * @author LGuiPeng
@@ -54,7 +54,6 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 
 public class UMShareAction {
     private Activity context;
-    final static String FinalOSSThumbFormat = "?@80h_80w.jpg";
     private OnShareSuccessListener onShareSuccessListener;
     private AlertDialogShareHelper alertDialogShareHelper;
     private boolean isSharing = false;
@@ -82,20 +81,6 @@ public class UMShareAction {
     }
 
     /**
-     * 分享
-     *
-     * @param context
-     * @param drawable
-     * @param title
-     * @param description
-     * @param urlLink
-     */
-    public UMShareAction(final Activity context, int drawable,
-                         final String title, final String description, final String urlLink) {
-        this.setShareImage(new UMImage(context, drawable), context, urlLink, title, description, 0, false);
-    }
-
-    /**
      * 分享内容 加载图片
      *
      * @param context
@@ -120,64 +105,21 @@ public class UMShareAction {
      * @param isSaveImg   是否展示保存图片
      */
     public UMShareAction(final Activity context, String imgUrl,
-                         final String title, final String description, final String urlLink, String routineUrl, int productId, boolean isSaveImg) {
+                         final String title, final String description, final String urlLink, String routineUrl
+            , int productId, boolean isSaveImg) {
         this.context = context;
         if (!TextUtils.isEmpty(routineUrl)) {
             this.routineUrl = routineUrl;
         }
-        if (!TextUtils.isEmpty(imgUrl)) {
-//        图片
-            GlideImageLoaderUtil.loadFinishImgDrawable(context, !TextUtils.isEmpty(imgUrl) ?
-                    imgUrl + FinalOSSThumbFormat
-                    : "", new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                @Override
-                public void onStart() {
-                }
-
-                @Override
-                public void onSuccess(Bitmap bitmap) {
-                    setShareImage(new UMImage(context, bitmap), context, urlLink, title, description, productId, isSaveImg);
-                }
-
-                @Override
-                public void onError(Drawable errorDrawable) {
-                    setShareImage(new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description, productId, isSaveImg);
-                }
-            });
-        } else {
-            setShareImage(new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description, productId, isSaveImg);
-        }
-    }
-
-    /**
-     * 设置分享信息
-     *
-     * @param umImage
-     * @param context
-     * @param urlLink
-     * @param title
-     * @param description
-     */
-    private void setShareImage(@NonNull UMImage umImage, Activity context,
-                               String urlLink, String title, String description, int productId, boolean isSaveImg) {
-        umImage.compressFormat = Bitmap.CompressFormat.PNG;
-        //        链接地址
-        final UMWeb web = new UMWeb(!TextUtils.isEmpty(urlLink) ? urlLink : "");
-        web.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");//标题
-        web.setThumb(umImage);  //缩略图
-        web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述
-        ShareBoardConfig config = new ShareBoardConfig();
-        config.setShareboardPostion(ShareBoardConfig.SHAREBOARD_POSITION_BOTTOM);
-        config.setMenuItemBackgroundShape(ShareBoardConfig.BG_SHAPE_NONE);
-        config.setTitleText("分享");
-        config.setIndicatorVisibility(false);
-        config.setCancelButtonVisibility(false);
-        if (!TextUtils.isEmpty(routineUrl) && isSaveImg && productId > 0) {
+        if (!TextUtils.isEmpty(routineUrl)
+                && isSaveImg && productId > 0) {
             isSaveImg = true;
         } else {
             isSaveImg = false;
         }
-        alertDialogShareHelper = new AlertDialogShareHelper(context, isSaveImg);
+        if(alertDialogShareHelper==null){
+            alertDialogShareHelper = new AlertDialogShareHelper(context, isSaveImg);
+        }
         alertDialogShareHelper.show();
         alertDialogShareHelper.setAlertSelectShareListener(new AlertDialogShareHelper.AlertSelectShareListener() {
             @Override
@@ -197,42 +139,7 @@ public class UMShareAction {
                             alertDialogShareHelper.setLoading(1);
                             isSharing = false;
                             break;
-                        case SINA:
-                            new ShareAction(context).setPlatform(shareIconTitleBean.getSharePlatformType())
-                                    .withText((!TextUtils.isEmpty(title) ? title : "")
-                                            + (!TextUtils.isEmpty(description) ? description : "")
-                                            + (!TextUtils.isEmpty(urlLink) ? urlLink : "多么生活"))
-                                    .withMedia(umImage)
-                                    .setCallback(umShareListener)
-                                    .share();
-                            break;
-                        case WEIXIN:
-                            if (!TextUtils.isEmpty(routineUrl)) {
-                                UMMin umMin = new UMMin(urlLink);
-                                //兼容低版本的网页链接
-                                umMin.setThumb(umImage);
-                                // 小程序消息封面图片
-                                umMin.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");
-                                // 小程序消息title
-                                umMin.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");
-                                // 小程序消息描述
-                                umMin.setPath(routineUrl);
-                                //小程序页面路径
-                                umMin.setUserName(routineId);
-                                // 小程序原始id,在微信平台查询
-                                new ShareAction(context)
-                                        .withMedia(umMin)
-                                        .setPlatform(shareIconTitleBean.getSharePlatformType())
-                                        .setCallback(umShareListener).share();
-                            } else {
-                                //                        分享链接
-                                new ShareAction(context).setPlatform(shareIconTitleBean.getSharePlatformType())
-                                        .withMedia(web)
-                                        .setCallback(umShareListener)
-                                        .share();
-                            }
-                            break;
-//                            保存图片
+                        //                            保存图片
                         case MORE:
                             if (constantMethod == null) {
                                 constantMethod = new ConstantMethod();
@@ -249,16 +156,96 @@ public class UMShareAction {
                             isSharing = false;
                             break;
                         default:
-                            //                        分享链接
-                            new ShareAction(context).setPlatform(shareIconTitleBean.getSharePlatformType())
-                                    .withMedia(web)
-                                    .setCallback(umShareListener)
-                                    .share();
+                            SHARE_MEDIA sharePlatformType = shareIconTitleBean.getSharePlatformType();
+                            if (!TextUtils.isEmpty(imgUrl)) {
+                                //        加载图片
+                                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl,300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                    @Override
+                                    public void onStart() {
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Bitmap bitmap) {
+                                        setLoadImageShare(sharePlatformType,new UMImage(context, bitmap), context, urlLink, title, description);
+                                    }
+
+                                    @Override
+                                    public void onError(Drawable errorDrawable) {
+                                        setLoadImageShare(sharePlatformType,new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                    }
+                                });
+                            } else {
+                                setLoadImageShare(sharePlatformType,new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                            }
                             break;
                     }
                 }
             }
         });
+    }
+
+    /**
+     * 加载图片分享
+     * @param platformType
+     * @param umImage
+     * @param context
+     * @param urlLink
+     * @param title
+     * @param description
+     */
+    private void setLoadImageShare(SHARE_MEDIA platformType,UMImage umImage,Activity context, final String urlLink,
+                                   final String title, final String description) {
+        umImage.compressFormat = Bitmap.CompressFormat.PNG;
+        //        链接地址
+        final UMWeb web = new UMWeb(!TextUtils.isEmpty(urlLink) ? urlLink : "");
+        web.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");//标题
+        web.setThumb(umImage);  //缩略图
+        web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述
+        switch (platformType){
+            case SINA:
+                new ShareAction(context).setPlatform(platformType)
+                        .withText((!TextUtils.isEmpty(title) ? title : "")
+                                + (!TextUtils.isEmpty(description) ? description : "")
+                                + (!TextUtils.isEmpty(urlLink) ? urlLink : "多么生活"))
+                        .withMedia(umImage)
+                        .setCallback(umShareListener)
+                        .share();
+                break;
+            case WEIXIN:
+                if (!TextUtils.isEmpty(routineUrl)) {
+                    UMMin umMin = new UMMin(urlLink);
+                    //兼容低版本的网页链接
+                    umMin.setThumb(umImage);
+                    // 小程序消息封面图片
+                    umMin.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");
+                    // 小程序消息title
+                    umMin.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");
+                    // 小程序消息描述
+                    umMin.setPath(routineUrl);
+                    //小程序页面路径
+                    umMin.setUserName(routineId);
+                    // 小程序原始id,在微信平台查询
+                    new ShareAction(context)
+                            .withMedia(umMin)
+                            .setPlatform(platformType)
+                            .setCallback(umShareListener).share();
+                } else {
+                    //                        分享链接
+                    new ShareAction(context).setPlatform(platformType)
+                            .withMedia(web)
+                            .setCallback(umShareListener)
+                            .share();
+                }
+                break;
+
+            default:
+                //                        分享链接
+                new ShareAction(context).setPlatform(platformType)
+                        .withMedia(web)
+                        .setCallback(umShareListener)
+                        .share();
+                break;
+        }
     }
 
     /**
@@ -349,7 +336,10 @@ public class UMShareAction {
     private UMShareListener umShareListener = new UMShareListener() {
         @Override
         public void onStart(SHARE_MEDIA share_media) {
-            alertDialogShareHelper.setLoading(1);
+            isSharing = false;
+            if (alertDialogShareHelper != null) {
+                alertDialogShareHelper.dismiss();
+            }
         }
 
         @Override
@@ -373,6 +363,9 @@ public class UMShareAction {
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
             isSharing = false;
+            if (alertDialogShareHelper != null) {
+                alertDialogShareHelper.setLoading(1);
+            }
             showToast(context, getPlatFormText(platform) + " 分享失败,请检查是否安装该应用");
         }
 

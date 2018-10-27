@@ -171,6 +171,25 @@ public class GlideImageLoaderUtil {
         return imgUrl;
     }
 
+    public static String getThumbImgUrl(String imgUrl, int sizeValue) {
+        if (!TextUtils.isEmpty(imgUrl)
+                && imgUrl.contains(OSS_URL)) {
+            String ossPrefix = "?x-oss-process=image";
+            String ossImgResizeOri = "/auto-orient,1";
+            if (sizeValue < 50) {
+                sizeValue = 50;
+            }
+            String ossImgThumbSize = "/resize,w_" + sizeValue;
+            if (imgUrl.contains(ossPrefix)) {
+                return imgUrl + ossImgResizeOri + ossImgThumbSize;
+            } else {
+                return imgUrl + ossPrefix + ossImgResizeOri + ossImgThumbSize;
+            }
+        }
+        return imgUrl;
+    }
+
+
     /**
      * 获取水印图片
      *

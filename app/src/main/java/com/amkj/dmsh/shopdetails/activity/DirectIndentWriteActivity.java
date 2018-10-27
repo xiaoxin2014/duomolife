@@ -745,7 +745,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onCancel() {
-                payError();
+                payCancel();
                 showToast(DirectIndentWriteActivity.this, "支付取消");
             }
         });
@@ -993,8 +993,8 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
             @Override
             public void onCancel() {
-                payError();
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, "支付取消");
+                payCancel();
+                showToast(DirectIndentWriteActivity.this, "支付取消");
             }
         }).doPay();
     }

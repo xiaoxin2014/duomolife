@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -100,10 +102,20 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         tv_header_titleAll.setText("热销单品");
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
-        stdDominantHotSale.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+        stdDominantHotSale.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         smart_refresh_hot_sale.setOnRefreshListener((refreshLayout) -> {
             loadData();
-            EventBus.getDefault().post(new EventMessage("refresh","hotSaleData"));
+            EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
+        });
+        relCommunalBanner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                relCommunalBanner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) relCommunalBanner.getLayoutParams();
+                int measuredHeight = tl_quality_bar.getMeasuredHeight();
+                layoutParams.setMargins(0, measuredHeight, 0, 0);
+                relCommunalBanner.setLayoutParams(layoutParams);
+            }
         });
         badge = getBadge(QualityTypeHotSaleProActivity.this, fl_header_service);
         totalPersonalTrajectory = insertNewTotalData(QualityTypeHotSaleProActivity.this);
@@ -234,20 +246,21 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
 
     /**
      * 设置热销单品 时间轴
+     *
      * @param hotSaleShaft
      */
     private void setHotSaleShaftData(List<HotSaleShaftBean> hotSaleShaft) {
         int currentTab = stdDominantHotSale.getCurrentTab();
-        if(hotSaleShaft!=null&&hotSaleShaft.size()>0){
+        if (hotSaleShaft != null && hotSaleShaft.size() > 0) {
             QualityHotSaleAdapter qualityHotSaleAdapter = new QualityHotSaleAdapter(getSupportFragmentManager(), hotSaleShaft);
             stdDominantHotSale.setVisibility(View.VISIBLE);
-            if(hotSaleShaft.size()>3){
-                stdDominantHotSale.setTabWidth((float) (screenWidth/3.5));
-            }else{
-                if(hotSaleShaft.size()==1){
+            if (hotSaleShaft.size() > 3) {
+                stdDominantHotSale.setTabWidth((float) (screenWidth / 3.5));
+            } else {
+                if (hotSaleShaft.size() == 1) {
                     stdDominantHotSale.setVisibility(View.GONE);
-                }else{
-                    stdDominantHotSale.setTabWidth((float) (screenWidth/hotSaleShaft.size()));
+                } else {
+                    stdDominantHotSale.setTabWidth((float) (screenWidth / hotSaleShaft.size()));
                 }
             }
             vpDominantHotSale.setAdapter(qualityHotSaleAdapter);

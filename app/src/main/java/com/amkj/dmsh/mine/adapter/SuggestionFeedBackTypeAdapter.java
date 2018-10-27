@@ -18,7 +18,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  */
 public class SuggestionFeedBackTypeAdapter extends BaseQuickAdapter<FeedBackTypeBean, BaseViewHolder> {
     public SuggestionFeedBackTypeAdapter(List<FeedBackTypeBean> data) {
-        super(R.layout.adapter_layout_communal_text, data);
+        super(R.layout.adapter_layout_communal_only_text, data);
     }
 
     @Override

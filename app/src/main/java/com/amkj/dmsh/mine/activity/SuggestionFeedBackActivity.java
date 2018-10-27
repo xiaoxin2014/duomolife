@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -30,7 +31,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.mine.adapter.SuggestionFeedBackTypeAdapter;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity.FeedBackTypeBean;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
@@ -57,7 +57,7 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -80,6 +80,8 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     //    反馈内容
     @BindView(R.id.emoji_mine_suggestion_feed_back)
     EditText emoji_mine_suggestion_feed_back;
+    @BindView(R.id.tv_suggestion_type)
+    TextView tv_suggestion_type;
     //    添加图片
     @BindView(R.id.rv_sug_img_show)
     RecyclerView rv_sug_img_show;
@@ -94,6 +96,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     private int adapterPosition;
     private AlertDialog selectAlertView;
     private SuggestionFeedBackTypeAdapter suggestionFeedBackAdapter;
+    private FeedBackTypeBean feedBackTypeBean;
 
     @Override
     protected int getContentView() {
@@ -102,12 +105,12 @@ public class SuggestionFeedBackActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getLoginStatus(this);
         tv_header_titleAll.setText("意见反馈");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("提交");
-        getLoginStatus();
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext,600)) {
+        if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext, 600)) {
             rv_sug_img_show.setLayoutManager(new GridLayoutManager(SuggestionFeedBackActivity.this, 5));
         } else {
             rv_sug_img_show.setLayoutManager(new GridLayoutManager(SuggestionFeedBackActivity.this, 3));
@@ -206,13 +209,14 @@ public class SuggestionFeedBackActivity extends BaseActivity {
 
     /**
      * 提交反馈
+     *
      * @param view
      */
     @OnClick(R.id.tv_suggestion_type)
     void commitSuggestion(View view) {
-        if(feedBackTypeBeans.size()>0){
-            if(selectAlertView == null){
-                AlertDialog.Builder builder = new AlertDialog.Builder(SuggestionFeedBackActivity.this,R.style.Theme_AppCompat_Dialog);
+        if (feedBackTypeBeans.size() > 0) {
+            if (selectAlertView == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SuggestionFeedBackActivity.this, R.style.service_dialog_theme);
                 View dialogView = LayoutInflater.from(SuggestionFeedBackActivity.this).inflate(R.layout.alert_suggestion_feedback_type, null, false);
                 RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
                 communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(SuggestionFeedBackActivity.this));
@@ -228,26 +232,56 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                         // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                         .setHeaderClickListener(null)
                         .create());
+                suggestionFeedBackAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                        FeedBackTypeBean feedBackTypeBean = (FeedBackTypeBean) view.getTag();
+                        if(feedBackTypeBean!=null){
+                            setTypeData(feedBackTypeBean);
+                        }
+                    }
+                });
                 selectAlertView = builder.create();
+                selectAlertView.show();
+                TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                int screenHeight = tinkerBaseApplicationLike.getScreenHeight() / 3 * 2;
                 Window window = selectAlertView.getWindow();
                 if (window != null) {
                     window.setBackgroundDrawableResource(R.color.translucence);
                     WindowManager.LayoutParams attributes = window.getAttributes();
+                    dialogView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                        @Override
+                        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                            if (v.getMeasuredHeight() > screenHeight) {
+                                ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+                                layoutParams.height = screenHeight;
+                                v.setLayoutParams(layoutParams);
+                            }
+                        }
+                    });
+                    attributes.height = WindowManager.LayoutParams.WRAP_CONTENT;
                     attributes.width = WindowManager.LayoutParams.MATCH_PARENT;
-                    attributes.height = 750;
                     window.setAttributes(attributes);
                     window.setGravity(Gravity.BOTTOM);
-                    window.setContentView(view);
+                    window.setContentView(dialogView);
                 }
-            }
-            if(!selectAlertView.isShowing()){
+            } else if (!selectAlertView.isShowing()) {
                 selectAlertView.show();
             }
         }
     }
 
+    private void setTypeData(FeedBackTypeBean feedBackTypeBean) {
+        this.feedBackTypeBean = feedBackTypeBean;
+        tv_suggestion_type.setText(getStrings(feedBackTypeBean.getTitle()));
+    }
+
     @OnClick(R.id.tv_header_shared)
     void submitSuggestion(View view) {
+        if(feedBackTypeBean==null){
+            showToast(this,getStrings(tv_suggestion_type.getHint().toString().trim()));
+            return;
+        }
         if (!TextUtils.isEmpty(emoji_mine_suggestion_feed_back.getText().toString().trim())) {
             if (loadHud != null) {
                 loadHud.show();
@@ -342,17 +376,6 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         });
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -387,38 +410,41 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         } else if (requestCode == REQUEST_PERMISSIONS) {
             showToast(this, "请到应用管理授予权限");
         } else if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
+            getLoginStatus(this);
         }
     }
 
 
     @Override
     protected void loadData() {
-        if(userId>0){
-            String url = BASE_URL+MINE_FEEDBACK_TYPE;
-            Map<String,Object> params = new HashMap<>();
-            params.put("uid",userId);
+        if (userId > 0) {
+            String url = BASE_URL + MINE_FEEDBACK_TYPE;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
             NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
                 @Override
                 public void onSuccess(String result) {
                     SuggestionTypeEntity suggestionTypeEntity = new Gson().fromJson(result, SuggestionTypeEntity.class);
-                    if(suggestionTypeEntity!=null){
-                        if(SUCCESS_CODE.equals(suggestionTypeEntity.getCode())){
+                    if (suggestionTypeEntity != null) {
+                        if (SUCCESS_CODE.equals(suggestionTypeEntity.getCode())) {
                             feedBackTypeBeans.addAll(suggestionTypeEntity.getFeedBackTypeList());
-                        }else{
-                            showToast(SuggestionFeedBackActivity.this,getStrings(suggestionTypeEntity.getMsg()));
+                            if(suggestionFeedBackAdapter!=null){
+                                suggestionFeedBackAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            showToast(SuggestionFeedBackActivity.this, getStrings(suggestionTypeEntity.getMsg()));
                         }
                     }
                 }
 
                 @Override
                 public void netClose() {
-                    showToast(SuggestionFeedBackActivity.this,R.string.unConnectedNetwork);
+                    showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast(SuggestionFeedBackActivity.this,R.string.invalidData);
+                    showToast(SuggestionFeedBackActivity.this, R.string.invalidData);
                 }
             });
         }

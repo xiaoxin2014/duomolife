@@ -151,7 +151,7 @@
     <string name="personal_real_id_card">请填写收货人身份证号码</string>
     <string name="personal_nick_name">取个昵称会更受欢迎哦</string>
     <string name="personal_perfect">资料完善可获得积分</string>
-    <string name="buy_get_integral_tint">购买可获得%1$d积分</string>
+    <string name="buy_get_integral_tint">%1$d积分</string>
     <string name="refund_repair_address">收货地址(该地址是多么生活回寄给您的地址)</string>
     <string name="variable_exception">参数异常，请重新刷新数据</string>
     <string name="refund_account_time_price">退回账号：%1$s\n到账时间：%2$s</string>
