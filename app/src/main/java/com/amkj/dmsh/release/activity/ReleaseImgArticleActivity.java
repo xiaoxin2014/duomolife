@@ -34,6 +34,7 @@ import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.adapter.AddRelevanceProAdapter;
 import com.amkj.dmsh.release.adapter.ImgGArticleRecyclerAdapter;
+import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.release.bean.IndentOrderProBean;
 import com.amkj.dmsh.release.bean.IndentOrderProBean.FindTopicBean;
 import com.amkj.dmsh.release.bean.IndentOrderProBean.ProductsBean;
@@ -45,13 +46,13 @@ import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.amkj.dmsh.views.ReleaseEditView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.yanzhenjie.permission.Permission;
 
 import org.greenrobot.eventbus.EventBus;
@@ -73,10 +74,11 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RELEVANCE_PRO_REQ;
-import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.release.tutu.CameraComponentSample.DEFAULT_PATH;
+import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 ;
 
@@ -103,9 +105,12 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     // 获得存储图片的路径
     private String Img_PATH = null;
     private ImgGArticleRecyclerAdapter imgGArticleRecyclerAdapter;
-    private ArrayList<String> dataPath = new ArrayList<>();
+    private List<ImagePathBean> imagePathBeans = new ArrayList<>();
     //图片路径
     private ArrayList<String> mSelectPath = new ArrayList();
+
+    //    已上传图片保存
+    private List<String> updatedImages = new ArrayList<>();
     private int uid;
     private int adapterPosition;
     private final int REQUEST_IMG = 80;
@@ -116,8 +121,8 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     private List<RelevanceProBean> selectRelevanceProList = new ArrayList<>();
     private String topicId;
     private String topicTitle = "";
-    private ConstantMethod constantMethod;
     private String orderNo;
+    private int maxSelImg = 9;
 
     @Override
     protected int getContentView() {
@@ -132,7 +137,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus();
-        constantMethod = new ConstantMethod();
         tl_normal_bar.setSelected(true);
         try {
             Intent intent = getIntent();
@@ -148,7 +152,9 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         }
         Img_PATH = getFilesDir().getAbsolutePath() + "/ImgArticle";
         createSaveImgFile();
-        this.dataPath.add(DEFAULT_ADD_IMG);
+        if (imagePathBeans.size() < 1) {
+            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
+        }
         if (!TextUtils.isEmpty(topicId)) {
             tv_header_titleAll.setText("参与话题");
         } else {
@@ -156,7 +162,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         }
         tv_find_release_topic.setText("发送");
         header_shared.setVisibility(View.GONE);
-        imgGArticleRecyclerAdapter = new ImgGArticleRecyclerAdapter(this, dataPath);
+        imgGArticleRecyclerAdapter = new ImgGArticleRecyclerAdapter(this, imagePathBeans);
         rv_img_article.setLayoutManager(new GridLayoutManager(ReleaseImgArticleActivity.this, 3));
         rv_img_article.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -174,16 +180,9 @@ public class ReleaseImgArticleActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.delete) {
                     adapterPosition = (int) view.getTag();
-                    if (dataPath.size() > dataPath.size() - 1 && !dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                        dataPath.set(dataPath.size() - 1, DEFAULT_ADD_IMG);
-                    } else {
-                        dataPath.remove(adapterPosition);
-                        if (!dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                            dataPath.add(DEFAULT_ADD_IMG);
-                        }
-                    }
+                    imagePathBeans = getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     setSelectImageData();
-                    imgGArticleRecyclerAdapter.setNewData(dataPath);
+                    imgGArticleRecyclerAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -397,9 +396,9 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
             @Override
             public void getPermissionsSuccess() {
-                int imgLength = dataPath.size() - 1;
-                if (position == imgLength && dataPath.get(imgLength).
-                        equals(DEFAULT_ADD_IMG)) {
+                int imgLength = imagePathBeans.size() - 1;
+                if (position == imgLength && imagePathBeans.get(imgLength).getPath()
+                        .contains(DEFAULT_ADD_IMG)) {
                     PictureSelectorUtils.getInstance()
                             .resetVariable()
                             .isCrop(false)
@@ -428,7 +427,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                     option.setSaveToAlbumName(DEFAULT_PATH);
                     option.setSaveToAlbum(true);
                     option.setAutoRemoveTemp(true);
-                    component.setImage(BitmapFactory.decodeFile(dataPath.get(position)))
+                    component.setImage(BitmapFactory.decodeFile(imagePathBeans.get(position).getPath()))
                             // 在组件执行完成后自动关闭组件
                             .setAutoDismissWhenCompleted(true)
                             // 开启组件
@@ -446,27 +445,28 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         switch (message.type) {
             case "resultImg":
                 ReplaceData result = (ReplaceData) message.result;
-                dataPath.clear();
-                dataPath.add(result.getPath());
-                dataPath.add(DEFAULT_ADD_IMG);
+                imagePathBeans.clear();
+                imagePathBeans.add(new ImagePathBean(result.getPath(), true));
+                imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                 setSelectImageData();
-                imgGArticleRecyclerAdapter.setNewData(dataPath);
+                imgGArticleRecyclerAdapter.notifyDataSetChanged();
                 break;
             case "addImg":
                 result = (ReplaceData) message.result;
-                dataPath.remove(dataPath.size() - 1);
-                dataPath.add(result.getPath());
-                if (dataPath.size() < 9) {
-                    dataPath.add(DEFAULT_ADD_IMG);
+                imagePathBeans.remove(imagePathBeans.size() - 1);
+                imagePathBeans.add(new ImagePathBean(result.getPath(), true));
+                if (imagePathBeans.size() < maxSelImg) {
+                    imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                 }
-                setSelectImageData();
-                imgGArticleRecyclerAdapter.setNewData(dataPath);
+                mSelectPath.clear();
+                mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
+                imgGArticleRecyclerAdapter.notifyDataSetChanged();
                 break;
             case "replace":
                 ReplaceData path = (ReplaceData) message.result;
-                dataPath.set(path.getPosition(), path.getPath());
+                imagePathBeans.set(path.getPosition(), new ImagePathBean(path.getPath(), true));
                 setSelectImageData();
-                imgGArticleRecyclerAdapter.setNewData(dataPath);
+                imgGArticleRecyclerAdapter.notifyDataSetChanged();
                 break;
         }
         if ("closeKeyBroad".equals(message.type) && "close".equals(message.result)) {
@@ -476,10 +476,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
 
     private void setSelectImageData() {
         mSelectPath.clear();
-        mSelectPath.addAll(dataPath);
-        if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-            mSelectPath.remove(mSelectPath.size() - 1);
-        }
+        mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
     }
 
     private void getLoginStatus() {
@@ -514,15 +511,14 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                 case PictureConfigC.CHOOSE_REQUEST:
                     List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
                     if (localMediaList != null && localMediaList.size() > 0) {
-                        this.dataPath.clear();
+                        imagePathBeans.clear();
                         for (LocalMediaC localMedia : localMediaList) {
                             if (!TextUtils.isEmpty(localMedia.getPath())) {
-                                this.dataPath.add(localMedia.getPath());
+                                imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
                             }
                         }
-                        this.dataPath.remove(DEFAULT_ADD_IMG);
-                        if (this.dataPath.size() < 9) {
-                            this.dataPath.add(DEFAULT_ADD_IMG);
+                        if (imagePathBeans.size() < maxSelImg) {
+                            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                         }
                         setSelectImageData();
                         imgGArticleRecyclerAdapter.notifyDataSetChanged();
@@ -570,7 +566,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     @OnClick(R.id.tv_find_release_topic)
     void sendMessage(View view) {
         if (release_et_input.getText().toString().trim().length() < 1
-                && (dataPath.size() < 1 || (dataPath.size() < 2 && dataPath.get(0).equals(DEFAULT_ADD_IMG)))) {
+                && (imagePathBeans.size() < 1 || (imagePathBeans.size() < 2 && imagePathBeans.get(0).equals(DEFAULT_ADD_IMG)))) {
             showToast(this, "请输入发送内容");
             return;
         } else {
@@ -580,19 +576,19 @@ public class ReleaseImgArticleActivity extends BaseActivity {
             final String content = release_et_input.getText().toString();
             tv_find_release_topic.setText("发送中...");
             tv_find_release_topic.setEnabled(false);
-            if (dataPath.size() < 9) {
-                dataPath.remove(dataPath.size() - 1);
-            } else if (dataPath.size() == 9 && dataPath.get(8).equals(DEFAULT_ADD_IMG)) {
-                dataPath.remove(dataPath.size() - 1);
-            }
-            if (dataPath.size() < 1) {
-                sendData(null, content);
+            if (updatedImages.size() > 0) {
+                sendData(updatedImages, content);
             } else {
                 ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
-                imgUrlHelp.setUrl(ReleaseImgArticleActivity.this, dataPath);
+                imgUrlHelp.setUrl(ReleaseImgArticleActivity.this, mSelectPath);
                 imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
                     @Override
-                    public void finishData(List<String> data, Handler handler) {
+                    public void finishData(@NonNull List<String> data, Handler handler) {
+                        updatedImages.clear();
+                        updatedImages.addAll(data);
+                        //                            已上传不可删除 不可更换图片
+                       imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);;
+                        imgGArticleRecyclerAdapter.notifyDataSetChanged();
                         sendData(data, content);
                         handler.removeCallbacksAndMessages(null);
                     }
@@ -820,15 +816,15 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                         public void onSuccess(File file) {
                             try {
                                 if (FileStreamUtils.forChannel(file, new File(finalTopicSavePath))) {
-                                    if (dataPath.size() > 0) {
-                                        String pathString = dataPath.get(dataPath.size() - 1);
+                                    if (imagePathBeans.size() > 0) {
+                                        String pathString = imagePathBeans.get(imagePathBeans.size() - 1).getPath();
                                         if (pathString.equals(DEFAULT_ADD_IMG)) {
-                                            dataPath.remove(pathString);
+                                            imagePathBeans.remove(imagePathBeans.size() - 1);
                                         }
                                     }
-                                    dataPath.add(finalTopicSavePath);
-                                    if (dataPath.size() < 9) {
-                                        dataPath.add(DEFAULT_ADD_IMG);
+                                    imagePathBeans.add(new ImagePathBean(finalTopicSavePath, true));
+                                    if (imagePathBeans.size() < maxSelImg) {
+                                        imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                                     }
                                     setSelectImageData();
                                     imgGArticleRecyclerAdapter.notifyDataSetChanged();
@@ -847,15 +843,15 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                         }
                     });
                 } else {
-                    if (dataPath.size() > 0) {
-                        String pathString = dataPath.get(dataPath.size() - 1);
+                    if (imagePathBeans.size() > 0) {
+                        String pathString = imagePathBeans.get(imagePathBeans.size() - 1).getPath();
                         if (pathString.equals(DEFAULT_ADD_IMG)) {
-                            dataPath.remove(pathString);
+                            imagePathBeans.remove(imagePathBeans.size() - 1);
                         }
                     }
-                    dataPath.add(topicSavePath);
-                    if (dataPath.size() < 9) {
-                        dataPath.add(DEFAULT_ADD_IMG);
+                    imagePathBeans.add(new ImagePathBean(topicSavePath, true));
+                    if (imagePathBeans.size() < 9) {
+                        imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                     }
                     setSelectImageData();
                     imgGArticleRecyclerAdapter.notifyDataSetChanged();

@@ -144,7 +144,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                 break;
             default:
                 //            图片
-                pathList.clear();
+                pathList = new ArrayList<>();
                 pathList.addAll(invitationDetailBean.getPictureList());
                 descriptionContent = getStrings(invitationDetailBean.getDescription());
                 helper.setGone(R.id.rel_find_article, false);
@@ -222,7 +222,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
 //        关联商品列表
         if (invitationDetailBean.getRelevanceProList() != null && invitationDetailBean.getRelevanceProList().size() > 0) {
             helper.rel_inv_pro.setVisibility(View.VISIBLE);
-            relevanceProList.clear();
+            relevanceProList = new ArrayList<>();
             if (invitationDetailBean.getRelevanceProList().size() > 2) {
                 for (int i = 0; i < 2; i++) {
                     relevanceProList.add(invitationDetailBean.getRelevanceProList().get(i));

@@ -21,7 +21,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -30,11 +29,11 @@ import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,14 +64,11 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
     @BindView(R.id.recycler_direct_publish_appraise)
     RecyclerView recycler_direct_publish_appraise;
     private List<String> dataPath = new ArrayList<>();
-    //图片路径
-    private List<String> mSelectPath;
     private List<String> mFilePathList = new ArrayList<>();
     private AlertView appraiseDialog;
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private DirectPublishAppraiseAdapter directPublishAppraiseAdapter;
     public static final int REQUEST_PERMISSIONS = 60;
-    public static final int REQUEST_IMG = 100;
     private int uid;
     private String orderNo;
     @Override
@@ -150,7 +146,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
                     }
                     dataPath.remove(ConstantVariable.DEFAULT_ADD_IMG);
                     if (dataPath.size() < 5) {
-                        dataPath.add(ImgGridRecyclerAdapter.DEFAULT_ADD_IMG);
+                        dataPath.add(DEFAULT_ADD_IMG);
                     }
                     for (int i = 0; i < dataPath.size(); i++) {
                         if (i == 0) {

@@ -10,11 +10,12 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
+
 /**
  * Created by dq on 2016/1/26.
  */
 public class ImgGridRecyclerEvaAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
-    public static final String DEFAULT_ADD_IMG = "plus_icon_nor.png";
     private final Context context;
     private int evaItemPosition;
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,17 +27,15 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.mine.adapter.SuggestionFeedBackTypeAdapter;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity.FeedBackTypeBean;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
+import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -61,11 +60,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.MINE_FEEDBACK_TYPE;
-import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 ;
 
@@ -85,10 +85,14 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     //    添加图片
     @BindView(R.id.rv_sug_img_show)
     RecyclerView rv_sug_img_show;
-    private int uid;
+    //    提交
+    @BindView(R.id.tv_suggestion_commit)
+    TextView tv_suggestion_commit;
     private ImgGridRecyclerAdapter imgGridRecyclerAdapter;
     private ArrayList<String> mSelectPath = new ArrayList<>();
-    private ArrayList<String> dataPath = new ArrayList<>();
+    private List<ImagePathBean> imagePathBeans = new ArrayList<>();
+    //    已上传图片保存
+    private List<String> updatedImages = new ArrayList<>();
     private final int REQUEST_PERMISSIONS = 60;
     private final int SUBMIT_FEEDBACK_CODE = 120;
     private List<FeedBackTypeBean> feedBackTypeBeans = new ArrayList<>();
@@ -107,16 +111,15 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     protected void initViews() {
         getLoginStatus(this);
         tv_header_titleAll.setText("意见反馈");
-        header_shared.setCompoundDrawables(null, null, null, null);
-        header_shared.setText("提交");
+        header_shared.setVisibility(View.GONE);
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext, 600)) {
             rv_sug_img_show.setLayoutManager(new GridLayoutManager(SuggestionFeedBackActivity.this, 5));
         } else {
             rv_sug_img_show.setLayoutManager(new GridLayoutManager(SuggestionFeedBackActivity.this, 3));
         }
-        if (dataPath.size() < 1) {
-            dataPath.add(DEFAULT_ADD_IMG);
+        if (imagePathBeans.size() < 1) {
+            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
         }
         rv_sug_img_show.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -128,26 +131,17 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                 .setHeaderClickListener(null)
                 .create());
-        imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, dataPath);
+        imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
         rv_sug_img_show.setAdapter(imgGridRecyclerAdapter);
         imgGridRecyclerAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.delete) {
                     adapterPosition = (int) view.getTag();
-                    if (dataPath.size() > dataPath.size() - 1 && !dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                        dataPath.set(dataPath.size() - 1, DEFAULT_ADD_IMG);
-                    } else {
-                        dataPath.remove(adapterPosition);
-                        if (!dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                            dataPath.add(DEFAULT_ADD_IMG);
-                        }
-                    }
+                    getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     mSelectPath.clear();
-                    mSelectPath.addAll(dataPath);
-                    if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG))
-                        mSelectPath.remove(mSelectPath.size() - 1);
-                    imgGridRecyclerAdapter.setNewData(dataPath);
+                    mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
+                    imgGridRecyclerAdapter.setNewData(imagePathBeans);
                 }
             }
         });
@@ -168,9 +162,9 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
             @Override
             public void getPermissionsSuccess() {
-                int imgLength = dataPath.size() - 1;
+                int imgLength = imagePathBeans.size() - 1;
                 if (position == imgLength
-                        && dataPath.get(imgLength).equals(DEFAULT_ADD_IMG)) {
+                        && DEFAULT_ADD_IMG.equals(imagePathBeans.get(imgLength).getPath())) {
                     PictureSelectorUtils.getInstance()
                             .resetVariable()
                             .isCrop(false)
@@ -236,8 +230,11 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                     @Override
                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                         FeedBackTypeBean feedBackTypeBean = (FeedBackTypeBean) view.getTag();
-                        if(feedBackTypeBean!=null){
+                        if (feedBackTypeBean != null) {
                             setTypeData(feedBackTypeBean);
+                            if (selectAlertView != null) {
+                                selectAlertView.dismiss();
+                            }
                         }
                     }
                 });
@@ -276,49 +273,53 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         tv_suggestion_type.setText(getStrings(feedBackTypeBean.getTitle()));
     }
 
-    @OnClick(R.id.tv_header_shared)
+    @OnClick(R.id.tv_suggestion_commit)
     void submitSuggestion(View view) {
-        if(feedBackTypeBean==null){
-            showToast(this,getStrings(tv_suggestion_type.getHint().toString().trim()));
+        if (feedBackTypeBean == null) {
+            showToast(this, getStrings(tv_suggestion_type.getHint().toString().trim()));
             return;
         }
         if (!TextUtils.isEmpty(emoji_mine_suggestion_feed_back.getText().toString().trim())) {
             if (loadHud != null) {
                 loadHud.show();
             }
-            header_shared.setText("提交中...");
-            header_shared.setEnabled(false);
-            if (dataPath.size() > 0 && dataPath.size() < maxSelImg) {
-                dataPath.remove(dataPath.size() - 1);
-            } else if (dataPath.size() == maxSelImg && dataPath.get(maxSelImg - 1).equals(ConstantVariable.DEFAULT_ADD_IMG)) {
-                dataPath.remove(dataPath.size() - 1);
-            }
-            if (dataPath.size() < 1) {
+            tv_suggestion_commit.setText("提交中...");
+            tv_suggestion_commit.setEnabled(false);
+            if (mSelectPath.size() < 1) {
                 sendSuggestionData(null);
             } else {
-                ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
-                imgUrlHelp.setUrl(SuggestionFeedBackActivity.this, dataPath);
-                imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
-                    @Override
-                    public void finishData(List<String> data, Handler handler) {
-                        sendSuggestionData(data);
-                        handler.removeCallbacksAndMessages(null);
-                    }
-
-                    @Override
-                    public void finishError(String error) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
+                if (updatedImages.size() > 0) {
+                    sendSuggestionData(updatedImages);
+                } else {
+                    ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
+                    imgUrlHelp.setUrl(SuggestionFeedBackActivity.this, mSelectPath);
+                    imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
+                        @Override
+                        public void finishData(@NonNull List<String> data, Handler handler) {
+                            updatedImages.clear();
+                            updatedImages.addAll(data);
+                            //                            已上传不可删除 不可更换图片
+                            imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);
+                            imgGridRecyclerAdapter.notifyDataSetChanged();
+                            sendSuggestionData(data);
+                            handler.removeCallbacksAndMessages(null);
                         }
-                        header_shared.setText("提交");
-                        header_shared.setEnabled(true);
-                        showToast(SuggestionFeedBackActivity.this, "网络异常");
-                    }
 
-                    @Override
-                    public void finishSingleImg(String singleImg, Handler handler) {
-                    }
-                });
+                        @Override
+                        public void finishError(String error) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            tv_suggestion_commit.setText("提交");
+                            tv_suggestion_commit.setEnabled(true);
+                            showToast(SuggestionFeedBackActivity.this, "网络异常");
+                        }
+
+                        @Override
+                        public void finishSingleImg(String singleImg, Handler handler) {
+                        }
+                    });
+                }
             }
         } else {
             showToast(this, "请输入反馈内容");
@@ -328,22 +329,23 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     //  提交反馈
     private void sendSuggestionData(List<String> data) {
         //图片地址
-        StringBuffer imgPath = new StringBuffer();
+        String imgPath = "";
         String url = BASE_URL + Url.MINE_FEEDBACK;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("remark", emoji_mine_suggestion_feed_back.getText().toString().trim());
         if (data != null) {
             for (int i = 0; i < data.size(); i++) {
                 if (i == 0) {
-                    imgPath.append(data.get(i));
+                    imgPath += getStrings(data.get(i));
                 } else {
-                    imgPath.append("," + data.get(i));
+                    imgPath += ("," + getStrings(data.get(i)));
                 }
             }
             params.put("feed_images", imgPath);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        params.put("type", feedBackTypeBean.getId());
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -352,26 +354,36 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
-                    if (requestInfo.getCode().equals("01")) {
+                    if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         showToast(SuggestionFeedBackActivity.this, "提交完成");
                         finish();
                     } else {
                         showToast(SuggestionFeedBackActivity.this, requestInfo.getResult() != null ?
                                 requestInfo.getResult().getMsg() : requestInfo.getMsg());
                     }
-                    header_shared.setText("提交");
-                    header_shared.setEnabled(true);
                 }
+                tv_suggestion_commit.setText("提交");
+                tv_suggestion_commit.setEnabled(true);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                header_shared.setText("提交");
-                header_shared.setEnabled(true);
-                showToast(SuggestionFeedBackActivity.this, ex.getMessage() + "");
+                tv_suggestion_commit.setText("提交");
+                tv_suggestion_commit.setEnabled(true);
+                showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                tv_suggestion_commit.setText("提交");
+                tv_suggestion_commit.setEnabled(true);
+                showToast(SuggestionFeedBackActivity.this, R.string.do_failed);
             }
         });
     }
@@ -390,21 +402,17 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
             List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
             if (localMediaList != null && localMediaList.size() > 0) {
-                dataPath.clear();
+                imagePathBeans.clear();
                 for (LocalMediaC localMedia : localMediaList) {
                     if (!TextUtils.isEmpty(localMedia.getPath())) {
-                        dataPath.add(localMedia.getPath());
+                        imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
                     }
                 }
-                dataPath.remove(ConstantVariable.DEFAULT_ADD_IMG);
-                if (dataPath.size() < maxSelImg) {
-                    dataPath.add(DEFAULT_ADD_IMG);
+                if (imagePathBeans.size() < maxSelImg) {
+                    imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                 }
                 mSelectPath.clear();
-                mSelectPath.addAll(dataPath);
-                if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                    mSelectPath.remove(mSelectPath.size() - 1);
-                }
+                mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
                 imgGridRecyclerAdapter.notifyDataSetChanged();
             }
         } else if (requestCode == REQUEST_PERMISSIONS) {
@@ -428,7 +436,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                     if (suggestionTypeEntity != null) {
                         if (SUCCESS_CODE.equals(suggestionTypeEntity.getCode())) {
                             feedBackTypeBeans.addAll(suggestionTypeEntity.getFeedBackTypeList());
-                            if(suggestionFeedBackAdapter!=null){
+                            if (suggestionFeedBackAdapter != null) {
                                 suggestionFeedBackAdapter.notifyDataSetChanged();
                             }
                         } else {

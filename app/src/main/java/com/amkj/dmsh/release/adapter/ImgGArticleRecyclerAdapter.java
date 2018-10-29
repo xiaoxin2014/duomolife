@@ -4,35 +4,37 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 
 /**
  * Created by dq on 2016/1/26.
  */
-public class ImgGArticleRecyclerAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
-    public static final String DEFAULT_ADD_IMG = "plus_icon_nor.png";
+public class ImgGArticleRecyclerAdapter extends BaseQuickAdapter<ImagePathBean, BaseViewHolder> {
     private final Context context;
 
-    public ImgGArticleRecyclerAdapter(Context context, ArrayList pathList) {
+    public ImgGArticleRecyclerAdapter(Context context, List<ImagePathBean> pathList) {
         super(R.layout.img_grid_article_item, pathList);
         this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, String item) {
+    protected void convert(BaseViewHolder helper, ImagePathBean imagePathBean) {
         ImageView image = helper.getView(R.id.pv_image);
-        int adapterPosition = helper.getAdapterPosition();
-//        是否显示删除图标
-        if (item.equals(DEFAULT_ADD_IMG)) {
-            helper.setGone(R.id.delete, false);
+        //        是否显示删除图标
+        if (imagePathBean.isShowDelIcon()&&!DEFAULT_ADD_IMG.equals(imagePathBean.getPath())){
+            helper.setGone(R.id.delete, true)
+                    .addOnClickListener(R.id.delete).setTag(R.id.delete, helper.getAdapterPosition());
+            GlideImageLoaderUtil.loadCenterCrop(context, image, "file://" + imagePathBean.getPath());
+        }else{
             image.setImageResource(R.drawable.plus_icon_nor);
-        } else {
-            helper.setGone(R.id.delete, true).addOnClickListener(R.id.delete).setTag(R.id.delete, adapterPosition);
-            GlideImageLoaderUtil.loadCenterCrop(context, image, "file://" + item);
+            helper.setGone(R.id.delete, false);
         }
     }
 }

@@ -142,11 +142,20 @@ public class ShopDetailsEntity extends BaseEntity{
         @SerializedName("couponJson")
         private List<CouponJsonBean> couponJsonList;
         private String flashBuyClickCount;
+        private String integralTip;
         private List<MarketLabelBean> marketLabelList;
 
         public static ShopPropertyBean objectFromData(String str) {
 
             return new Gson().fromJson(str, ShopPropertyBean.class);
+        }
+
+        public String getIntegralTip() {
+            return integralTip;
+        }
+
+        public void setIntegralTip(String integralTip) {
+            this.integralTip = integralTip;
         }
 
         public String getNewUserTag() {

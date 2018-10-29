@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,11 +31,11 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
+import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -50,13 +51,13 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
 
@@ -83,12 +84,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 ;
 ;
@@ -188,7 +190,10 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     private boolean isSelType = false;
     private ImgGridRecyclerAdapter imgGridRecyclerAdapter;
     private ArrayList<String> mSelectPath = new ArrayList();
-    private ArrayList<String> dataPath = new ArrayList<>();
+    private List<ImagePathBean> imagePathBeans = new ArrayList<>();
+    //    已上传图片保存
+    private List<String> updatedImages = new ArrayList<>();
+
     private final int REQUEST_PERMISSIONS = 60;
     private final int SEL_ADDRESS_REQ = 56;
     private int maxSelImg = 5;
@@ -252,13 +257,13 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
             rel_up_evidence.setVisibility(View.VISIBLE);
             //        图片
             TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-            if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext,600)) {
+            if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext, 600)) {
                 rv_apply_refund_img.setLayoutManager(new GridLayoutManager(DirectApplyRefundActivity.this, 5));
             } else {
                 rv_apply_refund_img.setLayoutManager(new GridLayoutManager(DirectApplyRefundActivity.this, 3));
             }
-            if (dataPath.size() < 1) {
-                dataPath.add(DEFAULT_ADD_IMG);
+            if (imagePathBeans.size() < 1) {
+                imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
             }
             rv_apply_refund_img.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                     // 设置分隔线资源ID
@@ -270,25 +275,16 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                     // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                     .setHeaderClickListener(null)
                     .create());
-            imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, dataPath);
+            imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
             rv_apply_refund_img.setAdapter(imgGridRecyclerAdapter);
             rv_apply_refund_img.setNestedScrollingEnabled(false);
             imgGridRecyclerAdapter.setOnItemChildClickListener((adapter, view, position) -> {
                 if (view.getId() == R.id.delete) {
-                    adapterPosition = (int) view.getTag();
-                    if (dataPath.size() > dataPath.size() - 1 && !dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                        dataPath.set(dataPath.size() - 1, DEFAULT_ADD_IMG);
-                    } else {
-                        dataPath.remove(adapterPosition);
-                        if (!dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                            dataPath.add(DEFAULT_ADD_IMG);
-                        }
-                    }
+                    adapterPosition = (int) view.getTag(R.id.delete);
+                    imagePathBeans = getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     mSelectPath.clear();
-                    mSelectPath.addAll(dataPath);
-                    if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG))
-                        mSelectPath.remove(mSelectPath.size() - 1);
-                    imgGridRecyclerAdapter.setNewData(dataPath);
+                    mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
+                    imgGridRecyclerAdapter.notifyDataSetChanged();
                 }
             });
             imgGridRecyclerAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -438,21 +434,17 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
             } else if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
                 List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
                 if (localMediaList != null && localMediaList.size() > 0) {
-                    dataPath.clear();
+                    imagePathBeans.clear();
                     for (LocalMediaC localMedia : localMediaList) {
                         if (!TextUtils.isEmpty(localMedia.getPath())) {
-                            dataPath.add(localMedia.getPath());
+                            imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
                         }
                     }
-                    dataPath.remove(ConstantVariable.DEFAULT_ADD_IMG);
-                    if (dataPath.size() < maxSelImg) {
-                        dataPath.add(DEFAULT_ADD_IMG);
+                    if (imagePathBeans.size() < maxSelImg) {
+                        imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                     }
                     mSelectPath.clear();
-                    mSelectPath.addAll(dataPath);
-                    if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                        mSelectPath.remove(mSelectPath.size() - 1);
-                    }
+                    mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
                     imgGridRecyclerAdapter.notifyDataSetChanged();
                 }
             } else if (requestCode == SEL_ADDRESS_REQ) {
@@ -468,8 +460,8 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     private void pickImage(final int position) {
         ConstantMethod constantMethod = new ConstantMethod();
         constantMethod.setOnGetPermissionsSuccess(() -> {
-            int imgLength = dataPath.size() - 1;
-            if (position == imgLength && dataPath.get(imgLength).equals(DEFAULT_ADD_IMG)) {
+            int imgLength = imagePathBeans.size() - 1;
+            if (position == imgLength && DEFAULT_ADD_IMG.equals(imagePathBeans.get(imgLength).getPath())) {
                 PictureSelectorUtils.getInstance()
                         .resetVariable()
                         .isCrop(false)
@@ -645,44 +637,53 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
      */
     private void submit(final DirectApplyRefundBean refundBean) {
         loadHud.show();
-        if (dataPath.size() > 1 && dataPath.size() <= 5
-                && dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-            dataPath.remove(dataPath.size() - 1);
-        }
-        if (dataPath.size() == 0 || (dataPath.size() < 2 && DEFAULT_ADD_IMG.equals(dataPath.get(dataPath.size() - 1)))) {
+        if (mSelectPath.size() < 1) {
             submitRefundData(refundBean);
         } else {
-            ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
-            imgUrlHelp.setUrl(DirectApplyRefundActivity.this, dataPath);
-            imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
-                @Override
-                public void finishData(List<String> data, Handler handler) {
-                    StringBuffer stringBuffer = new StringBuffer();
-                    for (int i = 0; i < data.size(); i++) {
-                        if (i == 0) {
-                            stringBuffer.append(data.get(i));
-                        } else {
-                            stringBuffer.append("," + data.get(i));
+            if (updatedImages.size() > 0) {
+                setRefundImageData(updatedImages, refundBean);
+            } else {
+                ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
+                imgUrlHelp.setUrl(DirectApplyRefundActivity.this, mSelectPath);
+                imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
+                    @Override
+                    public void finishData(@NonNull List<String> data, Handler handler) {
+                        updatedImages.clear();
+                        updatedImages.addAll(data);
+                        //                            已上传不可删除 不可更换图片
+                        imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);;
+                        imgGridRecyclerAdapter.notifyDataSetChanged();
+                        setRefundImageData(data, refundBean);
+                        submitRefundData(refundBean);
+                        handler.removeCallbacksAndMessages(null);
+                    }
+
+                    @Override
+                    public void finishError(String error) {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
                         }
+                        showToast(DirectApplyRefundActivity.this, "网络异常");
                     }
-                    refundBean.setImages(stringBuffer.toString());
-                    submitRefundData(refundBean);
-                    handler.removeCallbacksAndMessages(null);
-                }
 
-                @Override
-                public void finishError(String error) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
+                    @Override
+                    public void finishSingleImg(String singleImg, Handler handler) {
                     }
-                    showToast(DirectApplyRefundActivity.this, "网络异常");
-                }
-
-                @Override
-                public void finishSingleImg(String singleImg, Handler handler) {
-                }
-            });
+                });
+            }
         }
+    }
+
+    private void setRefundImageData(@NonNull List<String> data, DirectApplyRefundBean refundBean) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < data.size(); i++) {
+            if (i == 0) {
+                stringBuffer.append(data.get(i));
+            } else {
+                stringBuffer.append("," + data.get(i));
+            }
+        }
+        refundBean.setImages(stringBuffer.toString());
     }
 
     /**

@@ -111,7 +111,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (goodsBean.getCombineProductInfoList() != null
                         || goodsBean.getPresentProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList.clear();
+                    preComProInfoBeanList = new ArrayList<>();
                     if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
                         preComProInfoBeanList.addAll(goodsBean.getPresentProductInfoList());
                     }
@@ -163,7 +163,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (orderProductInfoBean.getCombineProductInfoList() != null
                         || orderProductInfoBean.getPresentProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList.clear();
+                    preComProInfoBeanList = new ArrayList<>();
                     if (orderProductInfoBean.getPresentProductInfoList() != null && orderProductInfoBean.getPresentProductInfoList().size() > 0) {
                         preComProInfoBeanList.addAll(orderProductInfoBean.getPresentProductInfoList());
                     }
@@ -247,7 +247,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (productInfoBean.getCombineProductInfoList() != null
                         || productInfoBean.getPresentProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList.clear();
+                    preComProInfoBeanList = new ArrayList<>();
                     if (productInfoBean.getPresentProductInfoList() != null
                             && productInfoBean.getPresentProductInfoList().size() > 0) {
                         preComProInfoBeanList.addAll(productInfoBean.getPresentProductInfoList());
@@ -296,7 +296,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 helper.setText(R.id.tv_direct_indent_pro_price,priceName);
                 if (applyRefundBean.getCartProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList.clear();
+                    preComProInfoBeanList = new ArrayList<>();
                     if (applyRefundBean.getCartProductInfoList() != null && applyRefundBean.getCartProductInfoList().size() > 0) {
                         preComProInfoBeanList.addAll(applyRefundBean.getCartProductInfoList());
                     }
@@ -328,7 +328,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (orderProductInfoBean.getCombineProductInfoList() != null
                         || orderProductInfoBean.getPresentProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList.clear();
+                    preComProInfoBeanList = new ArrayList<>();
 //                    发票只展示组合购商品
                     if (orderProductInfoBean.getPresentProductInfoList() != null
                             && orderProductInfoBean.getPresentProductInfoList().size() > 0) {

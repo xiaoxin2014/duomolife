@@ -871,9 +871,6 @@
             android:name=".user.activity.UserFansAttentionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".user.activity.UserReportActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".shopdetails.activity.DoMoIndentAllActivity"
             android:screenOrientation="portrait" />
         <activity

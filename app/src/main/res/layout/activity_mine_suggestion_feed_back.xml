@@ -54,13 +54,17 @@
         android:layout_marginRight="@dimen/sc_mm_20"
         android:id="@+id/rv_sug_img_show"
         android:scrollbars="none"
-        android:layout_height="@dimen/sc_mm_100"/>
+        android:layout_height="@dimen/sc_mm_126"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/sc_mm_40"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
+        android:text="提交"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_32"
         android:id="@+id/tv_suggestion_commit"
-        android:background="@drawable/border_circle_8_s_red_ff"
+        android:background="@drawable/sel_circle_8_enable_red_ff_gray_d"
         android:layout_height="@dimen/sc_mm_80" />
 </LinearLayout>

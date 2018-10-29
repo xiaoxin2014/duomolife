@@ -20,11 +20,11 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
+import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -35,12 +35,12 @@ import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
 
@@ -58,7 +58,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 ;
 
@@ -96,9 +97,11 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
     @BindView(R.id.rel_progressBar)
     RelativeLayout progressBar;
     private ImgGridRecyclerAdapter imgGridRecyclerAdapter;
-    private ArrayList<String> dataPath = new ArrayList<>();
+    private List<ImagePathBean> imagePathBeans = new ArrayList<>();
     //图片路径
     private ArrayList<String> mSelectPath = new ArrayList<>();
+    //    已上传图片保存
+    private List<String> updatedImages = new ArrayList<>();
     private AlertView dialog;
     private String orderNo;
     private AlertView commitDialog;
@@ -122,18 +125,18 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
         goodsBean = intent.getParcelableExtra("goodsBean");
-        if (dataPath != null) {
-            dataPath.clear();
-            dataPath.add(ConstantVariable.DEFAULT_ADD_IMG);
+        if (imagePathBeans != null) {
+            imagePathBeans.clear();
+            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
         }
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext,600)) {
+        if (app.getScreenWidth() >= AutoSizeUtils.mm2px(mAppContext, 600)) {
             rv_sale_return_img.setLayoutManager(new GridLayoutManager(SalesReturnAppealActivity.this, 5));
         } else {
             rv_sale_return_img.setLayoutManager(new GridLayoutManager(SalesReturnAppealActivity.this, 3));
         }
-        if (dataPath.size() < 1) {
-            dataPath.add(DEFAULT_ADD_IMG);
+        if (imagePathBeans.size() < 1) {
+            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
         }
         rv_sale_return_img.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -145,26 +148,17 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
                 // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
                 .setHeaderClickListener(null)
                 .create());
-        imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, dataPath);
+        imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
         rv_sale_return_img.setAdapter(imgGridRecyclerAdapter);
         imgGridRecyclerAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.delete) {
-                    adapterPosition = (int) view.getTag();
-                    if (dataPath.size() > dataPath.size() - 1 && !dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                        dataPath.set(dataPath.size() - 1, DEFAULT_ADD_IMG);
-                    } else {
-                        dataPath.remove(adapterPosition);
-                        if (!dataPath.get(dataPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                            dataPath.add(DEFAULT_ADD_IMG);
-                        }
-                    }
-                    mSelectPath = new ArrayList();
-                    mSelectPath.addAll(dataPath);
-                    if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG))
-                        mSelectPath.remove(mSelectPath.size() - 1);
-                    imgGridRecyclerAdapter.setNewData(dataPath);
+                    adapterPosition = (int) view.getTag(R.id.delete);
+                    imagePathBeans = getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
+                    mSelectPath.clear();
+                    mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
+                    imgGridRecyclerAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -203,26 +197,21 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
             List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
             if (localMediaList != null && localMediaList.size() > 0) {
-                dataPath.clear();
+                imagePathBeans.clear();
                 for (LocalMediaC localMedia : localMediaList) {
                     if (!TextUtils.isEmpty(localMedia.getPath())) {
-                        dataPath.add(localMedia.getPath());
+                        imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
                     }
                 }
-                dataPath.remove(ConstantVariable.DEFAULT_ADD_IMG);
-                if (dataPath.size() < maxSelImg) {
-                    dataPath.add(DEFAULT_ADD_IMG);
+                if (imagePathBeans.size() < maxSelImg) {
+                    imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                 }
                 mSelectPath.clear();
-                mSelectPath.addAll(dataPath);
-                if (mSelectPath.size() > 0 && mSelectPath.get(mSelectPath.size() - 1).equals(DEFAULT_ADD_IMG)) {
-                    mSelectPath.remove(mSelectPath.size() - 1);
-                }
+                mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
                 imgGridRecyclerAdapter.notifyDataSetChanged();
             }
         } else if (requestCode == REQUEST_PERMISSIONS) {
             showToast(this, "请到应用管理授予权限");
-            return;
         }
     }
 
@@ -232,8 +221,8 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
             @Override
             public void getPermissionsSuccess() {
-                int imgLength = dataPath.size() - 1;
-                if (position == imgLength && dataPath.get(imgLength).equals(DEFAULT_ADD_IMG)) {
+                int imgLength = imagePathBeans.size() - 1;
+                if (position == imgLength && DEFAULT_ADD_IMG.equals(imagePathBeans.get(imgLength).getPath())) {
                     PictureSelectorUtils.getInstance()
                             .resetVariable()
                             .isCrop(false)
@@ -305,44 +294,55 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
             directAppraisePassBean.setReason(et_appeal_reason.getText().toString().trim());
             directAppraisePassBean.setContent(et_appeal_question_description.getText().toString().trim());
             if (mSelectPath.size() > 0) {
-                final StringBuffer imgCountAppend = new StringBuffer();
                 //                上传图片
-                ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
-                imgUrlHelp.setUrl(SalesReturnAppealActivity.this, mSelectPath);
-                imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
-                    @Override
-                    public void finishData(List<String> data, Handler handler) {
-                        for (int i = 0; i < data.size(); i++) {
-                            if (i == 0) {
-                                imgCountAppend.append(data.get(i));
-                            } else {
-                                imgCountAppend.append("," + data.get(i));
-                            }
+                if (updatedImages.size() > 0) {
+                    setSalesReturnImageData(updatedImages, directAppraisePassBean);
+                } else {
+                    ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
+                    imgUrlHelp.setUrl(SalesReturnAppealActivity.this, mSelectPath);
+                    imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
+                        @Override
+                        public void finishData(List<String> data, Handler handler) {
+                            setSalesReturnImageData(data, directAppraisePassBean);
+                            //                            已上传不可删除 不可更换图片
+                           imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);;
+                            imgGridRecyclerAdapter.notifyDataSetChanged();
+                            submit(directAppraisePassBean);
+                            handler.removeCallbacksAndMessages(null);
                         }
-                        directAppraisePassBean.setImages(imgCountAppend.toString());
-                        submit(directAppraisePassBean);
-                        handler.removeCallbacksAndMessages(null);
-                    }
 
 
-                    @Override
-                    public void finishError(String error) {
-                        progressBar.setVisibility(View.GONE);
-                        header_shared.setText("提交");
-                        header_shared.setEnabled(true);
-                        showToast(SalesReturnAppealActivity.this, "网络异常");
-                    }
+                        @Override
+                        public void finishError(String error) {
+                            progressBar.setVisibility(View.GONE);
+                            header_shared.setText("提交");
+                            header_shared.setEnabled(true);
+                            showToast(SalesReturnAppealActivity.this, "网络异常");
+                        }
 
-                    @Override
-                    public void finishSingleImg(String singleImg, Handler handler) {
-                    }
-                });
+                        @Override
+                        public void finishSingleImg(String singleImg, Handler handler) {
+                        }
+                    });
+                }
             } else {
                 submit(directAppraisePassBean);
             }
         } else {
             showToast(this, "请填写申诉原因和问题描述，已方便我们尽快处理");
         }
+    }
+
+    private void setSalesReturnImageData(List<String> data, DirectAppraisePassBean directAppraisePassBean) {
+        StringBuffer imgCountAppend = new StringBuffer();
+        for (int i = 0; i < data.size(); i++) {
+            if (i == 0) {
+                imgCountAppend.append(data.get(i));
+            } else {
+                imgCountAppend.append("," + data.get(i));
+            }
+        }
+        directAppraisePassBean.setImages(imgCountAppend.toString());
     }
 
 

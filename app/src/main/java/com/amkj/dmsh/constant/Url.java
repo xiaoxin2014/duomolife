@@ -242,7 +242,7 @@ public class Url {
     //账号安全，第三方账号绑定手机
     public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
     //意见反馈
-    public static final String MINE_FEEDBACK = "api/my/addFeedBack";
+    public static final String MINE_FEEDBACK = "api/my/addFeedBackNew";
 //    意见反馈类型
     public static final String MINE_FEEDBACK_TYPE = "api/my/getFeedBackType";
     //    检查该号码是否已注册

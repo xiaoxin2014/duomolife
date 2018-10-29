@@ -370,7 +370,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 && editGoodsSkuBean.getPresentProductInfoList().size() > 0) {
             communal_recycler_wrap.setVisibility(View.VISIBLE);
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(baseAct));
-            communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext,30), 0, AutoSizeUtils.mm2px(mAppContext,24), 0);
             if (presentProAdapter == null) {
                 presentProductInfoList.clear();
                 for (PresentProductInfoBean presentProductInfoBean : editGoodsSkuBean.getPresentProductInfoList()) {
@@ -381,15 +380,13 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     pre.setPresentSkuId(presentProductInfoBean.getPresentSkuId());
                     presentProductInfoList.add(pre);
                 }
-                presentProAdapter = new ProductTextAdapter(presentProductInfoList);
-                View headerView = LayoutInflater.from(baseAct).inflate(R.layout.adapter_layout_communal_text, null, false);
-                TextView tv_communal_text = headerView.findViewById(R.id.tv_communal_text);
-                tv_communal_text.setGravity(Gravity.BOTTOM);
-                tv_communal_text.setText("部分商品有赠品");
-                presentProAdapter.addHeaderView(headerView);
-            } else {
-                presentProAdapter = new ProductTextAdapter(presentProductInfoList);
             }
+            presentProAdapter = new ProductTextAdapter(presentProductInfoList);
+            View headerView = LayoutInflater.from(baseAct).inflate(R.layout.adapter_layout_communal_text, null, false);
+            TextView tv_communal_text = headerView.findViewById(R.id.tv_communal_text);
+            tv_communal_text.setGravity(Gravity.BOTTOM);
+            tv_communal_text.setText("部分商品有赠品");
+            presentProAdapter.addHeaderView(headerView);
             communal_recycler_wrap.setAdapter(presentProAdapter);
         } else {
             communal_recycler_wrap.setVisibility(View.GONE);

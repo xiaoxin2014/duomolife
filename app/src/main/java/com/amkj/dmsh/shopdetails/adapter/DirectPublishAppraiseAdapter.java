@@ -24,11 +24,12 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.luck.picture.lib.config.PictureConfigC;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 
 ;
 
@@ -103,7 +104,7 @@ public class DirectPublishAppraiseAdapter extends BaseQuickAdapter<DirectApprais
                 if (view.getId() == R.id.delete) {
                     int adapterPosition = (int) view.getTag();
                     int evaPosition = (int) view.getTag(R.id.img_eva_list);
-                    ArrayList<String> images = mDataPathAll.get(evaPosition);
+                    List<String> images = mDataPathAll.get(evaPosition);
                     if (images.size() > images.size() - 1 && !images.get(images.size() - 1).equals(DEFAULT_ADD_IMG)) {
                         images.set(images.size() - 1, DEFAULT_ADD_IMG);
                     } else {
@@ -124,7 +125,7 @@ public class DirectPublishAppraiseAdapter extends BaseQuickAdapter<DirectApprais
                     directAppraisePassBean.setImages(spiltPath.toString());
                     directAppraisePassList.set(evaPosition, directAppraisePassBean);
                     EventBus.getDefault().post(new EventMessage("appraiseDate", directAppraisePassList));
-                    adapter.setNewData(images);
+                    adapter.notifyDataSetChanged();
                 }
             }
         });

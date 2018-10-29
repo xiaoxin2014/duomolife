@@ -1790,13 +1790,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    void goBack() {
         finish();
     }
 
     @OnClick(R.id.tv_ql_sp_pro_sc_integral_hint)
-    void integralHint(View view) {
-        showToast(this, R.string.integral_hint);
+    void integralHint() {
+        if(shopPropertyBean!=null&&!TextUtils.isEmpty(shopPropertyBean.getIntegralTip())){
+            showToast(this, getStrings(shopPropertyBean.getIntegralTip()));
+        }else{
+            showToast(this, R.string.integral_hint);
+        }
     }
 
     /**
