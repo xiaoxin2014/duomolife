@@ -30,6 +30,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * version 3.1.6
  * class description:网络工具
  */
+@SuppressWarnings("unchecked")
 public class NetLoadUtils<T, E extends BaseEntity> {
 
     private static NetLoadUtils netLoadUtils;

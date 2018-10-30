@@ -12,7 +12,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -458,9 +457,9 @@ public class ConstantMethod {
                             skipAliBCWebView(link, context);
                         } else {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            if(intent.resolveActivity(context.getPackageManager())!=null){
+                            if (intent.resolveActivity(context.getPackageManager()) != null) {
                                 context.startActivity(intent);
-                            }else{
+                            } else {
                                 skipMainActivity(context);
                             }
                             if (isCloseActivity) {
@@ -966,16 +965,6 @@ public class ConstantMethod {
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);
-                        }
-
-                        @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void onError(Drawable errorDrawable) {
-
                         }
                     });
                 }
@@ -1934,16 +1923,6 @@ public class ConstantMethod {
                                         });
                                         alertDialogImage.setImage(bitmap);
                                     }
-
-                                    @Override
-                                    public void onStart() {
-
-                                    }
-
-                                    @Override
-                                    public void onError(Drawable errorDrawable) {
-
-                                    }
                                 });
                             }
                         }
@@ -2054,23 +2033,22 @@ public class ConstantMethod {
         } else {
             allowInstallApps(context, appFile);
         }
-        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     private static void allowInstallApps(Context context, File appFile) {
-        if(appFile!=null&&appFile.exists()){
+        if (appFile != null && appFile.exists()) {
             Intent intent = new Intent();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }else{
+            } else {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             }
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(getFileUri(context, appFile),
                     "application/vnd.android.package-archive");
             context.startActivity(intent);
-        }else{
-            showToast(context,"该文件已删除，请重新下载");
+        } else {
+            showToast(context, "该文件已删除，请重新下载");
         }
     }
 
@@ -2854,4 +2832,13 @@ public class ConstantMethod {
         BigDecimal b2 = new BigDecimal(Double.toString(v2));
         return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
+
+//    public static Bitmap getResourceBitmap(Context context, int resId) {
+//        BitmapFactory.Options opt = new BitmapFactory.Options();
+//        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+//        opt.inPurgeable = true;
+//        opt.inInputShareable = true;
+//        InputStream is = context.getResources().openRawResource(resId);
+//        return BitmapFactory.decodeStream(is, null, opt);
+//    }
 }

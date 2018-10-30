@@ -238,7 +238,7 @@ dependencies {
     implementation 'me.jessyan:autosize:1.0.0'
 
     //    BaseRecyclerViewAdapter
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.41'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.42'
     implementation 'com.zzhoujay.richtext:richtext:3.0.5'
 
     //    implementation 'com.zzhoujay:html:1.0.1'

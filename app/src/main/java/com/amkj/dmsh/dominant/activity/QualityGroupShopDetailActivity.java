@@ -106,6 +106,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -205,7 +206,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private String shareJoinGroup = "shareJoinGroup";
     private String normalJoinGroup = "normalJoinGroup";
     private boolean isPause;
-    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupDetail.html?id=";
+    private String sharePageUrl = BASE_SHARE_PAGE_TWO + "m/template/share_template/groupDetail.html?id=";
     private ConstantMethod constantMethod;
     private CBViewHolderCreator cbViewHolderCreator;
     private boolean invitePartnerJoin;
@@ -930,7 +931,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             , qualityGroupShareBean.getGpPicUrl()
                             , qualityGroupShareBean.getName()
                             , getStrings(qualityGroupShareBean.getSubtitle())
-                            , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
+                            , BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                             + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
                             + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
                 } else {

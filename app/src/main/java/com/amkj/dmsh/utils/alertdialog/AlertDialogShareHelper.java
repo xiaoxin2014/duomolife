@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -78,7 +78,7 @@ public class AlertDialogShareHelper {
         }
         RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
         communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, 3));
-        ShareIconTitleAdapter shareIconTitleAdapter = new ShareIconTitleAdapter(context, iconTitleList);
+        ShareIconTitleAdapter shareIconTitleAdapter = new ShareIconTitleAdapter(iconTitleList);
         communal_recycler_wrap.setAdapter(shareIconTitleAdapter);
         shareIconTitleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -150,17 +150,20 @@ public class AlertDialogShareHelper {
     }
 
     private class ShareIconTitleAdapter extends BaseQuickAdapter<ShareIconTitleBean, BaseViewHolder> {
-        private final Context context;
 
-        public ShareIconTitleAdapter(Context context, List<ShareIconTitleBean> iconTitleList) {
+        public ShareIconTitleAdapter(List<ShareIconTitleBean> iconTitleList) {
             super(R.layout.adapter_share_icon_title, iconTitleList);
-            this.context = context;
         }
 
         @Override
         protected void convert(BaseViewHolder helper, ShareIconTitleBean shareIconTitleBean) {
-            GlideImageLoaderUtil.loadFitCenter(context, helper.getView(R.id.iv_share_icon),
-                    "android.resource://com.amkj.dmsh/drawable/" + shareIconTitleBean.getShareIconResId());
+            ImageView iv_share_icon = helper.getView(R.id.iv_share_icon);
+            try {
+                iv_share_icon.setImageResource(shareIconTitleBean.getShareIconResId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                iv_share_icon.setImageResource(R.drawable.load_loading_image);
+            }
             helper.setText(R.id.tv_share_title, getStrings(shareIconTitleBean.getShareTitle()))
                     .itemView.setTag(shareIconTitleBean);
         }
