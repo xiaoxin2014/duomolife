@@ -53,6 +53,8 @@ public class ConstantVariable {
     public static final int DEFAULT_COMMENT_TOTAL_COUNT = 6;
     //    加载条目20
     public static final int TOTAL_COUNT_TWENTY = 20;
+//    加载条目30
+    public static final int TOTAL_COUNT_THIRTY = 30;
     //    加载条目40
     public static final int TOTAL_COUNT_FORTY = 40;
     //  关联商品请求码

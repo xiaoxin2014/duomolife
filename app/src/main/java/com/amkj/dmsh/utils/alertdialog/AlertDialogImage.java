@@ -2,6 +2,7 @@ package com.amkj.dmsh.utils.alertdialog;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +54,7 @@ public class AlertDialogImage {
         isFirstSet = true;
     }
 
-    public void setImage(Bitmap bitmap) {
+    public void setImage(@NonNull Bitmap bitmap) {
         iv_ad_image.setImageBitmap(bitmap);
     }
 

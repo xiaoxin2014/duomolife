@@ -19,6 +19,7 @@ import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -39,7 +40,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_THIRTY;
 
 ;
 
@@ -53,11 +54,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 public class QualityTypeHotSaleProductFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    private int page = 1;
     private List<LikedProductBean> likedProductBeans = new ArrayList();
     private QualityTypeProductAdapter qualityTypeProductAdapter;
     private UserLikedProductEntity typeProductBean;
     private String hotSaleDay;
+    private RemoveExistUtils removeExistUtils;
 
     @Override
     protected int getContentView() {
@@ -82,13 +83,7 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                 .create());
         qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), likedProductBeans);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
-        qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getQualityTypePro();
-            }
-        }, communal_recycler);
+        qualityTypeProductAdapter.setEnableLoadMore(false);
         qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -126,6 +121,7 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
             }
         });
         totalPersonalTrajectory = insertNewTotalData(getActivity());
+        removeExistUtils = new RemoveExistUtils();
     }
 
     @Override
@@ -146,15 +142,14 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
-        page = 1;
         getQualityTypePro();
     }
 
     private void getQualityTypePro() {
         String url = Url.BASE_URL + Url.QUALITY_HOT_SALE_LIST_NEW;
         Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
-        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("showCount", TOTAL_COUNT_THIRTY);
+        params.put("currentPage", 1);
         params.put("day", hotSaleDay);
         if (userId > 0) {
             params.put("uid", userId);
@@ -164,14 +159,13 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         qualityTypeProductAdapter.loadMoreComplete();
-                        if (page == 1) {
-                            likedProductBeans.clear();
-                        }
+                        likedProductBeans.clear();
+                        removeExistUtils.clearData();
                         Gson gson = new Gson();
                         typeProductBean = gson.fromJson(result, UserLikedProductEntity.class);
                         if (typeProductBean != null) {
                             if (typeProductBean.getCode().equals(SUCCESS_CODE)) {
-                                likedProductBeans.addAll(typeProductBean.getLikedProductBeanList());
+                                likedProductBeans.addAll(removeExistUtils.removeExistList(typeProductBean.getLikedProductBeanList()));
                             } else if (typeProductBean.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
@@ -180,28 +174,29 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans,typeProductBean);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
                     }
 
                     @Override
                     public void netClose() {
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans,typeProductBean);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans,typeProductBean);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
                     }
                 });
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if("refresh".equals(message.type)&&"hotSaleData".equals(message.result)){
+        if ("refresh".equals(message.type)
+                && "hotSaleData".equals(message.result)) {
             loadData();
         }
     }
