@@ -30,11 +30,12 @@ public class ImgGridRecyclerAdapter extends BaseQuickAdapter<ImagePathBean, Base
         int adapterPosition = helper.getAdapterPosition();
 //        是否显示删除图标
         if (!DEFAULT_ADD_IMG.equals(imagePathBean.getPath())){
-            helper.addOnClickListener(R.id.delete).setTag(R.id.delete, adapterPosition);
+            helper.addOnClickListener(R.id.delete)
+                    .setTag(R.id.delete,adapterPosition);
             GlideImageLoaderUtil.loadCenterCrop(context, image, "file://" + imagePathBean.getPath());
         }else{
             image.setImageResource(R.drawable.plus_icon_nor);
-            helper.setGone(R.id.delete, imagePathBean.isShowDelIcon());
         }
+        helper.setGone(R.id.delete, !DEFAULT_ADD_IMG.equals(imagePathBean.getPath()) && imagePathBean.isShowDelIcon());
     }
 }

@@ -280,8 +280,8 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
             rv_apply_refund_img.setNestedScrollingEnabled(false);
             imgGridRecyclerAdapter.setOnItemChildClickListener((adapter, view, position) -> {
                 if (view.getId() == R.id.delete) {
-                    adapterPosition = (int) view.getTag(R.id.delete);
-                    imagePathBeans = getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
+                    adapterPosition = (int) view.getTag();
+                    getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     mSelectPath.clear();
                     mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
                     imgGridRecyclerAdapter.notifyDataSetChanged();
@@ -426,34 +426,33 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                loadData();
-            } else if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
-                List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
-                if (localMediaList != null && localMediaList.size() > 0) {
-                    imagePathBeans.clear();
-                    for (LocalMediaC localMedia : localMediaList) {
-                        if (!TextUtils.isEmpty(localMedia.getPath())) {
-                            imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
-                        }
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
+        } else if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
+            List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
+            if (localMediaList != null && localMediaList.size() > 0) {
+                imagePathBeans.clear();
+                for (LocalMediaC localMedia : localMediaList) {
+                    if (!TextUtils.isEmpty(localMedia.getPath())) {
+                        imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
                     }
-                    if (imagePathBeans.size() < maxSelImg) {
-                        imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
-                    }
-                    mSelectPath.clear();
-                    mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
-                    imgGridRecyclerAdapter.notifyDataSetChanged();
                 }
-            } else if (requestCode == SEL_ADDRESS_REQ) {
-                //            获取地址成功
-                addressId = data.getIntExtra("addressId", 0);
-                getAddressDetails();
-            } else if (requestCode == REQUEST_PERMISSIONS) {
-                showToast(this, "请到应用管理授予权限");
+                if (imagePathBeans.size() < maxSelImg) {
+                    imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
+                }
+                mSelectPath.clear();
+                mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
+                imgGridRecyclerAdapter.notifyDataSetChanged();
             }
+        } else if (requestCode == SEL_ADDRESS_REQ) {
+            //            获取地址成功
+            addressId = data.getIntExtra("addressId", 0);
+            getAddressDetails();
+        } else if (requestCode == REQUEST_PERMISSIONS) {
+            showToast(this, "请到应用管理授予权限");
         }
     }
 
@@ -651,7 +650,8 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                         updatedImages.clear();
                         updatedImages.addAll(data);
                         //                            已上传不可删除 不可更换图片
-                        imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);;
+                        getImageFormatInstance().submitChangeIconStatus(imagePathBeans, false);
+                        ;
                         imgGridRecyclerAdapter.notifyDataSetChanged();
                         setRefundImageData(data, refundBean);
                         submitRefundData(refundBean);

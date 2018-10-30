@@ -141,7 +141,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                     getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     mSelectPath.clear();
                     mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
-                    imgGridRecyclerAdapter.setNewData(imagePathBeans);
+                    imgGridRecyclerAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -299,7 +299,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                             updatedImages.clear();
                             updatedImages.addAll(data);
                             //                            已上传不可删除 不可更换图片
-                            imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);
+                            getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);
                             imgGridRecyclerAdapter.notifyDataSetChanged();
                             sendSuggestionData(data);
                             handler.removeCallbacksAndMessages(null);

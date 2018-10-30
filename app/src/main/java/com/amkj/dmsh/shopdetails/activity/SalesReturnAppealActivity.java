@@ -154,8 +154,8 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.delete) {
-                    adapterPosition = (int) view.getTag(R.id.delete);
-                    imagePathBeans = getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
+                    adapterPosition = (int) view.getTag();
+                    getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     mSelectPath.clear();
                     mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
                     imgGridRecyclerAdapter.notifyDataSetChanged();
@@ -222,7 +222,8 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
             @Override
             public void getPermissionsSuccess() {
                 int imgLength = imagePathBeans.size() - 1;
-                if (position == imgLength && DEFAULT_ADD_IMG.equals(imagePathBeans.get(imgLength).getPath())) {
+                if (position == imgLength
+                        && DEFAULT_ADD_IMG.equals(imagePathBeans.get(imgLength).getPath())) {
                     PictureSelectorUtils.getInstance()
                             .resetVariable()
                             .isCrop(false)
@@ -305,7 +306,7 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
                         public void finishData(List<String> data, Handler handler) {
                             setSalesReturnImageData(data, directAppraisePassBean);
                             //                            已上传不可删除 不可更换图片
-                           imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);;
+                           getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);
                             imgGridRecyclerAdapter.notifyDataSetChanged();
                             submit(directAppraisePassBean);
                             handler.removeCallbacksAndMessages(null);

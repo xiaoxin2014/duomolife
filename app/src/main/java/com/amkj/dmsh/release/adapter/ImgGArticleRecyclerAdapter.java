@@ -29,12 +29,11 @@ public class ImgGArticleRecyclerAdapter extends BaseQuickAdapter<ImagePathBean, 
         ImageView image = helper.getView(R.id.pv_image);
         //        是否显示删除图标
         if (imagePathBean.isShowDelIcon()&&!DEFAULT_ADD_IMG.equals(imagePathBean.getPath())){
-            helper.setGone(R.id.delete, true)
-                    .addOnClickListener(R.id.delete).setTag(R.id.delete, helper.getAdapterPosition());
+            helper.addOnClickListener(R.id.delete).setTag(R.id.delete, helper.getAdapterPosition());
             GlideImageLoaderUtil.loadCenterCrop(context, image, "file://" + imagePathBean.getPath());
         }else{
             image.setImageResource(R.drawable.plus_icon_nor);
-            helper.setGone(R.id.delete, false);
         }
+        helper.setGone(R.id.delete, !DEFAULT_ADD_IMG.equals(imagePathBean.getPath()) && imagePathBean.isShowDelIcon());
     }
 }

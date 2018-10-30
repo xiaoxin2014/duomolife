@@ -34,7 +34,9 @@ public class ImgGridRecyclerEvaAdapter extends BaseQuickAdapter<String, BaseView
             helper.setGone(R.id.delete, false);
             GlideImageLoaderUtil.loadCenterCrop(context, image, "file:///android_asset/" + item);
         } else {
-            helper.setGone(R.id.delete, true).addOnClickListener(R.id.delete).setTag(R.id.delete, adapterPosition).setTag(R.id.delete, R.id.img_eva_list, evaItemPosition);
+            helper.setGone(R.id.delete, true).addOnClickListener(R.id.delete)
+                    .setTag(R.id.delete, adapterPosition)
+                    .setTag(R.id.delete, R.id.img_eva_list, evaItemPosition);
             GlideImageLoaderUtil.loadCenterCrop(context, image, "file://" + item);
         }
         helper.itemView.setTag(evaItemPosition);

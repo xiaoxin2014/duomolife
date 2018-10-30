@@ -46,26 +46,6 @@ public class ImageFormatUtils {
     }
 
     /**
-     * bean切换为String
-     *
-     * @param imagePathBeans
-     * @return
-     */
-    public List<String> formatStringPath(List<ImagePathBean> imagePathBeans) {
-        List<String> formatPaths = new ArrayList<>();
-        if (imagePathBeans == null) {
-            return formatPaths;
-        }
-        for (int i = 0; i < imagePathBeans.size(); i++) {
-            ImagePathBean imagePathBean = imagePathBeans.get(i);
-            if (!TextUtils.isEmpty(imagePathBean.getPath())) {
-                formatPaths.add(imagePathBean.getPath());
-            }
-        }
-        return formatPaths;
-    }
-
-    /**
      * 转换为String 移除默认占位图片
      *
      * @param imagePathBeans
@@ -87,19 +67,22 @@ public class ImageFormatUtils {
     }
 
     /**
-     *
-     * @param imagePathList imageBean || String
+     * @param imagePathList imageBean
      * @param isShowDel     是否展示删除按钮
      * @return
      */
     public List<ImagePathBean> submitChangeIconStatus(@NonNull List<ImagePathBean> imagePathList, boolean isShowDel) {
+        if (imagePathList.size() > 0) {
+            ImagePathBean imagePathBean = imagePathList.get(imagePathList.size() - 1);
+            if (DEFAULT_ADD_IMG.equals(imagePathBean.getPath())) {
+                imagePathList.remove(imagePathList.size() - 1);
+            }
+        }
         for (int i = 0; i < imagePathList.size(); i++) {
             ImagePathBean imagePathBean = imagePathList.get(i);
-            if(imagePathBean!=null&&
-                    !DEFAULT_ADD_IMG.equals(imagePathBean.getPath())){
+            if (imagePathBean != null) {
                 imagePathBean.setShowDelIcon(isShowDel);
             }
-
         }
         return imagePathList;
     }
@@ -111,10 +94,7 @@ public class ImageFormatUtils {
      * @param delPosition
      * @return
      */
-    public List<ImagePathBean> delImageBean(List<ImagePathBean> imagePathBeans, int delPosition) {
-        if (imagePathBeans == null) {
-            return new ArrayList<>();
-        }
+    public List<ImagePathBean> delImageBean(@NonNull List<ImagePathBean> imagePathBeans, int delPosition) {
         if (imagePathBeans.size() <= delPosition) {
             return imagePathBeans;
         }

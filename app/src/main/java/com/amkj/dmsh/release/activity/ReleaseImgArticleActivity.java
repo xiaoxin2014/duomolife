@@ -14,6 +14,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -180,7 +181,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.delete) {
                     adapterPosition = (int) view.getTag();
-                    imagePathBeans = getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
+                    getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
                     setSelectImageData();
                     imgGArticleRecyclerAdapter.notifyDataSetChanged();
                 }
@@ -243,103 +244,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                 }
             }
         });
-//        rv_rel_topic.setLayoutManager(new GridLayoutManager(this, 3));
-//        rv_rel_topic.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
-//                // 设置分隔线资源ID
-//                .setDividerId(R.drawable.item_divider_nine_dp_white)
-//                // 开启绘制分隔线，默认关闭
-//                .enableDivider(true)
-//                // 是否关闭标签点击事件，默认开启
-//                .disableHeaderClick(false)
-//                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-//                .setHeaderClickListener(null)
-//                .create());
-//        findRelTopicAdapter = new FindRelTopicAdapter(relevanceTopicList);
-//        rv_rel_topic.setAdapter(findRelTopicAdapter);
-//        findRelTopicAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                TextView tv_title = (TextView) view.getTag();
-//                if (tv_title != null) {
-//                    FindRelTopicBean topicBean = (FindRelTopicBean) tv_title.getTag();
-//                    if (topicBean != null) {
-//                        String relText = release_et_input.getText().toString();
-//                        if (!TextUtils.isEmpty(relText) && !TextUtils.isEmpty(topicTitle)
-//                                && relText.contains(topicTitle)) {
-//                            if (!topicBean.isSelect()) {
-//                                String topicTitle = getStrings(topicBean.getTitle());
-//                                relText = relText.replace(ReleaseImgArticleActivity.this.topicTitle, topicTitle);
-//                                setLinkData(topicTitle, relText);
-//                            } else {
-//                                relText = relText.replace(ReleaseImgArticleActivity.this.topicTitle, "");
-//                                release_et_input.setText(relText);
-//                            }
-//                        } else {
-//                            if (!topicBean.isSelect()) {
-//                                String topicTitle = getStrings(topicBean.getTitle());
-//                                String subText = insertText(topicTitle, relText);
-//                                setLinkData(topicTitle, subText);
-//                            }
-//                        }
-//                        setEtTextSelection();
-//                        if (!topicTitle.equals(getStrings(topicBean.getTitle()))
-//                                && !topicBean.isSelect()) {
-//                            topicTitle = topicBean.getTitle();
-//                            topicId = String.valueOf(topicBean.getId());
-//                        }
-//                        for (int i = 0; i < relevanceTopicList.size(); i++) {
-//                            FindRelTopicBean findRelTopicBean = relevanceTopicList.get(i);
-//                            if (i == topicBean.getPosition()) {
-//                                findRelTopicBean.setSelect(!topicBean.isSelect());
-//                            } else {
-//                                findRelTopicBean.setSelect(false);
-//                            }
-//                        }
-//                        findRelTopicAdapter.notifyDataSetChanged();
-//                    }
-//                }
-//            }
-//        });
-
-//        release_et_input.addTextChangedListener(new TextWatchListener() {
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                String stringText = s.toString();
-//                if (!TextUtils.isEmpty(topicTitle)
-//                        && !stringText.contains(topicTitle)
-//                        && stringText.length() >= topicTitle.length() - 1
-//                        && before == 1 && start < topicTitle.length()) {
-//                    if ((start == 0 &&
-//                            stringText.substring(0, topicTitle.length() - 1).equals(topicTitle.substring(1, topicTitle.length() - 1))) ||
-//                            ((stringText.substring(0, start).equals(topicTitle.substring(0, start))
-//                                    && stringText.substring(start, topicTitle.length() - 1).equals(topicTitle.substring(start + before, topicTitle.length())))) ||
-//                            (start == topicTitle.length() - 1 &&
-//                                    stringText.substring(0, topicTitle.length() - 1).equals(topicTitle.substring(0, topicTitle.length() - 1)))) {
-//                        release_et_input.setText(getStrings(s.subSequence(topicTitle.length() - 1, s.length()).toString()));
-//                    }
-//                }
-//                super.onTextChanged(s, start, before, count);
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                super.afterTextChanged(s);
-//            }
-//        });
-//
-//        release_et_input.setOnSelectionChangedListener(new ReleaseEditView.OnSelectionChangedListener() {
-//            @Override
-//            public void onSelectionChanged(int selStart, int selEnd) {
-//                String topicString = release_et_input.getText().toString();
-//                if (!TextUtils.isEmpty(topicString) && !TextUtils.isEmpty(topicTitle)
-//                        && topicString.contains(topicString)
-//                        && topicString.length() >= topicTitle.length()
-//                        && (selStart >= 0 && selEnd < topicTitle.length()
-//                        || (selStart >= 0 && selStart < topicTitle.length()))) {
-//                    release_et_input.setSelection(topicTitle.length());
-//                }
-//            }
-//        });
         tv_find_release_topic.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -565,10 +469,14 @@ public class ReleaseImgArticleActivity extends BaseActivity {
 
     @OnClick(R.id.tv_find_release_topic)
     void sendMessage(View view) {
-        if (release_et_input.getText().toString().trim().length() < 1
-                && (imagePathBeans.size() < 1 || (imagePathBeans.size() < 2 && imagePathBeans.get(0).equals(DEFAULT_ADD_IMG)))) {
+        Editable text = release_et_input.getText();
+        if(text == null){
             showToast(this, "请输入发送内容");
             return;
+        }
+        if (text.toString().trim().length() < 1
+                && (imagePathBeans.size() < 1 || (imagePathBeans.size() < 2 && imagePathBeans.get(0).equals(DEFAULT_ADD_IMG)))) {
+            showToast(this, "请输入发送内容");
         } else {
             if (loadHud != null) {
                 loadHud.show();
@@ -587,7 +495,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                         updatedImages.clear();
                         updatedImages.addAll(data);
                         //                            已上传不可删除 不可更换图片
-                       imagePathBeans = getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);;
+                        getImageFormatInstance().submitChangeIconStatus(imagePathBeans, false);
                         imgGArticleRecyclerAdapter.notifyDataSetChanged();
                         sendData(data, content);
                         handler.removeCallbacksAndMessages(null);
