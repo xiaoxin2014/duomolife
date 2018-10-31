@@ -3,7 +3,6 @@ package com.amkj.dmsh.release.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -743,11 +742,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onStart() {
-                        }
-
-                        @Override
-                        public void onError(Drawable errorDrawable) {
+                        public void onError() {
                         }
                     });
                 } else {

@@ -12,7 +12,14 @@ ext.versions = [
         buildTools     : '27.0.3',
         nineOldAndroids: '2.4.0',
         materialicons  : '1.0.1',
-        stickyheaders  : '0.5.0'
+        stickyheaders  : '0.5.0',
+
+//        rx versions
+        rxjava2Versions : '2.2.3',
+        rxandroidVersions : '2.1.0',
+        rxrxlifecycle : '2.2.2',
+//        glide
+        glideVersion : '4.8.0'
 ]
 ext.libraries = [
         supportRecyclerView: "com.android.support:recyclerview-v7:$versions.supportLibs",

@@ -1,58 +1,49 @@
 package com.amkj.dmsh.base;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.message.bean.MessageTotalEntity;
-import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.views.SystemBarHelper;
-import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
 import com.tencent.stat.StatService;
+import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import cn.jzvd.JZVideoPlayer;
+import io.reactivex.Observable;
+import io.reactivex.functions.Action;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
-import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 ;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends RxAppCompatActivity {
     public KProgressHUD loadHud;
-    private BadgeDesktopReceiver badgeDesktopReceiver;
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
 
@@ -64,7 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         loadHud = KProgressHUD.create(this)
                 .setCancellable(true)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setSize(AutoSizeUtils.mm2px(mAppContext,50), AutoSizeUtils.mm2px(mAppContext,50));
+                .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50));
 //                .setDimAmount(0.5f)
         // 重新加载逻辑
         if (isAddLoad()) {
@@ -128,15 +119,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         MobclickAgent.onResume(this);
 //        腾讯分析
         StatService.onResume(this);
-        //创建广播
-        badgeDesktopReceiver = new BadgeDesktopReceiver();
-        //动态注册广播
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        //启动广播
-        registerReceiver(badgeDesktopReceiver, intentFilter);
         if (totalPersonalTrajectory == null) {
             totalPersonalTrajectory = new TotalPersonalTrajectory(this);
         }
+//取消rxjava 订阅
+        Observable.interval(1, TimeUnit.SECONDS)
+                .doOnDispose(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                    }
+                })
+                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe();
     }
 
     @Override
@@ -148,13 +142,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         StatService.onPause(this);
 
         JZVideoPlayer.releaseAllVideos();
-        if (badgeDesktopReceiver != null) {
-            try {
-                unregisterReceiver(badgeDesktopReceiver);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         saveTotalData();
     }
 
@@ -281,65 +268,5 @@ public abstract class BaseActivity extends AppCompatActivity {
             EventBus.getDefault().unregister(this);
         }
         super.onDestroy();
-    }
-
-    public class BadgeDesktopReceiver extends BroadcastReceiver {
-
-        private final String SYSTEM_DIALOG_REASON_KEY = "reason";
-        private final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
-                String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-                if (reason != null) {
-                    if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                        getDesktopMesCount();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 获取消息信息
-     * 配置桌面图标角标
-     */
-    private void getDesktopMesCount() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(this, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                            if (messageTotalEntity != null) {
-                                if (messageTotalEntity.getCode().equals("01")) {
-                                    MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                                    int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                            + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                            + messageTotalBean.getCommOffifialTotal();
-                                    if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
-                                        ShortcutBadger.applyCount(getApplicationContext(), totalCount);
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void netClose() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            ShortcutBadger.removeCount(getApplicationContext());
-                        }
-                    });
-        }
     }
 }

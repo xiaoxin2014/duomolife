@@ -11,7 +11,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -56,8 +55,6 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
 import com.amkj.dmsh.homepage.fragment.HomePageFragment;
 import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
-import com.amkj.dmsh.message.bean.MessageTotalEntity;
-import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -101,7 +98,6 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
-import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
@@ -712,48 +708,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     }
 
     /**
-     * 获取消息信息
-     * 配置桌面图标角标
-     */
-    private void getDesktopMesCount() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                            if (messageTotalEntity != null) {
-                                if (messageTotalEntity.getCode().equals("01")) {
-                                    MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                                    int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                            + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                            + messageTotalBean.getCommOffifialTotal();
-                                    if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
-                                        ShortcutBadger.applyCount(mAppContext, totalCount);
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void netClose() {
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            ShortcutBadger.removeCount(mAppContext);
-                        }
-                    });
-        } else {
-            ShortcutBadger.removeCount(getApplicationContext());
-        }
-    }
-
-    /**
      * 获取最新账号信息 避免黑名单、异常账户登录
      */
     private void getNetDataInfo() {
@@ -1124,12 +1078,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                                     }
 
                                     @Override
-                                    public void onStart() {
-
-                                    }
-
-                                    @Override
-                                    public void onError(Drawable errorDrawable) {
+                                    public void onError() {
 
                                     }
                                 });
@@ -1283,8 +1232,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_HOME);
             startActivity(intent);
-            //            获取桌面图标角标更新
-            getDesktopMesCount();
         }
     }
 

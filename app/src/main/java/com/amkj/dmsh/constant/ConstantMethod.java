@@ -417,11 +417,16 @@ public class ConstantMethod {
                     api.sendReq(req);
                     isMiniRoutine = true;
                 } else {
-                    String webUrl;
-                    if (link.contains("?")) {
-                        webUrl = link.substring(link.lastIndexOf("/") + 1, link.indexOf("?"));
-                    } else {
-                        webUrl = link.substring(link.lastIndexOf("/") + 1);
+                    String webUrl = "";
+                    int lastWebUrlIndex = link.lastIndexOf("/");
+                    int linkLength = link.length();
+                    if (lastWebUrlIndex != -1 && lastWebUrlIndex + 1 < linkLength) {
+                        int parameterIndex = link.lastIndexOf("?");
+                        if (parameterIndex != -1 && parameterIndex > lastWebUrlIndex) {
+                            webUrl = link.substring(lastWebUrlIndex + 1, parameterIndex);
+                        } else {
+                            webUrl = link.substring(lastWebUrlIndex + 1);
+                        }
                     }
                     Map<String, String> urlParams = getUrlParams(link);
                     if (webUrlTransform != null && webUrlTransform.get(webUrl) != null
@@ -576,10 +581,10 @@ public class ConstantMethod {
      * @return
      */
     public static Map<String, String> getUrlParams(String url) {
-        int index = url.indexOf("?");
+        int parameterIndex = url.lastIndexOf("?");
         Map<String, String> argMap = new HashMap<>();
-        if (index != -1) {
-            String argStr = url.substring(index + 1);
+        if (parameterIndex != -1 && parameterIndex + 1 < url.length()) {
+            String argStr = url.substring(parameterIndex + 1);
             String[] argAry = argStr.split("&");
             argMap = new HashMap<>(argAry.length);
             for (String arg : argAry) {
@@ -965,6 +970,11 @@ public class ConstantMethod {
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);
+                        }
+
+                        @Override
+                        public void onError() {
+
                         }
                     });
                 }
@@ -1922,6 +1932,11 @@ public class ConstantMethod {
                                             }
                                         });
                                         alertDialogImage.setImage(bitmap);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+
                                     }
                                 });
                             }

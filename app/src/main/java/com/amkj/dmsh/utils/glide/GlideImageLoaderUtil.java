@@ -11,16 +11,13 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +25,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
@@ -42,8 +46,6 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * @author liangzx
  */
 public class GlideImageLoaderUtil {
-
-    private static ConstantMethod constantMethod;
 
     /**
      * @param context
@@ -324,27 +326,59 @@ public class GlideImageLoaderUtil {
      */
     public static void loadFinishImgDrawable(final Context context, String imgUrl, final ImageLoaderFinishListener loaderFinishListener) {
         if (null != context) {
-            createExecutor().execute(() -> {
-                RequestOptions requestOptions = new RequestOptions().centerCrop()
-                        .placeholder(R.drawable.load_loading_image)
-                        .skipMemoryCache(true);
-                Glide.with(context.getApplicationContext()).asBitmap().load(imgUrl)
-                        .apply(requestOptions)
-                        .listener(new RequestListener<Bitmap>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(@NonNull Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                                if(loaderFinishListener!=null){
-                                    loaderFinishListener.onSuccess(resource);
+            Observable<Bitmap> bitmapObservable = Observable.create(new ObservableOnSubscribe<Bitmap>() {
+                @Override
+                public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
+                    RequestOptions requestOptions = new RequestOptions().centerCrop()
+                            .placeholder(R.drawable.load_loading_image)
+                            .skipMemoryCache(true);
+                    Glide.with(context.getApplicationContext()).asBitmap().load(imgUrl)
+                            .apply(requestOptions)
+                            .listener(new RequestListener<Bitmap>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                                    emitter.onComplete();
+                                    return false;
                                 }
-                                return true;
-                            }
-                        })
-                        .submit();
+
+                                @Override
+                                public boolean onResourceReady(@NonNull Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                                    emitter.onNext(resource);
+                                    return true;
+                                }
+                            })
+                            .submit();
+                }
+            });
+            bitmapObservable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Bitmap>() {
+                Disposable disposable;
+
+                @Override
+                public void onSubscribe(Disposable d) {
+                    this.disposable = d;
+                }
+
+                @Override
+                public void onNext(Bitmap bitmap) {
+                    if(loaderFinishListener!=null){
+                        loaderFinishListener.onSuccess(bitmap);
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    if(loaderFinishListener!=null){
+                        loaderFinishListener.onError();
+                    }
+                }
+
+                @Override
+                public void onComplete() {
+                    if(loaderFinishListener!=null){
+                        loaderFinishListener.onError();
+                    }
+                }
             });
         }
     }
@@ -358,7 +392,6 @@ public class GlideImageLoaderUtil {
      */
     public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
         if (null != context) {
-
             Glide.with(context).asDrawable().load(imgUrl)
                     .apply(new RequestOptions().dontAnimate().placeholder(R.drawable.load_loading_image)
                             .error(R.drawable.load_loading_image)
@@ -376,10 +409,10 @@ public class GlideImageLoaderUtil {
      */
     public static void loadGif(final Context context, final ImageView imageView, String imgUrl) {
         if (null != context) {
-            Glide.with(context).asGif().load(imgUrl)
+            Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions().placeholder(R.drawable.load_loading_image)
                             .error(R.drawable.load_loading_image)
-                            .dontAnimate()
+                            .skipMemoryCache(true)
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
                             .override(Target.SIZE_ORIGINAL))
                     .into(imageView);
@@ -394,29 +427,57 @@ public class GlideImageLoaderUtil {
      * @param originalLoaderFinishListener
      */
     public static void downOriginalImg(Context context, String originalImgUrl, final OriginalLoaderFinishListener originalLoaderFinishListener) {
-        Glide.with(context).download(originalImgUrl).apply(new RequestOptions().skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.DATA)).into(new SimpleTarget<File>() {
-            @Override
-            public void onStart() {
-                if (null != originalLoaderFinishListener) {
-                    originalLoaderFinishListener.onStart();
-                }
-            }
+        if (null != context) {
+            Observable<File> bitmapObservable = Observable.create(new ObservableOnSubscribe<File>() {
+                @Override
+                public void subscribe(ObservableEmitter<File> emitter) throws Exception {
+                    Glide.with(context).download(originalImgUrl).apply(new RequestOptions().skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)).listener(new RequestListener<File>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
+                            emitter.onError(e);
+                            return true;
+                        }
 
-            @Override
-            public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                if (null != originalLoaderFinishListener) {
-                    originalLoaderFinishListener.onError(errorDrawable);
+                        @Override
+                        public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
+                            emitter.onNext(resource);
+                            return true;
+                        }
+                    }).submit();
                 }
-            }
+            });
+            bitmapObservable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<File>() {
+                Disposable disposable;
 
-            @Override
-            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                if (null != originalLoaderFinishListener) {
-                    originalLoaderFinishListener.onSuccess(resource);
+                @Override
+                public void onSubscribe(Disposable d) {
+                    this.disposable = d;
                 }
-            }
-        });
+
+                @Override
+                public void onNext(File resource) {
+                    if (null != originalLoaderFinishListener) {
+                        originalLoaderFinishListener.onSuccess(resource);
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    if (null != originalLoaderFinishListener) {
+                        originalLoaderFinishListener.onError();
+                    }
+                }
+
+                @Override
+                public void onComplete() {
+                    if (null != originalLoaderFinishListener) {
+                        originalLoaderFinishListener.onError();
+                    }
+                }
+            });
+        }
     }
 
     //判断文件是否存在
@@ -547,15 +608,14 @@ public class GlideImageLoaderUtil {
 
     public interface ImageLoaderFinishListener {
         void onSuccess(Bitmap bitmap);
+        void onError();
     }
 
     public interface OriginalLoaderFinishListener {
 
         void onSuccess(File file);
 
-        void onStart();
-
-        void onError(Drawable errorDrawable);
+        void onError();
     }
 
     public interface gifLoaderFinishListener {

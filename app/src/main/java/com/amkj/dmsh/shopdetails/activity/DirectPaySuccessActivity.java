@@ -2,7 +2,6 @@ package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -239,11 +238,8 @@ public class DirectPaySuccessActivity extends BaseActivity {
                                     }
 
                                     @Override
-                                    public void onStart() {
-                                    }
+                                    public void onError() {
 
-                                    @Override
-                                    public void onError(Drawable errorDrawable) {
                                     }
                                 });
                             }

@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -42,6 +41,7 @@ import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.amkj.dmsh.views.MarqueeTextView;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -49,7 +49,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.xutils.ex.HttpException;
@@ -62,7 +61,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
-import me.leolin.shortcutbadger.ShortcutBadger;
 import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
@@ -344,8 +342,8 @@ public class HomePageFragment extends BaseFragment {
                                     int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
                                             + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
                                             + messageTotalBean.getCommOffifialTotal();
-                                    if (!Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")) {
-                                        ShortcutBadger.applyCount(mAppContext, totalCount);
+                                    if(badge!=null){
+                                        badge.setBadgeNumber(totalCount);
                                     }
                                 }
                             }
@@ -358,11 +356,13 @@ public class HomePageFragment extends BaseFragment {
 
                         @Override
                         public void onError(Throwable throwable) {
-                            ShortcutBadger.removeCount(mAppContext);
+
                         }
                     });
         }else{
-            ShortcutBadger.removeCount(mAppContext);
+            if(badge!=null){
+                badge.setBadgeNumber(0);
+            }
         }
     }
 

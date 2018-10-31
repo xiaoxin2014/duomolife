@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -161,16 +160,12 @@ public class UMShareAction {
                                 //        加载图片
                                 GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl,300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
-                                    public void onStart() {
-                                    }
-
-                                    @Override
                                     public void onSuccess(Bitmap bitmap) {
                                         setLoadImageShare(sharePlatformType,new UMImage(context, bitmap), context, urlLink, title, description);
                                     }
 
                                     @Override
-                                    public void onError(Drawable errorDrawable) {
+                                    public void onError() {
                                         setLoadImageShare(sharePlatformType,new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
                                     }
                                 });
@@ -292,13 +287,8 @@ public class UMShareAction {
                                             e.printStackTrace();
                                         }
                                     }
-
                                     @Override
-                                    public void onStart() {
-                                    }
-
-                                    @Override
-                                    public void onError(Drawable errorDrawable) {
+                                    public void onError() {
                                     }
                                 });
                             } else {
