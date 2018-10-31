@@ -191,7 +191,6 @@
                     android:layout_height="@dimen/sc_mm_80"
                     android:layout_marginTop="@dimen/sc_mm_79"
                     android:background="@drawable/login_bt_bg"
-
                     android:gravity="center"
                     android:text="登 录"
                     android:textColor="@color/text_login_gray_s"

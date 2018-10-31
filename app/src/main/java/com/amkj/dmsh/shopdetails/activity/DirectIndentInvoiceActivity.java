@@ -127,7 +127,8 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         goodsBeanList.clear();
         lvHeaderView.tv_indent_invoice_orderID.setText("订单编号：" + getStrings(orderDetailBean.getNo()));
         lvHeaderView.tv_indent_invoice_orderTime.setText("下单时间：" + getStrings(orderDetailBean.getCreateTime()));
-        lvHeaderView.tv_indent_invoice_header_type.setText(INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())));
+        lvHeaderView.tv_indent_invoice_header_type.setText(getStrings(INDENT_PRO_STATUS != null ?
+                INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())) : ""));
         lvFootView.tv_indent_direct_pay_price.setText(getStringsChNPrice(DirectIndentInvoiceActivity.this, orderDetailBean.getPayAmount()));
         for (int i = 0; i < orderDetailBean.getGoodDetails().size(); i++) {
             GoodsDetailBean goodsDetailBean = orderDetailBean.getGoodDetails().get(i);
