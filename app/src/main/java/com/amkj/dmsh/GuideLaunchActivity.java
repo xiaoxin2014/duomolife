@@ -1,8 +1,10 @@
 package com.amkj.dmsh;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.support.v4.view.ViewPager;
 
 import com.amkj.dmsh.base.BaseActivity;
@@ -34,6 +36,9 @@ public class GuideLaunchActivity extends BaseActivity {
             finish();
             return;
         }
+        SharedPreferences setIcon = getSharedPreferences("set_icon", MODE_PRIVATE);
+        int iconCode = setIcon.getInt("iconCode", 3);
+        switchIcon(iconCode);
         firstRun = isFirstRun();
         if (firstRun) {
             localImages.add(R.mipmap.guide1);
@@ -92,4 +97,51 @@ public class GuideLaunchActivity extends BaseActivity {
         return sp.getBoolean("isFirstRun", true);
     }
 
+
+    /**
+     * @param useCode =1、为活动图标 = 2 为用普通图标 =3、不启用判断
+     */
+    private void switchIcon(int useCode) {
+        SharedPreferences setIcon = getSharedPreferences("set_icon", MODE_PRIVATE);
+        SharedPreferences.Editor edit = setIcon.edit();
+        edit.putInt("iconCode",useCode-1>0?--useCode:3);
+        edit.apply();
+        com.amkj.dmsh.utils.Log.d("启动", "当前状态 switchIcon: " + useCode);
+        try {
+            //要跟manifest的activity-alias 的name保持一致
+            String icon_festival = "com.amkj.dmsh.FestivalActivity";
+            String icon_normal = "com.amkj.dmsh.NormalActivity";
+            if (useCode != 3) {
+                PackageManager pm = getPackageManager();
+                ComponentName normalComponentName = new ComponentName(
+                        getBaseContext(),
+                        icon_normal);
+                //正常图标新状态
+                int normalNewState = useCode == 2 ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+                if (pm.getComponentEnabledSetting(normalComponentName) != normalNewState) {//新状态跟当前状态不一样才执行
+                    pm.setComponentEnabledSetting(
+                            normalComponentName,
+                            normalNewState,
+                            PackageManager.DONT_KILL_APP);
+                    com.amkj.dmsh.utils.Log.d("启动", "设置 switchIcon: " + "正常状态");
+                }
+                ComponentName actComponentName = new ComponentName(
+                        getBaseContext(),
+                        icon_festival);
+                //正常图标新状态
+                int actNewState = useCode == 1 ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+                if (pm.getComponentEnabledSetting(actComponentName) != actNewState) {//新状态跟当前状态不一样才执行
+                    pm.setComponentEnabledSetting(
+                            actComponentName,
+                            actNewState,
+                            PackageManager.DONT_KILL_APP);
+                    com.amkj.dmsh.utils.Log.d("启动", "设置 switchIcon: " + "活动状态");
+                }
+            }
+        } catch (Exception e) {
+            com.amkj.dmsh.utils.Log.d("启动", "switchIcon: " + e.getMessage());
+        }
+    }
 }

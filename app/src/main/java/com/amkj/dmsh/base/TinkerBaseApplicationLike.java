@@ -54,7 +54,6 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
-import org.lasque.tusdk.core.TuSdk;
 import org.xutils.x;
 
 import java.io.File;
@@ -225,8 +224,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             youMengInit();
             initNewAliBaiC();
             try {
-                TuSdk.enableDebugLog(isDebugTag);
-                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
+//                TuSdk.enableDebugLog(isDebugTag);
+//                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
             } catch (Exception e) {
                 e.printStackTrace();
             }

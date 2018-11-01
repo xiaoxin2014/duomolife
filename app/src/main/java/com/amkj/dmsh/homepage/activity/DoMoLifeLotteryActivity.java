@@ -84,7 +84,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         tv_web_shared.setVisibility(View.GONE);
         tv_web_title.setText("抽奖");
         WebSettings webSettings = web_communal.getSettings();
-//        自适应屏幕大小
+        //        自适应屏幕大小
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         //设置WebView属性，能够执行Javascript脚本
@@ -95,6 +95,13 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         webSettings.setBuiltInZoomControls(false);
         //设置支持H5 DomStorage
         webSettings.setDomStorageEnabled(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setGeolocationEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setUseWideViewPort(true); // 关键点
+        webSettings.setSupportZoom(true); // 支持缩放
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不加载缓存内容
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
@@ -113,7 +120,6 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
             }
-
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -489,5 +495,4 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             return false;
         }
     });
-
 }

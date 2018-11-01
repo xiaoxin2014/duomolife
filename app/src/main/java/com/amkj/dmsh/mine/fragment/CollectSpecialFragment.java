@@ -14,10 +14,10 @@ import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.SpecialTopicAdapter;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -29,8 +29,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
@@ -38,6 +37,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
+;
 ;
 
 /**
@@ -68,7 +68,6 @@ public class CollectSpecialFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getLoginStatus(CollectSpecialFragment.this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
@@ -163,45 +162,47 @@ public class CollectSpecialFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        String url = Url.BASE_URL + Url.COLLECT_SPECIAL;
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
-        params.put("count", DEFAULT_TOTAL_COUNT);
-        params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                topicListAdapter.loadMoreComplete();
-                if (page == 1) {
-                    topicBeanList.clear();
-                }
-                Gson gson = new Gson();
-                topicDetailEntity = gson.fromJson(result, TopicSpecialEntity.class);
-                if (topicDetailEntity != null) {
-                    if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());
-                    } else if (!topicDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), topicDetailEntity.getMsg());
+        if(userId>0){
+            String url = Url.BASE_URL + Url.COLLECT_SPECIAL;
+            Map<String, Object> params = new HashMap<>();
+            params.put("currentPage", page);
+            params.put("count", DEFAULT_TOTAL_COUNT);
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    topicListAdapter.loadMoreComplete();
+                    if (page == 1) {
+                        topicBeanList.clear();
                     }
-                    topicListAdapter.notifyDataSetChanged();
+                    Gson gson = new Gson();
+                    topicDetailEntity = gson.fromJson(result, TopicSpecialEntity.class);
+                    if (topicDetailEntity != null) {
+                        if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                            topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());
+                        } else if (!topicDetailEntity.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), topicDetailEntity.getMsg());
+                        }
+                        topicListAdapter.notifyDataSetChanged();
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,topicBeanList, topicDetailEntity);
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,topicBeanList, topicDetailEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                topicListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,topicBeanList, topicDetailEntity);
-            }
+                @Override
+                public void netClose() {
+                    smart_communal_refresh.finishRefresh();
+                    topicListAdapter.loadMoreComplete();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,topicBeanList, topicDetailEntity);
+                }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                topicListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,topicBeanList, topicDetailEntity);
-            }
-        });
+                @Override
+                public void onError(Throwable throwable) {
+                    smart_communal_refresh.finishRefresh();
+                    topicListAdapter.loadMoreComplete();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,topicBeanList, topicDetailEntity);
+                }
+            });
+        }
     }
 }

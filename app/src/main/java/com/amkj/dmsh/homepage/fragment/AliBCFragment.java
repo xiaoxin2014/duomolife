@@ -134,6 +134,9 @@ public class AliBCFragment extends BaseFragment {
         web_fragment_communal.getSettings().setUseWideViewPort(true);
         web_fragment_communal.getSettings().setLoadWithOverviewMode(true);
         WebSettings webSettings = web_fragment_communal.getSettings();
+        //        自适应屏幕大小
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
         //设置WebView属性，能够执行Javascript脚本
         webSettings.setJavaScriptEnabled(true);
         //设置可以访问文件
@@ -142,6 +145,14 @@ public class AliBCFragment extends BaseFragment {
         webSettings.setBuiltInZoomControls(false);
         //设置支持H5 DomStorage
         webSettings.setDomStorageEnabled(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setGeolocationEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setUseWideViewPort(true); // 关键点
+        webSettings.setSupportZoom(true); // 支持缩放
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不加载缓存内容
+
         web_fragment_communal.setWebChromeClient(new MyWebChromeClient());
         //加载需要显示的网页
         if (NetWorkUtils.checkNet(getActivity())) {
@@ -255,7 +266,6 @@ public class AliBCFragment extends BaseFragment {
     }
 
     //改写物理按键——返回的逻辑
-
 
     @Override
     protected void loadData() {
@@ -522,7 +532,7 @@ public class AliBCFragment extends BaseFragment {
         @JavascriptInterface
         public void skipService() {
             QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-            qyServiceUtils.openQyServiceChat(getActivity(), "web：","");
+            qyServiceUtils.openQyServiceChat(getActivity(), "web：", "");
         }
 
         //      顶栏导航是否展示

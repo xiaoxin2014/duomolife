@@ -14,10 +14,10 @@ import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -28,14 +28,11 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
@@ -69,7 +66,6 @@ public class CollectTopicFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getLoginStatus(CollectTopicFragment.this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
@@ -154,58 +150,49 @@ public class CollectTopicFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        String url = Url.BASE_URL + Url.COLLECT_TOPIC;
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
-        params.put("count", DEFAULT_TOTAL_COUNT);
-        params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                findTopicListAdapter.loadMoreComplete();
-                if (page == 1) {
-                    findTopicBeanList.clear();
-                }
-                Gson gson = new Gson();
-                findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
-                if (findHotTopicEntity != null) {
-                    if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                        findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
-                    } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), findHotTopicEntity.getMsg());
+        if(userId>0){
+            String url = Url.BASE_URL + Url.COLLECT_TOPIC;
+            Map<String, Object> params = new HashMap<>();
+            params.put("currentPage", page);
+            params.put("count", DEFAULT_TOTAL_COUNT);
+            params.put("uid", userId);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    findTopicListAdapter.loadMoreComplete();
+                    if (page == 1) {
+                        findTopicBeanList.clear();
                     }
-                    findTopicListAdapter.notifyDataSetChanged();
+                    Gson gson = new Gson();
+                    findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
+                    if (findHotTopicEntity != null) {
+                        if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                            findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
+                        } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), findHotTopicEntity.getMsg());
+                        }
+                        findTopicListAdapter.notifyDataSetChanged();
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                findTopicListAdapter.loadMoreComplete();
-                showToast(mAppContext,R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
-            }
+                @Override
+                public void netClose() {
+                    smart_communal_refresh.finishRefresh();
+                    findTopicListAdapter.loadMoreComplete();
+                    showToast(mAppContext,R.string.unConnectedNetwork);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                findTopicListAdapter.loadMoreComplete();
-                showToast(mAppContext,R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
-            }
-        });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            loadData();
+                @Override
+                public void onError(Throwable throwable) {
+                    smart_communal_refresh.finishRefresh();
+                    findTopicListAdapter.loadMoreComplete();
+                    showToast(mAppContext,R.string.invalidData);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                }
+            });
         }
     }
 }

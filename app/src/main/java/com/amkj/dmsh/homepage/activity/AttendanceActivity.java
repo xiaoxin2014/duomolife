@@ -917,6 +917,7 @@ public class AttendanceActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
+            NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
             loadData();
         }
     }

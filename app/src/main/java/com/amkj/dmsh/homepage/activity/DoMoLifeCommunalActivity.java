@@ -27,7 +27,6 @@ import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -128,7 +127,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private String channelId = "DOWN_NOTIFY_CHANNEL_ID";
     private int notifyId = 0xfff;
     private NotificationCompat.Builder mBuilder;
-    private String refreshStatus;
     private String jsIdentifying;
 
     @Override
@@ -154,17 +152,14 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         webSettings.setBuiltInZoomControls(false);
         //设置支持H5 DomStorage
         webSettings.setDomStorageEnabled(true);
-        web_communal.setWebChromeClient(new MyWebChromeClient()/*{
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                if(newProgress==100){
-                    bottom_seek_web_progress.setVisibility(View.GONE);//加载完网页进度条消失
-                }else{
-                    bottom_seek_web_progress.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
-                    bottom_seek_web_progress.setProgress(newProgress);//设置进度值
-                }
-            }
-        }*/);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setGeolocationEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setUseWideViewPort(true); // 关键点
+        webSettings.setSupportZoom(true); // 支持缩放
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不加载缓存内容
+        web_communal.setWebChromeClient(new MyWebChromeClient());
         //加载需要显示的网页
         if (NetWorkUtils.checkNet(DoMoLifeCommunalActivity.this)) {
             webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -184,17 +179,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
-            }
-
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-            }
-
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
             }
 
             @Override
@@ -744,13 +728,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             });
         }
 
-        @JavascriptInterface
-        public void setRefreshStatus(String refreshStatus) {
-            if (!TextUtils.isEmpty(refreshStatus)) {
-                DoMoLifeCommunalActivity.this.refreshStatus = refreshStatus;
-            }
-        }
-
         /**
          * 打开相册
          */
@@ -915,5 +892,4 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             return false;
         }
     });
-
 }

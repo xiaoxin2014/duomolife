@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.TextView;
@@ -14,6 +15,9 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 /**
  * @author LGuiPeng
@@ -36,12 +40,19 @@ public class MineCollectContentActivity extends BaseActivity {
     }
     @Override
     protected void initViews() {
-        tv_header_titleAll.setText("收藏内容");
-        tv_header_shared.setVisibility(View.GONE);
-        communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
-        MineContentPageAdapter mineContentPageAdapter = new MineContentPageAdapter(getSupportFragmentManager());
-        vp_content_contain.setAdapter(mineContentPageAdapter);
-        communal_stl_tab.setViewPager(vp_content_contain);
+        getLoginStatus(this);
+        getCollectContentData();
+    }
+
+    private void getCollectContentData() {
+        if(userId>0){
+            tv_header_titleAll.setText("收藏内容");
+            tv_header_shared.setVisibility(View.GONE);
+            communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+            MineContentPageAdapter mineContentPageAdapter = new MineContentPageAdapter(getSupportFragmentManager());
+            vp_content_contain.setAdapter(mineContentPageAdapter);
+            communal_stl_tab.setViewPager(vp_content_contain);
+        }
     }
 
     @Override
@@ -53,4 +64,15 @@ public class MineCollectContentActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            finish();
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IS_LOGIN_CODE) {
+            getCollectContentData();
+        }
+    }
 }

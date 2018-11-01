@@ -76,7 +76,6 @@ public class CollectInvitationFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getLoginStatus(CollectInvitationFragment.this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
@@ -245,49 +244,51 @@ public class CollectInvitationFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        String url = Url.BASE_URL + Url.COLLECT_INVITATION;
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
-        params.put("count", DEFAULT_TOTAL_COUNT);
-        params.put("uid", userId);
-        params.put("version", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                if (page == 1) {
-                    invitationDetailList.clear();
-                }
-                Gson gson = new Gson();
-                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                if (invitationDetailEntity != null) {
-                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
-                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), invitationDetailEntity.getMsg());
+        if(userId>0){
+            String url = Url.BASE_URL + Url.COLLECT_INVITATION;
+            Map<String, Object> params = new HashMap<>();
+            params.put("currentPage", page);
+            params.put("count", DEFAULT_TOTAL_COUNT);
+            params.put("uid", userId);
+            params.put("version", 1);
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    adapterInvitationAdapter.loadMoreComplete();
+                    if (page == 1) {
+                        invitationDetailList.clear();
                     }
-                    adapterInvitationAdapter.notifyDataSetChanged();
+                    Gson gson = new Gson();
+                    invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                    if (invitationDetailEntity != null) {
+                        if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                            invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
+                        } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), invitationDetailEntity.getMsg());
+                        }
+                        adapterInvitationAdapter.notifyDataSetChanged();
+                    }
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
-            }
 
-            @Override
-            public void netClose() {
-                showToast(mAppContext,R.string.unConnectedNetwork);
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
-            }
+                @Override
+                public void netClose() {
+                    showToast(mAppContext,R.string.unConnectedNetwork);
+                    smart_communal_refresh.finishRefresh();
+                    adapterInvitationAdapter.loadMoreComplete();
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                showToast(mAppContext,R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
-            }
-        });
+                @Override
+                public void onError(Throwable throwable) {
+                    smart_communal_refresh.finishRefresh();
+                    adapterInvitationAdapter.loadMoreComplete();
+                    showToast(mAppContext,R.string.invalidData);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                }
+            });
+        }
     }
 
     @Override
