@@ -45,11 +45,11 @@ import com.amkj.dmsh.bean.PushInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.fragment.QualityFragment;
 import com.amkj.dmsh.find.fragment.FindFragment;
+import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
@@ -167,7 +167,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if ("skipMinePage".equals(message.type)) {
-            changePage(MAIN_MINE);
+            changeAdaptivePage(MAIN_MINE);
         } else if (message.type.equals("loginShowDialog")) {
             if (constantMethod == null) {
                 constantMethod = new ConstantMethod();
@@ -188,25 +188,9 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         String type = intent.getStringExtra("type");
         isFirstTime = intent.getBooleanExtra("isFirstTime", true);
         sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
-        String skipPage = intent.getStringExtra(ConstantVariable.SKIP_PAGE);
         setNavData();
-        if (type != null && type.equals("BindOtherAccount")) {
-            if (userId > 0) {
-                //登陆成功，加载信息
-                changePage(MAIN_MINE);
-            }
-        } else if (skipPage != null && skipPage.equals("1")) {
-            String webUrl = intent.getStringExtra("webUrl");
-            String indexShowLight = intent.getStringExtra("indexShowLight");
-//            导航栏显示高亮
-            int index = 0;
-            if (!TextUtils.isEmpty(indexShowLight)) {
-                index = Integer.parseInt(indexShowLight);
-            }
-            changePage(new MainIconBean(index > 4 ? 4 : index, webUrl));
-        } else if (!TextUtils.isEmpty(type)) {
-            String iconType = intent.getStringExtra("type");
-            changePage(iconType);
+        if (!TextUtils.isEmpty(type)) {
+            changeAdaptivePage(type);
         } else {
             initMainPage();
         }
@@ -413,7 +397,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 iconUrl = "";
                 break;
         }
-        changePage(new MainIconBean(i,iconUrl));
+        changePage(new MainIconBean(i, iconUrl));
     }
 
     private void setNavData() {
@@ -538,11 +522,12 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
 
     /**
      * 是否网页地址
+     *
      * @param androidLink
      * @return
      */
     private boolean isWebUrl(String androidLink) {
-        if(TextUtils.isEmpty(androidLink)){
+        if (TextUtils.isEmpty(androidLink)) {
             return false;
         }
         Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
@@ -632,20 +617,20 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
      */
     private void getMainIconData() {
         String url = Url.BASE_URL + Url.H_BOTTOM_ICON;
-        Map<String,Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         /**
          * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
          */
-        params.put("version",2);
+        params.put("version", 2);
         NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
                 if (mainNavEntity != null) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
                     if (mainNavEntity.getCode().equals("01")) {
                         if (mainNavEntity.getMainNavBeanList().size() == 5) {
-                            SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
                             String modifyTime = sharedPreferences.getString("modifyTime", "");
                             if (!modifyTime.equals(mainNavEntity.getModifyTime())) {
                                 SharedPreferences.Editor edit = sharedPreferences.edit();
@@ -658,6 +643,8 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                                 }
                             }
                         }
+                    } else {
+                        sharedPreferences.edit().clear().apply();
                     }
                 }
             }
@@ -1099,28 +1086,40 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case MINE_REQ_CODE:
-                changePage(MAIN_MINE);
+                changeAdaptivePage(MAIN_MINE);
                 break;
         }
         CallbackContext.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initMainPage() {
-        if (iconDataList.size() > 0) {
-            changePage(iconDataList.get(0));
-        } else {
-            changePage(new MainIconBean(0, MAIN_HOME));
+        RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(0);
+        radioButton.setChecked(true);
+        MainIconBean mainIconBean = (MainIconBean) radioButton.getTag(R.id.main_page);
+        if(mainIconBean!=null){
+            changePage(mainIconBean);
+        }else{
+            if (iconDataList.size() > 0) {
+                changePage(iconDataList.get(0));
+            } else {
+                changePage(new MainIconBean(0, MAIN_HOME));
+            }
         }
     }
 
     private Fragment lastFragment = null;
 
     /**
-     * 适配
+     * 适配 底部导航栏是否有此tag 如没有默认展示第一个
      *
      * @param tag
      */
-    private void changePage(String tag) {
+    private void changeAdaptivePage(String tag) {
+        RadioButton defaultButton = (RadioButton) rp_bottom_main.getChildAt(0);
+        MainIconBean defaultIconBean = (MainIconBean) defaultButton.getTag(R.id.main_page);
+        if(TextUtils.isEmpty(tag)){
+            changePage(defaultIconBean);
+        }
         for (int i = 0; i < rp_bottom_main.getChildCount(); i++) {
             RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(i);
             MainIconBean mainIconBean = (MainIconBean) radioButton.getTag(R.id.main_page);
@@ -1128,8 +1127,21 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                 changePage(mainIconBean);
                 break;
             } else if (rp_bottom_main.getChildCount() - 1 == i) {
-                changePage(new MainIconBean(0,tag));
+                changePage(defaultIconBean);
+                skipMainPage(tag);
             }
+        }
+    }
+
+    /**
+     * 设置页面tag
+     * @param pageTag
+     */
+    private void skipMainPage(String pageTag) {
+        if(!TextUtils.isEmpty(pageTag)){
+            Intent intent = new Intent(this, MainPageTabBarActivity.class);
+            intent.putExtra("tabType",pageTag);
+            startActivity(intent);
         }
     }
 
@@ -1153,8 +1165,8 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
                     params.put("paddingStatus", "true");
                     params.put("loadUrl", getStrings(mainIconBean.getIconUrl()));
                     fragment = BaseFragment.newInstance(AliBCFragment.class, params, null);
-                }else{
-                    switch (tag) {
+                } else {
+                    switch (getStrings(tag)) {
                         case MAIN_HOME:
                             fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
                             break;
@@ -1250,7 +1262,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     @Override
     public void onClick(View v) {
         MainIconBean mainIconBean = (MainIconBean) v.getTag(R.id.main_page);
-        if (mainIconBean!=null && !isChecked) {
+        if (mainIconBean != null && !isChecked) {
             changePage(mainIconBean);
         }
         isChecked = false;

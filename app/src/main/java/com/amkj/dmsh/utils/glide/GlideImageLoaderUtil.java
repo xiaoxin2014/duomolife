@@ -326,7 +326,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadFinishImgDrawable(final Context context, String imgUrl, final ImageLoaderFinishListener loaderFinishListener) {
         if (null != context) {
-            Observable<Bitmap> bitmapObservable = Observable.create(new ObservableOnSubscribe<Bitmap>() {
+            Observable.create(new ObservableOnSubscribe<Bitmap>() {
                 @Override
                 public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
                     RequestOptions requestOptions = new RequestOptions().centerCrop()
@@ -349,8 +349,7 @@ public class GlideImageLoaderUtil {
                             })
                             .submit();
                 }
-            });
-            bitmapObservable.subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Bitmap>() {
                 Disposable disposable;
 
@@ -428,7 +427,7 @@ public class GlideImageLoaderUtil {
      */
     public static void downOriginalImg(Context context, String originalImgUrl, final OriginalLoaderFinishListener originalLoaderFinishListener) {
         if (null != context) {
-            Observable<File> bitmapObservable = Observable.create(new ObservableOnSubscribe<File>() {
+            Observable.create(new ObservableOnSubscribe<File>() {
                 @Override
                 public void subscribe(ObservableEmitter<File> emitter) throws Exception {
                     Glide.with(context).download(originalImgUrl).apply(new RequestOptions().skipMemoryCache(true)
@@ -446,8 +445,7 @@ public class GlideImageLoaderUtil {
                         }
                     }).submit();
                 }
-            });
-            bitmapObservable.subscribeOn(Schedulers.io())
+            }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<File>() {
                 Disposable disposable;
 

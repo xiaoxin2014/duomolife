@@ -106,28 +106,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity-alias
-            android:name=".NormalActivity"
-            android:targetActivity=".GuideLaunchActivity"
-            android:label="正常多么生活"
-            android:icon="@drawable/domolife_logo"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".FestivalActivity"
-            android:targetActivity=".GuideLaunchActivity"
-            android:label="节日多么生活"
-            android:icon="@mipmap/ic_domolife_festival"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
 
         <activity
             android:name=".MiddleActivity"
@@ -250,6 +228,15 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="ArticleOfficialActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".homepage.activity.MainPageTabBarActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="MainPageTabBarActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

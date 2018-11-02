@@ -77,6 +77,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -541,9 +542,14 @@ public class AliBCFragment extends BaseFragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!TextUtils.isEmpty(showData)) {
-                        String urlPage = showData.substring(0, showData.indexOf(","));
-                        Map<String, String> urlParams = getUrlParams(showData);
+                    if (!TextUtils.isEmpty(showData) && showData.lastIndexOf(",") != -1) {
+                        int indexCode = showData.lastIndexOf(",");
+                        String urlPage = showData.substring(0, indexCode);
+                        if (showData.length() <= indexCode + 2) {
+                            tl_normal_bar.setVisibility(View.GONE);
+                            return;
+                        }
+                        Map<String, String> urlParams = getUrlParams(showData.substring(indexCode + 1));
                         String showType = urlParams.get("showType");
                         if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
                                 && !TextUtils.isEmpty(showType)) {
@@ -569,8 +575,13 @@ public class AliBCFragment extends BaseFragment {
                 @Override
                 public void run() {
                     if (!TextUtils.isEmpty(showData)) {
-                        String urlPage = showData.substring(0, showData.indexOf(","));
+                        int indexCode = showData.lastIndexOf(",");
                         Map<String, String> urlParams = getUrlParams(showData);
+                        String urlPage = showData.substring(0, indexCode);
+                        if (showData.length() <= indexCode + 2) {
+                            tv_header_shared.setVisibility(View.GONE);
+                            return;
+                        }
                         String showType = urlParams.get("showType");
                         if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
                                 && !TextUtils.isEmpty(showType)) {
@@ -593,8 +604,13 @@ public class AliBCFragment extends BaseFragment {
                 @Override
                 public void run() {
                     if (!TextUtils.isEmpty(showTitle)) {
-                        String urlPage = showTitle.substring(0, showTitle.indexOf(","));
+                        int indexCode = showTitle.lastIndexOf(",");
                         Map<String, String> urlParams = getUrlParams(showTitle);
+                        String urlPage = showTitle.substring(0, indexCode);
+                        if (showTitle.length() <= indexCode + 2) {
+                            tv_header_shared.setVisibility(View.GONE);
+                            return;
+                        }
                         String headTitle = urlParams.get("headTitle");
                         if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
                                 && !TextUtils.isEmpty(headTitle)) {
@@ -643,10 +659,6 @@ public class AliBCFragment extends BaseFragment {
             });
             constantMethod.getPermissions(getActivity(), Permission.Group.STORAGE);
         }
-    }
-
-    public Map<String, String> getUrlParams(String showTitle) {
-        return getUrlParams(showTitle.substring(showTitle.indexOf(","), showTitle.length()));
     }
 
     private void getLoginStatus() {

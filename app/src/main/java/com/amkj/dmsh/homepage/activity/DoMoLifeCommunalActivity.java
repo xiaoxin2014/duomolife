@@ -85,6 +85,7 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -611,7 +612,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         //        跳转页面
         @JavascriptInterface
         public void skipPage(String result) {
-            ConstantMethod.setSkipPath(context, result, false);
+            setSkipPath(context, result, false);
         }
 
         //分享
@@ -662,9 +663,14 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!TextUtils.isEmpty(showData)) {
-                        String urlPage = showData.substring(0, showData.indexOf(","));
-                        Map<String, String> urlParams = getUrlParams(showData);
+                    if (!TextUtils.isEmpty(showData) && showData.lastIndexOf(",") != -1) {
+                        int indexCode = showData.lastIndexOf(",");
+                        String urlPage = showData.substring(0, indexCode);
+                        if (showData.length() <= indexCode + 2) {
+                            tl_web_normal_bar.setVisibility(View.GONE);
+                            return;
+                        }
+                        Map<String, String> urlParams = getUrlParams(showData.substring(indexCode + 1));
                         String showType = urlParams.get("showType");
                         if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
                                 && !TextUtils.isEmpty(showType)) {
@@ -687,8 +693,13 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (!TextUtils.isEmpty(showData)) {
-                        String urlPage = showData.substring(0, showData.indexOf(","));
+                        int indexCode = showData.lastIndexOf(",");
                         Map<String, String> urlParams = getUrlParams(showData);
+                        String urlPage = showData.substring(0, indexCode);
+                        if (showData.length() <= indexCode + 2) {
+                            tv_web_shared.setVisibility(View.GONE);
+                            return;
+                        }
                         String showType = urlParams.get("showType");
                         if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
                                 && !TextUtils.isEmpty(showType)) {

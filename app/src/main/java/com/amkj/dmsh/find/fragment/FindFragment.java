@@ -206,7 +206,6 @@ public class FindFragment extends BaseFragment {
             }
         });
         findHotTopicAdapter.loadMoreEnd(true);
-
     }
 
     private void setStatusColor() {
