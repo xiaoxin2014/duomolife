@@ -78,7 +78,6 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     @BindView(R.id.rel_qq_account)
     RelativeLayout rel_qq_account;
     private final String CHANGE_PASSWORD = "changePassword";
-    private int uid;
     private AlertView weChatDialog;
     private AlertView qqDialog;
     private AlertView sinaDialog;
@@ -157,7 +156,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     private void getOtherAccountData() {
         String url = Url.BASE_URL + Url.MINE_SYNC_LOGIN;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                 , params, new NetLoadUtils.NetLoadListener() {
             @Override
@@ -220,7 +219,6 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     void skipSafe() {
         Intent intent = new Intent(AccountSafeActivity.this, ChangePasswordActivity.class);
         intent.putExtra("type", CHANGE_PASSWORD);
-        intent.putExtra("uid", uid);
         startActivity(intent);
     }
 
@@ -414,7 +412,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         }
         params.put("nickname", accountInfo.getNickname());
         params.put("avatar", accountInfo.getAvatar());
-        params.put("id", uid);
+        params.put("id", userId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -444,7 +442,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         if (NetWorkUtils.checkNet(this)) {
             loadHud.show();
             Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
+            params.put("uid", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
