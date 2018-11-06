@@ -86,7 +86,7 @@ rebuildChannel {
     channelFile = rootProject.file("channel.txt")
 //    baseDebugApk = 已有Debug APK
 //    baseReleaseApk = file("C:/jiagu/output/13751077044/domolife3.0.8.apk")
-    baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.1.5.2.apk")
+    baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.1.7.4.apk")
     //默认为new File(project.buildDir, "rebuildChannel/debug")
 //    debugOutputDir = Debug渠道包输出目录
     //默认为new File(project.buildDir, "rebuildChannel/release")

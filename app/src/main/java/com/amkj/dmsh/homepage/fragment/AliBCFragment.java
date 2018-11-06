@@ -15,6 +15,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,16 +43,18 @@ import com.alibaba.baichuan.trade.biz.AlibcConstants;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.amkj.dmsh.views.SystemBarHelper;
@@ -72,14 +75,16 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.AutoSize;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
@@ -106,7 +111,6 @@ public class AliBCFragment extends BaseFragment {
     @BindView(R.id.web_fragment_communal)
     HtmlWebView web_fragment_communal;
     private String webUrl;
-    private int uid;
     private String shareData;
     //    分享数据
     private Map<String, String> shareDataMap = new HashMap<>();
@@ -116,6 +120,7 @@ public class AliBCFragment extends BaseFragment {
     private Map<String, String> headerBarMap = new HashMap<>();
     private String paddingStatus;
     private String jsIdentifying;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -283,7 +288,6 @@ public class AliBCFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
                 transmitUid();
             } else if (requestCode == CHOOSE_REQUEST) {
                 List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
@@ -509,7 +513,7 @@ public class AliBCFragment extends BaseFragment {
         //        获取当前用户uid
         @JavascriptInterface
         public void getUserIdFromAndroid() {
-            getLoginStatus();
+            getLoginStatus(AliBCFragment.this);
         }
 
         //      跳转阿里百川
@@ -661,20 +665,101 @@ public class AliBCFragment extends BaseFragment {
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            transmitUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
+    /**
+     * v 3.1.8 后提供公用方法交互 避免版本控制
+     *
+     * @param resultJson json 数据
+     */
+    @JavascriptInterface
+    public void androidJsInteractive(String resultJson) {
+        try {
+            if (TextUtils.isEmpty(resultJson)) {
+                jsInteractiveException();
+            }
+            JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
+            if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                switch (jsInteractiveBean.getType()) {
+                    case "userId":
+                        jsGetUserId(jsInteractiveBean);
+                        break;
+                    default:
+                        jsInteractiveEmpty();
+                        break;
+                }
+            } else {
+                jsInteractiveException();
+            }
+        } catch (Exception e) {
+            jsInteractiveException();
+            e.printStackTrace();
         }
     }
 
+    /**
+     * js获取用户id
+     * @param jsInteractiveBean
+     */
+    private void jsGetUserId(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null && otherData.get("mustLogin") != null) {
+            try {
+                int mustLoginCode = (int) otherData.get("mustLogin");
+                if (mustLoginCode == 1) {
+                    getLoginStatus(getActivity());
+                } else {
+                    transmitUid();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                getLoginStatus(getActivity());
+            }
+        } else {
+            if (userId > 0) {
+                transmitUid();
+            } else {
+                getLoginStatus(getActivity());
+            }
+        }
+    }
+
+    /**
+     * js交互数据异常
+     */
+    private void jsInteractiveException() {
+        showToast(getActivity(), "数据异常呦，攻城狮正在加急处理呢~");
+        return;
+    }
+
+    /**
+     * 方法不支持，弹窗更新版本
+     */
+    private void jsInteractiveEmpty() {
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(getActivity());
+            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    /***** 检查更新 *****/
+                    AppUpdateUtils.getInstance().getAppUpdate(getActivity(), true);
+                }
+
+                @Override
+                public void cancel() {
+                    alertDialogHelper.dismiss();
+                }
+            });
+            alertDialogHelper.setTitle("通知提示")
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getResources().getString(R.string.skip_empty_page_hint))
+                    .setSingleButton(true)
+                    .setConfirmText("更新");
+        }
+        AutoSize.autoConvertDensityOfGlobal(getActivity());
+        alertDialogHelper.show();
+    }
+
     private void transmitUid() {
-        webViewJs(String.format(getResources().getString(R.string.web_uid_method), uid));
+        webViewJs(String.format(getResources().getString(R.string.web_uid_method), userId));
     }
 
     @Override
@@ -685,13 +770,13 @@ public class AliBCFragment extends BaseFragment {
 
     public void skipAliBCWebView(final String url, final String thirdId) {
         if (!TextUtils.isEmpty(url) || !TextUtils.isEmpty(thirdId)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url, thirdId);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(AliBCFragment.this);
             }
         } else {
             showToast(getActivity(), "地址缺失");
