@@ -99,7 +99,7 @@ import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
  * created on 2017/3/16
  * class description:公用嵌入web
  */
-public class DoMoLifeCommunalActivity extends BaseActivity {
+public class DoMoLifeCommunalActivity extends BaseActivity{
     @BindView(R.id.web_communal)
     HtmlWebView web_communal;
     @BindView(R.id.tv_web_back)
@@ -758,6 +758,15 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
             });
             constantMethod.getPermissions(DoMoLifeCommunalActivity.this, Permission.Group.STORAGE);
+        }
+
+        /**
+         * v 3.1.8 后提供公用方法交互 避免版本控制
+         * @param resultJson json 数据
+         */
+        @JavascriptInterface
+        public void androidJsInteractive(String resultJson) {
+
         }
     }
 

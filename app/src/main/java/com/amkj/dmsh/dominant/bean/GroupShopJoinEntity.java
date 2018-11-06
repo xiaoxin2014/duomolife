@@ -80,6 +80,8 @@ public class GroupShopJoinEntity {
         private String currentTime;
         private int itemType;
         private int range;
+        private int gp_type;
+        private String gpCreateStatus;
 //        记录序号
         private int numOrder;
         private long second;
@@ -91,6 +93,22 @@ public class GroupShopJoinEntity {
 
         public void setSecond(long second) {
             this.second = second;
+        }
+
+        public int getGp_type() {
+            return gp_type;
+        }
+
+        public void setGp_type(int gp_type) {
+            this.gp_type = gp_type;
+        }
+
+        public String getGpCreateStatus() {
+            return gpCreateStatus;
+        }
+
+        public void setGpCreateStatus(String gpCreateStatus) {
+            this.gpCreateStatus = gpCreateStatus;
         }
 
         public int getNumOrder() {

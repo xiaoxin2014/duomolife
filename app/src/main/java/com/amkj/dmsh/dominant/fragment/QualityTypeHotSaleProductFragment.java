@@ -41,6 +41,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_THIRTY;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
 ;
 
@@ -148,9 +149,13 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
     private void getQualityTypePro() {
         String url = Url.BASE_URL + Url.QUALITY_HOT_SALE_LIST_NEW;
         Map<String, Object> params = new HashMap<>();
-        params.put("showCount", TOTAL_COUNT_THIRTY);
-        params.put("currentPage", 1);
         params.put("day", hotSaleDay);
+        if("1".equals(hotSaleDay) ){
+            params.put("showCount", TOTAL_COUNT_TWENTY);
+        }else{
+            params.put("showCount", TOTAL_COUNT_THIRTY);
+        }
+        params.put("currentPage", 1);
         if (userId > 0) {
             params.put("uid", userId);
         }

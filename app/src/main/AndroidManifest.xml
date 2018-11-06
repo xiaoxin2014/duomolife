@@ -77,7 +77,7 @@
         android:name=".base.TinkerBaseApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_domolife_festival"
+        android:icon="@mipmap/ic_domolife_logo"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"

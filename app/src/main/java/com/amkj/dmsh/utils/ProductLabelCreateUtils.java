@@ -197,7 +197,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_gp_join_avator, null, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_dm_gp_open_ava);
         TextView tv_dm_gp_name = (TextView) view.findViewById(R.id.tv_dm_gp_name);
-        GlideImageLoaderUtil.loadRoundImg(context, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 80));
+        GlideImageLoaderUtil.loadRoundImg(context, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 80),R.drawable.default_ava_img);
         String name = getStrings(memberListBean.getNickname());
         if (name.length() > 7) {
             name = name.substring(0, 7) + "...";

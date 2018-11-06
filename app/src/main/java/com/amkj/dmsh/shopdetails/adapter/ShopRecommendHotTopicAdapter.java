@@ -24,8 +24,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
-;
-
 
 /**
  * @author LGuiPeng

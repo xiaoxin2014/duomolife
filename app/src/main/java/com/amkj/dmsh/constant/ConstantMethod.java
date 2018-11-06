@@ -416,7 +416,7 @@ public class ConstantMethod {
                     req.miniprogramType = versionType;// 可选打开 开发版，体验版和正式版
                     api.sendReq(req);
                     isMiniRoutine = true;
-                } else {
+                } else if(isWebLinkUrl(link)){
                     String webUrl = "";
                     int lastWebUrlIndex = link.lastIndexOf("/");
                     int linkLength = link.length();
@@ -429,7 +429,11 @@ public class ConstantMethod {
                         }
                     }
                     Map<String, String> urlParams = getUrlParams(link);
-                    if (webUrlTransform != null && webUrlTransform.get(webUrl) != null
+//                    不跳转app
+                    if(urlParams.get("skipApp")!=null){
+                        intent.setClass(context, DoMoLifeCommunalActivity.class);
+                        intent.putExtra("loadUrl", link);
+                    }else if (webUrlTransform != null && webUrlTransform.get(webUrl) != null
                             && webUrlParameterTransform != null && webUrlParameterTransform.get(webUrl) != null) {
 //                        获取本地地址
                         String skipUrl = webUrlTransform.get(webUrl);
@@ -455,6 +459,9 @@ public class ConstantMethod {
                         intent.setClass(context, DoMoLifeCommunalActivity.class);
                         intent.putExtra("loadUrl", link);
                     }
+                }else{
+                    showToast(context,R.string.skip_empty_page_hint);
+                    return;
                 }
                 if (!isMiniRoutine) {
                     try {
@@ -465,7 +472,8 @@ public class ConstantMethod {
                             if (intent.resolveActivity(context.getPackageManager()) != null) {
                                 context.startActivity(intent);
                             } else {
-                                skipMainActivity(context);
+                                showToast(context,R.string.skip_empty_page_hint);
+                                return;
                             }
                             if (isCloseActivity) {
                                 ((Activity) context).finish();
@@ -473,12 +481,28 @@ public class ConstantMethod {
                             }
                         }
                     } catch (Exception e) {
-                        skipMainActivity(context);
+                        showToast(context,R.string.skip_empty_page_hint);
                         e.printStackTrace();
                     }
                 }
             }
         }
+    }
+    /**
+     * 是否网页地址
+     *
+     * @param androidLink
+     * @return
+     */
+    public static boolean isWebLinkUrl(String androidLink) {
+        if (TextUtils.isEmpty(androidLink)) {
+            return false;
+        }
+        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
+        while (matcher.find()) {
+            return true;
+        }
+        return false;
     }
 
     private static void skipAliBCWebView(final String url, Context context) {
@@ -1379,8 +1403,7 @@ public class ConstantMethod {
      * @param imgUrl                图片地址
      */
     private static void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl) {
-        CommunalDetailObjectBean communalDetailObjectBean;
-        communalDetailObjectBean = new CommunalDetailObjectBean();
+        CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
         String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
         communalDetailObjectBean.setContent(imgUrlContent);
         communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
