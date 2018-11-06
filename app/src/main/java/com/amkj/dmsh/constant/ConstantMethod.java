@@ -113,6 +113,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
@@ -416,7 +417,7 @@ public class ConstantMethod {
                     req.miniprogramType = versionType;// 可选打开 开发版，体验版和正式版
                     api.sendReq(req);
                     isMiniRoutine = true;
-                } else if(isWebLinkUrl(link)){
+                } else if (isWebLinkUrl(link)) {
                     String webUrl = "";
                     int lastWebUrlIndex = link.lastIndexOf("/");
                     int linkLength = link.length();
@@ -430,10 +431,10 @@ public class ConstantMethod {
                     }
                     Map<String, String> urlParams = getUrlParams(link);
 //                    不跳转app
-                    if(urlParams.get("skipApp")!=null){
+                    if (urlParams.get("skipApp") != null) {
                         intent.setClass(context, DoMoLifeCommunalActivity.class);
                         intent.putExtra("loadUrl", link);
-                    }else if (webUrlTransform != null && webUrlTransform.get(webUrl) != null
+                    } else if (webUrlTransform != null && webUrlTransform.get(webUrl) != null
                             && webUrlParameterTransform != null && webUrlParameterTransform.get(webUrl) != null) {
 //                        获取本地地址
                         String skipUrl = webUrlTransform.get(webUrl);
@@ -459,8 +460,8 @@ public class ConstantMethod {
                         intent.setClass(context, DoMoLifeCommunalActivity.class);
                         intent.putExtra("loadUrl", link);
                     }
-                }else{
-                    showToast(context,R.string.skip_empty_page_hint);
+                } else {
+                    skipNonsupportEmpty(context);
                     return;
                 }
                 if (!isMiniRoutine) {
@@ -472,7 +473,7 @@ public class ConstantMethod {
                             if (intent.resolveActivity(context.getPackageManager()) != null) {
                                 context.startActivity(intent);
                             } else {
-                                showToast(context,R.string.skip_empty_page_hint);
+                                skipNonsupportEmpty(context);
                                 return;
                             }
                             if (isCloseActivity) {
@@ -481,13 +482,44 @@ public class ConstantMethod {
                             }
                         }
                     } catch (Exception e) {
-                        showToast(context,R.string.skip_empty_page_hint);
+                        showToast(context, R.string.skip_empty_page_hint);
                         e.printStackTrace();
                     }
                 }
             }
         }
     }
+
+    /**
+     * 方法不支持，弹窗更新版本
+     */
+    private static void skipNonsupportEmpty(Context context) {
+        if (isContextExisted(context)) {
+            AlertDialogHelper alertDialogHelper = new AlertDialogHelper(context);
+            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    /***** 检查更新 *****/
+                    AppUpdateUtils.getInstance().getAppUpdate(context, true);
+                }
+
+                @Override
+                public void cancel() {
+                    alertDialogHelper.dismiss();
+                }
+            });
+            alertDialogHelper.setTitle("通知提示")
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(context.getResources().getString(R.string.skip_empty_page_hint))
+                    .setSingleButton(true)
+                    .setConfirmText("更新");
+            if(context instanceof Activity){
+                AutoSize.autoConvertDensityOfGlobal((Activity) context);
+            }
+            alertDialogHelper.show();
+        }
+    }
+
     /**
      * 是否网页地址
      *

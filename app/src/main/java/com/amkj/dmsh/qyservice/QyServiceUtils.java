@@ -52,6 +52,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -333,8 +334,10 @@ public class QyServiceUtils {
         private ProductIndentAdapter productIndentAdapter;
         private final AlertDialog imageAlertDialog;
         private View indentDialogView;
+        private Context context;
 
         public ProductIndentHelper(Context context) {
+            this.context = context;
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.service_dialog_theme);
             indentDialogView = LayoutInflater.from(context).inflate(R.layout.alert_qy_indent, null, false);
             RecyclerView communal_recycler = indentDialogView.findViewById(R.id.communal_recycler);
@@ -400,13 +403,15 @@ public class QyServiceUtils {
         }
 
         public void show() {
-            if (!imageAlertDialog.isShowing()) {
+            if (imageAlertDialog!=null&&!imageAlertDialog.isShowing()) {
                 imageAlertDialog.show();
             }
         }
 
         public void dismiss() {
-            imageAlertDialog.dismiss();
+            if(imageAlertDialog!=null&& isContextExisted(context)){
+                imageAlertDialog.dismiss();
+            }
         }
     }
 

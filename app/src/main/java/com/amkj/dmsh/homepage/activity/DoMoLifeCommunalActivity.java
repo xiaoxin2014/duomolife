@@ -19,6 +19,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,18 +49,22 @@ import com.alibaba.baichuan.trade.biz.AlibcConstants;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyProgressCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
@@ -81,10 +86,13 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.AutoSize;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
+import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
@@ -129,6 +137,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
     private int notifyId = 0xfff;
     private NotificationCompat.Builder mBuilder;
     private String jsIdentifying;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -174,6 +183,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
         web_communal.setLayerType(View.LAYER_TYPE_HARDWARE,null);//开启硬件加速
 //        js交互
         web_communal.addJavascriptInterface(new JsData(DoMoLifeCommunalActivity.this), "JsToAndroid");
+        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+        jsonObject.put("type","hao");
+        jsonObject.put("otherData",new com.alibaba.fastjson.JSONObject());
+        new JsData(DoMoLifeCommunalActivity.this).androidJsInteractive(jsonObject.toJSONString());
         web_communal.loadUrl(loadUrl);
         //设置Web视图
         web_communal.setWebViewClient(new WebViewClient() {
@@ -288,7 +301,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
     private void downLoadFile(final String downUrl, final String invoiceSavePath, final int notifyId) {
         if (constantMethod.fileIsExist(invoiceSavePath)) {
             if (downUrl.contains(".apk")) {
-                openFile(new File(invoiceSavePath), DoMoLifeCommunalActivity.this);
+                installApps(DoMoLifeCommunalActivity.this,new File(invoiceSavePath));
             }
         } else {
             XUtil.DownLoadFile(downUrl, invoiceSavePath, new MyProgressCallBack<File>() {
@@ -315,7 +328,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
                     mNotifyManager.notify(notifyId, notification);
                     showToast(DoMoLifeCommunalActivity.this, "下载完成：" + result.getAbsolutePath());
                     if (downUrl.contains(".apk")) {
-                        openFile(result, DoMoLifeCommunalActivity.this);
+                        installApps(DoMoLifeCommunalActivity.this,result);
                     }
                 }
 
@@ -336,16 +349,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
                 }
             });
         }
-    }
-
-    //打开APK程序代码
-    public void openFile(File file, Context context) {
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file),
-                "application/vnd.android.package-archive");
-        context.startActivity(intent);
     }
 
     private String getRandomString(int length) { //length表示生成字符串的长度
@@ -456,10 +459,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
     @OnClick(R.id.tv_web_shared)
     void shareData(View view) {
         webViewJs(getResources().getString(R.string.web_share_getData_method));
-    }
-
-    public Map<String, String> getUrlParams(String showTitle) {
-        return getUrlParams(showTitle.substring(showTitle.indexOf(","), showTitle.length()));
     }
 
     //    自定义系统原生弹框
@@ -766,9 +765,63 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
          */
         @JavascriptInterface
         public void androidJsInteractive(String resultJson) {
-
+            try {
+                if(TextUtils.isEmpty(resultJson)){
+                    jsInteractiveException();
+                }
+                JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
+                if(jsInteractiveBean!=null&&!TextUtils.isEmpty(jsInteractiveBean.getType())){
+                    switch (jsInteractiveBean.getType()){
+                        default:
+                            jsInteractiveEmpty();
+                            break;
+                    }
+                }else{
+                    jsInteractiveException();
+                }
+            } catch (Exception e) {
+                jsInteractiveException();
+                e.printStackTrace();
+            }
         }
     }
+
+    /**
+     * js交互数据异常
+     */
+    private void jsInteractiveException() {
+        showToast(DoMoLifeCommunalActivity.this,"数据异常呦，攻城狮正在加急处理呢~");
+        return;
+    }
+
+    /**
+     * 方法不支持，弹窗更新版本
+     */
+    private void jsInteractiveEmpty() {
+        if(alertDialogHelper == null){
+            alertDialogHelper = new AlertDialogHelper(DoMoLifeCommunalActivity.this);
+            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    /***** 检查更新 *****/
+                    AppUpdateUtils.getInstance().getAppUpdate(DoMoLifeCommunalActivity.this,true);
+                }
+
+                @Override
+                public void cancel() {
+                    alertDialogHelper.dismiss();
+                }
+            });
+            alertDialogHelper.setTitle("通知提示")
+                    .setTitleGravity(Gravity.CENTER)
+                    .setMsg(getResources().getString(R.string.skip_empty_page_hint))
+                    .setSingleButton(true)
+                    .setConfirmText("更新");
+        }
+        AutoSize.autoConvertDensityOfGlobal(this);
+        alertDialogHelper.show();
+    }
+
 
     public void skipAliBCWebView(final String url, final String thirdId) {
         if (!TextUtils.isEmpty(url) || !TextUtils.isEmpty(thirdId)) {
@@ -880,6 +933,12 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
+        if(web_communal!=null){
+            web_communal.removeAllViews();
+        }
+        if(alertDialogHelper!=null){
+            alertDialogHelper.dismiss();
+        }
         super.onDestroy();
     }
 
@@ -912,4 +971,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity{
             return false;
         }
     });
+
+
 }

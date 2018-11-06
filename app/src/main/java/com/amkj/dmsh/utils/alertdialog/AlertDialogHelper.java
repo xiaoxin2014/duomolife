@@ -228,7 +228,8 @@ public class AlertDialogHelper implements View.OnClickListener {
     }
 
     public void dismiss() {
-        if (defaultAlertDialog != null) {
+        if (defaultAlertDialog != null
+                && isContextExisted(context)) {
             defaultAlertDialog.dismiss();
         }
     }

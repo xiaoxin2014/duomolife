@@ -85,6 +85,8 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        ruleAlertView.dismiss();
+        if(ruleAlertView!=null&& isContextExisted(context)){
+            ruleAlertView.dismiss();
+        }
     }
 }

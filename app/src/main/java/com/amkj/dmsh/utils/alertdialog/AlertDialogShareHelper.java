@@ -123,7 +123,7 @@ public class AlertDialogShareHelper {
     }
 
     public void dismiss() {
-        if (shareAlertDialog != null) {
+        if (shareAlertDialog != null&& isContextExisted(context)) {
             shareAlertDialog.dismiss();
         }
         if (loadView != null) {

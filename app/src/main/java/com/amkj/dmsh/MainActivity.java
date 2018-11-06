@@ -143,7 +143,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     private FragmentTransaction transaction;
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
-    private boolean isFirstTime;
     private AlertView exitApp;
     private AlertView selectServer;
     private String[] SERVER = {"正式库", "测试库", "泽钦", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2"};
@@ -186,7 +185,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         fragmentManager = getSupportFragmentManager();
         Intent intent = getIntent();
         String type = intent.getStringExtra("type");
-        isFirstTime = intent.getBooleanExtra("isFirstTime", true);
+        boolean isFirstTime = intent.getBooleanExtra("isFirstTime", true);
         sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
         setNavData();
         if (!TextUtils.isEmpty(type)) {

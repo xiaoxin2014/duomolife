@@ -90,7 +90,7 @@ public class AlertDialogImage {
     }
 
     public void dismiss() {
-        if (imageAlertDialog != null && imageAlertDialog.isShowing()) {
+        if (imageAlertDialog != null && isContextExisted(context)) {
             imageAlertDialog.dismiss();
         }
     }
