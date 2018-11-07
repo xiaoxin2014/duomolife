@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 
 /**
@@ -59,14 +61,23 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
             constantMethod = new ConstantMethod();
         }
     }
+
     @Override
     public int getItemCount() {
+        boolean hasUnfinished = false;
         if (qualityGroupBeanList != null && qualityGroupBeanList.size() > 0) {
-            constantMethod.createSchedule();
             for (int i = 0; i < qualityGroupBeanList.size(); i++) {
                 QualityGroupBean qualityGroupBean = qualityGroupBeanList.get(i);
-                beanMap.put(i, qualityGroupBean);
+                if (!isEndOrStartTime(qualityGroupBean.getCurrentTime(), qualityGroupBean.getGpEndTime())) {
+                    beanMap.put(i, qualityGroupBean);
+                    if (!hasUnfinished) {
+                        hasUnfinished = true;
+                    }
+                }
             }
+        }
+        if (hasUnfinished) {
+            constantMethod.createSchedule();
         }
         return super.getItemCount();
     }
@@ -84,7 +95,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
         for (int i = 0; i < sparseArray.size(); i++) {
             CountdownView countdownView = (CountdownView) sparseArray.get(sparseArray.keyAt(i));
             QualityGroupBean groupShopJoinBean = beanMap.get(sparseArray.keyAt(i));
-           setCountTime(groupShopJoinBean,countdownView);
+            setCountTime(groupShopJoinBean, countdownView);
         }
     }
 
@@ -95,7 +106,8 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
                 @Override
                 public void refreshTime() {
-                    if (qualityGroupBeanList != null && qualityGroupBeanList.size() > 0) {
+                    if (qualityGroupBeanList != null
+                            && qualityGroupBeanList.size() > 0) {
 //                刷新数据
                         refreshData();
 //                刷新倒计时
@@ -118,7 +130,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
         if (isTimeStart(qualityGroupBean)) {
             try {
                 //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date dateEnd = formatter.parse(qualityGroupBean.getGpEndTime());
                 Date dateCurrent;
                 if (!TextUtils.isEmpty(qualityGroupBean.getCurrentTime())) {
@@ -126,7 +138,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                 } else {
                     dateCurrent = new Date();
                 }
-                cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime()-qualityGroupBean.getAddSecond()*1000);
+                cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime() - qualityGroupBean.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -141,14 +153,14 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                 } else {
                     dateCurrent = new Date();
                 }
-                cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime()-qualityGroupBean.getAddSecond()*1000);
+                cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime() - qualityGroupBean.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        if(!isEndOrStartTimeAddSeconds(qualityGroupBean.getCurrentTime()
-                ,qualityGroupBean.getGpEndTime()
-                ,qualityGroupBean.getAddSecond())){
+        if (!isEndOrStartTimeAddSeconds(qualityGroupBean.getCurrentTime()
+                , qualityGroupBean.getGpEndTime()
+                , qualityGroupBean.getAddSecond())) {
             cv_countdownTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
                 @Override
                 public void onEnd(CountdownView cv) {
@@ -156,7 +168,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                     EventBus.getDefault().post(new EventMessage("refreshGroupShop", cv.getTag()));
                 }
             });
-        }else{
+        } else {
             cv_countdownTime.setOnCountdownEndListener(null);
         }
     }
@@ -164,7 +176,7 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
     private boolean isTimeStart(QualityGroupBean qualityGroupBean) {
         try {
             //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             Date dateStart = formatter.parse(qualityGroupBean.getGpStartTime());
             Date dateCurrent;
             if (!TextUtils.isEmpty(qualityGroupBean.getCurrentTime())) {
@@ -186,27 +198,35 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
 //        封面图
         TextView tv_gp_sp_count = helper.getView(R.id.tv_gp_sp_count);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_communal_img_bg), qualityGroupBean.getCoverImage());
-        helper.setText(R.id.tv_communal_time_status, !isTimeStart(qualityGroupBean) ? "距开始" : "距结束")
-                .setText(R.id.tv_gp_sp_name, getStrings(qualityGroupBean.getName()))
+        helper.setText(R.id.tv_gp_sp_name, getStrings(qualityGroupBean.getName()))
                 .setText(R.id.tv_gp_sp_per_count, qualityGroupBean.getGpType())//拼团人数
                 .setText(R.id.tv_gp_sp_per_price, "￥" + qualityGroupBean.getGpPrice())
                 .setText(R.id.tv_gp_sp_nor_price, "单买价￥" + qualityGroupBean.getPrice())
                 .setText(R.id.tv_gp_sp_open_count, "" + qualityGroupBean.getGpCount())
                 .setText(R.id.tv_gp_sp_inventory, qualityGroupBean.getGpProductQuantity() + "")
                 .setText(R.id.tv_gp_sp_count, qualityGroupBean.getGpProductQuantity() > 0 ? "去开团" : "已抢光")
-                .setGone(R.id.tv_ql_gp_sp_new, qualityGroupBean.getRange() == 1 );
+                .setGone(R.id.tv_ql_gp_sp_new, qualityGroupBean.getRange() == 1);
         tv_gp_sp_count.setSelected(qualityGroupBean.getGpProductQuantity() > 0);
         CountdownView ct_communal_time_details = helper.getView(R.id.ct_communal_time_details);
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,22));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_communal_time_details.dynamicShow(dynamic.build());
-        setCountTime(qualityGroupBean,ct_communal_time_details);
-        setCountDownView(helper.getAdapterPosition()-getHeaderLayoutCount(),ct_communal_time_details);
+        String timeStatus;
+        if (!isEndOrStartTime(qualityGroupBean.getCurrentTime(), qualityGroupBean.getGpEndTime())) {
+            timeStatus = !isTimeStart(qualityGroupBean) ? "距开始" : "距结束";
+            ct_communal_time_details.setVisibility(View.VISIBLE);
+            setCountTime(qualityGroupBean, ct_communal_time_details);
+            setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), ct_communal_time_details);
+        }else{
+            timeStatus = "已结束";
+            ct_communal_time_details.setVisibility(View.GONE);
+        }
+        helper.setText(R.id.tv_communal_time_status, timeStatus);
         helper.itemView.setTag(qualityGroupBean);
     }
 
     private void setCountDownView(int i, CountdownView countdownView) {
-        sparseArray.put(i,countdownView);
+        sparseArray.put(i, countdownView);
     }
 }
