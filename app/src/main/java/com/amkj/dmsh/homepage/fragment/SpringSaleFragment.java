@@ -259,7 +259,6 @@ public class SpringSaleFragment extends BaseFragment {
         } else {
             NetLoadUtils.getQyInstance().showLoadSirEmpty(loadService);
             saleTimeTotalList.clear();
-            removeExistUtils.clearData();
             getTopRecommendData();
         }
     }
@@ -416,7 +415,7 @@ public class SpringSaleFragment extends BaseFragment {
                                     BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
                                     baseTimeProductTopicBean.setItemType(TYPE_3);
                                     saleTimeTotalList.add(baseTimeProductTopicBean);
-                                    saleTimeTotalList.addAll(removeExistUtils.removeExistList(timeForeShowEntity.getTimeForeShowList()));
+                                    saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
                                 }
                                 springSaleRecyclerAdapter.notifyDataSetChanged();
                             }
