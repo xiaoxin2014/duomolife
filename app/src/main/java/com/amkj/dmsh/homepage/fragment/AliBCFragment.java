@@ -282,6 +282,7 @@ public class AliBCFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
+                transmitUid();
                 return;
             }
         }

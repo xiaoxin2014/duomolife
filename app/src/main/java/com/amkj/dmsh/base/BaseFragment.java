@@ -180,6 +180,7 @@ public abstract class BaseFragment extends Fragment {
         EventBus.getDefault().register(this);
         isInitView = true;
         isCanLoadData();
+        AutoSize.autoConvertDensityOfGlobal(getActivity());
         return loadService != null ? loadService.getLoadLayout() : view;
     }
 

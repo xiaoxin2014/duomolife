@@ -71,7 +71,6 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     TextView tv_web_shared;
     private int uid;
     private String turnId;
-    private String refreshStatus;
 
     @Override
     protected int getContentView() {
@@ -442,13 +441,6 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                 handler.sendMessage(message);
             } else {
                 Toast.makeText(context, "数据为空", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @JavascriptInterface
-        public void setRefreshStatus(String refreshStatus) {
-            if(!TextUtils.isEmpty(refreshStatus)){
-                DoMoLifeLotteryActivity.this.refreshStatus = refreshStatus;
             }
         }
 

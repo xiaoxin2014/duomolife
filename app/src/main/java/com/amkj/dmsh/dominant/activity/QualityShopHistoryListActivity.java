@@ -384,8 +384,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                         if (qualityBuyListEntity != null) {
                             if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
-                            } else {
-                                showToast(QualityShopHistoryListActivity.this, R.string.unConnectedNetwork);
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }

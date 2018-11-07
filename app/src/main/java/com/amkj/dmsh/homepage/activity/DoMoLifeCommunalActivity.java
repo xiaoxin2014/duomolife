@@ -377,8 +377,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
-                finish();
-            } else {
+                transmitUid();
                 return;
             }
         }
