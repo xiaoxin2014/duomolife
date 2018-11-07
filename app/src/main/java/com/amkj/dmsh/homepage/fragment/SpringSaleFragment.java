@@ -166,17 +166,20 @@ public class SpringSaleFragment extends BaseFragment {
         });
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             scrollY = 0;
-            loadData();
 //                刷新时间轴
             EventBus.getDefault().post(new EventMessage(TIME_REFRESH, "timeShaft"));
         });
-        springSaleRecyclerAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getProductData();
-            }
-        }, communal_recycler);
+        if (showTimeList != null && showTimeList.size() > 0) {
+            springSaleRecyclerAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+                @Override
+                public void onLoadMoreRequested() {
+                    page++;
+                    getProductData();
+                }
+            }, communal_recycler);
+        }else{
+            springSaleRecyclerAdapter.setEnableLoadMore(false);
+        }
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
                 , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
