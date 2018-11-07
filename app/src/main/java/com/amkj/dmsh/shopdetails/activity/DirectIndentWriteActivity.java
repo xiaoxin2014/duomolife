@@ -338,30 +338,30 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     void goExchange(View view) {
         if (type.equals(INDENT_DETAILS_TYPE)) {
             tv_indent_write_commit.setEnabled(false);
-            if (pullFootView.rb_checked_weChat_pay.isChecked() && !pullFootView.rb_checked_aliPay.isChecked()) {
-                payWay = PAY_WX_PAY;
-//                调起微信支付
-                paymentIndent();
-            } else if (pullFootView.rb_checked_aliPay.isChecked() && !pullFootView.rb_checked_weChat_pay.isChecked()) {
+            if (pullFootView.rb_checked_aliPay.isChecked()) {
 //                调起支付宝支付
                 payWay = PAY_ALI_PAY;
+                paymentIndent();
+            } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
+                payWay = PAY_WX_PAY;
+//                调起微信支付
                 paymentIndent();
             }
         } else if (type.equals(INDENT_W_TYPE)) {
             if (addressId != 0 && productInfoList.size() > 0) {
                 tv_indent_write_commit.setEnabled(false);
-                if (pullFootView.rb_checked_weChat_pay.isChecked() && !pullFootView.rb_checked_aliPay.isChecked()) {
-                    //创建订单
-                    payWay = PAY_WX_PAY;
-//                调起微信支付
+                if (pullFootView.rb_checked_aliPay.isChecked()) {
+//                调起支付宝支付
+                    payWay = PAY_ALI_PAY;
                     if (!TextUtils.isEmpty(orderCreateNo)) {
                         paymentIndent();
                     } else {
                         setCreateIndent();
                     }
-                } else if (pullFootView.rb_checked_aliPay.isChecked() && !pullFootView.rb_checked_weChat_pay.isChecked()) {
-//                调起支付宝支付
-                    payWay = PAY_ALI_PAY;
+                } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
+                    //创建订单
+                    payWay = PAY_WX_PAY;
+//                调起微信支付
                     if (!TextUtils.isEmpty(orderCreateNo)) {
                         paymentIndent();
                     } else {
@@ -377,18 +377,18 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             if (userId > 0) {
                 if (addressId != 0) {
                     tv_indent_write_commit.setEnabled(false);
-                    if (pullFootView.rb_checked_weChat_pay.isChecked() && !pullFootView.rb_checked_aliPay.isChecked()) {
-                        //创建订单
-                        payWay = PAY_WX_PAY;
-//                调起微信支付
+                    if (pullFootView.rb_checked_aliPay.isChecked()) {
+//                调起支付宝支付
+                        payWay = PAY_ALI_PAY;
                         if (!TextUtils.isEmpty(orderCreateNo)) {
                             paymentIndent();
                         } else {
                             createGroupIndent(payWay, groupShopDetailsBean);
                         }
-                    } else if (pullFootView.rb_checked_aliPay.isChecked() && !pullFootView.rb_checked_weChat_pay.isChecked()) {
-//                调起支付宝支付
-                        payWay = PAY_ALI_PAY;
+                    } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
+                        //创建订单
+                        payWay = PAY_WX_PAY;
+//                调起微信支付
                         if (!TextUtils.isEmpty(orderCreateNo)) {
                             paymentIndent();
                         } else {
@@ -1538,14 +1538,14 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         RectAddAndSubViewDirect rect_indent_number;
 
         //支付宝方式
-        @OnClick(R.id.ll_aliPay)
+        @OnClick(value = {R.id.ll_aliPay, R.id.rb_checked_alipay})
         void aliPay(View view) {
             rb_checked_aliPay.setChecked(true);
             rb_checked_weChat_pay.setChecked(false);
         }
 
         //微信支付方式
-        @OnClick(R.id.ll_Layout_weChat)
+        @OnClick(value = {R.id.ll_Layout_weChat, R.id.rb_checked_wechat_pay})
         void weChat(View view) {
             rb_checked_aliPay.setChecked(false);
             rb_checked_weChat_pay.setChecked(true);
