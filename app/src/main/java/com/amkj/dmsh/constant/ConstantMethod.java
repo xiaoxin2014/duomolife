@@ -2713,7 +2713,11 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
-        showToast(context, context.getResources().getString(resId));
+        if(context.getResources()==null){
+            showToast(context, "数据异常，请稍后再试");
+        }else{
+            showToast(context, context.getResources().getString(resId));
+        }
     }
 
     /**
