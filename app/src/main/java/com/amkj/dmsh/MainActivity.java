@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.MainIconBean;
@@ -60,7 +62,6 @@ import com.amkj.dmsh.mine.fragment.MineDataFragment;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
@@ -74,6 +75,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -136,14 +138,13 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
  * @author Liuguipeng
  * @date 2017/10/31
  */
-public class MainActivity extends BaseFragmentActivity implements OnAlertItemClickListener, View.OnClickListener {
+public class MainActivity extends BaseFragmentActivity implements View.OnClickListener {
     @BindView(R.id.rp_bottom_main)
     RadioGroup rp_bottom_main;
     private FragmentManager fragmentManager;
     private FragmentTransaction transaction;
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
-    private AlertView exitApp;
     private AlertView selectServer;
     private String[] SERVER = {"正式库", "测试库", "泽钦", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2"};
     private AlertView mAlertViewExt;
@@ -162,6 +163,7 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     private ConstantMethod constantMethod;
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
@@ -1236,16 +1238,6 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
         }
     }
 
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == exitApp && position != AlertView.CANCELPOSITION) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
-        }
-    }
-
     private MessageReceiver mMessageReceiver;
     public static final String MESSAGE_RECEIVED_ACTION = "JPUSH_MESSAGE_RECEIVED_ACTION";
 
@@ -1327,19 +1319,24 @@ public class MainActivity extends BaseFragmentActivity implements OnAlertItemCli
     }
 
     private void goBack() {
-        if (exitApp == null) {
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("确定");
-            alertData.setFirstDet(true);
-            alertData.setMsg("确定要退出当前程序");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            exitApp = new AlertView(alertSettingBean, this, this);
-            exitApp.setCancelable(true);
+        if(alertDialogHelper == null){
+            alertDialogHelper = new AlertDialogHelper(MainActivity.this);
+            alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("确定要退出当前程序").setCancelText("取消").setConfirmText("确定")
+                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                    applicationLike.exitApp();
+                    System.exit(0);
+                }
+
+                @Override
+                public void cancel() {}
+            });
         }
-        exitApp.show();
+        alertDialogHelper.show();
     }
 
     @Override

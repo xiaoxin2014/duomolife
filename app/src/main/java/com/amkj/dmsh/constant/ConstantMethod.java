@@ -1019,10 +1019,10 @@ public class ConstantMethod {
                             alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                                 @Override
                                 public void imageClick() {
+                                    alertDialogAdImage.dismiss();
                                     Intent intent = new Intent(context, DoMoLifeLotteryActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     context.startActivity(intent);
-                                    alertDialogAdImage.dismiss();
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);
@@ -2109,10 +2109,9 @@ public class ConstantMethod {
         if (appFile != null && appFile.exists()) {
             Intent intent = new Intent();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            } else {
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(getFileUri(context, appFile),
                     "application/vnd.android.package-archive");

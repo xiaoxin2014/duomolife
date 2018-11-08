@@ -388,7 +388,8 @@ class BaseCountdown {
     protected void initTimeTextBaseInfo() {
         // initialize time text width and height
         Rect rect = new Rect();
-        mTimeTextPaint.getTextBounds("00", 0, 2, rect);
+        String baseText = "00";
+        mTimeTextPaint.getTextBounds(baseText, 0, baseText.length(), rect);
         mTimeTextWidth = rect.width();
         mTimeTextHeight = rect.height();
         mTimeTextBottom = rect.bottom;

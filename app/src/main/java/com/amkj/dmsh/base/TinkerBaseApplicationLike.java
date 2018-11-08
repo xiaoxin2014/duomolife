@@ -1,6 +1,7 @@
 package com.amkj.dmsh.base;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -63,6 +65,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -112,6 +115,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public static Map<String, Map<String, String>> webUrlParameterTransform;
     //
     public static Map<String, Map<String, String>> totalActionMap;
+    // 此处采用 LinkedList作为容器，增删速度快
+    public static LinkedList<Activity> activityLinkedList;
     //    全局上下文
     public static Context mAppContext;
 
@@ -156,6 +161,44 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
         mAppContext = getApplication().getApplicationContext();
         setTotalChanel();
+        activityLinkedList = new LinkedList<>();
+        getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                activityLinkedList.add(activity);
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                activityLinkedList.remove(activity);
+            }
+        });
+
         if (isDebugTag) {
             // 补丁回调接口
             Beta.betaPatchListener = new BetaPatchListener() {
@@ -201,69 +244,66 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             // 设置开发设备，默认为false，上传补丁如果下发范围指定为“开发设备”，需要调用此接口来标识开发设备
             Bugly.setIsDevelopmentDevice(mAppContext, true);
         }
-        SharedPreferences sp = mAppContext.getSharedPreferences("delOldVersion", MODE_PRIVATE);
-        boolean isDelOldVersionCache = sp.getBoolean("delOldVersionCache", true);
-        if (isDelOldVersionCache) {
-            FileCacheUtils.cleanApplicationData(mAppContext);
-            SharedPreferences.Editor edit = sp.edit();
-            edit.putBoolean("delOldVersionCache", false);
-            edit.apply();
-        }
         super.onCreate();
 //        initBaiCHotFix();
-        //        阿里百川初始化
-        if (isDebugTag) {
-            SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
-            int selectServer = sharedPreferences.getInt("selectServer", 0);
-            new Url(mAppContext, selectServer);
-        }
 
         if (isAppMainProcess()) {
             //        七鱼客服初始化
             initQYService();
             //      友盟初始化
             youMengInit();
-            initNewAliBaiC();
-            try {
-                TuSdk.enableDebugLog(isDebugTag);
-                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        createExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                initTotalAction();
-                //        oss初始化
-                initOSS();
-            }
-        });
-
-        // 初始化xUtils
-        x.Ext.init(getApplication());
-        //shareSDK
-        MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
+            // 初始化xUtils
+            x.Ext.init(getApplication());
 
 //        腾讯移动分析初始化
-        // 第三个参数必须为：com.tencent.stat.common.StatConstants.VERSION
-        try {
-            StatService.startStatService(mAppContext, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
-        } catch (MtaSDkException e) {
-            e.printStackTrace();
-        }
+            // 第三个参数必须为：com.tencent.stat.common.StatConstants.VERSION
+            try {
+                StatService.startStatService(mAppContext, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
+            } catch (MtaSDkException e) {
+                e.printStackTrace();
+            }
 //      jPush 初始化
-        JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
-        JPushInterface.init(mAppContext);
-//      腾讯升级策略
-// 如果通过“AndroidManifest.xml”来配置APP信息，初始化方法如下
-// CrashReport.initCrashReport(context, strategy);
-        getScreenInfo();
-//        LinkedMe 深度链接
-        initLinkMe();
-        initWebUrlTransformLocation();
-        initLoadSir();
-        initAutoSizeScreen();
+            JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
+            JPushInterface.init(mAppContext);
+            //        LinkedMe 深度链接
+            initLinkMe();
+            initAutoSizeScreen();
+            createExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDebugTag) {
+                        SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
+                        int selectServer = sharedPreferences.getInt("selectServer", 0);
+                        new Url(mAppContext, selectServer);
+                    }
+                    SharedPreferences sp = mAppContext.getSharedPreferences("delOldVersion", MODE_PRIVATE);
+                    boolean isDelOldVersionCache = sp.getBoolean("delOldVersionCache", true);
+                    if (isDelOldVersionCache) {
+                        FileCacheUtils.cleanApplicationData(mAppContext);
+                        SharedPreferences.Editor edit = sp.edit();
+                        edit.putBoolean("delOldVersionCache", false);
+                        edit.apply();
+                    }
+                    initTotalAction();
+                    //        oss初始化
+                    initOSS();
+                    initNewAliBaiC();
+                    try {
+                        TuSdk.enableDebugLog(isDebugTag);
+                        TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //shareSDK
+                    MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
+                    //        阿里百川初始化
+                    getScreenInfo();
+                    initWebUrlTransformLocation();
+                    initLoadSir();
+                }
+            });
+        }
+
     }
 
     /**
@@ -646,5 +686,15 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         }catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    public  void exitApp() {
+        // 逐个退出Activity
+        for (Activity activity : activityLinkedList) {
+            activity.finish();
+        }
+
+        //  结束进程
+        // System.exit(0);
     }
 }

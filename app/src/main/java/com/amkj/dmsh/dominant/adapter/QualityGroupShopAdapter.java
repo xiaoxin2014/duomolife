@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
@@ -138,6 +139,8 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                 } else {
                     dateCurrent = new Date();
                 }
+                long milliSecond = dateEnd.getTime() - dateCurrent.getTime() - qualityGroupBean.getAddSecond() * 1000;
+                setLogPrint(milliSecond);
                 cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime() - qualityGroupBean.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -153,6 +156,8 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
                 } else {
                     dateCurrent = new Date();
                 }
+                long milliSecond = dateStart.getTime() - dateCurrent.getTime() - qualityGroupBean.getAddSecond() * 1000;
+                setLogPrint(milliSecond);
                 cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime() - qualityGroupBean.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -171,6 +176,15 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
         } else {
             cv_countdownTime.setOnCountdownEndListener(null);
         }
+    }
+
+    private void setLogPrint(long milliSecond) {
+        int day = (int) (milliSecond / (1000 * 60 * 60 * 24));
+        int hour = (int) ((milliSecond % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+        int minute = (int) ((milliSecond % (1000 * 60 * 60)) / (1000 * 60));
+        int second = (int) ((milliSecond % (1000 * 60)) / 1000);
+        Log.d(TAG, "setCountTime: " + day + "\t" + hour+ "\t" + minute+ "\t" + second );
     }
 
     private boolean isTimeStart(QualityGroupBean qualityGroupBean) {
@@ -216,9 +230,10 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
         if (!isEndOrStartTime(qualityGroupBean.getCurrentTime(), qualityGroupBean.getGpEndTime())) {
             timeStatus = !isTimeStart(qualityGroupBean) ? "距开始" : "距结束";
             ct_communal_time_details.setVisibility(View.VISIBLE);
-            setCountTime(qualityGroupBean, ct_communal_time_details);
+            Log.d(TAG, "setCountTime: " + "adapter更新" + getStrings(qualityGroupBean.getName()));
             setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), ct_communal_time_details);
-        }else{
+            setCountTime(qualityGroupBean, ct_communal_time_details);
+        } else {
             timeStatus = "已结束";
             ct_communal_time_details.setVisibility(View.GONE);
         }

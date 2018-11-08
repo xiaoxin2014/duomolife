@@ -289,9 +289,10 @@ public class CountdownView extends View {
 
         if (mCountdown.handlerAutoShowTime() || mCountdown.handlerDayLargeNinetyNine()) {
             reLayout();
-        } else {
+        } /*else {
             invalidate();
-        }
+        }*/
+        invalidate();
     }
 
     private void reSetTime(long ms) {

@@ -176,7 +176,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         webSettings.setUserAgentString(web_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
-        web_communal.setLayerType(View.LAYER_TYPE_HARDWARE, null);//开启硬件加速
 //        js交互
         web_communal.addJavascriptInterface(new JsData(DoMoLifeCommunalActivity.this), "JsToAndroid");
         web_communal.loadUrl(loadUrl);
@@ -619,7 +618,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         //        获取当前用户uid
         @JavascriptInterface
         public void getUserIdFromAndroid() {
-            getLoginStatus(DoMoLifeCommunalActivity.this);
+            getUserId();
         }
 
         //      跳转阿里百川
@@ -790,20 +789,27 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             try {
                 int mustLoginCode = (int) otherData.get("mustLogin");
                 if (mustLoginCode == 1) {
-                    getLoginStatus(DoMoLifeCommunalActivity.this);
+                    getUserId();
                 } else {
                     transmitUid();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                getLoginStatus(DoMoLifeCommunalActivity.this);
+                getUserId();
             }
         } else {
-            if (userId > 0) {
-                transmitUid();
-            } else {
-                getLoginStatus(DoMoLifeCommunalActivity.this);
-            }
+            getUserId();
+        }
+    }
+
+    /**
+     * 获取用户id 用户未登录提示登录
+     */
+    private void getUserId() {
+        if(userId>0){
+            transmitUid();
+        }else{
+            getLoginStatus(DoMoLifeCommunalActivity.this);
         }
     }
 

@@ -55,7 +55,11 @@ public class AlertDialogImage {
     }
 
     public void setImage(@NonNull Bitmap bitmap) {
-        iv_ad_image.setImageBitmap(bitmap);
+        try {
+            iv_ad_image.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setAlertClickListener(AlertImageClickListener alertImageClickListener) {

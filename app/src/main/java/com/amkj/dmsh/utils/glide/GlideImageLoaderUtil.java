@@ -350,7 +350,7 @@ public class GlideImageLoaderUtil {
                             .submit();
                 }
             }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Bitmap>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Bitmap>() {
                 Disposable disposable;
 
                 @Override

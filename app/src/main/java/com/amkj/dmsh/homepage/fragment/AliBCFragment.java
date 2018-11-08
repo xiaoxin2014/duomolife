@@ -514,7 +514,7 @@ public class AliBCFragment extends BaseFragment {
         //        获取当前用户uid
         @JavascriptInterface
         public void getUserIdFromAndroid() {
-            getLoginStatus(AliBCFragment.this);
+            getUserId();
         }
 
         //      跳转阿里百川
@@ -538,7 +538,7 @@ public class AliBCFragment extends BaseFragment {
         @JavascriptInterface
         public void skipService() {
             QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-            qyServiceUtils.openQyServiceChat(getActivity(), "web：", "");
+            qyServiceUtils.openQyServiceChat(getActivity(), "web","");
         }
 
         //      顶栏导航是否展示
@@ -706,23 +706,28 @@ public class AliBCFragment extends BaseFragment {
             try {
                 int mustLoginCode = (int) otherData.get("mustLogin");
                 if (mustLoginCode == 1) {
-                    getLoginStatus(getActivity());
+                    getUserId();
                 } else {
                     transmitUid();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                getLoginStatus(getActivity());
+                getUserId();
             }
         } else {
-            if (userId > 0) {
-                transmitUid();
-            } else {
-                getLoginStatus(getActivity());
-            }
+            getUserId();
         }
     }
-
+    /**
+     * 获取用户id 用户未登录提示登录
+     */
+    private void getUserId() {
+        if(userId>0){
+            transmitUid();
+        }else{
+            getLoginStatus(AliBCFragment.this);
+        }
+    }
     /**
      * js交互数据异常
      */

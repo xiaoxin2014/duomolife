@@ -162,7 +162,7 @@ public class AppDataActivity extends BaseActivity{
             alertDialogHelper = new AlertDialogHelper(AppDataActivity.this);
             alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
                     .setMsg("确定要退出当前账号？").setCancelText("取消").setConfirmText("确定")
-                    .setConfirmTextColor(getResources().getColor(R.color.text_login_gray_s));
+                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
             alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                 @Override
                 public void confirm() {
