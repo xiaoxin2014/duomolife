@@ -175,64 +175,63 @@ public class SearchDetailsUserFragment extends BaseFragment {
     }
 
     private void getUserDetails() {
-        if (!TextUtils.isEmpty(data)) {
-            String url = Url.BASE_URL + Url.H_HOT_SEARCH_USER;
-            Map<String, Object> params = new HashMap<>();
-            if (userId > 0) {
-                //当前用户ID
-                params.put("uid", userId);
-            }
-            params.put("keyword", data);
-            params.put("currentPage", page);
-            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            smart_communal_refresh.finishRefresh();
-                            userRecyclerAdapter.loadMoreComplete();
-                            if (page == 1) {
-                                userAttentionFansList.clear();
-                            }
-                            Gson gson = new Gson();
-                            userSearchEntity = gson.fromJson(result, UserSearchEntity.class);
-                            if (userSearchEntity != null) {
-                                if (userSearchEntity.getCode().equals(SUCCESS_CODE)) {
-                                    List<UserSearchBean> userSearchList = userSearchEntity.getUserSearchList();
-                                    UserAttentionFansBean userAttentionFansBean;
-                                    for (int i = 0; i < userSearchList.size(); i++) {
-                                        userAttentionFansBean = new UserAttentionFansBean();
-                                        UserSearchBean user = userSearchList.get(i);
-                                        userAttentionFansBean.setFavatar(user.getAvatar());
-                                        userAttentionFansBean.setFlag(user.isFlag());
-                                        userAttentionFansBean.setFuid(user.getUid());
-                                        userAttentionFansBean.setFnickname(user.getNickname());
-                                        userAttentionFansList.add(userAttentionFansBean);
-                                    }
-                                } else if (!userSearchEntity.getCode().equals(EMPTY_CODE)) {
-                                    showToast(getActivity(), userSearchEntity.getMsg());
-                                }
-                                userRecyclerAdapter.notifyDataSetChanged();
-                            }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansList,userSearchEntity);
-                        }
-
-                        @Override
-                        public void netClose() {
-                            smart_communal_refresh.finishRefresh();
-                            userRecyclerAdapter.loadMoreComplete();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansList,userSearchEntity);
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            smart_communal_refresh.finishRefresh();
-                            userRecyclerAdapter.loadMoreComplete();
-                            showToast(getActivity(), R.string.unConnectedNetwork);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansList,userSearchEntity);
-                        }
-                    });
-        } else {
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        if (TextUtils.isEmpty(data)) {
+            return;
         }
+        String url = Url.BASE_URL + Url.H_HOT_SEARCH_USER;
+        Map<String, Object> params = new HashMap<>();
+        if (userId > 0) {
+            //当前用户ID
+            params.put("uid", userId);
+        }
+        params.put("keyword", data);
+        params.put("currentPage", page);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        userRecyclerAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            userAttentionFansList.clear();
+                        }
+                        Gson gson = new Gson();
+                        userSearchEntity = gson.fromJson(result, UserSearchEntity.class);
+                        if (userSearchEntity != null) {
+                            if (userSearchEntity.getCode().equals(SUCCESS_CODE)) {
+                                List<UserSearchBean> userSearchList = userSearchEntity.getUserSearchList();
+                                UserAttentionFansBean userAttentionFansBean;
+                                for (int i = 0; i < userSearchList.size(); i++) {
+                                    userAttentionFansBean = new UserAttentionFansBean();
+                                    UserSearchBean user = userSearchList.get(i);
+                                    userAttentionFansBean.setFavatar(user.getAvatar());
+                                    userAttentionFansBean.setFlag(user.isFlag());
+                                    userAttentionFansBean.setFuid(user.getUid());
+                                    userAttentionFansBean.setFnickname(user.getNickname());
+                                    userAttentionFansList.add(userAttentionFansBean);
+                                }
+                            } else if (!userSearchEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), userSearchEntity.getMsg());
+                            }
+                            userRecyclerAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        userRecyclerAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        userRecyclerAdapter.loadMoreComplete();
+                        showToast(getActivity(), R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
+                    }
+                });
     }
 }

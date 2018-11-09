@@ -24,11 +24,11 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
@@ -47,6 +47,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -91,6 +92,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getLoginStatus(QualityGroupShopMineActivity.this);
         tv_header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("我的拼团");
 
@@ -196,15 +198,15 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
-                if (qualityGroupMineBean != null&&(qualityGroupMineBean.getGpStatus()==1||qualityGroupMineBean.getGpStatus()==2)) {
+                if (qualityGroupMineBean != null && (qualityGroupMineBean.getGpStatus() == 1 || qualityGroupMineBean.getGpStatus() == 2)) {
                     Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
                     intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
                     intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
-                    intent.putExtra("orderNo",qualityGroupMineBean.getOrderNo());
+                    intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
                     intent.putExtra("invitePartnerJoin", true);
                     startActivity(intent);
-                }else{
-                    showToast(QualityGroupShopMineActivity.this,"已结束拼团");
+                } else {
+                    showToast(QualityGroupShopMineActivity.this, "已结束拼团");
                 }
             }
         });
@@ -217,8 +219,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     , qualityGroupMineBean.getName()
                     , getStrings(qualityGroupMineBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupMineBean.getGpInfoId()
-                    + "&record=" + qualityGroupMineBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupMineBean.getGpInfoId()
-                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo())?"&gpRecordId=" + qualityGroupMineBean.getGpRecordId():"&order="+qualityGroupMineBean.getOrderNo()));
+                    + "&record=" + qualityGroupMineBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupMineBean.getGpInfoId()
+                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo()) ? "&gpRecordId=" + qualityGroupMineBean.getGpRecordId() : "&order=" + qualityGroupMineBean.getOrderNo()));
         }
     }
 
@@ -353,9 +355,18 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 //                    , null, getStrings(qualityGroupMineBean.getOrderNo()), getStrings(qualityGroupMineBean.getGpPrice()));
 //        }
 //    }
+
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            finish();
+            return;
+        }
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IS_LOGIN_CODE) {
+            NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+            loadData();
+        }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
@@ -377,6 +388,9 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 
     @Override
     protected void getData() {
+        if (userId < 1) {
+            return;
+        }
         String url = Url.BASE_URL + Url.GROUP_MINE_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);

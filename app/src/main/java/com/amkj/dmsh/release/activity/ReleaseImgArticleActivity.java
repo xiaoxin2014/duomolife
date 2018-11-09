@@ -26,12 +26,9 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.ReplaceData;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.adapter.AddRelevanceProAdapter;
 import com.amkj.dmsh.release.adapter.ImgGArticleRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
@@ -72,8 +69,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RELEVANCE_PRO_REQ;
@@ -111,7 +110,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
 
     //    已上传图片保存
     private List<String> updatedImages = new ArrayList<>();
-    private int uid;
     private int adapterPosition;
     private final int REQUEST_IMG = 80;
     private AddRelevanceProAdapter addRelevanceProAdapter;
@@ -136,7 +134,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tl_normal_bar.setSelected(true);
         try {
             Intent intent = getIntent();
@@ -382,17 +380,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -406,7 +393,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IS_LOGIN_CODE:
-                    getLoginStatus();
                     loadData();
                     break;
                 case 100:
@@ -469,7 +455,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     @OnClick(R.id.tv_find_release_topic)
     void sendMessage(View view) {
         Editable text = release_et_input.getText();
-        if(text == null){
+        if (text == null) {
             showToast(this, "请输入发送内容");
             return;
         }
@@ -524,7 +510,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_SEND_INVITATION;
         Map<String, Object> params = new HashMap<>();
         //用户Id
-        params.put("fuid", uid);
+        params.put("fuid", userId);
         //图片地址
         if (callBackPath != null) {
             for (int i = 0; i < callBackPath.size(); i++) {
@@ -604,38 +590,39 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     }
 
     private void getRelevanceProduct() {
-        if (uid > 0) {
-            String url = Url.BASE_URL + Url.RELEASE_RELEVANCE_PRODUCT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(@NonNull String result) {
-                    relevanceProList.clear();
-                    RelevanceProEntity relevanceProEntity = RelevanceProEntity.objectFromData(result);
-                    if (relevanceProEntity != null) {
-                        String backCode = relevanceProEntity.getCode();
-                        if (backCode.equals("01")) {
-                            if (relevanceProEntity.getRelevanceProList() != null
-                                    && relevanceProEntity.getRelevanceProList().size() > 0) {
-                                relevanceProList.addAll(relevanceProEntity.getRelevanceProList());
-                                addRelevanceProAdapter.notifyItemRangeChanged(0, relevanceProList.size());
-                                rel_relevance_product_header.setVisibility(View.VISIBLE);
-                                communal_recycler_wrap.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            relevanceDataException();
+        if (userId < 1) {
+            return;
+        }
+        String url = Url.BASE_URL + Url.RELEASE_RELEVANCE_PRODUCT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        XUtil.Post(url, params, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(@NonNull String result) {
+                relevanceProList.clear();
+                RelevanceProEntity relevanceProEntity = RelevanceProEntity.objectFromData(result);
+                if (relevanceProEntity != null) {
+                    String backCode = relevanceProEntity.getCode();
+                    if (backCode.equals("01")) {
+                        if (relevanceProEntity.getRelevanceProList() != null
+                                && relevanceProEntity.getRelevanceProList().size() > 0) {
+                            relevanceProList.addAll(relevanceProEntity.getRelevanceProList());
+                            addRelevanceProAdapter.notifyItemRangeChanged(0, relevanceProList.size());
+                            rel_relevance_product_header.setVisibility(View.VISIBLE);
+                            communal_recycler_wrap.setVisibility(View.VISIBLE);
                         }
+                    } else {
+                        relevanceDataException();
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                    relevanceDataException();
-                }
-            });
-        }
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+                relevanceDataException();
+            }
+        });
     }
 
     private void relevanceDataException() {
@@ -648,6 +635,9 @@ public class ReleaseImgArticleActivity extends BaseActivity {
      * 获取订单数据
      */
     private void getIndentProData() {
+        if (userId < 1) {
+            return;
+        }
         String url = Url.BASE_URL + Url.F_REL_INDENT_PRO_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("productOrderNo", orderNo);
@@ -790,10 +780,5 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

@@ -101,6 +101,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getLoginStatus(DirectPaySuccessActivity.this);
         tv_header_titleAll.setText("支付完成");
         tv_header_shared.setVisibility(GONE);
         tl_normal_bar.setSelected(true);
@@ -252,6 +253,9 @@ public class DirectPaySuccessActivity extends BaseActivity {
 
     //    推荐商品列表
     private void getRecommendProductData() {
+        if(userId<1){
+            return;
+        }
         String url = Url.BASE_URL + Url.Q_PAY_SUCCESS_PRODUCT;
         Map<String, Object> params = new HashMap<>();
         params.put("order_no", indentNo);
@@ -295,6 +299,9 @@ public class DirectPaySuccessActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
+            if(requestCode == IS_LOGIN_CODE){
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);

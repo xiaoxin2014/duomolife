@@ -1,7 +1,6 @@
 package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -17,14 +16,12 @@ import android.widget.RelativeLayout;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean.ChildCategoryListBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
@@ -34,7 +31,6 @@ import com.amkj.dmsh.dominant.adapter.QualityProductTypeSpecificAdapter;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
@@ -61,10 +57,12 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
@@ -114,11 +112,10 @@ public class QualityFragment extends BaseFragment {
     private QualityProductTypeSpecificAdapter productTypeSpecificAdapter;
     private QualityProductTypeAdapter productTypeAdapter;
     private Badge badge;
-    private int uid;
     public final static String updateCarNum = "updateCarNum";
-//    当前点击时间
+    //    当前点击时间
     private long clickNowTime;
-//    上一次点击时间
+    //    上一次点击时间
     private long clickOldTime;
     private boolean isClickSelect;
 
@@ -129,7 +126,6 @@ public class QualityFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 2);
         rv_quality_product_type_specific.setLayoutManager(manager);
         productTypeSpecificAdapter = new QualityProductTypeSpecificAdapter(getActivity(), qualityTypeSpecificBeanList);
@@ -147,10 +143,10 @@ public class QualityFragment extends BaseFragment {
                 if (qualityTypeBean.getPid() > 0) {
                     intent.putExtra(CATEGORY_ID, String.valueOf(qualityTypeBean.getPid()));
                     intent.putExtra(CATEGORY_CHILD, String.valueOf(qualityTypeBean.getId()));
-                    intent.putExtra(CATEGORY_NAME,getStrings(qualityTypeBean.getpName()));
+                    intent.putExtra(CATEGORY_NAME, getStrings(qualityTypeBean.getpName()));
                 } else {
                     intent.putExtra(CATEGORY_ID, String.valueOf(qualityTypeBean.getId()));
-                    intent.putExtra(CATEGORY_NAME,getStrings(qualityTypeBean.getName()));
+                    intent.putExtra(CATEGORY_NAME, getStrings(qualityTypeBean.getName()));
                 }
                 intent.putExtra(CATEGORY_TYPE, String.valueOf(qualityTypeBean.getType()));
                 startActivity(intent);
@@ -161,7 +157,7 @@ public class QualityFragment extends BaseFragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(!isClickSelect){
+                if (!isClickSelect) {
                     GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();//可见范围内的第一项的位置
                     QualityTypeBean firstTypeBean = qualityTypeSpecificBeanList.get(firstVisibleItemPosition);
@@ -176,7 +172,7 @@ public class QualityFragment extends BaseFragment {
                         }
                         productTypeAdapter.notifyDataSetChanged();
                     }
-                }else{
+                } else {
                     isClickSelect = false;
                 }
             }
@@ -209,15 +205,15 @@ public class QualityFragment extends BaseFragment {
                 productTypeAdapter.notifyDataSetChanged();
             }
         });
-        std_quality_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
-        std_quality_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext,30));
+        std_quality_type.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
+        std_quality_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 30));
         setStatusColor();
         badge = getBadge(getActivity(), fl_shop_car_quality);
     }
 
     private void scrollTypeVisibility(int position) {
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) rv_quality_product_type.getLayoutManager();
-        linearLayoutManager.scrollToPositionWithOffset(position,0);
+        linearLayoutManager.scrollToPositionWithOffset(position, 0);
         linearLayoutManager.setStackFromEnd(true);
     }
 
@@ -225,15 +221,6 @@ public class QualityFragment extends BaseFragment {
         SystemBarHelper.setPadding(getActivity(), rel_quality_header);
         SystemBarHelper.setPadding(getActivity(), ll_drawer_quality);
         SystemBarHelper.immersiveStatusBar(getActivity());
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
     }
 
     @Override
@@ -277,30 +264,29 @@ public class QualityFragment extends BaseFragment {
     }
 
     private void getCarCount() {
-        if (uid < 1) {
-            isLoginStatus();
+        if (userId < 1) {
+            badge.setBadgeNumber(0);
+            return;
         }
-        if (uid > 0) {
-            //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", uid);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
-                            showToast(getActivity(), requestStatus.getMsg());
-                        }
+        //购物车数量展示
+        String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        XUtil.Post(url, params, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals("01")) {
+                        int cartNumber = requestStatus.getResult().getCartNumber();
+                        badge.setBadgeNumber(cartNumber);
+                    } else if (!requestStatus.getCode().equals("02")) {
+                        showToast(getActivity(), requestStatus.getMsg());
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -315,8 +301,8 @@ public class QualityFragment extends BaseFragment {
         super.onResume();
         clickNowTime = System.currentTimeMillis();
         try {
-            if(clickNowTime-clickOldTime<300&& vp_quality!=null&&vp_quality.getChildCount() > 0
-                    && std_quality_type.getTabCount() > 0){
+            if (clickNowTime - clickOldTime < 300 && vp_quality != null && vp_quality.getChildCount() > 0
+                    && std_quality_type.getTabCount() > 0) {
                 std_quality_type.setCurrentTab(0);
                 vp_quality.setCurrentItem(0);
             }
@@ -646,10 +632,7 @@ public class QualityFragment extends BaseFragment {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            Bundle bundle = data.getExtras();
-            CommunalUserInfoEntity loginAccount = (CommunalUserInfoEntity) bundle.get("AccountInf");
-            uid = loginAccount.getCommunalUserInfoBean().getUid();
+        if (requestCode == IS_LOGIN_CODE) {
             getCarCount();
         }
     }

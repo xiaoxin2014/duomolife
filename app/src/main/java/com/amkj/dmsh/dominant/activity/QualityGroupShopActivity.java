@@ -16,6 +16,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -44,7 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -84,6 +84,7 @@ public class QualityGroupShopActivity extends BaseActivity {
     List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private CBViewHolderCreator cbViewHolderCreator;
     private QualityGroupEntity qualityGroupEntity;
+    private ConstantMethod constantMethod;
 
     @Override
     protected int getContentView() {
@@ -92,10 +93,11 @@ public class QualityGroupShopActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getConstant();
         tv_header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("Domo拼团");
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopActivity.this));
-        qualityGroupShopAdapter = new QualityGroupShopAdapter(QualityGroupShopActivity.this, qualityGroupBeanList);
+        qualityGroupShopAdapter = new QualityGroupShopAdapter(QualityGroupShopActivity.this,constantMethod, qualityGroupBeanList);
         View view = LayoutInflater.from(QualityGroupShopActivity.this).inflate(R.layout.layout_al_new_sp_banner, (ViewGroup) communal_recycler.getParent(), false);
         groupShopHeaderView = new GroupShopHeaderView();
         ButterKnife.bind(groupShopHeaderView, view);
@@ -171,7 +173,11 @@ public class QualityGroupShopActivity extends BaseActivity {
         });
         qualityGroupShopAdapter.openLoadAnimation(null);
     }
-
+    private void getConstant() {
+        if (constantMethod == null) {
+            constantMethod = new ConstantMethod();
+        }
+    }
     @Override
     protected void loadData() {
         page = 1;
@@ -299,12 +305,8 @@ public class QualityGroupShopActivity extends BaseActivity {
     //    我的拼团
     @OnClick(R.id.tv_quality_join_gp_sp)
     void getMineJoinGroup() {
-        if (userId != 0) {
-            Intent intent = new Intent(QualityGroupShopActivity.this, QualityGroupShopMineActivity.class);
-            startActivity(intent);
-        } else {
-            getLoginStatus(QualityGroupShopActivity.this);
-        }
+        Intent intent = new Intent(QualityGroupShopActivity.this, QualityGroupShopMineActivity.class);
+        startActivity(intent);
     }
 
     //    全部拼团
@@ -348,4 +350,12 @@ public class QualityGroupShopActivity extends BaseActivity {
         ConvenientBanner ad_communal_banner;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(constantMethod!=null){
+            constantMethod.stopSchedule();
+            constantMethod.releaseHandlers();
+        }
+    }
 }

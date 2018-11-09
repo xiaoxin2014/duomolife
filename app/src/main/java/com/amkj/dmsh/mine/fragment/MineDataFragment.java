@@ -260,35 +260,31 @@ public class MineDataFragment extends BaseFragment {
         indentTypeAdapter.setOnItemClickListener((adapter, view, position) -> {
             QualityTypeBean qualityTypeBean = (QualityTypeBean) view.getTag();
             if (qualityTypeBean != null) {
-                if (userId > 0) {
-                    Intent intent = new Intent();
-                    switch (qualityTypeBean.getId()) {
-                        case 0: //淘宝订单
-                            skipNewTaoBao();
-                            break;
-                        case 1: //待付款
-                            intent.setClass(getActivity(), DoMoIndentAllActivity.class);
-                            intent.putExtra("tab", "waitPay");
-                            startActivity(intent);
-                            break;
-                        case 2: //待发货
-                            intent.setClass(getActivity(), DoMoIndentAllActivity.class);
-                            intent.putExtra("tab", "waitSend");
-                            startActivity(intent);
-                            break;
-                        case 3: //待收货
-                            intent.setClass(getActivity(), DoMoIndentAllActivity.class);
-                            intent.putExtra("tab", "delivered");
-                            startActivity(intent);
-                            break;
-                        case 4://退货/售后
-                            intent.setClass(getActivity(), DirectGoodsSaleAfterActivity.class);
-                            intent.putExtra("type", "goodsReturn");
-                            startActivity(intent);
-                            break;
-                    }
-                } else {
-                    skipLoginPage();
+                Intent intent = new Intent();
+                switch (qualityTypeBean.getId()) {
+                    case 0: //淘宝订单
+                        skipNewTaoBao();
+                        break;
+                    case 1: //待付款
+                        intent.setClass(getActivity(), DoMoIndentAllActivity.class);
+                        intent.putExtra("tab", "waitPay");
+                        startActivity(intent);
+                        break;
+                    case 2: //待发货
+                        intent.setClass(getActivity(), DoMoIndentAllActivity.class);
+                        intent.putExtra("tab", "waitSend");
+                        startActivity(intent);
+                        break;
+                    case 3: //待收货
+                        intent.setClass(getActivity(), DoMoIndentAllActivity.class);
+                        intent.putExtra("tab", "delivered");
+                        startActivity(intent);
+                        break;
+                    case 4://退货/售后
+                        intent.setClass(getActivity(), DirectGoodsSaleAfterActivity.class);
+                        intent.putExtra("type", "goodsReturn");
+                        startActivity(intent);
+                        break;
                 }
             }
         });
@@ -650,14 +646,10 @@ public class MineDataFragment extends BaseFragment {
     //    全部订单
     @OnClick({R.id.tv_mine_all_indent})
     void skipAllIndent(View view) {
-        if (userId > 0) {
-            Intent intent = new Intent();
-            intent.setClass(getActivity(), DoMoIndentAllActivity.class);
-            intent.putExtra("tab", "all");
-            startActivity(intent);
-        } else {
-            skipLoginPage();
-        }
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), DoMoIndentAllActivity.class);
+        intent.putExtra("tab", "all");
+        startActivity(intent);
     }
 
     //  资料设置

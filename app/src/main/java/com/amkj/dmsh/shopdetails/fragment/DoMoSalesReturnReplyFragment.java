@@ -15,9 +15,9 @@ import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectSalesReturnRecordAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectReturnRecordEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectReturnRecordEntity.DirectReturnRecordBean.OrderListBean;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -32,7 +32,6 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
@@ -76,7 +75,6 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getLoginStatus(this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID

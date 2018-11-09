@@ -43,6 +43,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 /**
  * Created by atd48 on 2016/8/15.
+ * 商品更多评论
  */
 public class DirectProductEvaluationActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)

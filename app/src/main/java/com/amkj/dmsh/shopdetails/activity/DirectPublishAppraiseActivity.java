@@ -19,8 +19,6 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
@@ -47,9 +45,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 ;
 
@@ -69,29 +69,30 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private DirectPublishAppraiseAdapter directPublishAppraiseAdapter;
     public static final int REQUEST_PERMISSIONS = 60;
-    private int uid;
     private String orderNo;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_publish_appraise;
     }
+
     @Override
     protected void initViews() {
         loadHud.setCancellable(false);
         if (directAppraisePassList != null) {
             directAppraisePassList.clear();
         }
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("评价晒单");
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setText("提交");
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        if(bundle!=null){
+        if (bundle != null) {
             directAppraisePassList = bundle.getParcelableArrayList("appraiseData");
         }
         orderNo = intent.getStringExtra("orderNo");
-        if(directAppraisePassList!=null&&directAppraisePassList.size()>0){
+        if (directAppraisePassList != null && directAppraisePassList.size() > 0) {
             for (int i = 0; i < directAppraisePassList.size(); i++) {
                 directAppraisePassList.get(i).setImagePaths(DEFAULT_ADD_IMG);
             }
@@ -115,63 +116,51 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
     protected void loadData() {
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
-                List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
-                if (localMediaList != null && localMediaList.size() > 0) {
-                    StringBuffer spiltPath = new StringBuffer();
-                    dataPath.clear();
-                    LocalMediaC localMediaItem = localMediaList.get(0);
-                    int productPosition = localMediaItem.getEvaCurrentItem();
-                    for (LocalMediaC localMedia : localMediaList) {
-                        if (!TextUtils.isEmpty(localMedia.getPath())) {
-                            dataPath.add(localMedia.getPath());
-                        }
+        if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
+            List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
+            if (localMediaList != null && localMediaList.size() > 0) {
+                StringBuffer spiltPath = new StringBuffer();
+                dataPath.clear();
+                LocalMediaC localMediaItem = localMediaList.get(0);
+                int productPosition = localMediaItem.getEvaCurrentItem();
+                for (LocalMediaC localMedia : localMediaList) {
+                    if (!TextUtils.isEmpty(localMedia.getPath())) {
+                        dataPath.add(localMedia.getPath());
                     }
-                    dataPath.remove(ConstantVariable.DEFAULT_ADD_IMG);
-                    if (dataPath.size() < 5) {
-                        dataPath.add(DEFAULT_ADD_IMG);
-                    }
-                    for (int i = 0; i < dataPath.size(); i++) {
-                        if (i == 0) {
-                            spiltPath.append(dataPath.get(i));
-                        } else {
-                            spiltPath.append("," + dataPath.get(i));
-                        }
-                    }
-                    DirectAppraisePassBean directAppraisePassBean = directAppraisePassList.get(productPosition);
-                    directAppraisePassBean.setImagePaths(spiltPath.toString());
-                    directAppraisePassList.set(productPosition, directAppraisePassBean);
-                    directPublishAppraiseAdapter.notifyItemRangeChanged(productPosition, 1);
                 }
-            } else if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            } else if (requestCode == REQUEST_PERMISSIONS) {
-                showToast(this, "请到应用管理授予权限");
-                return;
+                dataPath.remove(ConstantVariable.DEFAULT_ADD_IMG);
+                if (dataPath.size() < 5) {
+                    dataPath.add(DEFAULT_ADD_IMG);
+                }
+                for (int i = 0; i < dataPath.size(); i++) {
+                    if (i == 0) {
+                        spiltPath.append(dataPath.get(i));
+                    } else {
+                        spiltPath.append("," + dataPath.get(i));
+                    }
+                }
+                DirectAppraisePassBean directAppraisePassBean = directAppraisePassList.get(productPosition);
+                directAppraisePassBean.setImagePaths(spiltPath.toString());
+                directAppraisePassList.set(productPosition, directAppraisePassBean);
+                directPublishAppraiseAdapter.notifyItemRangeChanged(productPosition, 1);
+            }
+        } else if (requestCode == REQUEST_PERMISSIONS) {
+            showToast(this, "请到应用管理授予权限");
         }
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type .equals("appraiseDate")) {
+        if (message.type.equals("appraiseDate")) {
             directAppraisePassList = (List<DirectAppraisePassBean>) message.result;
         } else if (message.type.equals("closeKeyBroad")) {
             if (message.result.equals("close")) {
@@ -285,7 +274,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
         String url = Url.BASE_URL + Url.Q_SEND_APPRAISE;
         Map<String, Object> params = new HashMap<>();
         params.put("orderNo", orderNo);
-        params.put("userId", uid);
+        params.put("userId", userId);
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < directAppraisePassList.size(); i++) {

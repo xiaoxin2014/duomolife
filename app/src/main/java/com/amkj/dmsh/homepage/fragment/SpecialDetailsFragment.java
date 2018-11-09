@@ -151,48 +151,47 @@ public class SpecialDetailsFragment extends BaseFragment {
     }
 
     private void getSpecialData() {
-        if (!TextUtils.isEmpty(keyWord)) {
-            String url = Url.BASE_URL + Url.H_HOT_SEARCH_SPECIAL;
-            Map<String, Object> params = new HashMap<>();
-            params.put("keyword", keyWord);
-            params.put("currentPage", page);
-            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    specialTopicAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        specialSearList.clear();
-                    }
-                    Gson gson = new Gson();
-                    topicSpecialEntity = gson.fromJson(result, TopicSpecialEntity.class);
-                    if (topicSpecialEntity != null) {
-                        if (topicSpecialEntity.getCode().equals(SUCCESS_CODE)) {
-                            specialSearList.addAll(topicSpecialEntity.getTopicSpecialBeanList());
-                        } else if (!topicSpecialEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), topicSpecialEntity.getMsg());
-                        }
-                        specialTopicAdapter.notifyDataSetChanged();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    specialTopicAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    specialTopicAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
-                }
-            });
-        } else {
-            NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+        if (TextUtils.isEmpty(keyWord)) {
+            return;
         }
+        String url = Url.BASE_URL + Url.H_HOT_SEARCH_SPECIAL;
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", keyWord);
+        params.put("currentPage", page);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                specialTopicAdapter.loadMoreComplete();
+                if (page == 1) {
+                    specialSearList.clear();
+                }
+                Gson gson = new Gson();
+                topicSpecialEntity = gson.fromJson(result, TopicSpecialEntity.class);
+                if (topicSpecialEntity != null) {
+                    if (topicSpecialEntity.getCode().equals(SUCCESS_CODE)) {
+                        specialSearList.addAll(topicSpecialEntity.getTopicSpecialBeanList());
+                    } else if (!topicSpecialEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), topicSpecialEntity.getMsg());
+                    }
+                    specialTopicAdapter.notifyDataSetChanged();
+                }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+            }
+
+            @Override
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                specialTopicAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                specialTopicAdapter.loadMoreComplete();
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
+            }
+        });
     }
 }

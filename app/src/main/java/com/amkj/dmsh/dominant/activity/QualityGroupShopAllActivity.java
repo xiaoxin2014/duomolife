@@ -10,6 +10,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityGroupShopAdapter;
@@ -59,6 +60,7 @@ public class QualityGroupShopAllActivity extends BaseActivity {
     private List<QualityGroupBean> qualityGroupBeanList = new ArrayList();
     private QualityGroupShopAdapter qualityGroupShopAdapter;
     private QualityGroupEntity qualityGroupEntity;
+    private ConstantMethod constantMethod;
 
     @Override
     protected int getContentView() {
@@ -67,10 +69,11 @@ public class QualityGroupShopAllActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        constantMethod = new ConstantMethod();
         tv_header_titleAll.setText("全部拼团");
         tv_header_shared.setVisibility(View.GONE);
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopAllActivity.this));
-        qualityGroupShopAdapter = new QualityGroupShopAdapter(QualityGroupShopAllActivity.this, qualityGroupBeanList);
+        qualityGroupShopAdapter = new QualityGroupShopAdapter(QualityGroupShopAllActivity.this, constantMethod, qualityGroupBeanList);
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
@@ -215,5 +218,12 @@ public class QualityGroupShopAllActivity extends BaseActivity {
     void goBack(View view) {
         finish();
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(constantMethod !=null){
+            constantMethod.stopSchedule();
+            constantMethod.releaseHandlers();
+        }
+    }
 }

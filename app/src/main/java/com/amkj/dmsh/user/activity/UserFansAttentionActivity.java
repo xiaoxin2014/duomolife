@@ -226,21 +226,21 @@ public class UserFansAttentionActivity extends BaseActivity {
                     }
                 }
                 detailsUserAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList,userAttentionFansEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList,userAttentionFansEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList,userAttentionFansEntity);
             }
         });
     }

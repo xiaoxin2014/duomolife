@@ -28,10 +28,10 @@ import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -60,6 +60,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEL;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
@@ -312,6 +313,9 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
 
     @Override
     protected void getData() {
+        if(userId<1){
+            return;
+        }
         //        订单搜索
         String url = Url.BASE_URL + Url.INDENT_SEARCH;
         Map<String, Object> params = new HashMap<>();
@@ -539,5 +543,19 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                 showToast(mAppContext,R.string.do_failed);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
+        }
     }
 }

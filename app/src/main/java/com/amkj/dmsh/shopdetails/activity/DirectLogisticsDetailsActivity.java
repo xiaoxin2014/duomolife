@@ -8,13 +8,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.shopdetails.adapter.LogisticsPagerAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -29,7 +28,11 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -47,17 +50,21 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     private String orderNo;
     private List<String> pageTitle = new ArrayList<>();
     private float tabWidth;
+    private DirectLogisticsEntity directLogisticsEntity;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_logistics_details;
     }
+
     @Override
     protected void initViews() {
+        getLoginStatus(this);
         tv_header_titleAll.setText("物流详情");
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
-        stl_direct_logistics_details.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+        stl_direct_logistics_details.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
     }
 
     private void setLogisticsData(DirectLogisticsBean directLogisticsBean) {
@@ -77,17 +84,27 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     }
 
     @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+
+    @Override
     protected void loadData() {
+        if (userId < 1) {
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            return;
+        }
         String url = Url.BASE_URL + Url.Q_CONFIRM_LOGISTICS;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(DirectLogisticsDetailsActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                DirectLogisticsEntity directLogisticsEntity = gson.fromJson(result, DirectLogisticsEntity.class);
+                directLogisticsEntity = gson.fromJson(result, DirectLogisticsEntity.class);
                 if (directLogisticsEntity != null) {
-                    if (directLogisticsEntity.getCode().equals("01")) {
+                    if (directLogisticsEntity.getCode().equals(SUCCESS_CODE)) {
                         int pageCount = directLogisticsEntity.getDirectLogisticsBean().getLogistics().size();
                         for (int i = 0; i < pageCount; i++) {
                             pageTitle.add("包裹" + (i + 1));
@@ -97,11 +114,19 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                         showToast(DirectLogisticsDetailsActivity.this, directLogisticsEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
+                showToast(DirectLogisticsDetailsActivity.this,R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(DirectLogisticsDetailsActivity.this, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
             }
         });
     }
@@ -109,6 +134,21 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IS_LOGIN_CODE) {
+            NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+            loadData();
+        }
     }
 
 }

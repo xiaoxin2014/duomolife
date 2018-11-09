@@ -233,53 +233,52 @@ public class SearchDetailsProductFragment extends BaseFragment {
     }
 
     private void getDetailsProduct() {
-        if (!TextUtils.isEmpty(data)) {
-            String url = Url.BASE_URL + Url.H_HOT_SEARCH_PRODUCT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("keyword", data);
-            params.put("currentPage", page);
-            params.put("searchType", 1);
-            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterProduct.loadMoreComplete();
-                    if (page == 1) {
-                        productSearList.clear();
-                        proRecommendList.clear();
-                        removeExistUtils.clearData();
-                    }
-                    Gson gson = new Gson();
-                    likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (likedProduct != null) {
-                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                            productSearList.addAll(removeExistUtils.removeExistList(likedProduct.getLikedProductBeanList()));
-                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), likedProduct.getMsg());
-                        }
-                        setEmptyUI();
-                        adapterProduct.notifyDataSetChanged();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                }
-
-                @Override
-                public void netClose() {
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                    smart_communal_refresh.finishRefresh();
-                    adapterProduct.loadMoreComplete();
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                    smart_communal_refresh.finishRefresh();
-                    adapterProduct.loadMoreComplete();
-                }
-            });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        if (TextUtils.isEmpty(data)) {
+            return;
         }
+        String url = Url.BASE_URL + Url.H_HOT_SEARCH_PRODUCT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", data);
+        params.put("currentPage", page);
+        params.put("searchType", 1);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                adapterProduct.loadMoreComplete();
+                if (page == 1) {
+                    productSearList.clear();
+                    proRecommendList.clear();
+                    removeExistUtils.clearData();
+                }
+                Gson gson = new Gson();
+                likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProduct != null) {
+                    if (likedProduct.getCode().equals(SUCCESS_CODE)) {
+                        productSearList.addAll(removeExistUtils.removeExistList(likedProduct.getLikedProductBeanList()));
+                    } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), likedProduct.getMsg());
+                    }
+                    setEmptyUI();
+                    adapterProduct.notifyDataSetChanged();
+                }
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void netClose() {
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                smart_communal_refresh.finishRefresh();
+                adapterProduct.loadMoreComplete();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                smart_communal_refresh.finishRefresh();
+                adapterProduct.loadMoreComplete();
+            }
+        });
     }
 
     private void setEmptyUI() {

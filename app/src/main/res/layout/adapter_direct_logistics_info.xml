@@ -42,7 +42,7 @@
             android:maxLines="2"
             android:lineSpacingExtra="@dimen/dimen_4dp"
             android:text="感谢你使用多么生活"
-            android:textColor="@color/sel_indent_blue_z_gray_n"
+            android:textColor="@color/selector_sel_indent_blue_z_gray_n"
             android:textSize="@dimen/sc_mm_24" />
         <TextView
             android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
             android:id="@+id/tv_direct_logist_info_time"
             android:layout_marginTop="@dimen/sc_mm_28"
             android:textSize="@dimen/sc_mm_24"
-            android:textColor="@color/sel_indent_blue_z_gray_n"
+            android:textColor="@color/selector_sel_indent_blue_z_gray_n"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 </LinearLayout>

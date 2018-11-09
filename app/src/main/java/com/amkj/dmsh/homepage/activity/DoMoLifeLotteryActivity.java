@@ -34,8 +34,6 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.HtmlWebView;
@@ -51,6 +49,8 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 ;
@@ -69,7 +69,6 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     TextView tv_web_title;
     @BindView(R.id.tv_web_shared)
     TextView tv_web_shared;
-    private int uid;
     private String turnId;
 
     @Override
@@ -79,7 +78,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(DoMoLifeLotteryActivity.this);
         tv_web_shared.setVisibility(View.GONE);
         tv_web_title.setText("抽奖");
         WebSettings webSettings = web_communal.getSettings();
@@ -110,8 +109,8 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 //        js交互
         web_communal.addJavascriptInterface(new JsData(DoMoLifeLotteryActivity.this), "JsToAndroid");
-        if (uid > 0) {
-            web_communal.loadUrl(LOTTERY_URL + "?uid=" + uid);
+        if (userId > 0) {
+            web_communal.loadUrl(LOTTERY_URL + "?uid=" + userId);
         }
         //设置Web视图
         web_communal.setWebViewClient(new WebViewClient() {
@@ -169,17 +168,6 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         return sb.toString();
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
     //改写物理按键——返回的逻辑
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -200,9 +188,12 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     }
 
     private void getLotteryTime() {
+        if(userId<1){
+            return;
+        }
         final String url = Url.BASE_URL + Url.H_HOT_ACTIVITY_ADD_LOTTERY;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("turn_id", TextUtils.isEmpty(turnId) ? "3" : turnId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -253,8 +244,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                web_communal.loadUrl(LOTTERY_URL + "?uid=" + uid);
+                web_communal.loadUrl(LOTTERY_URL + "?uid=" + userId);
             }
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);

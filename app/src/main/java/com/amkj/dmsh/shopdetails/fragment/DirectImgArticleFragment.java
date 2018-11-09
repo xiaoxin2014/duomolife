@@ -24,12 +24,9 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -45,7 +42,7 @@ import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -62,14 +59,12 @@ public class DirectImgArticleFragment extends BaseFragment {
     RecyclerView recycler_shop_details_evaluation_comment;
     private CommunalDetailAdapter contentOfficialAdapter;
     private List<CommunalDetailObjectBean> itemBodyBeanList = new ArrayList();
-    private int uid;
     @Override
     protected int getContentView() {
         return R.layout.fragment_shop_layout_recycler_no_refresh;
     }
     @Override
     protected void initViews() {
-        isLoginStatus();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recycler_shop_details_evaluation_comment.setLayoutManager(linearLayoutManager);
         recycler_shop_details_evaluation_comment.setNestedScrollingEnabled(false);
@@ -86,7 +81,7 @@ public class DirectImgArticleFragment extends BaseFragment {
                         int couponId = (int) view.getTag(R.id.iv_avatar_tag);
                         int type = (int) view.getTag(R.id.iv_type_tag);
                         if (couponId > 0) {
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 if (type == TYPE_COUPON) {
                                     getDirectCoupon(couponId);
                                 } else if (type == TYPE_COUPON_PACKAGE) {
@@ -96,7 +91,7 @@ public class DirectImgArticleFragment extends BaseFragment {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(DirectImgArticleFragment.this);
                             }
                         }
                         break;
@@ -107,13 +102,13 @@ public class DirectImgArticleFragment extends BaseFragment {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            if (uid != 0) {
+                            if (userId != 0) {
                                 skipAliBCWebView(couponBean.getCouponUrl());
                             } else {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                getLoginStatus();
+                                getLoginStatus(DirectImgArticleFragment.this);
                             }
                         }
                         break;
@@ -142,7 +137,7 @@ public class DirectImgArticleFragment extends BaseFragment {
                                 constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
                             } else {
                                 loadHud.dismiss();
-                                getLoginStatus();
+                                getLoginStatus(DirectImgArticleFragment.this);
                             }
                         }
                         break;
@@ -168,30 +163,10 @@ public class DirectImgArticleFragment extends BaseFragment {
         }
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     private void getDirectCoupon(int id) {
         String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
+        params.put("userId", userId);
         params.put("couponId", id);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -222,13 +197,13 @@ public class DirectImgArticleFragment extends BaseFragment {
 
     public void skipAliBCWebView(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
+            if (userId != 0) {
                 skipNewTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                getLoginStatus();
+                getLoginStatus(DirectImgArticleFragment.this);
             }
         } else {
             showToast(getActivity(), "地址缺失");
@@ -241,7 +216,7 @@ public class DirectImgArticleFragment extends BaseFragment {
     private void getDirectCouponPackage(int couponId) {
         String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
-        params.put("uId", uid);
+        params.put("uId", userId);
         params.put("cpId", couponId);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -262,10 +237,10 @@ public class DirectImgArticleFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(getActivity(), R.string.Get_Coupon_Fail);
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+                showToast(getActivity(), R.string.Get_Coupon_Fail);
             }
         });
     }
@@ -322,12 +297,5 @@ public class DirectImgArticleFragment extends BaseFragment {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            try {
-                getLoginStatus();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

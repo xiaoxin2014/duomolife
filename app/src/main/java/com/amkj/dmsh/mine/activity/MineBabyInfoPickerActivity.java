@@ -13,12 +13,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineBabyInfoAdapter;
 import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.TimeSexOptionsBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
@@ -43,10 +41,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 ;
 
@@ -65,7 +63,6 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
     TextView tv_header_shared;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    private int uid;
     private List<BabyBean> babyBeanList = new ArrayList<>();
     private final String[] mineStatusName = {"备孕中", "怀孕中", "有宝宝"};
     private final String[] mineStatusPic = {"sel_baby_one_icon", "sel_baby_two_icon", "sel_baby_thr_icon"};
@@ -89,7 +86,7 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(MineBabyInfoPickerActivity.this);
         Intent intent = getIntent();
         babyBean = (BabyBean) intent.getExtras().get("babyBean");
         tv_header_titleAll.setText("宝宝信息");
@@ -181,17 +178,6 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
         }
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -199,9 +185,6 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
     }
 
     @Override
@@ -210,9 +193,12 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
 
     //    配置宝宝信息
     private void setBabyInfo(String babyDate, String babySex) {
+        if(userId<1){
+            return;
+        }
         String url = Url.BASE_URL + Url.MINE_BABY_INFO;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("baby_status", babyStatus);
         if (babyBean != null) {
             params.put("id", babyBean.getId());

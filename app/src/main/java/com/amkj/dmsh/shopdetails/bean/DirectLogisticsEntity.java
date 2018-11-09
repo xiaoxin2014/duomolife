@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/10/31.
  */
-public class DirectLogisticsEntity {
+public class DirectLogisticsEntity extends BaseEntity{
 
     /**
      * payAmount : 9.00
@@ -41,31 +42,12 @@ public class DirectLogisticsEntity {
      * msg : 请求成功
      */
 
-    private String code;
-    private String msg;
-
     public DirectLogisticsBean getDirectLogisticsBean() {
         return directLogisticsBean;
     }
 
     public void setDirectLogisticsBean(DirectLogisticsBean directLogisticsBean) {
         this.directLogisticsBean = directLogisticsBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class DirectLogisticsBean implements Parcelable {

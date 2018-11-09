@@ -101,6 +101,9 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     //  2016/9/21 获取账号列表
     @Override
     protected void loadData() {
+        if(userId<1){
+            return;
+        }
         getCurrentAccountData();
         getOtherAccountData();
     }

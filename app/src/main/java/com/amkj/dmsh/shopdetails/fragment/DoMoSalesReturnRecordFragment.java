@@ -73,7 +73,6 @@ public class DoMoSalesReturnRecordFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getLoginStatus(this);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
                 // 设置分隔线资源ID

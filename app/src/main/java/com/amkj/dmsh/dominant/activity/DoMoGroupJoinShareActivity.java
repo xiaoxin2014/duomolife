@@ -51,8 +51,10 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -88,6 +90,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getLoginStatus(this);
         tv_header_titleAll.setText("DoMo拼团");
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
@@ -364,5 +367,16 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         constantMethod.stopSchedule();
         constantMethod.releaseHandlers();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

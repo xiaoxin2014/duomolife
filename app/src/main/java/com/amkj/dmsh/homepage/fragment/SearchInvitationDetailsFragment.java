@@ -64,7 +64,6 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     private List<InvitationDetailBean> invitationSearchList = new ArrayList();
     private int page = 1;
     private String data;
-    private final int SHARECODE = 100;
     private float screenHeight;
     private InvitationDetailEntity invitationDetailEntity;
 
@@ -72,6 +71,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     protected int getContentView() {
         return R.layout.layout_communal_smart_refresh_recycler_float_loading;
     }
+
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -89,7 +89,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         communal_recycler.setAdapter(adapterInvitation);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-                loadData();
+            loadData();
         });
         adapterInvitation.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -228,6 +228,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
+
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals("search2")) {
@@ -251,54 +252,53 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     }
 
     private void getInvitationDetails() {
-        if (!TextUtils.isEmpty(data)) {
-            String url = Url.BASE_URL + Url.H_HOT_SEARCH_INVITATION;
-            Map<String, Object> params = new HashMap();
-            if (userId != 0) {
-                params.put("fuid", userId);
-            }
-            params.put("keyword", data);
-            params.put("searchType", 1);
-            params.put("currentPage", page);
-            params.put("version", 1);
-            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitation.loadMoreComplete();
-                    if (page == 1) {
-                        invitationSearchList.clear();
-                    }
-                    Gson gson = new Gson();
-                    invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                    if (invitationDetailEntity != null) {
-                        if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                            invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                        } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), invitationDetailEntity.getMsg());
-                        }
-                        adapterInvitation.notifyDataSetChanged();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList,invitationDetailEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitation.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList,invitationDetailEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterInvitation.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList,invitationDetailEntity);
-                }
-            });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationSearchList,invitationDetailEntity);
+        if (TextUtils.isEmpty(data)) {
+            return;
         }
+        String url = Url.BASE_URL + Url.H_HOT_SEARCH_INVITATION;
+        Map<String, Object> params = new HashMap();
+        if (userId != 0) {
+            params.put("fuid", userId);
+        }
+        params.put("keyword", data);
+        params.put("searchType", 1);
+        params.put("currentPage", page);
+        params.put("version", 1);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitation.loadMoreComplete();
+                        if (page == 1) {
+                            invitationSearchList.clear();
+                        }
+                        Gson gson = new Gson();
+                        invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                        if (invitationDetailEntity != null) {
+                            if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                                invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
+                            } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), invitationDetailEntity.getMsg());
+                            }
+                            adapterInvitation.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitation.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitation.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
+                    }
+                });
     }
 }

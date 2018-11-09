@@ -36,16 +36,18 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 ;
 
 
-
 /**
- * Created by atd48 on 2016/10/31.
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2018/1/23
+ * class description:订单物流查询
  */
 public class DirectLogisticsFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     @BindView(R.id.smart_communal_refresh)
     RefreshLayout smart_communal_refresh;
-    private DirectLogisticsHeadView dirLogistHeadView;
+    private DirectLogisticsHeadView directLogisticsHeadView;
     private DirectLogisticsAdapter directLogisticsAdapter;
     private int packet;
     private DirectLogisticsBean directLogisticsBean;
@@ -61,12 +63,12 @@ public class DirectLogisticsFragment extends BaseFragment {
     @Override
     protected void initViews() {
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_direct_logistics_head, (ViewGroup) communal_recycler.getParent(), false);
-        dirLogistHeadView = new DirectLogisticsHeadView();
-        ButterKnife.bind(dirLogistHeadView, headerView);
+        directLogisticsHeadView = new DirectLogisticsHeadView();
+        ButterKnife.bind(directLogisticsHeadView, headerView);
 //        头部商品信息
         DirectLogisticsHeaderAdapter headAdapter = new DirectLogisticsHeaderAdapter(getActivity(), directLogisticsBean.getLogistics().get(packet));
-        dirLogistHeadView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
-        dirLogistHeadView.communal_recycler_wrap.setAdapter(headAdapter);
+        directLogisticsHeadView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
+        directLogisticsHeadView.communal_recycler_wrap.setAdapter(headAdapter);
         directLogisticsAdapter = new DirectLogisticsAdapter(logisticsBeanList);
         directLogisticsAdapter.addHeaderView(headerView);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -74,15 +76,15 @@ public class DirectLogisticsFragment extends BaseFragment {
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
         });
-        if(directLogisticsBean!=null){
+        if (directLogisticsBean != null) {
             logisticsBean = directLogisticsBean.getLogistics().get(packet).get(0);
         }
         setLogisticData();
     }
 
     private void setLogisticData() {
-        dirLogistHeadView.tv_logis_indent_dispatch_way.setText(("物流公司：" + logisticsBean.getExpressCompany()));
-        dirLogistHeadView.tv_logis_indent_exp_number.setText(("物流单号：" + logisticsBean.getExpressNo()));
+        directLogisticsHeadView.tv_logis_indent_dispatch_way.setText(("物流公司：" + logisticsBean.getExpressCompany()));
+        directLogisticsHeadView.tv_logis_indent_exp_number.setText(("物流单号：" + logisticsBean.getExpressNo()));
     }
 
     @Override
@@ -103,21 +105,21 @@ public class DirectLogisticsFragment extends BaseFragment {
                         directLogisticsAdapter.setNewData(logisticsBeanList);
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsPacketEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsPacketEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsPacketEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsPacketEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsPacketEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsPacketEntity);
             }
         });
     }
@@ -126,6 +128,7 @@ public class DirectLogisticsFragment extends BaseFragment {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void getReqParams(Bundle bundle) {
 //        数据信息

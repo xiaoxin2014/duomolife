@@ -7,20 +7,16 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.adapter.CouponStatusAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
 /**
@@ -38,7 +34,6 @@ public class DirectMyCouponActivity extends BaseActivity {
     SlidingTabLayout stdMineCoupon;
     @BindView(R.id.vp_mine_coupon)
     ViewPager vpMineCoupon;
-    private int uid;
 
     @Override
     protected int getContentView() {
@@ -47,35 +42,31 @@ public class DirectMyCouponActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(this);
         tv_header_titleAll.setText("优惠券");
         header_shared.setVisibility(View.INVISIBLE);
         stdMineCoupon.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+        setCouponData();
+    }
+
+    private void setCouponData() {
+        if(userId<1){
+            return;
+        }
         CouponStatusAdapter couponStatusAdapter = new CouponStatusAdapter(getSupportFragmentManager());
         vpMineCoupon.setAdapter(couponStatusAdapter);
         stdMineCoupon.setViewPager(vpMineCoupon);
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, IS_LOGIN_CODE);
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == IS_LOGIN_CODE) {
-            getLoginStatus();
-            EventBus.getDefault().post(new EventMessage("refresh",uid));
+        if (requestCode == IS_LOGIN_CODE) {
+            setCouponData();
         }
     }
 

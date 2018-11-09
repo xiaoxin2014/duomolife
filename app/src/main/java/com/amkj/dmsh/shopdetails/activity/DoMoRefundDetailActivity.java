@@ -243,7 +243,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            finish();
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -275,6 +277,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     }
 
     private void getRepairDetailData() {
+        if(userId<1){
+            return;
+        }
         String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("orderRefundProductId", orderRefundProductId);
@@ -318,6 +323,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     }
 
     private void getRefundDetailData() {
+        if(userId<1){
+            return;
+        }
         String url = Url.BASE_URL + Url.Q_INDENT_REFUND_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", no);

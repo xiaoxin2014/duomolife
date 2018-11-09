@@ -18,7 +18,6 @@ import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -38,10 +37,10 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.NEW_USER_DIALOG;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 ;
@@ -50,7 +49,7 @@ import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
  * Created by atd48 on 2016/8/18.
  * app资料配置
  */
-public class AppDataActivity extends BaseActivity{
+public class AppDataActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tl_normal_bar)
@@ -68,7 +67,6 @@ public class AppDataActivity extends BaseActivity{
     //    缓存统计
     @BindView(R.id.tv_set_clear_cache)
     TextView tv_set_clear_cache;
-    private int uid;
     private AddressInfoBean addressInfoBean;
     private String Img_PATH;
     private List<File> files = new ArrayList<>();
@@ -79,13 +77,28 @@ public class AppDataActivity extends BaseActivity{
     protected int getContentView() {
         return R.layout.activity_persional_data_setting;
     }
+
     @Override
     protected void initViews() {
-        isLoginStatus();
         tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("设置");
         header_shared.setVisibility(View.INVISIBLE);
+        setLayoutUI();
         getCacheStatic();
+    }
+
+    /**
+     * 根据是否登录展示UI
+     */
+    private void setLayoutUI() {
+        if (userId < 1 &&ll_mine_personal.getVisibility() == View.VISIBLE) {
+            ll_mine_personal.setVisibility(View.GONE);
+            tv_set_account_exit.setVisibility(View.GONE);
+        } else if (ll_mine_personal.getVisibility() == View.GONE) {
+            ll_mine_personal.setVisibility(View.VISIBLE);
+            tv_set_account_exit.setVisibility(View.VISIBLE);
+            loadData();
+        }
     }
 
     @Override
@@ -95,28 +108,28 @@ public class AppDataActivity extends BaseActivity{
     }
 
     private void getDefaultAddress() {
-        isLoginStatus();
-        if (uid > 0) {
-            String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + uid;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
-                    if (addressInfoEntity != null) {
-                        if (addressInfoEntity.getCode().equals("01")) {
-                            addressInfoBean = addressInfoEntity.getAddressInfoBean();
-                            setAddressData(addressInfoBean);
-                        } else if (addressInfoEntity.getCode().equals("02")) {
-                            tv_mine_setting_address.setText("");
-                        } else {
-                            tv_mine_setting_address.setText("");
-                            showToast(AppDataActivity.this, addressInfoEntity.getMsg());
-                        }
+        if (userId < 1) {
+            return;
+        }
+        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
+        XUtil.Get(url, null, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+                if (addressInfoEntity != null) {
+                    if (addressInfoEntity.getCode().equals("01")) {
+                        addressInfoBean = addressInfoEntity.getAddressInfoBean();
+                        setAddressData(addressInfoBean);
+                    } else if (addressInfoEntity.getCode().equals("02")) {
+                        tv_mine_setting_address.setText("");
+                    } else {
+                        tv_mine_setting_address.setText("");
+                        showToast(AppDataActivity.this, addressInfoEntity.getMsg());
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private void setAddressData(AddressInfoBean addressInfoBean) {
@@ -157,8 +170,8 @@ public class AppDataActivity extends BaseActivity{
 
     //退出登录
     @OnClick(R.id.tv_set_account_exit)
-    void offLine(View view) {
-        if(alertDialogHelper==null){
+    void offLine() {
+        if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(AppDataActivity.this);
             alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
                     .setMsg("确定要退出当前账号？").setCancelText("取消").setConfirmText("确定")
@@ -167,7 +180,7 @@ public class AppDataActivity extends BaseActivity{
                 @Override
                 public void confirm() {
                     NEW_USER_DIALOG = true;
-                    savePersonalInfoCache(AppDataActivity.this,null);
+                    savePersonalInfoCache(AppDataActivity.this, null);
                     showToast(AppDataActivity.this, "注销成功");
                     exitNewTaoBaoAccount();
 //        清除账号 修改我的页面
@@ -181,17 +194,6 @@ public class AppDataActivity extends BaseActivity{
             });
         }
         alertDialogHelper.show();
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-            ll_mine_personal.setVisibility(View.GONE);
-            tv_set_account_exit.setVisibility(View.GONE);
-        }
     }
 
     private void exitNewTaoBaoAccount() {
@@ -218,7 +220,7 @@ public class AppDataActivity extends BaseActivity{
     @Override
     protected void onResume() {
         if (isPause) {
-            loadData();
+            setLayoutUI();
         }
         super.onResume();
     }
@@ -262,7 +264,7 @@ public class AppDataActivity extends BaseActivity{
     //    给个好评  跳转app商店
     @OnClick(R.id.tv_setting_good)
     void skipShop(View view) {
-        getMarketApp(AppDataActivity.this,"本机应用商店暂未上线哦，小主会努力呢~");
+        getMarketApp(AppDataActivity.this, "本机应用商店暂未上线哦，小主会努力呢~");
     }
 
     //    意见反馈
@@ -317,7 +319,7 @@ public class AppDataActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(alertDialogHelper!=null&&alertDialogHelper.getAlertDialog().isShowing()){
+        if (alertDialogHelper != null && alertDialogHelper.getAlertDialog().isShowing()) {
             alertDialogHelper.dismiss();
         }
     }

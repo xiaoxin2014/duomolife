@@ -228,6 +228,9 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
     }
 
     private void getMyInvitationData() {
+        if(userId<1){
+            return;
+        }
         String url = Url.BASE_URL + Url.MINE_INVITATION_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);

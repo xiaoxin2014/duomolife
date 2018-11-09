@@ -9,15 +9,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
-
-import org.xutils.view.annotation.ContentView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,15 +22,15 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
-;
 
 /**
  * Created by atd48 on 2016/8/18.
+ * 限时特惠商品 设置消息提醒
  */
-@ContentView(R.layout.activity_message_warm)
 public class MessageWarmActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
@@ -45,14 +40,15 @@ public class MessageWarmActivity extends BaseActivity {
     RadioGroup rp_message_warm;
     private final String TIME_WARM = "timeWarm";
     private String timeWarm;
-    private int uid;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_message_warm;
     }
+
     @Override
     protected void initViews() {
-        getLoginStatus();
+        getLoginStatus(MessageWarmActivity.this);
         tv_header_titleAll.setText("提醒设定");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("保存");
@@ -63,7 +59,7 @@ public class MessageWarmActivity extends BaseActivity {
             if (getNumber(button.getText().toString().trim()).equals(timeWarm)) {
                 button.setChecked(true);
                 i = rp_message_warm.getChildCount();
-            }else{
+            } else {
                 button.setChecked(false);
             }
         }
@@ -98,9 +94,12 @@ public class MessageWarmActivity extends BaseActivity {
     }
 
     private void getData(String warmData) {
+        if (userId < 1) {
+            return;
+        }
         String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
         Map<String, Object> params = new HashMap<>();
-        params.put("uid", uid);
+        params.put("uid", userId);
         params.put("remindtime", getNumber(warmData));
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
@@ -122,29 +121,13 @@ public class MessageWarmActivity extends BaseActivity {
         });
     }
 
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             finish();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                getLoginStatus();
-                loadData();
-            }
-        }
     }
 
     @OnClick(R.id.tv_life_back)

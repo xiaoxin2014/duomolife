@@ -178,7 +178,9 @@ public class DirectCouponGetActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            finish();
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -207,6 +209,7 @@ public class DirectCouponGetActivity extends BaseActivity {
     protected View getLoadView() {
         return smart_communal_refresh;
     }
+
     private void selfChoiceCoupon() {
         if (settlementGoods != null
                 && userId > 0) {
@@ -259,26 +262,26 @@ public class DirectCouponGetActivity extends BaseActivity {
                         }
                         directMyCouponAdapter.notifyDataSetChanged();
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList,directCouponEntity);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
                 }
 
                 @Override
                 public void netClose() {
                     smart_communal_refresh.finishRefresh();
                     directMyCouponAdapter.loadMoreComplete();
-                    showToast(mAppContext,R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList,directCouponEntity);
+                    showToast(mAppContext, R.string.unConnectedNetwork);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
                     smart_communal_refresh.finishRefresh();
                     directMyCouponAdapter.loadMoreComplete();
-                    showToast(mAppContext,R.string.invalidData);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList,directCouponEntity);
+                    showToast(mAppContext, R.string.invalidData);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
                 }
             });
-        } else{
+        } else {
             NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
         }
     }

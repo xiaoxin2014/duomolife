@@ -77,9 +77,7 @@ public class IntegralProductIndentActivity extends BaseActivity {
     }
 
     @Override
-    protected void loadData() {
-
-    }
+    protected void loadData() {}
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

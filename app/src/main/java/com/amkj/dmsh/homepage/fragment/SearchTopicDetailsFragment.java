@@ -141,51 +141,50 @@ public class SearchTopicDetailsFragment extends BaseFragment {
     }
 
     private void getTopicList() {
-        if (!TextUtils.isEmpty(topicTitle)) {
-            String url = Url.BASE_URL + Url.H_HOT_SEARCH_TOPIC;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("count", DEFAULT_TOTAL_COUNT);
-            params.put("keyword", topicTitle);
-            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        findTopicBeanList.clear();
-                    }
-                    Gson gson = new Gson();
-                    findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
-                    if (findHotTopicEntity != null) {
-                        if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                            findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
-                        } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), findHotTopicEntity.getMsg());
-                        }
-                        findTopicListAdapter.notifyDataSetChanged();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList,findHotTopicEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList,findHotTopicEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList,findHotTopicEntity);
-                }
-            });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSir(loadService,findTopicBeanList,findHotTopicEntity);
+        if (TextUtils.isEmpty(topicTitle)) {
+            return;
         }
+        String url = Url.BASE_URL + Url.H_HOT_SEARCH_TOPIC;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("count", DEFAULT_TOTAL_COUNT);
+        params.put("keyword", topicTitle);
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadUtils.NetLoadListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            findTopicBeanList.clear();
+                        }
+                        Gson gson = new Gson();
+                        findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
+                        if (findHotTopicEntity != null) {
+                            if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                                findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
+                            } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), findHotTopicEntity.getMsg());
+                            }
+                            findTopicListAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreComplete();
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                    }
+                });
     }
 
     @Override

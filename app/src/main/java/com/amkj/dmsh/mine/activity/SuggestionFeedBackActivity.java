@@ -299,7 +299,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                             updatedImages.clear();
                             updatedImages.addAll(data);
                             //                            已上传不可删除 不可更换图片
-                            getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);
+                            getImageFormatInstance().submitChangeIconStatus(imagePathBeans, false);
                             imgGridRecyclerAdapter.notifyDataSetChanged();
                             sendSuggestionData(data);
                             handler.removeCallbacksAndMessages(null);
@@ -392,12 +392,11 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
-            if (requestCode == SUBMIT_FEEDBACK_CODE || requestCode == IS_LOGIN_CODE) {
+            if (requestCode == SUBMIT_FEEDBACK_CODE
+                    || requestCode == IS_LOGIN_CODE) {
                 finish();
-                return;
-            } else {
-                return;
             }
+            return;
         }
         if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
             List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
@@ -418,43 +417,44 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         } else if (requestCode == REQUEST_PERMISSIONS) {
             showToast(this, "请到应用管理授予权限");
         } else if (requestCode == IS_LOGIN_CODE) {
-            getLoginStatus(this);
+            loadData();
         }
     }
 
 
     @Override
     protected void loadData() {
-        if (userId > 0) {
-            String url = BASE_URL + MINE_FEEDBACK_TYPE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    SuggestionTypeEntity suggestionTypeEntity = new Gson().fromJson(result, SuggestionTypeEntity.class);
-                    if (suggestionTypeEntity != null) {
-                        if (SUCCESS_CODE.equals(suggestionTypeEntity.getCode())) {
-                            feedBackTypeBeans.addAll(suggestionTypeEntity.getFeedBackTypeList());
-                            if (suggestionFeedBackAdapter != null) {
-                                suggestionFeedBackAdapter.notifyDataSetChanged();
-                            }
-                        } else {
-                            showToast(SuggestionFeedBackActivity.this, getStrings(suggestionTypeEntity.getMsg()));
+        if (userId < 1) {
+            return;
+        }
+        String url = BASE_URL + MINE_FEEDBACK_TYPE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                SuggestionTypeEntity suggestionTypeEntity = new Gson().fromJson(result, SuggestionTypeEntity.class);
+                if (suggestionTypeEntity != null) {
+                    if (SUCCESS_CODE.equals(suggestionTypeEntity.getCode())) {
+                        feedBackTypeBeans.addAll(suggestionTypeEntity.getFeedBackTypeList());
+                        if (suggestionFeedBackAdapter != null) {
+                            suggestionFeedBackAdapter.notifyDataSetChanged();
                         }
+                    } else {
+                        showToast(SuggestionFeedBackActivity.this, getStrings(suggestionTypeEntity.getMsg()));
                     }
                 }
+            }
 
-                @Override
-                public void netClose() {
-                    showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
-                }
+            @Override
+            public void netClose() {
+                showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
+            }
 
-                @Override
-                public void onError(Throwable throwable) {
-                    showToast(SuggestionFeedBackActivity.this, R.string.invalidData);
-                }
-            });
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(SuggestionFeedBackActivity.this, R.string.invalidData);
+            }
+        });
     }
 }

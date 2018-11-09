@@ -16,6 +16,7 @@ import com.microquation.linkedme.android.util.LinkProperties;
 
 import java.util.HashMap;
 
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity.LOTTERY_URL;
 
 ;
@@ -60,7 +61,7 @@ public class MiddleActivity extends AppCompatActivity {
                         if (isSkipLogin.equals("true")) {
                             getLoginStatus(skipPage);
                         } else {
-                            ConstantMethod.setSkipPath(MiddleActivity.this, skipPage, true);
+                            setSkipPath(MiddleActivity.this, skipPage, true);
                         }
                     } else {
                         skipMainActivity();

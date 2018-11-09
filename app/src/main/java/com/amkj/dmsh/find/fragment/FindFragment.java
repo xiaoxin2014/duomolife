@@ -33,7 +33,6 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
@@ -46,7 +45,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -68,6 +66,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
@@ -111,11 +110,9 @@ public class FindFragment extends BaseFragment {
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     //    热门主题
     private List<FindHotTopicBean> hotTopicList = new ArrayList<>();
-    private int uid;
     private Badge badge;
     private boolean isOnPause;
     private boolean isCache;
-    private int screenHeight;
     private FindHotTopicAdapter findHotTopicAdapter;
     private int topicPage = 1;
     public static final String FIND_TYPE = "find";
@@ -134,21 +131,9 @@ public class FindFragment extends BaseFragment {
         tl_find_header.setSelected(true);
         findPagerAdapter = new FindPagerAdapter(getChildFragmentManager(), FIND_TYPE, null);
         viewPager.setAdapter(findPagerAdapter);
-        std_find_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+        std_find_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         std_find_art_type.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
         std_find_art_type.setViewPager(viewPager);
-        std_find_art_type.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelect(int position) {
-                if (position == 1) {
-                    isLoginStatus();
-                }
-            }
-
-            @Override
-            public void onTabReselect(int position) {
-            }
-        });
         smart_refresh_find.setOnRefreshListener((refreshLayout) -> {
             loadData();
             EventBus.getDefault().post(new EventMessage("refreshFindData", 1));
@@ -156,13 +141,12 @@ public class FindFragment extends BaseFragment {
         badge = getTopBadge(getActivity(), fra_find_message_total);
         setStatusColor();
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
         ll_find_header.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 ll_find_header.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) ll_find_header.getLayoutParams();
-                layoutParams.setMargins(0,tl_find_header.getMeasuredHeight(),0,0);
+                layoutParams.setMargins(0, tl_find_header.getMeasuredHeight(), 0, 0);
                 ll_find_header.setLayoutParams(layoutParams);
             }
         });
@@ -213,15 +197,6 @@ public class FindFragment extends BaseFragment {
         SystemBarHelper.setPadding(getActivity(), tl_find_header);
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            uid = 0;
-        }
-    }
-
     @OnClick(R.id.iv_find_message_total)
     void skipMessage(View view) {
         Intent intent = new Intent(getActivity(), MessageActivity.class);
@@ -254,14 +229,14 @@ public class FindFragment extends BaseFragment {
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
             getMessageWarm();
-        }else if(START_AUTO_PAGE_TURN.equals(message.type)){
-            if(adBeanList.size()>0&&ad_communal_banner!=null&&!ad_communal_banner.isTurning()){
+        } else if (START_AUTO_PAGE_TURN.equals(message.type)) {
+            if (adBeanList.size() > 0 && ad_communal_banner != null && !ad_communal_banner.isTurning()) {
                 ad_communal_banner.setCanScroll(true);
                 ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                 ad_communal_banner.setPointViewVisible(true);
             }
-        }else if(STOP_AUTO_PAGE_TURN.equals(message.type)){
-            if(ad_communal_banner!=null&&ad_communal_banner.isTurning()){
+        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
+            if (ad_communal_banner != null && ad_communal_banner.isTurning()) {
                 ad_communal_banner.setCanScroll(false);
                 ad_communal_banner.stopTurning();
                 ad_communal_banner.setPointViewVisible(false);
@@ -270,26 +245,27 @@ public class FindFragment extends BaseFragment {
     }
 
     private void getMessageWarm() {
-        isLoginStatus();
-        if (uid > 0) {
-            String url = Url.BASE_URL + Url.H_MESSAGE_WARM + uid;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                    if (messageTotalEntity != null) {
-                        MessageTotalEntity.MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                        if (badge != null) {
-                            int total = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                    + messageTotalBean.getOrderTotal() + messageTotalBean.getCommentTotal()
-                                    + messageTotalBean.getCommOffifialTotal();
-                            badge.setBadgeNumber(total);
-                        }
+        if (userId < 1) {
+            badge.setBadgeNumber(0);
+            return;
+        }
+        String url = Url.BASE_URL + Url.H_MESSAGE_WARM + userId;
+        XUtil.Get(url, null, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                if (messageTotalEntity != null) {
+                    MessageTotalEntity.MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
+                    if (badge != null) {
+                        int total = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
+                                + messageTotalBean.getOrderTotal() + messageTotalBean.getCommentTotal()
+                                + messageTotalBean.getCommOffifialTotal();
+                        badge.setBadgeNumber(total);
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -302,8 +278,8 @@ public class FindFragment extends BaseFragment {
 
     private void getFindAd() {
         String url = Url.BASE_URL + Url.FIND_AD;
-        Map<String,String> params = new HashMap<>();
-        params.put("vidoShow","1");
+        Map<String, String> params = new HashMap<>();
+        params.put("vidoShow", "1");
         XUtil.GetCache(url, 0, params, new MyCacheCallBack<String>() {
             private boolean hasError = false;
             private String result = null;
@@ -395,8 +371,8 @@ public class FindFragment extends BaseFragment {
 
     private void getFindAdNoCache() {
         String url = Url.BASE_URL + Url.FIND_AD;
-        Map<String,Object> params = new HashMap<>();
-        params.put("vidoShow","1");
+        Map<String, Object> params = new HashMap<>();
+        params.put("vidoShow", "1");
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -416,24 +392,24 @@ public class FindFragment extends BaseFragment {
         CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
         if (adActivityEntity != null) {
             if (adActivityEntity.getCode().equals("01")) {
-                    adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
-                    rel_find_ad.setVisibility(View.VISIBLE);
-                    if (cbViewHolderCreator == null) {
-                        cbViewHolderCreator = new CBViewHolderCreator() {
-                            @Override
-                            public Holder createHolder(View itemView) {
-                                return new CommunalAdHolderView(itemView, getActivity(), true);
-                            }
+                adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
+                rel_find_ad.setVisibility(View.VISIBLE);
+                if (cbViewHolderCreator == null) {
+                    cbViewHolderCreator = new CBViewHolderCreator() {
+                        @Override
+                        public Holder createHolder(View itemView) {
+                            return new CommunalAdHolderView(itemView, getActivity(), true);
+                        }
 
-                            @Override
-                            public int getLayoutId() {
-                                return R.layout.layout_ad_image_video;
-                            }
-                        };
-                    }
-                    ad_communal_banner.setPages(getActivity(),cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
-                            .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
-                            .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+                        @Override
+                        public int getLayoutId() {
+                            return R.layout.layout_ad_image_video;
+                        }
+                    };
+                }
+                ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+                        .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                        .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
 
             } else if (!adActivityEntity.getCode().equals("02")) {
                 showToast(getActivity(), adActivityEntity.getMsg());

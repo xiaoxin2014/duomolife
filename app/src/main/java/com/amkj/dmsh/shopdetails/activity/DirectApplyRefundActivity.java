@@ -314,6 +314,9 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     }
 
     private void getApplyRefund() {
+        if(userId<1){
+            return;
+        }
         String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND;
         Map<String, Object> params = new HashMap<>();
         params.put("no", refundBean.getOrderNo());
@@ -425,7 +428,9 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            finish();
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
