@@ -11,8 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/sc_mm_40"
+        android:padding="@dimen/sc_mm_10"
         android:id="@+id/fl_skip"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/tv_launch_wel_skip_main"

@@ -950,6 +950,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
         if (web_communal != null) {
             web_communal.removeAllViews();
+            web_communal.destroy();
         }
         if (alertDialogHelper != null) {
             alertDialogHelper.dismiss();

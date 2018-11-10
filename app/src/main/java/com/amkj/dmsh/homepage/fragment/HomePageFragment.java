@@ -638,11 +638,12 @@ public class HomePageFragment extends BaseFragment {
                 showToast(getActivity(), categoryTypeEntity.getMsg());
             }
             if (categoryList.size() > 0) {
-                HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getFragmentManager(), categoryList);
+                HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getChildFragmentManager(), categoryList);
                 viewpager_container.setAdapter(qualityPageAdapter);
                 std_home_art_type.setViewPager(viewpager_container);
                 std_home_art_type.setCurrentTab(0);
                 viewpager_container.setCurrentItem(0);
+                std_home_art_type.notifyDataSetChanged();
             }
         }
     }

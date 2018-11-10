@@ -155,12 +155,21 @@ public class WelcomeLaunchActivity extends BaseActivity {
     private void setLaunchImage() {
         if (!TextUtils.isEmpty(imgPath)) {
             showSeconds = sharedPreferences.getString(TimeKey, "5");
-            GlideImageLoaderUtil.loadCenterCrop(WelcomeLaunchActivity.this,iv_launch_wel_page,"file://"+imgPath);
-            if (Integer.parseInt(getNorNumber(showSeconds)) > 0) {
-                setAdDataShow(showSeconds);
-            } else {
-                setSkipClickPath(null);
-            }
+            GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page, "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {
+                @Override
+                public void onSuccess() {
+                    if (Integer.parseInt(getNorNumber(showSeconds)) > 0) {
+                        setAdDataShow(showSeconds);
+                    } else {
+                        setSkipClickPath(null);
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    setSkipClickPath(null);
+                }
+            });
         } else {
             setSkipClickPath(null);
         }
@@ -170,8 +179,10 @@ public class WelcomeLaunchActivity extends BaseActivity {
     void skipMain() {
         setSkipClickPath(null);
     }
-    @OnClick(R.id.iv_launch_wel_page)
-    void skipPath() {
+
+    @OnClick(R.id.fl_skip)
+    void skipPath(View view) {
+        view.setEnabled(false);
         setSkipClickPath(skipUrlPath);
     }
 

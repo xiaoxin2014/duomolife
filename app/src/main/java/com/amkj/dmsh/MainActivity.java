@@ -86,7 +86,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -129,8 +128,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
-import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
 
 ;
 
@@ -438,10 +438,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 dateCurrent = new Date();
             }
             return dateCurrent.getTime() >= dateExpress.getTime();
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return true;
         }
+        return true;
     }
 
     /**
@@ -469,8 +469,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
      * @param mainNavBean
      */
     private void initDownNavData(RadioButton rb, MainNavBean mainNavBean, int position) {
-        String picPath = getPicPath(mainNavBean.getPicUrl());
-        String picSecondPath = getPicPath(mainNavBean.getPicUrlSecond());
+        String picPath = getImageFilePath(this, mainNavBean.getPicUrl());
+        String picSecondPath = getImageFilePath(this, mainNavBean.getPicUrlSecond());
         if (fileIsExist(picPath) && fileIsExist(picSecondPath)) {
             setDownBitmap(rb, picPath, picSecondPath);
             setDynamicButtonData(rb, mainNavBean, position);
@@ -487,8 +487,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         } else {
 //            如果数据已存在，文件不存在，重新保存图片 下次生效
             setNormalIcon(position, rb);
-            saveNavIcon(mainNavBean.getPicUrl());
-            saveNavIcon(mainNavBean.getPicUrlSecond());
+            saveImageToFile(MainActivity.this, mainNavBean.getPicUrl());
+            saveImageToFile(MainActivity.this, mainNavBean.getPicUrlSecond());
         }
     }
 
@@ -633,14 +633,15 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     if (mainNavEntity.getCode().equals("01")) {
                         if (mainNavEntity.getMainNavBeanList().size() == 5) {
                             String modifyTime = sharedPreferences.getString("modifyTime", "");
-                            if (!modifyTime.equals(mainNavEntity.getModifyTime())) {
+                            if (!modifyTime.equals(mainNavEntity.getModifyTime())
+                                    && !isTimeExpress(mainNavEntity)) {
                                 SharedPreferences.Editor edit = sharedPreferences.edit();
                                 edit.putString("modifyTime", getStrings(mainNavEntity.getModifyTime()));
                                 edit.putString("NavDate", result);
                                 edit.apply();
                                 for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
-                                    saveNavIcon(mainNavBean.getPicUrl());
-                                    saveNavIcon(mainNavBean.getPicUrlSecond());
+                                    saveImageToFile(MainActivity.this, mainNavBean.getPicUrl());
+                                    saveImageToFile(MainActivity.this, mainNavBean.getPicUrlSecond());
                                 }
                             }
                         }
@@ -660,39 +661,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
             }
         });
-    }
-
-    //    保存底部导航图标
-    private void saveNavIcon(String picUrl) {
-        final String Nav = getPicPath(picUrl);
-        if (!TextUtils.isEmpty(picUrl)) {
-            if (!fileIsExist(Nav)) {
-                Glide.with(getApplicationContext()).downloadOnly().load(picUrl).into(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File file, Transition<? super File> transition) {
-                        try {
-                            FileStreamUtils.forChannel(file, new File(Nav));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    /**
-     * 获取图标保存路径
-     *
-     * @param picUrl
-     * @return
-     */
-    @NonNull
-    private String getPicPath(String picUrl) {
-        String Nav = getCacheDir().getAbsolutePath() + "/DownNavIcon";
-        createFilePath(Nav);
-        Nav = Nav + "/" + picUrl.substring(picUrl.lastIndexOf("/"));
-        return Nav;
     }
 
     /**
@@ -1097,9 +1065,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(0);
         radioButton.setChecked(true);
         MainIconBean mainIconBean = (MainIconBean) radioButton.getTag(R.id.main_page);
-        if(mainIconBean!=null){
+        if (mainIconBean != null) {
             changePage(mainIconBean);
-        }else{
+        } else {
             if (iconDataList.size() > 0) {
                 changePage(iconDataList.get(0));
             } else {
@@ -1118,7 +1086,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private void changeAdaptivePage(String tag) {
         RadioButton defaultButton = (RadioButton) rp_bottom_main.getChildAt(0);
         MainIconBean defaultIconBean = (MainIconBean) defaultButton.getTag(R.id.main_page);
-        if(TextUtils.isEmpty(tag)){
+        if (TextUtils.isEmpty(tag)) {
             changePage(defaultIconBean);
         }
         for (int i = 0; i < rp_bottom_main.getChildCount(); i++) {
@@ -1136,12 +1104,13 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     /**
      * 设置页面tag
+     *
      * @param pageTag
      */
     private void skipMainPage(String pageTag) {
-        if(!TextUtils.isEmpty(pageTag)){
+        if (!TextUtils.isEmpty(pageTag)) {
             Intent intent = new Intent(this, MainPageTabBarActivity.class);
-            intent.putExtra("tabType",pageTag);
+            intent.putExtra("tabType", pageTag);
             startActivity(intent);
         }
     }
@@ -1152,7 +1121,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(mainIconBean.getPosition() > rp_bottom_main.getChildCount() - 1 ?
                     rp_bottom_main.getChildCount() - 1 : mainIconBean.getPosition());
             radioButton.setChecked(true);
-            fragment = fragmentManager.findFragmentByTag(tag);
+            fragment = fragmentManager.findFragmentByTag(tag + mainIconBean.getPosition());
             transaction = fragmentManager.beginTransaction();
             if (fragment != null && fragment.isAdded()) {
                 if (lastFragment != null) {
@@ -1191,13 +1160,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 if (lastFragment != null) {
                     if (fragment.isAdded()) {
                         transaction.hide(lastFragment).show(fragment).commitAllowingStateLoss();
-
                     } else {
-                        transaction.hide(lastFragment).add(R.id.main_container, fragment, tag).commitAllowingStateLoss();
-
+                        transaction.hide(lastFragment).add(R.id.main_container, fragment, tag + mainIconBean.getPosition()).commitAllowingStateLoss();
                     }
                 } else {
-                    transaction.add(R.id.main_container, fragment, tag).commitAllowingStateLoss();
+                    transaction.add(R.id.main_container, fragment, tag + mainIconBean.getPosition()).commitAllowingStateLoss();
                 }
                 lastFragment = fragment;
             }
@@ -1319,7 +1286,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     private void goBack() {
-        if(alertDialogHelper == null){
+        if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(MainActivity.this);
             alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
                     .setMsg("确定要退出当前程序").setCancelText("取消").setConfirmText("确定")
@@ -1333,7 +1300,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 }
 
                 @Override
-                public void cancel() {}
+                public void cancel() {
+                }
             });
         }
         alertDialogHelper.show();

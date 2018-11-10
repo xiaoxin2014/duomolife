@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.utils.FileStreamUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -33,9 +34,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
+import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
+import static com.amkj.dmsh.constant.ConstantVariable.FILE_IMAGE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 ;
@@ -91,6 +95,41 @@ public class GlideImageLoaderUtil {
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
                             .centerCrop().error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
+                    .into(iv);
+        }
+    }
+
+    /**
+     * @param context
+     * @param iv
+     * @param imgUrl
+     */
+    public static void loadCenterCropListener(Context context, final ImageView iv, String imgUrl
+            , ImageLoaderListener imageLoaderListener) {
+        if (null != context) {
+            Glide.with(context).load(imgUrl)
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .skipMemoryCache(true)
+                            .centerCrop().error(R.drawable.load_loading_image))
+                    .transition(withCrossFade())
+                    .addListener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            if(imageLoaderListener!=null){
+                                imageLoaderListener.onError();
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            if(imageLoaderListener!=null){
+                                imageLoaderListener.onSuccess();
+                            }
+                            return false;
+                        }
+                    })
                     .into(iv);
         }
     }
@@ -350,7 +389,7 @@ public class GlideImageLoaderUtil {
                             .submit();
                 }
             }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Bitmap>() {
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Bitmap>() {
                 Disposable disposable;
 
                 @Override
@@ -360,21 +399,21 @@ public class GlideImageLoaderUtil {
 
                 @Override
                 public void onNext(Bitmap bitmap) {
-                    if(loaderFinishListener!=null){
+                    if (loaderFinishListener != null) {
                         loaderFinishListener.onSuccess(bitmap);
                     }
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    if(loaderFinishListener!=null){
+                    if (loaderFinishListener != null) {
                         loaderFinishListener.onError();
                     }
                 }
 
                 @Override
                 public void onComplete() {
-                    if(loaderFinishListener!=null){
+                    if (loaderFinishListener != null) {
                         loaderFinishListener.onError();
                     }
                 }
@@ -606,6 +645,7 @@ public class GlideImageLoaderUtil {
 
     public interface ImageLoaderFinishListener {
         void onSuccess(Bitmap bitmap);
+
         void onError();
     }
 
@@ -624,11 +664,78 @@ public class GlideImageLoaderUtil {
     }
 
     /**
+     * 监听图片加载过程
+     */
+    public interface ImageLoaderListener {
+
+        void onSuccess();
+
+        void onError();
+    }
+
+    /**
+     * 保存图片文件到app存储
+     * 子线程调用
+     *
+     * @param picUrl
+     */
+    public static void saveImageToFile(Context context, String picUrl) {
+        if (TextUtils.isEmpty(picUrl)) {
+            return;
+        }
+        createExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                String filePath = context.getDir(FILE_IMAGE, MODE_PRIVATE).getAbsolutePath();
+                createFilePath(filePath);
+                String imageFilePath = filePath + "/" + picUrl.substring(picUrl.lastIndexOf("/"));
+                if (!fileIsExist(imageFilePath)) {
+                    try {
+//                必须为子线程调用，否则阻塞线程
+                        File file = Glide.with(context).downloadOnly().load(picUrl)
+                                .apply(new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.DATA)).submit().get();
+                        if (file != null) {
+                            FileStreamUtils.forChannel(file, new File(imageFilePath));
+                        }
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取当前文件路径 仅限
+     * @param context
+     * @param picUrl
+     * @return
+     */
+    public static String getImageFilePath(Context context,String picUrl) {
+        if (TextUtils.isEmpty(picUrl)) {
+            return "";
+        }
+        String filePath = context.getDir(FILE_IMAGE, MODE_PRIVATE).getAbsolutePath();
+        createFilePath(filePath);
+        int indexCode = picUrl.lastIndexOf("/");
+        if (indexCode > -1) {
+            return filePath + "/" + picUrl.substring(indexCode);
+        } else {
+            return "";
+        }
+    }
+
+    /**
      * 获取图片宽高
+     *
      * @param path
      * @return
      */
-    public static int[] getImageWidthHeight(String path){
+    public static int[] getImageWidthHeight(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         /**
@@ -640,6 +747,6 @@ public class GlideImageLoaderUtil {
         /**
          *options.outHeight为原始图片的高
          */
-        return new int[]{options.outWidth,options.outHeight};
+        return new int[]{options.outWidth, options.outHeight};
     }
 }
