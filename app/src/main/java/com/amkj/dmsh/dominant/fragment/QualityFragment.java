@@ -316,111 +316,59 @@ public class QualityFragment extends BaseFragment {
 
     private void getQualityHorType() {
         String url = Url.BASE_URL + Url.QUALITY_SHOP_HOR_TYPE;
-        if (NetWorkUtils.isConnectedByState(getActivity())) {
-            XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
-                private boolean hasError = false;
-                private String result = null;
-                private boolean hasCache = false;
+        XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
+            private boolean hasError = false;
+            private String result = null;
+            private boolean hasCache = false;
 
-                @Override
-                public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                    this.result = result;
-                    hasCache = true;
-                    getTypeHorDataJson(result);
+            @Override
+            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
+                this.result = result;
+                hasCache = true;
+                getTypeHorDataJson(result);
 //                判断当前网络是否连接
-                    return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-                }
+                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
+            }
 
-                @Override
-                public void onSuccess(String result) {
-                    //如果服务返回304或onCache选择了信任缓存,这时result为null
-                    if (result != null) {
-                        this.result = result;
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    hasError = true;
-//                    showToast(x.app(), ex.getMessage());
-                    if (ex instanceof HttpException) { //网络错误
-                        HttpException httpEx = (HttpException) ex;
-                        int responseCode = httpEx.getCode();
-                        String responseMsg = httpEx.getMessage();
-                        String errorResult = httpEx.getResult();
-                        //...
-                    } else { //其他错误
-                        //...
-                    }
-                    if (hasCache) {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-                }
-
-                @Override
-                public void onCancelled(CancelledException cex) {
-                }
-
-                @Override
-                public void onFinished() {
-                    if (!hasError && result != null) {
-                        //成功获取数据
-//                    showToast(x.app(), result);
-                        getTypeHorDataJson(result);
-                    }
-                }
-            });
-        } else {
-            XUtil.GetCache(url, 2, null, new MyCacheCallBack<String>() {
-                private boolean hasError = false;
-                private String result = null;
-                private boolean hasCache = false;
-
-                @Override
-                public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
+            @Override
+            public void onSuccess(String result) {
+                //如果服务返回304或onCache选择了信任缓存,这时result为null
+                if (result != null) {
                     this.result = result;
-                    getTypeHorDataJson(result);
-//                判断当前网络是否连接
-                    return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
                 }
+            }
 
-                @Override
-                public void onSuccess(String result) {
-                    //如果服务返回304或onCache选择了信任缓存,这时result为null
-                    if (result != null) {
-                        this.result = result;
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    hasError = true;
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                hasError = true;
 //                    showToast(x.app(), ex.getMessage());
-                    if (ex instanceof HttpException) { //网络错误
-                        HttpException httpEx = (HttpException) ex;
-                        int responseCode = httpEx.getCode();
-                        String responseMsg = httpEx.getMessage();
-                        String errorResult = httpEx.getResult();
-                        //...
-                    } else { //其他错误
-                        //...
-                    }
+                if (ex instanceof HttpException) { //网络错误
+                    HttpException httpEx = (HttpException) ex;
+                    int responseCode = httpEx.getCode();
+                    String responseMsg = httpEx.getMessage();
+                    String errorResult = httpEx.getResult();
+                    //...
+                } else { //其他错误
+                    //...
                 }
-
-                @Override
-                public void onCancelled(CancelledException cex) {
+                if (hasCache) {
+                    showToast(getActivity(), R.string.unConnectedNetwork);
                 }
+            }
 
-                @Override
-                public void onFinished() {
-                    if (!hasError && result != null) {
-                        //成功获取数据
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onFinished() {
+                if (!hasError && result != null) {
+                    //成功获取数据
 //                    showToast(x.app(), result);
-                        getTypeHorDataJson(result);
-                    }
+                    getTypeHorDataJson(result);
                 }
-            });
-        }
+            }
+        });
     }
 
     private void getTypeHorDataJson(String result) {
@@ -437,111 +385,59 @@ public class QualityFragment extends BaseFragment {
 
     private void getQualitySideType() {
         String url = Url.BASE_URL + Url.QUALITY_SHOP_TYPE;
-        if (NetWorkUtils.isConnectedByState(getActivity())) {
-            XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
-                private boolean hasError = false;
-                private String result = null;
-                private boolean hasCache = false;
+        XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
+            private boolean hasError = false;
+            private String result = null;
+            private boolean hasCache = false;
 
-                @Override
-                public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                    this.result = result;
-                    hasCache = true;
-                    getTypeDataJson(result);
+            @Override
+            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
+                this.result = result;
+                hasCache = true;
+                getTypeDataJson(result);
 //                判断当前网络是否连接
-                    return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-                }
+                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
+            }
 
-                @Override
-                public void onSuccess(String result) {
-                    //如果服务返回304或onCache选择了信任缓存,这时result为null
-                    if (result != null) {
-                        this.result = result;
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    hasError = true;
-//                    showToast(x.app(), ex.getMessage());
-                    if (ex instanceof HttpException) { //网络错误
-                        HttpException httpEx = (HttpException) ex;
-                        int responseCode = httpEx.getCode();
-                        String responseMsg = httpEx.getMessage();
-                        String errorResult = httpEx.getResult();
-                        //...
-                    } else { //其他错误
-                        //...
-                    }
-                    if (hasCache) {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-                }
-
-                @Override
-                public void onCancelled(CancelledException cex) {
-                }
-
-                @Override
-                public void onFinished() {
-                    if (!hasError && result != null) {
-                        //成功获取数据
-//                    showToast(x.app(), result);
-                        getTypeDataJson(result);
-                    }
-                }
-            });
-        } else {
-            XUtil.GetCache(url, 2, null, new MyCacheCallBack<String>() {
-                private boolean hasError = false;
-                private String result = null;
-                private boolean hasCache = false;
-
-                @Override
-                public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
+            @Override
+            public void onSuccess(String result) {
+                //如果服务返回304或onCache选择了信任缓存,这时result为null
+                if (result != null) {
                     this.result = result;
-                    getTypeDataJson(result);
-//                判断当前网络是否连接
-                    return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
                 }
+            }
 
-                @Override
-                public void onSuccess(String result) {
-                    //如果服务返回304或onCache选择了信任缓存,这时result为null
-                    if (result != null) {
-                        this.result = result;
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    hasError = true;
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                hasError = true;
 //                    showToast(x.app(), ex.getMessage());
-                    if (ex instanceof HttpException) { //网络错误
-                        HttpException httpEx = (HttpException) ex;
-                        int responseCode = httpEx.getCode();
-                        String responseMsg = httpEx.getMessage();
-                        String errorResult = httpEx.getResult();
-                        //...
-                    } else { //其他错误
-                        //...
-                    }
+                if (ex instanceof HttpException) { //网络错误
+                    HttpException httpEx = (HttpException) ex;
+                    int responseCode = httpEx.getCode();
+                    String responseMsg = httpEx.getMessage();
+                    String errorResult = httpEx.getResult();
+                    //...
+                } else { //其他错误
+                    //...
                 }
-
-                @Override
-                public void onCancelled(CancelledException cex) {
+                if (hasCache) {
+                    showToast(getActivity(), R.string.unConnectedNetwork);
                 }
+            }
 
-                @Override
-                public void onFinished() {
-                    if (!hasError && result != null) {
-                        //成功获取数据
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onFinished() {
+                if (!hasError && result != null) {
+                    //成功获取数据
 //                    showToast(x.app(), result);
-                        getTypeDataJson(result);
-                    }
+                    getTypeDataJson(result);
                 }
-            });
-        }
+            }
+        });
     }
 
     private void getTypeDataJson(String result) {

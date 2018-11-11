@@ -6,14 +6,22 @@
     android:orientation="vertical">
 
     <include layout="@layout/activity_dml_progress_header" />
-
-    <FrameLayout
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"
+        android:id="@+id/smart_web_refresh"
         android:layout_height="match_parent">
-
-        <com.amkj.dmsh.views.HtmlWebView
-            android:id="@+id/web_communal"
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+            android:layout_height="wrap_content"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.amkj.dmsh.views.HtmlWebView
+                android:id="@+id/web_communal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <include layout="@layout/layout_communal_net_error"/>
+        </FrameLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

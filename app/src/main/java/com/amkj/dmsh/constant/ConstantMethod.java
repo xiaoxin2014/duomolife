@@ -537,6 +537,22 @@ public class ConstantMethod {
         return false;
     }
 
+    /**
+     * 获取web地址
+     * @param androidLink
+     * @return
+     */
+    public static String getWebLinkUrl(String androidLink) {
+        if (TextUtils.isEmpty(androidLink)) {
+            return "";
+        }
+        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
+        while (matcher.find()) {
+            return matcher.group();
+        }
+        return androidLink;
+    }
+
     private static void skipAliBCWebView(final String url, Context context) {
         if (!TextUtils.isEmpty(url)) {
             if (userId != 0) {

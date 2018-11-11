@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +27,7 @@ import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -35,6 +35,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -68,6 +69,7 @@ import com.amkj.dmsh.views.HtmlWebView;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -89,12 +91,18 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
+import static com.amkj.dmsh.constant.ConstantMethod.getWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
+import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 ;
@@ -120,6 +128,11 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     SeekBar bottom_seek_web_progress;
     @BindView(R.id.tl_web_normal_bar)
     Toolbar tl_web_normal_bar;
+    @BindView(R.id.ll_communal_net_error)
+    LinearLayout ll_communal_net_error;
+    @BindView(R.id.smart_web_refresh)
+    SmartRefreshLayout smart_web_refresh;
+
     private String loadUrl;
     //    分享数据
     private Map<String, String> shareDataMap = new HashMap<>();
@@ -134,6 +147,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private NotificationCompat.Builder mBuilder;
     private String jsIdentifying;
     private AlertDialogHelper alertDialogHelper;
+    private String errorUrl;
 
     @Override
     protected int getContentView() {
@@ -143,6 +157,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_web_shared.setVisibility(View.GONE);
+        ll_communal_net_error.setVisibility(View.GONE);
         tv_web_title.setText("");
         Intent intent = getIntent();
         loadUrl = intent.getStringExtra("loadUrl");
@@ -184,6 +199,36 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                // 断网或者网络连接超时
+                if (errorCode == ERROR_HOST_LOOKUP || errorCode == ERROR_CONNECT || errorCode == ERROR_TIMEOUT) {
+                    errorUrl = failingUrl;
+                    setErrorException(view);
+                }
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                int errorCode = error.getErrorCode();
+                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                    errorUrl = request.getUrl().toString();
+                    setErrorException(view);
+                }
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                int errorCode = errorResponse.getStatusCode();
+                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                    errorUrl = request.getUrl().toString();
+                    setErrorException(view);
+                }
             }
 
             @Override
@@ -234,11 +279,17 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 String url = request.getUrl().toString();
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
+                        if(url.contains(WEB_TAOBAO_SCHEME)||url.contains(WEB_JD_SCHEME)
+                                ||url.contains(WEB_TMALL_SCHEME)){
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            startActivity(intent);
+                        }else if(isWebLinkUrl(url)){
+                            view.loadUrl(getWebLinkUrl(url));
+                        }
                         return true;
                     }
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                    view.loadUrl(getWebLinkUrl(url));
                     return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
                 view.loadUrl(url);
@@ -249,23 +300,24 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
+                        if(url.contains(WEB_TAOBAO_SCHEME)||url.contains(WEB_JD_SCHEME)
+                                ||url.contains(WEB_TMALL_SCHEME)){
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            startActivity(intent);
+                        }else if(isWebLinkUrl(url)){
+                            view.loadUrl(getWebLinkUrl(url));
+                        }
                         return true;
                     }
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                    view.loadUrl(getWebLinkUrl(url));
                     return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
                 view.loadUrl(url);
                 return true;
             }
-
-            @Nullable
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                return super.shouldInterceptRequest(view, url);
-            }
         });
+
         web_communal.setDownloadListener((url, userAgent, contentDisposition, mineType, contentLength) -> {
             if (constantMethod == null) {
                 constantMethod = new ConstantMethod();
@@ -279,6 +331,11 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             });
             constantMethod.getPermissions(DoMoLifeCommunalActivity.this.getApplicationContext(), Permission.Group.STORAGE);
         });
+    }
+
+    private void setErrorException(WebView view) {
+        view.loadUrl(WEB_BLACK_PAGE);// 避免出现默认的错误界面
+        ll_communal_net_error.setVisibility(View.VISIBLE);
     }
 
 
@@ -987,6 +1044,14 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             return false;
         }
     });
-
+    @OnClick(R.id.tv_communal_net_refresh)
+    void clickError(){
+        ll_communal_net_error.setVisibility(View.GONE);
+        if(isWebLinkUrl(errorUrl)){
+            web_communal.loadUrl(errorUrl);
+        }else{
+            web_communal.loadUrl(loadUrl);
+        }
+    }
 
 }

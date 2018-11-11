@@ -297,4 +297,15 @@ public class ConstantVariable {
     public static String INDENT_INTEGRAL_PRODUCT = "integralProduct";
 //    自营商品
     public static String INDENT_PROPRIETOR_PRODUCT = "proprietorProduct";
+
+    /**
+     * web 数据
+     */
+    public static final String WEB_TAOBAO_SCHEME = "taobao://";
+//    京东
+    public static final String WEB_JD_SCHEME = "jdmoble://";
+//    天猫
+    public static final String WEB_TMALL_SCHEME = "tmall://";
+//    web 空白页面
+    public static final String WEB_BLACK_PAGE = "about:blank";
 }
