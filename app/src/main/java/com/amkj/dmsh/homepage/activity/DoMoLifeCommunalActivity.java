@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -70,6 +69,9 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -146,6 +148,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private int notifyId = 0xfff;
     private NotificationCompat.Builder mBuilder;
     private String jsIdentifying;
+    private String refreshStatus;
     private AlertDialogHelper alertDialogHelper;
     private String errorUrl;
 
@@ -232,15 +235,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             }
 
             @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-//                iv_close_reload_page.setVisibility(View.VISIBLE);
-//                iv_close_reload_page.setSelect(false);
-                super.onPageStarted(view, url, favicon);
-            }
-
-            @Override
             public void onPageFinished(final WebView view, final String url) {
-//                iv_close_reload_page.setSelect(true);
 //                    是否显示顶部导航栏
                 if (view.canGoBack()) {
                     runOnUiThread(new Runnable() {
@@ -269,6 +264,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                             }
                         }
                     });
+                }
+                if (RefreshState.Refreshing.equals(smart_web_refresh.getState())) {
+                    smart_web_refresh.finishRefresh();
                 }
                 super.onPageFinished(view, url);
             }
@@ -331,6 +329,22 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             });
             constantMethod.getPermissions(DoMoLifeCommunalActivity.this.getApplicationContext(), Permission.Group.STORAGE);
         });
+        web_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
+            @Override
+            public void onScroll(int dx, int dy) {
+                if (dy < 2) {
+                    setWebRefreshStatus(1);
+                } else {
+                    setWebRefreshStatus(0);
+                }
+            }
+        });
+        smart_web_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                web_communal.reload();
+            }
+        });
     }
 
     private void setErrorException(WebView view) {
@@ -338,6 +352,17 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         ll_communal_net_error.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * 设置刷新开启禁用 1 开启 其它禁用
+     * @param refreshStatus
+     */
+    private void setWebRefreshStatus(int refreshStatus) {
+        if (!TextUtils.isEmpty(this.refreshStatus)) {
+            smart_web_refresh.setEnableRefresh(this.refreshStatus.contains("1"));
+        } else {
+            smart_web_refresh.setEnableRefresh(refreshStatus == 1);
+        }
+    }
 
     /**
      * 文件下载
@@ -644,6 +669,11 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
+            if (newProgress == 100) {
+                if (RefreshState.Refreshing.equals(smart_web_refresh.getState())) {
+                    smart_web_refresh.finishRefresh();
+                }
+            }
         }
     }
 
@@ -822,6 +852,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                         case "userId":
                             jsGetUserId(jsInteractiveBean);
                             break;
+                        case "refresh":
+                            jsRefreshStatus(jsInteractiveBean);
+                            break;
                         default:
                             jsInteractiveEmpty();
                             break;
@@ -868,6 +901,24 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }else{
             getLoginStatus(DoMoLifeCommunalActivity.this);
         }
+    }
+    /**
+     * js刷新状态
+     * @param jsInteractiveBean
+     */
+    private void jsRefreshStatus(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        this.refreshStatus = String.valueOf(1);
+        if (otherData != null && otherData.get("refreshCode") != null) {
+            try {
+                int refreshCode = (int) otherData.get("refreshCode");
+                this.refreshStatus = String.valueOf(refreshCode);
+            } catch (Exception e) {
+                this.refreshStatus = String.valueOf(1);
+                e.printStackTrace();
+            }
+        }
+        setWebRefreshStatus(Integer.parseInt(refreshStatus));
     }
 
     /**

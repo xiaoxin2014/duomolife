@@ -782,7 +782,7 @@ public class AliBCFragment extends BaseFragment {
                         jsGetUserId(jsInteractiveBean);
                         break;
                     case "refresh":
-                        jsGetUserId(jsInteractiveBean);
+                        jsRefreshStatus(jsInteractiveBean);
                         break;
                     default:
                         jsInteractiveEmpty();
@@ -830,6 +830,25 @@ public class AliBCFragment extends BaseFragment {
         } else {
             getLoginStatus(AliBCFragment.this);
         }
+    }
+
+    /**
+     * js刷新状态
+     * @param jsInteractiveBean
+     */
+    private void jsRefreshStatus(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        this.refreshStatus = String.valueOf(1);
+        if (otherData != null && otherData.get("refreshCode") != null) {
+            try {
+                int refreshCode = (int) otherData.get("refreshCode");
+                this.refreshStatus = String.valueOf(refreshCode);
+            } catch (Exception e) {
+                this.refreshStatus = String.valueOf(1);
+                e.printStackTrace();
+            }
+        }
+        setWebRefreshStatus(Integer.parseInt(refreshStatus));
     }
 
     /**

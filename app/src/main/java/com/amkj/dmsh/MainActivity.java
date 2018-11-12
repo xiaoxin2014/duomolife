@@ -633,8 +633,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     if (mainNavEntity.getCode().equals("01")) {
                         if (mainNavEntity.getMainNavBeanList().size() == 5) {
                             String modifyTime = sharedPreferences.getString("modifyTime", "");
-                            if (!modifyTime.equals(mainNavEntity.getModifyTime())
-                                    && !isTimeExpress(mainNavEntity)) {
+                            if (!modifyTime.equals(mainNavEntity.getModifyTime())) {
                                 SharedPreferences.Editor edit = sharedPreferences.edit();
                                 edit.putString("modifyTime", getStrings(mainNavEntity.getModifyTime()));
                                 edit.putString("NavDate", result);

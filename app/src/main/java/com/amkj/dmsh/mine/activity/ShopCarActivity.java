@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -35,9 +36,6 @@ import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShoppingCartBiz;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
@@ -46,11 +44,12 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -87,7 +86,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 /**
  * Created by atd48 on 2016/10/22.
  */
-public class ShopCarActivity extends BaseActivity implements OnAlertItemClickListener {
+public class ShopCarActivity extends BaseActivity{
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -134,7 +133,6 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     private List<CartInfoBean> shopGoodsList = new ArrayList<>();
     private List<LikedProductBean> cartProRecommendList = new ArrayList<>();
     private ShopCarGoodsAdapter shopCarGoodsAdapter;
-    private AlertView dlDelGoods;
     private StringBuffer carIds;
     private boolean isOnPause;
     private int scrollY = 0;
@@ -143,6 +141,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     private View cartHeaderView;
     private ProNoShopCarAdapter proNoShopCarAdapter;
     private UserLikedProductEntity likedProduct;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -292,17 +291,7 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
             CartInfoBean cartInfoBean = (CartInfoBean) message.result;
             if (!TextUtils.isEmpty(cartInfoBean.getId() + "")) {
                 carIds = new StringBuffer(String.valueOf(cartInfoBean.getId()));
-                AlertSettingBean alertSettingBean = new AlertSettingBean();
-                AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                alertData.setCancelStr("取消");
-                alertData.setDetermineStr("确定");
-                alertData.setFirstDet(true);
-                alertData.setMsg("确定删除选中商品");
-                alertSettingBean.setStyle(AlertView.Style.Alert);
-                alertSettingBean.setAlertData(alertData);
-                dlDelGoods = new AlertView(alertSettingBean, ShopCarActivity.this, ShopCarActivity.this);
-                dlDelGoods.setCancelable(true);
-                dlDelGoods.show();
+                setDeleteGoodsDialog();
             }
         }
     }
@@ -419,7 +408,6 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
     }
 
     private void getShopCarProInfo() {
-
         String url = Url.BASE_URL + Url.MINE_SHOP_CAR_GOODS;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_FORTY);
@@ -681,48 +669,60 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
 
     //    删除
     @OnClick(R.id.tv_shop_car_del)
-    void delGoods(View view) {
+    void delGoods() {
         carIds = ShoppingCartBiz.delSelGoods(shopGoodsList);
+        setDeleteGoodsDialog();
+    }
+
+    /**
+     * 删除选中商品
+     */
+    private void setDeleteGoodsDialog() {
         if (!TextUtils.isEmpty(carIds)) {
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("确定");
-            alertData.setFirstDet(true);
-            alertData.setMsg("确定删除选中商品");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            dlDelGoods = new AlertView(alertSettingBean, ShopCarActivity.this, ShopCarActivity.this);
-            dlDelGoods.setCancelable(true);
-            dlDelGoods.show();
+            if (alertDialogHelper == null) {
+                alertDialogHelper = new AlertDialogHelper(ShopCarActivity.this);
+                alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                        .setMsg("确定删除选中商品").setCancelText("取消").setConfirmText("确定")
+                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                    @Override
+                    public void confirm() {
+                        //            确定删除商品
+                        delSelGoods();
+                    }
+
+                    @Override
+                    public void cancel() {
+
+                    }
+                });
+            }
+            alertDialogHelper.show();
         } else {
             showToast(this, "请选择你要删除的商品");
         }
     }
 
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == dlDelGoods && position != AlertView.CANCELPOSITION) {
-//            确定删除商品
-            delSelGoods();
-        }
-    }
-
     private void delSelGoods() {
+        if(loadHud!=null){
+            loadHud.show();
+        }
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_DEL_CAR;
-        Map<String,Object> params = new HashMap<>();
-        params.put("userId",userId);
-        params.put("ids",carIds);
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("ids", carIds);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
+                if(loadHud!=null){
+                    loadHud.dismiss();
+                }
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        setEditStatus();
                         loadData();
-                    } else if(!status.getCode().equals(EMPTY_CODE)){
+                    } else if (!status.getCode().equals(EMPTY_CODE)) {
                         showToast(ShopCarActivity.this, status.getMsg());
                     }
                 }
@@ -731,11 +731,17 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
             @Override
             public void netClose() {
                 showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+                if(loadHud!=null){
+                    loadHud.dismiss();
+                }
             }
 
             @Override
             public void onError(Throwable throwable) {
                 showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+                if(loadHud!=null){
+                    loadHud.dismiss();
+                }
             }
         });
     }
@@ -942,6 +948,14 @@ public class ShopCarActivity extends BaseActivity implements OnAlertItemClickLis
                 }
             });
             proNoShopCarAdapter.setEnableLoadMore(false);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(alertDialogHelper!=null){
+            alertDialogHelper.dismiss();
         }
     }
 }
