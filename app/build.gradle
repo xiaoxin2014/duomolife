@@ -260,7 +260,7 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'me.zhanghai.android.materialratingbar:library:1.2.0'
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
-    implementation 'com.qiyukf.unicorn:unicorn:4.5.1'
+    implementation 'com.qiyukf.unicorn:unicorn:4.6.0'
 
     implementation project(':RecyclerViewPager')
     implementation project(':FlycoTabLayout_Lib')

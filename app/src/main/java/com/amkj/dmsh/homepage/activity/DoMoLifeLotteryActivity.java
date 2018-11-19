@@ -20,11 +20,14 @@ import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 
 import org.json.JSONException;
@@ -50,8 +54,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
 
 ;
 
@@ -69,7 +75,12 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     TextView tv_web_title;
     @BindView(R.id.tv_web_shared)
     TextView tv_web_shared;
+    @BindView(R.id.ll_communal_net_error)
+    LinearLayout ll_communal_net_error;
+    @BindView(R.id.smart_web_refresh)
+    SmartRefreshLayout smart_web_refresh;
     private String turnId;
+    private String errorUrl;
 
     @Override
     protected int getContentView() {
@@ -80,6 +91,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     protected void initViews() {
         getLoginStatus(DoMoLifeLotteryActivity.this);
         tv_web_shared.setVisibility(View.GONE);
+        ll_communal_net_error.setVisibility(View.GONE);
         tv_web_title.setText("抽奖");
         WebSettings webSettings = web_communal.getSettings();
         //        自适应屏幕大小
@@ -149,12 +161,46 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                 view.loadUrl(url);
                 return true;
             }
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                // 断网或者网络连接超时
+                if (errorCode == ERROR_HOST_LOOKUP || errorCode == ERROR_CONNECT || errorCode == ERROR_TIMEOUT) {
+                    errorUrl = failingUrl;
+                    setErrorException(view);
+                }
+            }
 
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                int errorCode = error.getErrorCode();
+                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                    errorUrl = request.getUrl().toString();
+                    setErrorException(view);
+                }
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                int errorCode = errorResponse.getStatusCode();
+                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                    errorUrl = request.getUrl().toString();
+                    setErrorException(view);
+                }
+            }
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
             }
         });
+        smart_web_refresh.setEnableRefresh(false);
+    }
+
+    private void setErrorException(WebView view) {
+        view.loadUrl(WEB_BLACK_PAGE);// 避免出现默认的错误界面
+        ll_communal_net_error.setVisibility(View.VISIBLE);
     }
 
     private String getRandomString(int length) { //length表示生成字符串的长度
@@ -477,4 +523,14 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             return false;
         }
     });
+
+    @OnClick(R.id.tv_communal_net_refresh)
+    void clickError(){
+        ll_communal_net_error.setVisibility(View.GONE);
+        if(isWebLinkUrl(errorUrl)){
+            web_communal.loadUrl(errorUrl);
+        }else{
+            web_communal.loadUrl(LOTTERY_URL);
+        }
+    }
 }

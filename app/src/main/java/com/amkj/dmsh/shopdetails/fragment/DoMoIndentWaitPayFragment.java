@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -13,18 +14,16 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -56,7 +55,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * Created by atd48 on 2016/8/23.
  * 待支付
  */
-public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertItemClickListener {
+public class DoMoIndentWaitPayFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -67,13 +66,13 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
     List<OrderListBean> orderListBeanList = new ArrayList();
     //根据type类型分类DuomoIndentPayFragment
     private int page = 1;
-    private AlertView cancelOrderDialog;
     private OrderListBean orderBean;
     private boolean isOnPause;
     private DoMoIndentListAdapter doMoIndentListAdapter;
     private int scrollY = 0;
     private float screenHeight;
     private InquiryOrderEntry inquiryOrderEntry;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -164,17 +163,23 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
                 switch (type) {
                     case CANCEL_ORDER:
 //                        取消订单
-                        AlertSettingBean alertSettingBean = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定要取消当前订单？");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        cancelOrderDialog = new AlertView(alertSettingBean, getActivity(), DoMoIndentWaitPayFragment.this);
-                        cancelOrderDialog.setCancelable(true);
-                        cancelOrderDialog.show();
+                        if (alertDialogHelper == null) {
+                            alertDialogHelper = new AlertDialogHelper(getActivity());
+                            alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    cancelOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        alertDialogHelper.show();
                         break;
                     case PAY:
                         intent.setClass(getActivity(), DirectExchangeDetailsActivity.class);
@@ -293,13 +298,6 @@ public class DoMoIndentWaitPayFragment extends BaseFragment implements OnAlertIt
         super.onResume();
         if (isOnPause) {
             loadData();
-        }
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION) {
-            cancelOrder();
         }
     }
 }

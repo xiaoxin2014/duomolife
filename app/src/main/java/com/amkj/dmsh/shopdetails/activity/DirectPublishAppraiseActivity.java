@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -19,13 +21,11 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.adapter.DirectPublishAppraiseAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.google.gson.Gson;
@@ -56,7 +56,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 /**
  * 发表评论
  */
-public class DirectPublishAppraiseActivity extends BaseActivity implements OnAlertItemClickListener {
+public class DirectPublishAppraiseActivity extends BaseActivity{
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -65,11 +65,11 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
     RecyclerView recycler_direct_publish_appraise;
     private List<String> dataPath = new ArrayList<>();
     private List<String> mFilePathList = new ArrayList<>();
-    private AlertView appraiseDialog;
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private DirectPublishAppraiseAdapter directPublishAppraiseAdapter;
     public static final int REQUEST_PERMISSIONS = 60;
     private String orderNo;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -332,33 +332,51 @@ public class DirectPublishAppraiseActivity extends BaseActivity implements OnAle
     }
 
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm.isActive()) {
-            imm.hideSoftInputFromWindow(tv_header_shared.getWindowToken(), 0); //强制隐藏键盘)
-        }
-        if (appraiseDialog == null || !appraiseDialog.isShowing()) {
-            //弹窗 打开微信
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("确定");
-            alertData.setFirstDet(true);
-            alertData.setMsg("评价未完成，确定要离开吗？");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            appraiseDialog = new AlertView(alertSettingBean, DirectPublishAppraiseActivity.this, DirectPublishAppraiseActivity.this);
-            appraiseDialog.setCancelable(true);
-            appraiseDialog.show();
-        } else {
-            appraiseDialog.dismiss();
-        }
+    void goBack() {
+        confirmExitAppraise();
     }
 
     @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == appraiseDialog && position != AlertView.CANCELPOSITION) {
-            finish();
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            confirmExitAppraise();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 确定退出弹窗
+     */
+    private void confirmExitAppraise() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm!=null&&imm.isActive()) {
+            imm.hideSoftInputFromWindow(tv_header_shared.getWindowToken(), 0); //强制隐藏键盘)
+        }
+        if (alertDialogHelper == null) {
+            alertDialogHelper = new AlertDialogHelper(DirectPublishAppraiseActivity.this);
+            alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("评价未完成，确定要离开吗？").setCancelText("取消").setConfirmText("确定")
+                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    finish();
+                }
+
+                @Override
+                public void cancel() {
+                }
+            });
+        }
+        alertDialogHelper.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(alertDialogHelper!=null&&alertDialogHelper.getAlertDialog().isShowing()){
+            alertDialogHelper.dismiss();
         }
     }
 }

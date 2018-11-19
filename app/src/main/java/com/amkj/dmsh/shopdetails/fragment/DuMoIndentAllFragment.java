@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -22,8 +23,6 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
@@ -37,11 +36,12 @@ import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -87,7 +87,7 @@ import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 /**
  * Created by atd48 on 2016/8/23.
  */
-public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemClickListener {
+public class DuMoIndentAllFragment extends BaseFragment{
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -100,15 +100,15 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
     private int page = 1;
     private DoMoIndentListAdapter doMoIndentListAdapter;
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
-    private AlertView cancelOrderDialog;
-    private AlertView confirmOrderDialog;
-    private AlertView delOrderDialog;
     private OrderListBean orderBean;
     private DirectAppraisePassBean directAppraisePassBean;
     private boolean isOnPause;
     private int scrollY = 0;
     private float screenHeight;
     private InquiryOrderEntry inquiryOrderEntry;
+    private AlertDialogHelper delOrderDialogHelper;
+    private AlertDialogHelper cancelOrderDialogHelper;
+    private AlertDialogHelper confirmOrderDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -202,17 +202,23 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                         break;
                     case CANCEL_ORDER:
 //                        取消订单
-                        alertSettingBean = new AlertSettingBean();
-                        alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定要取消当前订单");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        cancelOrderDialog = new AlertView(alertSettingBean, getActivity(), DuMoIndentAllFragment.this);
-                        cancelOrderDialog.setCancelable(true);
-                        cancelOrderDialog.show();
+                        if (cancelOrderDialogHelper == null) {
+                            cancelOrderDialogHelper = new AlertDialogHelper(getActivity());
+                            cancelOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    cancelOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        cancelOrderDialogHelper.show();
                         break;
                     case CANCEL_PAY_ORDER:
                         DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
@@ -265,17 +271,23 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                         break;
                     case CONFIRM_ORDER:
 //                        确认收货
-                        alertSettingBean = new AlertSettingBean();
-                        alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定已收到货物");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        confirmOrderDialog = new AlertView(alertSettingBean, getActivity(), DuMoIndentAllFragment.this);
-                        confirmOrderDialog.setCancelable(true);
-                        confirmOrderDialog.show();
+                        if (confirmOrderDialogHelper == null) {
+                            confirmOrderDialogHelper = new AlertDialogHelper(getActivity());
+                            confirmOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    confirmOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        confirmOrderDialogHelper.show();
                         break;
                     case PRO_APPRAISE:
 //                        评价
@@ -322,17 +334,23 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                         break;
                     case DEL:
 //                        删除订单
-                        alertSettingBean = new AlertSettingBean();
-                        alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定要删除该订单");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        delOrderDialog = new AlertView(alertSettingBean, getActivity(), DuMoIndentAllFragment.this);
-                        delOrderDialog.setCancelable(true);
-                        delOrderDialog.show();
+                        if (delOrderDialogHelper == null) {
+                            delOrderDialogHelper = new AlertDialogHelper(getActivity());
+                            delOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定要删除该订单？").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            delOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    delOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        delOrderDialogHelper.show();
                         break;
                     case INVITE_GROUP:
                         getInviteGroupInfo(orderListBean.getNo());
@@ -436,17 +454,6 @@ public class DuMoIndentAllFragment extends BaseFragment implements OnAlertItemCl
                 }
             }
         });
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION) {
-            cancelOrder();
-        } else if (o == confirmOrderDialog && position != AlertView.CANCELPOSITION) {
-            confirmOrder();
-        } else if (o == delOrderDialog && position != AlertView.CANCELPOSITION) {
-            delOrder();
-        }
     }
 
     private void confirmOrder() {

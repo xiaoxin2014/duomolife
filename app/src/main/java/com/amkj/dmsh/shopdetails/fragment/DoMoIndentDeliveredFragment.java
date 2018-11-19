@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.fragment;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -12,18 +13,16 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -57,7 +56,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * Created by atd48 on 2016/8/23.
  * 待收货
  */
-public class DoMoIndentDeliveredFragment extends BaseFragment implements OnAlertItemClickListener {
+public class DoMoIndentDeliveredFragment extends BaseFragment{
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -68,12 +67,12 @@ public class DoMoIndentDeliveredFragment extends BaseFragment implements OnAlert
     List<OrderListBean> orderListBeanList = new ArrayList();
     //根据type类型分类DuomoIndentPayFragment
     private int page = 1;
-    private AlertView confirmOrderDialog;
     private OrderListBean orderBean;
     private DoMoIndentListAdapter doMoIndentListAdapter;
     private int scrollY = 0;
     private float screenHeight;
     private InquiryOrderEntry inquiryOrderEntry;
+    private AlertDialogHelper alertDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -160,17 +159,23 @@ public class DoMoIndentDeliveredFragment extends BaseFragment implements OnAlert
                         break;
                     case CONFIRM_ORDER:
 //                        确认收货
-                        AlertSettingBean alertSettingBean = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定已收到货物");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        confirmOrderDialog = new AlertView(alertSettingBean, getActivity(), DoMoIndentDeliveredFragment.this);
-                        confirmOrderDialog.setCancelable(true);
-                        confirmOrderDialog.show();
+                        if (alertDialogHelper == null) {
+                            alertDialogHelper = new AlertDialogHelper(getActivity());
+                            alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    confirmOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        alertDialogHelper.show();
                         break;
                 }
             }
@@ -265,12 +270,5 @@ public class DoMoIndentDeliveredFragment extends BaseFragment implements OnAlert
                 }
             }
         });
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == confirmOrderDialog && position != AlertView.CANCELPOSITION) {
-            confirmOrder();
-        }
     }
 }
