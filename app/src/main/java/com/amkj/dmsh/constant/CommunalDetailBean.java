@@ -1,5 +1,7 @@
 package com.amkj.dmsh.constant;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -9,6 +11,7 @@ package com.amkj.dmsh.constant;
 
 public class CommunalDetailBean {
     private String type;
+    @SerializedName(value = "content",alternate = "goodsList")
     private Object content;
     private int id;
     private String picUrl;
@@ -26,6 +29,7 @@ public class CommunalDetailBean {
     private String androidLink;
     private String text;
     private String title;
+
 
 
     public int getId() {
@@ -107,4 +111,6 @@ public class CommunalDetailBean {
     public void setTitle(String title) {
         this.title = title;
     }
+
+
 }

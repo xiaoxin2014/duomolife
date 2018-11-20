@@ -421,6 +421,10 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", welfareId);
         params.put("is_up", 1);
+        /**
+         * 3.1.7.5 加入 区分3,2排并列商品
+         */
+        params.put("version", 1);
         if (userId > 0) {
             params.put("uid", userId);
         }
@@ -959,10 +963,12 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
-        if (userId > 0) {
-            setPublishComment();
-        } else {
-            getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
+        if(qualityWefBean!=null){
+            if (userId > 0) {
+                setPublishComment();
+            } else {
+                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
+            }
         }
     }
 

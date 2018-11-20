@@ -60,6 +60,7 @@ import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.GoodsParataxisBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
@@ -68,12 +69,14 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -137,6 +140,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
@@ -145,6 +150,7 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
 
 /**
@@ -513,7 +519,7 @@ public class ConstantMethod {
                     .setMsg(context.getResources().getString(R.string.skip_empty_page_hint))
                     .setSingleButton(true)
                     .setConfirmText("更新");
-            if(context instanceof Activity){
+            if (context instanceof Activity) {
                 AutoSize.autoConvertDensityOfGlobal((Activity) context);
             }
             alertDialogHelper.show();
@@ -539,6 +545,7 @@ public class ConstantMethod {
 
     /**
      * 获取web地址
+     *
      * @param androidLink
      * @return
      */
@@ -1328,6 +1335,38 @@ public class ConstantMethod {
                         detailObjectBean.setPrice(hashMap.get("price") + "");
                     } catch (Exception e) {
                         detailObjectBean = null;
+                    }
+                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType())
+                        || "goodsX2".equals(descriptionBean.getType())
+                        || "pictureGoodsX2".equals(descriptionBean.getType())
+                        || "pictureGoodsX3".equals(descriptionBean.getType()))) {
+                    try {
+                        Gson gson = new Gson();
+                        String strContent = gson.toJson(descriptionBean.getContent());
+                        List<GoodsParataxisBean> goodList = gson.fromJson(strContent
+                                ,new TypeToken<List<GoodsParataxisBean>>(){}.getType());
+                        if (goodList == null || goodList.size() < 1) {
+                            continue;
+                        }
+                        RemoveExistUtils removeExistUtils = new RemoveExistUtils();
+                        List<GoodsParataxisBean> goodsParataxisBeans = removeExistUtils.removeExistList(goodList);
+                        if ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType())) {
+                            goodsParataxisBeans = goodsParataxisBeans.size() > 3 ? goodsParataxisBeans.subList(0, 3) : goodsParataxisBeans;
+                        } else {
+                            goodsParataxisBeans = goodsParataxisBeans.size() > 2 ? goodsParataxisBeans.subList(0, 2) : goodsParataxisBeans;
+                        }
+                        for (GoodsParataxisBean goodsParataxisBean:goodsParataxisBeans) {
+                            if(descriptionBean.getType().contains("goodsX")){
+                                goodsParataxisBean.setItemType(TYPE_0);
+                            }else{
+                                goodsParataxisBean.setItemType(TYPE_1);
+                            }
+                        }
+                        detailObjectBean.setItemType(TYPE_PARATAXIS_GOOD);
+                        detailObjectBean.setGoodsList(goodsParataxisBeans);
+                    } catch (Exception e) {
+                        detailObjectBean = null;
+                        e.printStackTrace();
                     }
                 } else if (descriptionBean.getType().equals("coupon")) {
                     try {
@@ -2728,9 +2767,9 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
-        if(context.getResources()==null){
+        if (context.getResources() == null) {
             showToast(context, "数据异常，请稍后再试");
-        }else{
+        } else {
             showToast(context, context.getResources().getString(resId));
         }
     }

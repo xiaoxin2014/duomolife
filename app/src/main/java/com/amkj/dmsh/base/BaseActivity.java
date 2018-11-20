@@ -195,12 +195,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         if (message == null) {
             return;
         }
-        // 是否为Event消息
-        if (message instanceof EventMessage) {
-            BaseActivity.this.postEventResult((EventMessage) message);
-        } else {
-            BaseActivity.this.postOtherResult(message);
-        }
+        BaseActivity.this.postEventResult(message);
+
     }
 
     // 传递EventBus事件类型结果，子类实现逻辑

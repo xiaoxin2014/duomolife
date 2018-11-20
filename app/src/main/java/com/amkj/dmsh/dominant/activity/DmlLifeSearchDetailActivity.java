@@ -1013,10 +1013,12 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment() {
-        if (userId > 0) {
-            setPublishComment();
-        } else {
-            getLoginStatus(DmlLifeSearchDetailActivity.this);
+        if(dmlSearchDetailBean!=null){
+            if (userId > 0) {
+                setPublishComment();
+            } else {
+                getLoginStatus(DmlLifeSearchDetailActivity.this);
+            }
         }
     }
 

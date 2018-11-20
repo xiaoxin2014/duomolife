@@ -59,8 +59,10 @@ public class GlideImageLoaderUtil {
     public static void loadFitCenter(Context context, ImageView iv, String imgUrl) {
         if (null != context) {
             Glide.with(context).load(imgUrl)
-                    .apply(new RequestOptions().fitCenter().dontAnimate()
-                            .diskCacheStrategy(DiskCacheStrategy.DATA))
+                    .apply(new RequestOptions().fitCenter()
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .dontAnimate()
+                            .error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
                     .into(iv);
         }

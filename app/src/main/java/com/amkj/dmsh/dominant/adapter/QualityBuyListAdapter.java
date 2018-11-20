@@ -16,6 +16,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -39,8 +40,8 @@ public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, 
     protected void convert(BaseViewHolder helper, QualityBuyListBean qualityBuyListBean) {
         GlideImageLoaderUtil.loadFitCenter(context, (ImageView) helper.getView(R.id.iv_ql_bl_product), qualityBuyListBean.getPicUrl());
         helper.setText(R.id.tv_ql_bl_pro_name, getStrings(qualityBuyListBean.getName()))
-                .setText(R.id.tv_ql_bl_product_recommend, TextUtils.isEmpty(qualityBuyListBean.getRecommendReason())?"":"推荐理由：" + qualityBuyListBean.getRecommendReason())
-                .setText(R.id.tv_ql_bl_pro_price, "￥ " + qualityBuyListBean.getPrice())
+                .setText(R.id.tv_ql_bl_product_recommend, getStrings(qualityBuyListBean.getRecommendReason()))
+                .setText(R.id.tv_ql_bl_pro_price, getStringsChNPrice(context,qualityBuyListBean.getPrice()))
                 .setGone(R.id.iv_com_pro_tag_out, qualityBuyListBean.getQuantity() < 1 )
                 .addOnClickListener(R.id.iv_ql_bl_add_car).setTag(R.id.iv_ql_bl_add_car, qualityBuyListBean);
         ImageView iv_ql_bl_add_car = helper.getView(R.id.iv_ql_bl_add_car);

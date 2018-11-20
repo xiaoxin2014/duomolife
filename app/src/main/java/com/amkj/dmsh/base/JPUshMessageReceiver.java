@@ -3,7 +3,6 @@ package com.amkj.dmsh.base;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -23,6 +22,7 @@ import java.util.Map;
 import cn.jpush.android.api.JPushInterface;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.totalPushMessage;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
@@ -97,6 +97,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                     QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
                     qyServiceUtils.openQyServiceChat(context, "推送-客服通知-"+getStrings(mContent),"");
                 } else {
+                    newTaskActivity(context);
                     setSkipPath(context, json.getString("androidLink"), false);
                 }
                 if (!TextUtils.isEmpty("pushId")) {
@@ -108,9 +109,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                     totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                 }
             } catch (JSONException e) {
-                Intent data = new Intent(context, MainActivity.class);
-                data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(data);
+                newTaskActivity(context);
                 e.printStackTrace();
             }
             //打开自定义的Activity
@@ -125,20 +124,18 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
         } else if (BROADCAST_NOTIFY.equals(intent.getAction())) {
             String filePath = intent.getStringExtra("filePath");
             if (!TextUtils.isEmpty(filePath) && filePath.contains(".apk")) {
-                openFile(new File(filePath), context);
+                installApps(context,new File(filePath));
             }
-        }/* else if (INSTALL_APP_SUCCESS.equals(intent.getAction())) {
-
-        }*/
+        }
     }
 
-    //打开APK程序代码
-    public void openFile(File file, Context context) {
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file),
-                "application/vnd.android.package-archive");
-        context.startActivity(intent);
+    /**
+     * 启动主页面
+     * @param context
+     */
+    private void newTaskActivity(Context context) {
+        Intent data = new Intent(context, MainActivity.class);
+        data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(data);
     }
 }

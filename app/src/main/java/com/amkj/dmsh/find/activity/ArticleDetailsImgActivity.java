@@ -928,10 +928,12 @@ public class ArticleDetailsImgActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment() {
-        if (userId > 0) {
-            setPublishComment();
-        } else {
-            getLoginStatus(ArticleDetailsImgActivity.this);
+        if(invitationDetailBean!=null){
+            if (userId > 0) {
+                setPublishComment();
+            } else {
+                getLoginStatus(ArticleDetailsImgActivity.this);
+            }
         }
     }
 

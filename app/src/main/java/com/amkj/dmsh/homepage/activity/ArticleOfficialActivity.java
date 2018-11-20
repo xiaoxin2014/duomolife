@@ -952,14 +952,16 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
-        if (userId > 0) {
-            if (VISIBLE == ll_input_comment.getVisibility()) {
-                commentViewVisible(GONE, null);
+        if(dmlSearchDetailBean!=null){
+            if (userId > 0) {
+                if (VISIBLE == ll_input_comment.getVisibility()) {
+                    commentViewVisible(GONE, null);
+                } else {
+                    commentViewVisible(VISIBLE, null);
+                }
             } else {
-                commentViewVisible(VISIBLE, null);
+                getLoginStatus(ArticleOfficialActivity.this);
             }
-        } else {
-            getLoginStatus(ArticleOfficialActivity.this);
         }
     }
 

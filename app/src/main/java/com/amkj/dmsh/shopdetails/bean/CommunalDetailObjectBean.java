@@ -1,9 +1,11 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -52,6 +54,9 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     private List<RelevanceProBean> relevanceProBeanList;
     //   集合 更多
     private List<CommunalDetailObjectBean> moreDataList;
+    //    商品图片列表
+    private List<GoodsParataxisBean> goodsList;
+
     public static final int NORTEXT = 0;
     public static final int TYPE_LUCKY_MONEY = 1;
     //    商品优惠券
@@ -88,12 +93,22 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     public static final int TYPE_RELEVANCE_PRODUCT = 16;
 //    限时特惠 头部红柱 + 标题 top灰色间隔
     public static final int TYPE_PROMOTION_TITLE = 17;
+//    并列商品列表
+    public static final int TYPE_PARATAXIS_GOOD = 18;
 
     public CommunalDetailObjectBean() {
     }
 
     public CommunalDetailObjectBean(String content) {
         this.content = content;
+    }
+
+    public List<GoodsParataxisBean> getGoodsList() {
+        return goodsList;
+    }
+
+    public void setGoodsList(List<GoodsParataxisBean> goodsList) {
+        this.goodsList = goodsList;
     }
 
     public List<LikedProductBean> getProductList() {
@@ -247,5 +262,74 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
 
     public void setMoreDataList(List<CommunalDetailObjectBean> moreDataList) {
         this.moreDataList = moreDataList;
+    }
+
+    public static class GoodsParataxisBean extends BaseRemoveExistProductBean implements MultiItemEntity{
+        /**
+         * picUrl : http://image.domolife.cn/platform/20170225/20170225180759430.jpg
+         * marketPrice : 118.00
+         * price : 58.00
+         * id : 4324
+         * type : goodsX3
+         * title : FaSoLa内衣收纳盒三件套
+         */
+
+        @SerializedName("picUrl")
+        private String picUrlX;
+        private String marketPrice;
+        private String price;
+        @SerializedName("title")
+        private String titleX;
+        private String type;
+        private int itemType;
+
+        public String getPicUrlX() {
+            return picUrlX;
+        }
+
+        public void setPicUrlX(String picUrlX) {
+            this.picUrlX = picUrlX;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getMarketPrice() {
+            return marketPrice;
+        }
+
+        public void setMarketPrice(String marketPrice) {
+            this.marketPrice = marketPrice;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public String getTitleX() {
+            return titleX;
+        }
+
+        public void setTitleX(String titleX) {
+            this.titleX = titleX;
+        }
+
+        @Override
+        public int getItemType() {
+            return itemType;
+        }
+
+        public void setItemType(int itemType) {
+            this.itemType = itemType;
+        }
     }
 }

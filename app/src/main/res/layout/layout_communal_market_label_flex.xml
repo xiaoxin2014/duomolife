@@ -2,9 +2,9 @@
 <com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/fbl_market_label"
     android:visibility="gone"
     app:dividerDrawable="@drawable/item_divider_img_white"
     app:showDivider="middle"
-    android:layout_marginTop="@dimen/sc_mm_16"
-    android:layout_height="wrap_content"/>
+    android:layout_marginTop="@dimen/sc_mm_16" />
