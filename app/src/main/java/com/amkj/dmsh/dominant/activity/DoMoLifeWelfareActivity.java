@@ -38,7 +38,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.kingja.loadsir.callback.SuccessCallback;
@@ -132,15 +132,15 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 .inflate(R.layout.layout_communal_recycler_wrap, (ViewGroup) communal_recycler.getParent(), false);
         overseasHeaderView = new OverseasHeaderView();
         ButterKnife.bind(overseasHeaderView, headerView);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
@@ -152,15 +152,15 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         communal_recycler.setAdapter(qualityTypeProductAdapter);
 
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
-        rv_communal_pro.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         qualityPreviousAdapter = new QualityHistoryAdapter(welfarePreviousList);
         qualityPreviousAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -248,15 +248,15 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
             }
         });
         overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
-        overseasHeaderView.communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_product)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         qualityWelfareHeaderAdapter = new QualityOsMailHeaderAdapter(DoMoLifeWelfareActivity.this, themeList, "welfare");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityWelfareHeaderAdapter);

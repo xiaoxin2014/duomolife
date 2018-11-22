@@ -1,10 +1,13 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,9 +30,6 @@ import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -66,7 +66,7 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 ;
 
-public class MineLoginActivity extends BaseActivity implements OnAlertItemClickListener {
+public class MineLoginActivity extends BaseActivity{
     @BindView(R.id.tv_blue_title)
     TextView tv_blue_title;
     @BindView(R.id.iv_blue_back)
@@ -103,13 +103,12 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
     @BindView(R.id.reg_login_code_gif_view)
     public ProgressBar reg_login_code_gif_view;
     //注册请求码
-    private AlertView weChatDialog;
-    private AlertView qqDialog;
-    private AlertView sinaDialog;
     private UMShareAPI mShareAPI;
-    private int REQUEST_PERM = 100;
     private boolean isPhoneLogin;
     private CountDownHelper countDownHelper;
+    private AlertDialogHelper weChatDialogHelper;
+    private AlertDialogHelper sinaDialogHelper;
+    private AlertDialogHelper qqDialogHelper;
     private AlertDialogHelper alertDialogHelper;
 
     @Override
@@ -214,22 +213,34 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         overridePendingTransition(0, 0);
     }
 
-    // 授权登录
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        mShareAPI = UMShareAPI.get(this);
-        if (o == weChatDialog && position != AlertView.CANCELPOSITION) {
-            // 打开微信授权
-            SHARE_MEDIA platform = WEIXIN;
-            mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
-        } else if (o == qqDialog && position != AlertView.CANCELPOSITION) {
-            //qq授权
-            SHARE_MEDIA platform = QQ;
-            mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
-        } else if (o == sinaDialog && position != AlertView.CANCELPOSITION) {
-            //新浪授权
-            SHARE_MEDIA platform = SINA;
-            mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+    /**
+     * 授权类型
+     *
+     * @param authType
+     */
+    public void doAuthInfo(String authType) {
+        if (mShareAPI == null) {
+            mShareAPI = UMShareAPI.get(this);
+        }
+        switch (getStrings(authType)) {
+            case OTHER_WECHAT:
+                // 打开微信授权
+                SHARE_MEDIA platform = WEIXIN;
+                mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+                break;
+            case OTHER_QQ:
+                //qq授权
+                platform = QQ;
+                mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+                break;
+            case OTHER_SINA:
+                //新浪授权
+                platform = SINA;
+                mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+                break;
+            default:
+                showToast(MineLoginActivity.this, "暂不支持该授权！");
+                break;
         }
     }
 
@@ -298,11 +309,6 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PERM) {
-            //新浪授权
-            SHARE_MEDIA platform = SHARE_MEDIA.SINA;
-            mShareAPI.doOauthVerify(this, platform, getDataInfoListener);
-        }
         try {
             mShareAPI.onActivityResult(requestCode, resultCode, data);
         } catch (Exception e) {
@@ -421,7 +427,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals("01")) {
                             RequestStatus.Result resultData = requestStatus.getResult();
-                            if ( resultData!= null) {
+                            if (resultData != null) {
                                 if (resultData.getResultCode().equals(SUCCESS_CODE)) {
                                     showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
                                     tv_login_send_code.setVisibility(View.VISIBLE);
@@ -431,17 +437,17 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                                     }
                                     countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
                                 } else {
-                                    if(EMPTY_CODE.equals(resultData.getCode())){
+                                    if (EMPTY_CODE.equals(resultData.getCode())) {
                                         showException(getResources().getString(R.string.date_exception_hint));
-                                    }else{
+                                    } else {
                                         showException(resultData.getMsg());
                                     }
                                 }
                             }
                         } else {
-                            if(EMPTY_CODE.equals(requestStatus.getCode())){
+                            if (EMPTY_CODE.equals(requestStatus.getCode())) {
                                 showException(getResources().getString(R.string.date_exception_hint));
-                            }else{
+                            } else {
                                 showException(requestStatus.getMsg());
                             }
                         }
@@ -459,6 +465,7 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
             loadHud.dismiss();
         }
     }
+
     /**
      * 展示后台数据异常
      *
@@ -500,17 +507,17 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
                                     communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
                                     loginSuccessSetData(communalUserInfoEntity);
                                 } else {
-                                    if(EMPTY_CODE.equals(loginPhoneCodeBean.getResultCode())){
+                                    if (EMPTY_CODE.equals(loginPhoneCodeBean.getResultCode())) {
                                         showException(getResources().getString(R.string.date_exception_hint));
-                                    }else{
+                                    } else {
                                         showException(loginPhoneCodeBean.getResultMsg());
                                     }
                                 }
                             }
                         } else {
-                            if(EMPTY_CODE.equals(loginPhoneCodeEntity.getCode())){
+                            if (EMPTY_CODE.equals(loginPhoneCodeEntity.getCode())) {
                                 showException(getResources().getString(R.string.date_exception_hint));
-                            }else{
+                            } else {
                                 showException(loginPhoneCodeEntity.getMsg());
                             }
                         }
@@ -541,14 +548,6 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
         countDownHelper.setSmsCountDown(tv_login_send_code);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(alertDialogHelper!=null){
-            alertDialogHelper.dismiss();
-        }
-    }
-
     //  切换登录方式
     @OnClick(R.id.tv_tv_mine_change_login_way)
     void changLoginWay(View view) {
@@ -569,62 +568,65 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
 
     @OnClick({R.id.ll_layout_weChat, R.id.rImg_login_way_weChat, R.id.tv_login_way_weChat})
     void openWeChat(View view) {
-        if(weChatDialog == null){
-            //弹窗 打开微信
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("打开");
-            alertData.setFirstDet(true);
-            alertData.setMsg("“多么生活”想要打开“微信”");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            weChatDialog = new AlertView(alertSettingBean, this, this);
-            weChatDialog.setCancelable(true);
+        if (weChatDialogHelper == null) {
+            weChatDialogHelper = new AlertDialogHelper(MineLoginActivity.this);
+            weChatDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("“多么生活”想要打开“微信”").setCancelText("取消").setConfirmText("打开")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            doAuthInfo(OTHER_WECHAT);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
         }
-        if(!weChatDialog.isShowing()){
-            weChatDialog.show();
-        }
+        weChatDialogHelper.show();
     }
 
     @OnClick({R.id.ll_layout_qq, R.id.rImg_login_way_qq, R.id.tv_login_way_qq})
     void openQQ(View view) {
-        if(qqDialog==null){
-            //弹窗 打开QQ
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("打开");
-            alertData.setFirstDet(true);
-            alertData.setMsg("“多么生活”想要打开“QQ”");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            qqDialog = new AlertView(alertSettingBean, this, this);
-            qqDialog.setCancelable(true);
+        if (qqDialogHelper == null) {
+            qqDialogHelper = new AlertDialogHelper(MineLoginActivity.this);
+            qqDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("“多么生活”想要打开“QQ”").setCancelText("取消").setConfirmText("打开")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            doAuthInfo(OTHER_QQ);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
         }
-        if(!qqDialog.isShowing()){
-            qqDialog.show();
-        }
+        qqDialogHelper.show();
     }
 
     @OnClick({R.id.ll_layout_weiBo, R.id.rImg_login_way_weiBo, R.id.tv_login_way_weiBo})
     void openSina(View view) {
-        if(sinaDialog==null){
-            //弹窗 打开新浪
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("打开");
-            alertData.setFirstDet(true);
-            alertData.setMsg("“多么生活”想要打开“微博”");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            sinaDialog = new AlertView(alertSettingBean, this, this);
-            sinaDialog.setCancelable(true);
+        if (sinaDialogHelper == null) {
+            sinaDialogHelper = new AlertDialogHelper(this);
+            sinaDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("“多么生活”想要打开“微博”").setCancelText("取消").setConfirmText("打开")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            doAuthInfo(OTHER_SINA);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
         }
-        if(!sinaDialog.isShowing()){
-            sinaDialog.show();
-        }
+        sinaDialogHelper.show();
     }
 
     @OnClick(R.id.iv_blue_close)
@@ -690,6 +692,53 @@ public class MineLoginActivity extends BaseActivity implements OnAlertItemClickL
             reqSMSCode(phoneNumber);
         } else if (phoneNumber.length() < 11) {
             showToast(this, "手机号码有错，请重新输入");
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS
+                );
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (qqDialogHelper != null && qqDialogHelper.getAlertDialog() != null && qqDialogHelper.getAlertDialog().isShowing()) {
+            qqDialogHelper.dismiss();
+        }
+        if (weChatDialogHelper != null && weChatDialogHelper.getAlertDialog() != null && weChatDialogHelper.getAlertDialog().isShowing()) {
+            weChatDialogHelper.dismiss();
+        }
+        if (sinaDialogHelper != null && sinaDialogHelper.getAlertDialog() != null && sinaDialogHelper.getAlertDialog().isShowing()) {
+            sinaDialogHelper.dismiss();
+        }
+        if (alertDialogHelper != null) {
+            alertDialogHelper.dismiss();
         }
     }
 }

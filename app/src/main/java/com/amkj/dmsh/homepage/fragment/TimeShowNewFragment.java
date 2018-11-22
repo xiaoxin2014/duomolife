@@ -95,6 +95,9 @@ public class TimeShowNewFragment extends BaseFragment {
         XUtil.Get(url, null, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
+                if(loadHud!=null){
+                    loadHud.dismiss();
+                }
                 String code = "";
                 String msg = "";
                 try {
@@ -119,6 +122,9 @@ public class TimeShowNewFragment extends BaseFragment {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
+                if(loadHud!=null){
+                    loadHud.dismiss();
+                }
                 setTimeLoadError();
             }
         });

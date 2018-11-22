@@ -48,7 +48,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 
@@ -146,15 +146,15 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         optimizedDetailsAdapter.addHeaderView(optHeaderView);
         communal_recycler.setAdapter(optimizedDetailsAdapter);
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(DmlOptimizedSelDetailActivity.this));
-        rv_communal_pro.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         optimizedSlideProAdapter = new WelfareSlideProAdapter(DmlOptimizedSelDetailActivity.this, welfareProductList);
         optimizedSlideProAdapter.setEnableLoadMore(false);

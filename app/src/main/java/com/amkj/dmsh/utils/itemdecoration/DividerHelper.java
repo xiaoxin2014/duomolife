@@ -1,4 +1,4 @@
-package com.amkj.dmsh.utils.pinnedsectionitemdecoration.utils;
+package com.amkj.dmsh.utils.itemdecoration;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;

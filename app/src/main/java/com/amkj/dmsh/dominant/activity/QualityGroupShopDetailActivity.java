@@ -62,7 +62,7 @@ import com.amkj.dmsh.shopdetails.fragment.DirectImgArticleFragment;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -228,16 +228,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         invitePartnerJoin = intent.getBooleanExtra("invitePartnerJoin", false);
         smart_refresh_ql_sp_details.setOnRefreshListener((refreshLayout) -> loadData());
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-        communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         directEvaluationAdapter = new DirectEvaluationAdapter(QualityGroupShopDetailActivity.this, goodsComments);
         directEvaluationAdapter.setHeaderAndEmpty(true);
         View joinGroupView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_communal_recycler_wrap, null);
@@ -251,6 +244,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         shopCommentHeaderView.initView();
         directEvaluationAdapter.addHeaderView(joinGroupView);
         directEvaluationAdapter.addHeaderView(commentHeaderView);
+        directEvaluationAdapter.getHeaderLayout();
+        directEvaluationAdapter.getFooterLayout();
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communal_recycler_wrap.setAdapter(directEvaluationAdapter);
 

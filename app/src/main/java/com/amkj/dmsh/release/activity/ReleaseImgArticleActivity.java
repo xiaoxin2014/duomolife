@@ -43,7 +43,7 @@ import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.ReleaseEditView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -162,15 +162,15 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         header_shared.setVisibility(View.GONE);
         imgGArticleRecyclerAdapter = new ImgGArticleRecyclerAdapter(this, imagePathBeans);
         rv_img_article.setLayoutManager(new GridLayoutManager(ReleaseImgArticleActivity.this, 3));
-        rv_img_article.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_img_article.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         rv_img_article.setAdapter(imgGArticleRecyclerAdapter);
         imgGArticleRecyclerAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -198,15 +198,15 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(ReleaseImgArticleActivity.this, LinearLayoutManager.HORIZONTAL, false));
         addRelevanceProAdapter = new AddRelevanceProAdapter(ReleaseImgArticleActivity.this, relevanceProList);
         communal_recycler_wrap.setAdapter(addRelevanceProAdapter);
-        communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         addRelevanceProAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override

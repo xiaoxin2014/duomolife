@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -36,9 +37,6 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
@@ -49,9 +47,10 @@ import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.MoneyRef
 import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.WaitDeliveryRefundReasonBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -100,7 +99,7 @@ import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
  * Created by atd48 on 2016/10/27.
  * 申请退款
  */
-public class DirectApplyRefundActivity extends BaseActivity implements OnAlertItemClickListener {
+public class DirectApplyRefundActivity extends BaseActivity{
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -200,9 +199,9 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     private int adapterPosition;
     private RefundApplyBean refundApplyBean;
     private boolean cancelRefund;
-    private AlertView cancelOrderDialog;
     private int addressId;
     private final String REPAIR_TYPE = "3";
+    private AlertDialogHelper commitDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -265,15 +264,15 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
             if (imagePathBeans.size() < 1) {
                 imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
             }
-            rv_apply_refund_img.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+            rv_apply_refund_img.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_img_white)
-                    // 开启绘制分隔线，默认关闭
-                    .enableDivider(true)
-                    // 是否关闭标签点击事件，默认开启
-                    .disableHeaderClick(false)
-                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                    .setHeaderClickListener(null)
+
+
+
+
+
+
                     .create());
             imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
             rv_apply_refund_img.setAdapter(imgGridRecyclerAdapter);
@@ -877,17 +876,25 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
-                        AlertSettingBean alertSettingBean = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setTitle(getString(R.string.Submit_Success));
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        cancelOrderDialog = new AlertView(alertSettingBean, DirectApplyRefundActivity.this, DirectApplyRefundActivity.this);
-                        cancelOrderDialog.setCancelable(false);
-                        cancelOrderDialog.show();
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                        if (commitDialogHelper == null) {
+                            commitDialogHelper = new AlertDialogHelper(DirectApplyRefundActivity.this);
+                            commitDialogHelper.setTitle("操作提示").setTitleGravity(Gravity.CENTER).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg(getString(R.string.Submit_Success)).setConfirmText("确定").setSingleButton(true)
+                                    .setCancelable(false)
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            commitDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    finish();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        commitDialogHelper.show();
                     } else {
                         showToast(DirectApplyRefundActivity.this, indentInfo.getResult() != null ?
                                 indentInfo.getResult().getMsg() : indentInfo.getMsg());
@@ -904,13 +911,6 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
                 super.onError(ex, isOnCallback);
             }
         });
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION) {
-            finish();
-        }
     }
 
     //  退款原因选择
@@ -1040,5 +1040,13 @@ public class DirectApplyRefundActivity extends BaseActivity implements OnAlertIt
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(commitDialogHelper!=null&&commitDialogHelper.isShowing()){
+            commitDialogHelper.dismiss();
+        }
     }
 }

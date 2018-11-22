@@ -6,7 +6,7 @@
     android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_marginLeft="@dimen/sc_mm_10"
         android:layout_marginRight="@dimen/sc_mm_10"

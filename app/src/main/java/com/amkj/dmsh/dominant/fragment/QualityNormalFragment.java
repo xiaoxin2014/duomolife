@@ -32,7 +32,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -109,16 +109,9 @@ public class QualityNormalFragment extends BaseFragment {
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
@@ -351,7 +344,7 @@ public class QualityNormalFragment extends BaseFragment {
         public void initViews() {
             if (communal_recycler_wrap != null) {
                 communal_recycler_wrap.setBackgroundColor(getResources().getColor(R.color.gray_bg));
-                communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext,20), 0, 0, AutoSizeUtils.mm2px(mAppContext,20));
+                communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext, 20), 0, 0, AutoSizeUtils.mm2px(mAppContext, 20));
                 // 这一步必须要做,否则不会显示.
                 communal_recycler_wrap.setLayoutManager(new GridLayoutManager(getActivity(), 4));
                 childProductTypeAdapter = new ChildProductTypeAdapter(childTypeList);

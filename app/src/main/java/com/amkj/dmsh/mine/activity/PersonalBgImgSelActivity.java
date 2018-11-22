@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,10 +22,8 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.PersonalBgImgSelAdapter;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity.MineBgImgBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -61,7 +60,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
  * created on 2017/9/26
  * class description:背景图片选择
  */
-public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertItemClickListener {
+public class PersonalBgImgSelActivity extends BaseActivity{
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -74,10 +73,10 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
     TextView tv_header_shared;
     private PersonalBgImgSelAdapter personalBgImgSelAdapter;
     private List<MineBgImgBean> mineBgImgBeanList = new ArrayList<>();
-    private AlertView openImg;
     private int coverImgWidth;
     private int coverImgHeight;
     private MineBgImgEntity mineBgImgEntity;
+    private AlertDialogBottomListHelper alertDialogBottomListHelper;
 
     @Override
     protected int getContentView() {
@@ -105,24 +104,58 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
 //                        网页图片
                         setBgImgUrl(mineBgImgBean.getBgimg_url());
                     } else {
-//                        存储图片地址
-                        AlertSettingBean alertSettingBean = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setNormalData(new String[]{"从相册上传", "拍照上传"});
-                        alertData.setFirstDet(true);
-                        alertData.setTitle("选择图片");
-                        alertSettingBean.setStyle(AlertView.Style.ActionSheet);
-                        alertSettingBean.setAlertData(alertData);
-                        openImg = new AlertView(alertSettingBean, PersonalBgImgSelActivity.this, PersonalBgImgSelActivity.this);
-                        openImg.setCancelable(true);
-                        openImg.show();
+                        if (alertDialogBottomListHelper == null) {
+                            alertDialogBottomListHelper = new AlertDialogBottomListHelper(PersonalBgImgSelActivity.this);
+                            alertDialogBottomListHelper.setTitleVisibility(GONE).setMsg("选择图片")
+                                    .setItemData(new String[]{"从相册上传", "拍照上传"}).itemNotifyDataChange().setAlertListener(new AlertDialogBottomListHelper.AlertItemClickListener() {
+                                @Override
+                                public void itemClick(@Nullable String text) {
+
+                                }
+
+                                @Override
+                                public void itemPosition(int itemPosition) {
+                                    openImageGallery(itemPosition);
+                                }
+                            });
+                        }
+                        alertDialogBottomListHelper.show();
                     }
                 }
             }
         });
-        coverImgWidth = AutoSizeUtils.mm2px(mAppContext,750);
-        coverImgHeight = AutoSizeUtils.mm2px(mAppContext,480);
+        coverImgWidth = AutoSizeUtils.mm2px(mAppContext, 750);
+        coverImgHeight = AutoSizeUtils.mm2px(mAppContext, 480);
+    }
+
+    /**
+     * 弹窗选择图片
+     *
+     * @param itemPosition
+     */
+    private void openImageGallery(int itemPosition) {
+        ConstantMethod constantMethod = new ConstantMethod();
+        constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+            @Override
+            public void getPermissionsSuccess() {
+                if (itemPosition == 0) {
+//                从相册选择 裁剪图片
+                    PictureSelectorUtils.getInstance()
+                            .resetVariable()
+                            .isCrop(true)
+                            .imageMode(PictureConfigC.SINGLE)
+                            .withAspectRatio(coverImgWidth, coverImgHeight)
+                            .openGallery(PersonalBgImgSelActivity.this);
+                } else if (itemPosition == 1) {
+                    PictureSelectorUtils.getInstance()
+                            .resetVariable()
+                            .isCrop(true)
+                            .withAspectRatio(coverImgWidth, coverImgHeight)
+                            .openCamera(PersonalBgImgSelActivity.this);
+                }
+            }
+        });
+        constantMethod.getPermissions(PersonalBgImgSelActivity.this, Permission.Group.STORAGE);
     }
 
     private void setBgImgUrl(final String imgUrl) {
@@ -259,34 +292,6 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
         finish();
     }
 
-    @Override
-    public void onAlertItemClick(Object o, final int position) {
-        if (o == openImg && position != AlertView.CANCELPOSITION) {
-            ConstantMethod constantMethod = new ConstantMethod();
-            constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
-                @Override
-                public void getPermissionsSuccess() {
-                    if (position == 0) {
-//                从相册选择 裁剪图片
-                        PictureSelectorUtils.getInstance()
-                                .resetVariable()
-                                .isCrop(true)
-                                .imageMode(PictureConfigC.SINGLE)
-                                .withAspectRatio(coverImgWidth, coverImgHeight)
-                                .openGallery(PersonalBgImgSelActivity.this);
-                    } else if (position == 1) {
-                        PictureSelectorUtils.getInstance()
-                                .resetVariable()
-                                .isCrop(true)
-                                .withAspectRatio(coverImgWidth, coverImgHeight)
-                                .openCamera(PersonalBgImgSelActivity.this);
-                    }
-                }
-            });
-            constantMethod.getPermissions(this, Permission.Group.STORAGE);
-        }
-    }
-
     private void setCoverImg(String coverImgPath) {
         //        加载本地图片
         if (!TextUtils.isEmpty(coverImgPath)) {
@@ -316,6 +321,15 @@ public class PersonalBgImgSelActivity extends BaseActivity implements OnAlertIte
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(alertDialogBottomListHelper!=null&&alertDialogBottomListHelper.getAlertDialog()!=null
+                &&alertDialogBottomListHelper.getAlertDialog().isShowing()){
+            alertDialogBottomListHelper.dismiss();
         }
     }
 }

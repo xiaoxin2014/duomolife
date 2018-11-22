@@ -1,4 +1,4 @@
-package com.amkj.dmsh.utils.pinnedsectionitemdecoration;
+package com.amkj.dmsh.utils.itemdecoration;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -13,12 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.callback.OnItemTouchListener;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.utils.DividerHelper;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 /**
  * Created by Oubowu on 2016/7/21 15:38.
@@ -26,17 +20,10 @@ import java.util.ArrayList;
  * <p>porting from https://github.com/takahr/pinned-section-item-decoration</p>
  * <p>注意：标签所在最外层布局不能设置marginTop，因为往上滚动遮不住真正的标签;marginBottom还有问题待解决</p>
  */
-public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
+public class ItemDecoration extends RecyclerView.ItemDecoration {
 
-    private OnHeaderClickListener mHeaderClickListener;
-
-    private boolean mEnableDivider;
-
-    private boolean mDisableHeaderClick;
-
+    private final boolean isLastDraw;
     private int mDividerId;
-
-    private int[] mClickIds;
 
     private Drawable mDrawable;
     private RecyclerView.Adapter mAdapter;
@@ -61,10 +48,8 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
     private int mHeaderLeftMargin;
     private int mHeaderTopMargin;
     private int mHeaderRightMargin;
-    private int mHeaderBottomMargin;
 
-    // 用于处理头部点击事件屏蔽与响应
-    private OnItemTouchListener mItemTouchListener;
+    private int maxItemType = 200;
 
     private int mLeft;
     private int mTop;
@@ -73,39 +58,22 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     private int mFirstVisiblePosition;
 
-    private int mDataPositionOffset;
-
-    private int mPinnedHeaderType;
-
-    private boolean mDisableDrawHeader;
-
     private RecyclerView mParent;
-    private int currentSpanCount = 0;
-    private boolean isFirstSpanCount = true;
-    private boolean headerNoDivider;
 
     // 当我们调用mRecyclerView.addItemDecoration()方法添加decoration的时候，RecyclerView在绘制的时候，去会绘制decorator，即调用该类的onDraw和onDrawOver方法，
     // 1.onDraw方法先于drawChildren
     // 2.onDrawOver在drawChildren之后，一般我们选择复写其中一个即可。
     // 3.getItemOffsets 可以通过outRect.set()为每个Item设置一定的偏移量，主要用于绘制Decorator。
 
-    private PinnedHeaderItemDecoration(Builder builder) {
-        mEnableDivider = builder.enableDivider;
-        mHeaderClickListener = builder.headerClickListener;
+    private ItemDecoration(Builder builder) {
         mDividerId = builder.dividerId;
-        mClickIds = builder.clickIds;
-        mDisableHeaderClick = builder.disableHeaderClick;
-        mPinnedHeaderType = builder.pinnedHeaderType;
+        isLastDraw = builder.isLastDraw;
     }
 
     @Override
     public void getItemOffsets(final Rect outRect, final View view, final RecyclerView parent, RecyclerView.State state) {
 
         checkCache(parent);
-
-        if (!mEnableDivider) {
-            return;
-        }
 
         if (mDrawable == null) {
             mDrawable = ContextCompat.getDrawable(parent.getContext(), mDividerId != 0 ? mDividerId : R.drawable.item_divider_five_gray_f);
@@ -140,11 +108,16 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
         } else if (parent.getLayoutManager() instanceof LinearLayoutManager) {
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager) parent.getLayoutManager();
             int position = parent.getChildAdapterPosition(view);
-            if(!isHeader(parent,position)){
+            int childCount = parent.getChildCount();
+            if (!isHeader(parent, position)) {
                 if (linearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
                     outRect.set(0, 0, mDrawable.getIntrinsicWidth(), 0);
                 } else {
-                    outRect.set(0, 0, 0, mDrawable.getIntrinsicHeight());
+                    if (!isLastDraw && position + 1 == childCount) {
+                        outRect.set(0, 0, 0, 0);
+                    } else {
+                        outRect.set(0, 0, 0, mDrawable.getIntrinsicHeight());
+                    }
                 }
             }
         } else if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
@@ -209,7 +182,7 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
     private boolean isHeader(RecyclerView parent, int position) {
         RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
-            if (parent.getAdapter().getItemViewType(position) > 3) {
+            if (parent.getAdapter().getItemViewType(position) > maxItemType) {
                 return true;
             }
         }
@@ -223,7 +196,7 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
         // 检测到标签存在的时候，将标签强制固定在顶部
         createPinnedHeader(parent);
 
-        if (!mDisableDrawHeader && mPinnedHeaderView != null && mFirstVisiblePosition >= mPinnedHeaderPosition) {
+        if (mPinnedHeaderView != null && mFirstVisiblePosition >= mPinnedHeaderPosition) {
 
             mClipBounds = c.getClipBounds();
             // getTop拿到的是它的原点(它自身的padding值包含在内)相对parent的顶部距离，加上它的高度后就是它的底部所处的位置
@@ -243,10 +216,7 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
             // 锁定画布绘制范围，记为A
             c.clipRect(mClipBounds);
         }
-
-        if (mEnableDivider) {
-            drawDivider(c, parent);
-        }
+        drawDivider(c, parent);
 
     }
 
@@ -303,7 +273,7 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
                 for (int i = 0; i < childCount; i++) {
                     final View child = parent.getChildAt(i);
                     final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-                    if (parent.getAdapter().getItemViewType(i) < 3) {
+                    if (parent.getAdapter().getItemViewType(i) < maxItemType) {
                         DividerHelper.drawRightAlignItem(c, mDrawable, child, params);
                     }
                 }
@@ -311,8 +281,10 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
                 for (int i = 0; i < childCount; i++) {
                     final View child = parent.getChildAt(i);
                     final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-                    if (parent.getAdapter().getItemViewType(i) < 3) {
-                        DividerHelper.drawBottomAlignItem(c, mDrawable, child, params);
+                    if (parent.getAdapter().getItemViewType(i) < maxItemType) {
+                        if (i + 1 != childCount || !isLastDraw) {
+                            DividerHelper.drawBottomAlignItem(c, mDrawable, child, params);
+                        }
                     }
                 }
             }
@@ -336,10 +308,8 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
 
-        if (!mDisableDrawHeader && mPinnedHeaderView != null && mFirstVisiblePosition >= mPinnedHeaderPosition) {
+        if (mPinnedHeaderView != null && mFirstVisiblePosition >= mPinnedHeaderPosition) {
             c.save();
-
-            mItemTouchListener.invalidTopAndBottom(mPinnedHeaderOffset);
 
             mClipBounds.top = mRecyclerViewPaddingTop + mHeaderTopMargin;
             // 锁定画布绘制范围，记为B
@@ -352,9 +322,6 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
 
             c.restore();
 
-        } else if (mItemTouchListener != null) {
-            // 不绘制的时候，把头部的偏移值偏移用户点击不到的程度
-            mItemTouchListener.invalidTopAndBottom(-1000);
         }
     }
 
@@ -379,7 +346,6 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
      *
      * @param parent
      */
-    @SuppressWarnings("unchecked")
     private void createPinnedHeader(final RecyclerView parent) {
 
         if (mAdapter == null) {
@@ -432,7 +398,6 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
                 mHeaderLeftMargin = mlp.leftMargin;
                 mHeaderTopMargin = mlp.topMargin;
                 mHeaderRightMargin = mlp.rightMargin;
-                mHeaderBottomMargin = mlp.bottomMargin;
             }
 
             // 最大高度为RecyclerView的高度减去padding
@@ -456,51 +421,8 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
             // 位置强制布局在顶部
             mPinnedHeaderView.layout(mLeft, mTop, mRight, mBottom);
 
-            if (mItemTouchListener == null) {
-                mItemTouchListener = new OnItemTouchListener(parent.getContext());
-                try {
-                    final Field field = parent.getClass().getDeclaredField("mOnItemTouchListeners");
-                    field.setAccessible(true);
-                    final ArrayList<OnItemTouchListener> touchListeners = (ArrayList<OnItemTouchListener>) field.get(parent);
-                    touchListeners.add(0, mItemTouchListener);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                    parent.addOnItemTouchListener(mItemTouchListener);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                    parent.addOnItemTouchListener(mItemTouchListener);
-                }
-                if (mHeaderClickListener != null) {
-                    mItemTouchListener.setHeaderClickListener(mHeaderClickListener);
-                    mItemTouchListener.disableHeaderClick(mDisableHeaderClick);
-                }
-                mItemTouchListener.setClickBounds(OnItemTouchListener.HEADER_ID, mPinnedHeaderView);
-            }
-
-            if (mHeaderClickListener != null) {
-                // OnItemTouchListener.HEADER_ID代表是标签的Id
-                mItemTouchListener.setClickBounds(OnItemTouchListener.HEADER_ID, mPinnedHeaderView);
-                if (mHeaderClickListener != null && mClickIds != null && mClickIds.length > 0) {
-                    for (int mClickId : mClickIds) {
-                        final View view = mPinnedHeaderView.findViewById(mClickId);
-                        if (view != null && view.getVisibility() == View.VISIBLE) {
-                            mItemTouchListener.setClickBounds(mClickId, view);
-                        }
-                    }
-                }
-                mItemTouchListener.setClickHeaderInfo(mPinnedHeaderPosition - mDataPositionOffset);
-            }
-
         }
 
-    }
-
-    public int getDataPositionOffset() {
-        return mDataPositionOffset;
-    }
-
-    public void setDataPositionOffset(int offset) {
-        mDataPositionOffset = offset;
     }
 
     /**
@@ -529,7 +451,7 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
      * @return
      */
     private boolean isPinnedHeaderType(int type) {
-        return mPinnedHeaderType == type;
+        return false;
     }
 
     /**
@@ -629,74 +551,15 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
         return spanCount;
     }
 
-    public View getPinnedHeaderView() {
-        return mPinnedHeaderView;
-    }
-
-    public int getPinnedHeaderPosition() {
-        return mPinnedHeaderPosition;
-    }
-
-    /**
-     * 是否禁止绘制粘性头部
-     *
-     * @return true的话不绘制头部
-     */
-    public boolean isDisableDrawHeader() {
-        return mDisableDrawHeader;
-    }
-
-    /**
-     * 禁止绘制粘性头部
-     *
-     * @param disableDrawHeader true的话不绘制头部，默认false绘制头部
-     */
-    public void disableDrawHeader(boolean disableDrawHeader) {
-        mDisableDrawHeader = disableDrawHeader;
-        if (mParent != null) {
-            mParent.invalidateItemDecorations();
-        }
-    }
-
-    public boolean isHeaderNoDivider(RecyclerView parent) {
-        if (mPinnedHeaderType == -2) {
-            return true;
-        }
-        return false;
-    }
-
     public static class Builder {
 
-        private OnHeaderClickListener headerClickListener;
-
         private int dividerId;
-
-        private boolean enableDivider;
-
-        private int[] clickIds;
-
-        private boolean disableHeaderClick;
-
-        private int pinnedHeaderType;
+        private boolean isLastDraw = true;
 
         /**
          * 构造方法
-         *
-         * @param pinnedHeaderType 粘性标签的类型
          */
-        public Builder(int pinnedHeaderType) {
-            this.pinnedHeaderType = pinnedHeaderType;
-        }
-
-        /**
-         * 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-         *
-         * @param headerClickListener 监听，若不设置这个setClickIds无效
-         * @return 构建者
-         */
-        public Builder setHeaderClickListener(OnHeaderClickListener headerClickListener) {
-            this.headerClickListener = headerClickListener;
-            return this;
+        public Builder() {
         }
 
         /**
@@ -711,40 +574,18 @@ public class PinnedHeaderItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         /**
-         * 是否开启绘制分隔线，默认关闭
+         * 仅针对linear vertical
          *
-         * @param enableDivider true为绘制，false不绘制，false时setDividerId无效
-         * @return 构建者
+         * @param isLastDraw
+         * @return
          */
-        public Builder enableDivider(boolean enableDivider) {
-            this.enableDivider = enableDivider;
+        public Builder setLastDraw(boolean isLastDraw) {
+            this.isLastDraw = isLastDraw;
             return this;
         }
 
-        /**
-         * 通过传入包括标签和其内部的子控件的ID设置其对应的点击事件
-         *
-         * @param clickIds 标签或其内部的子控件的ID
-         * @return 构建者
-         */
-        public Builder setClickIds(int... clickIds) {
-            this.clickIds = clickIds;
-            return this;
-        }
-
-        /**
-         * 是否关闭标签点击事件，默认开启
-         *
-         * @param disableHeaderClick true为关闭标签点击事件，false为开启标签点击事件
-         * @return 构建者
-         */
-        public Builder disableHeaderClick(boolean disableHeaderClick) {
-            this.disableHeaderClick = disableHeaderClick;
-            return this;
-        }
-
-        public PinnedHeaderItemDecoration create() {
-            return new PinnedHeaderItemDecoration(this);
+        public ItemDecoration create() {
+            return new ItemDecoration(this);
         }
 
     }

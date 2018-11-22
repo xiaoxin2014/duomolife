@@ -1261,10 +1261,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
-        RestartAPPTool.restartAPP(MainActivity.this);
         super.onDestroy();
         if (constantMethod != null) {
             constantMethod.releaseHandlers();
+        }
+        if (alertDialogHelper != null && alertDialogHelper.getAlertDialog() != null && alertDialogHelper.getAlertDialog().isShowing()) {
+            alertDialogHelper.dismiss();
         }
     }
 
@@ -1312,4 +1314,5 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             super.onBackPressed();
         }
     }
+
 }

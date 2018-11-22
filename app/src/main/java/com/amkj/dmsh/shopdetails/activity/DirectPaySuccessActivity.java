@@ -31,7 +31,7 @@ import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -116,15 +116,15 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 .inflate(R.layout.layout_pay_success_header, (ViewGroup) communal_recycler.getParent(), false);
         WelfareHeaderView welfareHeaderView = new WelfareHeaderView();
         ButterKnife.bind(welfareHeaderView, headerView);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         qualityTypeProductAdapter = new QualityTypeProductAdapter(DirectPaySuccessActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);

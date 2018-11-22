@@ -46,7 +46,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -157,15 +157,15 @@ public class ShopCarActivity extends BaseActivity{
         header_shared.setText("编辑");
         shopCarGoodsAdapter = new ShopCarGoodsAdapter(ShopCarActivity.this, shopGoodsList);
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         communal_recycler.setAdapter(shopCarGoodsAdapter);
 
@@ -912,15 +912,15 @@ public class ShopCarActivity extends BaseActivity{
 
         public void initViews() {
             communal_recycler_wrap.setLayoutManager(new GridLayoutManager(ShopCarActivity.this, 2));
-            communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+            communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f)
-                    // 开启绘制分隔线，默认关闭
-                    .enableDivider(true)
-                    // 是否关闭标签点击事件，默认开启
-                    .disableHeaderClick(false)
-                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                    .setHeaderClickListener(null)
+
+
+
+
+
+
                     .create());
             proNoShopCarAdapter = new ProNoShopCarAdapter(ShopCarActivity.this, cartProRecommendList);
             communal_recycler_wrap.setAdapter(proNoShopCarAdapter);

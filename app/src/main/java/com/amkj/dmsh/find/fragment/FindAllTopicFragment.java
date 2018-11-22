@@ -24,7 +24,7 @@ import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,15 +69,15 @@ public class FindAllTopicFragment extends BaseFragment {
     protected void initViews() {
         communal_recycler.setBackgroundColor(getResources().getColor(R.color.white));
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         adapterInvitationAdapter = new PullUserInvitationAdapter(getActivity(), invitationSearchList, TOPIC_TYPE);
         communal_recycler.setAdapter(adapterInvitationAdapter);

@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,14 +21,12 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -58,7 +57,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/8/24
  * class description:我的帖子列表
  */
-public class MineInvitationListActivity extends BaseActivity implements OnAlertItemClickListener {
+public class MineInvitationListActivity extends BaseActivity{
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -76,9 +75,9 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
     private PullUserInvitationAdapter adapterInvitationAdapter;
     private List<InvitationDetailBean> invitationDetailList = new ArrayList();
     private String type = "帖子";
-    private AlertView delArticleDialog;
     private InvitationDetailBean invitationDetailBean;
     private InvitationDetailEntity invitationDetailEntity;
+    private AlertDialogHelper delArticleDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -96,16 +95,9 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
         });
         adapterInvitationAdapter = new PullUserInvitationAdapter(MineInvitationListActivity.this, invitationDetailList, type);
         communal_recycler.setAdapter(adapterInvitationAdapter);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_ten_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_ten_dp).create());
         adapterInvitationAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -150,17 +142,23 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
                             break;
 //                        删除帖子
                         case R.id.tv_inv_live_att:
-                            AlertSettingBean alertSettingBean = new AlertSettingBean();
-                            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                            alertData.setCancelStr("取消");
-                            alertData.setDetermineStr("确定");
-                            alertData.setFirstDet(true);
-                            alertData.setMsg("确定删除该篇帖子？");
-                            alertSettingBean.setStyle(AlertView.Style.Alert);
-                            alertSettingBean.setAlertData(alertData);
-                            delArticleDialog = new AlertView(alertSettingBean, MineInvitationListActivity.this, MineInvitationListActivity.this);
-                            delArticleDialog.show();
-                            delArticleDialog.setCancelable(false);
+                            if (delArticleDialogHelper == null) {
+                                delArticleDialogHelper = new AlertDialogHelper(MineInvitationListActivity.this);
+                                delArticleDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                        .setMsg("确定删除该篇帖子？").setCancelText("取消").setConfirmText("提交").setCancelable(false)
+                                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                                delArticleDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                    @Override
+                                    public void confirm() {
+                                        delArticle();
+                                    }
+
+                                    @Override
+                                    public void cancel() {
+                                    }
+                                });
+                            }
+                            delArticleDialogHelper.show();
                             break;
                     }
                 }
@@ -366,9 +364,11 @@ public class MineInvitationListActivity extends BaseActivity implements OnAlertI
     }
 
     @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o.equals(delArticleDialog) && position != AlertView.CANCELPOSITION) {
-            delArticle();
+    protected void onDestroy() {
+        super.onDestroy();
+        if(delArticleDialogHelper!=null&&delArticleDialogHelper.getAlertDialog()!=null
+                &&delArticleDialogHelper.getAlertDialog().isShowing()){
+            delArticleDialogHelper.dismiss();
         }
     }
 }

@@ -43,7 +43,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.GoodsParataxisBea
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -106,6 +106,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_RELEV
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
+import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
 
 ;
 
@@ -235,20 +236,27 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 if(detailObjectBean.getGoodsList().size()>0){
                     if (detailObjectBean.getGoodsList().get(0).getType().contains("goodsX")) {
                         if(holder.communal_recycler_wrap.getItemDecorationCount() < 1){
-                            holder.communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+                            holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                                     // 设置分隔线资源ID
                                     .setDividerId(R.drawable.item_divider_five_dp)
-                                    // 开启绘制分隔线，默认关闭
-                                    .enableDivider(true)
-                                    // 是否关闭标签点击事件，默认开启
-                                    .disableHeaderClick(false)
-                                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                                    .setHeaderClickListener(null)
+
+
+
+
+
+
                                     .create());
+                        }
+                        if(holder.communal_recycler_wrap.getPaddingBottom()<1){
+                            holder.communal_recycler_wrap.setBackgroundColor(context.getResources().getColor(R.color.gray_bg));
+                            holder.communal_recycler_wrap.setPadding(0,0,0,dp2px(context,5));
                         }
                     }else{
                         if(holder.communal_recycler_wrap.getItemDecorationCount()>0){
                             holder.communal_recycler_wrap.removeItemDecorationAt(0);
+                        }
+                        if(holder.communal_recycler_wrap.getPaddingBottom()>0){
+                            holder.communal_recycler_wrap.setPadding(0,0,0,0);
                         }
                     }
                 }
@@ -271,15 +279,15 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 ProNoShopCarAdapter qualityTypeProductAdapter = new ProNoShopCarAdapter(context, detailObjectBean.getProductList());
                 holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, 2));
                 if (holder.communal_recycler_wrap.getItemDecorationCount() < 1) {
-                    holder.communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+                    holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                             // 设置分隔线资源ID
                             .setDividerId(R.drawable.item_divider_five_dp)
-                            // 开启绘制分隔线，默认关闭
-                            .enableDivider(true)
-                            // 是否关闭标签点击事件，默认开启
-                            .disableHeaderClick(false)
-                            // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                            .setHeaderClickListener(null)
+
+
+
+
+
+
                             .create());
                 }
                 holder.communal_recycler_wrap.setAdapter(qualityTypeProductAdapter);

@@ -45,7 +45,7 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     public AlertDialogHelper(Context context) {
         this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.service_dialog_theme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.service_dialog_theme);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_video_network, null, false);
         builder.setCancelable(true);
         tv_alert_title = dialogView.findViewById(R.id.tv_alert_title);
@@ -65,11 +65,10 @@ public class AlertDialogHelper implements View.OnClickListener {
     }
 
     /**
-     *
      * @param cancelable
      * @return
      */
-    public  AlertDialogHelper setCancelable(boolean cancelable) {
+    public AlertDialogHelper setCancelable(boolean cancelable) {
         defaultAlertDialog.setCancelable(cancelable);
         return this;
     }
@@ -88,6 +87,7 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     /**
      * 设置标题是否展示
+     *
      * @param visibility
      * @return
      */
@@ -95,8 +95,10 @@ public class AlertDialogHelper implements View.OnClickListener {
         tv_alert_title.setVisibility(View.GONE);
         return this;
     }
+
     /**
      * 设置标题位置显示
+     *
      * @param gravity
      * @return
      */
@@ -119,6 +121,7 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     /**
      * 设置描述信息
+     *
      * @param msgResId
      * @return
      */
@@ -130,6 +133,7 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     /**
      * 设置meg文本位置显示
+     *
      * @param msgTextGravity
      * @return
      */
@@ -137,6 +141,7 @@ public class AlertDialogHelper implements View.OnClickListener {
         tv_alert_message.setGravity(msgTextGravity);
         return this;
     }
+
     /**
      * 获取信息文本
      *
@@ -210,8 +215,8 @@ public class AlertDialogHelper implements View.OnClickListener {
      * 展示dialog
      */
     public void show() {
-        if(!defaultAlertDialog.isShowing()
-                && isContextExisted(context)){
+        if (!defaultAlertDialog.isShowing()
+                && isContextExisted(context)) {
             defaultAlertDialog.show();
         }
         if (isFirstSet) {
@@ -219,7 +224,7 @@ public class AlertDialogHelper implements View.OnClickListener {
             if (window != null) {
                 window.setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoSizeUtils.mm2px(mAppContext,500);
+                params.width = AutoSizeUtils.mm2px(mAppContext, 500);
                 window.setAttributes(params);
                 window.setContentView(dialogView);
             }
@@ -227,11 +232,23 @@ public class AlertDialogHelper implements View.OnClickListener {
         isFirstSet = false;
     }
 
+    /**
+     * 关掉dialog
+     */
     public void dismiss() {
         if (defaultAlertDialog != null
                 && isContextExisted(context)) {
             defaultAlertDialog.dismiss();
         }
+    }
+
+    /**
+     * dialog 是否在展示
+     * @return
+     */
+    public boolean isShowing() {
+        return defaultAlertDialog != null
+                && isContextExisted(context) && defaultAlertDialog.isShowing();
     }
 
     public void setAlertListener(AlertConfirmCancelListener alertConfirmCancelListener) {

@@ -77,7 +77,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -457,16 +457,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
         rv_ql_sp_good_recommend.setLayoutManager(new GridLayoutManager(ShopScrollDetailsActivity.this, 2));
-        rv_ql_sp_good_recommend.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_ql_sp_good_recommend.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         shopRecommendHotTopicAdapter = new ShopRecommendHotTopicAdapter(ShopScrollDetailsActivity.this, shopRecommendHotTopicBeans);
         rv_ql_sp_good_recommend.setNestedScrollingEnabled(false);
         rv_ql_sp_good_recommend.setAdapter(shopRecommendHotTopicAdapter);
@@ -955,8 +948,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             ll_product_activity_detail.setVisibility(VISIBLE);
             tv_communal_pro_tag.setVisibility(VISIBLE);
             tv_communal_pro_tag.setText(getStrings(shopProperty.getActivityTag()));
-            if(!TextUtils.isEmpty(shopPropertyBean.getActivityCode())
-                    && shopPropertyBean.getActivityCode().contains("XSG")){
+            if (!TextUtils.isEmpty(shopPropertyBean.getActivityCode())
+                    && shopPropertyBean.getActivityCode().contains("XSG")) {
                 tv_product_activity_description.setText("");
                 setActCountTime();
                 if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime()
@@ -974,7 +967,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     }
                     ll_communal_time_hours.setVisibility(GONE);
                 }
-            }else{
+            } else {
                 ll_communal_time_hours.setVisibility(GONE);
                 if (!TextUtils.isEmpty(shopProperty.getActivityRule())
                         && shopProperty.getActivityRule().trim().length() > 0) {
@@ -1006,7 +999,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .addLink(link)
                     .build();
         } else {
-            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_price_chn), shopProperty.getMarketPrice()));
+            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), shopProperty.getMarketPrice()));
         }
         if (!TextUtils.isEmpty(shopProperty.getPresentIds())) {
             setPresentProData(shopProperty.getPresentIds());
@@ -1037,7 +1030,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 rv_shop_details_text_communal.setVisibility(View.GONE);
             }
         }
-        if(shopPropertyBean.getMarketLabelList()!=null&&shopProperty.getMarketLabelList().size()>0){
+        if (!TextUtils.isEmpty(shopProperty.getActivityTag()) || (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0)) {
             fbl_details_market_label.setVisibility(VISIBLE);
             fbl_details_market_label.removeAllViews();
             if (!TextUtils.isEmpty(shopProperty.getActivityTag())) {
@@ -1045,13 +1038,15 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 marketLabelBean.setTitle(shopProperty.getActivityTag());
                 marketLabelBean.setActivityCode(getStrings(shopPropertyBean.getActivityCode()));
                 marketLabelBean.setLabelCode(1);
-                fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this,marketLabelBean));
+                fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this, marketLabelBean));
             }
-            for (MarketLabelBean marketLabelBean:shopPropertyBean.getMarketLabelList()) {
-                marketLabelBean.setLabelCode(0);
-                fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this,marketLabelBean));
+            if (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0) {
+                for (MarketLabelBean marketLabelBean : shopPropertyBean.getMarketLabelList()) {
+                    marketLabelBean.setLabelCode(0);
+                    fbl_details_market_label.addView(getLabelInstance().createLabelClickText(ShopScrollDetailsActivity.this, marketLabelBean));
+                }
             }
-        }else{
+        } else {
             fbl_details_market_label.setVisibility(GONE);
         }
 
@@ -1088,9 +1083,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 flex_communal_tag.removeAllViews();
                 for (int i = 0; i < tagSelected.length; i++) {
                     String tagName = tagMap.get(Integer.parseInt(tagSelected[i]));
-                    if(!TextUtils.isEmpty(tagName)){
+                    if (!TextUtils.isEmpty(tagName)) {
                         flex_communal_tag.addView(getLabelInstance().createProductTag(ShopScrollDetailsActivity.this
-                                ,getStringFilter(tagName)));
+                                , getStringFilter(tagName)));
                     }
                 }
             } else {
@@ -1354,7 +1349,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     }
                 });
                 if (!skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice())) {
-                    setReallyPrice(skuSaleList.get(0).getPrice() + " - " + skuSaleList.get(skuSaleList.size() - 1).getPrice());
+                    setReallyPrice(skuSaleList.get(0).getPrice()+"起");
                 } else {
                     setReallyPrice(skuSaleList.get(0).getPrice());
                 }
@@ -1796,9 +1791,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.tv_ql_sp_pro_sc_integral_hint)
     void integralHint() {
-        if(shopPropertyBean!=null&&!TextUtils.isEmpty(shopPropertyBean.getIntegralTip())){
+        if (shopPropertyBean != null && !TextUtils.isEmpty(shopPropertyBean.getIntegralTip())) {
             showToast(this, getStrings(shopPropertyBean.getIntegralTip()));
-        }else{
+        } else {
             showToast(this, R.string.integral_hint);
         }
     }

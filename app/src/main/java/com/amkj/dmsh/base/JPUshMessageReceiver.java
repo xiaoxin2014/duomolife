@@ -11,6 +11,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +96,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                 }
                 if (!TextUtils.isEmpty(pushType) && "999".equals(pushType)) { //跳转客服
                     QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-                    qyServiceUtils.openQyServiceChat(context, "推送-客服通知-"+getStrings(mContent),"");
+                    qyServiceUtils.openQyServiceChat(context, "推送-客服通知-" + getStrings(mContent), "");
                 } else {
                     newTaskActivity(context);
                     setSkipPath(context, json.getString("androidLink"), false);
@@ -124,18 +125,23 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
         } else if (BROADCAST_NOTIFY.equals(intent.getAction())) {
             String filePath = intent.getStringExtra("filePath");
             if (!TextUtils.isEmpty(filePath) && filePath.contains(".apk")) {
-                installApps(context,new File(filePath));
+                installApps(context, new File(filePath));
             }
         }
     }
 
     /**
      * 启动主页面
+     *
      * @param context
      */
     private void newTaskActivity(Context context) {
-        Intent data = new Intent(context, MainActivity.class);
-        data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(data);
+        TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        if(!tinkerBaseApplicationLike.isExistActivity(MainActivity.class.getName())){
+            Intent data = new Intent(context, MainActivity.class);
+            // 说明系统中不存在这个activity
+            data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(data);
+        }
     }
 }

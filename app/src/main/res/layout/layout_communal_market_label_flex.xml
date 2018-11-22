@@ -7,4 +7,5 @@
     android:visibility="gone"
     app:dividerDrawable="@drawable/item_divider_img_white"
     app:showDivider="middle"
+    app:flexWrap="wrap"
     android:layout_marginTop="@dimen/sc_mm_16" />

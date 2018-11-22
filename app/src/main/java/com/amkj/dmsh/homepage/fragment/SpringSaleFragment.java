@@ -33,11 +33,12 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeShaftRecordBean;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -84,8 +85,6 @@ public class SpringSaleFragment extends BaseFragment {
     //    商品总数
     private List<BaseTimeProductTopicBean> saleTimeTotalList = new ArrayList();
     private int page = 1;
-    //    当前时间
-    private String currentRecordTime = "";
     private SpringSaleRecyclerAdapterNew springSaleRecyclerAdapter;
     private TimeForeShowEntity timeForeShowEntity;
     private List<TimeShowShaftBean> showTimeList;
@@ -126,42 +125,14 @@ public class SpringSaleFragment extends BaseFragment {
                 return (saleTimeTotalList.get(position).getItemType() == TYPE_0) ? 1 : gridLayoutManager.getSpanCount();
             }
         });
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_five_white).create());
         communal_recycler.setAdapter(springSaleRecyclerAdapter);
-        springSaleRecyclerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        communal_recycler.addOnItemTouchListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                BaseTimeProductTopicBean baseTimeProductTopicBean = (BaseTimeProductTopicBean) view.getTag();
-                if (baseTimeProductTopicBean != null) {
-                    Intent intent;
-                    switch (baseTimeProductTopicBean.getItemType()) {
-                        case TYPE_0:
-                            intent = new Intent();
-                            TimeForeShowBean timeForeShowBean = (TimeForeShowBean) baseTimeProductTopicBean;
-                            intent.setClass(getActivity(), ShopTimeScrollDetailsActivity.class);
-                            intent.putExtra("productId", String.valueOf(timeForeShowBean.getId()));
-                            startActivity(intent);
-                            break;
-                        case TYPE_1:
-                            intent = new Intent();
-                            TimeTopicBean timeTopicBean = (TimeTopicBean) baseTimeProductTopicBean;
-                            intent.setClass(getActivity(), TimeBrandDetailsActivity.class);
-                            intent.putExtra("brandId", String.valueOf(timeTopicBean.getId()));
-                            startActivity(intent);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                addItemClick(view);
             }
         });
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
@@ -231,6 +202,31 @@ public class SpringSaleFragment extends BaseFragment {
         springSaleRecyclerAdapter.openLoadAnimation(null);
         removeExistUtils = new RemoveExistUtils();
 
+    }
+
+    private void addItemClick(View view) {
+        BaseTimeProductTopicBean baseTimeProductTopicBean = (BaseTimeProductTopicBean) view.getTag();
+        if (baseTimeProductTopicBean != null) {
+            Intent intent;
+            switch (baseTimeProductTopicBean.getItemType()) {
+                case TYPE_0:
+                    intent = new Intent();
+                    TimeForeShowBean timeForeShowBean = (TimeForeShowBean) baseTimeProductTopicBean;
+                    intent.setClass(getActivity(), ShopTimeScrollDetailsActivity.class);
+                    intent.putExtra("productId", String.valueOf(timeForeShowBean.getId()));
+                    startActivity(intent);
+                    break;
+                case TYPE_1:
+                    intent = new Intent();
+                    TimeTopicBean timeTopicBean = (TimeTopicBean) baseTimeProductTopicBean;
+                    intent.setClass(getActivity(), TimeBrandDetailsActivity.class);
+                    intent.putExtra("brandId", String.valueOf(timeTopicBean.getId()));
+                    startActivity(intent);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void setTimeShaftSelect(String weekName) {

@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,15 +21,13 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -76,7 +75,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/4/24
  * class description:请输入类描述
  */
-public class IndentSearchDetailsActivity extends BaseActivity implements OnAlertItemClickListener {
+public class IndentSearchDetailsActivity extends BaseActivity{
     @BindView(R.id.iv_indent_search)
     ImageView iv_indent_search;
     @BindView(R.id.iv_indent_service)
@@ -94,9 +93,6 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
     private int page = 1;
     private DoMoIndentListAdapter doMoIndentListAdapter;
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
-    private AlertView cancelOrderDialog;
-    private AlertView confirmOrderDialog;
-    private AlertView delOrderDialog;
     private OrderListBean orderBean;
     private DirectAppraisePassBean directAppraisePassBean;
     private boolean isOnPause;
@@ -104,6 +100,9 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
     private float screenHeight;
     private String searchKey;
     private InquiryOrderEntry inquiryOrderEntry;
+    private AlertDialogHelper delOrderDialogHelper;
+    private AlertDialogHelper confirmOrderDialogHelper;
+    private AlertDialogHelper cancelOrderDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -119,16 +118,9 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         Intent intent = getIntent();
         searchKey = intent.getStringExtra("data");
         communal_recycler.setLayoutManager(new LinearLayoutManager(IndentSearchDetailsActivity.this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(IndentSearchDetailsActivity.this, orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
@@ -195,8 +187,6 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                 orderBean = orderListBean;
                 Intent intent = new Intent();
                 Bundle bundle;
-                AlertSettingBean alertSettingBean = new AlertSettingBean();
-                AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
                 switch (type) {
                     case BUY_AGAIN:
 //                        再次购买
@@ -206,15 +196,23 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                         break;
                     case CANCEL_ORDER:
 //                        取消订单
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定要取消当前订单");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        cancelOrderDialog = new AlertView(alertSettingBean, IndentSearchDetailsActivity.this, IndentSearchDetailsActivity.this);
-                        cancelOrderDialog.setCancelable(true);
-                        cancelOrderDialog.show();
+                        if (cancelOrderDialogHelper == null) {
+                            cancelOrderDialogHelper = new AlertDialogHelper(IndentSearchDetailsActivity.this);
+                            cancelOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    cancelOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        cancelOrderDialogHelper.show();
                         break;
                     case REMIND_DELIVERY:
                         if(loadHud!=null){
@@ -237,15 +235,23 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                         break;
                     case CONFIRM_ORDER:
 //                        确认收货
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定已收到货物");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        confirmOrderDialog = new AlertView(alertSettingBean, IndentSearchDetailsActivity.this, IndentSearchDetailsActivity.this);
-                        confirmOrderDialog.setCancelable(true);
-                        confirmOrderDialog.show();
+                        if (confirmOrderDialogHelper == null) {
+                            confirmOrderDialogHelper = new AlertDialogHelper(IndentSearchDetailsActivity.this);
+                            confirmOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    confirmOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        confirmOrderDialogHelper.show();
                         break;
                     case PRO_APPRAISE:
 //                        评价
@@ -290,15 +296,23 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                         break;
                     case DEL:
 //                        删除订单
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setMsg("确定要删除该订单");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        delOrderDialog = new AlertView(alertSettingBean, IndentSearchDetailsActivity.this, IndentSearchDetailsActivity.this);
-                        delOrderDialog.setCancelable(true);
-                        delOrderDialog.show();
+                        if (delOrderDialogHelper == null) {
+                            delOrderDialogHelper = new AlertDialogHelper(IndentSearchDetailsActivity.this);
+                            delOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("确定要删除该订单？").setCancelText("取消").setConfirmText("确定")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            delOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    delOrder();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        delOrderDialogHelper.show();
                         break;
                 }
             }
@@ -411,17 +425,6 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
                 }
             }
         });
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION) {
-            cancelOrder();
-        } else if (o == confirmOrderDialog && position != AlertView.CANCELPOSITION) {
-            confirmOrder();
-        } else if (o == delOrderDialog && position != AlertView.CANCELPOSITION) {
-            delOrder();
-        }
     }
 
     private void confirmOrder() {
@@ -556,6 +559,22 @@ public class IndentSearchDetailsActivity extends BaseActivity implements OnAlert
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
             loadData();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(cancelOrderDialogHelper!=null&&cancelOrderDialogHelper.isShowing()){
+            cancelOrderDialogHelper.dismiss();
+        }
+        if(confirmOrderDialogHelper!=null
+                &&confirmOrderDialogHelper.isShowing()){
+            confirmOrderDialogHelper.dismiss();
+        }
+        if(delOrderDialogHelper!=null
+                &&delOrderDialogHelper.isShowing()){
+            delOrderDialogHelper.dismiss();
         }
     }
 }

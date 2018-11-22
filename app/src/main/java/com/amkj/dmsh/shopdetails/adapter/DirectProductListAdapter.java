@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -18,9 +19,6 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
@@ -32,6 +30,7 @@ import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean.ActivityProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean.OrderProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -78,6 +77,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     private final String type;
     private final Context context;
     private List<CartProductInfoBean> preComProInfoBeanList = new ArrayList<>();
+    private AlertDialogHelper refundOrderDialogHelper;
 
     public DirectProductListAdapter(Context context, List list, String type) {
         super(R.layout.layout_direct_indent_product_item, list);
@@ -560,18 +560,15 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                                 );
                                 break;
                             case 2:
-                                AlertSettingBean alertSettingBean = new AlertSettingBean();
-                                AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                                alertData.setCancelStr("取消");
-                                alertData.setDetermineStr("确定");
-                                alertData.setFirstDet(true);
-                                alertData.setTitle(getStrings(applyRefundCheckBean.getMsg()));
-                                alertSettingBean.setStyle(AlertView.Style.Alert);
-                                alertSettingBean.setAlertData(alertData);
-                                AlertView refundDialog = new AlertView(alertSettingBean, context, new OnAlertItemClickListener() {
-                                    @Override
-                                    public void onAlertItemClick(Object o, int position) {
-                                        if (position != AlertView.CANCELPOSITION) {
+                                if (refundOrderDialogHelper == null) {
+                                    refundOrderDialogHelper = new AlertDialogHelper(context);
+                                    refundOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                            .setMsg(getStrings(applyRefundCheckBean.getMsg())).setCancelText("取消")
+                                            .setConfirmText("确定")
+                                            .setCancelTextColor(context.getResources().getColor(R.color.text_login_gray_s));
+                                    refundOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                        @Override
+                                        public void confirm() {
                                             intent.setClass(context, DirectApplyRefundActivity.class);
                                             Bundle bundle = new Bundle();
                                             bundle.putParcelable("refundPro", refundBean);
@@ -579,10 +576,15 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                                             intent.putExtras(bundle);
                                             context.startActivity(intent);
                                         }
-                                    }
-                                });
-                                refundDialog.setCancelable(true);
-                                refundDialog.show();
+
+                                        @Override
+                                        public void cancel() {
+                                        }
+                                    });
+                                } else {
+                                    refundOrderDialogHelper.setMsg(getStrings(applyRefundCheckBean.getMsg()));
+                                }
+                                refundOrderDialogHelper.show();
                                 break;
                         }
                     } else {

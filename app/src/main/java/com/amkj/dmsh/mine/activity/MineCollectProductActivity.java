@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -20,15 +21,13 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineCollectProAdapter;
 import com.amkj.dmsh.mine.bean.CollectProEntity;
 import com.amkj.dmsh.mine.bean.CollectProEntity.CollectProBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -59,7 +58,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/8/10
  * class description:我 - 产品收藏
  */
-public class MineCollectProductActivity extends BaseActivity implements OnAlertItemClickListener {
+public class MineCollectProductActivity extends BaseActivity{
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -80,9 +79,9 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
     private List<CollectProBean> collectProList = new ArrayList();
     //    是否是编辑模式
     private boolean isEditStatus;
-    private AlertView dlDelGoods;
     private StringBuffer productIds;
     private CollectProEntity collectProEntity;
+    private AlertDialogHelper delGoodsDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -96,15 +95,15 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
         header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_titleAll.setText("收藏商品");
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         mineCollectProAdapter = new MineCollectProAdapter(MineCollectProductActivity.this, collectProList);
         communal_recycler.setAdapter(mineCollectProAdapter);
@@ -315,27 +314,26 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
     void delGoods(View view) {
         productIds = getCheckDelGoods(collectProList);
         if (!TextUtils.isEmpty(productIds)) {
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("确定");
-            alertData.setFirstDet(true);
-            alertData.setMsg("确定删除选中商品");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            dlDelGoods = new AlertView(alertSettingBean, MineCollectProductActivity.this, MineCollectProductActivity.this);
-            dlDelGoods.setCancelable(true);
-            dlDelGoods.show();
+            if (delGoodsDialogHelper == null) {
+                delGoodsDialogHelper = new AlertDialogHelper(MineCollectProductActivity.this);
+                delGoodsDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                        .setMsg("确定删除选中商品").setCancelText("取消").setConfirmText("确定")
+                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                delGoodsDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                    @Override
+                    public void confirm() {
+                        //            确定删除商品
+                        delMultiSelGoods(collectProList);
+                    }
+
+                    @Override
+                    public void cancel() {
+                    }
+                });
+            }
+            delGoodsDialogHelper.show();
         } else {
             showToast(this, "请选择你要删除的商品");
-        }
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == dlDelGoods && position != AlertView.CANCELPOSITION) {
-//            确定删除商品
-            delMultiSelGoods(collectProList);
         }
     }
 
@@ -418,5 +416,14 @@ public class MineCollectProductActivity extends BaseActivity implements OnAlertI
             }
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (delGoodsDialogHelper != null && delGoodsDialogHelper.getAlertDialog() != null
+                && delGoodsDialogHelper.getAlertDialog().isShowing()) {
+            delGoodsDialogHelper.dismiss();
+        }
     }
 }

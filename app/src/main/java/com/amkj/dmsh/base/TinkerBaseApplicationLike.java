@@ -670,7 +670,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     /**
-     *  修复AssetManager.finalize() timed out
+     * 修复AssetManager.finalize() timed out
      */
     private void fixTimeOut() {
         try {
@@ -683,12 +683,12 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
             method.invoke(field.get(null));
 
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    public  void exitApp() {
+    public void exitApp() {
         // 逐个退出Activity
         for (Activity activity : activityLinkedList) {
             activity.finish();
@@ -696,5 +696,23 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
         //  结束进程
         // System.exit(0);
+    }
+
+    /**
+     * 栈内是否存在当前activity
+     * 确保推送进来，finish后返回主页
+     * @param currentActivityName 当前类名
+     * @return
+     */
+    public boolean isExistActivity(String currentActivityName) {
+        if (TextUtils.isEmpty(currentActivityName)) {
+            return false;
+        }
+        for (Activity activity : activityLinkedList) {
+            if (activity.getClass().getName().equals(currentActivityName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

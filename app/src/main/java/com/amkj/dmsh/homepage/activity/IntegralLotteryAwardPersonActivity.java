@@ -13,7 +13,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.homepage.adapter.LotteryAwardPersonAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinListBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.List;
@@ -64,15 +64,15 @@ public class IntegralLotteryAwardPersonActivity extends BaseActivity {
         }
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         lotteryAwardPersonAdapter = new LotteryAwardPersonAdapter(this, winListBeanList);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         communal_recycler.setAdapter(lotteryAwardPersonAdapter);
         lotteryAwardPersonAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

@@ -27,7 +27,7 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -99,15 +99,15 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
         }
         directPublishAppraiseAdapter = new DirectPublishAppraiseAdapter(DirectPublishAppraiseActivity.this, directAppraisePassList);
         recycler_direct_publish_appraise.setLayoutManager(new LinearLayoutManager(DirectPublishAppraiseActivity.this, LinearLayoutManager.VERTICAL, false));
-        recycler_direct_publish_appraise.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        recycler_direct_publish_appraise.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         recycler_direct_publish_appraise.setAdapter(directPublishAppraiseAdapter);
     }

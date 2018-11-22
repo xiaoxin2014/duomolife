@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -25,17 +26,15 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
@@ -59,6 +58,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 ;
@@ -68,7 +68,7 @@ import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
  * Created by atd48 on 2016/8/25.
  * 退货申诉
  */
-public class SalesReturnAppealActivity extends BaseActivity implements OnAlertItemClickListener {
+public class SalesReturnAppealActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -102,13 +102,13 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
     private ArrayList<String> mSelectPath = new ArrayList<>();
     //    已上传图片保存
     private List<String> updatedImages = new ArrayList<>();
-    private AlertView dialog;
     private String orderNo;
-    private AlertView commitDialog;
     private GoodsBean goodsBean;
     private int adapterPosition;
     private final int REQUEST_PERMISSIONS = 60;
     private int maxSelImg = 5;
+    private AlertDialogHelper commitDialogHelper;
+    private AlertDialogHelper confirmDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -138,15 +138,11 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         if (imagePathBeans.size() < 1) {
             imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
         }
-        rv_sale_return_img.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_sale_return_img.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
                 .create());
         imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
         rv_sale_return_img.setAdapter(imgGridRecyclerAdapter);
@@ -259,21 +255,26 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
         if (et_appeal_reason.getText().toString().trim().length() < 1 && imgGridRecyclerAdapter.getItemCount() < 2
                 && et_appeal_question_description.getText().toString().trim().length() < 1) {
             finish();
-        } else if (dialog == null || !dialog.isShowing()) {
-            //弹窗
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("确定");
-            alertData.setFirstDet(true);
-            alertData.setMsg("申诉未完成，确定要离开吗？");
-            alertSettingBean.setStyle(AlertView.Style.Alert);
-            alertSettingBean.setAlertData(alertData);
-            dialog = new AlertView(alertSettingBean, this, SalesReturnAppealActivity.this);
-            dialog.setCancelable(true);
-            dialog.show();
+        } else if (confirmDialogHelper == null || !confirmDialogHelper.isShowing()) {
+            if (confirmDialogHelper == null) {
+                confirmDialogHelper = new AlertDialogHelper(SalesReturnAppealActivity.this);
+                confirmDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                        .setMsg("申诉未完成，确定要离开吗？").setConfirmText("确定").setCancelText("取消")
+                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                confirmDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                    @Override
+                    public void confirm() {
+                        finish();
+                    }
+
+                    @Override
+                    public void cancel() {
+                    }
+                });
+            }
+            confirmDialogHelper.show();
         } else {
-            dialog.dismiss();
+            confirmDialogHelper.dismiss();
         }
     }
 
@@ -306,7 +307,7 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
                         public void finishData(List<String> data, Handler handler) {
                             setSalesReturnImageData(data, directAppraisePassBean);
                             //                            已上传不可删除 不可更换图片
-                           getImageFormatInstance().submitChangeIconStatus(imagePathBeans,false);
+                            getImageFormatInstance().submitChangeIconStatus(imagePathBeans, false);
                             imgGridRecyclerAdapter.notifyDataSetChanged();
                             submit(directAppraisePassBean);
                             handler.removeCallbacksAndMessages(null);
@@ -361,19 +362,24 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
-                        AlertSettingBean alertSettingBean = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                        alertData.setCancelStr("取消");
-                        alertData.setDetermineStr("确定");
-                        alertData.setFirstDet(true);
-                        alertData.setTitle("提交成功");
-                        alertData.setMsg("我们会尽快为你处理");
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        commitDialog = new AlertView(alertSettingBean, SalesReturnAppealActivity.this, SalesReturnAppealActivity.this);
-                        commitDialog.show();
-                        commitDialog.setCancelable(false);
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                        if (commitDialogHelper == null) {
+                            commitDialogHelper = new AlertDialogHelper(SalesReturnAppealActivity.this);
+                            commitDialogHelper.setTitle("提交成功").setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("我们会尽快为你处理").setConfirmText("确定").setSingleButton(true).setCancelable(false)
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            commitDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    finish();
+                                }
+
+                                @Override
+                                public void cancel() {
+                                }
+                            });
+                        }
+                        commitDialogHelper.show();
                     } else {
                         showToast(SalesReturnAppealActivity.this, indentInfo.getResult() != null ?
                                 indentInfo.getResult().getMsg() : indentInfo.getMsg());
@@ -395,11 +401,13 @@ public class SalesReturnAppealActivity extends BaseActivity implements OnAlertIt
     }
 
     @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == dialog && position != AlertView.CANCELPOSITION) {
-            finish();
-        } else if (o == commitDialog && position == AlertView.CANCELPOSITION) {
-            finish();
+    protected void onDestroy() {
+        super.onDestroy();
+        if (commitDialogHelper != null && commitDialogHelper.isShowing()) {
+            commitDialogHelper.dismiss();
+        }
+        if (confirmDialogHelper != null && confirmDialogHelper.isShowing()) {
+            confirmDialogHelper.dismiss();
         }
     }
 }

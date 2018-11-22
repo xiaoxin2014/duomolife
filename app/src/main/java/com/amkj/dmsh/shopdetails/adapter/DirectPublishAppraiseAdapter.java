@@ -24,7 +24,7 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -67,15 +67,15 @@ public class DirectPublishAppraiseAdapter extends BaseQuickAdapter<DirectApprais
     protected void convert(final BaseViewHolderHelperAppraise helper, DirectAppraisePassBean directPassBean) {
         RatingBar ratingBar_direct_eva_count = helper.getView(R.id.ratingBar_direct_eva_count);
         RecyclerView rv_product_eva = helper.getView(R.id.rv_product_eva);
-        rv_product_eva.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_product_eva.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         final int adapterPosition = helper.getAdapterPosition();
         helper.et_indent_appraise_input.setTag(adapterPosition);

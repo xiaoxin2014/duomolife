@@ -23,9 +23,6 @@ import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
@@ -47,11 +44,12 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity.IntegralOrderDetailBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONArray;
@@ -96,7 +94,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.VIRTUAL_COUPON;
  * Created by atd48 on 2016/7/18.
  * 积分订单详情
  */
-public class IntegExchangeDetailActivity extends BaseActivity implements OnAlertItemClickListener, View.OnClickListener {
+public class IntegExchangeDetailActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
     @BindView(R.id.tv_header_title)
@@ -120,14 +118,15 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private RvHeaderView rvHeaderView;
     private RvFootView rvFootView;
-    private AlertView cancelOrderDialog;
-    private AlertView confirmOrderDialog;
     private OrderListBean orderListBean;
     private IndentDiscountAdapter indentDiscountAdapter;
     private CustomPopWindow mCustomPopWindow;
     private String payWay;
     private boolean isOnPause;
     private IntegralOrderDetailEntity integralOrderDetailEntity;
+    private AlertDialogHelper confirmOrderDialogHelper;
+    private AlertDialogHelper cancelOrderDialogHelper;
+    private AlertDialogHelper refundOrderDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -141,16 +140,9 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
         Intent intent = getIntent();
         indentNum = intent.getStringExtra("orderNo");
         communal_recycler.setLayoutManager(new LinearLayoutManager(IntegExchangeDetailActivity.this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_img_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_img_white).create());
         productIndentAdapter = new IntegralProductIndentAdapter(IntegExchangeDetailActivity.this, goodsBeanList);
         View headerView = LayoutInflater.from(IntegExchangeDetailActivity.this)
                 .inflate(R.layout.layout_integ_direct_detail_head, (ViewGroup) communal_recycler.getParent(), false);
@@ -513,18 +505,15 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
                                 );
                                 break;
                             case 2:
-                                AlertSettingBean alertSettingBean = new AlertSettingBean();
-                                AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                                alertData.setCancelStr("取消");
-                                alertData.setDetermineStr("确定");
-                                alertData.setFirstDet(true);
-                                alertData.setTitle(getStrings(applyRefundCheckBean.getMsg()));
-                                alertSettingBean.setStyle(AlertView.Style.Alert);
-                                alertSettingBean.setAlertData(alertData);
-                                AlertView refundDialog = new AlertView(alertSettingBean, IntegExchangeDetailActivity.this, new OnAlertItemClickListener() {
-                                    @Override
-                                    public void onAlertItemClick(Object o, int position) {
-                                        if (position != AlertView.CANCELPOSITION) {
+                                if (refundOrderDialogHelper == null) {
+                                    refundOrderDialogHelper = new AlertDialogHelper(IntegExchangeDetailActivity.this);
+                                    refundOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                            .setMsg(getStrings(applyRefundCheckBean.getMsg())).setCancelText("取消")
+                                            .setConfirmText("确定")
+                                            .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                                    refundOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                        @Override
+                                        public void confirm() {
                                             intent.setClass(IntegExchangeDetailActivity.this, DirectApplyRefundActivity.class);
                                             Bundle bundle = new Bundle();
                                             bundle.putParcelable("refundPro", refundBean);
@@ -532,10 +521,15 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
                                             intent.putExtras(bundle);
                                             startActivity(intent);
                                         }
-                                    }
-                                });
-                                refundDialog.setCancelable(true);
-                                refundDialog.show();
+
+                                        @Override
+                                        public void cancel() {
+                                        }
+                                    });
+                                } else {
+                                    refundOrderDialogHelper.setMsg(getStrings(applyRefundCheckBean.getMsg()));
+                                }
+                                refundOrderDialogHelper.show();
                                 break;
                         }
                     } else {
@@ -555,15 +549,6 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
     }
 
     @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION && orderListBean != null) {
-            cancelIntegralIndent(orderListBean.getNo());
-        } else if (o == confirmOrderDialog && position != AlertView.CANCELPOSITION && orderListBean != null) {
-            confirmOrder(orderListBean);
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         String type = (String) v.getTag(R.id.tag_first);
         OrderListBean indentInfoBean = (OrderListBean) v.getTag(R.id.tag_second);
@@ -576,22 +561,27 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
             return;
         }
         Intent intent = new Intent();
-        AlertSettingBean alertSettingBean;
-        AlertSettingBean.AlertData alertData;
         switch (type) {
             case CANCEL_ORDER:
 //                        取消订单
-                alertSettingBean = new AlertSettingBean();
-                alertData = new AlertSettingBean.AlertData();
-                alertData.setCancelStr("取消");
-                alertData.setDetermineStr("确定");
-                alertData.setFirstDet(true);
-                alertData.setMsg("确定要取消当前订单");
-                alertSettingBean.setStyle(AlertView.Style.Alert);
-                alertSettingBean.setAlertData(alertData);
-                cancelOrderDialog = new AlertView(alertSettingBean, this, this);
-                cancelOrderDialog.setCancelable(true);
-                cancelOrderDialog.show();
+                if (cancelOrderDialogHelper == null) {
+                    cancelOrderDialogHelper = new AlertDialogHelper(this);
+                    cancelOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                            .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
+                            .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                    cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            cancelIntegralIndent(orderListBean.getNo());
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+                }
+                cancelOrderDialogHelper.show();
+                cancelIntegralIndent(orderListBean.getNo());
                 break;
             case CANCEL_PAY_ORDER:
                 requestRefundData(indentInfoBean);
@@ -615,17 +605,23 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
                 break;
             case CONFIRM_ORDER:
 //                        确认收货
-                alertSettingBean = new AlertSettingBean();
-                alertData = new AlertSettingBean.AlertData();
-                alertData.setCancelStr("取消");
-                alertData.setDetermineStr("确定");
-                alertData.setFirstDet(true);
-                alertData.setMsg("确定已收到货物");
-                alertSettingBean.setStyle(AlertView.Style.Alert);
-                alertSettingBean.setAlertData(alertData);
-                confirmOrderDialog = new AlertView(alertSettingBean, this, this);
-                confirmOrderDialog.setCancelable(true);
-                confirmOrderDialog.show();
+                if (confirmOrderDialogHelper == null) {
+                    confirmOrderDialogHelper = new AlertDialogHelper(this);
+                    confirmOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                            .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
+                            .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                    confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            confirmOrder(orderListBean);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+                }
+                confirmOrderDialogHelper.show();
                 break;
             case PRO_APPRAISE:
 //                        评价
@@ -910,5 +906,19 @@ public class IntegExchangeDetailActivity extends BaseActivity implements OnAlert
         }
         super.onResume();
         isOnPause = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(cancelOrderDialogHelper!=null&&cancelOrderDialogHelper.isShowing()){
+            cancelOrderDialogHelper.dismiss();
+        }
+        if(confirmOrderDialogHelper!=null&&confirmOrderDialogHelper.isShowing()){
+            confirmOrderDialogHelper.dismiss();
+        }
+        if(refundOrderDialogHelper!=null&&refundOrderDialogHelper.isShowing()){
+            refundOrderDialogHelper.dismiss();
+        }
     }
 }

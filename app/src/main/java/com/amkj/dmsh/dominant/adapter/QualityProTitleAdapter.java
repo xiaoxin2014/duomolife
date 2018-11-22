@@ -61,6 +61,7 @@ public class QualityProTitleAdapter extends BaseQuickAdapter<LikedProductBean, B
                     }
                 }
             }
+
         }else{
             fbl_market_label.setVisibility(View.GONE);
         }

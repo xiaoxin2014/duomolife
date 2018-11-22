@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,11 +18,8 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
@@ -36,7 +34,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -50,8 +48,9 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.QQ;
 import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 
 ;
+;
 
-public class AccountSafeActivity extends BaseActivity implements OnAlertItemClickListener {
+public class AccountSafeActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tv_share;
     @BindView(R.id.tv_header_title)
@@ -78,13 +77,13 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     @BindView(R.id.rel_qq_account)
     RelativeLayout rel_qq_account;
     private final String CHANGE_PASSWORD = "changePassword";
-    private AlertView weChatDialog;
-    private AlertView qqDialog;
-    private AlertView sinaDialog;
     private UMShareAPI mShareAPI;
     private boolean isBindWeChat = false;
     private CommunalUserInfoEntity.CommunalUserInfoBean minaData;
     private OtherAccountBindEntity otherAccountBindEntity;
+    private AlertDialogHelper weChatDialogHelper;
+    private AlertDialogHelper sinaDialogHelper;
+    private AlertDialogHelper qqDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -101,7 +100,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     //  2016/9/21 获取账号列表
     @Override
     protected void loadData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         getCurrentAccountData();
@@ -115,34 +114,34 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
 
     private void getCurrentAccountData() {
         String url = Url.BASE_URL + Url.MINE_PAGE;
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
-                if (minePageData != null) {
-                    if (minePageData.getCode().equals("01")) {
-                        minaData = minePageData.getCommunalUserInfoBean();
-                        setMobileData(minaData);
-                    } else {
-                        showToast(AccountSafeActivity.this, minePageData.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
+                        if (minePageData != null) {
+                            if (minePageData.getCode().equals("01")) {
+                                minaData = minePageData.getCommunalUserInfoBean();
+                                setMobileData(minaData);
+                            } else {
+                                showToast(AccountSafeActivity.this, minePageData.getMsg());
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void netClose() {
+                    @Override
+                    public void netClose() {
 
-            }
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
+                    @Override
+                    public void onError(Throwable throwable) {
 
-            }
-        });
+                    }
+                });
     }
 
     private void setMobileData(CommunalUserInfoEntity.CommunalUserInfoBean minaData) {
@@ -162,34 +161,34 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                otherAccountBindEntity = gson.fromJson(result, OtherAccountBindEntity.class);
-                if (otherAccountBindEntity != null) {
-                    if (otherAccountBindEntity.getCode().equals("01")) {
-                        setAccountData(otherAccountBindEntity.getOtherAccountBindInfo());
-                    } else if (otherAccountBindEntity.getCode().equals("02")) {
-                        setAccountData(null);
-                    } else {
-                        showToast(AccountSafeActivity.this, otherAccountBindEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        otherAccountBindEntity = gson.fromJson(result, OtherAccountBindEntity.class);
+                        if (otherAccountBindEntity != null) {
+                            if (otherAccountBindEntity.getCode().equals("01")) {
+                                setAccountData(otherAccountBindEntity.getOtherAccountBindInfo());
+                            } else if (otherAccountBindEntity.getCode().equals("02")) {
+                                setAccountData(null);
+                            } else {
+                                showToast(AccountSafeActivity.this, otherAccountBindEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, otherAccountBindEntity);
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,otherAccountBindEntity);
-            }
 
-            @Override
-            public void netClose() {
-                showToast(mAppContext,R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,otherAccountBindEntity);
-            }
+                    @Override
+                    public void netClose() {
+                        showToast(mAppContext, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, otherAccountBindEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(mAppContext,R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,otherAccountBindEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(mAppContext, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, otherAccountBindEntity);
+                    }
+                });
     }
 
     private void setAccountData(List<OtherAccountBindInfo> otherAccountBindInfos) {
@@ -256,59 +255,82 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
     //绑定微信
     @OnClick(R.id.rel_weChat_account)
     void bindWeChat() {
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
+        String cancelText;
+        String msg;
+        String confirmText;
         if (isBindWeChat) {
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("解绑");
-            alertData.setFirstDet(true);
-            alertData.setMsg("解除绑定后该微信订单只能在微信中\n查看，确定要解除该微信账号吗");
+            cancelText = "取消";
+            confirmText = "解绑";
+            msg = "解除绑定后该微信订单只能在微信中\n查看，确定要解除该微信账号吗";
         } else {
             //弹窗 打开微信
-            alertData.setCancelStr("取消");
-            alertData.setDetermineStr("打开");
-            alertData.setFirstDet(true);
-            alertData.setMsg("“多么生活”想要打开“微信”");
+            cancelText = "取消";
+            confirmText = "打开";
+            msg = "“多么生活”想要打开“微信”";
         }
-        alertSettingBean.setStyle(AlertView.Style.Alert);
-        alertSettingBean.setAlertData(alertData);
-        weChatDialog = new AlertView(alertSettingBean, this, this);
-        weChatDialog.setCancelable(true);
-        weChatDialog.show();
+
+        if (weChatDialogHelper == null) {
+            weChatDialogHelper = new AlertDialogHelper(AccountSafeActivity.this);
+            weChatDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            doAuthInfo(OTHER_WECHAT);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+        }
+        weChatDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                .setMsg(msg).setCancelText(cancelText).setConfirmText(confirmText);
+        weChatDialogHelper.show();
     }
 
     //绑定微博
     @OnClick(R.id.rel_weiBo_account)
     void bindWeiBo() {
-        //弹窗 打开新浪
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-        alertData.setCancelStr("取消");
-        alertData.setDetermineStr("打开");
-        alertData.setFirstDet(true);
-        alertData.setMsg("“多么生活”想要打开“微博”");
-        alertSettingBean.setStyle(AlertView.Style.Alert);
-        alertSettingBean.setAlertData(alertData);
-        sinaDialog = new AlertView(alertSettingBean, this, this);
-        sinaDialog.setCancelable(true);
-        sinaDialog.show();
+        if (sinaDialogHelper == null) {
+            sinaDialogHelper = new AlertDialogHelper(AccountSafeActivity.this);
+            sinaDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("“多么生活”想要打开“微博”").setCancelText("取消").setConfirmText("打开")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            doAuthInfo(OTHER_SINA);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+        }
+        sinaDialogHelper.show();
     }
 
     //绑定QQ
     @OnClick(R.id.rel_qq_account)
     void bindQQ() {
         //弹窗 打开QQ
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-        alertData.setCancelStr("取消");
-        alertData.setDetermineStr("打开");
-        alertData.setFirstDet(true);
-        alertData.setMsg("“多么生活”想要打开“QQ”");
-        alertSettingBean.setStyle(AlertView.Style.Alert);
-        alertSettingBean.setAlertData(alertData);
-        qqDialog = new AlertView(alertSettingBean, this, this);
-        qqDialog.setCancelable(true);
-        qqDialog.show();
+        if (qqDialogHelper == null) {
+            qqDialogHelper = new AlertDialogHelper(AccountSafeActivity.this);
+            qqDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("“多么生活”想要打开“QQ”").setCancelText("取消").setConfirmText("打开")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            doAuthInfo(OTHER_QQ);
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+        }
+        qqDialogHelper.show();
     }
 
     @OnClick(R.id.rel_real_info)
@@ -323,25 +345,38 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
         finish();
     }
 
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        mShareAPI = UMShareAPI.get(this);
-        if (o == weChatDialog && position != AlertView.CANCELPOSITION) {
-            if (isBindWeChat) {
-                unBindWeChatAccount();
-            } else {
-                // 打开微信授权
-                SHARE_MEDIA platform = SHARE_MEDIA.WEIXIN;
+    /**
+     * 授权类型
+     *
+     * @param authType
+     */
+    public void doAuthInfo(String authType) {
+        if (mShareAPI == null) {
+            mShareAPI = UMShareAPI.get(this);
+        }
+        switch (getStrings(authType)) {
+            case OTHER_WECHAT:
+                if (isBindWeChat) {
+                    unBindWeChatAccount();
+                } else {
+                    // 打开微信授权
+                    SHARE_MEDIA platform = SHARE_MEDIA.WEIXIN;
+                    mShareAPI.getPlatformInfo(AccountSafeActivity.this, platform, getDataInfoListener);
+                }
+                break;
+            case OTHER_QQ:
+                //qq授权
+                SHARE_MEDIA platform = QQ;
                 mShareAPI.getPlatformInfo(AccountSafeActivity.this, platform, getDataInfoListener);
-            }
-        } else if (o == qqDialog && position != AlertView.CANCELPOSITION) {
-            //qq授权
-            SHARE_MEDIA platform = QQ;
-            mShareAPI.getPlatformInfo(AccountSafeActivity.this, platform, getDataInfoListener);
-        } else if (o == sinaDialog && position != AlertView.CANCELPOSITION) {
-            //新浪授权
-            SHARE_MEDIA platform = SINA;
-            mShareAPI.getPlatformInfo(AccountSafeActivity.this, platform, getDataInfoListener);
+                break;
+            case OTHER_SINA:
+                //新浪授权
+                platform = SINA;
+                mShareAPI.getPlatformInfo(AccountSafeActivity.this, platform, getDataInfoListener);
+                break;
+            default:
+                showToast(AccountSafeActivity.this, "暂不支持该授权！");
+                break;
         }
     }
 
@@ -391,6 +426,7 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
             showToast(getApplicationContext(), "授权取消");
         }
     };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -435,7 +471,6 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("MessageWarmActivity", "onError: " + ex);
             }
         });
     }
@@ -471,6 +506,20 @@ public class AccountSafeActivity extends BaseActivity implements OnAlertItemClic
             });
         } else {
             showToast(this, R.string.unConnectedNetwork);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (qqDialogHelper != null && qqDialogHelper.getAlertDialog() != null && qqDialogHelper.getAlertDialog().isShowing()) {
+            qqDialogHelper.dismiss();
+        }
+        if (weChatDialogHelper != null && weChatDialogHelper.getAlertDialog() != null && weChatDialogHelper.getAlertDialog().isShowing()) {
+            weChatDialogHelper.dismiss();
+        }
+        if (sinaDialogHelper != null && sinaDialogHelper.getAlertDialog() != null && sinaDialogHelper.getAlertDialog().isShowing()) {
+            sinaDialogHelper.dismiss();
         }
     }
 }

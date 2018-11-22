@@ -39,7 +39,7 @@ import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -110,16 +110,9 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         duoMoLifeTimeBrandAdapter = new DoMoLifeTimeBrandAdapter(TimeBrandDetailsActivity.this, brandProductList);
         duoMoLifeTimeBrandAdapter.addHeaderView(headerView);
         communal_recycler.setAdapter(duoMoLifeTimeBrandAdapter);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-2)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_product)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_product).create());
         duoMoLifeTimeBrandAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

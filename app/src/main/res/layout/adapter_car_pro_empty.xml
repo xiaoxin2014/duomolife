@@ -8,7 +8,7 @@
         android:src="@drawable/cart_empty_icon"
         android:layout_marginTop="@dimen/sc_mm_93"
         android:layout_marginBottom="@dimen/sc_mm_214"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:layout_marginLeft="@dimen/sc_mm_200"
         android:layout_marginRight="@dimen/sc_mm_200"
         android:adjustViewBounds="true"

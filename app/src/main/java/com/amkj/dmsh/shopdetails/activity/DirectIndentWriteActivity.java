@@ -38,9 +38,6 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.SaleSkuBean;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
@@ -60,12 +57,13 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
@@ -84,6 +82,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
@@ -111,7 +110,7 @@ import static com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity.I
  * Created by atd48 on 2016/8/17.
  * 订单填写
  */
-public class DirectIndentWriteActivity extends BaseActivity implements OnAlertItemClickListener {
+public class DirectIndentWriteActivity extends BaseActivity{
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -165,14 +164,13 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
     private AlertDialog alertDialog;
     private RuleDialogView ruleDialog;
     private boolean isOversea = false;
-    private AlertView payErrorAlert;
-    private AlertView payCancelAlert;
     private Date createIndentTime;
     private ConstantMethod constantMethod;
     private Date current;
-    private TextView tvAlertMsg;
     private CharSequence payErrorMsg;
     private IndentDiscountsBean indentDiscountsBean;
+    private AlertDialogHelper payErrorDialogHelper;
+    private AlertDialogHelper payCancelDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -232,15 +230,15 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         }
         pullFootView.rect_indent_number.setFontColor(Color.parseColor("#333333"));
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         directProductAdapter.addHeaderView(headerView);
         directProductAdapter.addFooterView(footView);
@@ -272,7 +270,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             @Override
             public void onNumChange(View view, int stype, int num) {
                 if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != num) {
-                    if(loadHud!=null){
+                    if (loadHud != null) {
                         loadHud.show();
                     }
                     discountBeanList.get(0).setCount(num);
@@ -762,41 +760,36 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
         if (current == null) {
             current = calendar.getTime();
         }
-        if (payErrorAlert == null) {
+        if (payErrorDialogHelper == null) {
             String url = Url.BASE_URL + Url.PAY_ERROR;
             XUtil.Get(url, null, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
-                    if (requestStatus != null && "01".equals(requestStatus.getCode())) {
+                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
                         setRefundTime(requestStatus);
                         if (!TextUtils.isEmpty(payErrorMsg)) {
-                            AlertSettingBean alertSettingBean = new AlertSettingBean();
-                            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                            AlertSettingBean.AlertInitView alertInitView = new AlertSettingBean.AlertInitView();
-                            alertData.setCancelStr("确认离开");
-                            alertData.setDetermineStr("继续支付");
-                            alertData.setFirstDet(false);
-                            alertData.setTitle("支付失败");
-                            alertData.setMsg(payErrorMsg.toString());
-                            alertInitView.setCancelColorValue("#999999");
-                            alertInitView.setCancelSize(30);
-                            alertInitView.setDetColorValue("#0a88fa");
-                            alertInitView.setCancelSize(30);
-                            alertSettingBean.setStyle(AlertView.Style.Alert);
-                            alertSettingBean.setAlertData(alertData);
-                            alertSettingBean.setAlertInitView(alertInitView);
-                            payErrorAlert = new AlertView(alertSettingBean, DirectIndentWriteActivity.this, DirectIndentWriteActivity.this);
-                            tvAlertMsg = payErrorAlert.getTvAlertMsg();
-                            tvAlertMsg.setText(payErrorMsg);
-                            payErrorAlert.setCancelable(false);
-                            payErrorAlert.show();
+                            payErrorDialogHelper = new AlertDialogHelper(DirectIndentWriteActivity.this);
+                            payErrorDialogHelper.setMsgTextGravity(Gravity.CENTER).setTitle("支付失败")
+                                    .setMsg(payErrorMsg.toString()).setCancelText("确认离开").setConfirmText("继续支付")
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                                    .setCancelable(false);
+                            payErrorDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {}
+
+                                @Override
+                                public void cancel() {
+                                    finish();
+                                }
+                            });
+                            payErrorDialogHelper.show();
                         }
                     }
                 }
             });
         } else {
-            payErrorAlert.show();
+            payErrorDialogHelper.show();
         }
     }
 
@@ -820,8 +813,8 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             if (constantMethod != null) {
                 constantMethod.stopSchedule();
             }
-            if (tvAlertMsg != null) {
-                tvAlertMsg.setText("订单已失效");
+            if (payErrorDialogHelper != null) {
+                payErrorDialogHelper.setMsg("订单已失效");
             }
         }
     }
@@ -848,13 +841,13 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
                         .addLink(link)
                         .build();
             } else {
-                if (payErrorAlert != null) {
-                    payErrorAlert.dismiss();
+                if (payErrorDialogHelper != null) {
+                    payErrorDialogHelper.dismiss();
                 }
             }
         } catch (Exception e) {
-            if (payErrorAlert != null) {
-                payErrorAlert.dismiss();
+            if (payErrorDialogHelper != null) {
+                payErrorDialogHelper.dismiss();
             }
         }
     }
@@ -863,55 +856,36 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
      * 订单支付取消弹窗
      */
     private void payCancel() {
-        if (payCancelAlert == null) {
+        if (payCancelDialogHelper == null) {
             String url = Url.BASE_URL + Url.PAY_CANCEL;
             XUtil.Get(url, null, new MyCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
-                    if (requestStatus != null && "01".equals(requestStatus.getCode())) {
-                        AlertSettingBean alertSettingBean = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                        AlertSettingBean.AlertInitView alertInitView = new AlertSettingBean.AlertInitView();
-                        alertData.setCancelStr("我再想想");
-                        alertData.setDetermineStr("去意已决");
-                        alertData.setFirstDet(false);
-                        alertData.setMsg(!TextUtils.isEmpty(requestStatus.getDescription()) ?
-                                requestStatus.getDescription() : "好货不等人哦，喜欢就入了吧");
-                        alertInitView.setCancelColorValue("#999999");
-                        alertInitView.setCancelSize(30);
-                        alertInitView.setDetColorValue("#0a88fa");
-                        alertInitView.setCancelSize(30);
-                        alertSettingBean.setStyle(AlertView.Style.Alert);
-                        alertSettingBean.setAlertData(alertData);
-                        alertSettingBean.setAlertInitView(alertInitView);
-                        payCancelAlert = new AlertView(alertSettingBean, DirectIndentWriteActivity.this, DirectIndentWriteActivity.this);
-                        payCancelAlert.setCancelable(false);
-                        payCancelAlert.show();
+                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
+                        payCancelDialogHelper = new AlertDialogHelper(DirectIndentWriteActivity.this);
+                        payCancelDialogHelper.setMsgTextGravity(Gravity.CENTER).setTitleVisibility(GONE)
+                                .setMsg(!TextUtils.isEmpty(requestStatus.getDescription()) ?
+                                        requestStatus.getDescription() : "好货不等人哦，喜欢就入了吧")
+                                .setCancelText("去意已决").setConfirmText("继续支付")
+                                .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                                .setCancelable(false);
+                        payCancelDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                            @Override
+                            public void confirm() {
+                            }
+
+                            @Override
+                            public void cancel() {
+                                finish();
+                            }
+                        });
+                        payCancelDialogHelper.show();
                     }
                 }
             });
         } else {
             finish();
-        }
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (payErrorAlert == o) {
-            if (payErrorAlert != null) {
-                payErrorAlert.dismiss();
-            }
-            if (position == AlertView.CANCELPOSITION) {
-                finish();
-            }
-        } else if (payCancelAlert == o) {
-            if (payCancelAlert != null) {
-                payCancelAlert.dismiss();
-            }
-            if (position != AlertView.CANCELPOSITION) {
-                finish();
-            }
         }
     }
 
@@ -1082,7 +1056,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
                 @Override
                 public void onSuccess(String result) {
-                    if(loadHud!=null){
+                    if (loadHud != null) {
                         loadHud.dismiss();
                     }
                     Gson gson = new Gson();
@@ -1098,7 +1072,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
                 @Override
                 public void netClose() {
-                    if(loadHud!=null){
+                    if (loadHud != null) {
                         loadHud.dismiss();
                     }
                     NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
@@ -1106,14 +1080,14 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
 
                 @Override
                 public void onError(Throwable throwable) {
-                    if(loadHud!=null){
+                    if (loadHud != null) {
                         loadHud.dismiss();
                     }
                     NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
             });
         } else {
-            if(loadHud!=null){
+            if (loadHud != null) {
                 loadHud.dismiss();
             }
             NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
@@ -1213,7 +1187,7 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             }
         }
         if (!INDENT_GROUP_SHOP.equals(type)
-                &&productInfoList.size() > 0 && productInfoList.size() < 2) {
+                && productInfoList.size() > 0 && productInfoList.size() < 2) {
             ActivityProductInfoBean activityProductInfoBean = productInfoList.get(0);
             pullFootView.rect_indent_number.setVisibility(VISIBLE);
             pullFootView.rect_indent_number.setNum(activityProductInfoBean.getCount());
@@ -1615,5 +1589,13 @@ public class DirectIndentWriteActivity extends BaseActivity implements OnAlertIt
             }
         }
         super.onDestroy();
+        if(payErrorDialogHelper!=null
+                &&payErrorDialogHelper.getAlertDialog()!=null&&payErrorDialogHelper.getAlertDialog().isShowing()){
+            payErrorDialogHelper.dismiss();
+        }
+        if(payCancelDialogHelper!=null
+                &&payCancelDialogHelper.getAlertDialog()!=null&&payCancelDialogHelper.getAlertDialog().isShowing()){
+            payCancelDialogHelper.dismiss();
+        }
     }
 }

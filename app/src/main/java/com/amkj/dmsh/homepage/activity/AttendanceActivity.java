@@ -55,7 +55,7 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -174,15 +174,15 @@ public class AttendanceActivity extends BaseActivity {
         integrationRecyclerAdapter.addFooterView(integralDoubleView);
         communal_recycler.setLayoutManager(new GridLayoutManager(AttendanceActivity.this, 3));
         communal_recycler.setAdapter(integrationRecyclerAdapter);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         integrationRecyclerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -964,15 +964,15 @@ public class AttendanceActivity extends BaseActivity {
         public void initViews() {
             rv_activity_prefecture.setNestedScrollingEnabled(false);
             rv_activity_prefecture.setLayoutManager(new GridLayoutManager(AttendanceActivity.this, 2));
-            rv_activity_prefecture.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+            rv_activity_prefecture.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_img_white)
-                    // 开启绘制分隔线，默认关闭
-                    .enableDivider(true)
-                    // 是否关闭标签点击事件，默认开启
-                    .disableHeaderClick(false)
-                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                    .setHeaderClickListener(null)
+
+
+
+
+
+
                     .create());
             homeImgActivityAdapter = new HomeImgActivityAdapter(AttendanceActivity.this, adActivityBeans);
             rv_activity_prefecture.setAdapter(homeImgActivityAdapter);
@@ -992,15 +992,15 @@ public class AttendanceActivity extends BaseActivity {
         public void initViews() {
             rv_integral_double.setNestedScrollingEnabled(false);
             rv_integral_double.setLayoutManager(new GridLayoutManager(AttendanceActivity.this, 2));
-            rv_integral_double.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+            rv_integral_double.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f)
-                    // 开启绘制分隔线，默认关闭
-                    .enableDivider(true)
-                    // 是否关闭标签点击事件，默认开启
-                    .disableHeaderClick(false)
-                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                    .setHeaderClickListener(null)
+
+
+
+
+
+
                     .create());
             qualityCustomTopicAdapter = new QualityCustomTopicAdapter(AttendanceActivity.this, doubleIntegrationList);
             rv_integral_double.setAdapter(qualityCustomTopicAdapter);

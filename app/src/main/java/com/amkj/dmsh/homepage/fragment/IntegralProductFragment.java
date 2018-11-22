@@ -17,7 +17,7 @@ import com.amkj.dmsh.homepage.adapter.IntegralProductAdapter;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -62,15 +62,15 @@ public class IntegralProductFragment extends BaseFragment {
             return;
         }
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         integralProductAdapter = new IntegralProductAdapter(getActivity(), integrationBeanList);
         communal_recycler.setAdapter(integralProductAdapter);

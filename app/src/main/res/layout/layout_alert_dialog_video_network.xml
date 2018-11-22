@@ -10,7 +10,7 @@
         android:id="@+id/tv_alert_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:lineSpacingExtra="@dimen/dimen_5_dp"
         android:minHeight="@dimen/sc_mm_68"
         android:singleLine="true"
@@ -67,7 +67,7 @@
             android:gravity="center"
             android:visibility="visible"
             android:text="取消"
-            android:textColor="@color/text_login_blue_z"
+            android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_28" />
     </LinearLayout>
 </LinearLayout>

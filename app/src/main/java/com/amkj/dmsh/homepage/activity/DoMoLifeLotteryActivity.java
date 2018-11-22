@@ -90,6 +90,9 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(DoMoLifeLotteryActivity.this);
+        if(userId>0){
+            web_communal.loadUrl(LOTTERY_URL + "?uid=" + userId);
+        }
         tv_web_shared.setVisibility(View.GONE);
         ll_communal_net_error.setVisibility(View.GONE);
         tv_web_title.setText("抽奖");

@@ -37,7 +37,7 @@ import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
@@ -121,15 +121,15 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         if (imagePathBeans.size() < 1) {
             imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
         }
-        rv_sug_img_show.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        rv_sug_img_show.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
         rv_sug_img_show.setAdapter(imgGridRecyclerAdapter);
@@ -216,15 +216,15 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(SuggestionFeedBackActivity.this));
                 suggestionFeedBackAdapter = new SuggestionFeedBackTypeAdapter(feedBackTypeBeans);
                 communal_recycler_wrap.setAdapter(suggestionFeedBackAdapter);
-                communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+                communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                         // 设置分隔线资源ID
                         .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                        // 开启绘制分隔线，默认关闭
-                        .enableDivider(true)
-                        // 是否关闭标签点击事件，默认开启
-                        .disableHeaderClick(false)
-                        // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                        .setHeaderClickListener(null)
+
+
+
+
+
+
                         .create());
                 suggestionFeedBackAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                     @Override
@@ -246,6 +246,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 if (window != null) {
                     window.setBackgroundDrawableResource(R.color.translucence);
                     WindowManager.LayoutParams attributes = window.getAttributes();
+                    attributes.height = WindowManager.LayoutParams.WRAP_CONTENT;
                     dialogView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                         @Override
                         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -256,7 +257,6 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                             }
                         }
                     });
-                    attributes.height = WindowManager.LayoutParams.WRAP_CONTENT;
                     attributes.width = WindowManager.LayoutParams.MATCH_PARENT;
                     window.setAttributes(attributes);
                     window.setGravity(Gravity.BOTTOM);

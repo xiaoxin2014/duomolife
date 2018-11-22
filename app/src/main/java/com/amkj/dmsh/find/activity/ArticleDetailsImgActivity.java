@@ -48,7 +48,7 @@ import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
@@ -169,16 +169,9 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         adapterArticleComment = new ArticleCommentAdapter(ArticleDetailsImgActivity.this, articleCommentList, COMMENT_TYPE);
         adapterArticleComment.addHeaderView(headerView);
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         communal_recycler.setAdapter(adapterArticleComment);
 
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
@@ -638,15 +631,15 @@ public class ArticleDetailsImgActivity extends BaseActivity {
 //            图片
             rv_img_find.setNestedScrollingEnabled(false);
             rv_img_find.setLayoutManager(new LinearLayoutManager(ArticleDetailsImgActivity.this));
-            rv_img_find.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+            rv_img_find.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_ten_white)
-                    // 开启绘制分隔线，默认关闭
-                    .enableDivider(true)
-                    // 是否关闭标签点击事件，默认开启
-                    .disableHeaderClick(false)
-                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                    .setHeaderClickListener(null)
+
+
+
+
+
+
                     .create());
             findImageListAdapter = new FindImageListAdapter(ArticleDetailsImgActivity.this, pathList);
             rv_img_find.setAdapter(findImageListAdapter);

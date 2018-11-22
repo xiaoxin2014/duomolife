@@ -21,7 +21,7 @@ import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity.DmlOptimizedSelBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -88,16 +88,9 @@ public class DmlOptimizedSelActivity extends BaseActivity {
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         tv_header_titleAll.setText("");
         communal_recycler.setLayoutManager(new LinearLayoutManager(DmlOptimizedSelActivity.this));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_nine_dp_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
-                .create());
+                .setDividerId(R.drawable.item_divider_nine_dp_white).create());
         dmlOptimizedSelAdapter = new DmlOptimizedSelAdapter(DmlOptimizedSelActivity.this, dmlOptimizedSelList);
         communal_recycler.setAdapter(dmlOptimizedSelAdapter);
         dmlOptimizedSelAdapter.setOnItemClickListener((adapter, view, position) -> {

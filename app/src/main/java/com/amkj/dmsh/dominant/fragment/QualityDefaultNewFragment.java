@@ -38,7 +38,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -113,15 +113,15 @@ public class QualityDefaultNewFragment extends BaseFragment {
         View goodProView = LayoutInflater.from(getActivity()).inflate(R.layout.adapter_ql_goods_pro_header, null, false);
         qualityGoodNewProAdapter.addHeaderView(goodProView);
         communal_recycler.setAdapter(qualityGoodNewProAdapter);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
 
         qualityGoodNewProAdapter.setOnLoadMoreListener(() -> {
@@ -303,7 +303,13 @@ public class QualityDefaultNewFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.QUALITY_SHOP_GOODS_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
+        /**
+         * version 1 区分是否带入广告页
+         */
         params.put("version", 1);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
         NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
                 , params, new NetLoadUtils.NetLoadListener() {
                     @Override
@@ -478,15 +484,15 @@ public class QualityDefaultNewFragment extends BaseFragment {
             communal_recycler_wrap.setNestedScrollingEnabled(false);
             rv_ql_center_pro.setNestedScrollingEnabled(false);
             communal_recycler_wrap.setAdapter(qualityTypeAreaAdapter);
-            rv_ql_center_pro.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+            rv_ql_center_pro.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_gray_f_two_px)
-                    // 开启绘制分隔线，默认关闭
-                    .enableDivider(true)
-                    // 是否关闭标签点击事件，默认开启
-                    .disableHeaderClick(false)
-                    // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                    .setHeaderClickListener(null)
+
+
+
+
+
+
                     .create());
         }
     }

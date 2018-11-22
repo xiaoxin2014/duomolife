@@ -46,7 +46,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -129,6 +129,7 @@ public class QualityTypeProductActivity extends BaseActivity {
     private CBViewHolderCreator cbViewHolderCreator;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils removeExistUtils;
+    private String couponId;
 
     @Override
     protected int getContentView() {
@@ -148,6 +149,7 @@ public class QualityTypeProductActivity extends BaseActivity {
             qualityTypeBeanChange.setId(getIntegers(intent.getStringExtra(CATEGORY_ID)));
             qualityTypeBeanChange.setType(getIntegers(intent.getStringExtra(CATEGORY_TYPE)));
             qualityTypeBeanChange.setName(getStrings(intent.getStringExtra(CATEGORY_NAME)));
+            couponId = intent.getStringExtra("couponId");
         }
         if (qualityTypeBeanChange != null) {
             ctb_qt_tab_product_type.setIndicatorWidth((int) (AutoSizeUtils.mm2px(mAppContext,32) * 4.5));
@@ -184,15 +186,15 @@ public class QualityTypeProductActivity extends BaseActivity {
         ButterKnife.bind(qTypeView, childTypeHeaderView);
         qTypeView.initViews();
         communal_recycler.setAdapter(qualityTypeProductAdapter);
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         qualityTypeProductAdapter.setOnLoadMoreListener(() -> {
             page++;
@@ -615,6 +617,9 @@ public class QualityTypeProductActivity extends BaseActivity {
             params.put("pid", 0);
         }
         params.put("orderTypeId", qualityTypeBeanChange.getSortType());
+        if(!TextUtils.isEmpty(couponId)){
+            params.put("couponId", couponId);
+        }
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeProductActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
             @Override

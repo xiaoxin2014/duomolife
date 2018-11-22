@@ -20,7 +20,7 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeForeShowBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,15 +60,15 @@ public class TopRecommendAtTimeEndGroupFragment extends BaseFragment {
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communal_recycler_wrap.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         springSaleRecyclerAdapter = new SpringSaleRecyclerAdapterNew(getActivity(), saleTimeTotalList);
-        communal_recycler_wrap.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_white)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         communal_recycler_wrap.setAdapter(springSaleRecyclerAdapter);
         springSaleRecyclerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

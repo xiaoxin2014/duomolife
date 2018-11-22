@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -16,9 +17,6 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.IntegralIndentListAdapter;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
@@ -26,11 +24,12 @@ import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -70,7 +69,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.VIRTUAL_COUPON;
 /**
  * Created by atd48 on 2016/8/25.
  */
-public class IntegralIndentFragment extends BaseFragment implements OnAlertItemClickListener {
+public class IntegralIndentFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -86,9 +85,9 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
     private boolean isOnPause;
     private int scrollY = 0;
     private float screenHeight;
-    private AlertView cancelOrderDialog;
-    private AlertView confirmOrderDialog;
     private OrderListBean orderListBean;
+    private AlertDialogHelper cancelOrderDialogHelper;
+    private AlertDialogHelper confirmOrderDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -98,15 +97,11 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
                 .create());
         integralIndentListAdapter = new IntegralIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(integralIndentListAdapter);
@@ -187,22 +182,26 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
                 if (orderListBean != null) {
                     Intent intent = new Intent();
                     Bundle bundle;
-                    AlertSettingBean alertSettingBean;
-                    AlertSettingBean.AlertData alertData;
                     switch (indentStatus) {
                         case CANCEL_ORDER:
 //                        取消订单
-                            alertSettingBean = new AlertSettingBean();
-                            alertData = new AlertSettingBean.AlertData();
-                            alertData.setCancelStr("取消");
-                            alertData.setDetermineStr("确定");
-                            alertData.setFirstDet(true);
-                            alertData.setMsg("确定要取消当前订单");
-                            alertSettingBean.setStyle(AlertView.Style.Alert);
-                            alertSettingBean.setAlertData(alertData);
-                            cancelOrderDialog = new AlertView(alertSettingBean, getActivity(), IntegralIndentFragment.this);
-                            cancelOrderDialog.setCancelable(true);
-                            cancelOrderDialog.show();
+                            if (cancelOrderDialogHelper == null) {
+                                cancelOrderDialogHelper = new AlertDialogHelper(getActivity());
+                                cancelOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                        .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
+                                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                                cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                    @Override
+                                    public void confirm() {
+                                        cancelIntegralIndent(orderListBean);
+                                    }
+
+                                    @Override
+                                    public void cancel() {
+                                    }
+                                });
+                            }
+                            cancelOrderDialogHelper.show();
                             break;
                         case CANCEL_PAY_ORDER:
                             intent.setClass(getActivity(), IntegExchangeDetailActivity.class);
@@ -223,17 +222,23 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
                             break;
                         case CONFIRM_ORDER:
 //                        确认收货
-                            alertSettingBean = new AlertSettingBean();
-                            alertData = new AlertSettingBean.AlertData();
-                            alertData.setCancelStr("取消");
-                            alertData.setDetermineStr("确定");
-                            alertData.setFirstDet(true);
-                            alertData.setMsg("确定已收到货物");
-                            alertSettingBean.setStyle(AlertView.Style.Alert);
-                            alertSettingBean.setAlertData(alertData);
-                            confirmOrderDialog = new AlertView(alertSettingBean, getActivity(), IntegralIndentFragment.this);
-                            confirmOrderDialog.setCancelable(true);
-                            confirmOrderDialog.show();
+                            if (confirmOrderDialogHelper == null) {
+                                confirmOrderDialogHelper = new AlertDialogHelper(getActivity());
+                                confirmOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                        .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
+                                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                                confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                    @Override
+                                    public void confirm() {
+                                        confirmIntegralOrder();
+                                    }
+
+                                    @Override
+                                    public void cancel() {
+                                    }
+                                });
+                            }
+                            confirmOrderDialogHelper.show();
                             break;
                         case PRO_APPRAISE:
 //                        评价
@@ -400,15 +405,6 @@ public class IntegralIndentFragment extends BaseFragment implements OnAlertItemC
         super.onResume();
         if (isOnPause) {
             loadData();
-        }
-    }
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == cancelOrderDialog && position != AlertView.CANCELPOSITION) {
-            cancelIntegralIndent(orderListBean);
-        } else if (o == confirmOrderDialog && position != AlertView.CANCELPOSITION) {
-            confirmIntegralOrder();
         }
     }
 

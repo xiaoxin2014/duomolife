@@ -19,7 +19,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.utils.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -95,15 +95,15 @@ public class ProRecommendActivity extends BaseActivity {
             communal_recycler.setLayoutManager(new LinearLayoutManager(ProRecommendActivity.this));
             tv_header_titleAll.setText("相关专题推荐");
         }
-        communal_recycler.addItemDecoration(new PinnedHeaderItemDecoration.Builder(-1)
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-                // 开启绘制分隔线，默认关闭
-                .enableDivider(true)
-                // 是否关闭标签点击事件，默认开启
-                .disableHeaderClick(false)
-                // 设置标签和其内部的子控件的监听，若设置点击监听不为null，但是disableHeaderClick(true)的话，还是不会响应点击事件
-                .setHeaderClickListener(null)
+
+
+
+
+
+
                 .create());
         shopRecommendHotTopicAdapter = new ShopRecommendHotTopicAdapter(ProRecommendActivity.this, proRecommendBeans);
         communal_recycler.setAdapter(shopRecommendHotTopicAdapter);

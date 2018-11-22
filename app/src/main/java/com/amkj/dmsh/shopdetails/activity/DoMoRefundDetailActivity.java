@@ -10,6 +10,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,20 +32,18 @@ import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.shopdetails.adapter.RefundTypeAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean;
-import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundGoodsAddressBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.ExpressInfoBean;
+import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundGoodsAddressBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundPayInfoBean;
 import com.amkj.dmsh.shopdetails.bean.RefundLogisticEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
@@ -90,7 +89,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/8/18
  * class description:退款售后详情
  */
-public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertItemClickListener {
+public class DoMoRefundDetailActivity extends BaseActivity{
     @BindView(R.id.iv_indent_service)
     ImageView iv_indent_service;
     @BindView(R.id.tv_indent_title)
@@ -180,7 +179,6 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     private final int CHECK_REPAIR_LOGISTIC = 3;
     //    维修确认收货
     private final int REPAIR_CONFIRM = 4;
-    private AlertView cancelApplyDialog;
     private String express;
     private List<String> expressCompanies;
     private List<RefundTypeBean> refundTypeBeans = new ArrayList<>();
@@ -197,6 +195,7 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
     private RefundDetailBean refundDetailBean;
     private String repairAddress;
     private RefundDetailEntity refundDetailEntity;
+    private AlertDialogHelper cancelApplyDialogHelper;
 
     @Override
     protected int getContentView() {
@@ -970,17 +969,24 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         refundDetailBean = (RefundDetailBean) view.getTag(R.id.tag_second);
         switch (doType) {
             case CANCEL_APPLY:
-                AlertSettingBean alertSettingBean = new AlertSettingBean();
-                AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                alertData.setCancelStr("取消");
-                alertData.setDetermineStr("确定");
-                alertData.setFirstDet(false);
-                alertData.setMsg(getResources().getString(R.string.cancel_invite));
-                alertSettingBean.setStyle(AlertView.Style.Alert);
-                alertSettingBean.setAlertData(alertData);
-                cancelApplyDialog = new AlertView(alertSettingBean, DoMoRefundDetailActivity.this, DoMoRefundDetailActivity.this);
-                cancelApplyDialog.setCancelable(true);
-                cancelApplyDialog.show();
+                if (cancelApplyDialogHelper == null) {
+                    cancelApplyDialogHelper = new AlertDialogHelper(DoMoRefundDetailActivity.this);
+                    cancelApplyDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                            .setMsg(getResources().getString(R.string.cancel_invite)).setCancelText("取消")
+                            .setConfirmText("确定")
+                            .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                    cancelApplyDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            cancelApply();
+                        }
+
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+                }
+                cancelApplyDialogHelper.show();
                 break;
             case EDIT_APPLY:
                 Intent intent = new Intent(DoMoRefundDetailActivity.this, DirectApplyRefundActivity.class);
@@ -1021,14 +1027,6 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         }
     }
 
-
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o.equals(cancelApplyDialog) && position != AlertView.CANCELPOSITION) {
-            cancelApply();
-        }
-    }
-
     @OnClick(R.id.tv_indent_back)
     void goBack(View view) {
         finish();
@@ -1041,6 +1039,9 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
             constantMethod.releaseHandlers();
         }
         super.onDestroy();
+        if(cancelApplyDialogHelper!=null&&cancelApplyDialogHelper.isShowing()){
+            cancelApplyDialogHelper.dismiss();
+        }
     }
 
     @OnClick(R.id.iv_indent_service)
@@ -1056,4 +1057,5 @@ public class DoMoRefundDetailActivity extends BaseActivity implements OnAlertIte
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, "退款售后详情", "", qyProductIndentInfo);
     }
+
 }

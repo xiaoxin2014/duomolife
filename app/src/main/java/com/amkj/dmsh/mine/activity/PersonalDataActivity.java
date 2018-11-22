@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -18,11 +20,10 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.MineBabyEntity;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
-import com.amkj.dmsh.release.dialogutils.OnAlertItemClickListener;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -48,13 +49,15 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 
+;
 ;
 
 /**
@@ -63,7 +66,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
  * created on 2017/8/8
  * class description:个人信息
  */
-public class PersonalDataActivity extends BaseActivity implements OnAlertItemClickListener, View.OnClickListener {
+public class PersonalDataActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -89,12 +92,12 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
     private String avatarPath;
     private int sexSelector;
     private String nowName;
-    private AlertView sexDialog;
     private CommunalUserInfoBean communalUserInfoBean;
     private boolean isOnPause;
     private TimePickerView nowBabyTime;
-    private AlertView birthAlert;
     private CommunalUserInfoEntity communalUserInfoEntity;
+    private AlertDialogHelper commitBirthdayDialogHelper;
+    private AlertDialogBottomListHelper sexDialogBottomListHelper;
 
     @Override
     protected int getContentView() {
@@ -126,8 +129,8 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
     private void getDataInfo() {
         if (userId > 0) {
             String url = Url.BASE_URL + Url.MINE_PAGE;
-            Map<String,Object> params = new HashMap<>();
-            params.put("uid",userId);
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
             NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                     , params, new NetLoadUtils.NetLoadListener() {
                         @Override
@@ -155,7 +158,7 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
                             NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
                         }
                     });
-        }else{
+        } else {
             NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
         }
     }
@@ -329,17 +332,23 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
     //    性别选择
     @OnClick(R.id.rel_per_sex)
     public void selSex() {
-        AlertSettingBean alertSettingBean = new AlertSettingBean();
-        AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-        alertData.setNormalData(SEX);
-        alertData.setCancelStr("取消");
-        alertData.setFirstDet(true);
-        alertData.setTitle("性别");
-        alertSettingBean.setStyle(AlertView.Style.ActionSheet);
-        alertSettingBean.setAlertData(alertData);
-        sexDialog = new AlertView(alertSettingBean, this, this);
-        sexDialog.show();
-        sexDialog.setCancelable(true);
+        if (sexDialogBottomListHelper == null) {
+            sexDialogBottomListHelper = new AlertDialogBottomListHelper(this);
+            sexDialogBottomListHelper.setTitleVisibility(GONE).setMsg("性别")
+                    .setItemData(SEX).itemNotifyDataChange().setAlertListener(new AlertDialogBottomListHelper.AlertItemClickListener() {
+                @Override
+                public void itemClick(@Nullable String text) {
+
+                }
+
+                @Override
+                public void itemPosition(int itemPosition) {
+                    sexSelector = (itemPosition == 0 ? 1 : 0);
+                    changePersonalData("SexSelector", null);
+                }
+            });
+        }
+        sexDialogBottomListHelper.show();
     }
 
     //    生日配置
@@ -367,27 +376,24 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
                     @Override
                     public void onTimeSelect(final Date date, View v) {//选中事件回调
                         // 这里回调过来的v,就是show()方法里面所添加的 View 参数，如果show的时候没有添加参数，v则为null
-                        if (birthAlert == null) {
-                            AlertSettingBean alertSettingBean = new AlertSettingBean();
-                            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-                            alertData.setMsg("生日一经提交不可更改");
-                            alertData.setCancelStr("取消");
-                            alertData.setDetermineStr("提交");
-                            alertSettingBean.setStyle(AlertView.Style.Alert);
-                            alertSettingBean.setAlertData(alertData);
-                            //                        提交
-                            birthAlert = new AlertView(alertSettingBean, PersonalDataActivity.this, new OnAlertItemClickListener() {
+                        if (commitBirthdayDialogHelper == null) {
+                            commitBirthdayDialogHelper = new AlertDialogHelper(PersonalDataActivity.this);
+                            commitBirthdayDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                    .setMsg("生日一经提交不可更改").setCancelText("取消").setConfirmText("提交").setCancelable(false)
+                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                            commitBirthdayDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
-                                public void onAlertItemClick(Object o, int position) {
-                                    if (position != AlertView.CANCELPOSITION) {
-                                        //                        提交
-                                        changePersonalData("birthday", formatTime(date));
-                                    }
+                                public void confirm() {
+                                    //                        提交
+                                    changePersonalData("birthday", formatTime(date));
+                                }
+
+                                @Override
+                                public void cancel() {
                                 }
                             });
-                            birthAlert.setCancelable(false);
                         }
-                        birthAlert.show();
+                        commitBirthdayDialogHelper.show();
                     }
                 })
                         //年月日时分秒 的显示与否，不设置则默认全部显示
@@ -453,14 +459,6 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
         }
     }
 
-    @Override
-    public void onAlertItemClick(Object o, int position) {
-        if (o == sexDialog && position != AlertView.CANCELPOSITION) {
-            sexSelector = (position == 0 ? 1 : 0);
-            changePersonalData("SexSelector", null);
-        }
-    }
-
     //    返回
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
@@ -487,6 +485,19 @@ public class PersonalDataActivity extends BaseActivity implements OnAlertItemCli
         nowBabyTime.dismiss();
         if (v.getId() == R.id.tv_time_confirm) {
             nowBabyTime.returnData();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(commitBirthdayDialogHelper!=null&&commitBirthdayDialogHelper.getAlertDialog()!=null
+                &&commitBirthdayDialogHelper.getAlertDialog().isShowing()){
+            commitBirthdayDialogHelper.dismiss();
+        }
+        if(sexDialogBottomListHelper!=null&&sexDialogBottomListHelper.getAlertDialog()!=null
+                &&sexDialogBottomListHelper.getAlertDialog().isShowing()){
+            sexDialogBottomListHelper.dismiss();
         }
     }
 }
