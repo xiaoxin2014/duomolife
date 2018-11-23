@@ -152,6 +152,7 @@
                                 android:id="@+id/tv_ql_sp_pro_sc_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:minHeight="@dimen/sc_mm_32"
                                 android:gravity="bottom"
                                 android:layout_centerVertical="true"
                                 android:textColor="@color/text_red_color"

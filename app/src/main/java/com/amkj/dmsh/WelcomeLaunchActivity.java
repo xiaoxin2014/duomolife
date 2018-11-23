@@ -155,7 +155,8 @@ public class WelcomeLaunchActivity extends BaseActivity {
     private void setLaunchImage() {
         if (!TextUtils.isEmpty(imgPath)) {
             showSeconds = sharedPreferences.getString(TimeKey, "5");
-            GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page, "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {
+            GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page
+                    , "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {
                 @Override
                 public void onSuccess() {
                     if (Integer.parseInt(getNorNumber(showSeconds)) > 0) {

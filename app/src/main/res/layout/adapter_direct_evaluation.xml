@@ -101,7 +101,7 @@
         android:paddingBottom="@dimen/sc_mm_16"
         android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/sc_mm_30"
-        android:background="@drawable/border_circle_four_light_blue"
+        android:background="@drawable/border_circle_four_light_blue_e"
         android:visibility="visible">
 
         <emojicon.EmojiconTextView xmlns:attr="http://schemas.android.com/apk/res-auto"

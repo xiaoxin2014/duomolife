@@ -70,9 +70,6 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -81,11 +78,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -156,7 +149,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public static final String SkipUrlKey = "SkipUrl";
     public static final String LauncherAdIdKey = "AD_ID";
     public static String OriginalImgUrl = "OriginalImgUrl";
-    private SharedPreferences sharedPreferences;
     //    地址存储路径
     private Fragment fragment;
     private boolean isChecked;
@@ -188,7 +180,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         Intent intent = getIntent();
         String type = intent.getStringExtra("type");
         boolean isFirstTime = intent.getBooleanExtra("isFirstTime", true);
-        sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
         setNavData();
         if (!TextUtils.isEmpty(type)) {
             changeAdaptivePage(type);
@@ -848,13 +839,17 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     Gson gson = new Gson();
                     CommunalADActivityEntity categoryAD = gson.fromJson(result, CommunalADActivityEntity.class);
                     if (categoryAD != null) {
-                        if (categoryAD.getCode().equals("01")) {
+                        if (categoryAD.getCode().equals(SUCCESS_CODE)) {
                             adActivityList.addAll(categoryAD.getCommunalADActivityBeanList());
                             if (adActivityList.size() > 0) {
+                                SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
                                 final SharedPreferences.Editor edit = sharedPreferences.edit();
                                 CommunalADActivityBean communalADActivityBean = adActivityList.get(adActivityList.size() - 1);
                                 if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
-                                    setLaunchAdData(adActivityList, edit);
+                                    String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
+                                    if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
+                                        setLaunchAdData(adActivityList, edit);
+                                    }
                                 } else {
                                     edit.clear().apply();
                                 }
@@ -870,59 +865,28 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         if (adActivityList.size() > 0) {
             final CommunalADActivityBean communalADActivityBean = adActivityList.get(adActivityList.size() - 1);
             final String pic_url = communalADActivityBean.getPicUrl();
-            Glide.with(MainActivity.this).asBitmap().load(pic_url).into(new SimpleTarget<Bitmap>() {
+            GlideImageLoaderUtil.saveImageToFile(MainActivity.this, pic_url, "launch_ad", new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
                 @Override
-                public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
-                    saveLaunchImg(bitmapByte(resource), communalADActivityBean, edit);
+                public void onSuccess(File file) {
+                    if (edit != null && file != null) {
+                        edit.putString(ImgKey, file.getAbsolutePath());
+                        edit.putString(OriginalImgUrl, communalADActivityBean.getPicUrl());
+                        edit.putInt(LauncherAdIdKey, communalADActivityBean.getObjectId());
+                        edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
+                        edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
+                                ? communalADActivityBean.getAndroidLink() : "app://");
+                        edit.apply();
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    edit.clear().apply();
                 }
             });
+
         } else {
             edit.clear().apply();
-        }
-    }
-
-    private byte[] bitmapByte(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    private void saveLaunchImg(byte[] resource, CommunalADActivityBean
-            communalADActivityBean, SharedPreferences.Editor edit) {
-        String pic_url = communalADActivityBean.getPicUrl();
-        String imgSaveName = pic_url.substring(pic_url.lastIndexOf("/"));
-        String IMG_FILE_NAME = getFilesDir().getAbsolutePath() + "/launch";
-        String imgAbsPath = IMG_FILE_NAME + "/" + imgSaveName;
-        File fileDir = new File(IMG_FILE_NAME);
-        if (!fileDir.exists()) {
-            fileDir.mkdirs();
-        }
-        if (!fileIsExist(imgAbsPath) || TextUtils.isEmpty(sharedPreferences.getString(ImgKey, ""))) {
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(imgAbsPath);
-                fos.write(resource);
-                fos.flush();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (fos != null) {
-                        fos.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            edit.putString(ImgKey, imgAbsPath);
-            edit.putString(OriginalImgUrl, communalADActivityBean.getPicUrl());
-            edit.putInt(LauncherAdIdKey, communalADActivityBean.getObjectId());
-            edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
-            edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
-                    ? communalADActivityBean.getAndroidLink() : "app://");
-            edit.apply();
         }
     }
 
@@ -976,7 +940,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     SharedPreferences.Editor loginEdit = loginStatus.edit();
                     loginEdit.putBoolean("isLogin", false);
                     loginEdit.apply();
-                    finish();
+                    RestartAPPTool.restartAPP(MainActivity.this);
                 }
             });
             selectServer.setCancelable(true);
@@ -1258,14 +1222,13 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         }
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (constantMethod != null) {
             constantMethod.releaseHandlers();
         }
-        if (alertDialogHelper != null && alertDialogHelper.getAlertDialog() != null && alertDialogHelper.getAlertDialog().isShowing()) {
+        if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
             alertDialogHelper.dismiss();
         }
     }

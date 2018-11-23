@@ -712,6 +712,56 @@ public class GlideImageLoaderUtil {
     }
 
     /**
+     * 保存图片文件到app存储
+     * 子线程调用
+     *
+     * @param picUrl
+     */
+    public static void saveImageToFile(Context context, String picUrl,String saveFilePath,OriginalLoaderFinishListener imageLoaderListener) {
+        if (TextUtils.isEmpty(picUrl)) {
+            return;
+        }
+        createExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                String saveFileName = FILE_IMAGE;
+                if(!TextUtils.isEmpty(saveFilePath)){
+                    saveFileName = saveFilePath;
+                }
+                String filePath = context.getDir(saveFileName, MODE_PRIVATE).getAbsolutePath();
+                createFilePath(filePath);
+                String imageFilePath = filePath + "/" + picUrl.substring(picUrl.lastIndexOf("/"));
+                if (!fileIsExist(imageFilePath)) {
+                    try {
+//                必须为子线程调用，否则阻塞线程
+                        File file = Glide.with(context).downloadOnly().load(picUrl)
+                                .apply(new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.DATA)).submit().get();
+                        if (file != null) {
+                            try {
+                                File saveFile = new File(imageFilePath);
+                                FileStreamUtils.forChannel(file, saveFile);
+                                if(imageLoaderListener!=null){
+                                    imageLoaderListener.onSuccess(saveFile);
+                                }
+                            } catch (Exception e) {
+                                if(imageLoaderListener!=null){
+                                    imageLoaderListener.onError();
+                                }
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+    /**
      * 获取当前文件路径 仅限
      * @param context
      * @param picUrl

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity.RegisterUserInfoBean;
 import com.amkj.dmsh.constant.Sha1Md5;
@@ -182,7 +183,7 @@ public class RegisterAccountActivity extends BaseActivity {
         params.put("unixtime", currentTimeMillis);
 //        设备号
         params.put("device_number", uniqueId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(RegisterAccountActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 bt_mine_reg.setEnabled(true);
@@ -218,8 +219,16 @@ public class RegisterAccountActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void netClose() {
+                bt_mine_reg.setEnabled(true);
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(RegisterAccountActivity.this,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 bt_mine_reg.setEnabled(true);
                 if (loadHud != null) {
                     loadHud.dismiss();

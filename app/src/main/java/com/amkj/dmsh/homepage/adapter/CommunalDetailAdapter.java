@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -107,6 +109,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
+import static me.jessyan.autosize.utils.AutoSizeUtils.mm2px;
 
 ;
 
@@ -233,30 +236,23 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             case TYPE_PARATAXIS_GOOD:
                 holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, detailObjectBean.getGoodsList().size()));
                 holder.communal_recycler_wrap.setNestedScrollingEnabled(false);
-                if(detailObjectBean.getGoodsList().size()>0){
+                if (detailObjectBean.getGoodsList().size() > 0) {
                     if (detailObjectBean.getGoodsList().get(0).getType().contains("goodsX")) {
-                        if(holder.communal_recycler_wrap.getItemDecorationCount() < 1){
+                        if (holder.communal_recycler_wrap.getItemDecorationCount() < 1) {
                             holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                                     // 设置分隔线资源ID
-                                    .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                                    .create());
+                                    .setDividerId(R.drawable.item_divider_five_dp).create());
                         }
-                        if(holder.communal_recycler_wrap.getPaddingBottom()<1){
+                        if (holder.communal_recycler_wrap.getPaddingBottom() < 1) {
                             holder.communal_recycler_wrap.setBackgroundColor(context.getResources().getColor(R.color.gray_bg));
-                            holder.communal_recycler_wrap.setPadding(0,0,0,dp2px(context,5));
+                            holder.communal_recycler_wrap.setPadding(0, 0, 0, dp2px(context, 5));
                         }
-                    }else{
-                        if(holder.communal_recycler_wrap.getItemDecorationCount()>0){
+                    } else {
+                        if (holder.communal_recycler_wrap.getItemDecorationCount() > 0) {
                             holder.communal_recycler_wrap.removeItemDecorationAt(0);
                         }
-                        if(holder.communal_recycler_wrap.getPaddingBottom()>0){
-                            holder.communal_recycler_wrap.setPadding(0,0,0,0);
+                        if (holder.communal_recycler_wrap.getPaddingBottom() > 0) {
+                            holder.communal_recycler_wrap.setPadding(0, 0, 0, 0);
                         }
                     }
                 }
@@ -265,9 +261,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     @Override
                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                         GoodsParataxisBean goodsParataxisBean = (GoodsParataxisBean) view.getTag(R.id.iv_tag);
-                        if(goodsParataxisBean!=null){
-                            Intent intent = new Intent(context,ShopScrollDetailsActivity.class);
-                            intent.putExtra("productId",String.valueOf(goodsParataxisBean.getId()));
+                        if (goodsParataxisBean != null) {
+                            Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
+                            intent.putExtra("productId", String.valueOf(goodsParataxisBean.getId()));
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
@@ -282,10 +278,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                             // 设置分隔线资源ID
                             .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                             .create());
@@ -769,14 +761,63 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         protected void convert(BaseViewHolder helper, GoodsParataxisBean goodsParataxisBean) {
             switch (goodsParataxisBean.getItemType()) {
                 case TYPE_1:
-                    GlideImageLoaderUtil.loadFitCenter(context,helper.getView(R.id.iv_communal_details_goods_pic),goodsParataxisBean.getPicUrlX());
-                    helper.itemView.setTag(R.id.iv_tag,goodsParataxisBean);
+                    ImageView iv_communal_details_goods_pic = helper.getView(R.id.iv_communal_details_goods_pic);
+                    GlideImageLoaderUtil.loadCenterCrop(helper.itemView.getContext(),iv_communal_details_goods_pic , goodsParataxisBean.getPicUrlX());
+                    iv_communal_details_goods_pic.setTag(R.id.iv_two_tag, getStrings(goodsParataxisBean.getType()));
+                    iv_communal_details_goods_pic.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            iv_communal_details_goods_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            String type = (String) iv_communal_details_goods_pic.getTag(R.id.iv_two_tag);
+                            if (!TextUtils.isEmpty(type)) {
+//                                计算边距距离
+                                int numberCount = Integer.parseInt(ConstantMethod.getNumber(type));
+                                int height;
+                                if(numberCount>2){
+                                    height = mm2px(context,320);
+                                }else{
+                                    height = mm2px(context,385);
+                                }
+                                ViewGroup.LayoutParams layoutParams = iv_communal_details_goods_pic.getLayoutParams();
+                                layoutParams.height = height;
+                                iv_communal_details_goods_pic.setLayoutParams(layoutParams);
+                            }else{
+                                iv_communal_details_goods_pic.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                            }
+                        }
+                    });
+                    helper.itemView.setTag(R.id.iv_tag, goodsParataxisBean);
                     break;
                 default:
-                    GlideImageLoaderUtil.loadFitCenter(context,helper.getView(R.id.iv_details_goods_image),getStrings(goodsParataxisBean.getPicUrlX()));
-                    helper.setText(R.id.tv_details_goods_name,getStrings(goodsParataxisBean.getTitleX()))
-                            .setText(R.id.tv_details_goods_price,getStringsChNPrice(context,goodsParataxisBean.getPrice()))
-                            .itemView.setTag(R.id.iv_tag,goodsParataxisBean);
+                    ImageView iv_details_goods_image = helper.getView(R.id.iv_details_goods_image);
+                    iv_details_goods_image.setTag(R.id.iv_two_tag, getStrings(goodsParataxisBean.getType()));
+                    iv_details_goods_image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            iv_details_goods_image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            String type = (String) iv_details_goods_image.getTag(R.id.iv_two_tag);
+                            if (!TextUtils.isEmpty(type)) {
+//                                计算边距距离
+                                int numberCount = Integer.parseInt(ConstantMethod.getNumber(type));
+                                if (numberCount < 1) {
+                                    numberCount = 1;
+                                }
+                                int numberLine = numberCount + 1;
+                                int numberWidthLine = numberLine * dp2px(context, 5);
+                                float width = (screenWidth - numberWidthLine) * 1f / numberCount;
+                                ViewGroup.LayoutParams layoutParams = iv_details_goods_image.getLayoutParams();
+                                layoutParams.height = (int) width;
+                                iv_details_goods_image.setLayoutParams(layoutParams);
+                            }
+                        }
+                    });
+                    GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_details_goods_image), getStrings(goodsParataxisBean.getPicUrlX()));
+                    TextView tv_details_goods_market_price = helper.getView(R.id.tv_details_goods_market_price);
+                    tv_details_goods_market_price.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG); //中划线
+                    helper.setText(R.id.tv_details_goods_name, getStrings(goodsParataxisBean.getTitleX()))
+                            .setText(R.id.tv_details_goods_price, getStringsChNPrice(context, goodsParataxisBean.getPrice()))
+                            .setText(R.id.tv_details_goods_market_price,getStringsChNPrice(context,goodsParataxisBean.getMarketPrice()))
+                            .itemView.setTag(R.id.iv_tag, goodsParataxisBean);
                     break;
             }
         }

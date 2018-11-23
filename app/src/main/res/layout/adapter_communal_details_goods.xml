@@ -9,7 +9,7 @@
         android:id="@+id/iv_details_goods_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitCenter" />
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/tv_details_goods_name"
@@ -23,16 +23,31 @@
         android:lines="2"
         android:textColor="@color/text_black_t"
         android:textSize="@dimen/sc_mm_22" />
-
-    <TextView
-        android:id="@+id/tv_details_goods_price"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/sc_mm_20"
-        android:layout_marginLeft="@dimen/sc_mm_12"
-        android:layout_marginRight="@dimen/sc_mm_12"
-        android:ellipsize="end"
-        android:lines="1"
-        android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_28" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_details_goods_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/sc_mm_20"
+            android:layout_marginLeft="@dimen/sc_mm_12"
+            android:layout_marginRight="@dimen/sc_mm_12"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_normal_red"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <TextView
+            android:id="@+id/tv_details_goods_market_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_details_goods_price"
+            android:layout_alignBaseline="@id/tv_details_goods_price"
+            android:layout_marginRight="@dimen/sc_mm_12"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_22" />
+    </RelativeLayout>
 </LinearLayout>

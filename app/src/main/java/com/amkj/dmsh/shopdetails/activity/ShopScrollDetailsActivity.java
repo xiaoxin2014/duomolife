@@ -126,6 +126,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -1442,19 +1443,29 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             String activityPriceTag = "活动价￥";
             String activityPrice = activityPriceTag + price;
             tv_ql_sp_pro_sc_price.setText(activityPrice);
-            Link link = new Link(activityPriceTag);
-            link.setTextColor(Color.parseColor("#ff5a6b"));
-            link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
-            link.setBgColor(Color.parseColor("#ffffff"));
-            link.setUnderlined(false);
-            link.setHighlightAlpha(0f);
-            CharSequence text = LinkBuilder.from(ShopScrollDetailsActivity.this, activityPrice)
-                    .addLink(link)
-                    .build();
-            tv_ql_sp_pro_sc_price.setText(text);
+            tv_ql_sp_pro_sc_price.setText(getChNText(activityPrice));
         } else {
-            tv_ql_sp_pro_sc_price.setText(("￥" + price));
+            String chNPrice = getStringsChNPrice(ShopScrollDetailsActivity.this, price);
+            tv_ql_sp_pro_sc_price.setText(getChNText(chNPrice));
         }
+    }
+
+    /**
+     * 获取着色
+     * @param priceText 价格
+     * @return
+     */
+    private CharSequence getChNText(String priceText) {
+        Pattern pattern = Pattern.compile("[^\\x00-\\xff]");
+        Link link = new Link(pattern);
+        link.setTextColor(Color.parseColor("#ff5a6b"));
+        link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+        link.setBgColor(Color.parseColor("#ffffff"));
+        link.setUnderlined(false);
+        link.setHighlightAlpha(0f);
+        return LinkBuilder.from(ShopScrollDetailsActivity.this, priceText)
+                .addLink(link)
+                .build();
     }
 
     //        sku属性选择

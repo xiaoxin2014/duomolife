@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
@@ -24,7 +23,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,14 +40,12 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
  */
 public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsCommentBean, DirectEvaluationAdapter.ProductEvaViewHolder> {
     private final Context context;
-    //    private final static String OSS_URL = "http://img.domolife.cn";
 
     public DirectEvaluationAdapter(Context context, List<GoodsCommentBean> goodsCommentBeanList) {
         super(goodsCommentBeanList);
         this.context = context;
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_direct_evaluation);
         addItemType(ConstantVariable.TYPE_1, R.layout.communal_comment_not);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
     }
 
     @Override

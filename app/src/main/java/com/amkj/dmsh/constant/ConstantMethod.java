@@ -69,7 +69,6 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -1348,14 +1347,12 @@ public class ConstantMethod {
                         if (goodList == null || goodList.size() < 1) {
                             continue;
                         }
-                        RemoveExistUtils removeExistUtils = new RemoveExistUtils();
-                        List<GoodsParataxisBean> goodsParataxisBeans = removeExistUtils.removeExistList(goodList);
                         if ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType())) {
-                            goodsParataxisBeans = goodsParataxisBeans.size() > 3 ? goodsParataxisBeans.subList(0, 3) : goodsParataxisBeans;
+                            goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
                         } else {
-                            goodsParataxisBeans = goodsParataxisBeans.size() > 2 ? goodsParataxisBeans.subList(0, 2) : goodsParataxisBeans;
+                            goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
                         }
-                        for (GoodsParataxisBean goodsParataxisBean:goodsParataxisBeans) {
+                        for (GoodsParataxisBean goodsParataxisBean:goodList) {
                             if(descriptionBean.getType().contains("goodsX")){
                                 goodsParataxisBean.setItemType(TYPE_0);
                             }else{
@@ -1363,7 +1360,7 @@ public class ConstantMethod {
                             }
                         }
                         detailObjectBean.setItemType(TYPE_PARATAXIS_GOOD);
-                        detailObjectBean.setGoodsList(goodsParataxisBeans);
+                        detailObjectBean.setGoodsList(goodList);
                     } catch (Exception e) {
                         detailObjectBean = null;
                         e.printStackTrace();

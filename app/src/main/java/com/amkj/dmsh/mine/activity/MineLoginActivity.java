@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -30,7 +31,6 @@ import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
@@ -66,7 +66,7 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 ;
 
-public class MineLoginActivity extends BaseActivity{
+public class MineLoginActivity extends BaseActivity {
     @BindView(R.id.tv_blue_title)
     TextView tv_blue_title;
     @BindView(R.id.iv_blue_back)
@@ -157,7 +157,7 @@ public class MineLoginActivity extends BaseActivity{
         params.put("mobile", phoneNumber);
         //密码
         params.put("password", passwordLock);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -167,7 +167,7 @@ public class MineLoginActivity extends BaseActivity{
                 CommunalUserInfoEntity loginAccount = gson.fromJson(result, CommunalUserInfoEntity.class);
                 if (loginAccount != null) {
                     String backCode = loginAccount.getCode();
-                    if (backCode.equals("01")) {
+                    if (backCode.equals(SUCCESS_CODE)) {
                         loginSuccessSetData(loginAccount);
                     } else {
                         showToast(MineLoginActivity.this, loginAccount.getMsg());
@@ -176,11 +176,19 @@ public class MineLoginActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                super.onError(ex, isOnCallback);
+                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(MineLoginActivity.this, R.string.login_failed);
             }
         });
     }
@@ -404,66 +412,67 @@ public class MineLoginActivity extends BaseActivity{
     }
 
     private void reqSMSCode(String phoneNumber) {
-        if (NetWorkUtils.checkNet(MineLoginActivity.this)) {
-            String url = Url.BASE_URL + Url.REQ_SEND_SMS_CODE;
-            Map<String, Object> params = new HashMap<>();
-            String smsType = "login";
-            params.put("mobile", phoneNumber);
-            params.put("smsType", smsType);
-            long currentTimeMillis = System.currentTimeMillis();
-            /**
-             * 3.1.2加入校验码 避免发送验证码被刷库
-             */
+        String url = Url.BASE_URL + Url.REQ_SEND_SMS_CODE;
+        Map<String, Object> params = new HashMap<>();
+        String smsType = "login";
+        params.put("mobile", phoneNumber);
+        params.put("smsType", smsType);
+        long currentTimeMillis = System.currentTimeMillis();
+        /**
+         * 3.1.2加入校验码 避免发送验证码被刷库
+         */
 //        校验token
-            params.put("verify_token", toMD5("" + currentTimeMillis + smsType + phoneNumber + "Domolife2018"));
+        params.put("verify_token", toMD5("" + currentTimeMillis + smsType + phoneNumber + "Domolife2018"));
 //        时间戳
-            params.put("unixtime", currentTimeMillis);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
-                            RequestStatus.Result resultData = requestStatus.getResult();
-                            if (resultData != null) {
-                                if (resultData.getResultCode().equals(SUCCESS_CODE)) {
-                                    showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
-                                    tv_login_send_code.setVisibility(View.VISIBLE);
-                                    reg_login_code_gif_view.setVisibility(View.GONE);
-                                    if (countDownHelper == null) {
-                                        countDownHelper = CountDownHelper.getTimerInstance();
-                                    }
-                                    countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
+        params.put("unixtime", currentTimeMillis);
+        NetLoadUtils.getQyInstance().loadNetDataPost(MineLoginActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                loadHud.dismiss();
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals("01")) {
+                        RequestStatus.Result resultData = requestStatus.getResult();
+                        if (resultData != null) {
+                            if (resultData.getResultCode().equals(SUCCESS_CODE)) {
+                                showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
+                                tv_login_send_code.setVisibility(View.VISIBLE);
+                                reg_login_code_gif_view.setVisibility(View.GONE);
+                                if (countDownHelper == null) {
+                                    countDownHelper = CountDownHelper.getTimerInstance();
+                                }
+                                countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
+                            } else {
+                                if (EMPTY_CODE.equals(resultData.getCode())) {
+                                    showException(getResources().getString(R.string.date_exception_hint));
                                 } else {
-                                    if (EMPTY_CODE.equals(resultData.getCode())) {
-                                        showException(getResources().getString(R.string.date_exception_hint));
-                                    } else {
-                                        showException(resultData.getMsg());
-                                    }
+                                    showException(resultData.getMsg());
                                 }
                             }
+                        }
+                    } else {
+                        if (EMPTY_CODE.equals(requestStatus.getCode())) {
+                            showException(getResources().getString(R.string.date_exception_hint));
                         } else {
-                            if (EMPTY_CODE.equals(requestStatus.getCode())) {
-                                showException(getResources().getString(R.string.date_exception_hint));
-                            } else {
-                                showException(requestStatus.getMsg());
-                            }
+                            showException(requestStatus.getMsg());
                         }
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    loadHud.dismiss();
-                    showException(getResources().getString(R.string.date_exception_hint));
-                }
-            });
-        } else {
-            showToast(this, R.string.unConnectedNetwork);
-            loadHud.dismiss();
-        }
+            @Override
+            public void netClose() {
+                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                loadHud.dismiss();
+                showException(getResources().getString(R.string.date_exception_hint));
+            }
+        });
     }
 
     /**
@@ -486,54 +495,55 @@ public class MineLoginActivity extends BaseActivity{
     }
 
     private void checkPhoneCode(String phoneNumber, String smsCode) {
-        if (NetWorkUtils.checkNet(MineLoginActivity.this)) {
-            String url = Url.BASE_URL + Url.LOGIN_CHECK_SMS_CODE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("mobile", phoneNumber);
-            params.put("checkcode", smsCode);
-            params.put("smsType", "login");
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    loadHud.dismiss();
-                    Gson gson = new Gson();
-                    LoginPhoneCodeEntity loginPhoneCodeEntity = gson.fromJson(result, LoginPhoneCodeEntity.class);
-                    if (loginPhoneCodeEntity != null) {
-                        if (loginPhoneCodeEntity.getCode().equals("01")) {
-                            if (loginPhoneCodeEntity.getLoginPhoneCodeBean() != null) {
-                                LoginPhoneCodeBean loginPhoneCodeBean = loginPhoneCodeEntity.getLoginPhoneCodeBean();
-                                if (loginPhoneCodeBean.getResultCode().equals("01")) {
-                                    CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
-                                    communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
-                                    loginSuccessSetData(communalUserInfoEntity);
+        String url = Url.BASE_URL + Url.LOGIN_CHECK_SMS_CODE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("mobile", phoneNumber);
+        params.put("checkcode", smsCode);
+        params.put("smsType", "login");
+        NetLoadUtils.getQyInstance().loadNetDataPost(MineLoginActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                loadHud.dismiss();
+                Gson gson = new Gson();
+                LoginPhoneCodeEntity loginPhoneCodeEntity = gson.fromJson(result, LoginPhoneCodeEntity.class);
+                if (loginPhoneCodeEntity != null) {
+                    if (loginPhoneCodeEntity.getCode().equals("01")) {
+                        if (loginPhoneCodeEntity.getLoginPhoneCodeBean() != null) {
+                            LoginPhoneCodeBean loginPhoneCodeBean = loginPhoneCodeEntity.getLoginPhoneCodeBean();
+                            if (loginPhoneCodeBean.getResultCode().equals("01")) {
+                                CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
+                                communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
+                                loginSuccessSetData(communalUserInfoEntity);
+                            } else {
+                                if (EMPTY_CODE.equals(loginPhoneCodeBean.getResultCode())) {
+                                    showException(getResources().getString(R.string.date_exception_hint));
                                 } else {
-                                    if (EMPTY_CODE.equals(loginPhoneCodeBean.getResultCode())) {
-                                        showException(getResources().getString(R.string.date_exception_hint));
-                                    } else {
-                                        showException(loginPhoneCodeBean.getResultMsg());
-                                    }
+                                    showException(loginPhoneCodeBean.getResultMsg());
                                 }
                             }
+                        }
+                    } else {
+                        if (EMPTY_CODE.equals(loginPhoneCodeEntity.getCode())) {
+                            showException(getResources().getString(R.string.date_exception_hint));
                         } else {
-                            if (EMPTY_CODE.equals(loginPhoneCodeEntity.getCode())) {
-                                showException(getResources().getString(R.string.date_exception_hint));
-                            } else {
-                                showException(loginPhoneCodeEntity.getMsg());
-                            }
+                            showException(loginPhoneCodeEntity.getMsg());
                         }
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    loadHud.dismiss();
-                    showException(getResources().getString(R.string.date_exception_hint));
-                }
-            });
-        } else {
-            showToast(this, R.string.unConnectedNetwork);
-            loadHud.dismiss();
-        }
+            @Override
+            public void netClose() {
+                loadHud.dismiss();
+                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                loadHud.dismiss();
+                showException(getResources().getString(R.string.date_exception_hint));
+            }
+        });
     }
 
     @Override
@@ -728,16 +738,16 @@ public class MineLoginActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (qqDialogHelper != null && qqDialogHelper.getAlertDialog() != null && qqDialogHelper.getAlertDialog().isShowing()) {
+        if (qqDialogHelper != null && qqDialogHelper.isShowing()) {
             qqDialogHelper.dismiss();
         }
-        if (weChatDialogHelper != null && weChatDialogHelper.getAlertDialog() != null && weChatDialogHelper.getAlertDialog().isShowing()) {
+        if (weChatDialogHelper != null && weChatDialogHelper.isShowing()) {
             weChatDialogHelper.dismiss();
         }
-        if (sinaDialogHelper != null && sinaDialogHelper.getAlertDialog() != null && sinaDialogHelper.getAlertDialog().isShowing()) {
+        if (sinaDialogHelper != null && sinaDialogHelper.isShowing()) {
             sinaDialogHelper.dismiss();
         }
-        if (alertDialogHelper != null) {
+        if (alertDialogHelper != null&&alertDialogHelper.isShowing()) {
             alertDialogHelper.dismiss();
         }
     }
