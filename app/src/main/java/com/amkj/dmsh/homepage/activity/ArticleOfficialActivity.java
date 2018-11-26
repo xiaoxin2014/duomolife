@@ -481,6 +481,10 @@ public class ArticleOfficialActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", artId);
+        /**
+         * 3.1.8 加入并列商品 两排 三排
+         */
+        params.put("version", 1);
         if (userId > 0) {
             params.put("fuid", userId);
         }

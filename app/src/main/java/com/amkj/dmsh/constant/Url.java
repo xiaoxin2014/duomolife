@@ -471,10 +471,8 @@ public class Url {
     public static final String QUALITY_WEEK_OPTIMIZED_PRO = "api/goods/weeklypreferred/getGoods";
 
     //    良品横向
-//    public static final String QUALITY_SHOP_HOR_TYPE = "api/goods/category/getIndexCategoryLevelOneList";
     public static final String QUALITY_SHOP_HOR_TYPE = "api/goods/navbarconfg/getNavbarConfig";
     //    良品侧栏分类
-//    public static final String QUALITY_SHOP_TYPE = "api/goods/category/getCategoryLevelOneList";
     public static final String QUALITY_SHOP_TYPE = "api/goods/category/getCategoryListV2";
     //    良品好物
     public static final String QUALITY_SHOP_GOODS_PRO = "api/goods/greate/getGreateGoodList";
@@ -484,6 +482,8 @@ public class Url {
     public static final String Q_HOME_CENTER_TYPE = "api/goods/index/getProductMiddleIndex";
     //    良品根据父类获取分类栏目
     public static final String Q_PRODUCT_TYPE = "api/goods/category/getCategoryByParent";
+//    良品分类 一级分类
+    public static final String QUALITY_CATEGORY_TYPE = "api/goods/category/getCategoryLevelOneList";
     //    良品分类排序
     public static final String Q_SORT_TYPE = "api/goods/category/getCategoryOrderType";
     //    良品分类商品列表

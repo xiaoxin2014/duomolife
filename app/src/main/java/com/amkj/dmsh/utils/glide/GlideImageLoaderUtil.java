@@ -23,7 +23,10 @@ import com.bumptech.glide.request.target.Target;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import io.reactivex.Observable;
@@ -118,7 +121,7 @@ public class GlideImageLoaderUtil {
                     .addListener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            if(imageLoaderListener!=null){
+                            if (imageLoaderListener != null) {
                                 imageLoaderListener.onError();
                             }
                             return false;
@@ -126,7 +129,7 @@ public class GlideImageLoaderUtil {
 
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            if(imageLoaderListener!=null){
+                            if (imageLoaderListener != null) {
                                 imageLoaderListener.onSuccess();
                             }
                             return false;
@@ -432,11 +435,73 @@ public class GlideImageLoaderUtil {
      */
     public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
         if (null != context) {
-            Glide.with(context).asDrawable().load(imgUrl)
-                    .apply(new RequestOptions().dontAnimate().placeholder(R.drawable.load_loading_image)
-                            .error(R.drawable.load_loading_image)
-                            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL))
-                    .into(imageView);
+            // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
+            Map<String,Object> params = new HashMap<>();
+            params.put("imgUrl",imgUrl);
+            params.put("imgView",imageView);
+            Observable.create(new ObservableOnSubscribe<Map<String,Object>>() {
+                @Override
+                public void subscribe(ObservableEmitter<Map<String,Object>> emitter) throws Exception {
+                    int[] imageUrlWidthHeight = getImageUrlWidthHeight(imgUrl);
+                    if (imageUrlWidthHeight.length < 2) {
+                        imageUrlWidthHeight = new int[]{0, 0};
+                    }
+                    params.put("imgSize",imageUrlWidthHeight);
+                    emitter.onNext(params);
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Map<String,Object>>() {
+                Disposable disposable;
+
+                @Override
+                public void onSubscribe(Disposable d) {
+                    this.disposable = d;
+                }
+
+                @Override
+                public void onNext(Map<String,Object> params) {
+                    int imgWidth = Target.SIZE_ORIGINAL;
+                    int imgHeight = Target.SIZE_ORIGINAL;
+                    String imgUrlX = null;
+                    ImageView imageViewX = null;
+                    int[] imageUrlWidthHeight = new int[]{imgWidth,imgHeight};
+                    try {
+                        imgUrlX = (String) params.get("imgUrl");
+                        imageViewX = (ImageView) params.get("imgView");
+                        imageUrlWidthHeight = (int[]) params.get("imgSize");
+                        if (imageUrlWidthHeight.length > 1) {
+                            imgWidth = imageUrlWidthHeight[0];
+                            imgHeight = imageUrlWidthHeight[1];
+                            if (imageUrlWidthHeight[1] > 3574) {
+                                imgWidth = (int) (3574f / imgHeight * imgWidth);
+                                imgHeight = 3574;
+                            }
+                        }
+                        Glide.with(context).asDrawable().load(imgUrlX)
+                                .apply(new RequestOptions().dontAnimate()
+                                        .placeholder(R.drawable.load_loading_image)
+                                        .error(R.drawable.load_loading_image)
+                                        .override(imgWidth, imgHeight))
+                                .into(imageViewX);
+                    } catch (Exception e) {
+                        Glide.with(context).asDrawable().load(imgUrl)
+                                .apply(new RequestOptions().dontAnimate()
+                                        .placeholder(R.drawable.load_loading_image)
+                                        .error(R.drawable.load_loading_image)
+                                        .override(imgWidth, imgHeight))
+                                .into(imageView);
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onComplete() {
+                }
+            });
         }
     }
 
@@ -673,6 +738,7 @@ public class GlideImageLoaderUtil {
         void onSuccess();
 
         void onError();
+
     }
 
     /**
@@ -717,7 +783,7 @@ public class GlideImageLoaderUtil {
      *
      * @param picUrl
      */
-    public static void saveImageToFile(Context context, String picUrl,String saveFilePath,OriginalLoaderFinishListener imageLoaderListener) {
+    public static void saveImageToFile(Context context, String picUrl, String saveFilePath, OriginalLoaderFinishListener imageLoaderListener) {
         if (TextUtils.isEmpty(picUrl)) {
             return;
         }
@@ -725,7 +791,7 @@ public class GlideImageLoaderUtil {
             @Override
             public void run() {
                 String saveFileName = FILE_IMAGE;
-                if(!TextUtils.isEmpty(saveFilePath)){
+                if (!TextUtils.isEmpty(saveFilePath)) {
                     saveFileName = saveFilePath;
                 }
                 String filePath = context.getDir(saveFileName, MODE_PRIVATE).getAbsolutePath();
@@ -740,11 +806,11 @@ public class GlideImageLoaderUtil {
                             try {
                                 File saveFile = new File(imageFilePath);
                                 FileStreamUtils.forChannel(file, saveFile);
-                                if(imageLoaderListener!=null){
+                                if (imageLoaderListener != null) {
                                     imageLoaderListener.onSuccess(saveFile);
                                 }
                             } catch (Exception e) {
-                                if(imageLoaderListener!=null){
+                                if (imageLoaderListener != null) {
                                     imageLoaderListener.onError();
                                 }
                                 e.printStackTrace();
@@ -761,13 +827,15 @@ public class GlideImageLoaderUtil {
             }
         });
     }
+
     /**
      * 获取当前文件路径 仅限
+     *
      * @param context
      * @param picUrl
      * @return
      */
-    public static String getImageFilePath(Context context,String picUrl) {
+    public static String getImageFilePath(Context context, String picUrl) {
         if (TextUtils.isEmpty(picUrl)) {
             return "";
         }
@@ -787,7 +855,7 @@ public class GlideImageLoaderUtil {
      * @param path
      * @return
      */
-    public static int[] getImageWidthHeight(String path) {
+    public static int[] getImageUrlWidthHeight(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         /**
@@ -795,10 +863,105 @@ public class GlideImageLoaderUtil {
          * 这里再decodeFile()，返回的bitmap为空，但此时调用options.outHeight时，已经包含了图片的高了
          */
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options); // 此时返回的bitmap为null
+        InputStream inputStream = null;
+        try {
+            URL url = new URL(path);
+            inputStream = url.openStream();
+            BitmapFactory.decodeStream(inputStream, null, options); // 此时返回的bitmap为null
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         /**
          *options.outHeight为原始图片的高
          */
         return new int[]{options.outWidth, options.outHeight};
     }
+
+    /**
+     * 网络图片获取宽高
+     *
+     * @param imgUrl
+     * @return
+     */
+    public static int[] getImageWidthHeight(String imgUrl) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        /**
+         * 最关键在此，把options.inJustDecodeBounds = true;
+         * 这里再decodeFile()，返回的bitmap为空，但此时调用options.outHeight时，已经包含了图片的高了
+         */
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imgUrl, options); // 此时返回的bitmap为null
+        /**
+         *options.outHeight为原始图片的高
+         */
+        return new int[]{options.outWidth, options.outHeight};
+    }
+
+    /**
+     * 获取当前应用最大能展示的图片尺寸
+     */
+//    public static int getMaxLoader() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            return getGLESTextureLimitEqualAboveLollipop();
+//        } else {
+//            return getGLESTextureLimitBelowLollipop();
+//        }
+//    }
+//
+//    private static int getGLESTextureLimitBelowLollipop() {
+//        int[] maxSize = new int[1];
+//        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+//        return maxSize[0];
+//    }
+//
+//    private static int getGLESTextureLimitEqualAboveLollipop() {
+//        EGL10 egl = (EGL10) EGLContext.getEGL();
+//        EGLDisplay dpy = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+//        int[] vers = new int[2];
+//        egl.eglInitialize(dpy, vers);
+//        int[] configAttr = {
+//                EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER,
+//                EGL10.EGL_LEVEL, 0,
+//                EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
+//                EGL10.EGL_NONE
+//        };
+//        EGLConfig[] configs = new EGLConfig[1];
+//        int[] numConfig = new int[1];
+//        egl.eglChooseConfig(dpy, configAttr, configs, 1, numConfig);
+//        if (numConfig[0] == 0) {// TROUBLE! No config found.
+//        }
+//        EGLConfig config = configs[0];
+//        int[] surfAttr = {
+//                EGL10.EGL_WIDTH, 64,
+//                EGL10.EGL_HEIGHT, 64,
+//                EGL10.EGL_NONE
+//        };
+//        EGLSurface surf = egl.eglCreatePbufferSurface(dpy, config, surfAttr);
+//        final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;  // missing in EGL10
+//        int[] ctxAttrib = {
+//                EGL_CONTEXT_CLIENT_VERSION, 1,
+//                EGL10.EGL_NONE
+//        };
+//        EGLContext ctx = egl.eglCreateContext(dpy, config, EGL10.EGL_NO_CONTEXT, ctxAttrib);
+//        egl.eglMakeCurrent(dpy, surf, surf, ctx);
+//        int[] maxSize = new int[1];
+//        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+//        egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE,
+//                EGL10.EGL_NO_CONTEXT);
+//        egl.eglDestroySurface(dpy, surf);
+//        egl.eglDestroyContext(dpy, ctx);
+//        egl.eglTerminate(dpy);
+//        return maxSize[0];
+//    }
 }

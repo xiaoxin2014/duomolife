@@ -520,6 +520,10 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", searchId);
 //            params.put("isV2", "true");
+        /**
+         * 3.1.8 加入并列商品 两排 三排
+         */
+        params.put("version", 1);
         if (userId > 0) {
             params.put("fuid", userId);
         }

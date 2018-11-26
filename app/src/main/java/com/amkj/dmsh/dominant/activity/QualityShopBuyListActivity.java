@@ -468,6 +468,10 @@ public class QualityShopBuyListActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
+        /**
+         * 3.1.8 加入并列商品 两排 三排
+         */
+        params.put("version", 1);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {

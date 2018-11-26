@@ -194,6 +194,10 @@
     <string name="invite_partner_register">你的好友 %1$s 邀请你注册多么生活</string>
     <!--网络提示-->
     <string name="net_error">当前网络不好，请刷新重试</string>
+    <!--缺少必须参数-->
+    <string name="miss_parameters_hint">数据异常，请重试</string>
+    <!--数据报错异常-->
+    <string name="request_json_data_error">数据错误，请重试</string>
     <!--图片裁切格式-->
     <string name="image_crop_style">/indexcrop,y_%1$d,i_%2$d</string>
     <string name="load_data_failed">可能原因\n·网络信号弱，换个wifi试一试~\n·系统出错，技术小哥正在抢修</string>

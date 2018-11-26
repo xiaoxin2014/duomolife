@@ -412,6 +412,11 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", listId);
+        /**
+         * 3.1.8 加入并列商品 两排 三排
+         */
+        params.put("version", 1);
+
         if (userId > 0) {
             params.put("uid", userId);
         }

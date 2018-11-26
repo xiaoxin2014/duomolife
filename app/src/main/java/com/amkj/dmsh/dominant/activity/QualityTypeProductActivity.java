@@ -18,7 +18,6 @@ import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean.ChildCategoryListBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -38,6 +37,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -46,7 +46,6 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -73,6 +72,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
@@ -118,18 +118,26 @@ public class QualityTypeProductActivity extends BaseActivity {
     private QTypeView qTypeView;
     //tab集合
     private ArrayList<CustomTabEntity> tabs = new ArrayList<>();
-    private QualityTypeBean qualityTypeBeanChange;
     private BottomPopWindows bottomPopWindows;
     private List<QualityTypeBean> qualityTypeBeans = new ArrayList<>();
     private View typeSortView;
     private View headerAdView;
     private View childTypeHeaderView;
+    //    分类 排序
     private ProductTypeSortAdapter productTypeSortAdapter;
+    //    子类
     private ChildProductTypeAdapter childProductTypeAdapter;
     private CBViewHolderCreator cbViewHolderCreator;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils removeExistUtils;
     private String couponId;
+    private int categoryType;
+    private int categoryId;
+    private String categoryName = "";
+    private int categoryChildId;
+    private int sortType;
+    private String sortTypeName = "";
+    private boolean isShowEmptyPage;
 
     @Override
     protected int getContentView() {
@@ -140,21 +148,21 @@ public class QualityTypeProductActivity extends BaseActivity {
     protected void initViews() {
         tl_quality_type_bar.setSelected(true);
         ctb_qt_tab_product_type.setVisibility(View.GONE);
-        ctb_qt_tab_product_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext,44));
-        ctb_qt_tab_product_type.setTextSize(AutoSizeUtils.mm2px(mAppContext,32));
+        ctb_qt_tab_product_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 44));
+        ctb_qt_tab_product_type.setTextSize(AutoSizeUtils.mm2px(mAppContext, 32));
         Intent intent = getIntent();
         if (intent != null) {
-            qualityTypeBeanChange = new QualityTypeBean();
-            qualityTypeBeanChange.setChildCategory(getStrings(intent.getStringExtra(CATEGORY_CHILD)));
-            qualityTypeBeanChange.setId(getIntegers(intent.getStringExtra(CATEGORY_ID)));
-            qualityTypeBeanChange.setType(getIntegers(intent.getStringExtra(CATEGORY_TYPE)));
-            qualityTypeBeanChange.setName(getStrings(intent.getStringExtra(CATEGORY_NAME)));
+            categoryChildId = getIntegers(intent.getStringExtra(CATEGORY_CHILD));
+            categoryId = getIntegers(intent.getStringExtra(CATEGORY_ID));
+            categoryType = getIntegers(intent.getStringExtra(CATEGORY_TYPE));
+            categoryName = getStrings(intent.getStringExtra(CATEGORY_NAME));
             couponId = intent.getStringExtra("couponId");
         }
-        if (qualityTypeBeanChange != null) {
-            ctb_qt_tab_product_type.setIndicatorWidth((int) (AutoSizeUtils.mm2px(mAppContext,32) * 4.5));
+        if (categoryId < 1) {
+            showToast(this, R.string.miss_parameters_hint);
+            return;
         }
-
+        ctb_qt_tab_product_type.setIndicatorWidth((int) (AutoSizeUtils.mm2px(mAppContext, 32) * 4.5));
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityTypeProductActivity.this, 2));
         smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
             loadData();
@@ -188,14 +196,7 @@ public class QualityTypeProductActivity extends BaseActivity {
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         qualityTypeProductAdapter.setOnLoadMoreListener(() -> {
             page++;
             getQualityTypePro();
@@ -242,7 +243,7 @@ public class QualityTypeProductActivity extends BaseActivity {
             }
         });
         typeSortView = LayoutInflater.from(QualityTypeProductActivity.this).inflate(R.layout.layout_type_sort_text_header, null, false);
-        totalPersonalTrajectory = insertNewTotalData(this, String.valueOf(qualityTypeBeanChange.getId()));
+        totalPersonalTrajectory = insertNewTotalData(this, String.valueOf(categoryId));
         removeExistUtils = new RemoveExistUtils();
     }
 
@@ -274,15 +275,14 @@ public class QualityTypeProductActivity extends BaseActivity {
             RecyclerView communal_recycler_wrap = (RecyclerView) popupWindowView.findViewById(R.id.communal_recycler_wrap);
             communal_recycler_wrap.setLayoutManager(new GridLayoutManager(QualityTypeProductActivity.this, 4));
             productTypeSortAdapter = new ProductTypeSortAdapter(qualityTypeBeans);
+            productTypeSortAdapter.addHeaderView(typeSortView);
             communal_recycler_wrap.setAdapter(productTypeSortAdapter);
-            setProductSortShow(tabPosition, qualityTypeBeanChange);
+            setProductSortShow(tabPosition);
             productTypeSortAdapter.setOnItemClickListener((adapter, view, position) -> {
                 QualityTypeBean qualityTypeBean = (QualityTypeBean) view.getTag();
-                if (qualityTypeBean != null && !qualityTypeBean.isSelect()) {
+                if (qualityTypeBean != null && !qualityTypeBean.isSelect() || typeDetails.size() < 1) {
 //                        修改商品类别
                     setProductSort(ctb_qt_tab_product_type.getCurrentTab(), qualityTypeBean);
-                    page = 1;
-                    getQualityTypePro();
                 }
                 if (bottomPopWindows != null && bottomPopWindows.isShowing()) {
                     bottomPopWindows.dismiss();
@@ -293,7 +293,7 @@ public class QualityTypeProductActivity extends BaseActivity {
             if (isReselect && bottomPopWindows.isShowing()) {
                 closePopWindows();
             } else {
-                setProductSortShow(tabPosition, qualityTypeBeanChange);
+                setProductSortShow(tabPosition);
                 bottomPopWindows.showPopupWindow(tl_quality_type_bar);
             }
         }
@@ -303,27 +303,30 @@ public class QualityTypeProductActivity extends BaseActivity {
         int currentTab = ctb_qt_tab_product_type.getCurrentTab();
         tabs.clear();
         if (isShow) {//展示popWindows
-            tabs.add(new TabEntity(getStrings(qualityTypeBeanChange.getName()), R.drawable.solid_top, R.drawable.solid_bottom));
-            tabs.add(new TabEntity(getStrings(qualityTypeBeanChange.getSortName()), R.drawable.solid_top, R.drawable.solid_bottom));
+            tabs.add(new TabEntity(getStrings(categoryName), R.drawable.solid_top, R.drawable.solid_bottom));
+            tabs.add(new TabEntity(getStrings(sortTypeName), R.drawable.solid_top, R.drawable.solid_bottom));
         } else { //不展示popWindows
             if (currentTab == 1) {
-                tabs.add(new TabEntity(getStrings(qualityTypeBeanChange.getName()), R.drawable.solid_top, R.drawable.solid_bottom));
-                tabs.add(new TabEntity(getStrings(qualityTypeBeanChange.getSortName()), R.drawable.solid_bottom, R.drawable.solid_top));
+                tabs.add(new TabEntity(getStrings(categoryName), R.drawable.solid_top, R.drawable.solid_bottom));
+                tabs.add(new TabEntity(getStrings(sortTypeName), R.drawable.solid_bottom, R.drawable.solid_top));
             } else {
-                tabs.add(new TabEntity(getStrings(qualityTypeBeanChange.getName()), R.drawable.solid_bottom, R.drawable.solid_top));
-                tabs.add(new TabEntity(getStrings(qualityTypeBeanChange.getSortName()), R.drawable.solid_top, R.drawable.solid_bottom));
+                tabs.add(new TabEntity(getStrings(categoryName), R.drawable.solid_bottom, R.drawable.solid_top));
+                tabs.add(new TabEntity(getStrings(sortTypeName), R.drawable.solid_top, R.drawable.solid_bottom));
             }
         }
         ctb_qt_tab_product_type.setTabData(tabs);
     }
 
     /**
-     * 设置商品类型 排序展示
+     * 设置商品类型&排序展示
      *
      * @param position
      * @param qualityTypeBean
      */
     private void setProductSort(int position, QualityTypeBean qualityTypeBean) {
+        if (loadHud != null) {
+            loadHud.show();
+        }
         if (position == 0) {
             for (int i = 0; i < productTypeList.size(); i++) {
                 QualityTypeBean qualityType = productTypeList.get(i);
@@ -333,20 +336,15 @@ public class QualityTypeProductActivity extends BaseActivity {
                     qualityType.setSelect(false);
                 }
             }
-            productTypeSortAdapter.removeAllHeaderView();
-            productTypeSortAdapter.notifyItemRangeRemoved(0, qualityTypeBeans.size());
+            categoryName = getStrings(qualityTypeBean.getName());
+            categoryId = qualityTypeBean.getId();
             qualityTypeBeans.clear();
             qualityTypeBeans.addAll(productTypeList);
-            productTypeSortAdapter.addHeaderView(typeSortView);
-            productTypeSortAdapter.notifyDataSetChanged();
-            qualityTypeBean.setSortType(qualityTypeBeanChange.getSortType());
-            qualityTypeBean.setSortName(qualityTypeBeanChange.getSortName());
-            if (qualityTypeBean.getChildCategoryList() != null && qualityTypeBean.getChildCategoryList().size() > 0) {
-                qualityTypeBean.setChildCategory(String.valueOf(qualityTypeBean.getChildCategoryList().get(0).getId()));
-            }
-            qualityTypeBeanChange = qualityTypeBean;
             addTotalData();
-            setChildProductTypeList(qualityTypeBean);
+//            重新设置child数据
+            page = 1;
+            categoryChildId = -1;
+            getChildrenType();
         } else { // 修改排序
             for (int i = 0; i < sortTypeList.size(); i++) {
                 QualityTypeBean qualityType = sortTypeList.get(i);
@@ -356,82 +354,48 @@ public class QualityTypeProductActivity extends BaseActivity {
                     qualityType.setSelect(false);
                 }
             }
-            productTypeSortAdapter.removeAllHeaderView();
-            productTypeSortAdapter.notifyItemRangeRemoved(0, qualityTypeBeans.size());
             qualityTypeBeans.clear();
             qualityTypeBeans.addAll(sortTypeList);
-            productTypeSortAdapter.notifyItemRangeChanged(0, qualityTypeBeans.size());
-            qualityTypeBeanChange.setSortType(qualityTypeBean.getSortType());
-            qualityTypeBeanChange.setSortName(qualityTypeBean.getSortName());
+            sortType = Integer.parseInt(qualityTypeBean.getSortType());
+            sortTypeName = getStrings(qualityTypeBean.getSortName());
+            page = 1;
+            getQualityTypePro();
         }
+        productTypeSortAdapter.notifyDataSetChanged();
     }
 
     /**
-     * 设置子分类
+     * 设置弹窗 品类
      *
-     * @param qualityTypeBean
+     * @param position
      */
-    private void setChildProductTypeList(QualityTypeBean qualityTypeBean) {
-        childTypeList.clear();
-        if (qualityTypeBean.getChildCategoryList() != null && qualityTypeBean.getChildCategoryList().size() > 0) {
-            QualityTypeBean qualityType;
-            for (ChildCategoryListBean childCategoryListBean : qualityTypeBean.getChildCategoryList()) {
-                qualityType = new QualityTypeBean();
-                qualityType.setChildCategory(String.valueOf(childCategoryListBean.getId()));
-                qualityType.setChildName(getStrings(childCategoryListBean.getName()));
-                if (qualityTypeBeanChange.getChildCategory().equals(qualityType.getChildCategory())) {
-                    qualityType.setSelect(true);
-                    qualityTypeBeanChange.setChildName(getStrings(qualityType.getChildName()));
-                }
-                childTypeList.add(qualityType);
-            }
-        }
-        if (childTypeList.size() > 0) {
-            if (childTypeHeaderView != null) {
-                if (childTypeHeaderView.getParent() == null) {
-                    qualityTypeProductAdapter.addHeaderView(childTypeHeaderView);
-                    scrollHeader();
-                }
-            }
-        } else {
-            if (childTypeHeaderView != null) {
-                qualityTypeProductAdapter.removeHeaderView(childTypeHeaderView);
-            }
-        }
-        childProductTypeAdapter.notifyDataSetChanged();
-    }
-
-    private void setProductSortShow(int position, QualityTypeBean qualityTypeBean) {
+    private void setProductSortShow(int position) {
         if (position == 0) {
             for (int i = 0; i < productTypeList.size(); i++) {
                 QualityTypeBean qualityType = productTypeList.get(i);
-                if (qualityType.getId() == qualityTypeBean.getId()) {
+                if (qualityType.getId() == categoryId) {
                     qualityType.setSelect(true);
                 } else {
                     qualityType.setSelect(false);
                 }
             }
-            productTypeSortAdapter.removeAllHeaderView();
-            productTypeSortAdapter.notifyItemRangeRemoved(0, qualityTypeBeans.size());
             qualityTypeBeans.clear();
             qualityTypeBeans.addAll(productTypeList);
-            productTypeSortAdapter.addHeaderView(typeSortView);
-            productTypeSortAdapter.notifyDataSetChanged();
+            typeSortView.setVisibility(View.VISIBLE);
         } else { // 修改排序
             for (int i = 0; i < sortTypeList.size(); i++) {
                 QualityTypeBean qualityType = sortTypeList.get(i);
-                if (qualityType.getSortType().equals(qualityTypeBean.getSortType())) {
+                if (qualityType.getSortType().equals(String.valueOf(sortType))) {
                     qualityType.setSelect(true);
                 } else {
                     qualityType.setSelect(false);
                 }
             }
-            productTypeSortAdapter.removeAllHeaderView();
-            productTypeSortAdapter.notifyItemRangeRemoved(0, qualityTypeBeans.size());
             qualityTypeBeans.clear();
             qualityTypeBeans.addAll(sortTypeList);
-            productTypeSortAdapter.notifyItemRangeChanged(0, qualityTypeBeans.size());
+            typeSortView.setVisibility(View.GONE);
         }
+        productTypeSortAdapter.notifyDataSetChanged();
     }
 
     private void closePopWindows() {
@@ -451,14 +415,21 @@ public class QualityTypeProductActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 获取排序-> 获取子类 -> 根据排序跟子类请求 商品数据
+     */
     @Override
     protected void loadData() {
-        if (qualityTypeBeanChange != null) {
+        if (categoryId > 0) {
             page = 1;
+            sortTypeList.clear();
+            getCategoryType();
             getSortType();
-            getRefreshTypeProData();
+            getAdTypeData();
         }
     }
+
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -468,18 +439,13 @@ public class QualityTypeProductActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
-    private void getRefreshTypeProData() {
-        getProductType();
-        getAdTypeData();
-        getChildrenType();
-    }
 
     private void getAdTypeData() {
         String url = Url.BASE_URL + Url.Q_QUALITY_TYPE_AD;
         if (NetWorkUtils.checkNet(QualityTypeProductActivity.this)) {
             Map<String, Object> params = new HashMap<>();
-            params.put("categoryType", qualityTypeBeanChange.getType());
-            params.put("categoryId", qualityTypeBeanChange.getId());
+            params.put("categoryType", categoryType);
+            params.put("categoryId", categoryId);
             params.put("vidoShow", "1");
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -489,7 +455,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                     adBeanList.clear();
                     CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
                     if (qualityAdLoop != null) {
-                        if (qualityAdLoop.getCode().equals("01")) {
+                        if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                             adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
                             if (cbViewHolderCreator == null) {
                                 cbViewHolderCreator = new CBViewHolderCreator() {
@@ -535,44 +501,20 @@ public class QualityTypeProductActivity extends BaseActivity {
         }
     }
 
-    private void getProductType() {
-        if (NetWorkUtils.checkNet(QualityTypeProductActivity.this)) {
-            String url = Url.BASE_URL + Url.QUALITY_SHOP_TYPE;
-            XUtil.Post(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    productTypeList.clear();
-                    Gson gson = new Gson();
-                    QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
-                    if (qualityTypeEntity != null) {
-                        if (qualityTypeEntity.getCode().equals("01")) {
-                            if (qualityTypeEntity.getQualityTypeBeanList() != null
-                                    && qualityTypeEntity.getQualityTypeBeanList().size() > 0) {
-                                productTypeList.addAll(qualityTypeEntity.getQualityTypeBeanList());
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
-    }
-
+    /**
+     * 获取分类排序
+     */
     private void getSortType() {
-        if (NetWorkUtils.checkNet(QualityTypeProductActivity.this)) {
+        if (sortTypeList.size() < 1) {
             String url = Url.BASE_URL + Url.Q_SORT_TYPE;
-            XUtil.Get(url, null, new MyCallBack<String>() {
+            NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeProductActivity.this, url, null, new NetLoadUtils.NetLoadListener() {
                 @Override
                 public void onSuccess(String result) {
                     sortTypeList.clear();
                     Gson gson = new Gson();
                     SortTypeEntity sortTypeEntity = gson.fromJson(result, SortTypeEntity.class);
                     if (sortTypeEntity != null) {
-                        if (sortTypeEntity.getCode().equals("01")) {
+                        if (sortTypeEntity.getCode().equals(SUCCESS_CODE)) {
                             if (sortTypeEntity.getCategoryOrderType() != null) {
                                 Map<String, String> categoryOrderType = sortTypeEntity.getCategoryOrderType();
                                 QualityTypeBean qualityTypeBean;
@@ -587,9 +529,10 @@ public class QualityTypeProductActivity extends BaseActivity {
                                     QualityTypeBean qualityType = sortTypeList.get(0);
                                     qualityType.setSelect(true);
                                     sortTypeList.set(0, qualityType);
-                                    qualityTypeBeanChange.setSortType(sortTypeList.get(0).getSortType());
-                                    qualityTypeBeanChange.setSortName(sortTypeList.get(0).getSortName());
-                                    getQualityTypePro();
+                                    sortType = getIntegers(sortTypeList.get(0).getSortType());
+                                    sortTypeName = getStrings(sortTypeList.get(0).getSortName());
+//                                    获取子类
+                                    getChildrenType();
                                 }
                             }
                         }
@@ -597,11 +540,66 @@ public class QualityTypeProductActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
+                public void netClose() {
+                    showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
+                    setEmptyErrorException();
+
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    showToast(QualityTypeProductActivity.this, R.string.request_json_data_error);
+                    setEmptyErrorException();
                 }
             });
+        } else {
+//          获取子类
+            getChildrenType();
         }
+    }
+
+    /**
+     * 获取一级分类
+     */
+    private void getCategoryType() {
+        String url = Url.BASE_URL + Url.QUALITY_CATEGORY_TYPE;
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, null, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                productTypeList.clear();
+                Gson gson = new Gson();
+                if (!TextUtils.isEmpty(result)) {
+                    QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+                    if (qualityTypeEntity != null) {
+                        if (SUCCESS_CODE.equals(qualityTypeEntity.getCode())) {
+                            productTypeList.addAll(qualityTypeEntity.getQualityTypeBeanList());
+                            for (QualityTypeBean qualityTypeBean : qualityTypeEntity.getQualityTypeBeanList()) {
+                                if (categoryId == qualityTypeBean.getId()) {
+                                    qualityTypeBean.setSelect(true);
+                                }
+                            }
+                        } else {
+                            setEmptyErrorException();
+                        }
+                        if (productTypeSortAdapter != null) {
+                            productTypeSortAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
+                setEmptyErrorException();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityTypeProductActivity.this, R.string.request_json_data_error);
+                setEmptyErrorException();
+            }
+        });
     }
 
     private void getQualityTypePro() {
@@ -609,126 +607,138 @@ public class QualityTypeProductActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
-        if (!TextUtils.isEmpty(qualityTypeBeanChange.getChildCategory())) {
-            params.put("id", qualityTypeBeanChange.getChildCategory());
-            params.put("pid", qualityTypeBeanChange.getId());
+        if (categoryChildId > -1) {
+            params.put("id", categoryChildId);
+            params.put("pid", categoryId);
         } else {
-            params.put("id", qualityTypeBeanChange.getId());
+            params.put("id", categoryId);
             params.put("pid", 0);
         }
-        params.put("orderTypeId", qualityTypeBeanChange.getSortType());
-        if(!TextUtils.isEmpty(couponId)){
+        params.put("orderTypeId", sortType);
+        if (!TextUtils.isEmpty(couponId)) {
             params.put("couponId", couponId);
         }
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeProductActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                if (page == 1) {
-                    typeDetails.clear();
-                    removeExistUtils.clearData();
-                }
-                Gson gson = new Gson();
-                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                if (likedProductEntity != null) {
-                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
-                    } else {
-                        qualityTypeProductAdapter.loadMoreEnd();
-                        showToast(QualityTypeProductActivity.this, likedProductEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        if (page == 1) {
+                            typeDetails.clear();
+                            removeExistUtils.clearData();
+                        }
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProductEntity != null) {
+                            if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                            } else {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                                if (!EMPTY_CODE.equals(likedProductEntity.getCode())) {
+                                    showToast(QualityTypeProductActivity.this, likedProductEntity.getMsg());
+                                }
+                            }
+                            if (page == 1) {
+                                ctb_qt_tab_product_type.setVisibility(View.VISIBLE);
+                                setTabIcon(false);
+                                qualityTypeProductAdapter.setNewData(typeDetails);
+                            } else {
+                                qualityTypeProductAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            qualityTypeProductAdapter.loadMoreComplete();
+                        }
+                        setEmptyErrorException();
                     }
-                    if (page == 1) {
-                        ctb_qt_tab_product_type.setVisibility(View.VISIBLE);
-                        setTabIcon(false);
-                        qualityTypeProductAdapter.setNewData(typeDetails);
-                    } else {
-                        qualityTypeProductAdapter.notifyDataSetChanged();
+
+                    @Override
+                    public void netClose() {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        setEmptyErrorException();
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
-            }
 
-            @Override
-            public void netClose() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
-            }
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityTypeProductActivity.this, R.string.invalidData);
+                        setEmptyErrorException();
+                    }
+                });
+    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(QualityTypeProductActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
-            }
-        });
+    private void setEmptyErrorException() {
+        if (loadHud != null) {
+            loadHud.dismiss();
+        }
+        smart_communal_refresh.finishRefresh();
+        if (childTypeList.size() < 1) {
+            NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
+        } else {
+            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        }
     }
 
     /**
      * 获取子类类型
      */
     private void getChildrenType() {
-        if (NetWorkUtils.checkNet(QualityTypeProductActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_PRODUCT_TYPE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("pid", qualityTypeBeanChange.getId());
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    childTypeList.clear();
-                    Gson gson = new Gson();
-                    QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
-                    if (qualityTypeEntity != null) {
-                        if (qualityTypeEntity.getCode().equals("01")) {
-                            if (qualityTypeEntity.getQualityTypeBeanList() != null) {
-                                for (QualityTypeBean qualityTypeBean : qualityTypeEntity.getQualityTypeBeanList()) {
-                                    qualityTypeBean.setChildCategory(String.valueOf(qualityTypeBean.getId()));
-                                    qualityTypeBean.setChildName(getStrings(qualityTypeBean.getName()));
-                                }
-                                childTypeList.addAll(qualityTypeEntity.getQualityTypeBeanList());
-                                if (childTypeList.size() > 0 && !TextUtils.isEmpty(qualityTypeBeanChange.getChildCategory())) {
-                                    for (QualityTypeBean qualityTypeBean : childTypeList) {
-                                        if (qualityTypeBeanChange.getChildCategory().equals(qualityTypeBean.getChildCategory())) {
+        childTypeList.clear();
+        String url = Url.BASE_URL + Url.Q_PRODUCT_TYPE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("pid", categoryId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeProductActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                childTypeList.clear();
+                Gson gson = new Gson();
+                QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+                if (qualityTypeEntity != null) {
+                    if (qualityTypeEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (qualityTypeEntity.getQualityTypeBeanList() != null) {
+                            for (QualityTypeBean qualityTypeBean : qualityTypeEntity.getQualityTypeBeanList()) {
+                                qualityTypeBean.setChildCategory(String.valueOf(qualityTypeBean.getId()));
+                                qualityTypeBean.setChildName(getStrings(qualityTypeBean.getName()));
+                            }
+                            childTypeList.addAll(qualityTypeEntity.getQualityTypeBeanList());
+                            if (childTypeList.size() > 0) {
+                                if (categoryChildId > -1) {
+                                    for (int i = 0; i < childTypeList.size(); i++) {
+                                        QualityTypeBean qualityTypeBean = childTypeList.get(i);
+                                        int id = qualityTypeBean.getId();
+                                        if (categoryChildId == id) {
                                             qualityTypeBean.setSelect(true);
-                                            qualityTypeBeanChange.setChildName(getStrings(qualityTypeBean.getChildName()));
                                             break;
                                         }
+                                        if (i == childTypeList.size() - 1) {
+                                            childTypeList.get(0).setSelect(true);
+                                        }
                                     }
+                                } else {
+                                    QualityTypeBean qualityTypeBean = childTypeList.get(0);
+                                    qualityTypeBean.setSelect(true);
+                                    categoryChildId = Integer.parseInt(qualityTypeBean.getChildCategory());
                                 }
+                            } else {
+                                categoryChildId = -1;
+                            }
+                            if (childProductTypeAdapter != null) {
+                                childProductTypeAdapter.notifyDataSetChanged();
                             }
                         }
-                        if (childTypeList.size() > 0) {
-                            if (childTypeHeaderView != null) {
-                                if (childTypeHeaderView.getParent() == null) {
-                                    qualityTypeProductAdapter.addHeaderView(childTypeHeaderView);
-                                    scrollHeader();
-                                }
-                            }
-                        } else {
-                            if (childTypeHeaderView != null) {
-                                qualityTypeProductAdapter.removeHeaderView(childTypeHeaderView);
-                            }
-                        }
-                        childProductTypeAdapter.notifyDataSetChanged();
+                    } else {
+                        categoryChildId = -1;
                     }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
+                    getQualityTypePro();
                     if (childTypeList.size() > 0) {
                         if (childTypeHeaderView != null) {
                             if (childTypeHeaderView.getParent() == null) {
@@ -741,9 +751,49 @@ public class QualityTypeProductActivity extends BaseActivity {
                             qualityTypeProductAdapter.removeHeaderView(childTypeHeaderView);
                         }
                     }
+                    childProductTypeAdapter.notifyDataSetChanged();
                 }
-            });
-        }
+            }
+
+            @Override
+            public void netClose() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                if (childTypeList.size() > 0) {
+                    if (childTypeHeaderView != null) {
+                        if (childTypeHeaderView.getParent() == null) {
+                            qualityTypeProductAdapter.addHeaderView(childTypeHeaderView);
+                            scrollHeader();
+                        }
+                    }
+                } else {
+                    if (childTypeHeaderView != null) {
+                        qualityTypeProductAdapter.removeHeaderView(childTypeHeaderView);
+                    }
+                }
+                showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
+                setEmptyErrorException();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (childTypeList.size() > 0) {
+                    if (childTypeHeaderView != null) {
+                        if (childTypeHeaderView.getParent() == null) {
+                            qualityTypeProductAdapter.addHeaderView(childTypeHeaderView);
+                            scrollHeader();
+                        }
+                    }
+                } else {
+                    if (childTypeHeaderView != null) {
+                        qualityTypeProductAdapter.removeHeaderView(childTypeHeaderView);
+                    }
+                }
+                showToast(QualityTypeProductActivity.this, R.string.request_json_data_error);
+                setEmptyErrorException();
+            }
+        });
     }
 
     class QTypeView {
@@ -757,7 +807,7 @@ public class QualityTypeProductActivity extends BaseActivity {
         public void initViews() {
             if (communal_recycler_wrap != null) {
                 communal_recycler_wrap.setBackgroundColor(getResources().getColor(R.color.gray_bg));
-                communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext,20), 0, 0, AutoSizeUtils.mm2px(mAppContext,20));
+                communal_recycler_wrap.setPadding(AutoSizeUtils.mm2px(mAppContext, 20), 0, 0, AutoSizeUtils.mm2px(mAppContext, 20));
                 // 这一步必须要做,否则不会显示.
                 communal_recycler_wrap.setLayoutManager(new GridLayoutManager(QualityTypeProductActivity.this, 4));
                 childProductTypeAdapter = new ChildProductTypeAdapter(childTypeList);
@@ -771,6 +821,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                             loadHud.show();
                         }
                         page = 1;
+                        isShowEmptyPage = false;
                         getQualityTypePro();
                     }
                 });
@@ -784,10 +835,7 @@ public class QualityTypeProductActivity extends BaseActivity {
      * @param qualityTypeBean
      */
     private void setChildProductType(QualityTypeBean qualityTypeBean) {
-        if (qualityTypeBeanChange != null) {
-            qualityTypeBeanChange.setChildCategory(getStrings(qualityTypeBean.getChildCategory()));
-            qualityTypeBeanChange.setChildName(qualityTypeBean.getChildName());
-        }
+        categoryChildId = Integer.parseInt(qualityTypeBean.getChildCategory());
         if (childTypeList.size() > 0) {
             for (QualityTypeBean qualityType : childTypeList) {
                 if (qualityTypeBean.getChildCategory().equals(qualityType.getChildCategory())) {
@@ -837,7 +885,7 @@ public class QualityTypeProductActivity extends BaseActivity {
     private void addTotalData() {
         if (totalPersonalTrajectory != null) {
             Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("categoryId", String.valueOf(qualityTypeBeanChange.getId()));
+            totalMap.put("categoryId", String.valueOf(categoryId));
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }

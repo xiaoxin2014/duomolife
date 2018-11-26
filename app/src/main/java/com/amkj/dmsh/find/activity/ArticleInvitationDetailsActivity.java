@@ -849,10 +849,14 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
 
         public void getDetailsData() {
             String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
-            Map<String, String> params = new HashMap<>();
+            Map<String, Object> params = new HashMap<>();
             params.put("id", artId);
 //            帖子改版 3.0.9
             params.put("isV2", "true");
+            /**
+             * 3.1.8 加入并列商品 两排 三排
+             */
+            params.put("version", 1);
             if (userId > 0) {
                 params.put("fuid", String.valueOf(userId));
             }

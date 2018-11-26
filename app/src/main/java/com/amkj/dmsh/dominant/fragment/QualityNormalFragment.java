@@ -306,7 +306,11 @@ public class QualityNormalFragment extends BaseFragment {
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
+                if(childTypeList.size()<1){
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
+                }else{
+                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                }
             }
 
             @Override
