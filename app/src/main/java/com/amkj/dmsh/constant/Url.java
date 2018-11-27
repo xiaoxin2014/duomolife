@@ -438,7 +438,7 @@ public class Url {
     public static final String GROUP_SHOP_JOIN_INDEX = "api/gp/getDomoGpIndexInfo";
     //    拼团首页轮播图
     public static final String GROUP_SHOP_LOOP_INDEX = "api/gp/getGpIndexAd";
-    //     拼团商品详细信息
+    //    拼团商品详细信息
     public static final String GROUP_SHOP_COMMUNAL = "api/gp/getDomoGpExtraInfo";
     //    新人团判断
     public static final String GROUP_SHOP_JOIN_NRE_USER = "api/gp/getQualifications";
@@ -456,8 +456,6 @@ public class Url {
     public static final String SHOP_EVA_LIKE = "api/goods/addEvaluateFavor";
     //    必买清单详情
     public static final String QUALITY_SHOP_BUY_DETAIL = "api/goods/mustbuy/getZone";
-    //    必买清单列表
-    public static final String QUALITY_SHOP_BUY_PRO = "api/goods/mustbuy/getGoods";
     //    历史清单
     public static final String QUALITY_SHOP_HISTORY_LIST = "api/goods/mustbuy/getoverdueZone";
     //    历史清单详情

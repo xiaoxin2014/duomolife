@@ -56,7 +56,9 @@ public class AlertDialogImage {
 
     public void setImage(@NonNull Bitmap bitmap) {
         try {
-            iv_ad_image.setImageBitmap(bitmap);
+            if (isContextExisted(context)) {
+                iv_ad_image.setImageBitmap(bitmap);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,5 +99,14 @@ public class AlertDialogImage {
         if (imageAlertDialog != null && isContextExisted(context)) {
             imageAlertDialog.dismiss();
         }
+    }
+
+    /**
+     * dialog 是否在展示
+     * @return
+     */
+    public boolean isShowing() {
+        return imageAlertDialog != null
+                && isContextExisted(context) && imageAlertDialog.isShowing();
     }
 }

@@ -1241,31 +1241,40 @@ public class ConstantMethod {
      *
      * @param context        上下文环境
      * @param oldVersionName 手机系统版本
-     * @param oldOsVersion   后台数据APP版本
      * @param oldMobileModel 手机型号
+     * @param oldOsVersion   后台数据APP版本
+     * @param sysNotice
      */
-    public static void setDeviceInfo(Context context, String oldVersionName, String oldMobileModel, String oldOsVersion) {
+    public static void setDeviceInfo(Context context, String oldVersionName, String oldMobileModel, String oldOsVersion, int sysNotice) {
 //        系统版本号
         String osVersion = Build.VERSION.RELEASE;
 //        手机型号
         String mobileModel = Build.MODEL;
 //        app版本
         String versionName = getVersionName(context);
+//        获取app通知开关
+        int notificationStatus = getDeviceAppNotificationStatus(context) ? 1 : 0;
+
         if (!getStrings(oldVersionName).equals(versionName)
                 || !getStrings(oldMobileModel).equals(mobileModel)
-                || !getStrings(oldOsVersion).equals(osVersion)) {
-            upDeviceInfo(context, osVersion, mobileModel, versionName);
+                || !getStrings(oldOsVersion).equals(osVersion) || notificationStatus != sysNotice) {
+            upDeviceInfo(context, osVersion, mobileModel, versionName,notificationStatus);
         }
+    }
+
+    public static boolean getDeviceAppNotificationStatus(Context context) {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context.getApplicationContext());
+        return manager.areNotificationsEnabled();
     }
 
     /**
      * 上传设备信息
-     *
-     * @param osVersion
-     * @param mobileModel
-     * @param versionName
+     *  @param osVersion 系统版本
+     * @param mobileModel 手机型号
+     * @param versionName 版本名称
+     * @param notificationStatus app 通知开关
      */
-    private static void upDeviceInfo(Context context, String osVersion, String mobileModel, String versionName) {
+    private static void upDeviceInfo(Context context, String osVersion, String mobileModel, String versionName, int notificationStatus) {
         if (NetWorkUtils.checkNet(context)) {
             String url = Url.BASE_URL + Url.DEVICE_INFO;
             Map<String, Object> params = new HashMap<>();
@@ -1273,6 +1282,7 @@ public class ConstantMethod {
             params.put("app_version_no", versionName);
             params.put("device_sys_version", osVersion);
             params.put("device_model", mobileModel);
+            params.put("sysNotice", notificationStatus);
             params.put("uid", userId);
             XUtil.Post(url, params, new MyCallBack<String>() {
                 @Override
@@ -1343,7 +1353,8 @@ public class ConstantMethod {
                         Gson gson = new Gson();
                         String strContent = gson.toJson(descriptionBean.getContent());
                         List<GoodsParataxisBean> goodList = gson.fromJson(strContent
-                                ,new TypeToken<List<GoodsParataxisBean>>(){}.getType());
+                                , new TypeToken<List<GoodsParataxisBean>>() {
+                                }.getType());
                         if (goodList == null || goodList.size() < 1) {
                             continue;
                         }
@@ -1352,10 +1363,10 @@ public class ConstantMethod {
                         } else {
                             goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
                         }
-                        for (GoodsParataxisBean goodsParataxisBean:goodList) {
-                            if(descriptionBean.getType().contains("goodsX")){
+                        for (GoodsParataxisBean goodsParataxisBean : goodList) {
+                            if (descriptionBean.getType().contains("goodsX")) {
                                 goodsParataxisBean.setItemType(TYPE_0);
-                            }else{
+                            } else {
                                 goodsParataxisBean.setItemType(TYPE_1);
                             }
                         }

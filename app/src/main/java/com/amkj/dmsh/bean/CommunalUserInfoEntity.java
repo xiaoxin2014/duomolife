@@ -98,12 +98,14 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
          * device_source : ios
          * device_model : iphone6sp
          * device_sys_version : 10.3.2
+         * sysNotice 1 | 0
          */
 
         private String app_version_no;
         private String device_source;
         private String device_model;
         private String device_sys_version;
+        private int sysNotice;
         /**
          * noticeInfo : {"group_id":"4","ios_link":"app://DMLGoodsProductsInfoViewController","web_pc_link":"sdf","android_link":"app://ShopScrollDetailsActivity","web_link":"http://www.domolife.cn/m/template/common/proprietary.html","content":"sd8asa"}
          */
@@ -113,6 +115,14 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         public static CommunalUserInfoBean objectFromData(String str) {
 
             return new Gson().fromJson(str, CommunalUserInfoBean.class);
+        }
+
+        public int getSysNotice() {
+            return sysNotice;
+        }
+
+        public void setSysNotice(int sysNotice) {
+            this.sysNotice = sysNotice;
         }
 
         public String getInterests() {
@@ -406,102 +416,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         public CommunalUserInfoBean() {
         }
 
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(this.birthday);
-            dest.writeString(this.serverTime);
-            dest.writeInt(this.is_sign);
-            dest.writeInt(this.fllow);
-            dest.writeInt(this.uid);
-            dest.writeInt(this.sex);
-            dest.writeString(this.nickname);
-            dest.writeInt(this.last_login_time);
-            dest.writeInt(this.status);
-            dest.writeInt(this.fans);
-            dest.writeInt(this.score);
-            dest.writeInt(this.remindtime);
-            dest.writeString(this.reg_ip);
-            dest.writeString(this.rtime);
-            dest.writeInt(this.login);
-            dest.writeByte(this.mobile_verification ? (byte) 1 : (byte) 0);
-            dest.writeByte(this.flag ? (byte) 1 : (byte) 0);
-            dest.writeString(this.signature);
-            dest.writeString(this.mobile);
-            dest.writeInt(this.is_disable);
-            dest.writeInt(this.reg_time);
-            dest.writeString(this.device_type);
-            dest.writeByte(this.baby_verification ? (byte) 1 : (byte) 0);
-            dest.writeString(this.token);
-            dest.writeString(this.qq);
-            dest.writeString(this.avatar);
-            dest.writeInt(this.firstAppLogin);
-            dest.writeInt(this.documentcount);
-            dest.writeString(this.bgimg_url);
-            dest.writeString(this.idcard);
-            dest.writeString(this.real_name);
-            dest.writeString(this.interests);
-            dest.writeTypedList(this.babys);
-            dest.writeInt(this.cartTotal);
-            dest.writeInt(this.couponTotal);
-            dest.writeInt(this.jfTotal);
-        }
-
-        protected CommunalUserInfoBean(Parcel in) {
-            this.birthday = in.readString();
-            this.serverTime = in.readString();
-            this.is_sign = in.readInt();
-            this.fllow = in.readInt();
-            this.uid = in.readInt();
-            this.sex = in.readInt();
-            this.nickname = in.readString();
-            this.last_login_time = in.readInt();
-            this.status = in.readInt();
-            this.fans = in.readInt();
-            this.score = in.readInt();
-            this.remindtime = in.readInt();
-            this.reg_ip = in.readString();
-            this.rtime = in.readString();
-            this.login = in.readInt();
-            this.mobile_verification = in.readByte() != 0;
-            this.flag = in.readByte() != 0;
-            this.signature = in.readString();
-            this.mobile = in.readString();
-            this.is_disable = in.readInt();
-            this.reg_time = in.readInt();
-            this.device_type = in.readString();
-            this.baby_verification = in.readByte() != 0;
-            this.token = in.readString();
-            this.qq = in.readString();
-            this.avatar = in.readString();
-            this.firstAppLogin = in.readInt();
-            this.documentcount = in.readInt();
-            this.bgimg_url = in.readString();
-            this.idcard = in.readString();
-            this.real_name = in.readString();
-            this.interests = in.readString();
-            this.babys = in.createTypedArrayList(BabyBean.CREATOR);
-            this.cartTotal = in.readInt();
-            this.couponTotal = in.readInt();
-            this.jfTotal = in.readInt();
-        }
-
-        public static final Creator<CommunalUserInfoBean> CREATOR = new Creator<CommunalUserInfoBean>() {
-            @Override
-            public CommunalUserInfoBean createFromParcel(Parcel source) {
-                return new CommunalUserInfoBean(source);
-            }
-
-            @Override
-            public CommunalUserInfoBean[] newArray(int size) {
-                return new CommunalUserInfoBean[size];
-            }
-        };
-
         public String getApp_version_no() {
             return app_version_no;
         }
@@ -612,6 +526,112 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
                 this.content = content;
             }
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.birthday);
+            dest.writeString(this.serverTime);
+            dest.writeInt(this.is_sign);
+            dest.writeInt(this.fllow);
+            dest.writeInt(this.uid);
+            dest.writeInt(this.sex);
+            dest.writeString(this.nickname);
+            dest.writeInt(this.last_login_time);
+            dest.writeInt(this.status);
+            dest.writeInt(this.fans);
+            dest.writeInt(this.score);
+            dest.writeInt(this.remindtime);
+            dest.writeString(this.reg_ip);
+            dest.writeString(this.rtime);
+            dest.writeInt(this.login);
+            dest.writeByte(this.mobile_verification ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.flag ? (byte) 1 : (byte) 0);
+            dest.writeString(this.signature);
+            dest.writeString(this.mobile);
+            dest.writeInt(this.is_disable);
+            dest.writeInt(this.reg_time);
+            dest.writeString(this.device_type);
+            dest.writeByte(this.baby_verification ? (byte) 1 : (byte) 0);
+            dest.writeString(this.token);
+            dest.writeString(this.qq);
+            dest.writeString(this.avatar);
+            dest.writeInt(this.firstAppLogin);
+            dest.writeInt(this.documentcount);
+            dest.writeString(this.bgimg_url);
+            dest.writeString(this.idcard);
+            dest.writeString(this.real_name);
+            dest.writeString(this.interests);
+            dest.writeTypedList(this.babys);
+            dest.writeInt(this.cartTotal);
+            dest.writeInt(this.couponTotal);
+            dest.writeInt(this.jfTotal);
+            dest.writeString(this.app_version_no);
+            dest.writeString(this.device_source);
+            dest.writeString(this.device_model);
+            dest.writeString(this.device_sys_version);
+            dest.writeInt(this.sysNotice);
+        }
+
+        protected CommunalUserInfoBean(Parcel in) {
+            this.birthday = in.readString();
+            this.serverTime = in.readString();
+            this.is_sign = in.readInt();
+            this.fllow = in.readInt();
+            this.uid = in.readInt();
+            this.sex = in.readInt();
+            this.nickname = in.readString();
+            this.last_login_time = in.readInt();
+            this.status = in.readInt();
+            this.fans = in.readInt();
+            this.score = in.readInt();
+            this.remindtime = in.readInt();
+            this.reg_ip = in.readString();
+            this.rtime = in.readString();
+            this.login = in.readInt();
+            this.mobile_verification = in.readByte() != 0;
+            this.flag = in.readByte() != 0;
+            this.signature = in.readString();
+            this.mobile = in.readString();
+            this.is_disable = in.readInt();
+            this.reg_time = in.readInt();
+            this.device_type = in.readString();
+            this.baby_verification = in.readByte() != 0;
+            this.token = in.readString();
+            this.qq = in.readString();
+            this.avatar = in.readString();
+            this.firstAppLogin = in.readInt();
+            this.documentcount = in.readInt();
+            this.bgimg_url = in.readString();
+            this.idcard = in.readString();
+            this.real_name = in.readString();
+            this.interests = in.readString();
+            this.babys = in.createTypedArrayList(BabyBean.CREATOR);
+            this.cartTotal = in.readInt();
+            this.couponTotal = in.readInt();
+            this.jfTotal = in.readInt();
+            this.app_version_no = in.readString();
+            this.device_source = in.readString();
+            this.device_model = in.readString();
+            this.device_sys_version = in.readString();
+            this.sysNotice = in.readInt();
+        }
+
+        public static final Creator<CommunalUserInfoBean> CREATOR = new Creator<CommunalUserInfoBean>() {
+            @Override
+            public CommunalUserInfoBean createFromParcel(Parcel source) {
+                return new CommunalUserInfoBean(source);
+            }
+
+            @Override
+            public CommunalUserInfoBean[] newArray(int size) {
+                return new CommunalUserInfoBean[size];
+            }
+        };
     }
 
     @Override
