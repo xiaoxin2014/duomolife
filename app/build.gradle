@@ -11,8 +11,8 @@ android {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 200
-        versionName '3.1.8'
+        versionCode 201
+        versionName '3.1.9'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
@@ -250,7 +250,7 @@ dependencies {
     implementation 'q.rorbin:badgeview:1.1.2'
 
     //    自动适配屏幕
-    implementation 'me.jessyan:autosize:1.0.6'
+    implementation 'me.jessyan:autosize:1.1.0'
 
     //    BaseRecyclerViewAdapter
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.42'

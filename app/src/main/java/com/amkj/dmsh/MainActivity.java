@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -98,6 +97,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getCurrentTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
+import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrEndTimeAddSeconds;
@@ -191,6 +191,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             getADDialog();
 //            启动广告
             getLaunchBanner();
+
             if (isDebugTag) {
                 getSelectedDialog();
             }
@@ -245,9 +246,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             SharedPreferences.Editor edit = preferences.edit();
             edit.putString(PUSH_CHECK_TIME, currentTime);
             edit.apply();
-            NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
-            boolean isOpened = manager.areNotificationsEnabled();
-            if (!isOpened) {
+            if (!getDeviceAppNotificationStatus(this)) {
                 AlertDialogHelper alertDialogHelper = new AlertDialogHelper(MainActivity.this);
                 alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                     @Override
@@ -683,7 +682,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                         if (minePageData.getCode().equals(SUCCESS_CODE)) {
                             getLoginStatusTime();
 //                            上传设备信息
-                            setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
+                            setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no()
+                                    , communalUserInfoBean.getDevice_model()
+                                    , communalUserInfoBean.getDevice_sys_version(),communalUserInfoBean.getSysNotice());
                         } else {
                             personalInfo.setLogin(false);
                             savePersonalInfoCache(MainActivity.this, personalInfo);

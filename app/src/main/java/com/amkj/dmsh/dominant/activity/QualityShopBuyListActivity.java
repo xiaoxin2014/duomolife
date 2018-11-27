@@ -181,14 +181,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
         });
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         qualityBuyListAdapter = new QualityBuyListAdapter(QualityShopBuyListActivity.this, qualityBuyListBeanList);
         qualityBuyListAdapter.setHeaderAndEmpty(true);
         View headerView = LayoutInflater.from(QualityShopBuyListActivity.this).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null);
@@ -202,7 +195,9 @@ public class QualityShopBuyListActivity extends BaseActivity {
             public void onLoadMoreRequested() {
                 if (page * TOTAL_COUNT_TWENTY <= qualityBuyListBeanList.size()) {
                     page++;
-                    getBuyListRecommend();
+                    if(shopBuyDetailBean!=null){
+                        getBuyListRecommend(shopBuyDetailBean.getId());
+                    }
                 } else {
                     qualityBuyListAdapter.loadMoreEnd();
                     qualityBuyListAdapter.setEnableLoadMore(false);
@@ -213,14 +208,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(QualityShopBuyListActivity.this));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         qualityHistoryAdapter = new QualityHistoryAdapter(historyListBeanList);
         qualityHistoryAdapter.setEnableLoadMore(false);
         rv_communal_pro.setAdapter(qualityHistoryAdapter);
@@ -397,7 +385,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
         page = 1;
         getCarCount();
         getBuyListDetailData();
-        getBuyListRecommend();
 //        获取历史清单
         getHistoryList();
     }
@@ -412,10 +399,11 @@ public class QualityShopBuyListActivity extends BaseActivity {
         return true;
     }
 
-    private void getBuyListRecommend() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_BUY_PRO;
+    private void getBuyListRecommend(int id) {
+        String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
+        params.put("must_buy_id", id);
         params.put("showCount", DEFAULT_TOTAL_COUNT);
         if (userId > 0) {
             params.put("uid", userId);
@@ -472,14 +460,14 @@ public class QualityShopBuyListActivity extends BaseActivity {
          * 3.1.8 加入并列商品 两排 三排
          */
         params.put("version", 1);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 itemDescriptionList.clear();
                 Gson gson = new Gson();
                 ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
                 if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals("01")) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopBuyListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl());
@@ -487,16 +475,26 @@ public class QualityShopBuyListActivity extends BaseActivity {
                             itemDescriptionList.addAll(ConstantMethod.getDetailsDataList(descriptionBeanList));
                         }
                         totalPersonalTrajectory = insertNewTotalData(QualityShopBuyListActivity.this, String.valueOf(shopBuyDetailBean.getId()));
-                    } else if (!shopDetailsEntity.getCode().equals("02")) {
+                        getBuyListRecommend(shopBuyDetailBean.getId());
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityShopBuyListActivity.this, shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
                 }
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void netClose() {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
         });
     }

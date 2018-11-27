@@ -211,7 +211,10 @@ public class MineLoginActivity extends BaseActivity {
         EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 // 上传设备信息
-        setDeviceInfo(this, communalUserInfoBean.getApp_version_no(), communalUserInfoBean.getDevice_model(), communalUserInfoBean.getDevice_sys_version());
+        setDeviceInfo(this, communalUserInfoBean.getApp_version_no()
+                , communalUserInfoBean.getDevice_model()
+                , communalUserInfoBean.getDevice_sys_version()
+                , communalUserInfoBean.getSysNotice());
         Intent data = new Intent();
         Bundle bundle = new Bundle();
         bundle.putParcelable("AccountInf", communalUserInfoEntity);
