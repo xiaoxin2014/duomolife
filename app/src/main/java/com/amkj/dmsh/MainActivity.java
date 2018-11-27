@@ -205,9 +205,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             getFirstPushInfo();
 //            获取更新
             AppUpdateUtils.getInstance().getAppUpdate(MainActivity.this);
-
+//            统计字段数据更新
             getAppUpdateJson();
-            //            统计数据上传大小
+//            统计数据上传大小
             getUpTotalSize();
 //            设置分享提示
             setShareTint();
@@ -829,6 +829,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * 启动广告
+     */
     private void getLaunchBanner() {
         String url = Url.BASE_URL + Url.H_LAUNCH_AD_DIALOG;
         adActivityList.clear();
@@ -1230,6 +1233,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         }
         if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
             alertDialogHelper.dismiss();
+        }
+        if (alertDialogAdImage != null && alertDialogAdImage.isShowing()) {
+            alertDialogAdImage.dismiss();
         }
     }
 

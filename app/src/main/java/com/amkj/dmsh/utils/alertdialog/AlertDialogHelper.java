@@ -1,5 +1,6 @@
 package com.amkj.dmsh.utils.alertdialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -217,6 +219,7 @@ public class AlertDialogHelper implements View.OnClickListener {
     public void show() {
         if (!defaultAlertDialog.isShowing()
                 && isContextExisted(context)) {
+            AutoSize.autoConvertDensityOfGlobal((Activity) context);
             defaultAlertDialog.show();
         }
         if (isFirstSet) {

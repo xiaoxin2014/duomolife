@@ -1,5 +1,6 @@
 package com.amkj.dmsh.utils.alertdialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -56,7 +58,9 @@ public class AlertDialogImage {
 
     public void setImage(@NonNull Bitmap bitmap) {
         try {
-            iv_ad_image.setImageBitmap(bitmap);
+            if (isContextExisted(context)) {
+                iv_ad_image.setImageBitmap(bitmap);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,6 +82,7 @@ public class AlertDialogImage {
             return;
         }
         if (!imageAlertDialog.isShowing()&& isContextExisted(context)) {
+            AutoSize.autoConvertDensityOfGlobal((Activity) context);
             imageAlertDialog.show();
         }
         if (isFirstSet) {
@@ -97,5 +102,14 @@ public class AlertDialogImage {
         if (imageAlertDialog != null && isContextExisted(context)) {
             imageAlertDialog.dismiss();
         }
+    }
+
+    /**
+     * dialog 是否在展示
+     * @return
+     */
+    public boolean isShowing() {
+        return imageAlertDialog != null
+                && isContextExisted(context) && imageAlertDialog.isShowing();
     }
 }

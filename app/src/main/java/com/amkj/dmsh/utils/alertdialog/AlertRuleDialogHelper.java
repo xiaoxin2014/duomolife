@@ -1,5 +1,6 @@
 package com.amkj.dmsh.utils.alertdialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -68,6 +70,7 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
     public void show(){
         if (!ruleAlertView.isShowing()
                 && isContextExisted(context)) {
+            AutoSize.autoConvertDensityOfGlobal((Activity) context);
             ruleAlertView.show();
         }
         if(isFirstSet){

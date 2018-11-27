@@ -447,7 +447,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
     private void youMengInit() {
         //SDK 初始化
-        UMConfigure.init(mAppContext, "57db8f1fe0f55a7ac0004684", getStrings(ChannelReaderUtil.getChannel(mAppContext)), UMConfigure.DEVICE_TYPE_PHONE, null);
+        UMConfigure.init(mAppContext, "57db8f1fe0f55a7ac0004684"
+                , getStrings(ChannelReaderUtil.getChannel(mAppContext)), UMConfigure.DEVICE_TYPE_PHONE, null);
         /**
          * 设置组件化的Log开关
          * 参数: boolean 默认为false，如需查看LOG设置为true

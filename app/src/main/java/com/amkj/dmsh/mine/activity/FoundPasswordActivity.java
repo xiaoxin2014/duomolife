@@ -81,10 +81,6 @@ public class FoundPasswordActivity extends BaseActivity {
     protected void initViews() {
         iv_blue_close.setVisibility(View.INVISIBLE);
         tv_bind_mobile_click.setText("完成");
-    }
-
-    @Override
-    protected void loadData() {
         //注册短信回调
         SMSSDK.registerEventHandler(new EventHandler() {
             @Override
@@ -96,6 +92,11 @@ public class FoundPasswordActivity extends BaseActivity {
                 handler.sendMessage(msg);
             }
         });
+    }
+
+    @Override
+    protected void loadData() {
+
     }
 
     private Handler handler = new Handler(new Handler.Callback() {

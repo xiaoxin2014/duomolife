@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.jessyan.autosize.AutoSize;
+
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
@@ -103,6 +105,7 @@ public class AlertDialogShareHelper {
     public void show() {
         if (!shareAlertDialog.isShowing()
                 &&isContextExisted(context)) {
+            AutoSize.autoConvertDensityOfGlobal((Activity) context);
             shareAlertDialog.show();
         }
         if (loadView != null) {

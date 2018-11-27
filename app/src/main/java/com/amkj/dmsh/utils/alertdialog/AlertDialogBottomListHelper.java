@@ -1,5 +1,6 @@
 package com.amkj.dmsh.utils.alertdialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
@@ -279,6 +281,7 @@ public class AlertDialogBottomListHelper {
     public void show() {
         if (!bottomListAlertDialog.isShowing()
                 && isContextExisted(context)) {
+            AutoSize.autoConvertDensityOfGlobal((Activity) context);
             bottomListAlertDialog.show();
         }
         if (isFirstSet) {

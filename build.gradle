@@ -5,21 +5,20 @@ buildscript {
         jcenter()
         google()
     }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath 'com.novoda:bintray-release:0.8.0'
         // tinkersupport插件, 其中lastest.release指拉取最新版本，也可以指定明确版本号，例如1.0.4
         classpath "com.tencent.bugly:tinker-support:1.1.5"
 //        多渠道包
-        classpath 'com.leon.channel:plugin:2.0.1'
+        classpath 'com.leon.channel:plugin:+'
+        classpath 'com.mob.sdk:MobSDK:+'
     }
 
     // NOTE: Do not place your application projectconfiguration here; they belong
     // in the individual module build.gradle files
 
 }
-
 allprojects {
     repositories {
         jcenter()
@@ -53,6 +52,7 @@ subprojects {
         }
     }
 }
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
