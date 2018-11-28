@@ -146,13 +146,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         qualityBuyListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * TOTAL_COUNT_TWENTY <= qualityBuyListBeanList.size()) {
-                    page++;
-                    getBuyListRecommend();
-                } else {
-                    qualityBuyListAdapter.loadMoreEnd();
-                    qualityBuyListAdapter.setEnableLoadMore(false);
-                }
+                page++;
+                getBuyListRecommend();
             }
         }, communal_recycler);
         communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -370,6 +365,9 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("must_buy_id", listId);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopHistoryListActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
                     @Override
@@ -384,6 +382,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                         if (qualityBuyListEntity != null) {
                             if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
+                            }else if(qualityBuyListEntity.getCode().equals(EMPTY_CODE)){
+                                qualityBuyListAdapter.loadMoreEnd();
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }

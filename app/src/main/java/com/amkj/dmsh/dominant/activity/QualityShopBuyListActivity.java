@@ -51,10 +51,10 @@ import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
@@ -78,7 +78,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -193,14 +192,9 @@ public class QualityShopBuyListActivity extends BaseActivity {
         qualityBuyListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * TOTAL_COUNT_TWENTY <= qualityBuyListBeanList.size()) {
+                if(shopBuyDetailBean!=null){
                     page++;
-                    if(shopBuyDetailBean!=null){
-                        getBuyListRecommend(shopBuyDetailBean.getId());
-                    }
-                } else {
-                    qualityBuyListAdapter.loadMoreEnd();
-                    qualityBuyListAdapter.setEnableLoadMore(false);
+                    getBuyListRecommend(shopBuyDetailBean.getId());
                 }
             }
         }, communal_recycler);
@@ -404,7 +398,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("must_buy_id", id);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         if (userId > 0) {
             params.put("uid", userId);
         }
@@ -423,9 +417,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
                         qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                     } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
-                    } else {
-                        showToast(QualityShopBuyListActivity.this, qualityBuyListEntity.getMsg());
+                        qualityBuyListAdapter.loadMoreEnd();
                     }
                     qualityBuyListAdapter.notifyDataSetChanged();
                 }

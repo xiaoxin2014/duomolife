@@ -479,14 +479,12 @@ public class GlideImageLoaderUtil {
                         }
                         Glide.with(context).asDrawable().load(imgUrlX)
                                 .apply(new RequestOptions().dontAnimate()
-                                        .placeholder(R.drawable.load_loading_image)
                                         .error(R.drawable.load_loading_image)
                                         .override(imgWidth, imgHeight))
                                 .into(imageViewX);
                     } catch (Exception e) {
                         Glide.with(context).asDrawable().load(imgUrl)
                                 .apply(new RequestOptions().dontAnimate()
-                                        .placeholder(R.drawable.load_loading_image)
                                         .error(R.drawable.load_loading_image)
                                         .override(imgWidth, imgHeight))
                                 .into(imageView);
