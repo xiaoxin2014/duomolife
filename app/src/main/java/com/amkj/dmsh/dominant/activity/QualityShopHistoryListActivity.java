@@ -127,14 +127,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityShopHistoryListActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         qualityBuyListAdapter = new QualityBuyListAdapter(QualityShopHistoryListActivity.this, qualityBuyListBeanList);
         qualityBuyListAdapter.setHeaderAndEmpty(true);
         View headerView = LayoutInflater.from(QualityShopHistoryListActivity.this).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null);
