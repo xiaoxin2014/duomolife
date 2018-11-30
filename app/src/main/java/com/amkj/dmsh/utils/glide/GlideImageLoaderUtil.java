@@ -477,7 +477,7 @@ public class GlideImageLoaderUtil {
                                 imgHeight = 3574;
                             }
                         }
-                        if (imageViewX != null) {
+                        if (isContextExisted(context)) {
                             Glide.with(context).asDrawable().load(imgUrlX)
                                     .apply(new RequestOptions().dontAnimate()
                                             .error(R.drawable.load_loading_image)
@@ -485,12 +485,14 @@ public class GlideImageLoaderUtil {
                                     .into(imageViewX);
                         }
                     } catch (Exception e) {
-                        Glide.with(context).asDrawable().load(imgUrl)
-                                .apply(new RequestOptions().dontAnimate()
-                                        .error(R.drawable.load_loading_image)
-                                        .override(imgWidth, imgHeight))
-                                .into(imageView);
-                        e.printStackTrace();
+                        if (isContextExisted(context)) {
+                            Glide.with(context).asDrawable().load(imgUrl)
+                                    .apply(new RequestOptions().dontAnimate()
+                                            .error(R.drawable.load_loading_image)
+                                            .override(imgWidth, imgHeight))
+                                    .into(imageView);
+                            e.printStackTrace();
+                        }
                     }
                 }
 

@@ -2,7 +2,8 @@ package com.amkj.dmsh.network;
 
 import io.reactivex.Flowable;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
+
+import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 
 /**
  * @author LGuiPeng
@@ -16,7 +17,7 @@ public interface NetApiService {
      * 我-底部宫格
      * @return
      */
-    @POST("{url}")
-    Flowable<String> getMineTypeBottom(@Path("url") String url);
+    @POST(MINE_BOTTOM_DATA)
+    Flowable<String> getMineTypeBottom();
 
 }

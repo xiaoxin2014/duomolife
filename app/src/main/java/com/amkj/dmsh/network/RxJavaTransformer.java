@@ -24,7 +24,7 @@ public class RxJavaTransformer {
         return new FlowableTransformer<T, T>() {
             @Override
             public Publisher<T> apply(Flowable<T> upstream) {
-                return upstream.observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
+                return upstream.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
             }
         };
     }

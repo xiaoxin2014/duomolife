@@ -102,7 +102,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
-import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.network.RxJavaTransformer.getSchedulerTransformer;
 
 ;
@@ -443,7 +442,7 @@ public class MineDataFragment extends BaseFragment {
     private void getBottomTypeNetData() {
         NetApiManager.getInstance().init();
         NetApiService netApiService = NetApiManager.getNetApiService();
-        netApiService.getMineTypeBottom(MINE_BOTTOM_DATA).compose(getSchedulerTransformer()).subscribe(new FlowableSubscriber<String>() {
+        netApiService.getMineTypeBottom().compose(getSchedulerTransformer()).subscribe(new FlowableSubscriber<String>() {
             @Override
             public void onSubscribe(Subscription s) {
 
