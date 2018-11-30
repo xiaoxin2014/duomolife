@@ -477,11 +477,13 @@ public class GlideImageLoaderUtil {
                                 imgHeight = 3574;
                             }
                         }
-                        Glide.with(context).asDrawable().load(imgUrlX)
-                                .apply(new RequestOptions().dontAnimate()
-                                        .error(R.drawable.load_loading_image)
-                                        .override(imgWidth, imgHeight))
-                                .into(imageViewX);
+                        if (imageViewX != null) {
+                            Glide.with(context).asDrawable().load(imgUrlX)
+                                    .apply(new RequestOptions().dontAnimate()
+                                            .error(R.drawable.load_loading_image)
+                                            .override(imgWidth, imgHeight))
+                                    .into(imageViewX);
+                        }
                     } catch (Exception e) {
                         Glide.with(context).asDrawable().load(imgUrl)
                                 .apply(new RequestOptions().dontAnimate()

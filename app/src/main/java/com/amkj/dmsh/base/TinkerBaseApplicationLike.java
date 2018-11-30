@@ -158,7 +158,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         // 调试时，将第三个参数改为true
 //        腾讯hotfix
 //        已包含bugly 初始化
-
         mAppContext = getApplication().getApplicationContext();
         setTotalChanel();
         activityLinkedList = new LinkedList<>();
@@ -248,10 +247,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //        initBaiCHotFix();
 
         if (isAppMainProcess()) {
-            //        七鱼客服初始化
-            initQYService();
-            //      友盟初始化
-            youMengInit();
             // 初始化xUtils
             x.Ext.init(getApplication());
 
@@ -262,12 +257,18 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             } catch (MtaSDkException e) {
                 e.printStackTrace();
             }
-//      jPush 初始化
-            JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
-            JPushInterface.init(mAppContext);
+            //      友盟初始化
+            youMengInit();
+
+            initAutoSizeScreen();
+            initLoadSir();
             //        LinkedMe 深度链接
             initLinkMe();
-            initAutoSizeScreen();
+            getScreenInfo();
+            initTotalAction();
+            //      jPush 初始化
+            JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
+            JPushInterface.init(mAppContext);
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -284,10 +285,11 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                         edit.putBoolean("delOldVersionCache", false);
                         edit.apply();
                     }
-                    initTotalAction();
                     //        oss初始化
                     initOSS();
                     initNewAliBaiC();
+                    //        七鱼客服初始化
+                    initQYService();
                     try {
                         TuSdk.enableDebugLog(isDebugTag);
                         TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
@@ -297,13 +299,10 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                     //shareSDK
                     MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
                     //        阿里百川初始化
-                    getScreenInfo();
                     initWebUrlTransformLocation();
-                    initLoadSir();
                 }
             });
         }
-
     }
 
     /**
