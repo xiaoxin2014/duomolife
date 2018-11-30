@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;

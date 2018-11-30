@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -18,11 +17,14 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -90,8 +92,11 @@ public class ArticleTypeActivity extends BaseActivity {
         }
         tv_header_titleAll.setText(getStrings(categoryTitle));
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArticleTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);

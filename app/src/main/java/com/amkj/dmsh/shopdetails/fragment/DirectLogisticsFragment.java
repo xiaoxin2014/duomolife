@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectLogisticsAdapter;
 import com.amkj.dmsh.shopdetails.adapter.DirectLogisticsHeaderAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean;
@@ -20,6 +20,7 @@ import com.amkj.dmsh.shopdetails.bean.DirectLogisticsPacketEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsPacketEntity.DirectLogisticsPacketBean.LogisticsEntity.LogisticsBean.ListBean;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +30,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
+;
 ;
 
 
@@ -73,8 +75,11 @@ public class DirectLogisticsFragment extends BaseFragment {
         directLogisticsAdapter.addHeaderView(headerView);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.setAdapter(directLogisticsAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         if (directLogisticsBean != null) {
             logisticsBean = directLogisticsBean.getLogistics().get(packet).get(0);

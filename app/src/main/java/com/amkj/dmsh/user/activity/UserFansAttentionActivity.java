@@ -11,19 +11,21 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.kingja.loadsir.core.Transport;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -87,10 +89,6 @@ public class UserFansAttentionActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         communal_recycler.setAdapter(detailsUserAdapter);
         detailsUserAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -105,8 +103,11 @@ public class UserFansAttentionActivity extends BaseActivity {
             }
         }, communal_recycler);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -195,12 +196,12 @@ public class UserFansAttentionActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         if ("fans".equals(type)) {
             url = Url.BASE_URL + Url.MINE_FANS;
-            if(userId>0){
+            if (userId > 0) {
                 params.put("buid", userId);
             }
         } else {
             url = Url.BASE_URL + Url.MINE_ATTENTION;
-            if(userId>0){
+            if (userId > 0) {
                 params.put("fuid", userId);
             }
         }
@@ -226,21 +227,21 @@ public class UserFansAttentionActivity extends BaseActivity {
                     }
                 }
                 detailsUserAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList,userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList, userAttentionFansEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList,userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList, userAttentionFansEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList,userAttentionFansEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, attentionFansList, userAttentionFansEntity);
             }
         });
     }

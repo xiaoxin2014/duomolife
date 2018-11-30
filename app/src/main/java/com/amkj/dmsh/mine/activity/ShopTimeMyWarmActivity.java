@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
@@ -21,12 +20,15 @@ import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.mine.adapter.ShopTimeMyWarmAdapter;
 import com.amkj.dmsh.mine.bean.MineWarmEntity;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -92,16 +94,15 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_ten_dp)
 
 
-
-
-
-
                 .create());
         communal_recycler.setAdapter(shopTimeMyWarmAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            scrollY = 0;
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                scrollY = 0;
+                loadData();
+            }
         });
         shopTimeMyWarmAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -212,10 +213,10 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     }
 
     private void getWarmTimeShop() {
-        String url = Url.BASE_URL + Url.MINE_WARM ;
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
-        params.put("currentPage",page);
+        String url = Url.BASE_URL + Url.MINE_WARM;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("currentPage", page);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
@@ -243,21 +244,21 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                     }
                     shopTimeMyWarmAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,mineWarmBeanList, mineWarmEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 shopTimeMyWarmAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,mineWarmBeanList, mineWarmEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 shopTimeMyWarmAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,mineWarmBeanList, mineWarmEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
             }
         });
     }
@@ -272,7 +273,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus foreShowBean = gson.fromJson(result, RequestStatus.class);
                 if (foreShowBean != null) {
-                    if (foreShowBean.getCode().equals("01")) {
+                    if (foreShowBean.getCode().equals(SUCCESS_CODE)) {
                         if (foreShowBean.getResult().isHadRemind()) {
                             timeWarm = String.valueOf(foreShowBean.getResult().getRemindtime());
                         }

@@ -56,7 +56,9 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
 
 ;
@@ -256,7 +258,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (code.equals("01")) {
+                if (code.equals(SUCCESS_CODE)) {
 //                    刷新抽奖次数
                     web_communal.post(new Runnable() {
                         @Override
@@ -268,7 +270,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                             }
                         }
                     });
-                } else if (!code.equals("02")) {
+                } else if (!code.equals(EMPTY_CODE)) {
                     Toast.makeText(DoMoLifeLotteryActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
             }

@@ -14,7 +14,6 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -26,6 +25,7 @@ import com.amkj.dmsh.dominant.adapter.ChildProductTypeAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -38,6 +38,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -113,8 +114,11 @@ public class QualityNormalFragment extends BaseFragment {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp).create());
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
 
         qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), typeDetails);
@@ -207,7 +211,7 @@ public class QualityNormalFragment extends BaseFragment {
                     adBeanList.clear();
                     CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
                     if (qualityAdLoop != null) {
-                        if (qualityAdLoop.getCode().equals("01")) {
+                        if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                             adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
                             if (cbViewHolderCreator == null) {
                                 cbViewHolderCreator = new CBViewHolderCreator() {
@@ -306,9 +310,9 @@ public class QualityNormalFragment extends BaseFragment {
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-                if(childTypeList.size()<1){
+                if (childTypeList.size() < 1) {
                     NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
-                }else{
+                } else {
                     NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                 }
             }
@@ -385,7 +389,7 @@ public class QualityNormalFragment extends BaseFragment {
                     Gson gson = new Gson();
                     QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
                     if (qualityTypeEntity != null) {
-                        if (qualityTypeEntity.getCode().equals("01")) {
+                        if (qualityTypeEntity.getCode().equals(SUCCESS_CODE)) {
                             if (qualityTypeEntity.getQualityTypeBeanList() != null) {
                                 for (QualityTypeBean qualityTypeBean : qualityTypeEntity.getQualityTypeBeanList()) {
                                     qualityTypeBean.setChildCategory(String.valueOf(qualityTypeBean.getId()));

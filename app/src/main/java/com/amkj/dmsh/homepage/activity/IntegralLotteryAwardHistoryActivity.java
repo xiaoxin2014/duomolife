@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAwardHistoryAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardHistoryEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;

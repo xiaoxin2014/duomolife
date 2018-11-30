@@ -8,11 +8,11 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
@@ -24,6 +24,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
@@ -56,7 +58,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * Created by atd48 on 2016/8/23.
  * 待收货
  */
-public class DoMoIndentDeliveredFragment extends BaseFragment{
+public class DoMoIndentDeliveredFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -88,19 +90,18 @@ public class DoMoIndentDeliveredFragment extends BaseFragment{
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
 
-            //                滚动距离置0
-            scrollY = 0;
-            loadData();
+                //                滚动距离置0
+                scrollY = 0;
+                loadData();
+            }
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -229,21 +230,21 @@ public class DoMoIndentDeliveredFragment extends BaseFragment{
                     showToast(getActivity(), msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
         });
     }
@@ -260,7 +261,7 @@ public class DoMoIndentDeliveredFragment extends BaseFragment{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(getActivity(), requestStatus.getMsg());
                     } else {

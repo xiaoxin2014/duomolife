@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -29,6 +28,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -39,6 +39,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -118,8 +120,11 @@ public class QualityProductActActivity extends BaseActivity {
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityProductActActivity.this, 2));
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         qualityTypeProductAdapter = new QualityTypeProductAdapter(QualityProductActActivity.this, actProActivityList);
         View headerView = LayoutInflater.from(QualityProductActActivity.this).inflate(R.layout.layout_act_topic_no_count_time, null, false);
@@ -130,10 +135,6 @@ public class QualityProductActActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -251,6 +252,7 @@ public class QualityProductActActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     private void getActProActivityData() {
         String url = Url.BASE_URL + Url.Q_ACT_PRO_LIST;
         final Map<String, Object> params = new HashMap<>();
@@ -280,7 +282,7 @@ public class QualityProductActActivity extends BaseActivity {
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,actProActivityList,likedProductEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
 
                     @Override
@@ -288,7 +290,7 @@ public class QualityProductActActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityProductActActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,actProActivityList,likedProductEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
 
                     @Override
@@ -296,7 +298,7 @@ public class QualityProductActActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityProductActActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,actProActivityList,likedProductEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
                 });
     }
@@ -333,10 +335,10 @@ public class QualityProductActActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityProductActActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -440,7 +442,7 @@ public class QualityProductActActivity extends BaseActivity {
                     , getStrings(likedProductEntity.getTitle())
                     , getStrings(likedProductEntity.getActivityDesc())
                     , BASE_SHARE_PAGE_TWO + "m/template/common/activitySpecial.html?id=" + likedProductBean.getActivityCode()
-                    ,"pages/activitySpecial/activitySpecial?id="+likedProductBean.getActivityCode());
+                    , "pages/activitySpecial/activitySpecial?id=" + likedProductBean.getActivityCode());
         }
     }
 

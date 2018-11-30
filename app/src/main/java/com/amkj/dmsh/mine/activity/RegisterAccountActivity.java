@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity.RegisterUserInfoBean;
 import com.amkj.dmsh.constant.Sha1Md5;
@@ -297,7 +297,7 @@ public class RegisterAccountActivity extends BaseActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (code.equals("01")) {
+                    if (code.equals(SUCCESS_CODE)) {
                         Gson gson = new Gson();
                         RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
                         if (status != null && status.getRegisterFlag() == 0) {

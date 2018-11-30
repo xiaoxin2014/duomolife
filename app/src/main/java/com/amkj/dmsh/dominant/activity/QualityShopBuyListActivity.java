@@ -26,7 +26,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -45,6 +44,7 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
@@ -56,6 +56,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -144,8 +146,11 @@ public class QualityShopBuyListActivity extends BaseActivity {
         tv_header_titleAll.setText("必买清单");
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityShopBuyListActivity.this));
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -192,7 +197,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
         qualityBuyListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if(shopBuyDetailBean!=null){
+                if (shopBuyDetailBean != null) {
                     page++;
                     getBuyListRecommend(shopBuyDetailBean.getId());
                 }
@@ -344,10 +349,10 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityShopBuyListActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -404,42 +409,42 @@ public class QualityShopBuyListActivity extends BaseActivity {
         }
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopBuyListActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                qualityBuyListAdapter.loadMoreComplete();
-                smart_communal_refresh.finishRefresh();
-                if (page == 1) {
-                    qualityBuyListBeanList.clear();
-                }
-                Gson gson = new Gson();
-                qualityBuyListEntity = gson.fromJson(result, QualityBuyListEntity.class);
-                if (qualityBuyListEntity != null) {
-                    if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
-                        qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
-                    } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
-                        qualityBuyListAdapter.loadMoreEnd();
+                    @Override
+                    public void onSuccess(String result) {
+                        qualityBuyListAdapter.loadMoreComplete();
+                        smart_communal_refresh.finishRefresh();
+                        if (page == 1) {
+                            qualityBuyListBeanList.clear();
+                        }
+                        Gson gson = new Gson();
+                        qualityBuyListEntity = gson.fromJson(result, QualityBuyListEntity.class);
+                        if (qualityBuyListEntity != null) {
+                            if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
+                                qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
+                            } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityBuyListAdapter.loadMoreEnd();
+                            }
+                            qualityBuyListAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
-                    qualityBuyListAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityBuyListAdapter.loadMoreComplete();
-                showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityBuyListAdapter.loadMoreComplete();
+                        showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityBuyListAdapter.loadMoreComplete();
-                showToast(QualityShopBuyListActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityBuyListAdapter.loadMoreComplete();
+                        showToast(QualityShopBuyListActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    }
+                });
     }
 
     private void getBuyListDetailData() {
@@ -501,7 +506,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     historyListBeanList.clear();
                     QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
                     if (qualityHistoryListEntity != null) {
-                        if (qualityHistoryListEntity.getCode().equals("01")) {
+                        if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
                             historyListBeanList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
                             setHistoryListData();
                             qualityHistoryAdapter.setNewData(historyListBeanList);
@@ -517,7 +522,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
         ll_communal_pro_list.setVisibility(View.VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = AutoSizeUtils.mm2px(mAppContext,50);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
         drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
         try {
             drawable.setColor(0xffffffff);
@@ -559,7 +564,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(QualityShopBuyListActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(QualityShopBuyListActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -591,7 +596,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(QualityShopBuyListActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(QualityShopBuyListActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());

@@ -27,7 +27,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
@@ -41,15 +40,18 @@ import com.amkj.dmsh.dominant.bean.DmlOptimizedSelDetailEntity.DmlOptimizedSelDe
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.ProductListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -171,9 +173,11 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                 }
             }
         });
-        smart_refresh_ql_welfare_details.setOnRefreshListener((refreshLayout) -> {
+        smart_refresh_ql_welfare_details.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
                 loadData();
-        });
+        }});
         optimizedDetailsAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -403,7 +407,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DmlOptimizedSelDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(DmlOptimizedSelDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -435,7 +439,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DmlOptimizedSelDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(DmlOptimizedSelDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -529,10 +533,10 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DmlOptimizedSelDetailActivity.this, requestStatus.getMsg());
                         }
                     }

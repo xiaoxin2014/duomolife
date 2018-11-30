@@ -24,7 +24,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -49,6 +48,7 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean
 import com.amkj.dmsh.dominant.fragment.GroupCustomerServiceFragment;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
@@ -73,6 +73,8 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -226,7 +228,12 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         gpRecordId = intent.getStringExtra("gpRecordId");
         orderNo = intent.getStringExtra("orderNo");
         invitePartnerJoin = intent.getBooleanExtra("invitePartnerJoin", false);
-        smart_refresh_ql_sp_details.setOnRefreshListener((refreshLayout) -> loadData());
+        smart_refresh_ql_sp_details.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
+        });
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -387,7 +394,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 ShopDetailsEntity shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
                 if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals("01")) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         EventBus.getDefault().post(new EventMessage("ImgArticleShop", shopDetailsEntity.getShopPropertyBean().getItemBody()));
                     }
                 }
@@ -412,10 +419,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
-                    if (goodsCommentEntity.getCode().equals("01")) {
+                    if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         communal_recycler_wrap.setVisibility(View.VISIBLE);
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
-                    } else if (!goodsCommentEntity.getCode().equals("02")) {
+                    } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
                         communal_recycler_wrap.setVisibility(GONE);
                         showToast(QualityGroupShopDetailActivity.this, goodsCommentEntity.getMsg());
                     }
@@ -455,7 +462,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                         Gson gson = new Gson();
                         qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                         if (qualityGroupShareEntity != null) {
-                            if (qualityGroupShareEntity.getCode().equals("01")) {
+                            if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                                 QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
                                 GroupShopJoinBean groupShopJoinBean = new GroupShopJoinBean();
                                 groupShopJoinBean.setCurrentTime(qualityGroupShareEntity.getCurrentTime());
@@ -494,7 +501,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                     shopJoinGroupView.joinGroupAdapter.addHeaderView(shopJoinGroupView.headerView);
                                 }
                                 shopJoinGroupView.joinGroupAdapter.setNewData(groupShopJoinList);
-                            } else if (qualityGroupShareEntity.getCode().equals("02")) {
+                            } else if (qualityGroupShareEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
                                 ll_group_buy.setEnabled(false);
                                 tv_sp_details_join_count.setText("拼团失败");
@@ -528,7 +535,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     Gson gson = new Gson();
                     GroupShopJoinEntity groupShopJoinEntity = gson.fromJson(result, GroupShopJoinEntity.class);
                     if (groupShopJoinEntity != null) {
-                        if (groupShopJoinEntity.getCode().equals("01")) {
+                        if (groupShopJoinEntity.getCode().equals(SUCCESS_CODE)) {
                             for (int i = 0; i < groupShopJoinEntity.getGroupShopJoinBeanList().size(); i++) {
                                 GroupShopJoinBean groupShopJoinBean = groupShopJoinEntity.getGroupShopJoinBeanList().get(i);
                                 groupShopJoinBean.setCurrentTime(groupShopJoinEntity.getCurrentTime());
@@ -567,7 +574,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 groupShopCommunalInfoEntity = gson.fromJson(result, GroupShopCommunalInfoEntity.class);
                 if (groupShopCommunalInfoEntity != null) {
-                    if (groupShopCommunalInfoEntity.getCode().equals("01")) {
+                    if (groupShopCommunalInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setCommunalInfo(groupShopCommunalInfoEntity.getGroupShopCommunalInfoBean());
                     }
                 }
@@ -999,7 +1006,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (joinType.equals(normalJoinGroup) && groupShopjoinBean != null) {
                             final GroupShopDetailsBean groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
                             groupShopDetailsBean.setGpStatus(2);

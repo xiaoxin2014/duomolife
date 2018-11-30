@@ -45,6 +45,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -215,7 +216,7 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(MineBabyInfoPickerActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
                         finish();
                     } else {

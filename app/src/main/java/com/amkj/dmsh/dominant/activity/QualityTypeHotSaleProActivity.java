@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.Url;
@@ -25,6 +24,7 @@ import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity.HotSaleShaftBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -32,6 +32,8 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -103,10 +105,10 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         stdDominantHotSale.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
-        smart_refresh_hot_sale.setOnRefreshListener((refreshLayout) -> {
+        smart_refresh_hot_sale.setOnRefreshListener(new OnRefreshListener() {            @Override            public void onRefresh(RefreshLayout refreshLayout) {
             loadData();
             EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
-        });
+        }});
         relCommunalBanner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -281,10 +283,10 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityTypeHotSaleProActivity.this, requestStatus.getMsg());
                         }
                     }

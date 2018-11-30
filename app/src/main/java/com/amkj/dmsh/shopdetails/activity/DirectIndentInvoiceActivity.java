@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean;
@@ -23,9 +23,11 @@ import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBea
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity.IndentInvoiceBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.google.gson.Gson;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,10 +100,6 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_img_white)
 
 
-
-
-
-
                 .create());
         directProductListAdapter = new DirectProductListAdapter(DirectIndentInvoiceActivity.this, goodsBeanList, INDENT_INVOICE);
         View headerView = LayoutInflater.from(DirectIndentInvoiceActivity.this).inflate(R.layout.layout_pro_invoice_detail_header, (ViewGroup) communal_recycler.getParent(), false);
@@ -113,9 +111,12 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         directProductListAdapter.addHeaderView(headerView);
         directProductListAdapter.addFooterView(footView);
         directProductListAdapter.setEnableLoadMore(false);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            directProductListAdapter.setEnableLoadMore(false);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                directProductListAdapter.setEnableLoadMore(false);
+            }
         });
         communal_recycler.setAdapter(directProductListAdapter);
         if (orderDetailBean != null) {

@@ -31,6 +31,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -137,7 +138,7 @@ public class ChangePasswordActivity extends BaseActivity implements TextWatcher 
                 Gson gson = new Gson();
                 MinePassword minePassword = gson.fromJson(result, MinePassword.class);
                 if (minePassword != null) {
-                    if (minePassword.getCode().equals("01")) {
+                    if (minePassword.getCode().equals(SUCCESS_CODE)) {
                         SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
                         SharedPreferences.Editor edit = loginStatus.edit();
                         edit.putBoolean("isLogin", true);

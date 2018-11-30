@@ -11,16 +11,20 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.adapter.SelectedAddressAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils.NetLoadListener;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,67 +89,69 @@ public class SelectedAddressActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_ten_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_ten_dp).create());
         communal_recycler.setAdapter(selectedAddressAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-        });
-        selectedAddressAdapter.setOnItemClickListener((adapter, view, position) -> {
-            AddressListBean addressAllBean = (AddressListBean) view.getTag();
-            if (addressAllBean != null && !isMineSkip) {
-                goBackAddress(addressAllBean.getId());
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
             }
         });
-        selectedAddressAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            final AddressListBean addressAllBean = (AddressListBean) view.getTag();
-            if (addressAllBean != null) {
-                switch (view.getId()) {
-                    case R.id.cb_address_selected_item:
-                        CheckBox cb_address_selected_item = (CheckBox) view;
-                        if (addressAllBean.getStatus() != 1) {
-                            for (int i = 0; i < addressAllBeanList.size(); i++) {
-                                if (i == position) {
-                                    addressAllBeanList.get(i).setStatus(1);
-                                } else {
-                                    addressAllBeanList.get(i).setStatus(0);
+        selectedAddressAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                AddressListBean addressAllBean = (AddressListBean) view.getTag();
+                if (addressAllBean != null && !isMineSkip) {
+                    goBackAddress(addressAllBean.getId());
+                }
+            }
+        });
+        selectedAddressAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                final AddressListBean addressAllBean = (AddressListBean) view.getTag();
+                if (addressAllBean != null) {
+                    switch (view.getId()) {
+                        case R.id.cb_address_selected_item:
+                            CheckBox cb_address_selected_item = (CheckBox) view;
+                            if (addressAllBean.getStatus() != 1) {
+                                for (int i = 0; i < addressAllBeanList.size(); i++) {
+                                    if (i == position) {
+                                        addressAllBeanList.get(i).setStatus(1);
+                                    } else {
+                                        addressAllBeanList.get(i).setStatus(0);
+                                    }
                                 }
-                            }
-                            selectedAddressAdapter.notifyDataSetChanged();
+                                selectedAddressAdapter.notifyDataSetChanged();
 //                    修改默认地址
-                            upDateDefaultAddress(addressAllBean);
-                        } else {
-                            cb_address_selected_item.setChecked(true);
-                        }
-                        break;
-                    case R.id.tv_address_item_edit:
-                        Intent addressData = new Intent(SelectedAddressActivity.this, AddressNewCreatedActivity.class);
-                        addressData.putExtra("addressId", addressAllBean.getId());
-                        addressData.putExtra("uid", addressAllBean.getUser_id());
-                        startActivityForResult(addressData, EDIT_ADDRESS_REQ);
-                        break;
-                    case R.id.tv_address_item_del:
-                        if (addressAllBean.getStatus() == 1) {
-                            showToast(SelectedAddressActivity.this, "不能删除默认地址,请先设置其它地址为默认地址");
-                        } else {
-                            // 创建
-                            dialog = new AlertDialog.Builder(SelectedAddressActivity.this)
-                                    .setTitle("删除收货地址")
-                                    .setMessage("确定删除这个收货地址吗?")
-                                    .setPositiveButton("确定", (dialog, which) -> delAddress(addressAllBean.getId()))
-                                    .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
-                                    .create();
-                            dialog.setCanceledOnTouchOutside(false);
-                            // 显示对话框
-                            dialog.show();
-                        }
-                        break;
+                                upDateDefaultAddress(addressAllBean);
+                            } else {
+                                cb_address_selected_item.setChecked(true);
+                            }
+                            break;
+                        case R.id.tv_address_item_edit:
+                            Intent addressData = new Intent(SelectedAddressActivity.this, AddressNewCreatedActivity.class);
+                            addressData.putExtra("addressId", addressAllBean.getId());
+                            addressData.putExtra("uid", addressAllBean.getUser_id());
+                            startActivityForResult(addressData, EDIT_ADDRESS_REQ);
+                            break;
+                        case R.id.tv_address_item_del:
+                            if (addressAllBean.getStatus() == 1) {
+                                showToast(SelectedAddressActivity.this, "不能删除默认地址,请先设置其它地址为默认地址");
+                            } else {
+                                // 创建
+                                dialog = new AlertDialog.Builder(SelectedAddressActivity.this)
+                                        .setTitle("删除收货地址")
+                                        .setMessage("确定删除这个收货地址吗?")
+                                        .setPositiveButton("确定", (dialog, which) -> delAddress(addressAllBean.getId()))
+                                        .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
+                                        .create();
+                                dialog.setCanceledOnTouchOutside(false);
+                                // 显示对话框
+                                dialog.show();
+                            }
+                            break;
+                    }
                 }
             }
         });
@@ -206,10 +212,10 @@ public class SelectedAddressActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         showToast(SelectedAddressActivity.this, "删除地址完成");
                         loadData();
-                    } else if (!status.getCode().equals("02")) {
+                    } else if (!status.getCode().equals(EMPTY_CODE)) {
                         showToast(SelectedAddressActivity.this, status.getMsg());
                     }
                 }
@@ -222,7 +228,7 @@ public class SelectedAddressActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.ADDRESS_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -270,14 +276,14 @@ public class SelectedAddressActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         showToast(SelectedAddressActivity.this, "修改默认地址完成");
                         if (!isMineSkip) {
                             goBackAddress(addressAllBean.getId());
                         } else {
                             loadData();
                         }
-                    } else if (!status.getCode().equals("02")) {
+                    } else if (!status.getCode().equals(EMPTY_CODE)) {
                         showToast(SelectedAddressActivity.this, status.getMsg());
                     }
                 }

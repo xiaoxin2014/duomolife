@@ -68,6 +68,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 
 ;
@@ -1463,7 +1464,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(baseAct, requestStatus.getIsNotice() == 1?"已取消通知" : "已设置通知");
                         if (isShowSingle) {
                             skuDialogView.bt_direct_attribute_buy.setText(requestStatus.getIsNotice() == 1 ? baseAct.getText(R.string.sku_notice) : baseAct.getText(R.string.sku_cancel_notice));

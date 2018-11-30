@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ArticleCommentEntity;
 import com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
@@ -17,12 +16,15 @@ import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.message.adapter.MessageCommunalAdapterNew;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -86,16 +88,15 @@ public class MessageLikedActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         communal_recycler.setAdapter(messageCommunalAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
 
+            }
         });
         messageCommunalAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override

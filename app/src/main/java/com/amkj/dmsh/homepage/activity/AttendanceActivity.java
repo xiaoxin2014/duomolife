@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -83,6 +83,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_PREFECTURE;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -332,13 +333,13 @@ public class AttendanceActivity extends BaseActivity {
                     integrationBeanList.clear();
                     IntegrationProEntity integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
                     if (integrationProEntity != null) {
-                        if (integrationProEntity.getCode().equals("01")) {
+                        if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
                             IntegrationBean integrationBean = new IntegrationBean();
                             integrationBean.setcItemType(TYPE_1);
                             integrationBeanList.add(integrationBean);
                             integrationBeanList.addAll(integrationProEntity.getIntegrationList().size()>9
                                     ?integrationProEntity.getIntegrationList().subList(0,9):integrationProEntity.getIntegrationList());
-                        } else if (!integrationProEntity.getCode().equals("02")) {
+                        } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(AttendanceActivity.this, integrationProEntity.getMsg());
                         }
                     }
@@ -607,7 +608,7 @@ public class AttendanceActivity extends BaseActivity {
                 adActivityBeans.clear();
                 CommunalADActivityEntity activityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
                 if (activityEntity != null) {
-                    if (activityEntity.getCode().equals("01")) {
+                    if (activityEntity.getCode().equals(SUCCESS_CODE)) {
                         for (int i = 0; i < activityEntity.getCommunalADActivityBeanList().size() / 2 * 2; i++) {
                             adActivityBeans.add(activityEntity.getCommunalADActivityBeanList().get(i));
                         }
@@ -655,7 +656,7 @@ public class AttendanceActivity extends BaseActivity {
                     Gson gson = new Gson();
                     UserLikedProductEntity userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (userLikedProductEntity != null) {
-                        if (userLikedProductEntity.getCode().equals("01")) {
+                        if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                             LikedProductBean likedProductBean = new LikedProductBean();
                             likedProductBean.setItemType(TYPE_2);
                             doubleIntegrationList.add(likedProductBean);
@@ -716,7 +717,7 @@ public class AttendanceActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             textView.setSelected(requestStatus.isSign());
                             if (requestStatus.isSign()) {
                                 showToast(AttendanceActivity.this, "设置提醒成功");

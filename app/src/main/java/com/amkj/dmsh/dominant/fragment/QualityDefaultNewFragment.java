@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -26,20 +25,22 @@ import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity;
 import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity.QualityHomeTypeBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.multitypejson.MultiTypeJsonParser;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.HttpException;
@@ -100,8 +101,11 @@ public class QualityDefaultNewFragment extends BaseFragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         communal_recycler.setLayoutManager(gridLayoutManager);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
 //        好物
         qualityGoodNewProAdapter = new QualityGoodNewProAdapter(getActivity(), goodsProList);
@@ -116,10 +120,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -271,7 +271,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
         Gson gson = new Gson();
         CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
         if (qualityAdLoop != null) {
-            if (qualityAdLoop.getCode().equals("01")) {
+            if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                 adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
                 qualityTypeView.rel_communal_banner.setVisibility(View.VISIBLE);
                 if (cbViewHolderCreator == null) {
@@ -447,13 +447,13 @@ public class QualityDefaultNewFragment extends BaseFragment {
                 Gson gson = new Gson();
                 QualityHomeTypeEntity homeTypeEntity = gson.fromJson(result, QualityHomeTypeEntity.class);
                 if (homeTypeEntity != null) {
-                    if (homeTypeEntity.getCode().equals("01")) {
+                    if (homeTypeEntity.getCode().equals(SUCCESS_CODE)) {
                         typeBeanArrayList.clear();
                         for (int i = 0; i < (homeTypeEntity.getQualityHomeTypeList().size() < 3 ? homeTypeEntity.getQualityHomeTypeList().size() : 3); i++) {
                             QualityHomeTypeBean qualityHomeTypeBean = homeTypeEntity.getQualityHomeTypeList().get(i);
                             typeBeanArrayList.add(qualityHomeTypeBean);
                         }
-                    } else if (!homeTypeEntity.getCode().equals("02")) {
+                    } else if (!homeTypeEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), homeTypeEntity.getMsg());
                     }
                     qualityTypeAreaAdapter.setNewData(typeBeanArrayList);
@@ -487,10 +487,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
             rv_ql_center_pro.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                     .create());

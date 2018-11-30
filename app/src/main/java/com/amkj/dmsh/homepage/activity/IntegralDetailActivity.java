@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.IntegralDetailAdapter;
 import com.amkj.dmsh.message.bean.IntegrationDetailsEntity;
@@ -90,8 +90,11 @@ public class IntegralDetailActivity extends BaseActivity {
         ButterKnife.bind(integralDetailChart, view);
         integralDetailChart.initViews();
         integralDetailAdapter.addHeaderView(view);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         integralDetailAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -103,10 +106,6 @@ public class IntegralDetailActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                 .create());
@@ -213,7 +212,7 @@ public class IntegralDetailActivity extends BaseActivity {
         PieChart pie_detail_section;
 
         public void initViews() {
-            pie_detail_section.setTransparentCircleRadius(AutoSizeUtils.mm2px(mAppContext,150));
+            pie_detail_section.setTransparentCircleRadius(AutoSizeUtils.mm2px(mAppContext, 150));
 //            实心圆 去除半透明
             pie_detail_section.setHoleRadius(0f);
             pie_detail_section.setTransparentCircleRadius(0f);

@@ -63,7 +63,7 @@ public class DirectDefaultCouponEntity {
          * product_coupon_id : 3
          * mobile : 13713732676
          */
-//{"result":{"status":0,"start_fee":0,"type":0,"product_ids":"0","id":15,"amount":0.1,"title":"测试","end_time":"2016-11-23 00:00:00","create_time":"2016-11-22 14:45:36","start_time":"2016-11-22 11:51:28","merchant_id":"25af1919042c4808b37d259e06dda71a","product_coupon_id":6,"mobile":"13751077044"},"code":"01","msg":"请求成功"}
+//{"result":{"status":0,"start_fee":0,"type":0,"product_ids":"0","id":15,"amount":0.1,"title":"测试","end_time":"2016-11-23 00:00:00","create_time":"2016-11-22 14:45:36","start_time":"2016-11-22 11:51:28","merchant_id":"25af1919042c4808b37d259e06dda71a","product_coupon_id":6,"mobile":"13751077044"},"code":SUCCESS_CODE,"msg":"请求成功"}
         private int status;
         private int start_fee;
         private String type;

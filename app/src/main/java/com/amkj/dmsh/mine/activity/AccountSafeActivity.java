@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
@@ -39,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
@@ -123,7 +124,7 @@ public class AccountSafeActivity extends BaseActivity {
                         Gson gson = new Gson();
                         CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
                         if (minePageData != null) {
-                            if (minePageData.getCode().equals("01")) {
+                            if (minePageData.getCode().equals(SUCCESS_CODE)) {
                                 minaData = minePageData.getCommunalUserInfoBean();
                                 setMobileData(minaData);
                             } else {
@@ -166,9 +167,9 @@ public class AccountSafeActivity extends BaseActivity {
                         Gson gson = new Gson();
                         otherAccountBindEntity = gson.fromJson(result, OtherAccountBindEntity.class);
                         if (otherAccountBindEntity != null) {
-                            if (otherAccountBindEntity.getCode().equals("01")) {
+                            if (otherAccountBindEntity.getCode().equals(SUCCESS_CODE)) {
                                 setAccountData(otherAccountBindEntity.getOtherAccountBindInfo());
-                            } else if (otherAccountBindEntity.getCode().equals("02")) {
+                            } else if (otherAccountBindEntity.getCode().equals(EMPTY_CODE)) {
                                 setAccountData(null);
                             } else {
                                 showToast(AccountSafeActivity.this, otherAccountBindEntity.getMsg());
@@ -458,7 +459,7 @@ public class AccountSafeActivity extends BaseActivity {
                 Gson gson = new Gson();
                 AuthorizeSuccessOtherData accountInfo = gson.fromJson(result, AuthorizeSuccessOtherData.class);
                 if (accountInfo != null) {
-                    if (accountInfo.getCode().equals("01")) {
+                    if (accountInfo.getCode().equals(SUCCESS_CODE)) {
 //                            第三方账号登录统计
                         showToast(AccountSafeActivity.this, accountInfo.getMsg());
                         MobclickAgent.onProfileSignIn(accountInfo.getOtherAccountBean().getType(), accountInfo.getOtherAccountBean().getUid() + "");

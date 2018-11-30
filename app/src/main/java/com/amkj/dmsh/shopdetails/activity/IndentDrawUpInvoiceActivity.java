@@ -36,6 +36,7 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -146,7 +147,7 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
                 descriptionBeanList.clear();
                 Gson gson = new Gson();
                 IndentInvoicePromptEntity indentInvoicePromptEntity = gson.fromJson(result, IndentInvoicePromptEntity.class);
-                if (indentInvoicePromptEntity.getCode().equals("01")) {
+                if (indentInvoicePromptEntity.getCode().equals(SUCCESS_CODE)) {
                     if (indentInvoicePromptEntity != null) {
                         IndentInvoicePromptBean indentInvoicePromptBean = indentInvoicePromptEntity.getIndentInvoicePromptBean();
                         if (indentInvoicePromptBean != null) {
@@ -230,7 +231,7 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             showToast(IndentDrawUpInvoiceActivity.this, "发票开具成功");
                             finish();
                         } else {

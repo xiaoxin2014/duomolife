@@ -31,7 +31,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
@@ -52,6 +51,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -60,10 +60,12 @@ import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -201,10 +203,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         adapterTopicComment.setOnItemChildClickListener((adapter, view, position) -> {
             DmlSearchCommentBean dmlSearchCommentBean = (DmlSearchCommentBean) view.getTag(R.id.iv_tag);
@@ -271,10 +269,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         welfareSlideProAdapter = new WelfareSlideProAdapter(DoMoLifeWelfareDetailsActivity.this, welfareProductList);
         welfareSlideProAdapter.setEnableLoadMore(false);
@@ -291,8 +285,11 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         communalWelfareDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -443,21 +440,21 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
 
                     @Override
                     public void netClose() {
                         smart_communal_refresh.finishRefresh();
                         showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         smart_communal_refresh.finishRefresh();
                         showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityWefBean, qualityWefEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
                 });
     }
@@ -498,7 +495,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 CommunalOnlyDescription communalOnlyDescription = gson.fromJson(result, CommunalOnlyDescription.class);
                 if (communalOnlyDescription != null) {
-                    if (communalOnlyDescription.getCode().equals("01")
+                    if (communalOnlyDescription.getCode().equals(SUCCESS_CODE)
                             && communalOnlyDescription.getComOnlyDesBean() != null) {
                         ComOnlyDesBean comOnlyDesBean = communalOnlyDescription.getComOnlyDesBean();
                         if (comOnlyDesBean.getDescriptionList() != null && comOnlyDesBean.getDescriptionList().size() > 0) {
@@ -519,7 +516,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         ll_wel_pro_list.setVisibility(View.VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = AutoSizeUtils.mm2px(mAppContext,50);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
         drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
         try {
             drawable.setColor(0xffffffff);
@@ -546,7 +543,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -578,7 +575,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -718,10 +715,10 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -963,7 +960,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
-        if(qualityWefBean!=null){
+        if (qualityWefBean != null) {
             if (userId > 0) {
                 setPublishComment();
             } else {

@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -25,6 +24,7 @@ import com.amkj.dmsh.dominant.adapter.ArticleCommentDetailAdapter;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean.ReplyCommBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
@@ -34,6 +34,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -124,11 +125,6 @@ public class CommentDetailsActivity extends BaseActivity {
         commentHeaderView.initView();
         articleCommentAdapter.addHeaderView(commentView);
         communal_recycler.setAdapter(articleCommentAdapter);
-
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-            getCommentData();
-        });
         articleCommentAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
@@ -192,8 +188,11 @@ public class CommentDetailsActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override

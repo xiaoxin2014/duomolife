@@ -8,17 +8,19 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageNotifyAdapter;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -89,7 +91,7 @@ public class MessageSysMesActivity extends BaseActivity {
                     switch (getStrings(messageNotifyBean.getObj())) {
                         case "csnotice":
                             QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-                            qyServiceUtils.openQyServiceChat(MessageSysMesActivity.this, "系统消息："+getStrings(messageNotifyBean.getM_content()),"");
+                            qyServiceUtils.openQyServiceChat(MessageSysMesActivity.this, "系统消息：" + getStrings(messageNotifyBean.getM_content()), "");
                             break;
                         default:
                             setSkipPath(MessageSysMesActivity.this, messageNotifyBean.getAndroidLink(), false);
@@ -110,8 +112,11 @@ public class MessageSysMesActivity extends BaseActivity {
             }
         }, communal_recycler);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -165,6 +170,7 @@ public class MessageSysMesActivity extends BaseActivity {
         page = 1;
         getData();
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -174,6 +180,7 @@ public class MessageSysMesActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void getData() {
         String url = Url.BASE_URL + Url.H_MES_NOTIFY;
@@ -201,7 +208,7 @@ public class MessageSysMesActivity extends BaseActivity {
                             }
                         }
                         messageNotifyAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,messageNotifyList,messageOfficialEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
                     }
 
                     @Override
@@ -209,7 +216,7 @@ public class MessageSysMesActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         messageNotifyAdapter.loadMoreComplete();
                         showToast(MessageSysMesActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,messageNotifyList,messageOfficialEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
                     }
 
                     @Override
@@ -217,7 +224,7 @@ public class MessageSysMesActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         messageNotifyAdapter.loadMoreComplete();
                         showToast(MessageSysMesActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,messageNotifyList,messageOfficialEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
                     }
                 });
     }

@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -347,7 +347,7 @@ public class MineLoginActivity extends BaseActivity {
                 AuthorizeSuccessOtherData accountInfo = gson.fromJson(result, AuthorizeSuccessOtherData.class);
                 if (accountInfo != null) {
                     OtherAccountBean otherAccountBean = accountInfo.getOtherAccountBean();
-                    if (accountInfo.getCode().equals("01") && otherAccountBean != null) {
+                    if (accountInfo.getCode().equals(SUCCESS_CODE) && otherAccountBean != null) {
                         if (otherAccountBean.isMobile_verification()) {
                             showToast(MineLoginActivity.this, R.string.login_success);
 //                            绑定JPush
@@ -435,7 +435,7 @@ public class MineLoginActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         RequestStatus.Result resultData = requestStatus.getResult();
                         if (resultData != null) {
                             if (resultData.getResultCode().equals(SUCCESS_CODE)) {
@@ -510,10 +510,10 @@ public class MineLoginActivity extends BaseActivity {
                 Gson gson = new Gson();
                 LoginPhoneCodeEntity loginPhoneCodeEntity = gson.fromJson(result, LoginPhoneCodeEntity.class);
                 if (loginPhoneCodeEntity != null) {
-                    if (loginPhoneCodeEntity.getCode().equals("01")) {
+                    if (loginPhoneCodeEntity.getCode().equals(SUCCESS_CODE)) {
                         if (loginPhoneCodeEntity.getLoginPhoneCodeBean() != null) {
                             LoginPhoneCodeBean loginPhoneCodeBean = loginPhoneCodeEntity.getLoginPhoneCodeBean();
-                            if (loginPhoneCodeBean.getResultCode().equals("01")) {
+                            if (loginPhoneCodeBean.getResultCode().equals(SUCCESS_CODE)) {
                                 CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
                                 communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
                                 loginSuccessSetData(communalUserInfoEntity);

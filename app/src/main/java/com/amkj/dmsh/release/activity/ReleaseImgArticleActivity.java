@@ -76,6 +76,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RELEVANCE_PRO_REQ;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.release.tutu.CameraComponentSample.DEFAULT_PATH;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
@@ -555,7 +556,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                 Gson gson = new Gson();
                 InvitationImgDetailEntity invitationDetailEntity = gson.fromJson(result, InvitationImgDetailEntity.class);
                 if (invitationDetailEntity != null) {
-                    if (invitationDetailEntity.getCode().equals("01")) {
+                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         showToast(ReleaseImgArticleActivity.this, "发布完成");
                         tv_find_release_topic.setText("已发送");
                         tv_find_release_topic.setEnabled(true);
@@ -603,7 +604,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                 RelevanceProEntity relevanceProEntity = RelevanceProEntity.objectFromData(result);
                 if (relevanceProEntity != null) {
                     String backCode = relevanceProEntity.getCode();
-                    if (backCode.equals("01")) {
+                    if (backCode.equals(SUCCESS_CODE)) {
                         if (relevanceProEntity.getRelevanceProList() != null
                                 && relevanceProEntity.getRelevanceProList().size() > 0) {
                             relevanceProList.addAll(relevanceProEntity.getRelevanceProList());
@@ -647,7 +648,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                 IndentOrderProBean indentOrderProBean = IndentOrderProBean.objectFromData(result);
                 if (indentOrderProBean != null) {
                     String backCode = indentOrderProBean.getCode();
-                    if (backCode.equals("01")) {
+                    if (backCode.equals(SUCCESS_CODE)) {
                         if (indentOrderProBean.getProductList() != null && indentOrderProBean.getProductList().size() > 0) {
                             RelevanceProBean relevanceProBean;
                             for (ProductsBean productsBean : indentOrderProBean.getProductList()) {

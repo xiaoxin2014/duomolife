@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
@@ -21,6 +21,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,10 +84,13 @@ public class DirectProductEvaluationActivity extends BaseActivity {
                 .create());
         directEvaluationAdapter = new DirectEvaluationAdapter(DirectProductEvaluationActivity.this, goodsComments);
         communal_recycler.setAdapter(directEvaluationAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-            getEvaluationData();
-            directEvaluationAdapter.loadMoreEnd(true);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                page = 1;
+                getEvaluationData();
+                directEvaluationAdapter.loadMoreEnd(true);
+            }
         });
         directEvaluationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override

@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CategoryTypeEntity;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
@@ -37,6 +36,7 @@ import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
@@ -50,6 +50,8 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.xutils.ex.HttpException;
 
@@ -72,12 +74,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 
 ;
@@ -142,8 +146,11 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        smart_refresh_home.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_refresh_home.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
                 , LinearLayoutManager.HORIZONTAL, false);
@@ -162,10 +169,6 @@ public class HomePageFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_img_white)
 
 
-
-
-
-
                 .create());
         homeImgActivityAdapter = new HomeImgActivityAdapter(getActivity(), activityList);
         rv_home_activity.setAdapter(homeImgActivityAdapter);
@@ -177,10 +180,10 @@ public class HomePageFragment extends BaseFragment {
         });
 
         badge = getTopBadge(getActivity(), fra_home_message_total);
-        std_home_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,28) );
-        std_home_art_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext,40));
-        std_home_art_type.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext,1));
-        std_home_art_type.setIndicatorCornerRadius(AutoSizeUtils.mm2px(mAppContext,1));
+        std_home_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
+        std_home_art_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 40));
+        std_home_art_type.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 1));
+        std_home_art_type.setIndicatorCornerRadius(AutoSizeUtils.mm2px(mAppContext, 1));
         setStatusColor();
         rel_home_page.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -188,7 +191,7 @@ public class HomePageFragment extends BaseFragment {
                 rel_home_page.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) rel_home_page.getLayoutParams();
                 int measuredHeight = tb_tool_home.getMeasuredHeight();
-                layoutParams.setMargins(0,measuredHeight,0,0);
+                layoutParams.setMargins(0, measuredHeight, 0, 0);
                 rel_home_page.setLayoutParams(layoutParams);
             }
         });
@@ -228,7 +231,7 @@ public class HomePageFragment extends BaseFragment {
                     Gson gson = new Gson();
                     HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
                     if (floatAdEntity != null) {
-                        if (floatAdEntity.getCode().equals("01")) {
+                        if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
                             if (floatAdEntity.getCommunalADActivityBean() != null) {
                                 iv_float_ad_icon.setVisibility(View.VISIBLE);
                                 GlideImageLoaderUtil.loadFitCenter(getActivity(), iv_float_ad_icon,
@@ -258,7 +261,7 @@ public class HomePageFragment extends BaseFragment {
                 public void onSuccess(String result) {
                     MarqueeTextEntity marqueeTextEntity = MarqueeTextEntity.objectFromData(result);
                     if (marqueeTextEntity != null) {
-                        if (marqueeTextEntity.getCode().equals("01")) {
+                        if (marqueeTextEntity.getCode().equals(SUCCESS_CODE)) {
                             if (marqueeTextEntity.getMarqueeTextList() != null && marqueeTextEntity.getMarqueeTextList().size() > 0) {
                                 ll_home_marquee.setVisibility(View.VISIBLE);
                                 tv_marquee_text.setText(getStrings(marqueeTextEntity.getMarqueeTextList().get(0).getContent()));
@@ -330,19 +333,19 @@ public class HomePageFragment extends BaseFragment {
             String url = Url.BASE_URL + Url.H_MES_STATISTICS;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext,url
+            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                     , params, new NetLoadUtils.NetLoadListener() {
                         @Override
                         public void onSuccess(String result) {
                             Gson gson = new Gson();
                             MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
                             if (messageTotalEntity != null) {
-                                if (messageTotalEntity.getCode().equals("01")) {
+                                if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
                                     MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
                                     int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
                                             + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
                                             + messageTotalBean.getCommOffifialTotal();
-                                    if(badge!=null){
+                                    if (badge != null) {
                                         badge.setBadgeNumber(totalCount);
                                     }
                                 }
@@ -359,8 +362,8 @@ public class HomePageFragment extends BaseFragment {
 
                         }
                     });
-        }else{
-            if(badge!=null){
+        } else {
+            if (badge != null) {
                 badge.setBadgeNumber(0);
             }
         }
@@ -423,9 +426,9 @@ public class HomePageFragment extends BaseFragment {
         hotActivityList.clear();
         CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
         if (communalADActivityEntity != null) {
-            if (communalADActivityEntity.getCode().equals("01")) {
+            if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                 hotActivityList.addAll(communalADActivityEntity.getCommunalADActivityBeanList());
-            } else if (!communalADActivityEntity.getCode().equals("02")) {
+            } else if (!communalADActivityEntity.getCode().equals(EMPTY_CODE)) {
                 showToast(getActivity(), communalADActivityEntity.getMsg());
             }
             hotActivityAdapter.notifyDataSetChanged();
@@ -517,7 +520,7 @@ public class HomePageFragment extends BaseFragment {
         adBeanList.clear();
         CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
         if (adActivityEntity != null) {
-            if (adActivityEntity.getCode().equals("01")) {
+            if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                 adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
                 rel_communal_banner.setVisibility(View.VISIBLE);
                 if (cbViewHolderCreator == null) {
@@ -533,10 +536,10 @@ public class HomePageFragment extends BaseFragment {
                         }
                     };
                 }
-                ad_communal_banner.setPages(getActivity(),cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+                ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
                         .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-            } else if (adActivityEntity.getCode().equals("02")) {
+            } else if (adActivityEntity.getCode().equals(EMPTY_CODE)) {
                 showToast(getActivity(), adActivityEntity.getMsg());
                 rel_communal_banner.setVisibility(View.GONE);
             }
@@ -552,7 +555,7 @@ public class HomePageFragment extends BaseFragment {
                 activityList.clear();
                 CommunalADActivityEntity activityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
                 if (activityEntity != null) {
-                    if (activityEntity.getCode().equals("01")) {
+                    if (activityEntity.getCode().equals(SUCCESS_CODE)) {
                         for (int i = 0; i < activityEntity.getCommunalADActivityBeanList().size() / 2 * 2; i++) {
                             activityList.add(activityEntity.getCommunalADActivityBeanList().get(i));
                         }
@@ -632,9 +635,9 @@ public class HomePageFragment extends BaseFragment {
         categoryList.clear();
         CategoryTypeEntity categoryTypeEntity = gson.fromJson(result, CategoryTypeEntity.class);
         if (categoryTypeEntity != null) {
-            if (categoryTypeEntity.getCode().equals("01")) {
+            if (categoryTypeEntity.getCode().equals(SUCCESS_CODE)) {
                 categoryList.addAll(categoryTypeEntity.getCategoryTypeList());
-            } else if (!categoryTypeEntity.getCode().equals("02")) {
+            } else if (!categoryTypeEntity.getCode().equals(EMPTY_CODE)) {
                 showToast(getActivity(), categoryTypeEntity.getMsg());
             }
             if (categoryList.size() > 0) {

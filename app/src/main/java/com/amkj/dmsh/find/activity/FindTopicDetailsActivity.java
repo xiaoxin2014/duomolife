@@ -29,6 +29,7 @@ import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -109,11 +110,14 @@ public class FindTopicDetailsActivity extends BaseActivity {
         }
         findPagerAdapter = new FindPagerAdapter(getSupportFragmentManager(), TOPIC_TYPE, topicId);
         find_topic_container.setAdapter(findPagerAdapter);
-        std_find_topic_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext,32));
+        std_find_topic_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext, 32));
         std_find_topic_art_type.setViewPager(find_topic_container);
-        smart_refresh_find.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            EventBus.getDefault().post(new EventMessage("refreshFindTopicData", 1));
+        smart_refresh_find.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                EventBus.getDefault().post(new EventMessage("refreshFindTopicData", 1));
+            }
         });
 
         tv_find_release_topic.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -131,8 +135,8 @@ public class FindTopicDetailsActivity extends BaseActivity {
         ab_find_topic_layout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state, int scrollY) {
-                if(state != COLLAPSED){
-                    EventBus.getDefault().post(new EventMessage("topicStopScroll","topicStopScroll"));
+                if (state != COLLAPSED) {
+                    EventBus.getDefault().post(new EventMessage("topicStopScroll", "topicStopScroll"));
                 }
             }
         });
@@ -194,7 +198,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_find_topic_collect.setSelected(!tv_find_topic_collect.isSelected());
                         tv_find_topic_collect.setText(tv_find_topic_collect.isSelected() ? "已收藏" : "值得收藏");
                         if (tv_find_topic_collect.isSelected()) {

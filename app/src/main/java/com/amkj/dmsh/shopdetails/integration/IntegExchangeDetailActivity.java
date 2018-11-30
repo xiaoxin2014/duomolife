@@ -19,10 +19,10 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
@@ -51,6 +51,8 @@ import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -154,9 +156,12 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         productIndentAdapter.addHeaderView(headerView);
         productIndentAdapter.addFooterView(footView);
         communal_recycler.setAdapter(productIndentAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            productIndentAdapter.setEnableLoadMore(false);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                productIndentAdapter.setEnableLoadMore(false);
+            }
         });
         productIndentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -210,21 +215,21 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 } else {
                     showToast(IntegExchangeDetailActivity.this, msg);
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,integralOrderDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,integralOrderDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
         });
     }
@@ -342,9 +347,9 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 tv_indent_border_second_blue.setTag(R.id.tag_second, orderListBean);
                 tv_indent_border_first_gray.setOnClickListener(this);
             } else if (30 <= statusCode && statusCode <= 40) {
-                if(statusCode == 40){
+                if (statusCode == 40) {
                     tv_indent_border_first_gray.setVisibility(View.GONE);
-                }else{
+                } else {
                     tv_indent_border_first_gray.setVisibility(View.VISIBLE);
                     tv_indent_border_first_gray.setText("评价");
                     tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_APPRAISE);
@@ -400,7 +405,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(IntegExchangeDetailActivity.this, "取消订单成功");
                         finish();
                     } else {
@@ -429,7 +434,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(IntegExchangeDetailActivity.this, requestStatus.getMsg());
                         finish();
                     } else {
@@ -472,7 +477,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 Gson gson = new Gson();
                 ApplyRefundCheckEntity refundCheckEntity = gson.fromJson(result, ApplyRefundCheckEntity.class);
                 if (refundCheckEntity != null) {
-                    if (refundCheckEntity.getCode().equals("01")) {
+                    if (refundCheckEntity.getCode().equals(SUCCESS_CODE)) {
                         ApplyRefundCheckBean applyRefundCheckBean = refundCheckEntity.getApplyRefundCheckBean();
                         final DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
                         refundBean.setType(1);
@@ -736,9 +741,9 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         }
 
         @OnClick(R.id.tv_copy_text)
-        void copyNo(View view){
+        void copyNo(View view) {
             String content = (String) tv_integral_indent_no.getTag();
-            ClipboardManager cmb = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Label", getStrings(content));
             cmb.setPrimaryClip(mClipData);
             showToast(IntegExchangeDetailActivity.this, "已复制");
@@ -788,7 +793,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 if (payWay.equals(PAY_WX_PAY)) {
                     QualityCreateWeChatPayIndentBean qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals("01")) {
+                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult().getPayKey());
                         } else {
@@ -799,7 +804,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 } else if (payWay.equals(PAY_ALI_PAY)) {
                     QualityCreateAliPayIndentBean qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals("01")) {
+                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult().getPayKey());
                         } else {
@@ -911,13 +916,13 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(cancelOrderDialogHelper!=null&&cancelOrderDialogHelper.isShowing()){
+        if (cancelOrderDialogHelper != null && cancelOrderDialogHelper.isShowing()) {
             cancelOrderDialogHelper.dismiss();
         }
-        if(confirmOrderDialogHelper!=null&&confirmOrderDialogHelper.isShowing()){
+        if (confirmOrderDialogHelper != null && confirmOrderDialogHelper.isShowing()) {
             confirmOrderDialogHelper.dismiss();
         }
-        if(refundOrderDialogHelper!=null&&refundOrderDialogHelper.isShowing()){
+        if (refundOrderDialogHelper != null && refundOrderDialogHelper.isShowing()) {
             refundOrderDialogHelper.dismiss();
         }
     }

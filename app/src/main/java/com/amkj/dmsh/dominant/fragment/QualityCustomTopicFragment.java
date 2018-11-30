@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -23,6 +22,7 @@ import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -36,6 +36,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -96,8 +98,11 @@ public class QualityCustomTopicFragment extends BaseFragment {
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -139,10 +144,6 @@ public class QualityCustomTopicFragment extends BaseFragment {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -237,7 +238,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                     Gson gson = new Gson();
                     CustomCoverDesEntity customCoverDesEntity = gson.fromJson(result, CustomCoverDesEntity.class);
                     if (customCoverDesEntity != null) {
-                        if (customCoverDesEntity.getCode().equals("01")
+                        if (customCoverDesEntity.getCode().equals(SUCCESS_CODE)
                                 && customCoverDesEntity.getCoverDesList() != null
                                 && customCoverDesEntity.getCoverDesList().size() > 0) {
                             CustomCoverDesBean customCoverDesBean = customCoverDesEntity.getCoverDesList().get(0);

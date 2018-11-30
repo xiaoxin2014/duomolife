@@ -30,6 +30,7 @@ import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,6 +46,8 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -98,13 +101,16 @@ public class UserPagerActivity extends BaseActivity {
         tv_user_report.setVisibility(View.GONE);
         Intent intent = getIntent();
         userId = intent.getStringExtra("userId");
-        communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,30));
+        communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
         UserPageAdapter userPageAdapter = new UserPageAdapter(getSupportFragmentManager(), userId);
         vp_user_container.setAdapter(userPageAdapter);
         communal_stl_tab.setViewPager(vp_user_container);
-        smart_refresh_mine.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            EventBus.getDefault().post(new EventMessage("refreshMineData", 1));
+        smart_refresh_mine.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                EventBus.getDefault().post(new EventMessage("refreshMineData", 1));
+            }
         });
         user_appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
@@ -144,10 +150,10 @@ public class UserPagerActivity extends BaseActivity {
                 Gson gson = new Gson();
                 UserPagerInfoEntity pagerInfoBean = gson.fromJson(result, UserPagerInfoEntity.class);
                 if (pagerInfoBean != null) {
-                    if (pagerInfoBean.getCode().equals("01")) {
+                    if (pagerInfoBean.getCode().equals(SUCCESS_CODE)) {
                         userInfo = pagerInfoBean.getUserInfo();
                         setData(userInfo);
-                    } else if (pagerInfoBean.getCode().equals("02")) {
+                    } else if (pagerInfoBean.getCode().equals(EMPTY_CODE)) {
                         showToast(UserPagerActivity.this, R.string.userDataNull);
                         finish();
                     } else {
@@ -240,7 +246,7 @@ public class UserPagerActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (!tv_user_att_status.isSelected()) {
                             tv_user_att_status.setSelected(true);
                             tv_user_att_status.setText("已关注");

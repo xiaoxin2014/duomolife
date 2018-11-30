@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.CommunalDetailBean;
@@ -32,6 +31,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
@@ -63,6 +63,8 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -88,6 +90,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -198,15 +201,18 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communalDetailAdapter = new CommunalDetailAdapter(IntegralScrollDetailsActivity.this, itemBodyList);
         communal_recycler_wrap.setAdapter(communalDetailAdapter);
-        smart_integral_details.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_integral_details.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         for (int i = 0; i < detailTabData.length; i++) {
             tabData.add(new TabEntity(detailTabData[i], 0, 0));
         }
-        ctbQtProDetails.setTextSize(AutoSizeUtils.mm2px(mAppContext,30));
-        ctbQtProDetails.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext,28 * 2));
-        ctbQtProDetails.setTabPadding(AutoSizeUtils.mm2px(mAppContext,20));
+        ctbQtProDetails.setTextSize(AutoSizeUtils.mm2px(mAppContext, 30));
+        ctbQtProDetails.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext, 28 * 2));
+        ctbQtProDetails.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 20));
         ctbQtProDetails.setTabData(tabData);
         ctbQtProDetails.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -280,7 +286,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 productInfoEntity = gson.fromJson(result, IntegralProductInfoEntity.class);
                 if (productInfoEntity != null) {
-                    if (productInfoEntity.getCode().equals("01")) {
+                    if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         productInfoBean = productInfoEntity.getIntegralProductInfoBean();
                         setIntegralProductData(productInfoBean);
                     } else if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
@@ -289,21 +295,21 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                         showToast(IntegralScrollDetailsActivity.this, productInfoEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,productInfoEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, productInfoEntity);
             }
 
             @Override
             public void netClose() {
                 smart_integral_details.finishRefresh();
                 showToast(IntegralScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,productInfoEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, productInfoEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_integral_details.finishRefresh();
                 showToast(IntegralScrollDetailsActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,productInfoEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, productInfoEntity);
             }
         });
     }
@@ -325,7 +331,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
                     if (goodsCommentEntity != null) {
-                        if (goodsCommentEntity.getCode().equals("01") && goodsCommentEntity.getGoodsComments() != null
+                        if (goodsCommentEntity.getCode().equals(SUCCESS_CODE) && goodsCommentEntity.getGoodsComments() != null
                                 && goodsCommentEntity.getGoodsComments().size() > 0) {
                             ll_product_comment.setVisibility(View.VISIBLE);
                             List<GoodsCommentBean> goodsComments = goodsCommentEntity.getGoodsComments();
@@ -465,7 +471,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         //        @用户昵称
         redNum.setTextColor(getResources().getColor(R.color.text_normal_red));
         redNum.setUnderlined(false);
-        redNum.setTextSize(AutoSizeUtils.mm2px(mAppContext,34));
+        redNum.setTextSize(AutoSizeUtils.mm2px(mAppContext, 34));
         redNum.setHighlightAlpha(0f);
         LinkBuilder.on(tv_integration_details_price)
                 .addLink(redNum)
@@ -496,7 +502,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 flex_communal_tag.setVisibility(View.VISIBLE);
                 flex_communal_tag.removeAllViews();
                 for (String tagName : tagSelected) {
-                    flex_communal_tag.addView(getLabelInstance().createProductTag(IntegralScrollDetailsActivity.this,tagMap.get(Integer.parseInt(tagName))));
+                    flex_communal_tag.addView(getLabelInstance().createProductTag(IntegralScrollDetailsActivity.this, tagMap.get(Integer.parseInt(tagName))));
                 }
             } else {
                 flex_communal_tag.setVisibility(View.GONE);
@@ -601,7 +607,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                             communalDetailObjectBean.setContent("服务承诺");
                             itemBodyList.add(communalDetailObjectBean);
                             List<CommunalDetailObjectBean> detailsDataList = getDetailsDataList(communalRuleEntity.getCommunalRuleList());
-                            if(detailsDataList!=null&&detailsDataList.size()>0){
+                            if (detailsDataList != null && detailsDataList.size() > 0) {
                                 itemBodyList.addAll(detailsDataList);
                             }
                             communalDetailAdapter.notifyDataSetChanged();
@@ -618,8 +624,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
 
     private void getIntegration() {
         String url = Url.BASE_URL + Url.MINE_PAGE;
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                 , params, new NetLoadUtils.NetLoadListener() {
                     @Override
@@ -627,10 +633,10 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                         Gson gson = new Gson();
                         UserPagerInfoEntity pagerInfoBean = gson.fromJson(result, UserPagerInfoEntity.class);
                         if (pagerInfoBean != null) {
-                            if (pagerInfoBean.getCode().equals("01")) {
+                            if (pagerInfoBean.getCode().equals(SUCCESS_CODE)) {
                                 personalScore = pagerInfoBean.getUserInfo().getScore();
                                 getExchangeScore(personalScore);
-                            } else if (!pagerInfoBean.getCode().equals("02")) {
+                            } else if (!pagerInfoBean.getCode().equals(EMPTY_CODE)) {
                                 showToast(IntegralScrollDetailsActivity.this, pagerInfoBean.getMsg());
                             }
                         }
@@ -771,6 +777,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         skipServiceDataInfo(productInfoBean);
 
     }
+
     //    七鱼客服
     private void skipServiceDataInfo(IntegralProductInfoBean integralProductInfoBean) {
         QyProductIndentInfo qyProductIndentInfo = null;
@@ -778,7 +785,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         String sourceUrl = "";
         if (integralProductInfoBean != null) {
             qyProductIndentInfo = new QyProductIndentInfo();
-            sourceUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId();;
+            sourceUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId();
+            ;
             sourceTitle = "积分商品详情：" + productInfoBean.getName();
             qyProductIndentInfo.setUrl(sourceUrl);
             qyProductIndentInfo.setTitle(getStrings(integralProductInfoBean.getName()));
@@ -807,9 +815,9 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_eva_count)
-    void evaFavorCount(View view){
+    void evaFavorCount(View view) {
         GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
-        if (goodsCommentBean != null&&!goodsCommentBean.isFavor()) {
+        if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
             if (userId > 0) {
                 setProductEvaLike(view);
             } else {
@@ -817,6 +825,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
             }
         }
     }
+
     private void setProductEvaLike(View view) {
         GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
         TextView tv_eva_like = (TextView) view;

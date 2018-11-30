@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -21,6 +20,7 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -28,6 +28,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -57,7 +59,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/8/24
  * class description:我的帖子列表
  */
-public class MineInvitationListActivity extends BaseActivity{
+public class MineInvitationListActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -90,8 +92,11 @@ public class MineInvitationListActivity extends BaseActivity{
         header_shared.setVisibility(View.INVISIBLE);
         tv_header_titleAll.setText("我的帖子");
         communal_recycler.setLayoutManager(new LinearLayoutManager(MineInvitationListActivity.this));
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         adapterInvitationAdapter = new PullUserInvitationAdapter(MineInvitationListActivity.this, invitationDetailList, type);
         communal_recycler.setAdapter(adapterInvitationAdapter);
@@ -226,7 +231,7 @@ public class MineInvitationListActivity extends BaseActivity{
     }
 
     private void getMyInvitationData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         String url = Url.BASE_URL + Url.MINE_INVITATION_LIST;
@@ -253,21 +258,21 @@ public class MineInvitationListActivity extends BaseActivity{
                     }
                     adapterInvitationAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 adapterInvitationAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 adapterInvitationAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
             }
         });
     }
@@ -289,7 +294,7 @@ public class MineInvitationListActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());
                         tv_collect.setText(ConstantMethod.getNumCount(tv_collect.isSelected(), invitationDetailBean.isCollect(), invitationDetailBean.getCollect(), "收藏"));
                     }
@@ -334,7 +339,7 @@ public class MineInvitationListActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(MineInvitationListActivity.this, "删除帖子完成");
                         page = 1;
                         loadData();
@@ -366,8 +371,8 @@ public class MineInvitationListActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(delArticleDialogHelper!=null&&delArticleDialogHelper.getAlertDialog()!=null
-                &&delArticleDialogHelper.getAlertDialog().isShowing()){
+        if (delArticleDialogHelper != null && delArticleDialogHelper.getAlertDialog() != null
+                && delArticleDialogHelper.getAlertDialog().isShowing()) {
             delArticleDialogHelper.dismiss();
         }
     }

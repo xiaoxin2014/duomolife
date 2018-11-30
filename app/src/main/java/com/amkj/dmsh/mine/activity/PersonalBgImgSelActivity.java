@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -22,6 +21,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.PersonalBgImgSelAdapter;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity.MineBgImgBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -33,6 +33,8 @@ import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yanzhenjie.permission.Permission;
 
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 ;
@@ -60,7 +64,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
  * created on 2017/9/26
  * class description:背景图片选择
  */
-public class PersonalBgImgSelActivity extends BaseActivity{
+public class PersonalBgImgSelActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -92,8 +96,11 @@ public class PersonalBgImgSelActivity extends BaseActivity{
         personalBgImgSelAdapter = new PersonalBgImgSelAdapter(PersonalBgImgSelActivity.this, mineBgImgBeanList);
         communal_recycler.setAdapter(personalBgImgSelAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         personalBgImgSelAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -173,7 +180,7 @@ public class PersonalBgImgSelActivity extends BaseActivity{
                     Gson gson = new Gson();
                     CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
                     if (communalUserInfoEntity != null) {
-                        if (communalUserInfoEntity.getCode().equals("01")) {
+                        if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                             PictureFileUtils.deleteCacheDirFile(PersonalBgImgSelActivity.this);
                             showToast(PersonalBgImgSelActivity.this, "修改完成");
                             Intent intent = new Intent();
@@ -210,12 +217,12 @@ public class PersonalBgImgSelActivity extends BaseActivity{
                 Gson gson = new Gson();
                 mineBgImgEntity = gson.fromJson(result, MineBgImgEntity.class);
                 if (mineBgImgEntity != null) {
-                    if (mineBgImgEntity.getCode().equals("01")) {
+                    if (mineBgImgEntity.getCode().equals(SUCCESS_CODE)) {
                         mineBgImgBeanList.addAll(mineBgImgEntity.getMineBgImgList());
                         MineBgImgBean mineBgImgBean = new MineBgImgBean();
                         mineBgImgBean.setBgimg_url(ConstantVariable.BASE_RESOURCE_DRAW + R.drawable.plus_icon_nor);
                         mineBgImgBeanList.add(mineBgImgBean);
-                    } else if (!mineBgImgEntity.getCode().equals("02")) {
+                    } else if (!mineBgImgEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(PersonalBgImgSelActivity.this, mineBgImgEntity.getMsg());
                     }
                     setBgImg();
@@ -327,8 +334,8 @@ public class PersonalBgImgSelActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(alertDialogBottomListHelper!=null&&alertDialogBottomListHelper.getAlertDialog()!=null
-                &&alertDialogBottomListHelper.getAlertDialog().isShowing()){
+        if (alertDialogBottomListHelper != null && alertDialogBottomListHelper.getAlertDialog() != null
+                && alertDialogBottomListHelper.getAlertDialog().isShowing()) {
             alertDialogBottomListHelper.dismiss();
         }
     }

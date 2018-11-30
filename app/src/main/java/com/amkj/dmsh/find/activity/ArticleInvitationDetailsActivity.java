@@ -33,7 +33,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -51,6 +50,7 @@ import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean.R
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity;
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -60,11 +60,13 @@ import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -144,7 +146,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     private ArticleCommentAdapter adapterArticleComment;
     //    评论数
     private List<DmlSearchCommentBean> articleCommentList = new ArrayList<>();
-//    详情描述
+    //    详情描述
     private List<CommunalDetailObjectBean> descriptionDetailList = new ArrayList<>();
     private String artId;
     private int page = 1;
@@ -170,7 +172,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         imgHeaderView = new ImgDetailsHeaderView();
         ButterKnife.bind(imgHeaderView, headerView);
         imgHeaderView.initView();
-        adapterArticleComment = new ArticleCommentAdapter(ArticleInvitationDetailsActivity.this, articleCommentList,COMMENT_TYPE);
+        adapterArticleComment = new ArticleCommentAdapter(ArticleInvitationDetailsActivity.this, articleCommentList, COMMENT_TYPE);
         adapterArticleComment.addHeaderView(headerView);
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
@@ -178,17 +180,16 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         communal_recycler.setAdapter(adapterArticleComment);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
                 //                滚动距离置0
                 scrollY = 0;
                 loadData();
+            }
         });
         adapterArticleComment.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -288,7 +289,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             }
         });
         tv_publish_comment.setText(R.string.comment_hint_invitation);
-        totalPersonalTrajectory = insertNewTotalData(this,artId);
+        totalPersonalTrajectory = insertNewTotalData(this, artId);
     }
 
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
@@ -424,7 +425,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_article_bottom_collect.setSelected(!tv_article_bottom_collect.isSelected());
                     }
                 }
@@ -452,7 +453,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 loadHud.dismiss();
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
-                showToast(ArticleInvitationDetailsActivity.this,R.string.comment_send_success);
+                showToast(ArticleInvitationDetailsActivity.this, R.string.comment_send_success);
                 commentViewVisible(GONE, null);
                 page = 1;
                 getArticleImgComment();
@@ -470,10 +471,10 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     }
 
     private void setPublishComment() {
-            if (View.VISIBLE == ll_input_comment.getVisibility()) {
-                commentViewVisible(GONE, null);
-            } else {
-                commentViewVisible(View.VISIBLE, null);
+        if (View.VISIBLE == ll_input_comment.getVisibility()) {
+            commentViewVisible(GONE, null);
+        } else {
+            commentViewVisible(View.VISIBLE, null);
         }
     }
 
@@ -534,6 +535,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     protected View getLoadView() {
         return smart_communal_refresh;
     }
+
     @Override
     protected boolean isAddLoad() {
         return true;
@@ -574,14 +576,14 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
                     if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals("01")) {
+                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
                             articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals("02")) {
+                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(ArticleInvitationDetailsActivity.this, dmlSearchCommentEntity.getMsg());
                         }
                         if (articleCommentList.size() > 0) {
                             imgHeaderView.rel_img_art_com.setVisibility(View.VISIBLE);
-                            imgHeaderView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_count),dmlSearchCommentEntity.getCommentSize()));
+                            imgHeaderView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_count), dmlSearchCommentEntity.getCommentSize()));
                         } else {
                             imgHeaderView.rel_img_art_com.setVisibility(GONE);
                         }
@@ -628,7 +630,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         public void initView() {
             communal_recycler_wrap.setNestedScrollingEnabled(false);
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(ArticleInvitationDetailsActivity.this));
-            communalDetailAdapter = new CommunalDetailAdapter(ArticleInvitationDetailsActivity.this,descriptionDetailList);
+            communalDetailAdapter = new CommunalDetailAdapter(ArticleInvitationDetailsActivity.this, descriptionDetailList);
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
             communal_recycler_wrap.setNestedScrollingEnabled(false);
             communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -715,10 +717,10 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                             loadHud.show();
                         }
                         CommunalDetailObjectBean tbLink = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
-                        if(tbLink == null){
+                        if (tbLink == null) {
                             tbLink = (CommunalDetailObjectBean) view.getTag();
                         }
-                        if(tbLink!=null){
+                        if (tbLink != null) {
                             skipAliBCWebView(tbLink.getUrl());
                         }
                         break;
@@ -775,8 +777,8 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     communalDetailBean.setRelevanceProBeanList(detailsBean.getRelevanceProList());
                     descriptionDetailList.add(communalDetailBean);
                 }
-                if(detailsBean.getDocumentProductList()!=null
-                        &&detailsBean.getDocumentProductList().size()>0){
+                if (detailsBean.getDocumentProductList() != null
+                        && detailsBean.getDocumentProductList().size() > 0) {
                     CommunalDetailObjectBean communalDetailBean = new CommunalDetailObjectBean();
                     communalDetailBean.setItemType(TYPE_PRODUCT_RECOMMEND);
                     communalDetailBean.setProductList(detailsBean.getDocumentProductList());
@@ -819,7 +821,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             if (!isAttention) {
                                 textView.setSelected(true);
                                 textView.setText("已关注");
@@ -875,7 +877,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                             smart_communal_refresh.finishRefresh();
                             adapterArticleComment.loadMoreComplete();
                             rel_article_img_bottom.setVisibility(GONE);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, dmlSearchDetailBean, dmlSearchDetailEntity);
                         }
 
                         @Override
@@ -883,7 +885,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                             smart_communal_refresh.finishRefresh();
                             adapterArticleComment.loadMoreComplete();
                             rel_article_img_bottom.setVisibility(GONE);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, dmlSearchDetailBean, dmlSearchDetailEntity);
                         }
                     });
         }
@@ -902,7 +904,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     showToast(ArticleInvitationDetailsActivity.this, dmlSearchDetailEntity.getMsg());
                 }
             }
-            NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+            NetLoadUtils.getQyInstance().showLoadSir(loadService, dmlSearchDetailBean, dmlSearchDetailEntity);
         }
     }
 
@@ -996,7 +998,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(ArticleInvitationDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(ArticleInvitationDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -1028,7 +1030,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(ArticleInvitationDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(ArticleInvitationDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -1114,12 +1116,13 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             }
         });
     }
+
     @Override
     protected void onPause() {
         super.onPause();
-        if(totalPersonalTrajectory!=null){
-            Map<String,String> totalMap = new HashMap<>();
-            totalMap.put("relate_id",artId);
+        if (totalPersonalTrajectory != null) {
+            Map<String, String> totalMap = new HashMap<>();
+            totalMap.put("relate_id", artId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
@@ -1127,9 +1130,9 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(totalPersonalTrajectory!=null){
-            Map<String,String> totalMap = new HashMap<>();
-            totalMap.put("relate_id",artId);
+        if (totalPersonalTrajectory != null) {
+            Map<String, String> totalMap = new HashMap<>();
+            totalMap.put("relate_id", artId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }

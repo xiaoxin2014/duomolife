@@ -32,7 +32,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
@@ -54,6 +53,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -68,6 +68,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -210,10 +212,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         adapterArticleComment.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -286,10 +284,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                 .create());
@@ -419,9 +413,12 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            page = 1;
-            getData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                page = 1;
+                getData();
+            }
         });
         badge = ConstantMethod.getBadge(DmlLifeSearchDetailActivity.this, fl_header_service);
         //          关闭手势滑动
@@ -491,9 +488,9 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     Gson gson = new Gson();
                     DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
                     if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals("01")) {
+                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
                             articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals("02")) {
+                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DmlLifeSearchDetailActivity.this, dmlSearchCommentEntity.getMsg());
                         }
                         adapterArticleComment.removeHeaderView(commentHeaderView);
@@ -603,7 +600,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 CommunalOnlyDescription communalOnlyDescription = gson.fromJson(result, CommunalOnlyDescription.class);
                 if (communalOnlyDescription != null) {
-                    if (communalOnlyDescription.getCode().equals("01")
+                    if (communalOnlyDescription.getCode().equals(SUCCESS_CODE)
                             && communalOnlyDescription.getComOnlyDesBean() != null) {
                         ComOnlyDesBean comOnlyDesBean = communalOnlyDescription.getComOnlyDesBean();
                         if (comOnlyDesBean.getDescriptionList() != null && comOnlyDesBean.getDescriptionList().size() > 0) {
@@ -624,7 +621,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         ll_communal_pro_list.setVisibility(View.VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = AutoSizeUtils.mm2px(mAppContext,50);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
         drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
         try {
             drawable.setColor(0xffffffff);
@@ -649,10 +646,10 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DmlLifeSearchDetailActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -675,7 +672,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DmlLifeSearchDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(DmlLifeSearchDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -707,7 +704,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DmlLifeSearchDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(DmlLifeSearchDetailActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -860,7 +857,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_article_bottom_collect.setSelected(!tv_article_bottom_collect.isSelected());
 //                        String likeCount = getNumber(tv_article_bottom_collect.getText().toString().trim());
 //                        int collectNum = Integer.parseInt(likeCount);
@@ -1017,7 +1014,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment() {
-        if(dmlSearchDetailBean!=null){
+        if (dmlSearchDetailBean != null) {
             if (userId > 0) {
                 setPublishComment();
             } else {

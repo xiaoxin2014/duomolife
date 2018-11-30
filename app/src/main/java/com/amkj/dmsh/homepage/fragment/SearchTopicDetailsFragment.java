@@ -10,17 +10,18 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -72,14 +73,13 @@ public class SearchTopicDetailsFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         findTopicListAdapter = new FindTopicListAdapter(getActivity(), findTopicBeanList);
         communal_recycler.setAdapter(findTopicListAdapter);

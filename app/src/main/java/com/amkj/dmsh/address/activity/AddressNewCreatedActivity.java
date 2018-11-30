@@ -41,6 +41,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -145,7 +146,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         addressInfoBean = addressInfoEntity.getAddressInfoBean();
                         setData(addressInfoBean);
                     } else {
@@ -243,7 +244,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         showToast(AddressNewCreatedActivity.this, "添加成功");
                         Intent data = new Intent();
                         data.putExtra("addressId", addressInfoEntity.getAddressInfoBean().getId());
@@ -288,7 +289,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         Intent data = new Intent();
                         data.putExtra("addressId", addressInfoEntity.getAddressInfoBean().getId());
                         setResult(RESULT_OK, data);

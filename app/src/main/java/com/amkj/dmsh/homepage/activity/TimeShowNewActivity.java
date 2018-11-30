@@ -29,6 +29,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
 
 ;
@@ -96,13 +98,13 @@ public class TimeShowNewActivity extends BaseActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (code.equals("01")) {
+                if (code.equals(SUCCESS_CODE)) {
                     Gson gson = new Gson();
                     TimeShowShaftEntity timeShowEntity = gson.fromJson(result, TimeShowShaftEntity.class);
                     if (timeShowEntity != null) {
                         setTimeShaft(timeShowEntity);
                     }
-                } else if (!code.equals("02")) {
+                } else if (!code.equals(EMPTY_CODE)) {
                     showToast(TimeShowNewActivity.this, msg);
                 }
             }

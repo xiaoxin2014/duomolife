@@ -22,7 +22,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -39,6 +38,7 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
@@ -49,6 +49,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -121,8 +123,11 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityWeekOptimizedActivity.this));
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -158,10 +163,6 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                 .create());
@@ -309,10 +310,10 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityWeekOptimizedActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -346,6 +347,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         getBuyListDetailData();
         getBuyListRecommend();
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -355,6 +357,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     private void getBuyListRecommend() {
         String url = Url.BASE_URL + Url.QUALITY_WEEK_OPTIMIZED_PRO;
         Map<String, Object> params = new HashMap<>();
@@ -384,7 +387,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityBuyListBeanList, qualityBuyListEntity);
                     }
 
                     @Override
@@ -392,7 +395,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         qualityBuyListAdapter.loadMoreComplete();
                         showToast(QualityWeekOptimizedActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityBuyListBeanList, qualityBuyListEntity);
                     }
 
                     @Override
@@ -400,7 +403,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         qualityBuyListAdapter.loadMoreComplete();
                         showToast(QualityWeekOptimizedActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityBuyListBeanList,qualityBuyListEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityBuyListBeanList, qualityBuyListEntity);
                     }
                 });
     }
@@ -414,7 +417,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                 Gson gson = new Gson();
                 ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
                 if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals("01")) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
 //                        配置封面图
                         GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
@@ -423,7 +426,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         if (descriptionBeanList != null) {
                             itemDescriptionList.addAll(ConstantMethod.getDetailsDataList(descriptionBeanList));
                         }
-                    } else if (!shopDetailsEntity.getCode().equals("02")) {
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityWeekOptimizedActivity.this, shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
@@ -466,7 +469,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -498,7 +501,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -599,7 +602,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     , "每周优选"
                     , "摸透你的心，为你精选最应季最实用最优质的热门精品"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html"
-                    ,"pages/weekly_optimization/weekly_optimization");
+                    , "pages/weekly_optimization/weekly_optimization");
         }
     }
 }

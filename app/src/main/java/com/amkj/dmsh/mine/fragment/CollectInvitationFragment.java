@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -19,12 +18,15 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -77,18 +79,17 @@ public class CollectInvitationFragment extends BaseFragment {
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         adapterInvitationAdapter = new PullUserInvitationAdapter(getActivity(), invitationDetailList, "invitation");
         communal_recycler.setAdapter(adapterInvitationAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp)
-
-
-
-
 
 
                 .create());
@@ -198,7 +199,7 @@ public class CollectInvitationFragment extends BaseFragment {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());
                         tv_collect.setText(getNumCount(tv_collect.isSelected(), invitationDetailBean.isCollect(), invitationDetailBean.getCollect(), "收藏"));
                     }
@@ -244,7 +245,7 @@ public class CollectInvitationFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        if(userId>0){
+        if (userId > 0) {
             String url = Url.BASE_URL + Url.COLLECT_INVITATION;
             Map<String, Object> params = new HashMap<>();
             params.put("currentPage", page);
@@ -269,23 +270,23 @@ public class CollectInvitationFragment extends BaseFragment {
                         }
                         adapterInvitationAdapter.notifyDataSetChanged();
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
                 }
 
                 @Override
                 public void netClose() {
-                    showToast(mAppContext,R.string.unConnectedNetwork);
+                    showToast(mAppContext, R.string.unConnectedNetwork);
                     smart_communal_refresh.finishRefresh();
                     adapterInvitationAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
                     smart_communal_refresh.finishRefresh();
                     adapterInvitationAdapter.loadMoreComplete();
-                    showToast(mAppContext,R.string.invalidData);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                    showToast(mAppContext, R.string.invalidData);
+                    NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
                 }
             });
         }

@@ -1,12 +1,14 @@
 package com.amkj.dmsh.mine.fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,10 +28,10 @@ import com.alibaba.baichuan.trade.biz.AlibcConstants;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.QualityTypeEntity;
@@ -43,35 +45,36 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.mine.activity.AppDataActivity;
-import com.amkj.dmsh.mine.activity.MineCollectContentActivity;
-import com.amkj.dmsh.mine.activity.MineCollectProductActivity;
 import com.amkj.dmsh.mine.activity.MineInvitationListActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
 import com.amkj.dmsh.mine.activity.PersonalDataActivity;
-import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.activity.ShopTimeMyWarmActivity;
 import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
+import com.amkj.dmsh.mine.bean.MineTypeEntity;
+import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetApiManager;
+import com.amkj.dmsh.network.NetApiService;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectGoodsSaleAfterActivity;
-import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentTypeAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectIndentCountEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectIndentCountEntity.DirectIndentCountBean;
-import com.amkj.dmsh.shopdetails.integration.IntegralProductIndentActivity;
 import com.amkj.dmsh.user.activity.UserFansAttentionActivity;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.SystemBarHelper;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
+
+import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,8 +83,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.FlowableSubscriber;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
@@ -90,10 +95,15 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.MINE_BOTTOM_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
+import static com.amkj.dmsh.network.RxJavaTransformer.getSchedulerTransformer;
 
 ;
 ;
@@ -151,11 +161,13 @@ public class MineDataFragment extends BaseFragment {
     public RelativeLayout rel_personal_data_sup;
     @BindView(R.id.tv_personal_data_sup)
     public TextView tv_personal_data_sup;
-    private final int LOGIN_REQ_CODE = 66;
     private CommunalUserInfoBean communalUserInfoBean;
     private MineTypeAdapter typeMineAdapter;
-    private List<QualityTypeBean> mineTypeList = new ArrayList();
+    private List<MineTypeBean> mineTypeList = new ArrayList();
     private final String[] typeMineName = {"购物车", "优惠券", "分享赚", "积分订单", "秒杀提醒", "收藏商品", "收藏内容", "客服",};
+    private final String[] typeMineUrl = {"app://ShopCarActivity", "app://DirectMyCouponActivity", MAKE_SHARE_URL, "app://IntegralProductIndentActivity",
+            "app://ShopTimeMyWarmActivity", "app://MineCollectProductActivity",
+            "app://MineCollectContentActivity", "app://ManagerServiceChat"};
     private final String[] typeMinePic = {"m_s_car_icon", "m_coupon_icon", "m_share_icon", "m_i_integ_icon", "m_warm_icon", "m_c_pro_icon", "m_c_content_icon", "m_service_icon",};
     //    订单模块
     private IndentTypeAdapter indentTypeAdapter;
@@ -165,8 +177,11 @@ public class MineDataFragment extends BaseFragment {
     private final String[] typeIndentPic = {"i_tb_icon", "i_w_pay_icon", "i_w_send_icon", "i_w_appraise_icon", "i_s_af_icon"};
     //    跳转登录请求码
     private QualityTypeBean qualityTypeBean;
+    private String packageName = "";
     private CBViewHolderCreator cbViewHolderCreator;
     private QyServiceUtils qyInstance;
+    private SharedPreferences mineTypeShared;
+    private MineTypeEntity mineTypeEntity;
 
     @Override
     protected int getContentView() {
@@ -182,66 +197,33 @@ public class MineDataFragment extends BaseFragment {
         communal_recycler_wrap.setLayoutManager(manager);
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         mineTypeList = new ArrayList<>();
-        for (int i = 0; i < typeMineName.length; i++) {
-            qualityTypeBean = new QualityTypeBean();
-            qualityTypeBean.setName(typeMineName[i]);
-            qualityTypeBean.setPicUrl(typeMinePic[i]);
-            qualityTypeBean.setId(i);
-            mineTypeList.add(qualityTypeBean);
+        MineTypeEntity bottomLocalData = getBottomLocalData();
+        if (bottomLocalData != null && bottomLocalData.getMineTypeBeanList() != null
+                && bottomLocalData.getMineTypeBeanList().size() > 0) {
+            mineTypeList.addAll(bottomLocalData.getMineTypeBeanList());
+        } else {
+            if (getActivity() == null) {
+                packageName = "com.amkj.dmsh";
+            } else {
+                packageName = getActivity().getPackageName();
+            }
+            for (int i = 0; i < typeMineName.length; i++) {
+                MineTypeBean mineTypeBean = new MineTypeBean();
+                mineTypeBean.setName(typeMineName[i]);
+                mineTypeBean.setIconUrl("android.resource://" + packageName + "/drawable/" + typeMinePic[i]);
+                mineTypeBean.setAndroidUrl(typeMineUrl[i]);
+                mineTypeList.add(mineTypeBean);
+            }
         }
         typeMineAdapter = new MineTypeAdapter(getActivity(), mineTypeList);
         communal_recycler_wrap.setAdapter(typeMineAdapter);
         typeMineAdapter.setOnItemClickListener((adapter, view, position) -> {
-            QualityTypeBean qualityTypeBean = (QualityTypeBean) view.getTag();
-            if (qualityTypeBean != null) {
-                if (qualityTypeBean.getId() == 7) {
-                    conversation();
-                } else {
-                    Intent intent = new Intent();
-//                    if (uid != 0) {
-                    switch (qualityTypeBean.getId()) {
-                        case 0: //购物车
-                            intent.setClass(getActivity(), ShopCarActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 1: //优惠券
-                            intent.setClass(getActivity(), DirectMyCouponActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 2: //分享赚
-                            setSkipPath(getActivity(), MAKE_SHARE_URL, false);
-                            break;
-                        case 3: //积分订单
-                            intent.setClass(getActivity(), IntegralProductIndentActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 4://秒杀提醒
-                            intent.setClass(getActivity(), ShopTimeMyWarmActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 5://收藏商品
-                            intent.setClass(getActivity(), MineCollectProductActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 6://收藏内容
-                            intent.setClass(getActivity(), MineCollectContentActivity.class);
-                            startActivity(intent);
-                            break;
-                    }
-//                    } else {
-//                        skipLoginPage();
-//                    }
-                }
+            MineTypeBean mineTypeBean = (MineTypeBean) view.getTag();
+            if (mineTypeBean != null) {
+                setSkipPath(getActivity(), mineTypeBean.getAndroidUrl(), false);
             }
         });
 
@@ -308,16 +290,17 @@ public class MineDataFragment extends BaseFragment {
 
     /**
      * 更新客服未读消息
-     * //     * @param serviceTotalCount 未读消息条数
+     *
+     * @param serviceTotalCount 客服未读消息条数
      */
     private void setServiceUnread(int serviceTotalCount) {
-        if (mineTypeList.size() > 7) {
-            if (serviceTotalCount > 0) {
-                mineTypeList.get(7).setType(serviceTotalCount);
-            } else {
-                mineTypeList.get(7).setType(0);
+        for (int i = 0; i < mineTypeList.size(); i++) {
+            MineTypeBean mineTypeBean = mineTypeList.get(i);
+            String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+            if (androidLink.contains("ManagerServiceChat")) {
+                mineTypeBean.setMesCount(serviceTotalCount);
+                break;
             }
-            typeMineAdapter.notifyItemChanged(7);
         }
     }
 
@@ -357,7 +340,7 @@ public class MineDataFragment extends BaseFragment {
                 ? ImageConverterUtils.getFormatImg(userData.getAvatar()) : "");
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(userData.getBgimg_url())
                 ? ImageConverterUtils.getFormatImg(userData.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
-        setBottomCount(userData);
+        setBottomTypeCount(userData);
         if (userData.getNoticeInfo() != null && !TextUtils.isEmpty(userData.getNoticeInfo().getContent())) {
             rel_personal_data_sup.setVisibility(View.VISIBLE);
             tv_personal_data_sup.setText(getStrings(userData.getNoticeInfo().getContent()));
@@ -371,36 +354,28 @@ public class MineDataFragment extends BaseFragment {
      *
      * @param userData
      */
-    private void setBottomCount(CommunalUserInfoBean userData) {
-        if (userData != null && mineTypeList.size() > 3) {
-            if (userData.getCartTotal() > 0) {
-                mineTypeList.get(0).setType(userData.getCartTotal());
-            } else {
-                mineTypeList.get(0).setType(0);
-            }
-            if (userData.getCouponTotal() > 0) {
-                mineTypeList.get(1).setType(userData.getCouponTotal());
-            } else {
-                mineTypeList.get(1).setType(0);
-            }
-            if (userData.getJfTotal() > 0) {
-                mineTypeList.get(3).setType(userData.getJfTotal());
-            } else {
-                mineTypeList.get(3).setType(0);
+    private void setBottomTypeCount(CommunalUserInfoBean userData) {
+        if (userData != null) {
+            for (int i = 0; i < mineTypeList.size(); i++) {
+                MineTypeBean mineTypeBean = mineTypeList.get(i);
+                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+                if (androidLink.contains("ShopCarActivity")) {
+                    mineTypeBean.setMesCount(userData.getCartTotal());
+                } else if (androidLink.contains("DirectMyCouponActivity")) {
+                    mineTypeBean.setMesCount(userData.getCouponTotal());
+                } else if (androidLink.contains("IntegralProductIndentActivity")) {
+                    mineTypeBean.setMesCount(userData.getJfTotal());
+                } else {
+                    mineTypeBean.setMesCount(0);
+                }
             }
         } else {
             for (int i = 0; i < mineTypeList.size(); i++) {
-                QualityTypeBean qualityTypeBean = mineTypeList.get(i);
-                qualityTypeBean.setType(0);
+                MineTypeBean mineTypeBean = mineTypeList.get(i);
+                mineTypeBean.setMesCount(0);
             }
         }
         typeMineAdapter.notifyDataSetChanged();
-    }
-
-    //启动客服，登录
-    private void conversation() {
-        QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-        qyServiceUtils.openQyServiceChat(getActivity(), "首页-我的");
     }
 
     @Override
@@ -422,6 +397,7 @@ public class MineDataFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        getBottomTypeNetData();
     }
 
     private void isLoginStatus() {
@@ -432,36 +408,103 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
+    /**
+     * 获取订单数量显示
+     */
     private void getDoMeIndentDataCount() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.Q_QUERY_INDENT_COUNT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    DirectIndentCountEntity directIndentCountEntity = gson.fromJson(result, DirectIndentCountEntity.class);
-                    if (directIndentCountEntity != null) {
-                        if (directIndentCountEntity.getCode().equals("01")) {
-                            setCountData(directIndentCountEntity.getDirectIndentCountBean());
-                        } else {
-                            if (directIndentCountEntity.getCode().equals("02")) {
-                                return;
-                            } else {
-                                showToast(getActivity(), R.string.invalidData);
-                            }
-                        }
+        if (userId < 1) {
+            setCountData(null);
+            return;
+        }
+        String url = BASE_URL + Url.Q_QUERY_INDENT_COUNT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        XUtil.Post(url, params, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                DirectIndentCountEntity directIndentCountEntity = gson.fromJson(result, DirectIndentCountEntity.class);
+                if (directIndentCountEntity != null) {
+                    if (directIndentCountEntity.getCode().equals(SUCCESS_CODE)) {
+                        setCountData(directIndentCountEntity.getDirectIndentCountBean());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+        });
+    }
+
+    /**
+     * 获取底部数据
+     */
+    private void getBottomTypeNetData() {
+        NetApiManager.getInstance().init();
+        NetApiService netApiService = NetApiManager.getNetApiService();
+        netApiService.getMineTypeBottom(MINE_BOTTOM_DATA).compose(getSchedulerTransformer()).subscribe(new FlowableSubscriber<String>() {
+            @Override
+            public void onSubscribe(Subscription s) {
+
+            }
+
+            @Override
+            public void onNext(String result) {
+                MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
+                if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
+                    MineTypeEntity bottomLocalData = getBottomLocalData();
+                    if (bottomLocalData == null ||
+                            !getStrings(bottomLocalData.getUpdateTime()).equals(getStrings(mineTypeEntity.getUpdateTime()))) {
+                        saveBottomLocalData(JSON.toJSONString(mineTypeEntity));
+                    }
+                } else {
+//                    清除底部宫格数据
+                    if (getBottomShared() != null) {
+                        getBottomShared().edit().clear().apply();
+                    }
                 }
-            });
-        } else {
-            setCountData(null);
-        }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.d(getClass().getSimpleName(), "onError: " + t.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+//        String url = BASE_URL + Url.MINE_BOTTOM_DATA;
+//        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, null, new NetLoadUtils.NetLoadListener() {
+//            @Override
+//            public void onSuccess(String result) {
+//                MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
+//                if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
+//                    MineTypeEntity bottomLocalData = getBottomLocalData();
+//                    if (bottomLocalData == null ||
+//                            !getStrings(bottomLocalData.getUpdateTime()).equals(getStrings(mineTypeEntity.getUpdateTime()))) {
+//                        saveBottomLocalData(JSON.toJSONString(mineTypeEntity));
+//                    }
+//                } else {
+////                    清除底部宫格数据
+//                    if (getBottomShared() != null) {
+//                        getBottomShared().edit().clear().apply();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void netClose() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable throwable) {
+////          错误数据不清除
+//            }
+//        });
     }
 
     private void setCountData(DirectIndentCountBean messageTotalBean) {
@@ -475,21 +518,19 @@ public class MineDataFragment extends BaseFragment {
             //退货售后
             indentTypeList.get(4).setType(messageTotalBean.getWaitAfterSaleNum());
         } else {
-            int totalCount = 0;
-            //待付款
-            indentTypeList.get(1).setType(totalCount);
-            //待发货
-            indentTypeList.get(2).setType(totalCount);
-            //待收货
-            indentTypeList.get(3).setType(totalCount);
-            //退货售后
-            indentTypeList.get(4).setType(totalCount);
+            for (int i = 0; i < indentTypeList.size(); i++) {
+                QualityTypeBean qualityTypeBean = indentTypeList.get(i);
+                qualityTypeBean.setType(0);
+            }
         }
         indentTypeAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * 请求用户数据
+     */
     private void getNetDataInfo() {
-        String url = Url.BASE_URL + Url.MINE_PAGE;
+        String url = BASE_URL + Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
@@ -513,13 +554,13 @@ public class MineDataFragment extends BaseFragment {
 
     private void setErrorUserData() {
         initLoggedView();
-        setBottomCount(null);
+        setBottomTypeCount(null);
         getDoMeIndentDataCount();
     }
 
     //    我的模块 广告
     private void getMineAd() {
-        String url = Url.BASE_URL + Url.MINE_PAGE_AD;
+        String url = BASE_URL + Url.MINE_PAGE_AD;
         Map<String, String> params = new HashMap<>();
         params.put("vidoShow", "1");
         XUtil.Get(url, params, new MyCallBack<String>() {
@@ -529,9 +570,9 @@ public class MineDataFragment extends BaseFragment {
                 adBeanList.clear();
                 CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
                 if (adActivityEntity != null) {
-                    if (adActivityEntity.getCode().equals("01")) {
+                    if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setMineAdData(adActivityEntity);
-                    } else if (!adActivityEntity.getCode().equals("02")) {
+                    } else if (!adActivityEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), adActivityEntity.getMsg());
                         ad_mine.setVisibility(View.GONE);
                     } else {
@@ -548,6 +589,11 @@ public class MineDataFragment extends BaseFragment {
         });
     }
 
+    /**
+     * 设置我-广告
+     *
+     * @param adActivityEntity
+     */
     private void setMineAdData(CommunalADActivityEntity adActivityEntity) {
         adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
         ad_mine.setVisibility(View.VISIBLE);
@@ -569,6 +615,9 @@ public class MineDataFragment extends BaseFragment {
                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
     }
 
+    /**
+     * 初始化用户数据
+     */
     private void initLoggedView() {
         if (ll_mine_login == null) {
             return;
@@ -579,6 +628,11 @@ public class MineDataFragment extends BaseFragment {
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
     }
 
+    /**
+     * 处理个人信息数据
+     *
+     * @param result
+     */
     private void getUserDataInfo(String result) {
         Gson gson = new Gson();
         CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
@@ -593,7 +647,7 @@ public class MineDataFragment extends BaseFragment {
                 setErrorUserData();
                 showToast(getActivity(), minePageData.getMsg());
             }
-        }else{
+        } else {
             setErrorUserData();
             showToast(getActivity(), minePageData.getMsg());
         }
@@ -764,6 +818,58 @@ public class MineDataFragment extends BaseFragment {
                 ad_mine.stopTurning();
                 ad_mine.setPointViewVisible(false);
             }
+        }
+    }
+
+    /**
+     * 获取底部轻量级存储对象
+     *
+     * @return
+     */
+    public SharedPreferences getBottomShared() {
+        if (mineTypeShared == null) {
+            if (getActivity() == null) {
+                return null;
+            }
+            mineTypeShared = getActivity().getSharedPreferences(MINE_BOTTOM_TYPE, MODE_PRIVATE);
+        }
+        return mineTypeShared;
+    }
+
+    /**
+     * 保存底部数据
+     *
+     * @param typeData
+     */
+    public void saveBottomLocalData(String typeData) {
+        SharedPreferences bottomShared = getBottomShared();
+        if (bottomShared != null && !TextUtils.isEmpty(typeData)) {
+            SharedPreferences.Editor edit = bottomShared.edit();
+            edit.putString(MINE_BOTTOM_TYPE, typeData);
+            edit.apply();
+        }
+    }
+
+    /**
+     * 获取底部数据
+     */
+    public MineTypeEntity getBottomLocalData() {
+        try {
+            if (mineTypeEntity == null) {
+                SharedPreferences bottomShared = getBottomShared();
+                if (bottomShared != null) {
+                    String typeJson = bottomShared.getString(MINE_BOTTOM_TYPE, "");
+                    if (!TextUtils.isEmpty(typeJson)) {
+                        mineTypeEntity = JSON.parseObject(typeJson, MineTypeEntity.class);
+                        return mineTypeEntity;
+                    }
+                }
+                return null;
+            }
+            return mineTypeEntity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

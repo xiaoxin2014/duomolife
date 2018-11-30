@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -32,6 +31,7 @@ import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity.QNewProTimeShaftBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -48,6 +48,8 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -135,14 +137,17 @@ public class QualityNewProActivity extends BaseActivity {
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         GradientDrawable drawable = new GradientDrawable();
-        drawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
-                , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
+        drawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext, 25), AutoSizeUtils.mm2px(mAppContext, 25)
+                , AutoSizeUtils.mm2px(mAppContext, 25), AutoSizeUtils.mm2px(mAppContext, 25), 0, 0});
         drawable.setColor(0x7f000000);
         tv_ql_new_pro_time_tag.setBackground(drawable);
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityNewProActivity.this, 2));
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -184,10 +189,6 @@ public class QualityNewProActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -245,13 +246,14 @@ public class QualityNewProActivity extends BaseActivity {
             }
         });
 //        时间轴
-        productPopWindow = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null,false);
+        productPopWindow = getLayoutInflater().inflate(R.layout.layout_communal_recycler_wrap_wrap, null, false);
         popupWindowView = new PopupWindowView();
         ButterKnife.bind(popupWindowView, productPopWindow);
         popupWindowView.initView();
         badge = ConstantMethod.getBadge(QualityNewProActivity.this, fl_header_service);
         totalPersonalTrajectory = insertNewTotalData(QualityNewProActivity.this);
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -261,6 +263,7 @@ public class QualityNewProActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void loadData() {
         page = 1;
@@ -282,7 +285,7 @@ public class QualityNewProActivity extends BaseActivity {
                     adBeanList.clear();
                     CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
                     if (qualityAdLoop != null) {
-                        if (qualityAdLoop.getCode().equals("01")) {
+                        if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                             adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
                             if (cbViewHolderCreator == null) {
                                 cbViewHolderCreator = new CBViewHolderCreator() {
@@ -325,7 +328,7 @@ public class QualityNewProActivity extends BaseActivity {
                 Gson gson = new Gson();
                 QNewProTimeShaftEntity proTimeShaftEntity = gson.fromJson(result, QNewProTimeShaftEntity.class);
                 if (proTimeShaftEntity != null) {
-                    if (proTimeShaftEntity.getCode().equals("01")) {
+                    if (proTimeShaftEntity.getCode().equals(SUCCESS_CODE)) {
                         timeShaftList.clear();
                         for (int i = 0; i < proTimeShaftEntity.getQNewProTimeShaftList().size(); i++) {
                             QNewProTimeShaftBean qNewProTimeShaftBean = proTimeShaftEntity.getQNewProTimeShaftList().get(i);
@@ -400,7 +403,7 @@ public class QualityNewProActivity extends BaseActivity {
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, newProList, likedProductEntity);
             }
 
             @Override
@@ -408,7 +411,7 @@ public class QualityNewProActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(QualityNewProActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, newProList, likedProductEntity);
             }
 
             @Override
@@ -416,7 +419,7 @@ public class QualityNewProActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(QualityNewProActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,newProList,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, newProList, likedProductEntity);
             }
         });
     }
@@ -493,8 +496,8 @@ public class QualityNewProActivity extends BaseActivity {
         public void initView() {
             communal_recycler_wrap_wrap.setLayoutManager(new LinearLayoutManager(QualityNewProActivity.this));
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,15), AutoSizeUtils.mm2px(mAppContext,15)
-                    , AutoSizeUtils.mm2px(mAppContext,15), AutoSizeUtils.mm2px(mAppContext,15), 0, 0});
+            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext, 15), AutoSizeUtils.mm2px(mAppContext, 15)
+                    , AutoSizeUtils.mm2px(mAppContext, 15), AutoSizeUtils.mm2px(mAppContext, 15), 0, 0});
             gradientDrawable.setColor(0x7f000000);
             communal_recycler_wrap_wrap.setBackground(gradientDrawable);
             timeShaftAdapter = new TimeShaftAdapter(timeShaftList);

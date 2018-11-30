@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -24,6 +23,7 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -31,6 +31,8 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,7 +56,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -94,9 +98,11 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         tv_header_titleAll.setText("DoMo拼团");
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
-        smart_scroll_communal_refresh.setOnRefreshListener((refreshLayout) ->
-                loadData()
-        );
+        smart_scroll_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }});
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoGroupJoinShareActivity.this));
         View headerView = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_ql_gp_sp_join_share, null);
         groupShareJoinView = new GroupShareJoinView();
@@ -135,7 +141,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 Gson gson = new Gson();
                 groupShopJoinEntity = gson.fromJson(result, GroupShopCommunalInfoEntity.class);
                 if (groupShopJoinEntity != null) {
-                    if (groupShopJoinEntity.getCode().equals("01")) {
+                    if (groupShopJoinEntity.getCode().equals(SUCCESS_CODE)) {
                         setCommunalInfo(groupShopJoinEntity.getGroupShopCommunalInfoBean());
                     }
                 }
@@ -165,9 +171,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                         Gson gson = new Gson();
                         qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                         if (qualityGroupShareEntity != null) {
-                            if (qualityGroupShareEntity.getCode().equals("01")) {
+                            if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                                 setGpDataInfo(qualityGroupShareEntity);
-                            } else if (qualityGroupShareEntity.getCode().equals("02")) {
+                            } else if (qualityGroupShareEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
                             } else {
                                 showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());

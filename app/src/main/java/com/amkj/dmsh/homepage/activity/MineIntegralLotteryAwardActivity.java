@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAwardAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardEntity.LotteryInfoListBean;

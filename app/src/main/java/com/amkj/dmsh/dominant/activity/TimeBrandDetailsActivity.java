@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeDetail;
 import com.amkj.dmsh.bean.DMLThemeDetail.ThemeDataBean;
@@ -32,15 +31,18 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.DMLTimeDetailEntity;
 import com.amkj.dmsh.dominant.bean.DMLTimeDetailEntity.DMLTimeDetailBean;
 import com.amkj.dmsh.homepage.adapter.DoMoLifeTimeBrandAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -126,8 +128,11 @@ public class TimeBrandDetailsActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         duoMoLifeTimeBrandAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -202,7 +207,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus foreShowBean = gson.fromJson(result, RequestStatus.class);
                 if (foreShowBean != null) {
-                    if (foreShowBean.getCode().equals("01")) {
+                    if (foreShowBean.getCode().equals(SUCCESS_CODE)) {
                         if (foreShowBean.getResult().isHadRemind()) { //已设置过提醒
                             if (view.isSelected()) {
 //                                取消提醒
@@ -214,7 +219,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                         } else {
                             setDefaultWarm();
                         }
-                    } else if (!foreShowBean.getCode().equals("02")) {
+                    } else if (!foreShowBean.getCode().equals(EMPTY_CODE)) {
                         showToast(TimeBrandDetailsActivity.this, foreShowBean.getMsg());
                     }
                 }
@@ -272,7 +277,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null && requestStatus.getCode().equals("01")) {
+                if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)) {
                     showToast(TimeBrandDetailsActivity.this, "已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
                 }
             }
@@ -296,7 +301,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         imageView.setSelected(false);
                         showToast(TimeBrandDetailsActivity.this, "已取消提醒");
                     } else {
@@ -326,7 +331,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         imageView.setSelected(true);
                         showToast(TimeBrandDetailsActivity.this, "已设置提醒");
                     } else {
@@ -400,7 +405,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     DMLTimeDetailEntity dmlTimeDetailEntity = gson.fromJson(result, DMLTimeDetailEntity.class);
                     if (dmlTimeDetailEntity != null) {
-                        if (dmlTimeDetailEntity.getCode().equals("01")) {
+                        if (dmlTimeDetailEntity.getCode().equals(SUCCESS_CODE)) {
                             for (int i = 0; i < dmlTimeDetailEntity.getDmlTimeDetailBeanList().size(); i++) {
                                 DMLTimeDetailBean dmlTimeDetailBean = dmlTimeDetailEntity.getDmlTimeDetailBeanList().get(i);
                                 if (!TextUtils.isEmpty(dmlTimeDetailEntity.getCurrentTime())) {
@@ -408,7 +413,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                                 }
                                 brandProductList.add(dmlTimeDetailBean);
                             }
-                        } else if (!dmlTimeDetailEntity.getCode().equals("02")) {
+                        } else if (!dmlTimeDetailEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(TimeBrandDetailsActivity.this, dmlTimeDetailEntity.getMsg());
                         }
                     }
@@ -450,7 +455,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                                 showToast(TimeBrandDetailsActivity.this, dmlThemeDetail.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, themeBean, dmlThemeDetail);
                     }
 
                     @Override
@@ -458,7 +463,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         duoMoLifeTimeBrandAdapter.loadMoreComplete();
                         showToast(TimeBrandDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, themeBean, dmlThemeDetail);
                     }
 
                     @Override
@@ -466,7 +471,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         duoMoLifeTimeBrandAdapter.loadMoreComplete();
                         showToast(TimeBrandDetailsActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,themeBean,dmlThemeDetail);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, themeBean, dmlThemeDetail);
                     }
                 });
     }

@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 
 /**
@@ -107,7 +108,7 @@ public class MessageWarmActivity extends BaseActivity {
                 Gson gson = new Gson();
                 CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
                 if (communalUserInfoEntity != null) {
-                    if (communalUserInfoEntity.getCode().equals("01")) {
+                    if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         showToast(MessageWarmActivity.this, R.string.saveSuccess);
                         Intent intent = new Intent();
                         intent.putExtra(TIME_WARM, getNumber(communalUserInfoEntity.getCommunalUserInfoBean().getRemindtime() + ""));

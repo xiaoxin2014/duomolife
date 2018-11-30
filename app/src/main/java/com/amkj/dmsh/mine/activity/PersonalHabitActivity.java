@@ -13,18 +13,20 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineHabitTypeAdapter;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity.HabitTypeBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +38,7 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -44,6 +46,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
+;
 ;
 
 /**
@@ -91,8 +94,11 @@ public class PersonalHabitActivity extends BaseActivity {
         mineHabitTypeAdapter.addHeaderView(headerView);
         communal_recycler.setAdapter(mineHabitTypeAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         mineHabitTypeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -120,41 +126,41 @@ public class PersonalHabitActivity extends BaseActivity {
         params.put("uid", userId);
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                habitTypeBeanList.clear();
-                Gson gson = new Gson();
-                habitTypeEntity = gson.fromJson(result, HabitTypeEntity.class);
-                if (habitTypeEntity != null) {
-                    if (habitTypeEntity.getCode().equals(SUCCESS_CODE)) {
-                        rel_habit_type.setVisibility(VISIBLE);
-                        habitTypeBeanList.addAll(habitTypeEntity.getHabitTypeBeanList());
-                        mineHabitTypeAdapter.setNewData(habitTypeBeanList);
-                    } else if (!habitTypeEntity.getCode().equals(EMPTY_CODE)) {
-                        rel_habit_type.setVisibility(GONE);
-                        showToast(PersonalHabitActivity.this, habitTypeEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        habitTypeBeanList.clear();
+                        Gson gson = new Gson();
+                        habitTypeEntity = gson.fromJson(result, HabitTypeEntity.class);
+                        if (habitTypeEntity != null) {
+                            if (habitTypeEntity.getCode().equals(SUCCESS_CODE)) {
+                                rel_habit_type.setVisibility(VISIBLE);
+                                habitTypeBeanList.addAll(habitTypeEntity.getHabitTypeBeanList());
+                                mineHabitTypeAdapter.setNewData(habitTypeBeanList);
+                            } else if (!habitTypeEntity.getCode().equals(EMPTY_CODE)) {
+                                rel_habit_type.setVisibility(GONE);
+                                showToast(PersonalHabitActivity.this, habitTypeEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                mineHabitTypeAdapter.loadMoreComplete();
-                showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,habitTypeEntity);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        mineHabitTypeAdapter.loadMoreComplete();
+                        showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                rel_habit_type.setVisibility(GONE);
-                smart_communal_refresh.finishRefresh();
-                showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,habitTypeEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        rel_habit_type.setVisibility(GONE);
+                        smart_communal_refresh.finishRefresh();
+                        showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
+                    }
+                });
     }
 
     @Override
@@ -166,6 +172,7 @@ public class PersonalHabitActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -216,7 +223,7 @@ public class PersonalHabitActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(PersonalHabitActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
                         finish();

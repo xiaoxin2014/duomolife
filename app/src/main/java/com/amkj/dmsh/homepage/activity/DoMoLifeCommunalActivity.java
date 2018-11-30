@@ -339,6 +339,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
             }
         });
+        smart_web_refresh.setEnableAutoLoadMore(false);
+        smart_web_refresh.setEnableNestedScroll(false);
+        smart_web_refresh.setEnableOverScrollBounce(false);
+        smart_web_refresh.setEnableOverScrollDrag(false);
         smart_web_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {

@@ -13,7 +13,7 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -34,6 +34,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
@@ -223,9 +224,9 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         showToast(IntegralLotteryAwardGetActivity.this, addressInfoEntity.getMsg());
@@ -244,9 +245,9 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         showToast(IntegralLotteryAwardGetActivity.this, addressInfoEntity.getMsg());

@@ -59,6 +59,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity.APPLY_REFUND;
@@ -528,7 +529,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 Gson gson = new Gson();
                 ApplyRefundCheckEntity refundCheckEntity = gson.fromJson(result, ApplyRefundCheckEntity.class);
                 if (refundCheckEntity != null) {
-                    if (refundCheckEntity.getCode().equals("01")) {
+                    if (refundCheckEntity.getCode().equals(SUCCESS_CODE)) {
                         ApplyRefundCheckBean applyRefundCheckBean = refundCheckEntity.getApplyRefundCheckBean();
                         final DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
                         refundBean.setType(1);

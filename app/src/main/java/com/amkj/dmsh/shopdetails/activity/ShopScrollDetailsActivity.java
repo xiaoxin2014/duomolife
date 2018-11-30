@@ -34,7 +34,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -53,6 +52,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
@@ -92,6 +92,8 @@ import com.google.gson.GsonBuilder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
@@ -343,8 +345,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             showToast(ShopScrollDetailsActivity.this, "商品信息有误，请重试");
             finish();
         }
-        smart_ql_sp_pro_details.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_ql_sp_pro_details.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(ShopScrollDetailsActivity.this));
         directEvaluationAdapter = new DirectEvaluationAdapter(ShopScrollDetailsActivity.this, goodsComments);
@@ -625,7 +630,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 public void onSuccess(String result) {
                     ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
                     if (recommendHotTopicEntity != null) {
-                        if (recommendHotTopicEntity.getCode().equals("01")) {
+                        if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                             if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
                                 ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
                                 shopRecommendHotTopicBean.setItemType(TYPE_2);
@@ -675,7 +680,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 public void onSuccess(String result) {
                     ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
                     if (recommendHotTopicEntity != null) {
-                        if (recommendHotTopicEntity.getCode().equals("01")) {
+                        if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                             if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
                                 ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
                                 shopRecommendHotTopicBean.setItemType(TYPE_2);
@@ -803,9 +808,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
-                    if (goodsCommentEntity.getCode().equals("01")) {
+                    if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
-                    } else if (!goodsCommentEntity.getCode().equals("02")) {
+                    } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ShopScrollDetailsActivity.this, goodsCommentEntity.getMsg());
                     }
                     setCommentCount(goodsCommentEntity);
@@ -1170,7 +1175,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     DirectGoodsServerEntity directGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
                     if (directGoodsServerEntity != null) {
-                        if (directGoodsServerEntity.getCode().equals("01")) {
+                        if (directGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
                             serviceDataList.clear();
                             serviceDataTotalList.clear();
                             DirectGoodsServerBean directGoodsServerBean = directGoodsServerEntity.getDirectGoodsServerBean();
@@ -1350,7 +1355,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     }
                 });
                 if (!skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice())) {
-                    setReallyPrice(skuSaleList.get(0).getPrice()+"起");
+                    setReallyPrice(skuSaleList.get(0).getPrice() + "起");
                 } else {
                     setReallyPrice(skuSaleList.get(0).getPrice());
                 }
@@ -1452,6 +1457,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     /**
      * 获取着色
+     *
      * @param priceText 价格
      * @return
      */
@@ -1538,7 +1544,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
-                        if (status.getCode().equals("01")) {
+                        if (status.getCode().equals(SUCCESS_CODE)) {
                             TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(ShopScrollDetailsActivity.this);
                             Map<String, String> totalMap = new HashMap<>();
                             totalMap.put("productId", String.valueOf(shopPropertyBean.getId()));
@@ -1593,10 +1599,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -1676,7 +1682,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_collect.setSelected(requestStatus.isCollect());
                         showToast(ShopScrollDetailsActivity.this,
                                 String.format(getResources().getString(
@@ -1838,7 +1844,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                         } else {
                             showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -1891,7 +1897,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -1991,7 +1997,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
                         showToast(ShopScrollDetailsActivity.this, requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
                     } else {

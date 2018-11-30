@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -24,13 +23,16 @@ import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.message.adapter.MessageCommunalAdapterNew;
 import com.amkj.dmsh.message.bean.MessageCommentEntity;
 import com.amkj.dmsh.message.bean.MessageCommentEntity.MessageCommentBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -105,15 +107,14 @@ public class MessageCommentActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_ten_dp)
 
 
-
-
-
-
                 .create());
         communal_recycler.setAdapter(messageCommunalAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         messageCommunalAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -255,42 +256,42 @@ public class MessageCommentActivity extends BaseActivity {
             params.put("currentPage", page);
             NetLoadUtils.getQyInstance().loadNetDataPost(MessageCommentActivity.this, url
                     , params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    messageCommunalAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        commentList.clear();
-                    }
-                    Gson gson = new Gson();
-                    articleCommentEntity = gson.fromJson(result, MessageCommentEntity.class);
-                    if (articleCommentEntity != null) {
-                        if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                            commentList.addAll(articleCommentEntity.getMessageCommentList());
-                        } else if (!articleCommentEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(MessageCommentActivity.this, articleCommentEntity.getMsg());
+                        @Override
+                        public void onSuccess(String result) {
+                            smart_communal_refresh.finishRefresh();
+                            messageCommunalAdapter.loadMoreComplete();
+                            if (page == 1) {
+                                commentList.clear();
+                            }
+                            Gson gson = new Gson();
+                            articleCommentEntity = gson.fromJson(result, MessageCommentEntity.class);
+                            if (articleCommentEntity != null) {
+                                if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                                    commentList.addAll(articleCommentEntity.getMessageCommentList());
+                                } else if (!articleCommentEntity.getCode().equals(EMPTY_CODE)) {
+                                    showToast(MessageCommentActivity.this, articleCommentEntity.getMsg());
+                                }
+                            }
+                            messageCommunalAdapter.notifyDataSetChanged();
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, commentList, articleCommentEntity);
                         }
-                    }
-                    messageCommunalAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,commentList,articleCommentEntity);
-                }
 
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    messageCommunalAdapter.loadMoreComplete();
-                    showToast(MessageCommentActivity.this, R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,commentList,articleCommentEntity);
-                }
+                        @Override
+                        public void netClose() {
+                            smart_communal_refresh.finishRefresh();
+                            messageCommunalAdapter.loadMoreComplete();
+                            showToast(MessageCommentActivity.this, R.string.unConnectedNetwork);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, commentList, articleCommentEntity);
+                        }
 
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    messageCommunalAdapter.loadMoreComplete();
-                    showToast(MessageCommentActivity.this, R.string.invalidData);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,commentList,articleCommentEntity);
-                }
-            });
+                        @Override
+                        public void onError(Throwable throwable) {
+                            smart_communal_refresh.finishRefresh();
+                            messageCommunalAdapter.loadMoreComplete();
+                            showToast(MessageCommentActivity.this, R.string.invalidData);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, commentList, articleCommentEntity);
+                        }
+                    });
         } else {
             NetLoadUtils.getQyInstance().showLoadSir(loadService, commentList, articleCommentEntity);
         }

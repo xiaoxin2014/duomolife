@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -22,6 +22,8 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
-
 
 
 /**
@@ -70,18 +71,17 @@ public class SearchGoodProMoreActivity extends BaseActivity {
     protected void initViews() {
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-           loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         tv_header_titleAll.setText("好物推荐");
         communal_recycler.setLayoutManager(new GridLayoutManager(SearchGoodProMoreActivity.this, 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_product)
-
-
-
-
 
 
                 .create());
@@ -103,7 +103,7 @@ public class SearchGoodProMoreActivity extends BaseActivity {
                             intent.setClass(SearchGoodProMoreActivity.this, IntegralScrollDetailsActivity.class);
                             break;
                     }
-                    if(likedProduct!=null&&!TextUtils.isEmpty(likedProduct.getRecommendFlag())){
+                    if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getRecommendFlag())) {
                         intent.putExtra("recommendFlag", likedProduct.getRecommendFlag());
                     }
                     intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
@@ -126,37 +126,37 @@ public class SearchGoodProMoreActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.H_SEARCH_PRODUCT_GOOD;
         NetLoadUtils.getQyInstance().loadNetDataPost(SearchGoodProMoreActivity.this, url,
                 null, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                productSearList.clear();
-                Gson gson = new Gson();
-                likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                if (likedProduct != null) {
-                    if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                        productSearList.addAll(likedProduct.getLikedProductBeanList());
-                    } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                        showToast(SearchGoodProMoreActivity.this, likedProduct.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        productSearList.clear();
+                        Gson gson = new Gson();
+                        likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProduct != null) {
+                            if (likedProduct.getCode().equals(SUCCESS_CODE)) {
+                                productSearList.addAll(likedProduct.getLikedProductBeanList());
+                            } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
+                                showToast(SearchGoodProMoreActivity.this, likedProduct.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productSearList, likedProduct);
+                        adapterProduct.notifyDataSetChanged();
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,productSearList,likedProduct);
-                adapterProduct.notifyDataSetChanged();
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,productSearList,likedProduct);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productSearList, likedProduct);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,productSearList,likedProduct);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productSearList, likedProduct);
+                    }
+                });
     }
 
     @OnClick(R.id.tv_life_back)

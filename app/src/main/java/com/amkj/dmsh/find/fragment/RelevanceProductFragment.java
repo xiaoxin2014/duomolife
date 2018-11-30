@@ -12,16 +12,18 @@ import android.widget.CheckBox;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.RelevanceProAdapter;
 import com.amkj.dmsh.release.bean.RelevanceProEntity;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -109,10 +111,6 @@ public class RelevanceProductFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         relevanceProAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -134,8 +132,11 @@ public class RelevanceProductFragment extends BaseFragment {
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         relevanceProAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -336,50 +337,50 @@ public class RelevanceProductFragment extends BaseFragment {
         params.put("showCount", TOTAL_COUNT_TWENTY);
         NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                relevanceProAdapter.loadMoreComplete();
-                smart_communal_refresh.finishRefresh();
-                if (colProPage == 1) {
-                    relevanceColProList.clear();
-                    relevanceProList.clear();
-                }
-                Gson gson = new Gson();
-                RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
-                if (relevanceProEntity != null) {
-                    if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
-                        relevanceColProList.addAll(relevanceProEntity.getRelevanceProList());
-                        relevanceProList.removeAll(relevanceColProList);
-                        relevanceProList.addAll(changeRelevanceProduct(relevanceColProList, relevanceSelProList));
-                    } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
-                        relevanceProAdapter.loadMoreEnd(false);
-                    } else {
-                        relevanceProAdapter.loadMoreEnd(false);
-                        showToast(getActivity(), relevanceProEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        relevanceProAdapter.loadMoreComplete();
+                        smart_communal_refresh.finishRefresh();
+                        if (colProPage == 1) {
+                            relevanceColProList.clear();
+                            relevanceProList.clear();
+                        }
+                        Gson gson = new Gson();
+                        RelevanceProEntity relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
+                        if (relevanceProEntity != null) {
+                            if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
+                                relevanceColProList.addAll(relevanceProEntity.getRelevanceProList());
+                                relevanceProList.removeAll(relevanceColProList);
+                                relevanceProList.addAll(changeRelevanceProduct(relevanceColProList, relevanceSelProList));
+                            } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
+                                relevanceProAdapter.loadMoreEnd(false);
+                            } else {
+                                relevanceProAdapter.loadMoreEnd(false);
+                                showToast(getActivity(), relevanceProEntity.getMsg());
+                            }
+                            relevanceProAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
-                    relevanceProAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
-            }
 
-            @Override
-            public void netClose() {
-                relevanceProAdapter.loadMoreEnd(false);
-                smart_communal_refresh.finishRefresh();
-                relevanceProAdapter.loadMoreComplete();
-                showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
-            }
+                    @Override
+                    public void netClose() {
+                        relevanceProAdapter.loadMoreEnd(false);
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreComplete();
+                        showToast(getActivity(), R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                relevanceProAdapter.loadMoreEnd(false);
-                smart_communal_refresh.finishRefresh();
-                relevanceProAdapter.loadMoreComplete();
-                showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        relevanceProAdapter.loadMoreEnd(false);
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreComplete();
+                        showToast(getActivity(), R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
+                });
     }
 
     @Override

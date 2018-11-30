@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -30,17 +29,20 @@ import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TagBe
 import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TopTagListBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -115,18 +117,17 @@ public class FindTagDetailsActivity extends BaseActivity {
             showToast(this, R.string.unConnectedNetwork);
             finish();
         }
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         communal_recycler.setBackgroundColor(getResources().getColor(R.color.white));
         communal_recycler.setLayoutManager(new LinearLayoutManager(FindTagDetailsActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -320,7 +321,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RelevanceTagInfoEntity relevanceTagInfoEntity = gson.fromJson(result, RelevanceTagInfoEntity.class);
                     if (relevanceTagInfoEntity != null) {
-                        if (relevanceTagInfoEntity.getCode().equals("01")) {
+                        if (relevanceTagInfoEntity.getCode().equals(SUCCESS_CODE)) {
                             relevanceTagInfoBean = relevanceTagInfoEntity.getRelevanceTagInfoBean();
                             if (relevanceTagInfoBean.getProductList() != null && relevanceTagInfoBean.getProductList().size() > 0) {
                                 relevanceProList.clear();
@@ -330,7 +331,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                                 tagHeaderView.rel_tag_rel_pro.setVisibility(View.GONE);
                             }
                             setTagData(relevanceTagInfoBean);
-                        } else if (!relevanceTagInfoEntity.getCode().equals("02")) {
+                        } else if (!relevanceTagInfoEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(FindTagDetailsActivity.this, relevanceTagInfoEntity.getMsg());
                         }
                         tagRelProAdapter.notifyDataSetChanged();
@@ -402,7 +403,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());
                         tv_collect.setText(ConstantMethod.getNumCount(tv_collect.isSelected(), invitationDetailBean.isCollect(), invitationDetailBean.getCollect(), "收藏"));
                     }
@@ -482,10 +483,6 @@ public class FindTagDetailsActivity extends BaseActivity {
             communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_img_white)
-
-
-
-
 
 
                     .create());

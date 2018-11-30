@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -36,6 +35,7 @@ import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShoppingCartBiz;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
@@ -51,6 +51,8 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
@@ -86,7 +88,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 /**
  * Created by atd48 on 2016/10/22.
  */
-public class ShopCarActivity extends BaseActivity{
+public class ShopCarActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -162,16 +164,15 @@ public class ShopCarActivity extends BaseActivity{
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         communal_recycler.setAdapter(shopCarGoodsAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            scrollY = 0;
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                scrollY = 0;
+                loadData();
+            }
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
             if (page * TOTAL_COUNT_TWENTY <= shopGoodsList.size()) {
@@ -320,7 +321,7 @@ public class ShopCarActivity extends BaseActivity{
                         Gson gson = new Gson();
                         ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
                         if (shopCarNewInfoEntity != null) {
-                            if (shopCarNewInfoEntity.getCode().equals("01")) {
+                            if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
                                 if (shopCarNewInfoEntity.getShopCarNewInfoList().size() > 0) {
                                     ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
                                     ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(oldCartInfoBean.getOldPosition());
@@ -530,7 +531,7 @@ public class ShopCarActivity extends BaseActivity{
                     Gson gson = new Gson();
                     likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProduct != null) {
-                        if (likedProduct.getCode().equals("01")) {
+                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                             cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
                             if (cartProRecommendList.size() > 0) {
                                 if (cartHeaderView.getParent() == null) {
@@ -539,7 +540,7 @@ public class ShopCarActivity extends BaseActivity{
                                 recommendHeaderView.tv_pro_title.setText("-商品推荐-");
                                 proNoShopCarAdapter.notifyDataSetChanged();
                             }
-                        } else if (!likedProduct.getCode().equals("02")) {
+                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
                             showToast(ShopCarActivity.this, likedProduct.getMsg());
                         }
                     }
@@ -572,14 +573,14 @@ public class ShopCarActivity extends BaseActivity{
                     Gson gson = new Gson();
                     likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProduct != null) {
-                        if (likedProduct.getCode().equals("01")) {
+                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                             cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
                             if (cartProRecommendList.size() > 0) {
                                 shopCarGoodsAdapter.addFooterView(cartHeaderView);
                                 recommendHeaderView.tv_pro_title.setText("-商品推荐-");
                                 proNoShopCarAdapter.notifyDataSetChanged();
                             }
-                        } else if (!likedProduct.getCode().equals("02")) {
+                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
                             showToast(ShopCarActivity.this, likedProduct.getMsg());
                         }
                     }
@@ -704,7 +705,7 @@ public class ShopCarActivity extends BaseActivity{
     }
 
     private void delSelGoods() {
-        if(loadHud!=null){
+        if (loadHud != null) {
             loadHud.show();
         }
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_DEL_CAR;
@@ -714,7 +715,7 @@ public class ShopCarActivity extends BaseActivity{
         NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
-                if(loadHud!=null){
+                if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 Gson gson = new Gson();
@@ -731,7 +732,7 @@ public class ShopCarActivity extends BaseActivity{
             @Override
             public void netClose() {
                 showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-                if(loadHud!=null){
+                if (loadHud != null) {
                     loadHud.dismiss();
                 }
             }
@@ -739,7 +740,7 @@ public class ShopCarActivity extends BaseActivity{
             @Override
             public void onError(Throwable throwable) {
                 showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-                if(loadHud!=null){
+                if (loadHud != null) {
                     loadHud.dismiss();
                 }
             }
@@ -760,7 +761,7 @@ public class ShopCarActivity extends BaseActivity{
                     Gson gson = new Gson();
                     EditGoodsSkuEntity editGoodsSkuEmpty = gson.fromJson(result, EditGoodsSkuEntity.class);
                     if (editGoodsSkuEmpty != null) {
-                        if (editGoodsSkuEmpty.getCode().equals("01")) {
+                        if (editGoodsSkuEmpty.getCode().equals(SUCCESS_CODE)) {
                             if (editGoodsSkuEmpty.getEditGoodsSkuBean().getSkuSale().size() > 1) {
                                 getProperty(editGoodsSkuEmpty.getEditGoodsSkuBean(), cartInfoBean);
                             } else {
@@ -838,7 +839,7 @@ public class ShopCarActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
-                    if (status.getCode().equals("01")) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
                         updateCartData(cartInfoBean.getCurrentPosition());
                         setEditStatus();
                     } else {
@@ -884,7 +885,7 @@ public class ShopCarActivity extends BaseActivity{
                     Gson gson = new Gson();
                     ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
                     if (shopCarNewInfoEntity != null) {
-                        if (shopCarNewInfoEntity.getCode().equals("01")) {
+                        if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
                             updatePrice(shopCarNewInfoEntity);
                         } else {
                             updateLocalPrice();
@@ -915,10 +916,6 @@ public class ShopCarActivity extends BaseActivity{
             communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
-
-
 
 
                     .create());
@@ -954,7 +951,7 @@ public class ShopCarActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(alertDialogHelper!=null){
+        if (alertDialogHelper != null) {
             alertDialogHelper.dismiss();
         }
     }

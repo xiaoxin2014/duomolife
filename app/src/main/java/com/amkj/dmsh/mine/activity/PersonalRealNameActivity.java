@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -31,7 +31,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -83,10 +85,10 @@ public class PersonalRealNameActivity extends BaseActivity {
                             Gson gson = new Gson();
                             CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
                             if (communalUserInfoEntity != null) {
-                                if (communalUserInfoEntity.getCode().equals("01")) {
+                                if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                                     CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
                                     setPersonalData(communalUserInfoBean);
-                                } else if (!communalUserInfoEntity.getCode().equals("02")) {
+                                } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
                                     showToast(PersonalRealNameActivity.this, communalUserInfoEntity.getMsg());
                                 }
                             }
@@ -131,7 +133,7 @@ public class PersonalRealNameActivity extends BaseActivity {
                             }
                             RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                             if (requestStatus != null) {
-                                if (requestStatus.getCode().equals("01")) {
+                                if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                                     showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
                                     finish();
                                 } else {

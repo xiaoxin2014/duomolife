@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
@@ -33,6 +32,7 @@ import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -44,6 +44,8 @@ import com.google.gson.Gson;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -137,14 +139,13 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         qualityTypeProductAdapter = new QualityTypeProductAdapter(DoMoLifeWelfareActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
@@ -155,10 +156,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                 .create());
@@ -251,10 +248,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_product)
-
-
-
-
 
 
                 .create());
@@ -402,10 +395,10 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoLifeWelfareActivity.this, requestStatus.getMsg());
                         }
                     }
@@ -449,7 +442,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         ll_communal_pro_list.setVisibility(View.VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = AutoSizeUtils.mm2px(mAppContext,50);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
         drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
         try {
             drawable.setColor(0xffffffff);
@@ -492,6 +485,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void getData() {
         getWelfareThemeData();

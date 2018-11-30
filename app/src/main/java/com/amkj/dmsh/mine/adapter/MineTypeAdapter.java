@@ -5,7 +5,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
+import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -22,37 +23,34 @@ import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/8/7
- * class description:请输入类描述
+ * class description:我的-底栏
  */
 
-public class MineTypeAdapter extends BaseQuickAdapter<QualityTypeBean, MineTypeAdapter.TypeViewHolderHelper> {
+public class MineTypeAdapter extends BaseQuickAdapter<MineTypeBean, MineTypeAdapter.TypeViewHolderHelper> {
     private final Context context;
 
-    public MineTypeAdapter(Context context, List<QualityTypeBean> mineTypeList) {
+    public MineTypeAdapter(Context context, List<MineTypeBean> mineTypeList) {
         super(R.layout.adapter_mine_bottom, mineTypeList);
         this.context = context;
     }
 
     @Override
-    protected void convert(TypeViewHolderHelper helper, QualityTypeBean qualityTypeBean) {
+    protected void convert(TypeViewHolderHelper helper, MineTypeBean mineTypeBean) {
         Badge badge = helper.badge;
         if (badge != null) {
-            if(badge.getBadgeNumber()!=qualityTypeBean.getType()){
-                badge.setBadgeNumber(qualityTypeBean.getType());
+            if (badge.getBadgeNumber() != mineTypeBean.getMesCount()) {
+                badge.setBadgeNumber(mineTypeBean.getMesCount());
             }
         }
-        try {
-            helper.iv_mine_type_icon.setImageResource(context.getResources().getIdentifier(qualityTypeBean.getPicUrl(), "drawable", "com.amkj.dmsh"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        helper.setText(R.id.tv_mine_type_title, getStrings(qualityTypeBean.getName()));
-        helper.itemView.setTag(qualityTypeBean);
+        GlideImageLoaderUtil.loadFitCenter(context, helper.iv_mine_type_icon, mineTypeBean.getIconUrl());
+        helper.setText(R.id.tv_mine_type_title, getStrings(mineTypeBean.getName()))
+                .itemView.setTag(mineTypeBean);
     }
 
     public class TypeViewHolderHelper extends BaseViewHolder {
         Badge badge;
         ImageView iv_mine_type_icon;
+
         public TypeViewHolderHelper(View view) {
             super(view);
             iv_mine_type_icon = (ImageView) view.findViewById(R.id.iv_mine_type_icon);

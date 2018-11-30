@@ -960,6 +960,7 @@
         <activity
             android:name=".mine.activity.ChangeMobileActivity"
             android:screenOrientation="portrait" />
+        <!--收藏内容-->
         <activity
             android:name=".mine.activity.MineCollectContentActivity"
             android:exported="false"
@@ -969,6 +970,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <!--我的帖子列表-->
         <activity
             android:name=".mine.activity.MineInvitationListActivity"
             android:exported="false"

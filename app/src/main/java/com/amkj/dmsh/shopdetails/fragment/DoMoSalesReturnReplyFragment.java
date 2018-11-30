@@ -8,9 +8,9 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectSalesReturnRecordAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectReturnRecordEntity;
@@ -19,6 +19,8 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
@@ -79,20 +81,17 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
                 .create());
         directSalesReturnListAdapter = new DirectSalesReturnRecordAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(directSalesReturnListAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            //                滚动距离置0
-            scrollY = 0;
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                //                滚动距离置0
+                scrollY = 0;
+                loadData();
+            }
         });
         directSalesReturnListAdapter.setOnLoadMoreListener(() -> {
             if (page * DEFAULT_TOTAL_COUNT <= directSalesReturnListAdapter.getItemCount()) {
@@ -217,21 +216,21 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
                     showToast(getActivity(), msg);
                 }
                 directSalesReturnListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 directSalesReturnListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 directSalesReturnListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
         });
     }

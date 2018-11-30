@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalComment;
@@ -40,6 +39,7 @@ import com.amkj.dmsh.find.bean.InvitationImgDetailEntity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
@@ -56,6 +56,8 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -174,11 +176,14 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp).create());
         communal_recycler.setAdapter(adapterArticleComment);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            //                滚动距离置0
-            scrollY = 0;
-            page = 1;
-            getDetailData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                //                滚动距离置0
+                scrollY = 0;
+                page = 1;
+                getDetailData();
+            }
         });
         adapterArticleComment.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -415,7 +420,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_article_bottom_collect.setSelected(!tv_article_bottom_collect.isSelected());
                     }
                 }
@@ -566,9 +571,9 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                     Gson gson = new Gson();
                     DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
                     if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals("01")) {
+                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
                             articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals("02")) {
+                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(ArticleDetailsImgActivity.this, dmlSearchCommentEntity.getMsg());
                         }
                         if (articleCommentList.size() > 0) {
@@ -636,10 +641,6 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                     .setDividerId(R.drawable.item_divider_ten_white)
 
 
-
-
-
-
                     .create());
             findImageListAdapter = new FindImageListAdapter(ArticleDetailsImgActivity.this, pathList);
             rv_img_find.setAdapter(findImageListAdapter);
@@ -696,10 +697,10 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
                 flex_communal_tag.removeAllViews();
                 for (int i = 0; i < detailsBean.getTagsList().size(); i++) {
-                    if(i ==0){
+                    if (i == 0) {
                         flex_communal_tag.addView(getLabelInstance().createArticleIcon(ArticleDetailsImgActivity.this));
                     }
-                    flex_communal_tag.addView(getLabelInstance().createArticleClickTag(ArticleDetailsImgActivity.this,detailsBean.getTagsList().get(i)));
+                    flex_communal_tag.addView(getLabelInstance().createArticleClickTag(ArticleDetailsImgActivity.this, detailsBean.getTagsList().get(i)));
                 }
             } else {
                 rel_tag_layout_img.setVisibility(View.GONE);
@@ -815,7 +816,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             if (!isAttention) {
                                 textView.setSelected(true);
                                 textView.setText("已关注");
@@ -867,7 +868,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                             smart_communal_refresh.finishRefresh();
                             adapterArticleComment.loadMoreComplete();
                             rel_article_img_bottom.setVisibility(GONE);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailBean,invitationDetailEntity);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
                         }
 
                         @Override
@@ -875,7 +876,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                             smart_communal_refresh.finishRefresh();
                             adapterArticleComment.loadMoreComplete();
                             rel_article_img_bottom.setVisibility(GONE);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailBean,invitationDetailEntity);
+                            NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
                         }
                     });
         }
@@ -896,7 +897,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                     }
                 }
             }
-            NetLoadUtils.getQyInstance().showLoadSir(loadService,invitationDetailBean,invitationDetailEntity);
+            NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
         }
     }
 
@@ -921,7 +922,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment() {
-        if(invitationDetailBean!=null){
+        if (invitationDetailBean != null) {
             if (userId > 0) {
                 setPublishComment();
             } else {

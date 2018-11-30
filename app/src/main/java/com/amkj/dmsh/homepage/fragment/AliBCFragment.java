@@ -324,6 +324,10 @@ public class AliBCFragment extends BaseFragment {
                 }
             }
         });
+        smart_web_fragment_refresh.setEnableAutoLoadMore(false);
+        smart_web_fragment_refresh.setEnableNestedScroll(false);
+        smart_web_fragment_refresh.setEnableOverScrollBounce(false);
+        smart_web_fragment_refresh.setEnableOverScrollDrag(false);
         smart_web_fragment_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {

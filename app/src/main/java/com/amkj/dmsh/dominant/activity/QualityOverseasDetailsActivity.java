@@ -24,7 +24,7 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -51,6 +51,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -133,10 +135,6 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -182,9 +180,12 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            qualityTypeProductAdapter.loadMoreEnd(true);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                qualityTypeProductAdapter.loadMoreEnd(true);
+            }
         });
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -326,6 +327,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
     void goBack(View view) {
         finish();
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -369,9 +371,9 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     qualityShopDescripEntity = gson.fromJson(result, QualityShopDescripEntity.class);
                     if (qualityShopDescripEntity != null) {
-                        if (qualityShopDescripEntity.getCode().equals("01")) {
+                        if (qualityShopDescripEntity.getCode().equals(SUCCESS_CODE)) {
                             setData(qualityShopDescripEntity.getQualityShopDescBean());
-                        } else if (qualityShopDescripEntity.getCode().equals("02")) {
+                        } else if (qualityShopDescripEntity.getCode().equals(EMPTY_CODE)) {
                             if (page == 1) {
                                 showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
                             }
@@ -407,43 +409,43 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
         }
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityOverseasDetailsActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                Gson gson = new Gson();
-                if (page == 1) {
-                    //重新加载数据
-                    proDetailList.clear();
-                }
-                userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                if (userLikedProductEntity != null) {
-                    if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        proDetailList.addAll(userLikedProductEntity.getLikedProductBeanList());
-                    } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityOverseasDetailsActivity.this, userLikedProductEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        if (page == 1) {
+                            //重新加载数据
+                            proDetailList.clear();
+                        }
+                        userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (userLikedProductEntity != null) {
+                            if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                proDetailList.addAll(userLikedProductEntity.getLikedProductBeanList());
+                            } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(QualityOverseasDetailsActivity.this, userLikedProductEntity.getMsg());
+                            }
+                            qualityTypeProductAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
                     }
-                    qualityTypeProductAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proDetailList,userLikedProductEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proDetailList,userLikedProductEntity);
-            }
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proDetailList,userLikedProductEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
+                    }
+                });
     }
 
     private void getDirectCoupon(int id) {
@@ -460,7 +462,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(QualityOverseasDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(QualityOverseasDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -492,7 +494,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(QualityOverseasDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(QualityOverseasDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -586,10 +588,10 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals("02")) {
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityOverseasDetailsActivity.this, requestStatus.getMsg());
                         }
                     }

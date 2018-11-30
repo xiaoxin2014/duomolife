@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
@@ -21,6 +20,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineCollectProAdapter;
 import com.amkj.dmsh.mine.bean.CollectProEntity;
 import com.amkj.dmsh.mine.bean.CollectProEntity.CollectProBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -29,6 +29,8 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -58,7 +61,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/8/10
  * class description:我 - 产品收藏
  */
-public class MineCollectProductActivity extends BaseActivity{
+public class MineCollectProductActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -98,10 +101,6 @@ public class MineCollectProductActivity extends BaseActivity{
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                 .create());
@@ -145,8 +144,11 @@ public class MineCollectProductActivity extends BaseActivity{
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -181,7 +183,7 @@ public class MineCollectProductActivity extends BaseActivity{
 
     @Override
     protected void loadData() {
-        if(userId>0){
+        if (userId > 0) {
             page = 1;
             getCollectPro();
         }
@@ -217,13 +219,13 @@ public class MineCollectProductActivity extends BaseActivity{
                     if (collectProEntity.getCode().equals(SUCCESS_CODE)) {
                         collectProList.addAll(collectProEntity.getCollectProList());
                         tv_header_titleAll.setText("收藏商品(" + collectProEntity.getCount() + ")");
-                    } else if (!collectProEntity.getCode().equals("02")) {
+                    } else if (!collectProEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(MineCollectProductActivity.this, collectProEntity.getMsg());
                     }
                     mineCollectProAdapter.notifyDataSetChanged();
                 }
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,collectProList, collectProEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, collectProList, collectProEntity);
             }
 
             @Override
@@ -231,7 +233,7 @@ public class MineCollectProductActivity extends BaseActivity{
                 smart_communal_refresh.finishRefresh();
                 mineCollectProAdapter.loadMoreComplete();
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,collectProList,collectProEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, collectProList, collectProEntity);
             }
 
             @Override
@@ -239,7 +241,7 @@ public class MineCollectProductActivity extends BaseActivity{
                 smart_communal_refresh.finishRefresh();
                 mineCollectProAdapter.loadMoreComplete();
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,collectProList,collectProEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, collectProList, collectProEntity);
             }
         });
     }
@@ -360,7 +362,7 @@ public class MineCollectProductActivity extends BaseActivity{
                     Gson gson = new Gson();
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
-                        if (status.getCode().equals("01")) {
+                        if (status.getCode().equals(SUCCESS_CODE)) {
                             showToast(MineCollectProductActivity.this, "已取消收藏");
                             page = 1;
                             loadData();

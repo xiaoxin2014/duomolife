@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
@@ -18,6 +17,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
@@ -30,6 +30,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -96,9 +98,11 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         tv_header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("我的拼团");
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
             loadData();
-        });
+        }});
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopMineActivity.this));
         qualityGroupMineAdapter = new QualityGroupMineAdapter(QualityGroupShopMineActivity.this, qualityGroupMineList);
         communal_recycler.setAdapter(qualityGroupMineAdapter);
@@ -238,7 +242,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     if (payWay.equals(PAY_WX_PAY)) {
                         qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                         if (qualityWeChatIndent != null) {
-                            if (qualityWeChatIndent.getCode().equals("01")) {
+                            if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                                 //返回成功，调起微信支付接口
                                 doWXPay(qualityWeChatIndent.getResult().getPayKey());
                             } else {
@@ -249,7 +253,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     } else if (payWay.equals(PAY_ALI_PAY)) {
                         qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                         if (qualityAliPayIndent != null) {
-                            if (qualityAliPayIndent.getCode().equals("01")) {
+                            if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                                 //返回成功，调起支付宝支付接口
                                 doAliPay(qualityAliPayIndent.getResult().getPayKey());
                             } else {

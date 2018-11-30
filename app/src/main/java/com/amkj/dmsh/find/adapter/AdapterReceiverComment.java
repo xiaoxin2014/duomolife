@@ -37,6 +37,7 @@ import static com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -219,7 +220,7 @@ public class AdapterReceiverComment extends BaseMultiItemQuickAdapter<ArticleCom
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 textView.setEnabled(true);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (commentBean.isFavor()) {
                             if (!textView.isSelected()) {
                                 textView.setSelected(true);

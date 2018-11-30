@@ -1,8 +1,9 @@
-package com.amkj.dmsh.base;
+package com.amkj.dmsh.network;
 
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
@@ -30,7 +31,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * version 3.1.6
  * class description:网络工具
  */
-@SuppressWarnings("unchecked")
 public class NetLoadUtils<T, E extends BaseEntity> {
 
     private static NetLoadUtils netLoadUtils;
@@ -155,6 +155,25 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             } else if (resultClass != null) {
                 loadService.showWithConvertor(resultClass.getCode());
             } else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
+        }
+    }
+
+    /**
+     * 集合数据
+     *
+     * @param loadService
+     * @param list
+     * @param resultCode 返回码
+     */
+    public void showLoadSirString(LoadService loadService, List<T> list, String resultCode) {
+        if (loadService != null) {
+            if (list != null && list.size() > 0) {
+                loadService.showWithConvertor(SUCCESS_CODE);
+            } else if (!TextUtils.isEmpty(resultCode)) {
+                loadService.showWithConvertor(resultCode);
+            }else{
                 loadService.showWithConvertor(ERROR_CODE);
             }
         }

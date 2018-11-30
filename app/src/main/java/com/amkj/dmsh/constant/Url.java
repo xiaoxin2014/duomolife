@@ -185,6 +185,8 @@ public class Url {
      */
     //我的首页
     public static final String MINE_PAGE = "api/my/getPersonalData";
+    //    我-底部宫格数据
+    public static final String MINE_BOTTOM_DATA = "api/my/getMyDefinedIcon";
     //    查询信息
     public static final String MINE_PAGE_POST = "api/my/getPersonalData";
     //    我 广告
@@ -243,7 +245,7 @@ public class Url {
     public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
     //意见反馈
     public static final String MINE_FEEDBACK = "api/my/addFeedBackNew";
-//    意见反馈类型
+    //    意见反馈类型
     public static final String MINE_FEEDBACK_TYPE = "api/my/getFeedBackType";
     //    检查该号码是否已注册
     public static final String CHECK_PHONE_IS_REG = "api/my/checkRegMobile";
@@ -480,7 +482,7 @@ public class Url {
     public static final String Q_HOME_CENTER_TYPE = "api/goods/index/getProductMiddleIndex";
     //    良品根据父类获取分类栏目
     public static final String Q_PRODUCT_TYPE = "api/goods/category/getCategoryByParent";
-//    良品分类 一级分类
+    //    良品分类 一级分类
     public static final String QUALITY_CATEGORY_TYPE = "api/goods/category/getCategoryLevelOneList";
     //    良品分类排序
     public static final String Q_SORT_TYPE = "api/goods/category/getCategoryOrderType";
@@ -523,7 +525,7 @@ public class Url {
     public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
     public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
-//    标签详情商品
+    //    标签详情商品
     public static final String QUALITY_PRODUCT_LABEL = "api/goods/getProductListByLabelId";
     //    新版热销单品 时间轴
     public static final String QUALITY_HOT_SALE_LIST_NEW = "api/goods/getHotGoodsNew";

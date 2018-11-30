@@ -10,16 +10,18 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.google.gson.Gson;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +31,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -38,6 +40,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 
+;
 ;
 
 /**
@@ -82,17 +85,16 @@ public class CouponProductActivity extends BaseActivity {
         }
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         communal_recycler.setLayoutManager(new GridLayoutManager(CouponProductActivity.this, 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -170,7 +172,7 @@ public class CouponProductActivity extends BaseActivity {
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponProductList,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
             }
 
             @Override
@@ -181,7 +183,7 @@ public class CouponProductActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(CouponProductActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponProductList,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
             }
 
             @Override
@@ -192,7 +194,7 @@ public class CouponProductActivity extends BaseActivity {
                     loadHud.dismiss();
                 }
                 showToast(CouponProductActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponProductList,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
             }
         });
     }

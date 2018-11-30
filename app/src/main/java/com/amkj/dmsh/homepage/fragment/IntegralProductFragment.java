@@ -9,16 +9,18 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.IntegralProductAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,10 +69,6 @@ public class IntegralProductFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         integralProductAdapter = new IntegralProductAdapter(getActivity(), integrationBeanList);
         communal_recycler.setAdapter(integralProductAdapter);
@@ -92,8 +90,11 @@ public class IntegralProductFragment extends BaseFragment {
                 getIntegralData();
             }
         }, communal_recycler);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
     }
 
@@ -123,7 +124,7 @@ public class IntegralProductFragment extends BaseFragment {
                         integralProductAdapter.loadMoreEnd();
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,integrationBeanList, integrationProEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
                 integralProductAdapter.notifyDataSetChanged();
             }
 
@@ -132,7 +133,7 @@ public class IntegralProductFragment extends BaseFragment {
                 smart_communal_refresh.finishRefresh();
                 integralProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,integrationBeanList, integrationProEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
             }
 
             @Override
@@ -140,7 +141,7 @@ public class IntegralProductFragment extends BaseFragment {
                 smart_communal_refresh.finishRefresh();
                 integralProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,integrationBeanList, integrationProEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
             }
         });
     }

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
@@ -237,7 +237,7 @@ public class FoundPasswordActivity extends BaseActivity {
                 Gson gson = new Gson();
                 MinePassword minePassword = gson.fromJson(result, MinePassword.class);
                 if (minePassword != null) {
-                    if (minePassword.getCode().equals("01")) {
+                    if (minePassword.getCode().equals(SUCCESS_CODE)) {
                         SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
                         SharedPreferences.Editor edit = loginStatus.edit();
                         edit.putBoolean("isLogin", true);

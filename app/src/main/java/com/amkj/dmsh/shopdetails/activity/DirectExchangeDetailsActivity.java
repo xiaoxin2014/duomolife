@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -38,6 +37,7 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
@@ -72,6 +72,8 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
@@ -213,11 +215,14 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         directProductListAdapter.addHeaderView(headerView);
         directProductListAdapter.addFooterView(footView);
         communal_recycler.setAdapter(directProductListAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            //                滚动距离置0
-            loadData();
-            directProductListAdapter.setEnableLoadMore(false);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                //                滚动距离置0
+                loadData();
+                directProductListAdapter.setEnableLoadMore(false);
 
+            }
         });
         directProductListAdapter.setOnItemClickListener((adapter, view, position) -> {
             OrderProductInfoBean orderProductInfoBean = (OrderProductInfoBean) view.getTag();
@@ -316,7 +321,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 Gson gson = new Gson();
                 ApplyRefundCheckEntity refundCheckEntity = gson.fromJson(result, ApplyRefundCheckEntity.class);
                 if (refundCheckEntity != null) {
-                    if (refundCheckEntity.getCode().equals("01")) {
+                    if (refundCheckEntity.getCode().equals(SUCCESS_CODE)) {
                         ApplyRefundCheckBean applyRefundCheckBean = refundCheckEntity.getApplyRefundCheckBean();
                         final DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
                         refundBean.setType(1);
@@ -597,7 +602,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (code.equals("01")) {
+                    if (code.equals(SUCCESS_CODE)) {
                         Gson gson = new Gson();
                         RefundDetailEntity refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
                         if (refundDetailEntity != null) {
@@ -1031,7 +1036,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     Gson gson = new Gson();
                     QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                     if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals("01")) {
+                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                             QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
                             invitePartnerGroup(qualityGroupShareBean);
                         }
@@ -1151,7 +1156,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 if (payWay.equals(PAY_WX_PAY)) {
                     QualityCreateWeChatPayIndentBean qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals("01")) {
+                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult().getPayKey());
                         } else {
@@ -1162,7 +1167,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 } else if (payWay.equals(PAY_ALI_PAY)) {
                     QualityCreateAliPayIndentBean qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals("01")) {
+                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult().getPayKey());
                         } else {
@@ -1282,7 +1287,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectExchangeDetailsActivity.this, requestStatus.getMsg());
                         finish();
                     } else {
@@ -1306,7 +1311,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectExchangeDetailsActivity.this, requestStatus.getMsg());
                         finish();
                     } else {
@@ -1330,7 +1335,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectExchangeDetailsActivity.this, String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                         finish();
                     } else {
@@ -1501,20 +1506,20 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         constantMethod.stopSchedule();
         constantMethod.releaseHandlers();
         super.onDestroy();
-        if(cancelOrderDialogHelper!=null
-                &&cancelOrderDialogHelper.getAlertDialog()!=null&&cancelOrderDialogHelper.getAlertDialog().isShowing()){
+        if (cancelOrderDialogHelper != null
+                && cancelOrderDialogHelper.getAlertDialog() != null && cancelOrderDialogHelper.getAlertDialog().isShowing()) {
             cancelOrderDialogHelper.dismiss();
         }
-        if(confirmOrderDialogHelper!=null
-                &&confirmOrderDialogHelper.getAlertDialog()!=null&&confirmOrderDialogHelper.getAlertDialog().isShowing()){
+        if (confirmOrderDialogHelper != null
+                && confirmOrderDialogHelper.getAlertDialog() != null && confirmOrderDialogHelper.getAlertDialog().isShowing()) {
             confirmOrderDialogHelper.dismiss();
         }
-        if(delOrderDialogHelper!=null
-                &&delOrderDialogHelper.getAlertDialog()!=null&&delOrderDialogHelper.getAlertDialog().isShowing()){
+        if (delOrderDialogHelper != null
+                && delOrderDialogHelper.getAlertDialog() != null && delOrderDialogHelper.getAlertDialog().isShowing()) {
             delOrderDialogHelper.dismiss();
         }
-        if(refundOrderDialogHelper!=null
-                &&refundOrderDialogHelper.getAlertDialog()!=null&&refundOrderDialogHelper.getAlertDialog().isShowing()){
+        if (refundOrderDialogHelper != null
+                && refundOrderDialogHelper.getAlertDialog() != null && refundOrderDialogHelper.getAlertDialog().isShowing()) {
             refundOrderDialogHelper.dismiss();
         }
     }

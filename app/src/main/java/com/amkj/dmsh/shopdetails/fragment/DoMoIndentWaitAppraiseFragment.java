@@ -10,12 +10,12 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
@@ -31,6 +31,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
@@ -64,7 +66,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * 待评价
  */
 
-public class DoMoIndentWaitAppraiseFragment extends BaseFragment{
+public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -100,17 +102,16 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment{
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            scrollY = 0;
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                scrollY = 0;
+                loadData();
+            }
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -282,21 +283,21 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment{
                             showToast(getActivity(), msg);
                         }
                         doMoIndentListAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                        NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
                     }
 
                     @Override
                     public void netClose() {
                         smart_communal_refresh.finishRefresh();
                         doMoIndentListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         smart_communal_refresh.finishRefresh();
                         doMoIndentListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
                     }
                 });
     }
@@ -313,7 +314,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment{
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                     } else {

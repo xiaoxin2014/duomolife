@@ -11,18 +11,20 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.CouponProductActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -82,21 +84,17 @@ public class DirectMyCouponFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_twenty_white)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_twenty_white).create());
         directMyCouponAdapter = new DirectMyCouponAdapter(couponList, "checkCoupon");
         communal_recycler.setAdapter(directMyCouponAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            //                滚动距离置0
-            scrollY = 0;
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                //                滚动距离置0
+                scrollY = 0;
+                loadData();
 
+            }
         });
         directMyCouponAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -182,21 +180,21 @@ public class DirectMyCouponFragment extends BaseFragment {
                         showToast(getActivity(), directCouponEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList, directCouponEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 directMyCouponAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList, directCouponEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 directMyCouponAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,couponList, directCouponEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
             }
         });
     }

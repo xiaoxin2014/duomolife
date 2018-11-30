@@ -246,6 +246,8 @@ public class ConstantVariable {
     public static final String MANDATORY_UPDATE_DESCRIPTION = "M_U_D";
 //    图片存储类型
     public static final String FILE_IMAGE = "fileImage";
+//    我-底部宫格
+    public static final String MINE_BOTTOM_TYPE = "M_B_T";
 
     /**
      * 推送通知开关

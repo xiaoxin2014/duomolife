@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -28,16 +27,19 @@ import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity.CouponGiftBean;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -114,17 +116,16 @@ public class QualityNewUserActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_gray_f)
 
 
-
-
-
-
                 .create());
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            qualityNewUserShopList.clear();
-            qualityNewUserCouponList.clear();
-            getQualityTypePro();
-            getNewUserCouponProduct();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                qualityNewUserShopList.clear();
+                qualityNewUserCouponList.clear();
+                getQualityTypePro();
+                getNewUserCouponProduct();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -218,6 +219,7 @@ public class QualityNewUserActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -227,6 +229,7 @@ public class QualityNewUserActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void loadData() {
         getQualityTypePro();
@@ -273,43 +276,43 @@ public class QualityNewUserActivity extends BaseActivity {
         }
         NetLoadUtils.getQyInstance().loadNetDataPost(QualityNewUserActivity.this, url
                 , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                qualityNewUserShopAdapter.loadMoreComplete();
-                Gson gson = new Gson();
-                qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
-                if (qualityNewUserShopEntity != null) {
-                    if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
-                        qualityNewUserShopList.clear();
-                        qualityNewUserShopList.addAll(qualityNewUserShopEntity.getQualityNewUserShopList());
-                    } else if (!qualityNewUserShopEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityNewUserActivity.this, qualityNewUserShopEntity.getMsg());
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityNewUserShopAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
+                        if (qualityNewUserShopEntity != null) {
+                            if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
+                                qualityNewUserShopList.clear();
+                                qualityNewUserShopList.addAll(qualityNewUserShopEntity.getQualityNewUserShopList());
+                            } else if (!qualityNewUserShopEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(QualityNewUserActivity.this, qualityNewUserShopEntity.getMsg());
+                            }
+                            if (qualityNewUserCouponList.size() > 0) {
+                                qualityNewUserShopList.addAll(qualityNewUserCouponList);
+                                qualityNewUserShopAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
                     }
-                    if (qualityNewUserCouponList.size() > 0) {
-                        qualityNewUserShopList.addAll(qualityNewUserCouponList);
-                        qualityNewUserShopAdapter.notifyDataSetChanged();
+
+                    @Override
+                    public void netClose() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityNewUserShopAdapter.loadMoreComplete();
+                        showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityNewUserShopAdapter.loadMoreComplete();
-                showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityNewUserShopAdapter.loadMoreComplete();
-                showToast(QualityNewUserActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityNewUserShopList,qualityNewUserShopEntity);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityNewUserShopAdapter.loadMoreComplete();
+                        showToast(QualityNewUserActivity.this, R.string.invalidData);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
+                    }
+                });
     }
 
     /**
@@ -324,7 +327,7 @@ public class QualityNewUserActivity extends BaseActivity {
                 Gson gson = new Gson();
                 QualityNewUserShopEntity qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
                 if (qualityNewUserShopEntity != null) {
-                    if (qualityNewUserShopEntity.getCode().equals("01")) {
+                    if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
                         QualityNewUserShopBean qualityNewUserShopBean = new QualityNewUserShopBean();
                         qualityNewUserShopBean.setcItemType(TYPE_1);
                         qualityNewUserShopBean.setcTitle("- 用券专区 -");
@@ -372,7 +375,7 @@ public class QualityNewUserActivity extends BaseActivity {
                             couponGiftList.clear();
                             couponGiftList.addAll(newUserCouponEntity.getCouponGiftList());
                             setNewUserCouponShowWay();
-                        } else if (!newUserCouponEntity.getCode().equals("02")) {
+                        } else if (!newUserCouponEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(QualityNewUserActivity.this, newUserCouponEntity.getMsg());
                             setNewUserGetCouponShowWay();
                         }
@@ -426,10 +429,6 @@ public class QualityNewUserActivity extends BaseActivity {
                     .setDividerId(R.drawable.item_divider_coupon_white)
 
 
-
-
-
-
                     .create());
         }
 
@@ -463,7 +462,7 @@ public class QualityNewUserActivity extends BaseActivity {
                     , "新人专享"
                     , "注册有礼"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/new_exclusive.html"
-                    ,"pages/new_exclusive/new_exclusive");
+                    , "pages/new_exclusive/new_exclusive");
         }
     }
 }

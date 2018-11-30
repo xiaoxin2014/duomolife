@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -24,6 +23,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.IntegExchangeDetailActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -35,6 +35,8 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PAY_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 ;
@@ -108,8 +111,11 @@ public class DirectPaySuccessActivity extends BaseActivity {
         Intent intent = getIntent();
         indentNo = intent.getStringExtra("indentNo");
         indentProductType = intent.getStringExtra(INDENT_PRODUCT_TYPE);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            getRecommendProductData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                getRecommendProductData();
+            }
         });
         communal_recycler.setLayoutManager(new GridLayoutManager(DirectPaySuccessActivity.this, 2));
         View headerView = LayoutInflater.from(DirectPaySuccessActivity.this)
@@ -119,10 +125,6 @@ public class DirectPaySuccessActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -217,7 +219,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                     Gson gson = new Gson();
                     HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
                     if (floatAdEntity != null) {
-                        if (floatAdEntity.getCode().equals("01")) {
+                        if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
                             CommunalADActivityBean communalADActivityBean = floatAdEntity.getCommunalADActivityBean();
                             if (communalADActivityBean != null) {
                                 GlideImageLoaderUtil.loadFinishImgDrawable(DirectPaySuccessActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
@@ -253,7 +255,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
 
     //    推荐商品列表
     private void getRecommendProductData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         String url = Url.BASE_URL + Url.Q_PAY_SUCCESS_PRODUCT;
@@ -268,14 +270,14 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 Gson gson = new Gson();
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
-                    if (likedProductEntity.getCode().equals("01")) {
+                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
                     } else {
                         showToast(DirectPaySuccessActivity.this, likedProductEntity.getMsg());
                     }
                 }
                 qualityTypeProductAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
 
             @Override
@@ -283,7 +285,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(DirectPaySuccessActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
 
             @Override
@@ -291,7 +293,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
                 showToast(DirectPaySuccessActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,typeDetails,likedProductEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
         });
     }
@@ -299,7 +301,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            if(requestCode == IS_LOGIN_CODE){
+            if (requestCode == IS_LOGIN_CODE) {
                 finish();
             }
             return;

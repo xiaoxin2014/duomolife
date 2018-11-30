@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -21,6 +21,8 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -85,9 +87,12 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
         communal_recycler.setNestedScrollingEnabled(false);
         communal_recycler.setLayoutManager(new LinearLayoutManager(PlatformNotifyDetailsActivity.this));
         communal_recycler.setAdapter(contentPlatformAdapter);
-        smart_official_details.setOnRefreshListener((refreshLayout) ->
-                loadData()
-        );
+        smart_official_details.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
+        });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

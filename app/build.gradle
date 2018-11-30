@@ -159,15 +159,18 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava2Versions"
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroidVersions"
     implementation "com.trello.rxlifecycle2:rxlifecycle-components:$versions.rxrxlifecycle"
-
+//    retrofit 2
+    implementation "com.squareup.retrofit2:retrofit:2.5.0"
+    implementation "com.squareup.okhttp3:okhttp:3.12.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
+    //fastjson
+    implementation 'com.alibaba:fastjson:1.2.47'
     /*极光推送*/
     implementation 'cn.jiguang.sdk:jpush:3.1.7'
     implementation 'cn.jiguang.sdk:jcore:1.2.6'
 
     //阿里百川
 
-    //fastjson
-    implementation 'com.alibaba:fastjson:1.2.47'
 
     //登陆
     implementation 'com.ali.auth.sdk:alibabauth_core:1.5.1.10@jar'

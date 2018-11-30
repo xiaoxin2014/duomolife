@@ -9,17 +9,19 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageOfficialAdapter;
 import com.amkj.dmsh.message.bean.MessageOfficialEntity;
 import com.amkj.dmsh.message.bean.MessageOfficialEntity.MessageOfficialBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -114,8 +116,11 @@ public class MessageHotActivity extends BaseActivity {
             }
         }, communal_recycler);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -207,7 +212,7 @@ public class MessageHotActivity extends BaseActivity {
                             }
                         }
                         messageOfficialAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,messageArticleList,messageOfficialEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
                     }
 
                     @Override
@@ -215,7 +220,7 @@ public class MessageHotActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         messageOfficialAdapter.loadMoreComplete();
                         showToast(MessageHotActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,messageArticleList,messageOfficialEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
                     }
 
                     @Override
@@ -223,7 +228,7 @@ public class MessageHotActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         messageOfficialAdapter.loadMoreComplete();
                         showToast(MessageHotActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,messageArticleList,messageOfficialEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
                     }
                 });
     }

@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
@@ -29,19 +28,21 @@ import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -122,14 +123,13 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), typeDetails);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
@@ -202,10 +202,6 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_product)
 
 
-
-
-
-
                 .create());
         qualityOsMailHeaderAdapter = new QualityOsMailHeaderAdapter(getActivity(), themeList, "overseas");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityOsMailHeaderAdapter);
@@ -235,10 +231,10 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     Gson gson = new Gson();
                     UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
-                        if (likedProductEntity.getCode().equals("01")) {
+                        if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                             typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
                             qualityTypeProductAdapter.notifyDataSetChanged();
-                        } else if (likedProductEntity.getCode().equals("02")) {
+                        } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                             isLoadProData = false;
                             qualityTypeProductAdapter.loadMoreEnd();
                         } else {
@@ -387,7 +383,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     adBeanList.clear();
                     CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
                     if (qualityAdLoop != null) {
-                        if (qualityAdLoop.getCode().equals("01")) {
+                        if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                             adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
                             overseasHeaderView.rel_communal_banner.setVisibility(View.VISIBLE);
                             if (cbViewHolderCreator == null) {

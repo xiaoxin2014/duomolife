@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -32,6 +31,7 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeShaftBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeShaftRecordBean;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
@@ -40,6 +40,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -135,10 +137,13 @@ public class SpringSaleFragment extends BaseFragment {
                 addItemClick(view);
             }
         });
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            scrollY = 0;
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                scrollY = 0;
 //                刷新时间轴
-            EventBus.getDefault().post(new EventMessage(TIME_REFRESH, "timeShaft"));
+                EventBus.getDefault().post(new EventMessage(TIME_REFRESH, "timeShaft"));
+            }
         });
         if (showTimeList != null && showTimeList.size() > 0) {
             springSaleRecyclerAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -148,12 +153,12 @@ public class SpringSaleFragment extends BaseFragment {
                     getProductData();
                 }
             }, communal_recycler);
-        }else{
+        } else {
             springSaleRecyclerAdapter.setEnableLoadMore(false);
         }
         GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
-                , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
+        gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext, 25), AutoSizeUtils.mm2px(mAppContext, 25)
+                , AutoSizeUtils.mm2px(mAppContext, 25), AutoSizeUtils.mm2px(mAppContext, 25), 0, 0});
         gradientDrawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
         tv_time_product_shaft.setBackground(gradientDrawable);
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -166,7 +171,7 @@ public class SpringSaleFragment extends BaseFragment {
 //                    重新计算
                     dropDownScroll = 0;
                 }
-                if (timeShaftList.size()>2&&dropDownScroll > 300 && tv_time_product_shaft.getVisibility() == View.GONE) {
+                if (timeShaftList.size() > 2 && dropDownScroll > 300 && tv_time_product_shaft.getVisibility() == View.GONE) {
                     Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.down_in_visiable);
                     animation.setDuration(500);
                     tv_time_product_shaft.startAnimation(animation);
@@ -179,11 +184,11 @@ public class SpringSaleFragment extends BaseFragment {
                 }
                 if (!isClickSelect) {
                     GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                    if(layoutManager == null){
+                    if (layoutManager == null) {
                         return;
                     }
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();//可见范围内的第一项的位置
-                    if(firstVisibleItemPosition>=0&&firstVisibleItemPosition<saleTimeTotalList.size()){
+                    if (firstVisibleItemPosition >= 0 && firstVisibleItemPosition < saleTimeTotalList.size()) {
                         BaseTimeProductTopicBean baseTimeProductTopicBean = saleTimeTotalList.get(firstVisibleItemPosition);
                         if (baseTimeProductTopicBean.getItemType() == TYPE_2) {
                             TimeShaftBean timeShaftBean = (TimeShaftBean) baseTimeProductTopicBean;
@@ -508,8 +513,8 @@ public class SpringSaleFragment extends BaseFragment {
         void initPopView() {
             communal_recycler_wrap_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25)
-                    , AutoSizeUtils.mm2px(mAppContext,25), AutoSizeUtils.mm2px(mAppContext,25), 0, 0});
+            gradientDrawable.setCornerRadii(new float[]{0, 0, AutoSizeUtils.mm2px(mAppContext, 25), AutoSizeUtils.mm2px(mAppContext, 25)
+                    , AutoSizeUtils.mm2px(mAppContext, 25), AutoSizeUtils.mm2px(mAppContext, 25), 0, 0});
             gradientDrawable.setColor(getResources().getColor(R.color.bg_trans_80_ffs_pink));
             communal_recycler_wrap_wrap.setBackground(gradientDrawable);
             timeShaftRecordAdapter = new TimeShaftRecordAdapter(timeShaftList);

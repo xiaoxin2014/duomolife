@@ -36,7 +36,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -51,6 +50,7 @@ import com.amkj.dmsh.dominant.fragment.TopRecommendAtTimeEndGroupFragment;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
@@ -66,6 +66,8 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
@@ -178,9 +180,12 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         contentOfficialAdapter = new CommunalDetailAdapter(ShopTimeScrollDetailsActivity.this, itemBodyList);
         communalRecyclerWrap.setAdapter(contentOfficialAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            EventBus.getDefault().post(new EventMessage("refreshData", "timeProduct"));
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                EventBus.getDefault().post(new EventMessage("refreshData", "timeProduct"));
+            }
         });
         contentOfficialAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -209,12 +214,12 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
         });
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,26));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,26));
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
         dynamic.setSuffixGravity(Gravity.CENTER);
         DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
         backgroundInfo.setColor(getResources().getColor(R.color.text_pink_red))
-                .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext,8))
+                .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext, 8))
                 .setBorderColor(getResources().getColor(R.color.text_pink_red))
                 .setShowTimeBgBorder(true);
         dynamic.setBackgroundInfo(backgroundInfo);
@@ -224,7 +229,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             customTabEntities.add(new TabEntity(promotionProduct[i], 0, 0));
         }
         ctbPromotionProduct.setTabData(customTabEntities);
-        ctbPromotionProduct.setTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        ctbPromotionProduct.setTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
         ctbPromotionProduct.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
@@ -332,7 +337,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         tvTimeProductDetailsWarm.setText("设置提醒");
                         productDetailBean.setRemind(false);
-                        showToast(mAppContext,"已取消提醒");
+                        showToast(mAppContext, "已取消提醒");
                     } else {
                         showToast(ShopTimeScrollDetailsActivity.this, status.getMsg());
                     }
@@ -363,7 +368,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         tvTimeProductDetailsWarm.setText("取消提醒");
-                        showToast(mAppContext,"已设置提醒");
+                        showToast(mAppContext, "已设置提醒");
                         productDetailBean.setRemind(true);
                     } else {
                         showToast(ShopTimeScrollDetailsActivity.this, status.getMsg());
@@ -546,7 +551,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     communalDetailObjectBean.setName(luckyMoneyBean.getName());
                     communalDetailObjectBean.setCouponUrl(luckyMoneyBean.getUrl());
                     communalDetailObjectBean.setItemType(1);
-                    if(i == luckyMoney.size()-1){
+                    if (i == luckyMoney.size() - 1) {
                         communalDetailObjectBean.setLastTbCoupon(true);
                     }
                     itemBodyList.add(communalDetailObjectBean);
@@ -616,7 +621,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus foreShowBean = gson.fromJson(result, RequestStatus.class);
                 if (foreShowBean != null) {
-                    if (foreShowBean.getCode().equals("01")) {
+                    if (foreShowBean.getCode().equals(SUCCESS_CODE)) {
                         if (foreShowBean.getResult().isHadRemind()) { //已设置过提醒
                             if (productDetailBean != null) {
                                 loadHud.show();
@@ -631,7 +636,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         } else {
                             setDefaultWarm();
                         }
-                    } else if (!foreShowBean.getCode().equals("02")) {
+                    } else if (!foreShowBean.getCode().equals(EMPTY_CODE)) {
                         showToast(ShopTimeScrollDetailsActivity.this, foreShowBean.getMsg());
                     }
                 }
@@ -689,7 +694,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null && requestStatus.getCode().equals("01")) {
+                if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)) {
                     showToast(ShopTimeScrollDetailsActivity.this, "已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
                 }
             }
@@ -790,8 +795,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     private void skipNewShopDetails() {
 //                    跳转淘宝商品详情
-        if(TextUtils.isEmpty(thirdId)&&TextUtils.isEmpty(thirdUrl)){
-            showToast(mAppContext,"地址缺失，请联系客服");
+        if (TextUtils.isEmpty(thirdId) && TextUtils.isEmpty(thirdUrl)) {
+            showToast(mAppContext, "地址缺失，请联系客服");
             return;
         }
         /**

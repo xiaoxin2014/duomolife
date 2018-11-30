@@ -33,7 +33,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
@@ -54,6 +53,7 @@ import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.Pro
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
@@ -67,6 +67,8 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -207,10 +209,6 @@ public class ArticleOfficialActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         adapterArticleComment.setOnItemChildClickListener((adapter, view, position) -> {
             DmlSearchCommentBean dmlSearchCommentBean = (DmlSearchCommentBean) view.getTag(R.id.iv_tag);
@@ -275,10 +273,6 @@ public class ArticleOfficialActivity extends BaseActivity {
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
 
 
                 .create());
@@ -392,8 +386,11 @@ public class ArticleOfficialActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         //          关闭手势滑动
         dl_art_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
@@ -453,9 +450,9 @@ public class ArticleOfficialActivity extends BaseActivity {
                     Gson gson = new Gson();
                     DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
                     if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals("01")) {
+                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
                             articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals("02")) {
+                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(ArticleOfficialActivity.this, dmlSearchCommentEntity.getMsg());
                         }
                         adapterArticleComment.removeHeaderView(commentHeaderView);
@@ -503,21 +500,21 @@ public class ArticleOfficialActivity extends BaseActivity {
                         showToast(ArticleOfficialActivity.this, dmlSearchDetailEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean, dmlSearchDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, dmlSearchDetailBean, dmlSearchDetailEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 showToast(ArticleOfficialActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, dmlSearchDetailBean, dmlSearchDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(ArticleOfficialActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlSearchDetailBean,dmlSearchDetailEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, dmlSearchDetailBean, dmlSearchDetailEntity);
             }
         });
     }
@@ -590,7 +587,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 Gson gson = new Gson();
                 CommunalOnlyDescription communalOnlyDescription = gson.fromJson(result, CommunalOnlyDescription.class);
                 if (communalOnlyDescription != null) {
-                    if (communalOnlyDescription.getCode().equals("01")
+                    if (communalOnlyDescription.getCode().equals(SUCCESS_CODE)
                             && communalOnlyDescription.getComOnlyDesBean() != null) {
                         ComOnlyDesBean comOnlyDesBean = communalOnlyDescription.getComOnlyDesBean();
                         if (comOnlyDesBean.getDescriptionList() != null && comOnlyDesBean.getDescriptionList().size() > 0) {
@@ -611,7 +608,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         ll_communal_pro_list.setVisibility(VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = AutoSizeUtils.mm2px(mAppContext,50);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
         drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
         try {
             drawable.setColor(0xffffffff);
@@ -638,7 +635,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -670,7 +667,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     } else {
                         showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
@@ -823,7 +820,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_article_bottom_collect.setSelected(!tv_article_bottom_collect.isSelected());
                     }
                 }
@@ -956,7 +953,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
-        if(dmlSearchDetailBean!=null){
+        if (dmlSearchDetailBean != null) {
             if (userId > 0) {
                 if (VISIBLE == ll_input_comment.getVisibility()) {
                     commentViewVisible(GONE, null);

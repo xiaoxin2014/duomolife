@@ -41,6 +41,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 ;
@@ -118,10 +120,10 @@ public class AppDataActivity extends BaseActivity {
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         addressInfoBean = addressInfoEntity.getAddressInfoBean();
                         setAddressData(addressInfoBean);
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         tv_mine_setting_address.setText("");
                     } else {
                         tv_mine_setting_address.setText("");

@@ -12,7 +12,6 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -21,6 +20,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
@@ -43,6 +43,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
@@ -87,7 +89,7 @@ import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 /**
  * Created by atd48 on 2016/8/23.
  */
-public class DuMoIndentAllFragment extends BaseFragment{
+public class DuMoIndentAllFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -121,21 +123,17 @@ public class DuMoIndentAllFragment extends BaseFragment{
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.divider_ll_10dp_gray_bg)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.divider_ll_10dp_gray_bg).create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
 //                滚动距离置0
-            scrollY = 0;
-            loadData();
+                scrollY = 0;
+                loadData();
+            }
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -195,7 +193,7 @@ public class DuMoIndentAllFragment extends BaseFragment{
                         startActivity(intent);
                         break;
                     case REMIND_DELIVERY:
-                        if(loadHud!=null){
+                        if (loadHud != null) {
                             loadHud.show();
                         }
                         setRemindDelivery(orderBean);
@@ -413,21 +411,21 @@ public class DuMoIndentAllFragment extends BaseFragment{
                     showToast(getActivity(), msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
+                NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
         });
     }
@@ -444,7 +442,7 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                     } else {
@@ -468,7 +466,7 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(getActivity(), requestStatus.getMsg());
                     } else {
@@ -492,7 +490,7 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(getActivity(), requestStatus.getMsg());
                         loadData();
                     } else {
@@ -521,9 +519,9 @@ public class DuMoIndentAllFragment extends BaseFragment{
                     Gson gson = new Gson();
                     QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                     if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals("01")) {
+                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                             QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            invitePartnerGroup(qualityGroupShareBean,no);
+                            invitePartnerGroup(qualityGroupShareBean, no);
                         }
                     }
                 }
@@ -543,13 +541,14 @@ public class DuMoIndentAllFragment extends BaseFragment{
 
     /**
      * 设置催发货
+     *
      * @param orderBean
      */
     private void setRemindDelivery(OrderListBean orderBean) {
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
-        params.put("orderNo",orderBean.getNo());
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL+Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("orderNo", orderBean.getNo());
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL + Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -560,9 +559,9 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         orderBean.setWaitDeliveryFlag(false);
-                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
-                    }else{
-                        showToast(mAppContext,requestStatus.getMsg());
+                        showToast(mAppContext, "已提醒商家尽快发货，请耐心等候~");
+                    } else {
+                        showToast(mAppContext, requestStatus.getMsg());
                     }
                 }
             }
@@ -572,7 +571,7 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(mAppContext,R.string.unConnectedNetwork);
+                showToast(mAppContext, R.string.unConnectedNetwork);
             }
 
             @Override
@@ -580,7 +579,7 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(mAppContext,R.string.do_failed);
+                showToast(mAppContext, R.string.do_failed);
             }
         });
     }
@@ -597,8 +596,8 @@ public class DuMoIndentAllFragment extends BaseFragment{
                 , qualityGroupShareBean.getName()
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo)?"&gpRecordId=" + qualityGroupShareBean.getGpRecordId():"&order="+orderNo));
+                + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
+                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
     }
 
     public void onPause() {

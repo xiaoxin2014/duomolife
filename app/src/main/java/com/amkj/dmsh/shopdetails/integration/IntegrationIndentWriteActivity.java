@@ -61,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_INTEGRAL_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -195,9 +196,9 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         showToast(IntegrationIndentWriteActivity.this, addressInfoEntity.getMsg());
@@ -595,7 +596,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
                     } else {
                         showToast(IntegrationIndentWriteActivity.this, addressInfoEntity.getMsg());

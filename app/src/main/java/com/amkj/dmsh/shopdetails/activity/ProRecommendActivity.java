@@ -11,16 +11,18 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.ShopRecommendHotTopicAdapter;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -39,6 +41,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 
+;
 ;
 
 /**
@@ -83,14 +86,17 @@ public class ProRecommendActivity extends BaseActivity {
         }
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-           loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
-        if(PRO_COMMENT.equals(recommendType)){
+        if (PRO_COMMENT.equals(recommendType)) {
 //            商品
-            communal_recycler.setLayoutManager(new GridLayoutManager(ProRecommendActivity.this,2));
+            communal_recycler.setLayoutManager(new GridLayoutManager(ProRecommendActivity.this, 2));
             tv_header_titleAll.setText("同类商品推荐");
-        }else{
+        } else {
 //            专题
             communal_recycler.setLayoutManager(new LinearLayoutManager(ProRecommendActivity.this));
             tv_header_titleAll.setText("相关专题推荐");
@@ -98,10 +104,6 @@ public class ProRecommendActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
 
 
                 .create());
@@ -130,10 +132,10 @@ public class ProRecommendActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if(PRO_COMMENT.equals(recommendType)){
+        if (PRO_COMMENT.equals(recommendType)) {
 //            商品
             getDoMoRecommend();
-        }else{
+        } else {
 //            专题
             getTopicRecommend();
         }
@@ -151,7 +153,6 @@ public class ProRecommendActivity extends BaseActivity {
 
     /**
      * 获取推荐商品
-     *
      */
     private void getDoMoRecommend() {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
@@ -166,33 +167,32 @@ public class ProRecommendActivity extends BaseActivity {
                 if (recommendHotTopicEntity != null) {
                     if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         proRecommendBeans.addAll(recommendHotTopicEntity.getShopRecommendHotTopicList());
-                    }else if(!recommendHotTopicEntity.getCode().equals(EMPTY_CODE)){
+                    } else if (!recommendHotTopicEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ProRecommendActivity.this, recommendHotTopicEntity.getMsg());
                     }
                 }
                 shopRecommendHotTopicAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proRecommendBeans,recommendHotTopicEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proRecommendBeans,recommendHotTopicEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proRecommendBeans,recommendHotTopicEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
         });
     }
 
     /**
      * 获取推荐主题
-     *
      */
     private void getTopicRecommend() {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
@@ -206,30 +206,30 @@ public class ProRecommendActivity extends BaseActivity {
                 recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
                 if (recommendHotTopicEntity != null) {
                     if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                        for (ShopRecommendHotTopicBean shopRecommendHotTopicBean:recommendHotTopicEntity.getShopRecommendHotTopicList()) {
+                        for (ShopRecommendHotTopicBean shopRecommendHotTopicBean : recommendHotTopicEntity.getShopRecommendHotTopicList()) {
                             shopRecommendHotTopicBean.setItemType(TYPE_1);
                             proRecommendBeans.add(shopRecommendHotTopicBean);
                         }
-                    }else if(!recommendHotTopicEntity.getCode().equals(EMPTY_CODE)){
+                    } else if (!recommendHotTopicEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ProRecommendActivity.this, recommendHotTopicEntity.getMsg());
                     }
                 }
                 shopRecommendHotTopicAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proRecommendBeans,recommendHotTopicEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proRecommendBeans,recommendHotTopicEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,proRecommendBeans,recommendHotTopicEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
         });
     }
@@ -250,7 +250,7 @@ public class ProRecommendActivity extends BaseActivity {
                 intent.setClass(ProRecommendActivity.this, ShopScrollDetailsActivity.class);
                 break;
         }
-        if(recommendHotTopicEntity!=null&&!TextUtils.isEmpty(recommendHotTopicEntity.getRecommendFlag())){
+        if (recommendHotTopicEntity != null && !TextUtils.isEmpty(recommendHotTopicEntity.getRecommendFlag())) {
             intent.putExtra("recommendFlag", recommendHotTopicEntity.getRecommendFlag());
         }
         intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));

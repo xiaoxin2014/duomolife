@@ -13,12 +13,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
@@ -32,6 +32,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
@@ -75,7 +77,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * created on 2017/4/24
  * class description:请输入类描述
  */
-public class IndentSearchDetailsActivity extends BaseActivity{
+public class IndentSearchDetailsActivity extends BaseActivity {
     @BindView(R.id.iv_indent_search)
     ImageView iv_indent_search;
     @BindView(R.id.iv_indent_service)
@@ -123,10 +125,13 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                 .setDividerId(R.drawable.item_divider_five_dp).create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(IndentSearchDetailsActivity.this, orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            scrollY = 0;
-            loadData();
-            doMoIndentListAdapter.loadMoreEnd(true);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                scrollY = 0;
+                loadData();
+                doMoIndentListAdapter.loadMoreEnd(true);
+            }
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -215,7 +220,7 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                         cancelOrderDialogHelper.show();
                         break;
                     case REMIND_DELIVERY:
-                        if(loadHud!=null){
+                        if (loadHud != null) {
                             loadHud.show();
                         }
                         setRemindDelivery(orderListBean);
@@ -327,7 +332,7 @@ public class IndentSearchDetailsActivity extends BaseActivity{
 
     @Override
     protected void getData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         //        订单搜索
@@ -372,23 +377,23 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                     showToast(IndentSearchDetailsActivity.this, msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                showToast(mAppContext,R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                showToast(mAppContext, R.string.unConnectedNetwork);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                showToast(mAppContext,R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                showToast(mAppContext, R.string.invalidData);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
         });
     }
@@ -415,7 +420,7 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(IndentSearchDetailsActivity.this, String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                     } else {
@@ -432,14 +437,14 @@ public class IndentSearchDetailsActivity extends BaseActivity{
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        params.put("orderProductId",0);
+        params.put("orderProductId", 0);
         XUtil.Post(url, params, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(IndentSearchDetailsActivity.this, requestStatus.getMsg());
                     } else {
@@ -463,7 +468,7 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(IndentSearchDetailsActivity.this, requestStatus.getMsg());
                         loadData();
                     } else {
@@ -501,17 +506,18 @@ public class IndentSearchDetailsActivity extends BaseActivity{
     private void setVisitorOpenService() {
         QyServiceUtils.getQyInstance()
                 .openQyServiceChat(IndentSearchDetailsActivity.this
-                        , "订单搜索","");
+                        , "订单搜索", "");
     }
 
     /**
      * 设置催发货
+     *
      * @param orderBean
      */
     private void setRemindDelivery(OrderListBean orderBean) {
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
-        params.put("orderNo",orderBean.getNo());
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("orderNo", orderBean.getNo());
         NetLoadUtils.getQyInstance().loadNetDataPost(this, Url.Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
@@ -523,9 +529,9 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         orderBean.setWaitDeliveryFlag(false);
-                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
-                    }else{
-                        showToast(mAppContext,requestStatus.getMsg());
+                        showToast(mAppContext, "已提醒商家尽快发货，请耐心等候~");
+                    } else {
+                        showToast(mAppContext, requestStatus.getMsg());
                     }
                 }
             }
@@ -535,7 +541,7 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(mAppContext,R.string.unConnectedNetwork);
+                showToast(mAppContext, R.string.unConnectedNetwork);
             }
 
             @Override
@@ -543,7 +549,7 @@ public class IndentSearchDetailsActivity extends BaseActivity{
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(mAppContext,R.string.do_failed);
+                showToast(mAppContext, R.string.do_failed);
             }
         });
     }
@@ -565,15 +571,15 @@ public class IndentSearchDetailsActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(cancelOrderDialogHelper!=null&&cancelOrderDialogHelper.isShowing()){
+        if (cancelOrderDialogHelper != null && cancelOrderDialogHelper.isShowing()) {
             cancelOrderDialogHelper.dismiss();
         }
-        if(confirmOrderDialogHelper!=null
-                &&confirmOrderDialogHelper.isShowing()){
+        if (confirmOrderDialogHelper != null
+                && confirmOrderDialogHelper.isShowing()) {
             confirmOrderDialogHelper.dismiss();
         }
-        if(delOrderDialogHelper!=null
-                &&delOrderDialogHelper.isShowing()){
+        if (delOrderDialogHelper != null
+                && delOrderDialogHelper.isShowing()) {
             delOrderDialogHelper.dismiss();
         }
     }

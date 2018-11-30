@@ -47,6 +47,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,9 +68,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -134,9 +137,12 @@ public class FindFragment extends BaseFragment {
         std_find_art_type.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         std_find_art_type.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
         std_find_art_type.setViewPager(viewPager);
-        smart_refresh_find.setOnRefreshListener((refreshLayout) -> {
-            loadData();
-            EventBus.getDefault().post(new EventMessage("refreshFindData", 1));
+        smart_refresh_find.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                EventBus.getDefault().post(new EventMessage("refreshFindData", 1));
+            }
         });
         badge = getTopBadge(getActivity(), fra_find_message_total);
         setStatusColor();
@@ -156,10 +162,6 @@ public class FindFragment extends BaseFragment {
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_nine_dp_white)
-
-
-
-
 
 
                 .create());
@@ -351,7 +353,7 @@ public class FindFragment extends BaseFragment {
                     Gson gson = new Gson();
                     CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
                     if (communalADActivityEntity != null) {
-                        if (communalADActivityEntity.getCode().equals("01")) {
+                        if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                             findActivityList.addAll(communalADActivityEntity.getCommunalADActivityBeanList());
                         }
                         recyclerFindHotAdapter.setNewData(findActivityList);
@@ -391,7 +393,7 @@ public class FindFragment extends BaseFragment {
         adBeanList.clear();
         CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
         if (adActivityEntity != null) {
-            if (adActivityEntity.getCode().equals("01")) {
+            if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                 adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
                 rel_find_ad.setVisibility(View.VISIBLE);
                 if (cbViewHolderCreator == null) {
@@ -411,7 +413,7 @@ public class FindFragment extends BaseFragment {
                         .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
 
-            } else if (!adActivityEntity.getCode().equals("02")) {
+            } else if (!adActivityEntity.getCode().equals(EMPTY_CODE)) {
                 showToast(getActivity(), adActivityEntity.getMsg());
                 rel_find_ad.setVisibility(View.GONE);
             } else {
@@ -435,9 +437,9 @@ public class FindFragment extends BaseFragment {
                     Gson gson = new Gson();
                     FindHotTopicEntity findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
                     if (findHotTopicEntity != null) {
-                        if (findHotTopicEntity.getCode().equals("01")) {
+                        if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                             hotTopicList.addAll(findHotTopicEntity.getHotTopicList());
-                        } else if (!findHotTopicEntity.getCode().equals("02")) {
+                        } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), findHotTopicEntity.getMsg());
                         }
                         if (topicPage == 1) {

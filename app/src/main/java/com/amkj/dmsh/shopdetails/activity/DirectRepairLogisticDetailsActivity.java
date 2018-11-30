@@ -12,13 +12,15 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectLogisticsAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsPacketEntity.DirectLogisticsPacketBean.LogisticsEntity.LogisticsBean.ListBean;
 import com.amkj.dmsh.shopdetails.bean.DirectRepairLogisticsEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectRepairLogisticsEntity.DirectRepairLogisticsBean;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +31,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+
+;
 
 
 /**
@@ -78,8 +82,11 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
         }
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         View headerView = LayoutInflater.from(DirectRepairLogisticDetailsActivity.this).inflate(R.layout.layout_direct_logistics_head, (ViewGroup) communal_recycler.getParent(), false);
         dirLogisticHeadView = new DirectLogisticsHeadView();
@@ -106,25 +113,25 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
                 if (directLogisticsEntity != null) {
                     if (directLogisticsEntity.getCode().equals(SUCCESS_CODE)) {
                         setRepairLogisticsData(directLogisticsEntity.getDirectRepairLogisticsBean());
-                    } else if(!directLogisticsEntity.getCode().equals(EMPTY_CODE)){
+                    } else if (!directLogisticsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(DirectRepairLogisticDetailsActivity.this, directLogisticsEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsEntity);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 showToast(DirectRepairLogisticDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(DirectRepairLogisticDetailsActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,directLogisticsEntity);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsEntity);
             }
         });
     }

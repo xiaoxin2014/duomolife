@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.constant.Url;
@@ -55,7 +55,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 ;
@@ -138,10 +140,10 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                             Gson gson = new Gson();
                             communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
                             if (communalUserInfoEntity != null) {
-                                if (communalUserInfoEntity.getCode().equals("01")) {
+                                if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                                     communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
                                     setPersonalData(communalUserInfoBean);
-                                } else if (!communalUserInfoEntity.getCode().equals("02")) {
+                                } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
                                     showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
                                 }
                             }
@@ -187,7 +189,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 Gson gson = new Gson();
                 CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
                 if (communalUserInfoEntity != null) {
-                    if (communalUserInfoEntity.getCode().equals("01")) {
+                    if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
                         switch (type) {
                             case "SexSelector":

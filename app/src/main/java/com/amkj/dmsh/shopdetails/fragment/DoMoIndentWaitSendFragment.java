@@ -10,7 +10,6 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -19,6 +18,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
@@ -29,11 +29,13 @@ import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.Or
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONException;
@@ -102,19 +104,18 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_dp)
 
 
-
-
-
-
                 .create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
 
-            //                滚动距离置0
-            scrollY = 0;
-            loadData();
+                //                滚动距离置0
+                scrollY = 0;
+                loadData();
+            }
         });
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -171,7 +172,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                         startActivity(intent);
                         break;
                     case REMIND_DELIVERY:
-                        if(loadHud!=null){
+                        if (loadHud != null) {
                             loadHud.show();
                         }
                         setRemindDelivery(orderListBean);
@@ -280,21 +281,21 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                     showToast(getActivity(), msg);
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,code);
+                NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,inquiryOrderEntry);
+                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
         });
     }
@@ -321,9 +322,9 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                     Gson gson = new Gson();
                     QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                     if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals("01")) {
+                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                             QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            invitePartnerGroup(qualityGroupShareBean,no);
+                            invitePartnerGroup(qualityGroupShareBean, no);
                         }
                     }
                 }
@@ -340,15 +341,17 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
             showToast(getActivity(), R.string.unConnectedNetwork);
         }
     }
+
     /**
      * 设置催发货
+     *
      * @param orderBean
      */
     private void setRemindDelivery(OrderListBean orderBean) {
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
-        params.put("orderNo",orderBean.getNo());
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL+Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("orderNo", orderBean.getNo());
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL + Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -359,9 +362,9 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         orderBean.setWaitDeliveryFlag(false);
-                        showToast(mAppContext,"已提醒商家尽快发货，请耐心等候~");
-                    }else{
-                        showToast(mAppContext,requestStatus.getMsg());
+                        showToast(mAppContext, "已提醒商家尽快发货，请耐心等候~");
+                    } else {
+                        showToast(mAppContext, requestStatus.getMsg());
                     }
                 }
             }
@@ -371,7 +374,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(mAppContext,R.string.unConnectedNetwork);
+                showToast(mAppContext, R.string.unConnectedNetwork);
             }
 
             @Override
@@ -379,22 +382,23 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(mAppContext,R.string.do_failed);
+                showToast(mAppContext, R.string.do_failed);
             }
         });
     }
+
     /**
      * 邀请参团
      *
      * @param qualityGroupShareBean 参团信息
      */
-    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean,String orderNo) {
+    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean, String orderNo) {
         new UMShareAction(getActivity()
                 , qualityGroupShareBean.getGpPicUrl()
                 , qualityGroupShareBean.getName()
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId(),"pages/groupshare/groupshare?id="+ qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo)?"&gpRecordId=" + qualityGroupShareBean.getGpRecordId():"&order="+orderNo));
+                + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
+                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
     }
 }

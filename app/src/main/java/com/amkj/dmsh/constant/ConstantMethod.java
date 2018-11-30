@@ -373,26 +373,34 @@ public class ConstantMethod {
                 Intent intent = new Intent();
 //                    app内部网址
                 if (link.contains(prefix)) {
-                    int prefixLength = link.indexOf(prefix) + prefix.length();
-                    int urlIndex = link.indexOf("?", prefixLength);
-                    if (urlIndex != -1) {
-                        subUrl = link.substring(prefixLength, urlIndex).trim();
-                        try {
-                            Map<String, String> urlParams = getUrlParams(link);
-                            Iterator<String> iterator = urlParams.keySet().iterator();
-                            while (iterator.hasNext()) {
-                                String keyVariable = iterator.next();
-                                String valueVariable = urlParams.get(keyVariable);
-                                intent.putExtra(keyVariable.trim(), valueVariable.trim());
+                    /**
+                     * 先识别是否是打开客服 app://ManagerServiceChat
+                     */
+                    if(link.contains("ManagerServiceChat")){
+                        QyServiceUtils.getQyInstance().openQyServiceChat(context);
+                        return;
+                    }else{
+                        int prefixLength = link.indexOf(prefix) + prefix.length();
+                        int urlIndex = link.indexOf("?", prefixLength);
+                        if (urlIndex != -1) {
+                            subUrl = link.substring(prefixLength, urlIndex).trim();
+                            try {
+                                Map<String, String> urlParams = getUrlParams(link);
+                                Iterator<String> iterator = urlParams.keySet().iterator();
+                                while (iterator.hasNext()) {
+                                    String keyVariable = iterator.next();
+                                    String valueVariable = urlParams.get(keyVariable);
+                                    intent.putExtra(keyVariable.trim(), valueVariable.trim());
+                                }
+                                intent.setAction(subUrl);
+                            } catch (NumberFormatException e) {
+                                intent.setAction("MainActivity");
+                                e.printStackTrace();
                             }
+                        } else {
+                            subUrl = link.substring(prefixLength, link.length()).trim();
                             intent.setAction(subUrl);
-                        } catch (NumberFormatException e) {
-                            intent.setAction("MainActivity");
-                            e.printStackTrace();
                         }
-                    } else {
-                        subUrl = link.substring(prefixLength, link.length()).trim();
-                        intent.setAction(subUrl);
                     }
                 } else if (link.contains(smallRoutine)) {
                     int smallRoutineStart = link.indexOf(smallRoutine) + smallRoutine.length();
@@ -788,7 +796,7 @@ public class ConstantMethod {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
@@ -835,7 +843,7 @@ public class ConstantMethod {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
@@ -878,7 +886,7 @@ public class ConstantMethod {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
@@ -926,7 +934,7 @@ public class ConstantMethod {
                 Gson gson = new Gson();
                 RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
-                    if (requestInfo.getCode().equals("01")) {
+                    if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
@@ -1031,7 +1039,7 @@ public class ConstantMethod {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = RequestStatus.objectFromData(result);
-                if (requestStatus != null && requestStatus.getCode().equals("01")
+                if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)
                         && !TextUtils.isEmpty(requestStatus.getSrc())) {
                     GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getSrc(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
@@ -1561,7 +1569,7 @@ public class ConstantMethod {
                 Gson gson = new Gson();
                 EditGoodsSkuEntity editGoodsSkuEntity = gson.fromJson(result, EditGoodsSkuEntity.class);
                 if (editGoodsSkuEntity != null) {
-                    if (editGoodsSkuEntity.getCode().equals("01")) {
+                    if (editGoodsSkuEntity.getCode().equals(SUCCESS_CODE)) {
                         EditGoodsSkuBean editGoodsSkuBean = editGoodsSkuEntity.getEditGoodsSkuBean();
                         List<SkuSaleBean> skuSaleBeanList = editGoodsSkuBean.getSkuSale();
                         if (skuSaleBeanList == null) {
@@ -1654,7 +1662,7 @@ public class ConstantMethod {
                     }
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
-                        if (status.getCode().equals("01")) {
+                        if (status.getCode().equals(SUCCESS_CODE)) {
                             showToast(context, context.getString(R.string.AddCarSuccess));
                             if (onAddCarListener != null) {
                                 onAddCarListener.onAddCarSuccess();
@@ -2083,7 +2091,7 @@ public class ConstantMethod {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             showToast(context, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                             Intent intent = new Intent(context, DirectMyCouponActivity.class);
                             context.startActivity(intent);

@@ -62,9 +62,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 
 ;
@@ -241,7 +243,7 @@ public class QualityFragment extends BaseFragment {
                     Gson gson = new Gson();
                     HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
                     if (floatAdEntity != null) {
-                        if (floatAdEntity.getCode().equals("01")) {
+                        if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
                             if (floatAdEntity.getCommunalADActivityBean() != null) {
                                 iv_float_ad_icon.setVisibility(View.VISIBLE);
                                 GlideImageLoaderUtil.loadFitCenter(getActivity(), iv_float_ad_icon,
@@ -278,10 +280,10 @@ public class QualityFragment extends BaseFragment {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         int cartNumber = requestStatus.getResult().getCartNumber();
                         badge.setBadgeNumber(cartNumber);
-                    } else if (!requestStatus.getCode().equals("02")) {
+                    } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), requestStatus.getMsg());
                     }
                 }
@@ -375,7 +377,7 @@ public class QualityFragment extends BaseFragment {
         Gson gson = new Gson();
         QualityTypeEntity typeBean = gson.fromJson(result, QualityTypeEntity.class);
         if (typeBean != null) {
-            if (typeBean.getCode().equals("01")) {
+            if (typeBean.getCode().equals(SUCCESS_CODE)) {
                 setSlideData(typeBean.getQualityTypeBeanList());
             } else {
                 showToast(getActivity(), typeBean.getMsg());
@@ -446,7 +448,7 @@ public class QualityFragment extends BaseFragment {
         qualityTypeSpecificBeanList.clear();
         qualityTypeBeanList.clear();
         if (typeBean != null) {
-            if (typeBean.getCode().equals("01")) {
+            if (typeBean.getCode().equals(SUCCESS_CODE)) {
                 qualityTypeBeanList.addAll(typeBean.getQualityTypeBeanList());
                 if (qualityTypeBeanList.size() > 0) {
                     QualityTypeBean qualityTypeBean = qualityTypeBeanList.get(0);
@@ -477,7 +479,7 @@ public class QualityFragment extends BaseFragment {
                 }
                 productTypeSpecificAdapter.notifyDataSetChanged();
                 productTypeAdapter.notifyDataSetChanged();
-            } else if (typeBean.getCode().equals("02")) {
+            } else if (typeBean.getCode().equals(EMPTY_CODE)) {
                 showToast(getActivity(), R.string.invalidData);
             } else {
                 showToast(getActivity(), typeBean.getMsg());

@@ -50,6 +50,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -253,7 +254,7 @@ public class BindingMobileActivity extends BaseActivity {
                     if (communalUserInfoEntity != null) {
                         String backCode = communalUserInfoEntity.getCode();
                         CommunalUserInfoBean communalUserInfo = communalUserInfoEntity.getCommunalUserInfoBean();
-                        if (backCode.equals("01")) {
+                        if (backCode.equals(SUCCESS_CODE)) {
 //                            保存个人信息
                             SavePersonalInfoBean savePersonalInfoBean = new SavePersonalInfoBean();
                             savePersonalInfoBean.setAvatar(getStrings(communalUserInfo.getAvatar()));
@@ -417,7 +418,7 @@ public class BindingMobileActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(BindingMobileActivity.this, "更换手机成功");
                         finish();
                     } else {

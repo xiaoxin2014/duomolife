@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -21,6 +20,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -30,6 +30,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -105,30 +107,21 @@ public class ProductLabelDetailActivity extends BaseActivity {
             return;
         }
         communal_recycler.setLayoutManager(new GridLayoutManager(this, 2));
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
             loadData();
-        });
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(this,labelProductList);
+        }});
+        qualityTypeProductAdapter = new QualityTypeProductAdapter(this, labelProductList);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * TOTAL_COUNT_TWENTY <= labelProductList.size()) {
-                    page++;
-                    getProductLabelData();
-                } else {
-                    qualityTypeProductAdapter.loadMoreEnd();
-                }
+                page++;
+                getProductLabelData();
             }
         }, communal_recycler);
         qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -213,6 +206,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
         page = 1;
         getProductLabelData();
     }
+
     @Override
     protected View getLoadView() {
         return smart_communal_refresh;
@@ -247,12 +241,14 @@ public class ProductLabelDetailActivity extends BaseActivity {
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 labelProductList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                            }else if(likedProductEntity.getCode().equals(EMPTY_CODE)){
+                                qualityTypeProductAdapter.loadMoreEnd();
                             } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(ProductLabelDetailActivity.this, likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,labelProductList,likedProductEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
 
                     @Override
@@ -260,7 +256,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(ProductLabelDetailActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,labelProductList,likedProductEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
 
                     @Override
@@ -268,7 +264,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
                         showToast(ProductLabelDetailActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,labelProductList,likedProductEntity);
+                        NetLoadUtils.getQyInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
                 });
     }

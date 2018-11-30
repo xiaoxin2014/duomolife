@@ -33,7 +33,7 @@ import com.amkj.dmsh.address.AddressUtils;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
@@ -306,7 +306,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 public void onSuccess(String result) {
                     PushInfoEntity pushInfoEntity = PushInfoEntity.objectFromData(result);
                     if (pushInfoEntity != null
-                            && pushInfoEntity.getCode().equals("01")
+                            && pushInfoEntity.getCode().equals(SUCCESS_CODE)
                             && pushInfoEntity.getAppPushInfo() != null && pushInfoEntity.getAppPushInfo().getId() > 0) {
                         SharedPreferences sharedPreferences = getSharedPreferences("pushInfo", MODE_PRIVATE);
                         String pushInfoMap = sharedPreferences.getString("pushInfoMap", "");
@@ -620,7 +620,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
                 if (mainNavEntity != null) {
                     SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
-                    if (mainNavEntity.getCode().equals("01")) {
+                    if (mainNavEntity.getCode().equals(SUCCESS_CODE)) {
                         if (mainNavEntity.getMainNavBeanList().size() == 5) {
                             String modifyTime = sharedPreferences.getString("modifyTime", "");
                             if (!modifyTime.equals(mainNavEntity.getModifyTime())) {
@@ -727,7 +727,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01") && requestStatus.getResult() != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE) && requestStatus.getResult() != null) {
                         UP_TOTAL_SIZE = requestStatus.getResult().getCollectSize() > 0 ? requestStatus.getResult().getCollectSize() : 50;
                     }
                 }
@@ -743,7 +743,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         SharedPreferences preferences = getSharedPreferences("addressConfig", MODE_PRIVATE);
                         String versionName = preferences.getString("version", "");
                         if (!versionName.equals(requestStatus.getVersion())) {
@@ -786,7 +786,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (code.equals("01")) {
+                if (code.equals(SUCCESS_CODE)) {
                     //        地址初始化
                     AddressUtils.getQyInstance().initAddress(result);
                     FileStreamUtils.writeFileFromString(getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt", result, false);
@@ -813,7 +813,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     Gson gson = new Gson();
                     OSSConfigEntity ossConfigEntity = gson.fromJson(result, OSSConfigEntity.class);
                     if (ossConfigEntity != null) {
-                        if (ossConfigEntity.getCode().equals("01")) {
+                        if (ossConfigEntity.getCode().equals(SUCCESS_CODE)) {
                             OSSConfigBean ossConfigBean = ossConfigEntity.getOssConfigBean();
                             SharedPreferences preferences = getSharedPreferences("ossConfig", MODE_PRIVATE);
                             SharedPreferences.Editor edit = preferences.edit();
@@ -971,7 +971,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 Gson gson = new Gson();
                 CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
                 if (communalADActivityEntity != null) {
-                    if (communalADActivityEntity.getCode().equals("01")) {
+                    if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
                         if (communalADActivityBeanList != null && communalADActivityBeanList.size() > 0) {
                             CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);

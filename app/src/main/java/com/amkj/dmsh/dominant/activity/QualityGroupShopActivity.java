@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -25,6 +24,7 @@ import com.amkj.dmsh.dominant.bean.QualityGroupEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupEntity.QualityGroupBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -34,6 +34,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -114,9 +116,11 @@ public class QualityGroupShopActivity extends BaseActivity {
                 .create());
         communal_recycler.setAdapter(qualityGroupShopAdapter);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
             loadData();
-        });
+        }});
         qualityGroupShopAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -210,7 +214,7 @@ public class QualityGroupShopActivity extends BaseActivity {
                 Gson gson = new Gson();
                 CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
                 if (adActivityEntity != null) {
-                    if (adActivityEntity.getCode().equals("01")) {
+                    if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setGpLoopAD(adActivityEntity);
                     } else {
                         groupShopHeaderView.rel_communal_banner.setVisibility(View.GONE);

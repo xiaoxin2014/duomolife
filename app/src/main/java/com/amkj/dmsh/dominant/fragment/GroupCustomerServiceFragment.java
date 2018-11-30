@@ -21,6 +21,8 @@ import java.util.List;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -54,7 +56,7 @@ public class GroupCustomerServiceFragment extends BaseFragment {
                     Gson gson = new Gson();
                     GroupShopCommunalInfoEntity communalInfoEntity = gson.fromJson(result, GroupShopCommunalInfoEntity.class);
                     if (communalInfoEntity != null) {
-                        if (communalInfoEntity.getCode().equals("01")) {
+                        if (communalInfoEntity.getCode().equals(SUCCESS_CODE)) {
                             itemBodyBeanList.clear();
                             List<ServicePromiseBean> servicePromiseBeanList = communalInfoEntity.getGroupShopCommunalInfoBean().getServicePromise();
                             CommunalDetailObjectBean communalDetailObjectBean;
@@ -66,7 +68,7 @@ public class GroupCustomerServiceFragment extends BaseFragment {
                                     itemBodyBeanList.add(communalDetailObjectBean);
                                 }
                             }
-                        } else if (!communalInfoEntity.getCode().equals("02")) {
+                        } else if (!communalInfoEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), communalInfoEntity.getMsg());
                         }
                         directServiceAdapter.notifyDataSetChanged();

@@ -12,7 +12,6 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.constant.Url;
@@ -21,6 +20,7 @@ import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.activity.SearchGoodProMoreActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -28,10 +28,11 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -98,10 +99,6 @@ public class SearchDetailsProductFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_product)
 
 
-
-
-
-
                 .create());
         adapterProduct = new ProNoShopCarAdapter(getActivity(), productSearList);
         adapterProduct.setOnItemClickListener((adapter, view, position) -> {
@@ -165,8 +162,11 @@ public class SearchDetailsProductFragment extends BaseFragment {
         }, communal_recycler);
         communal_recycler.setAdapter(adapterProduct);
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -302,7 +302,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                         public void onSuccess(String result) {
                             Gson gson = new Gson();
                             QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
-                            if (qualityTypeEntity != null && qualityTypeEntity.getCode().equals("01")
+                            if (qualityTypeEntity != null && qualityTypeEntity.getCode().equals(SUCCESS_CODE)
                                     && qualityTypeEntity.getQualityTypeBeanList() != null && qualityTypeEntity.getQualityTypeBeanList().size() > 0) {
                                 qualityTypeBean = qualityTypeEntity.getQualityTypeBeanList().get(0);
                             }
@@ -330,7 +330,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                     Gson gson = new Gson();
                     likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProduct != null) {
-                        if (likedProduct.getCode().equals("01")) {
+                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                             if (likedProduct.getLikedProductBeanList().size() > 0) {
                                 LikedProductBean likedProductBean = new LikedProductBean();
                                 likedProductBean.setItemType(TYPE_1);
@@ -338,7 +338,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                             }
                             proRecommendList.addAll(likedProduct.getLikedProductBeanList());
                             productSearList.addAll(removeExistUtils.removeExistList(proRecommendList));
-                        } else if (!likedProduct.getCode().equals("02")) {
+                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), likedProduct.getMsg());
                         }
                         adapterProduct.notifyDataSetChanged();

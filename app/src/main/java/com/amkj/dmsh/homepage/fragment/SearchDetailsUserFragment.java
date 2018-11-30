@@ -11,18 +11,19 @@ import android.view.ViewGroup;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.UserSearchEntity;
 import com.amkj.dmsh.bean.UserSearchEntity.UserSearchBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -75,17 +76,16 @@ public class SearchDetailsUserFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                 .create());
         userRecyclerAdapter = new SearchDetailsUserAdapter(getActivity(), userAttentionFansList, type);
         communal_recycler.setAdapter(userRecyclerAdapter);
         userRecyclerAdapter.setEmptyView(R.layout.layout_search_user_empty, (ViewGroup) communal_recycler.getParent());
 
-        smart_communal_refresh.setOnRefreshListener((refreshLayout) -> {
-            loadData();
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+            }
         });
         userRecyclerAdapter.setOnLoadMoreListener(() -> {
             if (page * DEFAULT_TOTAL_COUNT <= userRecyclerAdapter.getItemCount()) {

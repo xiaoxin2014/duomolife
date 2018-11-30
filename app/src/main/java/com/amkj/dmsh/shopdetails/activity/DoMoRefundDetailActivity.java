@@ -23,7 +23,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -399,10 +399,10 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals("01")) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "撤销"));
                         finish();
-                    } else if (requestStatus.getCode().equals("02")) {
+                    } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                         showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                     } else {
                         showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
@@ -427,10 +427,10 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     Gson gson = new Gson();
                     RefundLogisticEntity refundLogisticEntity = gson.fromJson(result, RefundLogisticEntity.class);
                     if (refundLogisticEntity != null) {
-                        if (refundLogisticEntity.getCode().equals("01")) {
+                        if (refundLogisticEntity.getCode().equals(SUCCESS_CODE)) {
                             expressCompanies = refundLogisticEntity.getExpressCompanys();
                             setRefundLogisticData(expressCompanies);
-                        } else if (refundLogisticEntity.getCode().equals("02")) {
+                        } else if (refundLogisticEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                         } else {
                             showToast(DoMoRefundDetailActivity.this, refundLogisticEntity.getMsg());
@@ -839,10 +839,10 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "提交"));
                             loadData();
-                        } else if (requestStatus.getCode().equals("02")) {
+                        } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                         } else {
                             showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
@@ -881,10 +881,10 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "提交"));
                             loadData();
-                        } else if (requestStatus.getCode().equals("02")) {
+                        } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                         } else {
                             showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
@@ -917,9 +917,9 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals("01")) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             loadData();
-                        } else if (requestStatus.getCode().equals("02")) {
+                        } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                             showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                         } else {
                             showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());

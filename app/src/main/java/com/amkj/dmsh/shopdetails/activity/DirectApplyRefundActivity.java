@@ -27,7 +27,7 @@ import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -501,9 +501,9 @@ public class DirectApplyRefundActivity extends BaseActivity{
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         showToast(DirectApplyRefundActivity.this, addressInfoEntity.getMsg());
@@ -525,9 +525,9 @@ public class DirectApplyRefundActivity extends BaseActivity{
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         showToast(DirectApplyRefundActivity.this, addressInfoEntity.getMsg());
@@ -748,7 +748,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
-                    if (requestInfo.getCode().equals("01")) {
+                    if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectApplyRefundActivity.this, "提交完成");
                         Intent intent = new Intent(DirectApplyRefundActivity.this, DoMoRefundDetailActivity.class);
                         intent.putExtra("orderProductId", String.valueOf(directRefundProBean.getOrderProductId()));
@@ -834,7 +834,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
-                    if (requestInfo.getCode().equals("01")) {
+                    if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         finish();
                     } else {
                         showToast(DirectApplyRefundActivity.this, requestInfo.getResult() != null ?

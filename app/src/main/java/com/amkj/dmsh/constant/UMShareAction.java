@@ -15,7 +15,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;

@@ -24,7 +24,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.NetLoadUtils;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -462,7 +462,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 if (payWay.equals(PAY_WX_PAY)) {
                     qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals("01")) {
+                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult().getPayKey());
                             orderCreateNo = qualityWeChatIndent.getResult().getNo();
@@ -474,7 +474,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 } else {
                     qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals("01")) {
+                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult().getPayKey());
                             orderCreateNo = qualityAliPayIndent.getResult().getNo();
@@ -509,7 +509,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 if (payWay.equals(PAY_WX_PAY)) {
                     qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals("01")) {
+                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult().getPayKey());
                         } else {
@@ -520,7 +520,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 } else if (payWay.equals(PAY_ALI_PAY)) {
                     qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals("01")) {
+                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult().getPayKey());
                         } else {
@@ -628,7 +628,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 if (payType.equals(PAY_WX_PAY)) {
                     qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals("01")) {
+                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult().getPayKey());
                             orderCreateNo = qualityWeChatIndent.getResult().getNo();
@@ -644,7 +644,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 } else {
                     qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals("01")) {
+                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult().getPayKey());
                             orderCreateNo = qualityAliPayIndent.getResult().getNo();
@@ -1134,7 +1134,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
 //                    Gson gson = new Gson();
 //                    CouponSettleEntity couponSettleEntity = gson.fromJson(result, CouponSettleEntity.class);
 //                    if (couponSettleEntity != null) {
-//                        if (couponSettleEntity.getCode().equals("01")) {
+//                        if (couponSettleEntity.getCode().equals(SUCCESS_CODE)) {
 //                            setDiscounts(couponSettleEntity.getCouponSettleList());
 //                        }
 //                    }
@@ -1245,9 +1245,9 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
@@ -1266,9 +1266,9 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 Gson gson = new Gson();
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals("01")) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals("02")) {
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
                         constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());

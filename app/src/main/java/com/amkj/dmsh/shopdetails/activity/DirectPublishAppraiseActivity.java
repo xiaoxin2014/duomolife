@@ -50,6 +50,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
 
@@ -306,7 +307,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
                 Gson gson = new Gson();
                 RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
                 if (indentInfo != null) {
-                    if (indentInfo.getCode().equals("01")) {
+                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectPublishAppraiseActivity.this, R.string.appraise_public_success);
                         finish();
                     } else {
