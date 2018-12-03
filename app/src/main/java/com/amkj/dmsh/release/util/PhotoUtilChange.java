@@ -41,7 +41,7 @@ public class PhotoUtilChange {
     /**
      * 因为处理不同
      *
-     * @param takePhotoCode Uri originalUri = data.getData();
+     * @param takePhotoCode Uri originalUri = data.getNetData();
      *                      image=ImageBitmapUtil.getBitmapFromUrl(originalUri.toString());
      *                      *********************************************************************************
      * @param pickPhotoCode Bundle extras = data.getExtras(); image = (Bitmap)

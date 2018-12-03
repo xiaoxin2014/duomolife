@@ -4,8 +4,11 @@ import com.alibaba.fastjson.support.retrofit.Retrofit2ConverterFactory;
 import com.amkj.dmsh.constant.Url;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
+import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 
 /**
  * @author LGuiPeng
@@ -35,8 +38,14 @@ public class NetApiManager {
      */
     public void init() {
         // 初始化okhttp
-        OkHttpClient client = new OkHttpClient.Builder()
-                .build();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        HttpLoggingInterceptor logging = null;
+        if (isDebugTag) {
+            logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(logging);
+        }
+        OkHttpClient client = builder.build();
         // 初始化Retrofit
         retrofit = new Retrofit.Builder()
                 .client(client)
@@ -49,6 +58,9 @@ public class NetApiManager {
     public static NetApiService getNetApiService() {
         if (netApiService == null) {
             synchronized (NetApiService.class) {
+                if(retrofit==null){
+                    throw new NullPointerException("retrofit未初始化！");
+                }
                 netApiService = retrofit.create(NetApiService.class);
             }
         }

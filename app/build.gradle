@@ -161,8 +161,9 @@ dependencies {
     implementation "com.trello.rxlifecycle2:rxlifecycle-components:$versions.rxrxlifecycle"
 //    retrofit 2
     implementation "com.squareup.retrofit2:retrofit:2.5.0"
-    implementation "com.squareup.okhttp3:okhttp:3.12.0"
     implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
+    implementation "com.squareup.okhttp3:okhttp:3.12.0"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
     //fastjson
     implementation 'com.alibaba:fastjson:1.2.47'
     /*极光推送*/

@@ -30,6 +30,7 @@ import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
+import com.amkj.dmsh.network.NetApiManager;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
@@ -249,6 +250,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         if (isAppMainProcess()) {
             // 初始化xUtils
             x.Ext.init(getApplication());
+            NetApiManager.getInstance().init();
 
 //        腾讯移动分析初始化
             // 第三个参数必须为：com.tencent.stat.common.StatConstants.VERSION
@@ -269,6 +271,13 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             //      jPush 初始化
             JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
             JPushInterface.init(mAppContext);
+            try {
+//                不能放到子线程初始化
+                TuSdk.enableDebugLog(isDebugTag);
+                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -290,12 +299,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                     initNewAliBaiC();
                     //        七鱼客服初始化
                     initQYService();
-                    try {
-                        TuSdk.enableDebugLog(isDebugTag);
-                        TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+
                     //shareSDK
                     MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
                     //        阿里百川初始化

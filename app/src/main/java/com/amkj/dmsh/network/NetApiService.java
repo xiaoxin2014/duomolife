@@ -1,9 +1,11 @@
 package com.amkj.dmsh.network;
 
-import io.reactivex.Flowable;
-import retrofit2.http.POST;
+import java.util.Map;
 
-import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
+import io.reactivex.Observable;
+import retrofit2.http.POST;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * @author LGuiPeng
@@ -14,10 +16,20 @@ import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
  */
 public interface NetApiService {
     /**
-     * 我-底部宫格
+     * 无参
+     * @param url 地址
      * @return
      */
-    @POST(MINE_BOTTOM_DATA)
-    Flowable<String> getMineTypeBottom();
+    @POST()
+    Observable<String> getNetData(@Url String url);
+
+    /**
+     *
+     * @param url 地址
+     * @param params 参数
+     * @return
+     */
+    @POST()
+    Observable<String> getNetData(@Url String url, @QueryMap Map<String,Object> params);
 
 }

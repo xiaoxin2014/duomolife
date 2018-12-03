@@ -11,7 +11,6 @@ import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
@@ -20,9 +19,13 @@ import com.kingja.loadsir.core.LoadService;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.network.RxJavaTransformer.getSchedulerObservableTransformer;
 
 /**
  * @author LGuiPeng
@@ -51,6 +54,15 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     }
 
     /**
+     *
+     * @param context
+     * @param url
+     * @param netLoadListener
+     */
+    public void loadNetDataPost(Context context, String url, NetLoadListener netLoadListener) {
+        loadNetDataPost(context,url,null,netLoadListener);
+    }
+    /**
      * @param context
      * @param url
      * @param params
@@ -58,21 +70,37 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
         if (NetWorkUtils.checkNet(context)) {
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetApiService netApiService = NetApiManager.getNetApiService();
+            Observer<String> observer = new Observer<String>() {
                 @Override
-                public void onSuccess(String result) {
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(String result) {
                     if (netLoadListener != null) {
                         netLoadListener.onSuccess(result);
                     }
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onError(Throwable exception) {
                     if (netLoadListener != null) {
-                        netLoadListener.onError(ex);
+                        netLoadListener.onError(exception);
                     }
                 }
-            });
+
+                @Override
+                public void onComplete() {
+
+                }
+            };
+            if(params!=null){
+                netApiService.getNetData(url,params).compose(getSchedulerObservableTransformer()).subscribe(observer);
+            }else{
+                netApiService.getNetData(url).compose(getSchedulerObservableTransformer()).subscribe(observer);
+            }
         } else {
             if (netLoadListener != null) {
                 netLoadListener.netClose();

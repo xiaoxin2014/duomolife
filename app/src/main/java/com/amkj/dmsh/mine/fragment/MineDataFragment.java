@@ -8,7 +8,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -53,8 +52,6 @@ import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.network.NetApiManager;
-import com.amkj.dmsh.network.NetApiService;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectGoodsSaleAfterActivity;
@@ -74,8 +71,6 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
 
-import org.reactivestreams.Subscription;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +78,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.FlowableSubscriber;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
@@ -102,7 +96,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
-import static com.amkj.dmsh.network.RxJavaTransformer.getSchedulerTransformer;
+import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 
 ;
 ;
@@ -440,22 +434,15 @@ public class MineDataFragment extends BaseFragment {
      * 获取底部数据
      */
     private void getBottomTypeNetData() {
-        NetApiManager.getInstance().init();
-        NetApiService netApiService = NetApiManager.getNetApiService();
-        netApiService.getMineTypeBottom().compose(getSchedulerTransformer()).subscribe(new FlowableSubscriber<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadUtils.NetLoadListener() {
             @Override
-            public void onSubscribe(Subscription s) {
-
-            }
-
-            @Override
-            public void onNext(String result) {
+            public void onSuccess(String result) {
                 MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
                 if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
                     MineTypeEntity bottomLocalData = getBottomLocalData();
                     if (bottomLocalData == null ||
                             !getStrings(bottomLocalData.getUpdateTime()).equals(getStrings(mineTypeEntity.getUpdateTime()))) {
-                        saveBottomLocalData(JSON.toJSONString(mineTypeEntity));
+                        saveBottomLocalData(result);
                     }
                 } else {
 //                    清除底部宫格数据
@@ -466,44 +453,15 @@ public class MineDataFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable t) {
-                Log.d(getClass().getSimpleName(), "onError: " + t.getMessage());
+            public void netClose() {
+
             }
 
             @Override
-            public void onComplete() {
-
+            public void onError(Throwable throwable) {
+//          错误数据不清除
             }
         });
-//        String url = BASE_URL + Url.MINE_BOTTOM_DATA;
-//        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, null, new NetLoadUtils.NetLoadListener() {
-//            @Override
-//            public void onSuccess(String result) {
-//                MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
-//                if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
-//                    MineTypeEntity bottomLocalData = getBottomLocalData();
-//                    if (bottomLocalData == null ||
-//                            !getStrings(bottomLocalData.getUpdateTime()).equals(getStrings(mineTypeEntity.getUpdateTime()))) {
-//                        saveBottomLocalData(JSON.toJSONString(mineTypeEntity));
-//                    }
-//                } else {
-////                    清除底部宫格数据
-//                    if (getBottomShared() != null) {
-//                        getBottomShared().edit().clear().apply();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void netClose() {
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable throwable) {
-////          错误数据不清除
-//            }
-//        });
     }
 
     private void setCountData(DirectIndentCountBean messageTotalBean) {
