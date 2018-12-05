@@ -3,8 +3,12 @@ package com.amkj.dmsh.network;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
@@ -17,19 +21,47 @@ import retrofit2.http.Url;
 public interface NetApiService {
     /**
      * 无参
+     *
      * @param url 地址
      * @return
      */
     @POST()
-    Observable<String> getNetData(@Url String url);
+    Observable<String> getPostNetData(@Url String url);
 
     /**
-     *
-     * @param url 地址
+     * @param url    地址
      * @param params 参数
      * @return
      */
     @POST()
-    Observable<String> getNetData(@Url String url, @QueryMap Map<String,Object> params);
+    Observable<String> getPostNetData(@Url String url, @QueryMap Map<String, Object> params);
+
+    /**
+     * Get请求
+     *
+     * @param url
+     * @return
+     */
+    @GET()
+    Observable<String> getGetNetData(@Url String url);
+
+    /**
+     * Get请求
+     *
+     * @param url
+     * @return
+     */
+    @GET()
+    Observable<String> getGetNetData(@Url String url, @QueryMap Map<String, String> params);
+
+    /**
+     * 下载文件
+     * 地址已加载在baseUrl
+     *
+     * @return
+     */
+    @Streaming
+    @POST("{url}")
+    Observable<ResponseBody> downLoadFile(@Path(value = "url",encoded = true) String url);
 
 }

@@ -60,6 +60,7 @@ import com.amkj.dmsh.views.CustomPopWindow;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -101,10 +102,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
+import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
@@ -422,8 +425,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         imagesVideoList.clear();
         String[] images = productDetailBean.getImages().split(",");
         CommunalADActivityBean communalADActivityBean;
+        List<String> imageList = new ArrayList<>();
         if (images.length != 0) {
-            List<String> imageList = Arrays.asList(images);
+            imageList.addAll(Arrays.asList(images));
             for (int i = 0; i < imageList.size(); i++) {
                 communalADActivityBean = new CommunalADActivityBean();
                 if (i == 0) {
@@ -436,6 +440,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         } else {
             communalADActivityBean = new CommunalADActivityBean();
             communalADActivityBean.setPicUrl(getStrings(productDetailBean.getPicUrl()));
+            imageList.add(getStrings(productDetailBean.getPicUrl()));
             imagesVideoList.add(communalADActivityBean);
         }
 //         轮播图
@@ -454,6 +459,16 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         }
         bannerShopTimeDetails.setPages(ShopTimeScrollDetailsActivity.this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        bannerShopTimeDetails.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (imageList.size() > 0 && position < imageList.size()) {
+                    showImageActivity(ShopTimeScrollDetailsActivity.this, IMAGE_DEF,
+                            position,
+                            imageList);
+                }
+            }
+        });
 //        商品名字
         itemBodyList.clear();
         tvShopTimeProductName.setText(getStrings(productDetailBean.getName()));

@@ -32,16 +32,22 @@
     <!-- 微信支付 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <!--危险权限 暂时移除-->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"
-        tools:node="remove"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"
-        tools:node="remove"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"
-        tools:node="remove"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"
-        tools:node="remove"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
-        tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.SYSTEM_ALERT_WINDOW"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.RECORD_AUDIO"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.READ_CONTACTS"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:node="remove" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -837,7 +843,7 @@
         <activity
             android:name=".dominant.activity.DoMoGroupJoinShareActivity"
             android:exported="false"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="DoMoGroupJoinShareActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -1104,7 +1110,10 @@
             android:theme="@style/fullTheme1" />
         <!--app重新启动-->
         <service android:name=".utils.restartapputils.RestartAppService" />
-
+        <!--app更新弹窗-->
+        <activity
+            android:name=".AppUpdateDialogActivity"
+            android:theme="@style/Dialog_Activity" />
         <!--uCrop裁切图片-->
         <meta-data
             android:name="com.google.android.gms.version"

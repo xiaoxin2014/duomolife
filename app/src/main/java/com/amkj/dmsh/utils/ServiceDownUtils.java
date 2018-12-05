@@ -9,8 +9,8 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.utils.inteface.MyProgressCallBack;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.network.downfile.DownloadListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -55,20 +55,32 @@ public class ServiceDownUtils extends Service {
 
     public void downAppFile(String url, String downUrl, boolean isInstallApp, boolean isShowProgress) {
         String filePath = downUrl.substring(0, downUrl.lastIndexOf("/"));
+        int fileNameCode = downUrl.lastIndexOf("/") + 1;
+        if(fileNameCode>=downUrl.length()){
+            return;
+        }
+        String fileName = downUrl.substring(fileNameCode);
         File pathFile = new File(filePath);
         if (!pathFile.exists()) {
             pathFile.mkdir();
         }
-        XUtil.DownLoadFile(url, downUrl, new MyProgressCallBack<File>() {
+        NetLoadUtils.getQyInstance().downFile(url, filePath, fileName, new DownloadListener() {
             @Override
-            public void onLoading(long total, long current, boolean isDownloading) {
+            public void onStartDownload() {
                 if (isShowProgress) {
-                    EventBus.getDefault().post(new EventMessage("appVersionProgress", current*1f / total * 100 + 1));
+                    EventBus.getDefault().post(new EventMessage("appVersionProgress", 0));
                 }
             }
 
             @Override
-            public void onSuccess(File file) {
+            public void onProgress(int progress) {
+                if (isShowProgress) {
+                    EventBus.getDefault().post(new EventMessage("appVersionProgress", progress));
+                }
+            }
+
+            @Override
+            public void onFinishDownload(File file) {
                 if (isInstallApp
                         && file.getAbsolutePath().contains(".apk")) {
                     openFile(file, ServiceDownUtils.this);
@@ -77,11 +89,34 @@ public class ServiceDownUtils extends Service {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onFail(Throwable ex) {
                 showToast(ServiceDownUtils.this, "下载失败");
                 stopSelf();
             }
         });
+//        XUtil.DownLoadFile(url, downUrl, new MyProgressCallBack<File>() {
+//            @Override
+//            public void onLoading(long total, long current, boolean isDownloading) {
+//                if (isShowProgress) {
+//                    EventBus.getDefault().post(new EventMessage("appVersionProgress", current*1f / total * 100 + 1));
+//                }
+//            }
+//
+//            @Override
+//            public void onSuccess(File file) {
+//                if (isInstallApp
+//                        && file.getAbsolutePath().contains(".apk")) {
+//                    openFile(file, ServiceDownUtils.this);
+//                    stopSelf();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(Throwable ex, boolean isOnCallback) {
+//                showToast(ServiceDownUtils.this, "下载失败");
+//                stopSelf();
+//            }
+//        });
     }
 
     //打开当前APK程序代码

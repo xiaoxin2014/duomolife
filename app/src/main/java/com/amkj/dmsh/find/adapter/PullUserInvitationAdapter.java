@@ -12,12 +12,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.XFLinearLayoutManager;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
 import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
-import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
@@ -41,6 +39,7 @@ import java.util.regex.Pattern;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
@@ -316,16 +315,9 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                 PictureBean pictureBean = (PictureBean) view.getTag();
                 if (pictureBean != null && pictureBean.getOriginalList() != null
                         && pictureBean.getItemType() != TYPE_2) {
-                    ImagePagerActivity.ImageSize imageSize = new ImagePagerActivity.ImageSize(view.getMeasuredWidth(), view.getMeasuredHeight());
-                    ImageBean imageBean = null;
-                    List<ImageBean> imageBeanList = new ArrayList<>();
-                    for (String picUrl : pictureBean.getOriginalList()) {
-                        imageBean = new ImageBean();
-                        imageBean.setPicUrl(picUrl);
-                        imageBeanList.add(imageBean);
-                    }
-                    ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList
-                            , pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0, imageSize);
+                    showImageActivity(context,IMAGE_DEF,
+                            pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0,
+                            pictureBean.getOriginalList());
                 } else if (TYPE_2 == pictureBean.getItemType()) {
                     skipArticlePage(pictureBean.getObject_id(), pictureBean.getType());
                 }

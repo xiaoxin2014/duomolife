@@ -27,7 +27,6 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -48,7 +47,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -276,26 +274,21 @@ public class BindingMobileActivity extends BaseActivity {
                             startActivity(intent);
                             finish();
                         } else {
-                            if (EMPTY_CODE.equals(communalUserInfoEntity.getCode())) {
-                                showException(getResources().getString(R.string.date_exception_hint));
-                            } else {
-                                showException(communalUserInfoEntity.getMsg());
-                            }
+                            showException(communalUserInfoEntity.getMsg());
                         }
                     }
                 }
 
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
-                    Log.d("HomeCateError", "onError: " + ex);
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    showException(getResources().getString(R.string.date_exception_hint));
+                    showException(getResources().getString(R.string.do_failed));
                 }
             });
         } else {
-            showException(getResources().getString(R.string.date_exception_hint));
+            showException("请输入新密码！");
         }
     }
 
@@ -422,11 +415,7 @@ public class BindingMobileActivity extends BaseActivity {
                         showToast(BindingMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        if (EMPTY_CODE.equals(requestStatus.getCode())) {
-                            showException(getResources().getString(R.string.date_exception_hint));
-                        } else {
-                            showException(requestStatus.getMsg());
-                        }
+                        showException(requestStatus.getMsg());
                     }
                 }
             }
@@ -436,7 +425,7 @@ public class BindingMobileActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showException(getResources().getString(R.string.date_exception_hint));
+                showException(getResources().getString(R.string.do_failed));
             }
         });
     }

@@ -477,7 +477,7 @@ public class GlideImageLoaderUtil {
                                 imgHeight = 3574;
                             }
                         }
-                        if (isContextExisted(context)) {
+                        if (isContextExisted(context)&&imageViewX!=null) {
                             Glide.with(context).asDrawable().load(imgUrlX)
                                     .apply(new RequestOptions().dontAnimate()
                                             .error(R.drawable.load_loading_image)
@@ -485,7 +485,7 @@ public class GlideImageLoaderUtil {
                                     .into(imageViewX);
                         }
                     } catch (Exception e) {
-                        if (isContextExisted(context)) {
+                        if (isContextExisted(context)&&imageView!=null) {
                             Glide.with(context).asDrawable().load(imgUrl)
                                     .apply(new RequestOptions().dontAnimate()
                                             .error(R.drawable.load_loading_image)
@@ -516,13 +516,79 @@ public class GlideImageLoaderUtil {
      */
     public static void loadGif(final Context context, final ImageView imageView, String imgUrl) {
         if (null != context) {
-            Glide.with(context).load(imgUrl)
-                    .apply(new RequestOptions().placeholder(R.drawable.load_loading_image)
-                            .error(R.drawable.load_loading_image)
-                            .skipMemoryCache(true)
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)
-                            .override(Target.SIZE_ORIGINAL))
-                    .into(imageView);
+            // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
+            Map<String, Object> params = new HashMap<>();
+            params.put("imgUrl", imgUrl);
+            params.put("imgView", imageView);
+            Observable.create(new ObservableOnSubscribe<Map<String, Object>>() {
+                @Override
+                public void subscribe(ObservableEmitter<Map<String, Object>> emitter) throws Exception {
+                    int[] imageUrlWidthHeight = getImageUrlWidthHeight(imgUrl);
+                    if (imageUrlWidthHeight.length < 2) {
+                        imageUrlWidthHeight = new int[]{0, 0};
+                    }
+                    params.put("imgSize", imageUrlWidthHeight);
+                    emitter.onNext(params);
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Map<String, Object>>() {
+                Disposable disposable;
+
+                @Override
+                public void onSubscribe(Disposable d) {
+                    this.disposable = d;
+                }
+
+                @Override
+                public void onNext(Map<String, Object> params) {
+                    int imgWidth = Target.SIZE_ORIGINAL;
+                    int imgHeight = Target.SIZE_ORIGINAL;
+                    String imgUrlX = null;
+                    ImageView imageViewX = null;
+                    int[] imageUrlWidthHeight;
+                    try {
+                        imgUrlX = (String) params.get("imgUrl");
+                        imageViewX = (ImageView) params.get("imgView");
+                        imageUrlWidthHeight = (int[]) params.get("imgSize");
+                        if (imageUrlWidthHeight.length > 1) {
+                            imgWidth = imageUrlWidthHeight[0];
+                            imgHeight = imageUrlWidthHeight[1];
+                            if (imageUrlWidthHeight[1] > 3574) {
+                                imgWidth = (int) (3574f / imgHeight * imgWidth);
+                                imgHeight = 3574;
+                            }
+                        }
+                        if (isContextExisted(context)&&imageViewX!=null) {
+                            Glide.with(context).load(imgUrlX)
+                                    .apply(new RequestOptions()
+                                            .error(R.drawable.load_loading_image)
+                                            .skipMemoryCache(true)
+                                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                                            .override(imgWidth, imgHeight))
+                                    .into(imageViewX);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (isContextExisted(context)&&imageView!=null) {
+                            Glide.with(context).load(imgUrlX)
+                                    .apply(new RequestOptions()
+                                            .error(R.drawable.load_loading_image)
+                                            .skipMemoryCache(true)
+                                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                                            .override(imgWidth, imgHeight))
+                                    .into(imageView);
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onComplete() {
+                }
+            });
         }
     }
 

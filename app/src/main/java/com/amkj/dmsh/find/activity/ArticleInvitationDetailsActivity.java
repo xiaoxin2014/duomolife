@@ -158,6 +158,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     private float locationY;
     private DmlSearchDetailBean dmlSearchDetailBean;
     private CommunalDetailAdapter communalDetailAdapter;
+    private boolean isForceNet;
 
     @Override
     protected int getContentView() {
@@ -187,6 +188,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
                 //                滚动距离置0
+                isForceNet = true;
                 scrollY = 0;
                 loadData();
             }
@@ -550,6 +552,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     private void getDetailData() {
         getArticleImgComment();
         imgHeaderView.getDetailsData();
+        isForceNet = false;
     }
 
     private void getArticleImgComment() {
@@ -862,13 +865,14 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             if (userId > 0) {
                 params.put("fuid", String.valueOf(userId));
             }
-            NetLoadUtils.getQyInstance().loadNetDataGetCache(ArticleInvitationDetailsActivity.this, url
+            NetLoadUtils.getQyInstance().loadNetDataGetCache(url
                     , params
-                    , new NetLoadUtils.NetLoadListener() {
+                    , isForceNet,new NetLoadUtils.NetLoadListener() {
                         @Override
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();
                             adapterArticleComment.loadMoreComplete();
+                            android.util.Log.d("article->", "onSuccess: " + result);
                             getDetailsDataJson(result);
                         }
 

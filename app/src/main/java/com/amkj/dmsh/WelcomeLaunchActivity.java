@@ -181,7 +181,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
         setSkipClickPath(null);
     }
 
-    @OnClick(R.id.fl_skip)
+    @OnClick(R.id.iv_launch_wel_page)
     void skipPath(View view) {
         view.setEnabled(false);
         setSkipClickPath(skipUrlPath);

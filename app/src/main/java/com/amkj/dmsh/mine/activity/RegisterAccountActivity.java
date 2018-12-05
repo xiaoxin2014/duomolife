@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity.RegisterUserInfoBean;
 import com.amkj.dmsh.constant.Sha1Md5;
@@ -30,6 +29,7 @@ import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
@@ -53,7 +53,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUniqueId;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
@@ -209,11 +208,7 @@ public class RegisterAccountActivity extends BaseActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        if (EMPTY_CODE.equals(registerUserInfoEntity.getCode())) {
-                            showException(getResources().getString(R.string.date_exception_hint));
-                        } else {
-                            showException(registerUserInfoEntity.getMsg());
-                        }
+                        showException(registerUserInfoEntity.getMsg());
                     }
                 }
             }
@@ -224,7 +219,7 @@ public class RegisterAccountActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(RegisterAccountActivity.this,R.string.unConnectedNetwork);
+                showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
             }
 
             @Override
@@ -233,7 +228,7 @@ public class RegisterAccountActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showException(getResources().getString(R.string.date_exception_hint));
+                showException(getResources().getString(R.string.do_failed));
             }
         });
     }

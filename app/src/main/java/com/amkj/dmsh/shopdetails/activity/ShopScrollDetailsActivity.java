@@ -82,6 +82,7 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -132,6 +133,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -148,6 +150,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
+import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
@@ -844,14 +847,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 //        赠品优惠券
         presentProductInfoBeans.clear();
         CommunalADActivityBean communalADActivityBean;
+        List<String> imageList = new ArrayList<>();
+        int videoCount=0;
         if (images.length != 0) {
-            List<String> imageList = Arrays.asList(images);
+            imageList.addAll(Arrays.asList(images));
             for (int i = 0; i < imageList.size(); i++) {
                 communalADActivityBean = new CommunalADActivityBean();
                 if (i == 0) {
                     communalADActivityBean.setPicUrl(getWaterMarkImgUrl(imageList.get(i), shopProperty.getWaterRemark()));
                     if (!TextUtils.isEmpty(shopProperty.getVideoUrl())) {
                         communalADActivityBean.setVideoUrl(shopProperty.getVideoUrl());
+                        videoCount++;
                     }
                 } else {
                     communalADActivityBean.setPicUrl(imageList.get(i));
@@ -864,6 +870,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (!TextUtils.isEmpty(shopProperty.getVideoUrl())) {
                 communalADActivityBean.setVideoUrl(shopProperty.getVideoUrl());
             }
+            imageList.add(getStrings(shopProperty.getImages()));
             imagesVideoList.add(communalADActivityBean);
         }
 //         轮播图
@@ -882,6 +889,26 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
         banner_ql_sp_pro_details.setPages(ShopScrollDetailsActivity.this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        int finalVideoCount = videoCount;
+        banner_ql_sp_pro_details.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (imagesVideoList.size() > position) {
+                    CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);
+                    if (!TextUtils.isEmpty(communalADActivityBean.getVideoUrl())) {
+                        return;
+                    }
+                    if (position - finalVideoCount < 0) {
+                        return;
+                    }
+                    if (imageList.size() > 0 && position < imageList.size()) {
+                        showImageActivity(ShopScrollDetailsActivity.this, IMAGE_DEF,
+                                position - finalVideoCount,
+                                imageList);
+                    }
+                }
+            }
+        });
         if (!TextUtils.isEmpty(shopProperty.getGpDiscounts())) {
             tv_group_product.setVisibility(VISIBLE);
             tv_group_product.setText(getString(R.string.group_discount, getStrings(shopProperty.getGpDiscounts())));

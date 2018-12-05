@@ -66,6 +66,7 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -103,12 +104,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
+import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -656,8 +659,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         String[] images = groupShopDetailsBean.getImages().split(",");
         imagesVideoList.clear();
         CommunalADActivityBean communalADActivityBean;
+        List<String> imageList = new ArrayList<>();
         if (images.length != 0) {
-            List<String> imageList = Arrays.asList(images);
+            imageList.addAll(Arrays.asList(images));
             for (String imagePath : imageList) {
                 communalADActivityBean = new CommunalADActivityBean();
                 communalADActivityBean.setPicUrl(imagePath);
@@ -666,6 +670,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         } else {
             communalADActivityBean = new CommunalADActivityBean();
             communalADActivityBean.setPicUrl(getStrings(groupShopDetailsBean.getCoverImage()));
+            imageList.add(getStrings(groupShopDetailsBean.getCoverImage()));
             imagesVideoList.add(communalADActivityBean);
         }
         if (groupShopDetailsBean.getRange() == 1) {
@@ -691,6 +696,18 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
         banner_ql_gp_sp_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        banner_ql_gp_sp_details.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (imagesVideoList.size() > position) {
+                    if (imageList.size() > 0 && position < imageList.size()) {
+                        showImageActivity(QualityGroupShopDetailActivity.this, IMAGE_DEF,
+                                position,
+                                imageList);
+                    }
+                }
+            }
+        });
         tv_open_pro_label.setText(getStrings(groupShopDetailsBean.getGoodsAreaLabel()));
         setCountTime(groupShopDetailsEntity);
         if (!ConstantMethod.isEndOrStartTime(groupShopDetailsEntity.getCurrentTime()

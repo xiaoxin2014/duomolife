@@ -29,6 +29,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,9 +49,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
@@ -994,6 +997,28 @@ public class ConstantMethod {
     }
 
     /**
+     * 放大展示图片
+     * @param context
+     * @param imageType
+     * @param firstShowPosition
+     * @param imagePathList
+     */
+    public static void showImageActivity(Context context,String imageType,int firstShowPosition,List<String> imagePathList){
+        if(imagePathList==null||imagePathList.size()<1){
+            showToast(context,"图片地址错误~");
+            return;
+        }
+        ImageBean imageBean = null;
+        List<ImageBean> imageBeanList = new ArrayList<>();
+        for (String picUrl : imagePathList) {
+            imageBean = new ImageBean();
+            imageBean.setPicUrl(picUrl);
+            imageBeanList.add(imageBean);
+        }
+        ImagePagerActivity.startImagePagerActivity(context, imageType, imageBeanList
+                ,firstShowPosition,new ImagePagerActivity.ImageSize(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+    /**
      * 默认图片 文字描述
      *
      * @param context
@@ -1017,6 +1042,10 @@ public class ConstantMethod {
         });
     }
 
+    /**
+     * 推送点击统计
+     * @param pushId
+     */
     public static void totalPushMessage(@NonNull String pushId) {
         String url = Url.BASE_URL + Url.TOTAL_PUSH_INFO;
         Map<String, Object> params = new HashMap<>();
@@ -1443,12 +1472,6 @@ public class ConstantMethod {
                                         } else {
                                             addImagePath(descriptionDetailList, imgUrl);
                                         }
-
-//                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-//                                        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
-//                                        communalDetailObjectBean.setContent(imgUrlContent);
-//                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-//                                        descriptionDetailList.add(communalDetailObjectBean);
                                     }
                                     hasImgUrl = matcher.find();
                                 }

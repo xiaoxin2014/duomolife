@@ -104,6 +104,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
+import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_RECOMMEND;
@@ -177,6 +178,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     private CommentCountView commentCountView;
     private View commentHeaderView;
     private DmlSearchDetailEntity dmlSearchDetailEntity;
+    private boolean isForceNet;
 
     @Override
     protected int getContentView() {
@@ -389,6 +391,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
+                isForceNet = true;
                 loadData();
             }
         });
@@ -424,6 +427,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void loadData() {
         page = 1;
         getArticleData();
+        isForceNet = false;
         getArticleComment();
     }
 
@@ -475,17 +479,16 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
     private void getArticleData() {
-        String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", artId);
+        Map<String, String> params = new HashMap<>();
+        params.put("id", String.valueOf(artId));
         /**
          * 3.1.8 加入并列商品 两排 三排
          */
-        params.put("version", 1);
+        params.put("version", "1");
         if (userId > 0) {
-            params.put("fuid", userId);
+            params.put("fuid", String.valueOf(userId));
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(ArticleOfficialActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getQyInstance().loadNetDataGetCache(F_INVITATION_DETAIL, params, isForceNet, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

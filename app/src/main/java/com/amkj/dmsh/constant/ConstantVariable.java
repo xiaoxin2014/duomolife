@@ -2,6 +2,7 @@ package com.amkj.dmsh.constant;
 
 import com.amkj.dmsh.BuildConfig;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -310,4 +311,7 @@ public class ConstantVariable {
     public static final String WEB_TMALL_SCHEME = "tmall://";
 //    web 空白页面
     public static final String WEB_BLACK_PAGE = "about:blank";
+
+//    下载Map
+    public static Map<String,String> downFileMap = new HashMap<>();
 }

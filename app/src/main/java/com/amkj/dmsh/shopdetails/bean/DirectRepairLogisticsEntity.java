@@ -3,10 +3,9 @@ package com.amkj.dmsh.shopdetails.bean;
 import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean.LogisticsDetailsBean.LogisticsBean.LogisticTextBean;
 
 import java.util.List;
-
-import static com.amkj.dmsh.shopdetails.bean.DirectLogisticsPacketEntity.DirectLogisticsPacketBean.LogisticsEntity.LogisticsBean.ListBean;
 
 /**
  * @author LGuiPeng
@@ -50,7 +49,7 @@ public class DirectRepairLogisticsEntity extends BaseEntity{
         private String repairReturnExpressCompany;
         private String repairReturnExpressNo;
         private String repairReturnExpressType;
-        private List<ListBean> logistics;
+        private List<LogisticTextBean> logistics;
 
         public static DirectRepairLogisticsBean objectFromData(String str) {
 
@@ -81,11 +80,11 @@ public class DirectRepairLogisticsEntity extends BaseEntity{
             this.repairReturnExpressType = repairReturnExpressType;
         }
 
-        public List<ListBean> getLogistics() {
+        public List<LogisticTextBean> getLogistics() {
             return logistics;
         }
 
-        public void setLogistics(List<ListBean> logistics) {
+        public void setLogistics(List<LogisticTextBean> logistics) {
             this.logistics = logistics;
         }
     }

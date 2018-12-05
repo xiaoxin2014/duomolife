@@ -153,6 +153,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     private InvitationProAdapter invitationProAdapter;
     private InvitationImgDetailBean invitationDetailBean;
     private FindImageListAdapter findImageListAdapter;
+    private boolean isForceNet;
 
     @Override
     protected int getContentView() {
@@ -182,6 +183,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 //                滚动距离置0
                 scrollY = 0;
                 page = 1;
+                isForceNet = true;
                 getDetailData();
             }
         });
@@ -545,6 +547,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     private void getDetailData() {
         getArticleImgComment();
         imgHeaderView.getDetailsData();
+        isForceNet = false;
     }
 
     private void getArticleImgComment() {
@@ -853,9 +856,9 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             if (userId > 0) {
                 params.put("fuid", String.valueOf(userId));
             }
-            NetLoadUtils.getQyInstance().loadNetDataGetCache(ArticleDetailsImgActivity.this, url
+            NetLoadUtils.getQyInstance().loadNetDataGetCache(url
                     , params
-                    , new NetLoadUtils.NetLoadListener() {
+                    , isForceNet, new NetLoadUtils.NetLoadListener() {
                         @Override
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();

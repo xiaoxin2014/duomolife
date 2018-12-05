@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -31,6 +30,7 @@ import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.SystemBarHelper;
@@ -55,7 +55,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
@@ -447,19 +446,11 @@ public class MineLoginActivity extends BaseActivity {
                                 }
                                 countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
                             } else {
-                                if (EMPTY_CODE.equals(resultData.getCode())) {
-                                    showException(getResources().getString(R.string.date_exception_hint));
-                                } else {
-                                    showException(resultData.getMsg());
-                                }
+                                showException(resultData.getMsg());
                             }
                         }
                     } else {
-                        if (EMPTY_CODE.equals(requestStatus.getCode())) {
-                            showException(getResources().getString(R.string.date_exception_hint));
-                        } else {
-                            showException(requestStatus.getMsg());
-                        }
+                        showException(requestStatus.getMsg());
                     }
                 }
             }
@@ -473,7 +464,7 @@ public class MineLoginActivity extends BaseActivity {
             @Override
             public void onError(Throwable throwable) {
                 loadHud.dismiss();
-                showException(getResources().getString(R.string.date_exception_hint));
+                showException(getResources().getString(R.string.do_failed));
             }
         });
     }
@@ -518,19 +509,11 @@ public class MineLoginActivity extends BaseActivity {
                                 communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
                                 loginSuccessSetData(communalUserInfoEntity);
                             } else {
-                                if (EMPTY_CODE.equals(loginPhoneCodeBean.getResultCode())) {
-                                    showException(getResources().getString(R.string.date_exception_hint));
-                                } else {
-                                    showException(loginPhoneCodeBean.getResultMsg());
-                                }
+                                showException(loginPhoneCodeBean.getResultMsg());
                             }
                         }
                     } else {
-                        if (EMPTY_CODE.equals(loginPhoneCodeEntity.getCode())) {
-                            showException(getResources().getString(R.string.date_exception_hint));
-                        } else {
-                            showException(loginPhoneCodeEntity.getMsg());
-                        }
+                        showException(loginPhoneCodeEntity.getMsg());
                     }
                 }
             }
@@ -544,7 +527,7 @@ public class MineLoginActivity extends BaseActivity {
             @Override
             public void onError(Throwable throwable) {
                 loadHud.dismiss();
-                showException(getResources().getString(R.string.date_exception_hint));
+                showException(getResources().getString(R.string.do_failed));
             }
         });
     }
@@ -750,7 +733,7 @@ public class MineLoginActivity extends BaseActivity {
         if (sinaDialogHelper != null && sinaDialogHelper.isShowing()) {
             sinaDialogHelper.dismiss();
         }
-        if (alertDialogHelper != null&&alertDialogHelper.isShowing()) {
+        if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
             alertDialogHelper.dismiss();
         }
     }

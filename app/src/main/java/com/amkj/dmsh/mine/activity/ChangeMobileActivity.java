@@ -35,7 +35,6 @@ import cn.smssdk.SMSSDK;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 ;
@@ -164,7 +163,7 @@ public class ChangeMobileActivity extends BaseActivity {
                     tv_change_send_code.setVisibility(View.VISIBLE);
                     reg_change_code_gif_view.setVisibility(View.GONE);
                     showToast(ChangeMobileActivity.this, R.string.GetSmsCodeSuccess);
-                    if(countDownHelper==null){
+                    if (countDownHelper == null) {
                         countDownHelper = CountDownHelper.getTimerInstance();
                     }
                     countDownHelper.setSmsCountDown(tv_change_send_code, getResources().getString(R.string.send_sms), 60);
@@ -181,11 +180,11 @@ public class ChangeMobileActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode(ChangeMobileActivity.this,status);
+                    disposeMessageCode(ChangeMobileActivity.this, status);
                 } catch (Exception e) {
                     showToast(ChangeMobileActivity.this, R.string.unConnectedNetwork);
                 }
-            }else{
+            } else {
                 showToast(ChangeMobileActivity.this, R.string.do_failed);
             }
             return false;
@@ -212,11 +211,7 @@ public class ChangeMobileActivity extends BaseActivity {
                         showToast(ChangeMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        if (EMPTY_CODE.equals(requestStatus.getCode())) {
-                            showException(getResources().getString(R.string.date_exception_hint));
-                        } else {
-                            showException(requestStatus.getMsg());
-                        }
+                        showException(requestStatus.getMsg());
                     }
                 }
             }
@@ -226,10 +221,11 @@ public class ChangeMobileActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showException(getResources().getString(R.string.date_exception_hint));
+                showException(getResources().getString(R.string.do_failed));
             }
         });
     }
+
     /**
      * 展示后台数据异常
      *
@@ -249,6 +245,7 @@ public class ChangeMobileActivity extends BaseActivity {
         edit_cm_get_code.getText().clear();
         alertDialogHelper.show();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -267,7 +264,7 @@ public class ChangeMobileActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(countDownHelper==null){
+        if (countDownHelper == null) {
             countDownHelper = CountDownHelper.getTimerInstance();
         }
         countDownHelper.setSmsCountDown(tv_change_send_code);

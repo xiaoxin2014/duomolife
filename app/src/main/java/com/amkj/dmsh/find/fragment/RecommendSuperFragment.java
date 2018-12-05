@@ -67,14 +67,7 @@ public class RecommendSuperFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         adapterInvitationAdapter = new PullUserInvitationAdapter(getActivity(), invitationSearchList, type);
         communal_recycler.setAdapter(adapterInvitationAdapter);
         adapterInvitationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {

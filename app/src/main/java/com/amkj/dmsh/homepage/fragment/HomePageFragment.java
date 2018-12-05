@@ -640,14 +640,25 @@ public class HomePageFragment extends BaseFragment {
             } else if (!categoryTypeEntity.getCode().equals(EMPTY_CODE)) {
                 showToast(getActivity(), categoryTypeEntity.getMsg());
             }
+            setDefaultCategoryType();
             if (categoryList.size() > 0) {
                 HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getChildFragmentManager(), categoryList);
                 viewpager_container.setAdapter(qualityPageAdapter);
                 std_home_art_type.setViewPager(viewpager_container);
-                std_home_art_type.setCurrentTab(0);
-                viewpager_container.setCurrentItem(0);
-                std_home_art_type.notifyDataSetChanged();
+                setDefaultCategoryType();
             }
+        }
+    }
+
+    /**
+     * 刷新 tab恢复默认
+     */
+    private void setDefaultCategoryType() {
+        if(viewpager_container.getAdapter()!=null
+                &&std_home_art_type.getCurrentTab()!=0
+                &&viewpager_container.getCurrentItem()!=0){
+            std_home_art_type.setCurrentTab(0);
+            viewpager_container.setCurrentItem(0);
         }
     }
 

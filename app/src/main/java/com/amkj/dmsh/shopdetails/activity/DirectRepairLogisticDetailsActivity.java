@@ -15,7 +15,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectLogisticsAdapter;
-import com.amkj.dmsh.shopdetails.bean.DirectLogisticsPacketEntity.DirectLogisticsPacketBean.LogisticsEntity.LogisticsBean.ListBean;
+import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean.LogisticsDetailsBean.LogisticsBean.LogisticTextBean;
 import com.amkj.dmsh.shopdetails.bean.DirectRepairLogisticsEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectRepairLogisticsEntity.DirectRepairLogisticsBean;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -60,7 +60,7 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
     RecyclerView communal_recycler;
     private DirectLogisticsHeadView dirLogisticHeadView;
     private DirectLogisticsAdapter directLogisticsAdapter;
-    private List<ListBean> logisticsBeanList = new ArrayList<>();
+    private List<LogisticTextBean> logisticsBeanList = new ArrayList();
     private String orderProductId;
     private String orderRefundProductId;
     private DirectRepairLogisticsEntity directLogisticsEntity;
@@ -88,7 +88,7 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
                 loadData();
             }
         });
-        View headerView = LayoutInflater.from(DirectRepairLogisticDetailsActivity.this).inflate(R.layout.layout_direct_logistics_head, (ViewGroup) communal_recycler.getParent(), false);
+        View headerView = LayoutInflater.from(DirectRepairLogisticDetailsActivity.this).inflate(R.layout.layout_direct_logistics_header, (ViewGroup) communal_recycler.getParent(), false);
         dirLogisticHeadView = new DirectLogisticsHeadView();
         ButterKnife.bind(dirLogisticHeadView, headerView);
         dirLogisticHeadView.initViews();

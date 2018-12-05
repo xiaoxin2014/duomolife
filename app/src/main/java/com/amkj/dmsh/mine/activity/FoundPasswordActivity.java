@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.MinePassword;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
@@ -39,7 +39,6 @@ import cn.smssdk.SMSSDK;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
@@ -117,7 +116,7 @@ public class FoundPasswordActivity extends BaseActivity {
                     showToast(FoundPasswordActivity.this, R.string.GetSmsCodeSuccess);
                     tv_bind_send_code.setVisibility(View.VISIBLE);
                     reg_bind_code_gif_view.setVisibility(View.GONE);
-                    if(countDownHelper==null){
+                    if (countDownHelper == null) {
                         countDownHelper = CountDownHelper.getTimerInstance();
                     }
                     countDownHelper.setSmsCountDown(tv_bind_send_code, getResources().getString(R.string.send_sms), 60);
@@ -147,7 +146,7 @@ public class FoundPasswordActivity extends BaseActivity {
 //            判断手机号是否注册
             Map<String, Object> params = new HashMap<>();
             params.put("mobile", phoneNumber);
-            NetLoadUtils.getQyInstance().loadNetDataPost(this, BASE_URL + CHECK_PHONE_IS_REG,params , new NetLoadUtils.NetLoadListener() {
+            NetLoadUtils.getQyInstance().loadNetDataPost(this, BASE_URL + CHECK_PHONE_IS_REG, params, new NetLoadUtils.NetLoadListener() {
                 @Override
                 public void onSuccess(String result) {
                     String code = "";
@@ -247,11 +246,7 @@ public class FoundPasswordActivity extends BaseActivity {
                         //重置密码成功
                         finish();
                     } else {
-                        if(EMPTY_CODE.equals(minePassword.getCode())){
-                            showException(getResources().getString(R.string.date_exception_hint));
-                        }else{
-                            showException(minePassword.getMsg());
-                        }
+                        showException(minePassword.getMsg());
                     }
                 }
             }
@@ -262,10 +257,11 @@ public class FoundPasswordActivity extends BaseActivity {
                     loadHud.dismiss();
                 }
                 super.onError(ex, isOnCallback);
-                showException(getResources().getString(R.string.date_exception_hint));
+                showException(getResources().getString(R.string.do_failed));
             }
         });
     }
+
     /**
      * 展示后台数据异常
      *
@@ -285,6 +281,7 @@ public class FoundPasswordActivity extends BaseActivity {
         edit_get_code.getText().clear();
         alertDialogHelper.show();
     }
+
     @OnClick(R.id.iv_blue_back)
     void goBack(View view) {
         finish();
@@ -300,7 +297,7 @@ public class FoundPasswordActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (countDownHelper==null){
+        if (countDownHelper == null) {
             countDownHelper = CountDownHelper.getTimerInstance();
         }
         countDownHelper.setSmsCountDown(tv_bind_send_code);

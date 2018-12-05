@@ -97,6 +97,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
+import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 
 ;
 ;
@@ -517,10 +518,9 @@ public class MineDataFragment extends BaseFragment {
 
     //    我的模块 广告
     private void getMineAd() {
-        String url = BASE_URL + Url.MINE_PAGE_AD;
         Map<String, String> params = new HashMap<>();
         params.put("vidoShow", "1");
-        XUtil.Get(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getQyInstance().loadNetDataGet(getActivity(), MINE_PAGE_AD, params, new NetLoadUtils.NetLoadListener() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -530,7 +530,6 @@ public class MineDataFragment extends BaseFragment {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setMineAdData(adActivityEntity);
                     } else if (!adActivityEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), adActivityEntity.getMsg());
                         ad_mine.setVisibility(View.GONE);
                     } else {
                         ad_mine.setVisibility(View.GONE);
@@ -539,9 +538,13 @@ public class MineDataFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 ad_mine.setVisibility(View.GONE);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                ad_mine.setVisibility(View.GONE);
             }
         });
     }

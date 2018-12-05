@@ -170,8 +170,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
         if (message.type.equals("appVersionProgress")) {
             int total = 0;
             try {
-                float totalCurrent = (float) message.result;
-                total = (int) totalCurrent;
+                total = (int) message.result;
             } catch (Exception e) {
                 e.printStackTrace();
             }
