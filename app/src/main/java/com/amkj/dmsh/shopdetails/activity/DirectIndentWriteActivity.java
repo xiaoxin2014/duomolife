@@ -232,14 +232,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         directProductAdapter.addHeaderView(headerView);
         directProductAdapter.addFooterView(footView);
         communal_recycler.setAdapter(directProductAdapter);
@@ -407,10 +400,9 @@ public class DirectIndentWriteActivity extends BaseActivity{
             if (pullHeaderView.et_oversea_name.getText().toString().length() > 0
                     && pullHeaderView.et_oversea_card.getText().toString().length() > 0) {
                 createIndent(payWay, productInfoList);
-            } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_name.getText().toString())) {
-                constantMethod.showImportantToast(this, R.string.input_name);
-            } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_card.getText().toString())) {
-                constantMethod.showImportantToast(this, R.string.input_card);
+            } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_name.getText().toString())||TextUtils.isEmpty(pullHeaderView.et_oversea_card.getText().toString())) {
+                tv_indent_write_commit.setEnabled(true);
+                constantMethod.showImportantToast(this,"因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
             }
         } else {
             createIndent(payWay, productInfoList);
@@ -1093,61 +1085,6 @@ public class DirectIndentWriteActivity extends BaseActivity{
             NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
         }
     }
-
-    /**
-     * 结算金额 换取优惠券调用
-     */
-//    private void getIndentSettle() {
-//        if (indentDiscountsEntity != null) {
-//            String url = Url.BASE_URL + Url.INDENT_SETTLE_PRICE;
-//            Map<String, Object> params = new HashMap<>();
-//            params.put("newUserCouponId", couponId);
-//            params.put("userId", uid);
-//            if (addressId > 0) {
-//                params.put("addressId", addressId);
-//            }
-//            try {
-//                JSONArray jsonArray = new JSONArray();
-//                List<ProductInfoBean> productInfoList = indentDiscountsEntity.getIndentDiscountsBean().getProductInfoList();
-//                for (int i = 0; i < productInfoList.size(); i++) {
-//                    ProductInfoBean productInfoBean = productInfoList.get(i);
-//                    for (int j = 0; j < productInfoBean.getActivityProductInfo().size(); j++) {
-//                        ActivityProductInfoBean activityProductInfoBean = productInfoBean.getActivityProductInfo().get(j);
-//                        JSONObject jsonObject = new JSONObject();
-//                        jsonObject.put("id", activityProductInfoBean.getId());
-//                        jsonObject.put("price", activityProductInfoBean.getPrice());
-//                        jsonObject.put("count", activityProductInfoBean.getCount());
-//                        jsonObject.put("saleSkuId", activityProductInfoBean.getSaleSkuId());
-//                        if (!TextUtils.isEmpty(activityProductInfoBean.getActivityCode())) {
-//                            jsonObject.put("activityCode", activityProductInfoBean.getActivityCode());
-//                        }
-//                        jsonArray.put(jsonObject);
-//                    }
-//                }
-//                params.put("orderList", jsonArray.toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            XUtil.Post(url, params, new MyCallBack<String>() {
-//                @Override
-//                public void onSuccess(String result) {
-//                    Gson gson = new Gson();
-//                    CouponSettleEntity couponSettleEntity = gson.fromJson(result, CouponSettleEntity.class);
-//                    if (couponSettleEntity != null) {
-//                        if (couponSettleEntity.getCode().equals(SUCCESS_CODE)) {
-//                            setDiscounts(couponSettleEntity.getCouponSettleList());
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onError(Throwable ex, boolean isOnCallback) {
-//                    super.onError(ex, isOnCallback);
-//                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
-//                }
-//            });
-//        }
-//    }
     private void setDiscountsInfo(IndentDiscountsBean indentDiscountsBean) {
         isOversea = indentDiscountsBean.isOverseasGo();
         tv_indent_write_commit.setEnabled(indentDiscountsBean.getHideCreate() == 0);

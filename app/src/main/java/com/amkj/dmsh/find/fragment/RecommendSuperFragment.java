@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -22,6 +21,7 @@ import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -129,6 +129,22 @@ public class RecommendSuperFragment extends BaseFragment {
                             } else {
                                 getLoginStatus(RecommendSuperFragment.this);
                             }
+                            break;
+                        case R.id.tv_com_art_comment_count:
+                            Intent intent = new Intent();
+                            switch (invitationDetailBean.getArticletype()) {
+                                case 1:
+                                    intent.setClass(getActivity(), ArticleInvitationDetailsActivity.class);
+                                    break;
+                                case 3:
+                                    break;
+                                default:
+                                    intent.setClass(getActivity(), ArticleDetailsImgActivity.class);
+                                    break;
+                            }
+                            intent.putExtra("ArtId", String.valueOf(invitationDetailBean.getId()));
+                            intent.putExtra("scrollToComment", true);
+                            startActivity(intent);
                             break;
                     }
                 }

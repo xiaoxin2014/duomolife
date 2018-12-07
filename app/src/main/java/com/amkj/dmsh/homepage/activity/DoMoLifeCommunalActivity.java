@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -25,6 +26,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -37,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.baichuan.android.trade.AlibcTrade;
 import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
@@ -57,6 +60,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
@@ -89,22 +93,28 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.AutoSize;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
-import static com.amkj.dmsh.constant.ConstantMethod.getWebLinkUrl;
+import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
+import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_ADD_LOTTERY;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 ;
@@ -151,6 +161,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private String refreshStatus;
     private AlertDialogHelper alertDialogHelper;
     private String errorUrl;
+    private String turnId;
+
 
     @Override
     protected int getContentView() {
@@ -218,7 +230,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 int errorCode = error.getErrorCode();
-                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                if (404 == errorCode || 500 == errorCode || errorCode == -2) {
                     errorUrl = request.getUrl().toString();
                     setErrorException(view);
                 }
@@ -228,7 +240,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 int errorCode = errorResponse.getStatusCode();
-                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                if (404 == errorCode || 500 == errorCode || errorCode == -2) {
                     errorUrl = request.getUrl().toString();
                     setErrorException(view);
                 }
@@ -270,6 +282,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
                 super.onPageFinished(view, url);
             }
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+            }
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -277,42 +293,34 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 String url = request.getUrl().toString();
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        if(url.contains(WEB_TAOBAO_SCHEME)||url.contains(WEB_JD_SCHEME)
-                                ||url.contains(WEB_TMALL_SCHEME)){
+                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME)|| url.contains(WEB_JD_SCHEME)
+                                || url.contains(WEB_TMALL_SCHEME)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             startActivity(intent);
-                        }else if(isWebLinkUrl(url)){
-                            view.loadUrl(getWebLinkUrl(url));
+                            return true;
                         }
-                        return true;
                     }
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
-                    view.loadUrl(getWebLinkUrl(url));
-                    return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
-                view.loadUrl(url);
-                return true;
+//                因返回true 会导致重定向而无法返回问题 todo
+                return super.shouldOverrideUrlLoading(view,request);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        if(url.contains(WEB_TAOBAO_SCHEME)||url.contains(WEB_JD_SCHEME)
-                                ||url.contains(WEB_TMALL_SCHEME)){
+                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME)|| url.contains(WEB_JD_SCHEME)
+                                || url.contains(WEB_TMALL_SCHEME)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             startActivity(intent);
-                        }else if(isWebLinkUrl(url)){
-                            view.loadUrl(getWebLinkUrl(url));
+                            return true;
                         }
-                        return true;
                     }
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
-                    view.loadUrl(getWebLinkUrl(url));
-                    return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
-                view.loadUrl(url);
-                return true;
+//                因返回true 会导致重定向而无法返回问题 todo
+                return super.shouldOverrideUrlLoading(view,url);
             }
         });
 
@@ -358,6 +366,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     /**
      * 设置刷新开启禁用 1 开启 其它禁用
+     *
      * @param refreshStatus
      */
     private void setWebRefreshStatus(int refreshStatus) {
@@ -438,18 +447,12 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
         return sb.toString();
     }
-
     //改写物理按键——返回的逻辑
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (web_communal.canGoBack()) {
-                web_communal.goBack();//返回上一页面
-                return true;
-            } else {
-                finish();
-//                System.exit(0);//退出程序
-            }
+            finishWebPage(1);
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -524,8 +527,25 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     @OnClick(R.id.tv_web_back)
     void finish(View view) {
+        finishWebPage(1);
+    }
+
+    /**
+     * 关闭web界面
+     *
+     * @param finishCount
+     */
+    private void finishWebPage(int finishCount) {
+        finishCount = Math.abs(finishCount);
+        WebBackForwardList webBackForwardList = web_communal.copyBackForwardList();
+//        当前页面index
+        int currentIndex = webBackForwardList.getCurrentIndex();
         if (web_communal.canGoBack()) {
-            web_communal.goBack();//返回上一页面
+            if (currentIndex - finishCount < 0) {
+                finish();
+            } else {
+                web_communal.goBackOrForward(-finishCount);
+            }
         } else {
             finish();
         }
@@ -538,6 +558,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     //    自定义系统原生弹框
     class MyWebChromeClient extends WebChromeClient {
+
         @Override
         public void onCloseWindow(WebView window) {
             super.onCloseWindow(window);
@@ -679,22 +700,24 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
             }
         }
+
     }
 
     public class JsData {
         private Context context;
 
+
         public JsData(Context context) {
             this.context = context;
         }
-
         //        跳转页面
+
         @JavascriptInterface
         public void skipPage(String result) {
             setSkipPath(context, result, false);
         }
-
         //分享
+
         @JavascriptInterface
         public void sharePage(String result) {
             if (!TextUtils.isEmpty(result)) {
@@ -705,14 +728,14 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 showToast(context, "数据为空");
             }
         }
-
         //        获取当前用户uid
+
         @JavascriptInterface
         public void getUserIdFromAndroid() {
             getUserId();
         }
-
         //      跳转阿里百川
+
         @JavascriptInterface
         public void skipAlibc(String urlType) {
             if (!TextUtils.isEmpty(urlType)) {
@@ -728,15 +751,15 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 showToast(context, R.string.unConnectedNetwork);
             }
         }
-
         //      跳转客服
+
         @JavascriptInterface
         public void skipService() {
             QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
             qyServiceUtils.openQyServiceChat(DoMoLifeCommunalActivity.this, "web：", "");
         }
-
         //      顶栏导航是否展示
+
         @JavascriptInterface
         public void isShowHeadBar(final String showData) {
             runOnUiThread(new Runnable() {
@@ -764,8 +787,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
             });
         }
-
         //        是否显示分享按钮
+
         @JavascriptInterface
         public void isShowShare(final String showData) {
             runOnUiThread(new Runnable() {
@@ -793,8 +816,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
             });
         }
-
         //        修改导航标题
+
         @JavascriptInterface
         public void showTitle(final String showTitle) {
             runOnUiThread(new Runnable() {
@@ -853,14 +876,37 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
                 if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     switch (jsInteractiveBean.getType()) {
+//                        获取用户Id
                         case "userId":
                             jsGetUserId(jsInteractiveBean);
                             break;
+//                            刷新设置
                         case "refresh":
                             jsRefreshStatus(jsInteractiveBean);
                             break;
+//                            导航栏设置
+                        case "navigationBar":
+                            jsSetNavBar(jsInteractiveBean);
+                            break;
+//                            获取app设备信息
+                        case "appDeviceInfo":
+                            jsGetAppDeviceInfo();
+                            break;
+//                            app更新弹窗
+                        case "appUpdate":
+                            jsInteractiveEmpty(jsInteractiveBean);
+                            break;
+                        case "finishWebPage":
+                            jsAutoFinishPage(jsInteractiveBean);
+                            break;
+                        case "alibcUrl":
+                            jsSkipTaoBao(jsInteractiveBean);
+                            break;
+                        case "statusBar":
+                            jsSetStatusBar(jsInteractiveBean);
+                            break;
                         default:
-                            jsInteractiveEmpty();
+                            jsInteractiveEmpty(null);
                             break;
                     }
                 } else {
@@ -871,10 +917,119 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
+
+    }
+
+    /**
+     * 设置状态栏
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsSetStatusBar(JsInteractiveBean jsInteractiveBean) {
+        if (jsInteractiveBean.getOtherData() != null) {
+            // TODO: 2018/12/6 js设置状态栏
+        }
+    }
+
+    /**
+     * js跳转阿里百川
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsSkipTaoBao(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null) {
+            String thirdId = (String) getMapValue(otherData.get("tbThirdId"), "");
+            if (TextUtils.isEmpty(thirdId)) {
+                String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
+                if (!TextUtils.isEmpty(tbUrl)) {
+                    skipAliBCWebView(tbUrl, null);
+                }
+            } else {
+                skipAliBCWebView(null, thirdId);
+            }
+        }
+    }
+
+    /**
+     * js关闭自带页面
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsAutoFinishPage(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null && otherData.get("pageCount") != null) {
+            int pageCount = (int) getMapValue(otherData.get("pageCount"), 1);
+            finishWebPage(pageCount);
+        } else {
+            finishWebPage(1);
+        }
+    }
+
+    /**
+     * js获取app信息
+     */
+    private void jsGetAppDeviceInfo() {
+        try {
+//        app版本号
+            String versionName = getVersionName(DoMoLifeCommunalActivity.this);
+//        系统版本号
+            String osVersion = Build.VERSION.RELEASE;
+//        手机型号
+            String mobileModel = Build.MODEL;
+//        android设备号
+            String deviceId = getDeviceId(DoMoLifeCommunalActivity.this);
+            com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+            jsonObject.put("appVersion", versionName);
+            jsonObject.put("sysVersion", osVersion);
+            jsonObject.put("deviceModel", mobileModel);
+            jsonObject.put("deviceId", deviceId);
+            webViewJs("javascript:" + "getDeviceInfo(" + jsonObject.toJSONString() + ")");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * js设置导航栏
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsSetNavBar(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null && otherData.get("navBarVisibility") != null) {
+            try {
+                int navBarVisibility = (int) otherData.get("navBarVisibility");
+                if (navBarVisibility == 1) {
+                    tl_web_normal_bar.setVisibility(View.VISIBLE);
+                    String navBarTitle = (String) getMapValue(otherData.get("navTitle"), "");
+                    tv_web_title.setText(getStrings(navBarTitle));
+                    tv_web_shared.setVisibility(((int) getMapValue(otherData.get("navShareVisibility"), 0)) == 1 ?
+                            View.VISIBLE : View.GONE);
+                } else {
+                    setDefaultNavBar(View.GONE);
+                }
+            } catch (Exception e) {
+                setDefaultNavBar(View.VISIBLE);
+                e.printStackTrace();
+            }
+        } else {
+            setDefaultNavBar(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 设置导航栏默认设置
+     */
+    private void setDefaultNavBar(int navBarVisibility) {
+        tv_web_title.setText("");
+        tv_web_shared.setVisibility(View.GONE);
+        tl_web_normal_bar.setVisibility(navBarVisibility);
     }
 
     /**
      * js获取用户id
+     *
      * @param jsInteractiveBean
      */
     private void jsGetUserId(JsInteractiveBean jsInteractiveBean) {
@@ -900,14 +1055,16 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      * 获取用户id 用户未登录提示登录
      */
     private void getUserId() {
-        if(userId>0){
+        if (userId > 0) {
             transmitUid();
-        }else{
+        } else {
             getLoginStatus(DoMoLifeCommunalActivity.this);
         }
     }
+
     /**
      * js刷新状态
+     *
      * @param jsInteractiveBean
      */
     private void jsRefreshStatus(JsInteractiveBean jsInteractiveBean) {
@@ -935,8 +1092,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     /**
      * 方法不支持，弹窗更新版本
+     *
+     * @param jsInteractiveBean
      */
-    private void jsInteractiveEmpty() {
+    private void jsInteractiveEmpty(JsInteractiveBean jsInteractiveBean) {
         if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(DoMoLifeCommunalActivity.this);
             alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
@@ -951,12 +1110,21 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     alertDialogHelper.dismiss();
                 }
             });
-            alertDialogHelper.setTitle("通知提示")
-                    .setTitleGravity(Gravity.CENTER)
-                    .setMsg(getResources().getString(R.string.skip_empty_page_hint))
-                    .setSingleButton(true)
-                    .setConfirmText("更新");
         }
+        String title = "通知提示";
+        String content = getResources().getString(R.string.skip_empty_page_hint);
+        if (jsInteractiveBean != null
+                && jsInteractiveBean.getOtherData() != null) {
+            Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+            title = (String) getMapValue(otherData.get("alertTitle"), "");
+            content = (String) getMapValue(otherData.get("alertContent"), content);
+        }
+        alertDialogHelper.setTitle(title)
+                .setTitleVisibility(!TextUtils.isEmpty(title) ? View.VISIBLE : View.GONE)
+                .setTitleGravity(Gravity.CENTER)
+                .setMsg(content)
+                .setSingleButton(true)
+                .setConfirmText("更新");
         AutoSize.autoConvertDensityOfGlobal(this);
         alertDialogHelper.show();
     }
@@ -1081,17 +1249,27 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     String imageUrl = jsonObject.getString("imageUrl");
                     String content = jsonObject.getString("content");
                     String url = jsonObject.getString("url");
+                    turnId = jsonObject.getString("turnId");
                     String routineUrl = null;
                     try {
                         routineUrl = jsonObject.getString("routineUrl");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    new UMShareAction(DoMoLifeCommunalActivity.this
+                    UMShareAction umShareAction = new UMShareAction(DoMoLifeCommunalActivity.this
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
                             , TextUtils.isEmpty(content) ? "" : content
                             , url, routineUrl);
+                    if (!TextUtils.isEmpty(turnId)) {
+                        umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
+                            @Override
+                            public void onShareSuccess() {
+//                                新增抽奖次数
+                                getLotteryTime();
+                            }
+                        });
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1099,12 +1277,61 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             return false;
         }
     });
+
+    private void getLotteryTime() {
+        if (userId < 1) {
+            return;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("turn_id", TextUtils.isEmpty(turnId) ? "3" : turnId);
+        NetLoadUtils.getQyInstance().loadNetDataPost(this, H_HOT_ACTIVITY_ADD_LOTTERY, params, new NetLoadUtils.NetLoadListener() {
+            @Override
+            public void onSuccess(String result) {
+                String code = "";
+                String msg = "";
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    code = (String) jsonObject.get("code");
+                    msg = (String) jsonObject.get("msg");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (code.equals(SUCCESS_CODE)) {
+//                    刷新抽奖次数
+                    web_communal.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                web_communal.loadUrl("javascript:refreshdml()");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else if (!code.equals(EMPTY_CODE)) {
+                    Toast.makeText(DoMoLifeCommunalActivity.this, msg, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void netClose() {
+                Toast.makeText(DoMoLifeCommunalActivity.this, getString(R.string.unConnectedNetwork), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Toast.makeText(DoMoLifeCommunalActivity.this, getString(R.string.do_failed), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @OnClick(R.id.tv_communal_net_refresh)
-    void clickError(){
+    void clickError() {
         ll_communal_net_error.setVisibility(View.GONE);
-        if(isWebLinkUrl(errorUrl)){
+        if (isWebLinkUrl(errorUrl)) {
             web_communal.loadUrl(errorUrl);
-        }else{
+        } else {
             web_communal.loadUrl(loadUrl);
         }
     }

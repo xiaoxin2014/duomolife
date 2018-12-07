@@ -116,7 +116,8 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                         String.valueOf(invitationDetailBean.getComment() > 999 ? "999+" : invitationDetailBean.getComment()) : "评论")
                 .setGone(R.id.tv_com_art_collect_count, false)
                 .addOnClickListener(R.id.tv_com_art_collect_count)
-                .setTag(R.id.tv_com_art_collect_count, invitationDetailBean);
+                .setTag(R.id.tv_com_art_collect_count, invitationDetailBean)
+                .addOnClickListener(R.id.tv_com_art_comment_count).setTag(R.id.tv_com_art_comment_count, invitationDetailBean);;
         ImageView iv_find_rec_tag = helper.getView(R.id.iv_find_rec_tag);
         if (!TextUtils.isEmpty(invitationDetailBean.getRecommendType())) {
             String recommendType = invitationDetailBean.getRecommendType();

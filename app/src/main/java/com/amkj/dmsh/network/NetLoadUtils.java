@@ -83,8 +83,12 @@ public class NetLoadUtils<T, E extends BaseEntity> {
 
                 @Override
                 public void onNext(String result) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onSuccess(result);
+                    try {
+                        if (netLoadListener != null) {
+                            netLoadListener.onSuccess(result);
+                        }
+                    } catch (Exception e) {
+                        netLoadListener.onError(e);
                     }
                 }
 
@@ -135,30 +139,34 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (NetWorkUtils.checkNet(context)) {
             NetApiService netApiService = NetApiManager.getNetApiService();
             Observer<String> observer = new Observer<String>() {
-                @Override
-                public void onSubscribe(Disposable d) {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                }
-
-                @Override
-                public void onNext(String result) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onSuccess(result);
                     }
-                }
 
-                @Override
-                public void onError(Throwable exception) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onError(exception);
+                    @Override
+                    public void onNext(String result) {
+                        try {
+                            if (netLoadListener != null) {
+                                netLoadListener.onSuccess(result);
+                            }
+                        } catch (Exception e) {
+                            netLoadListener.onError(e);
+                        }
                     }
-                }
 
-                @Override
-                public void onComplete() {
+                    @Override
+                    public void onError(Throwable exception) {
+                        if (netLoadListener != null) {
+                            netLoadListener.onError(exception);
+                        }
+                    }
 
-                }
-            };
+                    @Override
+                    public void onComplete() {
+
+                    }
+                };
             if (params != null) {
                 netApiService.getGetNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
             } else {
@@ -184,30 +192,34 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (!TextUtils.isEmpty(url)) {
             NetApiService netApiService = NetApiManager.getNetCacheApiService(isForceNet);
             Observer<String> observer = new Observer<String>() {
-                @Override
-                public void onSubscribe(Disposable d) {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                }
-
-                @Override
-                public void onNext(String result) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onSuccess(result);
                     }
-                }
 
-                @Override
-                public void onError(Throwable exception) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onError(exception);
+                    @Override
+                    public void onNext(String result) {
+                        try {
+                            if (netLoadListener != null) {
+                                netLoadListener.onSuccess(result);
+                            }
+                        } catch (Exception e) {
+                            netLoadListener.onError(e);
+                        }
                     }
-                }
 
-                @Override
-                public void onComplete() {
+                    @Override
+                    public void onError(Throwable exception) {
+                        if (netLoadListener != null) {
+                            netLoadListener.onError(exception);
+                        }
+                    }
 
-                }
-            };
+                    @Override
+                    public void onComplete() {
+
+                    }
+                };
             if (params != null) {
                 netApiService.getGetNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
             } else {

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,6 +34,7 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
@@ -60,15 +62,18 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
+import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -158,6 +163,9 @@ public class ArticleOfficialActivity extends BaseActivity {
     TextView tv_article_bottom_like;
     @BindView(R.id.tv_article_bottom_collect)
     TextView tv_article_bottom_collect;
+    //    滚动至顶部
+    @BindView(R.id.download_btn_communal)
+    public FloatingActionButton download_btn_communal;
 
     //    评论列表
     private List<DmlSearchCommentBean> articleCommentList = new ArrayList<>();
@@ -179,6 +187,8 @@ public class ArticleOfficialActivity extends BaseActivity {
     private View commentHeaderView;
     private DmlSearchDetailEntity dmlSearchDetailEntity;
     private boolean isForceNet;
+    private boolean isScrollToComment;
+    private float screenHeight;
 
     @Override
     protected int getContentView() {
@@ -191,8 +201,11 @@ public class ArticleOfficialActivity extends BaseActivity {
         tv_header_titleAll.setText("");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
+        isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
         rel_article_bottom.setVisibility(GONE);
-        communal_recycler.setLayoutManager(new LinearLayoutManager(ArticleOfficialActivity.this));
+        communal_recycler.setLayoutManager(new OffsetLinearLayoutManager(ArticleOfficialActivity.this));
         adapterArticleComment = new ArticleCommentAdapter(ArticleOfficialActivity.this, articleCommentList, COMMENT_TYPE);
         adapterArticleComment.setHeaderAndEmpty(true);
         View coverView = LayoutInflater.from(ArticleOfficialActivity.this)
@@ -208,10 +221,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         communal_recycler.setAdapter(adapterArticleComment);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         adapterArticleComment.setOnItemChildClickListener((adapter, view, position) -> {
             DmlSearchCommentBean dmlSearchCommentBean = (DmlSearchCommentBean) view.getTag(R.id.iv_tag);
             if (dmlSearchCommentBean == null) {
@@ -274,10 +284,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(ArticleOfficialActivity.this));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         searchSlideProAdapter = new WelfareSlideProAdapter(ArticleOfficialActivity.this, searchProductList);
         searchSlideProAdapter.setEnableLoadMore(false);
         rv_communal_pro.setAdapter(searchSlideProAdapter);
@@ -395,9 +402,36 @@ public class ArticleOfficialActivity extends BaseActivity {
                 loadData();
             }
         });
+        download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                OffsetLinearLayoutManager layoutManager = (OffsetLinearLayoutManager) recyclerView.getLayoutManager();
+                int scrollY = layoutManager.computeVerticalScrollOffset();
+                if (dy < 0 && scrollY > screenHeight * 1.5) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.hide();
+                    }
+                } else {
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide();
+                    }
+                }
+            }
+        });
+        download_btn_communal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+                download_btn_communal.hide();
+                linearLayoutManager.scrollToPositionWithOffset(0, 0);
+            }
+        });
         //          关闭手势滑动
         dl_art_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        totalPersonalTrajectory = insertNewTotalData(ArticleOfficialActivity.this, artId);
+        totalPersonalTrajectory =
+
+                insertNewTotalData(ArticleOfficialActivity.this, artId);
         tv_publish_comment.setText(R.string.comment_article_hint);
     }
 
@@ -465,6 +499,10 @@ public class ArticleOfficialActivity extends BaseActivity {
                             commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
                         }
                         adapterArticleComment.notifyDataSetChanged();
+                    }
+                    if (isScrollToComment) {
+                        scrollToComment();
+                        isScrollToComment = false;
                     }
                 }
 
@@ -869,7 +907,8 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
 
-    private void commentViewVisible(int visibility, final DmlSearchCommentBean dmlSearchCommentBean) {
+    private void commentViewVisible(int visibility,
+                                    final DmlSearchCommentBean dmlSearchCommentBean) {
         ll_input_comment.setVisibility(visibility);
         ll_article_comment.setVisibility(visibility == VISIBLE ? GONE : VISIBLE);
         if (VISIBLE == visibility) {
@@ -954,6 +993,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         finish();
     }
 
+
     @OnClick(R.id.tv_publish_comment)
     void publishComment(View view) {
         if (dmlSearchDetailBean != null) {
@@ -961,6 +1001,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (VISIBLE == ll_input_comment.getVisibility()) {
                     commentViewVisible(GONE, null);
                 } else {
+                    clickScrollToComment();
                     commentViewVisible(VISIBLE, null);
                 }
             } else {
@@ -1092,6 +1133,56 @@ public class ArticleOfficialActivity extends BaseActivity {
             Map<String, String> totalMap = new HashMap<>();
             totalMap.put("relate_id", artId);
             totalPersonalTrajectory.stopTotal(totalMap);
+        }
+    }
+
+    /**
+     * 滚动到评论区
+     */
+    private void scrollToComment() {
+        int headerLayoutCount = adapterArticleComment.getHeaderLayoutCount();
+        LinearLayout headerLayout = adapterArticleComment.getHeaderLayout();
+        if (headerLayout != null) {
+            final boolean[] isFirstSame = {true};
+            final int[] measureHeight = {0};
+            headerLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    int measuredNewHeight = headerLayout.getMeasuredHeight();
+                    if (measuredNewHeight > screenHeight || (measureHeight[0] == measuredNewHeight && !isFirstSame[0])) {
+                        headerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (measuredNewHeight > screenHeight) {
+                            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+                            linearLayoutManager.scrollToPositionWithOffset(headerLayoutCount, 300);
+                            linearLayoutManager.setStackFromEnd(true);
+                        }
+                    } else if (measureHeight[0] == measuredNewHeight && isFirstSame[0]) {
+                        /**
+                         * 因会出现两次测量结果一致，故避免这情况
+                         */
+                        isFirstSame[0] = false;
+                    } else {
+                        measureHeight[0] = measuredNewHeight;
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 点击评论滑动到评论区
+     */
+    private void clickScrollToComment() {
+        int headerLayoutCount = adapterArticleComment.getHeaderLayoutCount();
+        LinearLayout headerLayout = adapterArticleComment.getHeaderLayout();
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+        int lastCompletelyVisibleItemPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+        if (lastCompletelyVisibleItemPosition < headerLayoutCount) {
+            int measuredNewHeight = headerLayout.getMeasuredHeight();
+            if (measuredNewHeight > screenHeight) {
+                linearLayoutManager.scrollToPositionWithOffset(headerLayoutCount, 300);
+                linearLayoutManager.setStackFromEnd(true);
+            }
         }
     }
 }

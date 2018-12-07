@@ -50,7 +50,7 @@ import cn.smssdk.SMSSDK;
 
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getUniqueId;
+import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -172,7 +172,7 @@ public class RegisterAccountActivity extends BaseActivity {
         params.put("mobile", phoneNumber);
         params.put("newPassword", passwordLock);
         long currentTimeMillis = System.currentTimeMillis();
-        String uniqueId = getUniqueId(this);
+        String uniqueId = getDeviceId(this);
         /**
          * 3.1.2加入校验码 避免注册被刷库
          */

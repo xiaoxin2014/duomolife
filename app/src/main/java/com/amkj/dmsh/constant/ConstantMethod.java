@@ -213,7 +213,18 @@ public class ConstantMethod {
         return String.valueOf(number);
     }
 
-
+    /**
+     * 判空并且返回值
+     * @param object 基本类型，对象为空
+     * @param defaultValue 空值默认返回
+     * @return
+     */
+    public static Object getMapValue(Object object,Object defaultValue) {
+        if(object == null){
+            return defaultValue;
+        }
+        return object;
+    }
     /**
      * @param text
      * @return
@@ -482,9 +493,9 @@ public class ConstantMethod {
                 }
                 if (!isMiniRoutine) {
                     try {
-                        if (link.contains("taobao")) {
-                            skipAliBCWebView(link, context);
-                        } else {
+//                        if (link.contains("taobao")) {
+//                            skipAliBCWebView(link, context);
+//                        } else {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             if (intent.resolveActivity(context.getPackageManager()) != null) {
                                 context.startActivity(intent);
@@ -496,7 +507,7 @@ public class ConstantMethod {
                                 ((Activity) context).finish();
                                 ((Activity) context).overridePendingTransition(0, 0);
                             }
-                        }
+//                        }
                     } catch (Exception e) {
                         showToast(context, R.string.skip_empty_page_hint);
                         e.printStackTrace();
@@ -2942,7 +2953,7 @@ public class ConstantMethod {
      * @param context
      * @return
      */
-    public static String getUniqueId(Context context) {
+    public static String getDeviceId(Context context) {
         String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String id = androidID + Build.SERIAL;
         return id;

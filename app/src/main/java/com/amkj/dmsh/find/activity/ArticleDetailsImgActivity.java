@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -154,6 +155,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     private InvitationImgDetailBean invitationDetailBean;
     private FindImageListAdapter findImageListAdapter;
     private boolean isForceNet;
+    private boolean isScrollToComment;
 
     @Override
     protected int getContentView() {
@@ -165,6 +167,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         tv_header_titleAll.setText("帖子详情");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
+        isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
         View headerView = LayoutInflater.from(ArticleDetailsImgActivity.this).inflate(R.layout.layout_find_img_details, (ViewGroup) communal_recycler.getParent(), false);
         imgHeaderView = new ImgDetailsHeaderView();
         ButterKnife.bind(imgHeaderView, headerView);
@@ -591,6 +594,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                             adapterArticleComment.notifyDataSetChanged();
                         }
                     }
+                    scrollToComment();
                 }
 
                 @Override
@@ -1000,5 +1004,44 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             totalMap.put("relate_id", artId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
+    }
+
+    /**
+     * 滚动到评论区
+     */
+    private void scrollToComment() {
+        if (isScrollToComment) {
+//                        必须确保详情数据下来
+            int headerLayoutCount = adapterArticleComment.getHeaderLayoutCount();
+            LinearLayout headerLayout = adapterArticleComment.getHeaderLayout();
+            TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+            int screenHeight = tinkerBaseApplicationLike.getScreenHeight();
+            if (headerLayout != null) {
+                final boolean[] isFirstSame = {true};
+                final int[] measureHeight = {0};
+                headerLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        int measuredNewHeight = headerLayout.getMeasuredHeight();
+                        if (measuredNewHeight > screenHeight || (measureHeight[0] == measuredNewHeight && !isFirstSame[0])) {
+                            headerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            if (measuredNewHeight > screenHeight) {
+                                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+                                linearLayoutManager.scrollToPositionWithOffset(headerLayoutCount, 300);
+                                linearLayoutManager.setStackFromEnd(true);
+                            }
+                        } else if (measureHeight[0] == measuredNewHeight && isFirstSame[0]) {
+                            /**
+                             * 因会出现两次测量结果一致，故避免这情况
+                             */
+                            isFirstSame[0] = false;
+                        } else {
+                            measureHeight[0] = measuredNewHeight;
+                        }
+                    }
+                });
+            }
+        }
+        isScrollToComment = false;
     }
 }

@@ -114,6 +114,12 @@ public class ArticleTypeFragment extends BaseFragment {
                                 startActivity(intent);
                             }
                             break;
+                        case R.id.tv_com_art_comment_count:
+                            Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
+                            intent.putExtra("ArtId", String.valueOf(articleBean.getId()));
+                            intent.putExtra("scrollToComment", true);
+                            startActivity(intent);
+                            break;
                     }
                 }
             }

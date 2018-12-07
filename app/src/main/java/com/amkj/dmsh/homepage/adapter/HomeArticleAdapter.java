@@ -48,7 +48,8 @@ public class HomeArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, Ho
                 .setText(R.id.tv_com_art_comment_count, communalArticleBean.getComment() > 0 ? String.valueOf(communalArticleBean.getComment() > 999 ? "999+" : communalArticleBean.getComment()) : "评论")
                 .setText(R.id.tv_com_art_like_count, communalArticleBean.getFavor() > 0 ? String.valueOf(communalArticleBean.getFavor() > 999 ? "999+" : communalArticleBean.getFavor()) : "赞")
                 .addOnClickListener(R.id.tv_com_art_like_count).setTag(R.id.tv_com_art_like_count, communalArticleBean)
-                .addOnClickListener(R.id.tv_article_type).setTag(R.id.tv_article_type, communalArticleBean);
+                .addOnClickListener(R.id.tv_article_type).setTag(R.id.tv_article_type, communalArticleBean)
+                .addOnClickListener(R.id.tv_com_art_comment_count).setTag(R.id.tv_com_art_comment_count, communalArticleBean);
 //        文章分类
         TextView tv_article_type = helper.getView(R.id.tv_article_type);
         String tagName = communalArticleBean.getCategory_name();

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_98"
     android:background="@color/white"
+    android:id="@+id/ll_details_bottom"
     android:orientation="horizontal">
 
     <TextView

@@ -141,6 +141,12 @@ public class ArticleTypeActivity extends BaseActivity {
                                 getLoginStatus();
                             }
                             break;
+                        case R.id.tv_com_art_comment_count:
+                            Intent intent = new Intent(ArticleTypeActivity.this, ArticleOfficialActivity.class);
+                            intent.putExtra("ArtId", String.valueOf(articleBean.getId()));
+                            intent.putExtra("scrollToComment", true);
+                            startActivity(intent);
+                            break;
                         default:
                             break;
                     }

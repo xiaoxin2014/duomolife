@@ -171,7 +171,7 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.tv_indent_back)
+    @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
     }

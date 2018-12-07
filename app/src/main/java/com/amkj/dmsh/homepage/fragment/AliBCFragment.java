@@ -88,7 +88,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
-import static com.amkj.dmsh.constant.ConstantMethod.getWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -97,6 +96,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
@@ -276,44 +276,37 @@ public class AliBCFragment extends BaseFragment {
                 String url = request.getUrl().toString();
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_JD_SCHEME)
+                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME)|| url.contains(WEB_JD_SCHEME)
                                 || url.contains(WEB_TMALL_SCHEME)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             startActivity(intent);
-                        } else if (isWebLinkUrl(url)) {
-                            view.loadUrl(getWebLinkUrl(url));
+                            return true;
                         }
-                        return true;
                     }
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
-                    view.loadUrl(getWebLinkUrl(url));
-                    return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
-                view.loadUrl(url);
-                return true;
+//                因返回true 会导致重定向而无法返回问题 todo
+                return super.shouldOverrideUrlLoading(view,request);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_JD_SCHEME)
+                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME)|| url.contains(WEB_JD_SCHEME)
                                 || url.contains(WEB_TMALL_SCHEME)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             startActivity(intent);
-                        } else if (isWebLinkUrl(url)) {
-                            view.loadUrl(getWebLinkUrl(url));
+                            return true;
                         }
-                        return true;
                     }
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
-                    view.loadUrl(getWebLinkUrl(url));
-                    return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
-                view.loadUrl(url);
-                return true;
+//                因返回true 会导致重定向而无法返回问题 todo
+                return super.shouldOverrideUrlLoading(view,url);
             }
         });
+
         web_fragment_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
             @Override
             public void onScroll(int dx, int dy) {

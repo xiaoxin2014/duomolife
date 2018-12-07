@@ -16,6 +16,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +36,7 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -92,9 +95,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
+import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
@@ -272,6 +277,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     NestedScrollView scroll_pro;
     @BindView(R.id.fl_product_details)
     FrameLayout fl_product_details;
+    @BindView(R.id.ll_details_bottom)
+    LinearLayout ll_details_bottom;
+    @BindView(R.id.download_btn_communal)
+    FloatingActionButton download_btn_communal;
     //    赠品信息
     private List<PresentProductInfoBean> presentProductInfoBeans = new ArrayList<>();
     //    domo推荐
@@ -316,6 +325,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private String recommendFlag;
     private String recommendType;
     private int skuSaleBeanId;
+    private int screenHeight;
 
     @Override
     protected int getContentView() {
@@ -343,6 +353,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
         recommendFlag = intent.getStringExtra("recommendFlag");
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
         recommendType = intent.getStringExtra(RECOMMEND_TYPE);
         if (TextUtils.isEmpty(productId)) {
             showToast(ShopScrollDetailsActivity.this, "商品信息有误，请重试");
@@ -386,6 +398,20 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         }
                     }
                     break;
+            }
+        });
+        ll_details_bottom.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ll_details_bottom.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int measuredHeight = ll_details_bottom.getMeasuredHeight();
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) download_btn_communal.getLayoutParams();
+                int bottomMargin = marginLayoutParams.bottomMargin;
+                int topMargin = marginLayoutParams.topMargin;
+                int leftMargin = marginLayoutParams.leftMargin;
+                int rightMargin = marginLayoutParams.rightMargin;
+                marginLayoutParams.setMargins(leftMargin,topMargin,rightMargin,bottomMargin+measuredHeight);
+                download_btn_communal.setLayoutParams(marginLayoutParams);
             }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShopScrollDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -571,6 +597,41 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_product_share_tint.setVisibility(GONE);
         }
+        download_btn_communal.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                download_btn_communal.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+        scroll_pro.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView nestedScrollView, int i, int newY, int i2, int oldY) {
+                boolean isDownOrUp = newY - oldY > 0;
+                if(isDownOrUp){
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide(false);
+                    }
+                }else{
+                    if (newY > screenHeight * 1.5) {
+                        if (download_btn_communal.getVisibility() == GONE) {
+                            download_btn_communal.setVisibility(VISIBLE);
+                        }
+                        download_btn_communal.show(false);
+                    }else{
+                        if (download_btn_communal.isVisible()) {
+                            download_btn_communal.hide(false);
+                        }
+                    }
+                }
+            }
+        });
+        download_btn_communal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scroll_pro.scrollTo(0, 0);
+                download_btn_communal.hide(false);
+            }
+        });
         badge = getBadge(ShopScrollDetailsActivity.this, fl_header_service);
         insertNewTotalData();
     }
@@ -848,7 +909,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         presentProductInfoBeans.clear();
         CommunalADActivityBean communalADActivityBean;
         List<String> imageList = new ArrayList<>();
-        int videoCount=0;
+        int videoCount = 0;
         if (images.length != 0) {
             imageList.addAll(Arrays.asList(images));
             for (int i = 0; i < imageList.size(); i++) {

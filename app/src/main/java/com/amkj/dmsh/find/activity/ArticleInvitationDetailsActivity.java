@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,6 +59,7 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -84,6 +86,7 @@ import butterknife.OnTouch;
 import emojicon.EmojiconEditText;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -152,13 +155,13 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     private int page = 1;
     private ImgDetailsHeaderView imgHeaderView;
     private DmlSearchDetailEntity dmlSearchDetailEntity;
-    private int scrollY = 0;
-    private float screenHeight;
     //    按下点击位置
     private float locationY;
     private DmlSearchDetailBean dmlSearchDetailBean;
     private CommunalDetailAdapter communalDetailAdapter;
     private boolean isForceNet;
+    private boolean isScrollToComment;
+    private int screenHeight;
 
     @Override
     protected int getContentView() {
@@ -169,13 +172,16 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
+        isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
         View headerView = LayoutInflater.from(ArticleInvitationDetailsActivity.this).inflate(R.layout.layout_find_article_invitation_details, (ViewGroup) communal_recycler.getParent(), false);
         imgHeaderView = new ImgDetailsHeaderView();
         ButterKnife.bind(imgHeaderView, headerView);
         imgHeaderView.initView();
         adapterArticleComment = new ArticleCommentAdapter(ArticleInvitationDetailsActivity.this, articleCommentList, COMMENT_TYPE);
         adapterArticleComment.addHeaderView(headerView);
-        communal_recycler.setLayoutManager(new LinearLayoutManager(this));
+        communal_recycler.setLayoutManager(new OffsetLinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
@@ -189,7 +195,6 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             public void onRefresh(RefreshLayout refreshLayout) {
                 //                滚动距离置0
                 isForceNet = true;
-                scrollY = 0;
                 loadData();
             }
         });
@@ -207,19 +212,18 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
 
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                scrollY += dy;
-                if (screenHeight == 0) {
-                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                    screenHeight = app.getScreenHeight();
-                }
-                if (scrollY >= screenHeight) {
-                    download_btn_communal.setVisibility(View.VISIBLE);
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                OffsetLinearLayoutManager layoutManager = (OffsetLinearLayoutManager) recyclerView.getLayoutManager();
+                int scrollY = layoutManager.computeVerticalScrollOffset();
+                if (dy < 0 && scrollY > screenHeight * 1.5) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.hide();
+                    }
                 } else {
-                    download_btn_communal.setVisibility(GONE);
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide();
+                    }
                 }
             }
         });
@@ -227,15 +231,11 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
+                download_btn_communal.hide();
+                linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
+
         adapterArticleComment.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -476,6 +476,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         if (View.VISIBLE == ll_input_comment.getVisibility()) {
             commentViewVisible(GONE, null);
         } else {
+            clickScrollToComment();
             commentViewVisible(View.VISIBLE, null);
         }
     }
@@ -595,6 +596,10 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                         } else {
                             adapterArticleComment.notifyDataSetChanged();
                         }
+                    }
+                    if (isScrollToComment) {
+                        scrollToComment();
+                        isScrollToComment = false;
                     }
                 }
 
@@ -867,7 +872,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             }
             NetLoadUtils.getQyInstance().loadNetDataGetCache(url
                     , params
-                    , isForceNet,new NetLoadUtils.NetLoadListener() {
+                    , isForceNet, new NetLoadUtils.NetLoadListener() {
                         @Override
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();
@@ -1138,6 +1143,56 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             Map<String, String> totalMap = new HashMap<>();
             totalMap.put("relate_id", artId);
             totalPersonalTrajectory.stopTotal(totalMap);
+        }
+    }
+
+    /**
+     * 滚动到评论区
+     */
+    private void scrollToComment() {
+        int headerLayoutCount = adapterArticleComment.getHeaderLayoutCount();
+        LinearLayout headerLayout = adapterArticleComment.getHeaderLayout();
+        if (headerLayout != null) {
+            final boolean[] isFirstSame = {true};
+            final int[] measureHeight = {0};
+            headerLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    int measuredNewHeight = headerLayout.getMeasuredHeight();
+                    if (measuredNewHeight > screenHeight || (measureHeight[0] == measuredNewHeight && !isFirstSame[0])) {
+                        headerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (measuredNewHeight > screenHeight) {
+                            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+                            linearLayoutManager.scrollToPositionWithOffset(headerLayoutCount, 300);
+                            linearLayoutManager.setStackFromEnd(true);
+                        }
+                    } else if (measureHeight[0] == measuredNewHeight && isFirstSame[0]) {
+                        /**
+                         * 因会出现两次测量结果一致，故避免这情况
+                         */
+                        isFirstSame[0] = false;
+                    } else {
+                        measureHeight[0] = measuredNewHeight;
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 点击评论滑动到评论区
+     */
+    private void clickScrollToComment() {
+        int headerLayoutCount = adapterArticleComment.getHeaderLayoutCount();
+        LinearLayout headerLayout = adapterArticleComment.getHeaderLayout();
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+        int lastCompletelyVisibleItemPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+        if (lastCompletelyVisibleItemPosition < headerLayoutCount) {
+            int measuredNewHeight = headerLayout.getMeasuredHeight();
+            if (measuredNewHeight > screenHeight) {
+                linearLayoutManager.scrollToPositionWithOffset(headerLayoutCount, 300);
+                linearLayoutManager.setStackFromEnd(true);
+            }
         }
     }
 }

@@ -304,9 +304,11 @@ public class ConstantVariable {
     /**
      * web 数据
      */
+//    淘宝
     public static final String WEB_TAOBAO_SCHEME = "taobao://";
+    public static final String WEB_TB_SCHEME = "tbopen://";
 //    京东
-    public static final String WEB_JD_SCHEME = "jdmoble://";
+    public static final String WEB_JD_SCHEME = "jdmobile://";
 //    天猫
     public static final String WEB_TMALL_SCHEME = "tmall://";
 //    web 空白页面

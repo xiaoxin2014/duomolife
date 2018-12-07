@@ -271,6 +271,14 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             //      jPush 初始化
             JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
             JPushInterface.init(mAppContext);
+            //        oss初始化
+            initOSS();
+            //        阿里百川初始化
+            initNewAliBaiC();
+            //        七鱼客服初始化
+            initQYService();
+// web自动识别
+            initWebUrlTransformLocation();
             try {
 //                不能放到子线程初始化
                 TuSdk.enableDebugLog(isDebugTag);
@@ -294,16 +302,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                         edit.putBoolean("delOldVersionCache", false);
                         edit.apply();
                     }
-                    //        oss初始化
-                    initOSS();
-                    initNewAliBaiC();
-                    //        七鱼客服初始化
-                    initQYService();
-
                     //shareSDK
                     MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
-                    //        阿里百川初始化
-                    initWebUrlTransformLocation();
                 }
             });
         }
