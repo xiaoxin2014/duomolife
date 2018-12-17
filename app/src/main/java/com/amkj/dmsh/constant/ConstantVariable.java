@@ -44,24 +44,20 @@ public class ConstantVariable {
     public static final String MAIN_MINE = "mine";
     //    限时特惠
     public static final String MAIN_TIME = "time";
-    //    营销活动 web 跳转
-    public static final String MAIN_WEB = "webActivity";
     //    关注回调请求码 请求登录
     public static final int IS_LOGIN_CODE = 10;
-    //    默认加载条目
-    public static final int DEFAULT_TOTAL_COUNT = 10;
     //    子评论默认加载条数
     public static final int DEFAULT_COMMENT_TOTAL_COUNT = 6;
+    //    默认加载条目
+    public static final int TOTAL_COUNT_TEN = 10;
     //    加载条目20
     public static final int TOTAL_COUNT_TWENTY = 20;
-//    加载条目30
+    //    加载条目30
     public static final int TOTAL_COUNT_THIRTY = 30;
     //    加载条目40
     public static final int TOTAL_COUNT_FORTY = 40;
     //  关联商品请求码
     public static final int RELEVANCE_PRO_REQ = 201;
-    //    申请权限
-    public static final int REQUEST_CODE_PERMISSION = 196;
     //    背景图片请求码
     public static final int REQ_MINE_BG = 107;
     //    默认
@@ -90,7 +86,7 @@ public class ConstantVariable {
     public static final String PAY = "pay";
     //    整单退款查询去向
     public static final String REFUND_TO_WHERE = "refundToWhere";
-//    提醒发货
+    //    提醒发货
     public static final String REMIND_DELIVERY = "remindDelivery";
     //    查看物流
     public static final String CHECK_LOG = "checkLogistics";
@@ -135,6 +131,9 @@ public class ConstantVariable {
     public static final String MES_ADVISE = "advise";
     //    消息-评论-反馈意见
     public static final String MES_FEEDBACK = "feedback";
+    /**
+     * 正则表达式
+     */
     //    <a标签 识别地址跟图片地址
     public static String REGEX_TEXT = "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?";
     //    网址识别
@@ -145,8 +144,13 @@ public class ConstantVariable {
     public static final String regexATextUrl = "<a [\\s\\S]*?href=\"[\\s\\S]*?\"[\\s\\S]*?>";
     //    数字
     public static final String REGEX_NUM = "[+|-]*\\d+(\\.\\d+)?";
-//    正则匹配空格 换行符
+    //    正则匹配空格 换行符
     public static final String REGEX_SPACE_CHAR = "\\s*|\\t|\\r|\\n";
+    //    正则匹配数字跟-
+    public static final String REGEX_NUMBER_BAR = "^[0-9]*-?[0-9]*$";
+    //    正则匹配密码6-20 数字与字母结合
+    public static final String REGEX_PW_ALPHABET_NUMBER = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$";
+
     //    订单商品状态
     public static Map<String, String> INDENT_PRO_STATUS;
     //    购物车活动状态
@@ -241,13 +245,13 @@ public class ConstantVariable {
     public static final String VERSION_UPDATE_LOW = "V_U_L";
     //    当前更新版本
     public static final String APP_CURRENT_UPDATE_VERSION = "A_C_U_V";
-//    强制更新版本 isMandatoryUpdate
+    //    强制更新版本 isMandatoryUpdate
     public static final String APP_MANDATORY_UPDATE_VERSION = "A_M_U_V";
-//    强制更新详情
+    //    强制更新详情
     public static final String MANDATORY_UPDATE_DESCRIPTION = "M_U_D";
-//    图片存储类型
+    //    图片存储类型
     public static final String FILE_IMAGE = "fileImage";
-//    我-底部宫格
+    //    我-底部宫格
     public static final String MINE_BOTTOM_TYPE = "M_B_T";
 
     /**
@@ -282,9 +286,9 @@ public class ConstantVariable {
     public static String RECOMMEND_PRODUCT = "productRecommend";
     //    支付推荐
     public static String RECOMMEND_PAY_SUCCESS = "paySuccessRecommend";
-//    签到 双倍积分类型
+    //    签到 双倍积分类型
     public static String DOUBLE_INTEGRAL_PREFECTURE = "50";
-//    双倍积分 专区类型
+    //    双倍积分 专区类型
     public static String DOUBLE_INTEGRAL_TYPE = "doubleIntegralType";
     /**
      * 分享提示展示
@@ -296,9 +300,9 @@ public class ConstantVariable {
      */
 //    积分订单类型
     public static String INDENT_PRODUCT_TYPE = "productType";
-//    积分商品
+    //    积分商品
     public static String INDENT_INTEGRAL_PRODUCT = "integralProduct";
-//    自营商品
+    //    自营商品
     public static String INDENT_PROPRIETOR_PRODUCT = "proprietorProduct";
 
     /**
@@ -307,13 +311,13 @@ public class ConstantVariable {
 //    淘宝
     public static final String WEB_TAOBAO_SCHEME = "taobao://";
     public static final String WEB_TB_SCHEME = "tbopen://";
-//    京东
+    //    京东
     public static final String WEB_JD_SCHEME = "jdmobile://";
-//    天猫
+    //    天猫
     public static final String WEB_TMALL_SCHEME = "tmall://";
-//    web 空白页面
+    //    web 空白页面
     public static final String WEB_BLACK_PAGE = "about:blank";
 
-//    下载Map
-    public static Map<String,String> downFileMap = new HashMap<>();
+    //    下载Map
+    public static Map<String, String> downFileMap = new HashMap<>();
 }

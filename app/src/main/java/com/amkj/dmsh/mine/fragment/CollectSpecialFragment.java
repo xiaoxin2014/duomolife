@@ -8,18 +8,17 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.SpecialTopicAdapter;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -33,10 +32,11 @@ import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.COLLECT_SPECIAL;
 
 ;
 ;
@@ -70,29 +70,18 @@ public class CollectSpecialFragment extends BaseFragment {
     @Override
     protected void initViews() {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         topicListAdapter = new SpecialTopicAdapter(getActivity(), topicBeanList);
         communal_recycler.setAdapter(topicListAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_ten_dp)
-
-
-                .create());
-        topicListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                TopicSpecialBean topicDetailBean = (TopicSpecialBean) view.getTag();
-                if (topicDetailBean != null) {
-                    Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
-                    intent.putExtra("ArtId", String.valueOf(topicDetailBean.getId()));
-                    startActivity(intent);
-                }
+                .setDividerId(R.drawable.item_divider_ten_dp).create());
+        topicListAdapter.setOnItemClickListener((adapter, view, position) -> {
+            TopicSpecialBean topicDetailBean = (TopicSpecialBean) view.getTag();
+            if (topicDetailBean != null) {
+                Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
+                intent.putExtra("ArtId", String.valueOf(topicDetailBean.getId()));
+                startActivity(intent);
             }
         });
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -129,12 +118,8 @@ public class CollectSpecialFragment extends BaseFragment {
         topicListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= topicBeanList.size()) {
-                    page++;
-                    getInvitationList();
-                } else {
-                    topicListAdapter.loadMoreEnd();
-                }
+                page++;
+                getInvitationList();
             }
         }, communal_recycler);
     }
@@ -162,47 +147,44 @@ public class CollectSpecialFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.COLLECT_SPECIAL;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("count", DEFAULT_TOTAL_COUNT);
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    topicListAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        topicBeanList.clear();
-                    }
-                    Gson gson = new Gson();
-                    topicDetailEntity = gson.fromJson(result, TopicSpecialEntity.class);
-                    if (topicDetailEntity != null) {
-                        if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                            topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());
-                        } else if (!topicDetailEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), topicDetailEntity.getMsg());
-                        }
-                        topicListAdapter.notifyDataSetChanged();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, topicBeanList, topicDetailEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    topicListAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, topicBeanList, topicDetailEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    topicListAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, topicBeanList, topicDetailEntity);
-                }
-            });
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("count", TOTAL_COUNT_TWENTY);
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_SPECIAL,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        topicListAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            topicBeanList.clear();
+                        }
+                        Gson gson = new Gson();
+                        topicDetailEntity = gson.fromJson(result, TopicSpecialEntity.class);
+                        if (topicDetailEntity != null) {
+                            if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                                topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());
+                            } else if (!topicDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), topicDetailEntity.getMsg());
+                            } else {
+                                topicListAdapter.loadMoreEnd();
+                            }
+                            topicListAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, topicBeanList, topicDetailEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        topicListAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, topicBeanList, topicDetailEntity);
+                    }
+                });
     }
 }

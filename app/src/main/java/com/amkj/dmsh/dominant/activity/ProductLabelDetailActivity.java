@@ -17,9 +17,9 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -52,6 +52,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.QUALITY_PRODUCT_LABEL;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 /**
  * @author LGuiPeng
@@ -110,8 +112,9 @@ public class ProductLabelDetailActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-            loadData();
-        }});
+                loadData();
+            }
+        });
         qualityTypeProductAdapter = new QualityTypeProductAdapter(this, labelProductList);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
@@ -218,7 +221,6 @@ public class ProductLabelDetailActivity extends BaseActivity {
     }
 
     private void getProductLabelData() {
-        String url = Url.BASE_URL + Url.QUALITY_PRODUCT_LABEL;
         final Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
@@ -226,8 +228,8 @@ public class ProductLabelDetailActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_PRODUCT_LABEL
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -241,30 +243,31 @@ public class ProductLabelDetailActivity extends BaseActivity {
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 labelProductList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
-                            }else if(likedProductEntity.getCode().equals(EMPTY_CODE)){
+                            } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(ProductLabelDetailActivity.this, likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(ProductLabelDetailActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(ProductLabelDetailActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
                 });
     }
@@ -289,10 +292,9 @@ public class ProductLabelDetailActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -303,16 +305,6 @@ public class ProductLabelDetailActivity extends BaseActivity {
                             badge.setBadgeNumber(cartNumber);
                         }
                     }
-                }
-
-                @Override
-                public void netClose() {
-
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-
                 }
             });
         }

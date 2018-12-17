@@ -29,7 +29,6 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityBuyListAdapter;
 import com.amkj.dmsh.dominant.bean.QualityBuyListEntity;
 import com.amkj.dmsh.dominant.bean.QualityBuyListEntity.QualityBuyListBean;
@@ -37,12 +36,11 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -71,6 +69,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST_DETAIL;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST_PRO;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
@@ -308,7 +310,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -358,7 +360,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
     }
 
     private void getBuyListRecommend() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
@@ -366,8 +367,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopHistoryListActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityShopHistoryListActivity.this, QUALITY_SHOP_HISTORY_LIST_PRO
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         qualityBuyListAdapter.loadMoreComplete();
@@ -382,32 +383,34 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
+                            }else {
+                                showToast(QualityShopHistoryListActivity.this,qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityBuyListAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        qualityBuyListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         showToast(QualityShopHistoryListActivity.this, R.string.unConnectedNetwork);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityBuyListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                         showToast(QualityShopHistoryListActivity.this, R.string.invalidData);
                     }
                 });
     }
 
     private void getBuyListDetailData() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", listId);
         /**
@@ -418,8 +421,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopHistoryListActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityShopHistoryListActivity.this, QUALITY_SHOP_HISTORY_LIST_DETAIL
+                , params, new NetLoadListenerHelper() {
 
                     @Override
                     public void onSuccess(String result) {
@@ -438,16 +441,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                             } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(QualityShopHistoryListActivity.this, shopDetailsEntity.getMsg());
                             }
-                            communalDetailAdapter.setNewData(itemDescriptionList);
+                            communalDetailAdapter.notifyDataSetChanged();
                         }
-                    }
-
-                    @Override
-                    public void netClose() {
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
                     }
                 });
     }
@@ -468,11 +463,10 @@ public class QualityShopHistoryListActivity extends BaseActivity {
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_ARTICLE_COUPON,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -490,21 +484,29 @@ public class QualityShopHistoryListActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(QualityShopHistoryListActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityShopHistoryListActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityShopHistoryListActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,COUPON_PACKAGE,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -522,11 +524,20 @@ public class QualityShopHistoryListActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(QualityShopHistoryListActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityShopHistoryListActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityShopHistoryListActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -583,12 +594,10 @@ public class QualityShopHistoryListActivity extends BaseActivity {
             public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
                 //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
 //                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
             }
 
             @Override
             public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
 //                showToast(ShopTimeScrollDetailsActivity.this, msg);
             }

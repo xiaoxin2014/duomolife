@@ -24,12 +24,10 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.DoMoGroupJoinShareActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopMineActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
@@ -38,6 +36,8 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.SaleSkuBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
@@ -58,7 +58,6 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBea
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.google.gson.Gson;
@@ -101,6 +100,14 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
+import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
+import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
+import static com.amkj.dmsh.constant.Url.PAY_CANCEL;
+import static com.amkj.dmsh.constant.Url.PAY_ERROR;
+import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_INDENT;
+import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
+import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
+import static com.amkj.dmsh.constant.Url.Q_RE_BUY_INDENT;
 import static com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity.INDENT_DETAILS_TYPE;
 
 ;
@@ -110,7 +117,7 @@ import static com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity.I
  * Created by atd48 on 2016/8/17.
  * 订单填写
  */
-public class DirectIndentWriteActivity extends BaseActivity{
+public class DirectIndentWriteActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -284,10 +291,10 @@ public class DirectIndentWriteActivity extends BaseActivity{
     //  再次购买，获取商品信息
     private void getOrderData() {
         passGoods = new ArrayList<>();
-        String url = Url.BASE_URL + Url.Q_RE_BUY_INDENT;
+        String url = Url.BASE_URL + Q_RE_BUY_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_RE_BUY_INDENT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (productInfoList != null) {
@@ -318,9 +325,13 @@ public class DirectIndentWriteActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
                 constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DirectIndentWriteActivity.this,R.string.unConnectedNetwork);
             }
         });
     }
@@ -400,9 +411,9 @@ public class DirectIndentWriteActivity extends BaseActivity{
             if (pullHeaderView.et_oversea_name.getText().toString().length() > 0
                     && pullHeaderView.et_oversea_card.getText().toString().length() > 0) {
                 createIndent(payWay, productInfoList);
-            } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_name.getText().toString())||TextUtils.isEmpty(pullHeaderView.et_oversea_card.getText().toString())) {
+            } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_name.getText().toString()) || TextUtils.isEmpty(pullHeaderView.et_oversea_card.getText().toString())) {
                 tv_indent_write_commit.setEnabled(true);
-                constantMethod.showImportantToast(this,"因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
+                constantMethod.showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
             }
         } else {
             createIndent(payWay, productInfoList);
@@ -411,7 +422,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
 
     private void createGroupIndent(final String payWay, GroupShopDetailsBean groupShopDetailsBean) {
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
-        String url = Url.BASE_URL + Url.Q_CREATE_GROUP_INDENT;
+        String url = Url.BASE_URL + Q_CREATE_GROUP_INDENT;
         Map<String, Object> params = new HashMap<>();
         //用户ID
         params.put("userId", userId);
@@ -447,7 +458,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
 //        微信 wechatPay 支付宝 aliPay
         params.put("buyType", payWay);
         params.put("source", 0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CREATE_GROUP_INDENT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -480,21 +491,29 @@ public class DirectIndentWriteActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+            public void onNotNetOrException() {
                 tv_indent_write_commit.setEnabled(true);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void paymentIndent() {
-        String url = Url.BASE_URL + Url.Q_PAYMENT_INDENT;
+        String url = Url.BASE_URL + Q_PAYMENT_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", !TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo);
         params.put("userId", userId);
         params.put("buyType", payWay);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_PAYMENT_INDENT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -525,10 +544,17 @@ public class DirectIndentWriteActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+            public void onNotNetOrException() {
                 tv_indent_write_commit.setEnabled(true);
-                super.onError(ex, isOnCallback);
+            }
+            @Override
+            public void onError(Throwable throwable) {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -538,7 +564,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
             loadHud.show();
         }
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
-        String url = Url.BASE_URL + Url.Q_CREATE_INDENT;
+        String url = Url.BASE_URL + Q_CREATE_INDENT;
         Map<String, Object> params = new HashMap<>();
         //用户ID
         params.put("userId", userId);
@@ -610,7 +636,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
         }
 //        订单来源
         params.put("source", 0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CREATE_INDENT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -654,13 +680,20 @@ public class DirectIndentWriteActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
                 tv_indent_write_commit.setEnabled(true);
-                super.onError(ex, isOnCallback);
+            }
+            @Override
+            public void onError(Throwable throwable) {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -753,8 +786,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
             current = calendar.getTime();
         }
         if (payErrorDialogHelper == null) {
-            String url = Url.BASE_URL + Url.PAY_ERROR;
-            XUtil.Get(url, null, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,PAY_ERROR,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -768,7 +800,8 @@ public class DirectIndentWriteActivity extends BaseActivity{
                                     .setCancelable(false);
                             payErrorDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
-                                public void confirm() {}
+                                public void confirm() {
+                                }
 
                                 @Override
                                 public void cancel() {
@@ -849,8 +882,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
      */
     private void payCancel() {
         if (payCancelDialogHelper == null) {
-            String url = Url.BASE_URL + Url.PAY_CANCEL;
-            XUtil.Get(url, null, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,PAY_CANCEL,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -1045,7 +1077,7 @@ public class DirectIndentWriteActivity extends BaseActivity{
                 }
             }
             params.put("version", "v3.1.5");
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -1059,32 +1091,25 @@ public class DirectIndentWriteActivity extends BaseActivity{
                             setDiscountsInfo(indentDiscountsBean);
                         }
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
 
                 @Override
-                public void netClose() {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, indentDiscountsEntity);
                 }
             });
         } else {
             if (loadHud != null) {
                 loadHud.dismiss();
             }
-            NetLoadUtils.getQyInstance().showLoadSir(loadService, indentDiscountsEntity);
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, indentDiscountsEntity);
         }
     }
+
     private void setDiscountsInfo(IndentDiscountsBean indentDiscountsBean) {
         isOversea = indentDiscountsBean.isOverseasGo();
         tv_indent_write_commit.setEnabled(indentDiscountsBean.getHideCreate() == 0);
@@ -1175,8 +1200,9 @@ public class DirectIndentWriteActivity extends BaseActivity{
     }
 
     private void getDefaultAddress() {
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1195,9 +1221,9 @@ public class DirectIndentWriteActivity extends BaseActivity{
     }
 
     private void getAddressDetails() {
-        //地址详情内容
-        String url = Url.BASE_URL + Url.ADDRESS_DETAILS + addressId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", addressId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1526,12 +1552,12 @@ public class DirectIndentWriteActivity extends BaseActivity{
             }
         }
         super.onDestroy();
-        if(payErrorDialogHelper!=null
-                &&payErrorDialogHelper.getAlertDialog()!=null&&payErrorDialogHelper.getAlertDialog().isShowing()){
+        if (payErrorDialogHelper != null
+                && payErrorDialogHelper.getAlertDialog() != null && payErrorDialogHelper.getAlertDialog().isShowing()) {
             payErrorDialogHelper.dismiss();
         }
-        if(payCancelDialogHelper!=null
-                &&payCancelDialogHelper.getAlertDialog()!=null&&payCancelDialogHelper.getAlertDialog().isShowing()){
+        if (payCancelDialogHelper != null
+                && payCancelDialogHelper.getAlertDialog() != null && payCancelDialogHelper.getAlertDialog().isShowing()) {
             payCancelDialogHelper.dismiss();
         }
     }

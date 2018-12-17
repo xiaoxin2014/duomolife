@@ -27,7 +27,6 @@ import com.alibaba.baichuan.trade.biz.AlibcConstants;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
-import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
@@ -37,8 +36,6 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
@@ -52,6 +49,7 @@ import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectGoodsSaleAfterActivity;
@@ -62,13 +60,12 @@ import com.amkj.dmsh.shopdetails.bean.DirectIndentCountEntity.DirectIndentCountB
 import com.amkj.dmsh.user.activity.UserFansAttentionActivity;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.views.SystemBarHelper;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
 
 import java.util.ArrayList;
@@ -89,15 +86,15 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MINE_BOTTOM_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
+import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
 
 ;
 ;
@@ -299,9 +296,9 @@ public class MineDataFragment extends BaseFragment {
     }
 
     private void setStatusColor() {
-        SystemBarHelper.setStatusBarDarkMode(getActivity());
-        SystemBarHelper.setPadding(getActivity(), rel_header_mine);
-        SystemBarHelper.immersiveStatusBar(getActivity());
+//        SystemBarHelper.setStatusBarDarkMode(getActivity());
+//        SystemBarHelper.setPadding(getActivity(), rel_header_mine);
+//        SystemBarHelper.immersiveStatusBar(getActivity());
     }
 
     @Override
@@ -410,10 +407,9 @@ public class MineDataFragment extends BaseFragment {
             setCountData(null);
             return;
         }
-        String url = BASE_URL + Url.Q_QUERY_INDENT_COUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_INDENT_COUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -424,10 +420,6 @@ public class MineDataFragment extends BaseFragment {
                     }
                 }
             }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
         });
     }
 
@@ -435,7 +427,7 @@ public class MineDataFragment extends BaseFragment {
      * 获取底部数据
      */
     private void getBottomTypeNetData() {
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
@@ -451,16 +443,6 @@ public class MineDataFragment extends BaseFragment {
                         getBottomShared().edit().clear().apply();
                     }
                 }
-            }
-
-            @Override
-            public void netClose() {
-
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-//          错误数据不清除
             }
         });
     }
@@ -488,23 +470,17 @@ public class MineDataFragment extends BaseFragment {
      * 请求用户数据
      */
     private void getNetDataInfo() {
-        String url = BASE_URL + Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         getUserDataInfo(result);
                     }
 
                     @Override
-                    public void netClose() {
-                        setErrorUserData();
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
+                    public void onNotNetOrException() {
                         setErrorUserData();
                     }
                 });
@@ -518,9 +494,9 @@ public class MineDataFragment extends BaseFragment {
 
     //    我的模块 广告
     private void getMineAd() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getQyInstance().loadNetDataGet(getActivity(), MINE_PAGE_AD, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_PAGE_AD, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -529,21 +505,14 @@ public class MineDataFragment extends BaseFragment {
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setMineAdData(adActivityEntity);
-                    } else if (!adActivityEntity.getCode().equals(EMPTY_CODE)) {
-                        ad_mine.setVisibility(View.GONE);
-                    } else {
+                    }else {
                         ad_mine.setVisibility(View.GONE);
                     }
                 }
             }
 
             @Override
-            public void netClose() {
-                ad_mine.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
+            public void onNotNetOrException() {
                 ad_mine.setVisibility(View.GONE);
             }
         });
@@ -820,7 +789,7 @@ public class MineDataFragment extends BaseFragment {
                 if (bottomShared != null) {
                     String typeJson = bottomShared.getString(MINE_BOTTOM_TYPE, "");
                     if (!TextUtils.isEmpty(typeJson)) {
-                        mineTypeEntity = JSON.parseObject(typeJson, MineTypeEntity.class);
+                        mineTypeEntity = new Gson().fromJson(typeJson, MineTypeEntity.class);
                         return mineTypeEntity;
                     }
                 }
@@ -831,5 +800,16 @@ public class MineDataFragment extends BaseFragment {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public void initImmersionBar() {
+        ImmersionBar.with(this).titleBar(rel_header_mine)
+                .statusBarDarkFont(true).init();
+    }
+
+    @Override
+    public boolean immersionBarEnabled() {
+        return true;
     }
 }

@@ -23,20 +23,17 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity.QNewProTimeShaftBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -70,12 +67,16 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_AD;
+import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_LIST;
+import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_TIME_SHAFT;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -195,12 +196,8 @@ public class QualityNewProActivity extends BaseActivity {
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= newProList.size()) {
-                    page++;
-                    getQualityNewPro();
-                } else {
-                    qualityTypeProductAdapter.loadMoreEnd();
-                }
+                page++;
+                getQualityNewPro();
             }
         }, communal_recycler);
         qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -273,56 +270,51 @@ public class QualityNewProActivity extends BaseActivity {
     }
 
     private void getNewProAd() {
-        String url = Url.BASE_URL + Url.Q_NEW_PRO_AD;
-        if (NetWorkUtils.checkNet(QualityNewProActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("vidoShow", "1");
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    Gson gson = new Gson();
-                    adBeanList.clear();
-                    CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
-                    if (qualityAdLoop != null) {
-                        if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
-                            adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
-                            if (cbViewHolderCreator == null) {
-                                cbViewHolderCreator = new CBViewHolderCreator() {
-                                    @Override
-                                    public Holder createHolder(View itemView) {
-                                        return new CommunalAdHolderView(itemView, QualityNewProActivity.this, true);
-                                    }
+        Map<String, Object> params = new HashMap<>();
+        params.put("vidoShow", "1");
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_NEW_PRO_AD,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                Gson gson = new Gson();
+                adBeanList.clear();
+                CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+                if (qualityAdLoop != null) {
+                    if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
+                        adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
+                        if (cbViewHolderCreator == null) {
+                            cbViewHolderCreator = new CBViewHolderCreator() {
+                                @Override
+                                public Holder createHolder(View itemView) {
+                                    return new CommunalAdHolderView(itemView, QualityNewProActivity.this, true);
+                                }
 
-                                    @Override
-                                    public int getLayoutId() {
-                                        return R.layout.layout_ad_image_video;
-                                    }
-                                };
-                            }
-                            qNewProView.ad_communal_banner.setPages(QualityNewProActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                    .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
-                                    .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+                                @Override
+                                public int getLayoutId() {
+                                    return R.layout.layout_ad_image_video;
+                                }
+                            };
                         }
-                        qualityTypeProductAdapter.removeAllFooterView();
-                        if (adBeanList.size() > 0) {
-                            qualityTypeProductAdapter.addHeaderView(headerView);
-                        }
+                        qNewProView.ad_communal_banner.setPages(QualityNewProActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
+                                .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+                    }
+                    qualityTypeProductAdapter.removeAllFooterView();
+                    if (adBeanList.size() > 0) {
+                        qualityTypeProductAdapter.addHeaderView(headerView);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    smart_communal_refresh.finishRefresh();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+            }
+        });
     }
 
     private void getNewProShaft() {
-        String url = Url.BASE_URL + Url.Q_NEW_PRO_TIME_SHAFT;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_NEW_PRO_TIME_SHAFT,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -350,9 +342,8 @@ public class QualityNewProActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -377,60 +368,63 @@ public class QualityNewProActivity extends BaseActivity {
     }
 
     private void getQualityNewPro() {
-        String url = Url.BASE_URL + Url.Q_NEW_PRO_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("newReleaseDay", timeShaftDay);
         params.put("currentPage", page);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityNewProActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                if (page == 1) {
-                    newProList.clear();
-                }
-                Gson gson = new Gson();
-                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                if (likedProductEntity != null) {
-                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        newProList.addAll(likedProductEntity.getLikedProductBeanList());
-                    } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityNewProActivity.this, likedProductEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityNewProActivity.this, Q_NEW_PRO_LIST,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            newProList.clear();
+                        }
+                        Gson gson = new Gson();
+                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProductEntity != null) {
+                            if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                newProList.addAll(likedProductEntity.getLikedProductBeanList());
+                            } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                            } else {
+                                showToast(QualityNewProActivity.this, likedProductEntity.getMsg());
+                            }
+                            qualityTypeProductAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, newProList, likedProductEntity);
                     }
-                    qualityTypeProductAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, newProList, likedProductEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                showToast(QualityNewProActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, newProList, likedProductEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, newProList, likedProductEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                showToast(QualityNewProActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, newProList, likedProductEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(QualityNewProActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                        showToast(QualityNewProActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();

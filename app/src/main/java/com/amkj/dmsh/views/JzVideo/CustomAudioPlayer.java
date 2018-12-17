@@ -4,22 +4,22 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amkj.dmsh.R;
 
 import java.util.LinkedHashMap;
 
+import cn.jzvd.JZDataSource;
 import cn.jzvd.JZMediaManager;
 import cn.jzvd.JZUserAction;
 import cn.jzvd.JZUtils;
-import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.Jzvd;
 
+import static cn.jzvd.JZDataSource.URL_KEY_DEFAULT;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
 ;
@@ -38,6 +38,7 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
     private ImageView ib_audio_player;
     private TextView tv_audio_player_title,tv_audio_player_source;
     private RelativeLayout rel_audio;
+    private LinkedHashMap linkedHashMap = new LinkedHashMap();
 
     public CustomAudioPlayer(Context context) {
         super(context);
@@ -45,6 +46,7 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
     public CustomAudioPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
     @Override
     public int getLayoutId() {
         return R.layout.jz_layout_standard_audio;
@@ -57,6 +59,7 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
         tv_audio_player_title = findViewById(R.id.tv_audio_player_title);
         tv_audio_player_source = findViewById(R.id.tv_audio_player_source);
         rel_audio = findViewById(R.id.rel_audio);
+        rel_audio.setVisibility(GONE);
         ib_audio_player.setOnClickListener(this);
     }
 
@@ -67,10 +70,7 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
      * @param sourceTitle
      */
     public void setAudioData(@NonNull String url,String title,String sourceTitle){
-        LinkedHashMap map = new LinkedHashMap();
-        map.put(URL_KEY_DEFAULT, url);
-        Object[] dataSourceObjects = new Object[1];
-        dataSourceObjects[0] = map;
+        linkedHashMap.put(URL_KEY_DEFAULT, url);
         if(!TextUtils.isEmpty(title)){
             tv_audio_player_title.setVisibility(VISIBLE);
             tv_audio_player_title.setText(title);
@@ -83,21 +83,16 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
         }else{
             tv_audio_player_source.setVisibility(GONE);
         }
-        setUp(dataSourceObjects, 0, JZVideoPlayer.SCREEN_WINDOW_NORMAL, "");
+        JZDataSource jzDataSource = new JZDataSource(linkedHashMap,"");
+        setUp(jzDataSource, Jzvd.SCREEN_WINDOW_NORMAL);
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
         if(v.getId() == R.id.ib_audio_player){
-            if (dataSourceObjects == null || JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
-                Toast.makeText(getContext(), getResources().getString(cn.jzvd.R.string.no_url), Toast.LENGTH_SHORT).show();
-                return;
-            }
             if (currentState == CURRENT_STATE_NORMAL) {
-                if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
-                        JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                        !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                if (!JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
                     showWifiDialog();
                     return;
                 }
@@ -105,7 +100,6 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
                 onEvent(JZUserAction.ON_CLICK_START_ICON);
             } else if (currentState == CURRENT_STATE_PLAYING) {
                 onEvent(JZUserAction.ON_CLICK_PAUSE);
-                Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
                 JZMediaManager.pause();
                 onStatePause();
             } else if (currentState == CURRENT_STATE_PAUSE) {

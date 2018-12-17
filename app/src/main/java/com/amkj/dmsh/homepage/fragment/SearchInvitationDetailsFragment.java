@@ -15,15 +15,13 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
 import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -43,9 +41,11 @@ import butterknife.BindView;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
+import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_INVITATION;
 
 ;
 
@@ -95,12 +95,8 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         adapterInvitation.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= adapterInvitation.getItemCount()) {
-                    page++;
-                    getInvitationDetails();
-                } else {
-                    adapterInvitation.loadMoreEnd();
-                }
+                page++;
+                getInvitationDetails();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -182,14 +178,13 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     //    文章收藏
     private void setArticleCollect(final InvitationDetailBean invitationDetailBean, View view) {
         final TextView tv_collect = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -204,28 +199,31 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(getActivity(), String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(getActivity(),R.string.unConnectedNetwork);
             }
         });
     }
 
     private void setArticleLiked(InvitationDetailBean invitationDetailBean, View view) {
         TextView tv_like = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_DETAILS_FAVOR,params,null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
@@ -256,7 +254,6 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         if (TextUtils.isEmpty(data)) {
             return;
         }
-        String url = Url.BASE_URL + Url.H_HOT_SEARCH_INVITATION;
         Map<String, Object> params = new HashMap();
         if (userId != 0) {
             params.put("fuid", userId);
@@ -265,8 +262,8 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         params.put("searchType", 1);
         params.put("currentPage", page);
         params.put("version", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_HOT_SEARCH_INVITATION
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -279,26 +276,21 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
                         if (invitationDetailEntity != null) {
                             if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                            } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                adapterInvitation.loadMoreEnd();
+                            }else{
                                 showToast(getActivity(), invitationDetailEntity.getMsg());
                             }
                             adapterInvitation.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        adapterInvitation.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        adapterInvitation.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
+                        adapterInvitation.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
                     }
                 });
     }

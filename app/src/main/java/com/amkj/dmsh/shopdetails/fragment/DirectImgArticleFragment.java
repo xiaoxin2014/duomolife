@@ -25,11 +25,11 @@ import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 
@@ -169,7 +169,7 @@ public class DirectImgArticleFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -187,11 +187,10 @@ public class DirectImgArticleFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -219,7 +218,7 @@ public class DirectImgArticleFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -237,11 +236,20 @@ public class DirectImgArticleFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(getActivity(), R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }

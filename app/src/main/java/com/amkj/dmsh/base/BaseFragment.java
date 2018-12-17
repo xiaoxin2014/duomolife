@@ -5,17 +5,17 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.gyf.barlibrary.ImmersionFragment;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -36,12 +36,14 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.jzvd.JzvdStd;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends ImmersionFragment {
 
     private Unbinder mUnBinder;
 
@@ -136,7 +138,7 @@ public abstract class BaseFragment extends Fragment {
                     loadService.showCallback(NetLoadCallback.class);
                     loadData();
                 }
-            }, NetLoadUtils.getQyInstance().getLoadSirCover());
+            }, NetLoadUtils.getNetInstance().getLoadSirCover());
             String hintText;
             switch (getClass().getSimpleName()) {
                 case "DoMoIndentDeliveredFragment":
@@ -319,6 +321,24 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(loadService != null&&
+                loadService.getCurrentCallback().getName().equals(NetLoadCallback.class.getName())){
+            loadService.showSuccess();
+        }
+    }
+
+    @Override
+    public void initImmersionBar() {
+
+    }
+
+    @Override
+    public boolean immersionBarEnabled() {
+        return false;
+    }
     /**
      * 当视图已经对用户不可见并且加载过数据，如果需要在切换到其他页面时停止加载数据，可以覆写此方法
      */
@@ -330,4 +350,11 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void initViews();
 
     protected abstract void loadData();
+
+    @Override
+    public void onInvisible() {
+        JzvdStd.releaseAllVideos();
+        //        避免播放 置于后台，释放滚动
+        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+    }
 }

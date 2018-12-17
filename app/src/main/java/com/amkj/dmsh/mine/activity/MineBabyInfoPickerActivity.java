@@ -13,12 +13,11 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineBabyInfoAdapter;
 import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
 import com.amkj.dmsh.mine.bean.TimeSexOptionsBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
@@ -46,6 +45,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_BABY_INFO;
 
 ;
 
@@ -197,7 +197,6 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
         if(userId<1){
             return;
         }
-        String url = Url.BASE_URL + Url.MINE_BABY_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("baby_status", babyStatus);
@@ -210,7 +209,7 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
         if (!TextUtils.isEmpty(babyDate)) {
             params.put("birthday", babyDate);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_BABY_INFO,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -226,8 +225,12 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onError(Throwable throwable) {
+                showToast(MineBabyInfoPickerActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(MineBabyInfoPickerActivity.this, R.string.unConnectedNetwork);
             }
         });

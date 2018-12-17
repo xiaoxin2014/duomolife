@@ -9,10 +9,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -33,11 +33,10 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.F_TOPIC_LIST;
 
 ;
 
@@ -86,10 +85,7 @@ public class FindHotTopicListActivity extends BaseActivity {
         communal_recycler.setLayoutManager(linearLayoutManager);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         findTopicListAdapter = new FindTopicListAdapter(FindHotTopicListActivity.this, findTopicBeanList);
         communal_recycler.setAdapter(findTopicListAdapter);
         findTopicListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -106,12 +102,8 @@ public class FindHotTopicListActivity extends BaseActivity {
         findTopicListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= findTopicBeanList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    findTopicListAdapter.loadMoreEnd();
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -165,12 +157,11 @@ public class FindHotTopicListActivity extends BaseActivity {
 
     @Override
     protected void getData() {
-        String url = BASE_URL + Url.F_TOPIC_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
-        NetLoadUtils.getQyInstance().loadNetDataPost(FindHotTopicListActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(FindHotTopicListActivity.this, F_TOPIC_LIST
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -183,27 +174,31 @@ public class FindHotTopicListActivity extends BaseActivity {
                         if (findHotTopicEntity != null) {
                             if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                                 findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
-                            } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                                findTopicListAdapter.loadMoreEnd();
+                            }else{
                                 showToast(FindHotTopicListActivity.this, findHotTopicEntity.getMsg());
                             }
                             findTopicListAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        findTopicListAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        findTopicListAdapter.loadMoreComplete();
                         showToast(FindHotTopicListActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        findTopicListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+                        showToast(FindHotTopicListActivity.this, R.string.invalidData);
                     }
                 });
     }

@@ -31,7 +31,10 @@
     <string name="MobileError">手机号码有误，请重新输入</string>
     <string name="SmsCodeNull">验证码为空，请输入验证码</string>
     <string name="PasswordDiffer">两次密码输入不一致</string>
+    <string name="PasswordSame">新密码与旧密码一致!</string>
     <string name="PasswordLessSix">密码小于6位，请重新输入</string>
+    <string name="PasswordInconformity">密码必须是6-20个英文和数字组合组成</string>
+    <string name="PasswordRule">密码为6-20个英文和数字组合组成</string>
     <string name="GetSmsCodeSuccess">获取验证码成功</string>
     <string name="personal_name_hint">昵称由2-20个字组成</string>
     <string name="personal_name_more_hint">字数超过限定</string>
@@ -203,7 +206,7 @@
     <string name="load_data_failed">可能原因\n·网络信号弱，换个wifi试一试~\n·系统出错，技术小哥正在抢修</string>
     <!--限时特惠-->
     <string name="time_product_clock_new">%1$s点上新</string>
-    <string name="time_join_group_count">%1$s人已参团</string>
+    <string name="time_join_group_count">%1$s人喜欢</string>
     <!--我的-关注数-->
     <string name="mine_follow_count">%1$d\n关注</string>
     <string name="mine_fans_count">%1$d\n粉丝</string>

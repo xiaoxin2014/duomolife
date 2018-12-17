@@ -501,6 +501,9 @@ public class InquiryOrderEntry extends BaseEntity{
                     this.completeTime = completeTime;
                 }
 
+                public GoodsBean() {
+                }
+
                 @Override
                 public int describeContents() {
                     return 0;
@@ -524,9 +527,10 @@ public class InquiryOrderEntry extends BaseEntity{
                     dest.writeString(this.logistics);
                     dest.writeString(this.deliverTime);
                     dest.writeString(this.completeTime);
-                }
-
-                public GoodsBean() {
+                    dest.writeString(this.combineParentId);
+                    dest.writeString(this.presentParentId);
+                    dest.writeTypedList(this.combineProductInfoList);
+                    dest.writeTypedList(this.presentProductInfoList);
                 }
 
                 protected GoodsBean(Parcel in) {
@@ -546,6 +550,10 @@ public class InquiryOrderEntry extends BaseEntity{
                     this.logistics = in.readString();
                     this.deliverTime = in.readString();
                     this.completeTime = in.readString();
+                    this.combineParentId = in.readString();
+                    this.presentParentId = in.readString();
+                    this.combineProductInfoList = in.createTypedArrayList(CartProductInfoBean.CREATOR);
+                    this.presentProductInfoList = in.createTypedArrayList(CartProductInfoBean.CREATOR);
                 }
 
                 public static final Creator<GoodsBean> CREATOR = new Creator<GoodsBean>() {

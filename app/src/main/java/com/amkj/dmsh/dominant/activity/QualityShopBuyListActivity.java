@@ -33,7 +33,6 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityBuyListAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityHistoryAdapter;
 import com.amkj.dmsh.dominant.bean.QualityBuyListEntity;
@@ -44,13 +43,12 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -84,6 +82,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_BUY_DETAIL;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST_PRO;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
@@ -343,7 +346,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -399,7 +402,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
     }
 
     private void getBuyListRecommend(int id) {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("must_buy_id", id);
@@ -407,8 +409,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityShopBuyListActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityShopBuyListActivity.this, QUALITY_SHOP_HISTORY_LIST_PRO
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         qualityBuyListAdapter.loadMoreComplete();
@@ -423,32 +425,34 @@ public class QualityShopBuyListActivity extends BaseActivity {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
+                            }else{
+                                showToast(QualityShopBuyListActivity.this,qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityBuyListAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        qualityBuyListAdapter.loadMoreComplete();
                         showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityBuyListAdapter.loadMoreComplete();
                         showToast(QualityShopBuyListActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
                 });
     }
 
     private void getBuyListDetailData() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_BUY_DETAIL;
         Map<String, Object> params = new HashMap<>();
         if (userId > 0) {
             params.put("uid", userId);
@@ -457,7 +461,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
          * 3.1.8 加入并列商品 两排 三排
          */
         params.put("version", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_SHOP_BUY_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 itemDescriptionList.clear();
@@ -479,42 +483,33 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     communalDetailAdapter.setNewData(itemDescriptionList);
                 }
                 smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
         });
     }
 
     private void getHistoryList() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_HISTORY_LIST;
-        if (NetWorkUtils.checkNet(QualityShopBuyListActivity.this)) {
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    historyListBeanList.clear();
-                    QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
-                    if (qualityHistoryListEntity != null) {
-                        if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
-                            historyListBeanList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
-                            setHistoryListData();
-                            qualityHistoryAdapter.setNewData(historyListBeanList);
-                        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,QUALITY_SHOP_HISTORY_LIST,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                historyListBeanList.clear();
+                QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
+                if (qualityHistoryListEntity != null) {
+                    if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
+                        historyListBeanList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
+                        setHistoryListData();
+                        qualityHistoryAdapter.notifyDataSetChanged();
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private void setHistoryListData() {
@@ -551,11 +546,10 @@ public class QualityShopBuyListActivity extends BaseActivity {
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_ARTICLE_COUPON,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -573,21 +567,29 @@ public class QualityShopBuyListActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(QualityShopBuyListActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityShopBuyListActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,COUPON_PACKAGE,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -605,11 +607,20 @@ public class QualityShopBuyListActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(QualityShopBuyListActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityShopBuyListActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

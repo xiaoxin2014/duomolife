@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -10,22 +11,22 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.DmlOptimizedSelAdapter;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity.DmlOptimizedSelBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -37,12 +38,16 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.Q_DML_OPTIMIZED_LIST;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -87,7 +92,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
         iv_img_share.setVisibility(View.GONE);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         tv_header_titleAll.setText("");
-        communal_recycler.setLayoutManager(new LinearLayoutManager(DmlOptimizedSelActivity.this));
+        communal_recycler.setLayoutManager(new OffsetLinearLayoutManager(DmlOptimizedSelActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_nine_dp_white).create());
@@ -102,33 +107,46 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
+        dmlOptimizedSelAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (screenHeight == 0) {
-                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                    screenHeight = app.getScreenHeight();
-                }
-                if (scrollY >= screenHeight) {
-                    download_btn_communal.setVisibility(View.VISIBLE);
+            public void onLoadMoreRequested() {
+                page++;
+                getOptimizedData();
+            }
+        },communal_recycler);
+        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                loadData();
+            }
+        });
+        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                OffsetLinearLayoutManager layoutManager = (OffsetLinearLayoutManager) recyclerView.getLayoutManager();
+                int scrollY = layoutManager.computeVerticalScrollOffset();
+                if (scrollY > screenHeight * 1.5) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.hide(false);
+                    }
+                    if(!download_btn_communal.isVisible()){
+                        download_btn_communal.show(true);
+                    }
                 } else {
-                    download_btn_communal.setVisibility(View.GONE);
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide();
+                    }
                 }
             }
         });
-        download_btn_communal.setOnClickListener((v) -> {
-            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-            int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                    - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-            if (firstVisibleItemPosition > mVisibleCount) {
-                communal_recycler.scrollToPosition(mVisibleCount);
+        download_btn_communal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+                download_btn_communal.hide();
+                linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
-            communal_recycler.smoothScrollToPosition(0);
         });
         badge = ConstantMethod.getBadge(DmlOptimizedSelActivity.this, fl_header_service);
     }
@@ -156,51 +174,54 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     }
 
     private void getOptimizedData() {
-        String url = Url.BASE_URL + Url.Q_DML_OPTIMIZED_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(DmlOptimizedSelActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                dmlOptimizedSelAdapter.loadMoreComplete();
-                if (page == 1) {
-                    dmlOptimizedSelList.clear();
-                }
-                Gson gson = new Gson();
-                optimizedSelEntity = gson.fromJson(result, DmlOptimizedSelEntity.class);
-                if (optimizedSelEntity != null) {
-                    if (optimizedSelEntity.getCode().equals(SUCCESS_CODE)) {
-                        tv_header_titleAll.setText(getStrings(optimizedSelEntity.getTitle()));
-                        dmlOptimizedSelList.addAll(optimizedSelEntity.getDmlOptimizedSelList());
-                    } else if (!optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(DmlOptimizedSelActivity.this, Q_DML_OPTIMIZED_LIST, params,
+                new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        dmlOptimizedSelAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            dmlOptimizedSelList.clear();
+                        }
+                        Gson gson = new Gson();
+                        optimizedSelEntity = gson.fromJson(result, DmlOptimizedSelEntity.class);
+                        if (optimizedSelEntity != null) {
+                            if (optimizedSelEntity.getCode().equals(SUCCESS_CODE)) {
+                                tv_header_titleAll.setText(getStrings(optimizedSelEntity.getTitle()));
+                                dmlOptimizedSelList.addAll(optimizedSelEntity.getDmlOptimizedSelList());
+                            } else if (optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
+                                dmlOptimizedSelAdapter.loadMoreEnd();
+                            }else{
+                                showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
+                            }
+                            dmlOptimizedSelAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, dmlOptimizedSelList, optimizedSelEntity);
                     }
-                    dmlOptimizedSelAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                dmlOptimizedSelAdapter.loadMoreComplete();
-                showToast(DmlOptimizedSelActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        dmlOptimizedSelAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, dmlOptimizedSelList, optimizedSelEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                dmlOptimizedSelAdapter.loadMoreComplete();
-                showToast(DmlOptimizedSelActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,dmlOptimizedSelList,optimizedSelEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(DmlOptimizedSelActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(DmlOptimizedSelActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     @Override
@@ -212,10 +233,9 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -224,8 +244,6 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DmlOptimizedSelActivity.this, requestStatus.getMsg());
                         }
                     }
                 }
@@ -255,10 +273,5 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     void skipService(View view) {
         Intent intent = new Intent(DmlOptimizedSelActivity.this, ShopCarActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

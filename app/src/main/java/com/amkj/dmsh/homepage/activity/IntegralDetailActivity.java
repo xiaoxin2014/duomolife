@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.IntegralDetailAdapter;
 import com.amkj.dmsh.message.bean.IntegrationDetailsEntity;
 import com.amkj.dmsh.message.bean.IntegrationDetailsEntity.IntegrationDetailsBean;
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -24,10 +24,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +44,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_INTEGRAl_DETAIL;
 
 /**
  * @author LGuiPeng
@@ -90,31 +88,15 @@ public class IntegralDetailActivity extends BaseActivity {
         ButterKnife.bind(integralDetailChart, view);
         integralDetailChart.initViews();
         integralDetailAdapter.addHeaderView(view);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
-        integralDetailAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getIntegralDetailData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
+        integralDetailAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getIntegralDetailData();
         }, communal_recycler);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     @Override
@@ -134,58 +116,59 @@ public class IntegralDetailActivity extends BaseActivity {
     }
 
     private void getIntegralDetailData() {
-        if (userId > 0) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("currentPage", page);
-            params.put("showCount", TOTAL_COUNT_FORTY);
-            String url = Url.BASE_URL + Url.H_ATTENDANCE_INTEGRAl_DETAIL;
-            NetLoadUtils.getQyInstance().loadNetDataPost(IntegralDetailActivity.this, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            smart_communal_refresh.finishRefresh();
-                            integralDetailAdapter.loadMoreComplete();
-                            if (page == 1) {
-                                integrationDetailsList.clear();
-                            }
-                            Gson gson = new Gson();
-                            integrationDetailsEntity = gson.fromJson(result, IntegrationDetailsEntity.class);
-                            if (integrationDetailsEntity != null) {
-                                if (SUCCESS_CODE.equals(integrationDetailsEntity.getCode())) {
-                                    integrationDetailsList.addAll(integrationDetailsEntity.getIntegrationDetailsList());
-                                    integralDetailChart.tv_integral_detail_score.setText(String.valueOf(integrationDetailsEntity.getNowScore()));
-                                    setIntegralDetailData(integrationDetailsEntity);
-                                } else {
-                                    if (!integrationDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                                        showToast(IntegralDetailActivity.this, integrationDetailsEntity.getMsg());
-                                    }
-                                    integralDetailAdapter.loadMoreEnd();
-                                }
-                            }
-                            integralDetailAdapter.notifyDataSetChanged();
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
-                        }
-
-                        @Override
-                        public void netClose() {
-                            smart_communal_refresh.finishRefresh();
-                            integralDetailAdapter.loadMoreComplete();
-                            showToast(IntegralDetailActivity.this, R.string.unConnectedNetwork);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            smart_communal_refresh.finishRefresh();
-                            integralDetailAdapter.loadMoreComplete();
-                            showToast(IntegralDetailActivity.this, R.string.invalidData);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
-                        }
-                    });
-        } else {
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_FORTY);
+        NetLoadUtils.getNetInstance().loadNetDataPost(IntegralDetailActivity.this, H_ATTENDANCE_INTEGRAl_DETAIL
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        integralDetailAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            integrationDetailsList.clear();
+                        }
+                        Gson gson = new Gson();
+                        integrationDetailsEntity = gson.fromJson(result, IntegrationDetailsEntity.class);
+                        if (integrationDetailsEntity != null) {
+                            if (SUCCESS_CODE.equals(integrationDetailsEntity.getCode())) {
+                                integrationDetailsList.addAll(integrationDetailsEntity.getIntegrationDetailsList());
+                                integralDetailChart.tv_integral_detail_score.setText(String.valueOf(integrationDetailsEntity.getNowScore()));
+                                setIntegralDetailData(integrationDetailsEntity);
+                            } else {
+                                if (!integrationDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                                    showToast(IntegralDetailActivity.this, integrationDetailsEntity.getMsg());
+                                }
+                                integralDetailAdapter.loadMoreEnd();
+                            }
+                        }
+                        integralDetailAdapter.notifyDataSetChanged();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        integralDetailAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integrationDetailsList, integrationDetailsEntity);
+
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(IntegralDetailActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(IntegralDetailActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     @Override

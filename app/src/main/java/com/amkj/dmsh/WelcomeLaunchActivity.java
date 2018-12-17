@@ -3,6 +3,7 @@ package com.amkj.dmsh;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -61,15 +62,42 @@ public class WelcomeLaunchActivity extends BaseActivity {
 
     @Override
     protected int getContentView() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         return R.layout.activity_launch_welcome;
     }
+
     @Override
     protected void initViews() {
+        hideNavStatus();
         sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
         imgPath = sharedPreferences.getString(ImgKey, "");
         skipUrlPath = sharedPreferences.getString(SkipUrlKey, "");
         launcherAdId = sharedPreferences.getInt(LauncherAdIdKey, 0);
+    }
+
+    @Override
+    public void setStatusBar() {
+    }
+
+    private void hideNavStatus() {
+        View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if (visibility == 0) {
+                    fl_skip.setFocusable(true);
+                    fl_skip.setFocusableInTouchMode(true);
+                    fl_skip.requestFocus();
+                }
+            }
+        });
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT < 19) { // lower api
+            decorView.setSystemUiVisibility(View.GONE);
+        } else {
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     private void setAdDataShow(String showSeconds) {
@@ -82,10 +110,10 @@ public class WelcomeLaunchActivity extends BaseActivity {
             @Override
             public void refreshTime() {
                 --show_time;
-                if(show_time>=0){
+                if (show_time >= 0) {
                     tv_launch_wel_skip_main.setText((show_time + " 跳过"));
                 }
-                if(show_time==0){
+                if (show_time == 0) {
                     constantMethod.stopSchedule();
                     skipMainActivity();
                 }
@@ -143,7 +171,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
     protected void onResume() {
         if (isOnPause) {
             skipMainActivity();
-        }else{
+        } else {
             setLaunchImage();
         }
         super.onResume();
@@ -157,26 +185,26 @@ public class WelcomeLaunchActivity extends BaseActivity {
             showSeconds = sharedPreferences.getString(TimeKey, "5");
             GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page
                     , "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {
-                @Override
-                public void onSuccess() {
-                    if (Integer.parseInt(getNorNumber(showSeconds)) > 0) {
-                        setAdDataShow(showSeconds);
-                    } else {
-                        setSkipClickPath(null);
-                    }
-                }
+                        @Override
+                        public void onSuccess() {
+                            if (Integer.parseInt(getNorNumber(showSeconds)) > 0) {
+                                setAdDataShow(showSeconds);
+                            } else {
+                                setSkipClickPath(null);
+                            }
+                        }
 
-                @Override
-                public void onError() {
-                    setSkipClickPath(null);
-                }
-            });
+                        @Override
+                        public void onError() {
+                            setSkipClickPath(null);
+                        }
+                    });
         } else {
             setSkipClickPath(null);
         }
     }
 
-    @OnClick(R.id.tv_launch_wel_skip_main)
+    @OnClick(value = {R.id.fl_skip, R.id.tv_launch_wel_skip_main})
     void skipMain() {
         setSkipClickPath(null);
     }
@@ -189,18 +217,19 @@ public class WelcomeLaunchActivity extends BaseActivity {
 
     /**
      * 设置主动点击 被动跳转
+     *
      * @param path
      */
     private void setSkipClickPath(String path) {
         tv_launch_wel_skip_main.setVisibility(View.GONE);
         reg_req_code_gif_skip.setVisibility(View.VISIBLE);
         isOnPause = true;
-        if(constantMethod!=null){
+        if (constantMethod != null) {
             constantMethod.stopSchedule();
         }
-        if(!TextUtils.isEmpty(path)){
+        if (!TextUtils.isEmpty(path)) {
             setSkipLocalPath(path);
-        }else{
+        } else {
             skipMainActivity();
         }
     }
@@ -213,10 +242,11 @@ public class WelcomeLaunchActivity extends BaseActivity {
             overridePendingTransition(0, 0);
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(constantMethod!=null){
+        if (constantMethod != null) {
             constantMethod.releaseHandlers();
         }
     }

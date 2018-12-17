@@ -14,18 +14,16 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.MineBabyEntity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
@@ -44,6 +42,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -58,6 +57,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
+import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 
 ;
 ;
@@ -129,44 +130,38 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void getDataInfo() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.MINE_PAGE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
-                            if (communalUserInfoEntity != null) {
-                                if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                                    communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
-                                    setPersonalData(communalUserInfoBean);
-                                } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
-                                    showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
-                                }
-                            }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
-                        }
-
-                        @Override
-                        public void netClose() {
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, communalUserInfoEntity);
-                        }
-                    });
-        } else {
-            NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+                        if (communalUserInfoEntity != null) {
+                            if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                                communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
+                                setPersonalData(communalUserInfoBean);
+                            } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, communalUserInfoEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, communalUserInfoEntity);
+                    }
+                });
+
     }
 
     private void changePersonalData(final String type, final String date) {
-        String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         switch (type) {
@@ -180,7 +175,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 params.put("birthday", date);
                 break;
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -212,11 +207,10 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -427,7 +421,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
     private String formatTime(Date date) {
         try {
-            SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
             return timeReceiveFormat.format(date);
         } catch (Exception e) {
             e.printStackTrace();
@@ -493,12 +487,12 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(commitBirthdayDialogHelper!=null&&commitBirthdayDialogHelper.getAlertDialog()!=null
-                &&commitBirthdayDialogHelper.getAlertDialog().isShowing()){
+        if (commitBirthdayDialogHelper != null && commitBirthdayDialogHelper.getAlertDialog() != null
+                && commitBirthdayDialogHelper.getAlertDialog().isShowing()) {
             commitBirthdayDialogHelper.dismiss();
         }
-        if(sexDialogBottomListHelper!=null&&sexDialogBottomListHelper.getAlertDialog()!=null
-                &&sexDialogBottomListHelper.getAlertDialog().isShowing()){
+        if (sexDialogBottomListHelper != null && sexDialogBottomListHelper.getAlertDialog() != null
+                && sexDialogBottomListHelper.getAlertDialog().isShowing()) {
             sexDialogBottomListHelper.dismiss();
         }
     }

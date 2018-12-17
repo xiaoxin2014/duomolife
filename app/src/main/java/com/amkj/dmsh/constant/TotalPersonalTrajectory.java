@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestSyncStatus;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileSizeUtil;
 import com.amkj.dmsh.utils.FileStreamUtils;
@@ -28,10 +28,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import retrofit2.Response;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
@@ -210,6 +212,9 @@ public class TotalPersonalTrajectory {
                     FileCacheUtils.deleteFolderFile(file.getPath(), true);
                 }
             }
+            isUpTotalFile = false;
+        } else {
+            isUpTotalFile = false;
         }
     }
 
@@ -231,7 +236,11 @@ public class TotalPersonalTrajectory {
                     reserveList.add(objectList.get(i));
                     if ((i + 1) % 20 == 0 || i == objectList.size() - 1) {
                         //                        上传数据
-                        uploadingTotalData(reserveList);
+                        boolean isUpSuccess = uploadingTotalData(reserveList);
+//                        避免用户中断网络或者数据异常导致上传失败
+                        if(!isUpSuccess){
+                            break;
+                        }
                         //                        清除上传数据
                         /**
                          * 避免上传中断，需要将未上传的数据保存
@@ -273,14 +282,20 @@ public class TotalPersonalTrajectory {
         }
     }
 
-    private void uploadingTotalData(List<Object> jsonStr) {
+    private boolean uploadingTotalData(List<Object> jsonStr) {
         String url = BASE_URL + TOTAL_DATA_UP;
         Map<String, Object> params = new HashMap<>();
         params.put("deviceType", "Android");
         params.put("jsonData", JSON.toJSONString(jsonStr));
-        RequestSyncStatus requestStatus = XUtil.PostSync(url, params, RequestSyncStatus.class);
-        if (requestStatus != null
-                && SUCCESS_CODE.equals(requestStatus.getCode())) {
+        try {
+            Response<String> response = NetLoadUtils.getNetInstance().loadNetDataPostSync(mAppContext, url, params);
+            if (response != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
         }
     }
 

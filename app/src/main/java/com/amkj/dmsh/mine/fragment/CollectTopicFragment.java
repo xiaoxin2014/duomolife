@@ -8,11 +8,11 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -33,9 +33,10 @@ import butterknife.BindView;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.Url.COLLECT_TOPIC;
 
 ;
 ;
@@ -71,10 +72,7 @@ public class CollectTopicFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
 
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -98,12 +96,8 @@ public class CollectTopicFragment extends BaseFragment {
         findTopicListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= findTopicBeanList.size()) {
-                    page++;
-                    getInvitationList();
-                } else {
-                    findTopicListAdapter.loadMoreEnd();
-                }
+                page++;
+                getInvitationList();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -151,49 +145,53 @@ public class CollectTopicFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.COLLECT_TOPIC;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("count", DEFAULT_TOTAL_COUNT);
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    if (page == 1) {
-                        findTopicBeanList.clear();
-                    }
-                    Gson gson = new Gson();
-                    findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
-                    if (findHotTopicEntity != null) {
-                        if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                            findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
-                        } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), findHotTopicEntity.getMsg());
-                        }
-                        findTopicListAdapter.notifyDataSetChanged();
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    showToast(mAppContext, R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    findTopicListAdapter.loadMoreComplete();
-                    showToast(mAppContext, R.string.invalidData);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
-                }
-            });
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("count", TOTAL_COUNT_TEN);
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_TOPIC, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                findTopicListAdapter.loadMoreComplete();
+                if (page == 1) {
+                    findTopicBeanList.clear();
+                }
+                Gson gson = new Gson();
+                findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
+                if (findHotTopicEntity != null) {
+                    if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                        findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
+                    } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), findHotTopicEntity.getMsg());
+                    }else{
+                        findTopicListAdapter.loadMoreEnd();
+                    }
+                    findTopicListAdapter.notifyDataSetChanged();
+                }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                findTopicListAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(mAppContext, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(mAppContext, R.string.invalidData);
+            }
+        });
     }
 }

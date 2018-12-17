@@ -10,6 +10,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectSalesReturnRecordAdapter;
@@ -36,7 +37,7 @@ import butterknife.BindView;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
@@ -94,12 +95,8 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
             }
         });
         directSalesReturnListAdapter.setOnLoadMoreListener(() -> {
-            if (page * DEFAULT_TOTAL_COUNT <= directSalesReturnListAdapter.getItemCount()) {
-                page++;
-                getReturnReplyData();
-            } else {
-                directSalesReturnListAdapter.loadMoreEnd();
-            }
+            page++;
+            getReturnReplyData();
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -188,9 +185,9 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.Q_APPLY_AFTER_SALE_REPLY_RECORD;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", page);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -214,23 +211,18 @@ public class DoMoSalesReturnReplyFragment extends BaseFragment {
                     orderListBeanList.addAll(inquiryOrderEntry.getDirectReturnRecordBean().getOrderList());
                 } else if (!code.equals(EMPTY_CODE)) {
                     showToast(getActivity(), msg);
+                }else{
+                    directSalesReturnListAdapter.loadMoreEnd();
                 }
                 directSalesReturnListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
+                NetLoadUtils.getNetInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                directSalesReturnListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                directSalesReturnListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
+                directSalesReturnListAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
         });
     }

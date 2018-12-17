@@ -10,20 +10,16 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MesPushTypeSetAdapter;
 import com.amkj.dmsh.mine.bean.MesPushTypeEntity;
 import com.amkj.dmsh.mine.bean.MesPushTypeEntity.MesPushTypeBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +37,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_MES_PUSH_LIST;
+import static com.amkj.dmsh.constant.Url.MINE_MES_PUSH_SWITCH;
 
 ;
 ;
@@ -80,20 +78,12 @@ public class MessagePushTypeActivity extends BaseActivity {
         tv_header_shared.setVisibility(GONE);
         tv_header_titleAll.setText("消息推送");
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MessagePushTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         mesPushTypeSetAdapter = new MesPushTypeSetAdapter(mesPushTypeList);
         mesPushTypeSetAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -123,7 +113,6 @@ public class MessagePushTypeActivity extends BaseActivity {
     }
 
     private void changeMesPushType(final MesPushTypeBean mesPushTypeOldBean) {
-        String url = Url.BASE_URL + Url.MINE_MES_PUSH_SWITCH;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
@@ -141,7 +130,7 @@ public class MessagePushTypeActivity extends BaseActivity {
             }
         }
         params.put("ids", stringBuffer.toString().trim());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_MES_PUSH_SWITCH,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -158,21 +147,28 @@ public class MessagePushTypeActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(MessagePushTypeActivity.this, R.string.do_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(MessagePushTypeActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.MINE_MES_PUSH_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_MES_PUSH_LIST
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -191,21 +187,23 @@ public class MessagePushTypeActivity extends BaseActivity {
                                 showToast(MessagePushTypeActivity.this, mesPushTypeEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, mesPushTypeList, mesPushTypeEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, mesPushTypeList, mesPushTypeEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, mesPushTypeList, mesPushTypeEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
                         showToast(MessagePushTypeActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, mesPushTypeList, mesPushTypeEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
                         showToast(MessagePushTypeActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, mesPushTypeList, mesPushTypeEntity);
                     }
                 });
     }

@@ -13,6 +13,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.CouponProductActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
@@ -39,7 +40,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -99,12 +99,8 @@ public class DirectMyCouponFragment extends BaseFragment {
         directMyCouponAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= directMyCouponAdapter.getItemCount()) {
-                    page++;
-                    checkCoupon();
-                } else {
-                    directMyCouponAdapter.loadMoreEnd();
-                }
+                page++;
+                checkCoupon();
             }
         }, communal_recycler);
         directMyCouponAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -162,7 +158,7 @@ public class DirectMyCouponFragment extends BaseFragment {
         params.put("uid", userId);
         params.put("currentPage", page);
         params.put("type", couponStatus);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -178,23 +174,18 @@ public class DirectMyCouponFragment extends BaseFragment {
                         directMyCouponAdapter.notifyDataSetChanged();
                     } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), directCouponEntity.getMsg());
+                    }else{
+                        directMyCouponAdapter.loadMoreEnd();
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, couponList, directCouponEntity);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                directMyCouponAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                directMyCouponAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
+                directMyCouponAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, couponList, directCouponEntity);
             }
         });
     }

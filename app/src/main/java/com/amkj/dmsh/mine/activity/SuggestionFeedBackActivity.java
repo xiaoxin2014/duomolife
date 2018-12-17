@@ -22,22 +22,22 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.mine.adapter.SuggestionFeedBackTypeAdapter;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity.FeedBackTypeBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
@@ -63,7 +63,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.MINE_FEEDBACK;
 import static com.amkj.dmsh.constant.Url.MINE_FEEDBACK_TYPE;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
@@ -123,14 +123,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         }
         rv_sug_img_show.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_img_white)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_img_white).create());
         imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
         rv_sug_img_show.setAdapter(imgGridRecyclerAdapter);
         imgGridRecyclerAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -218,14 +211,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 communal_recycler_wrap.setAdapter(suggestionFeedBackAdapter);
                 communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                         // 设置分隔线资源ID
-                        .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                        .create());
+                        .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
                 suggestionFeedBackAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -330,7 +316,6 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     private void sendSuggestionData(List<String> data) {
         //图片地址
         String imgPath = "";
-        String url = BASE_URL + Url.MINE_FEEDBACK;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("remark", emoji_mine_suggestion_feed_back.getText().toString().trim());
@@ -345,7 +330,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
             params.put("feed_images", imgPath);
         }
         params.put("type", feedBackTypeBean.getId());
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_FEEDBACK, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -367,22 +352,21 @@ public class SuggestionFeedBackActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 tv_suggestion_commit.setText("提交");
                 tv_suggestion_commit.setEnabled(true);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                tv_suggestion_commit.setText("提交");
-                tv_suggestion_commit.setEnabled(true);
                 showToast(SuggestionFeedBackActivity.this, R.string.do_failed);
             }
         });
@@ -427,10 +411,9 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
-        String url = BASE_URL + MINE_FEEDBACK_TYPE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_FEEDBACK_TYPE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 SuggestionTypeEntity suggestionTypeEntity = new Gson().fromJson(result, SuggestionTypeEntity.class);

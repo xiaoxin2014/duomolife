@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.LogisticsPagerAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticPacketBean;
@@ -38,6 +38,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.Q_CONFIRM_LOGISTICS;
 
 ;
 
@@ -86,23 +87,23 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         for (List<LogisticsProductPacketBean> logisticsPacketBeanList : directLogisticsBeans) {
             directLogisticPacketBean = new DirectLogisticPacketBean();
             directLogisticPacketBean.setDirectGoods(logisticsPacketBeanList);
-            if(logisticsPacketBeanList.size()>0){
+            if (logisticsPacketBeanList.size() > 0) {
                 LogisticsProductPacketBean logisticsPacketBean = logisticsPacketBeanList.get(0);
                 directLogisticPacketBean.setExpressCompany(getStrings(logisticsPacketBean.getExpressCompany()));
                 directLogisticPacketBean.setExpressNo(getStrings(logisticsPacketBean.getExpressNo()));
-                if(logisticsPacketBean.getLogisticsDetailsBean()!=null){
+                if (logisticsPacketBean.getLogisticsDetailsBean() != null) {
                     directLogisticPacketBean.setLogisticPacketList(logisticsPacketBean.getLogisticsDetailsBean().getLogisticsBean().getLogisticTextBeanList());
                     logisticPacketBeans.add(directLogisticPacketBean);
                 }
             }
         }
-        if(logisticPacketBeans.size()>0){
+        if (logisticPacketBeans.size() > 0) {
             if (logisticPacketBeans.size() < 2) {
                 rel_direct_logistics_layout.setVisibility(View.GONE);
             } else {
                 rel_direct_logistics_layout.setVisibility(View.VISIBLE);
             }
-            if(stl_direct_logistics_details.getCurrentTab()!=0){
+            if (stl_direct_logistics_details.getCurrentTab() != 0) {
                 stl_direct_logistics_details.setCurrentTab(0);
             }
             LogisticsPagerAdapter logisticsPagerAdapter = new LogisticsPagerAdapter(getSupportFragmentManager(), pageTitle, logisticPacketBeans);
@@ -124,48 +125,50 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     @Override
     protected void loadData() {
         if (userId < 1) {
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             return;
         }
-        String url = Url.BASE_URL + Url.Q_CONFIRM_LOGISTICS;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        NetLoadUtils.getQyInstance().loadNetDataPost(DirectLogisticsDetailsActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_logistic_refresh.finishRefresh();
-                Gson gson = new Gson();
-                directLogisticsEntity = gson.fromJson(result, DirectLogisticsEntity.class);
-                if (directLogisticsEntity != null) {
-                    if (directLogisticsEntity.getCode().equals(SUCCESS_CODE)) {
-                        pageTitle.clear();
-                        logisticPacketBeans.clear();
-                        int pageCount = directLogisticsEntity.getDirectLogisticsBean().getLogisticsProductPacketList().size();
-                        for (int i = 0; i < pageCount; i++) {
-                            pageTitle.add("包裹" + (i + 1));
+        NetLoadUtils.getNetInstance().loadNetDataPost(DirectLogisticsDetailsActivity.this, Q_CONFIRM_LOGISTICS,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_logistic_refresh.finishRefresh();
+                        Gson gson = new Gson();
+                        directLogisticsEntity = gson.fromJson(result, DirectLogisticsEntity.class);
+                        if (directLogisticsEntity != null) {
+                            if (directLogisticsEntity.getCode().equals(SUCCESS_CODE)) {
+                                pageTitle.clear();
+                                logisticPacketBeans.clear();
+                                int pageCount = directLogisticsEntity.getDirectLogisticsBean().getLogisticsProductPacketList().size();
+                                for (int i = 0; i < pageCount; i++) {
+                                    pageTitle.add("包裹" + (i + 1));
+                                }
+                                setLogisticsData(directLogisticsEntity.getDirectLogisticsBean().getLogisticsProductPacketList());
+                            } else {
+                                showToast(DirectLogisticsDetailsActivity.this, directLogisticsEntity.getMsg());
+                            }
                         }
-                        setLogisticsData(directLogisticsEntity.getDirectLogisticsBean().getLogisticsProductPacketList());
-                    } else {
-                        showToast(DirectLogisticsDetailsActivity.this, directLogisticsEntity.getMsg());
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, logisticPacketBeans, directLogisticsEntity);
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,logisticPacketBeans, directLogisticsEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_logistic_refresh.finishRefresh();
-                showToast(DirectLogisticsDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,logisticPacketBeans, directLogisticsEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_logistic_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, logisticPacketBeans, directLogisticsEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_logistic_refresh.finishRefresh();
-                showToast(DirectLogisticsDetailsActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,logisticPacketBeans, directLogisticsEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(DirectLogisticsDetailsActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(DirectLogisticsDetailsActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     @OnClick(R.id.tv_life_back)
@@ -183,7 +186,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
             loadData();
         }
     }

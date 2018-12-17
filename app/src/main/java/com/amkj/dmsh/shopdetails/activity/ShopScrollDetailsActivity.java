@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Parcelable;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,7 +44,6 @@ import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
@@ -55,6 +53,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -78,8 +77,6 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendH
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -303,7 +300,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private DirectEvaluationAdapter directEvaluationAdapter;
     private ShopRecommendHotTopicAdapter shopRecommendHotTopicAdapter;
     private ShopCommentHeaderView shopCommentHeaderView;
-    private AlertDialog alertRuleDialog;
     private String productId;
     private ShopDetailsEntity shopDetailsEntity;
     private ShopPropertyBean shopPropertyBean;
@@ -565,6 +561,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 } else if (scrollY >= recommendHeightStart && currentTab != 2) {
                     ctb_qt_pro_details.setCurrentTab(2);
                 }
+                if (scrollY > screenHeight * 1.5) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.show(false);
+                    }
+                    if(!download_btn_communal.isVisible()){
+                        download_btn_communal.show(false);
+                    }
+                }else{
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide(false);
+                    }
+                }
             }
         });
         rv_shop_details_text_communal.setLayoutManager(new LinearLayoutManager(ShopScrollDetailsActivity.this));
@@ -588,7 +597,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (isShowTint) {
             SharedPreferences showShareTint = getSharedPreferences("showShareTint", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = showShareTint.edit();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.CHINA);
             String format = simpleDateFormat.format(new Date());
             edit.putString("shareDate", format);
             edit.apply();
@@ -597,34 +606,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_product_share_tint.setVisibility(GONE);
         }
-        download_btn_communal.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                download_btn_communal.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
-        scroll_pro.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView nestedScrollView, int i, int newY, int i2, int oldY) {
-                boolean isDownOrUp = newY - oldY > 0;
-                if(isDownOrUp){
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide(false);
-                    }
-                }else{
-                    if (newY > screenHeight * 1.5) {
-                        if (download_btn_communal.getVisibility() == GONE) {
-                            download_btn_communal.setVisibility(VISIBLE);
-                        }
-                        download_btn_communal.show(false);
-                    }else{
-                        if (download_btn_communal.isVisible()) {
-                            download_btn_communal.hide(false);
-                        }
-                    }
-                }
-            }
-        });
         download_btn_communal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -685,48 +666,41 @@ public class ShopScrollDetailsActivity extends BaseActivity {
      * @param id
      */
     private void getDoMoRecommend(final int id) {
-        if (NetWorkUtils.checkNet(ShopScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", id);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
-                    if (recommendHotTopicEntity != null) {
-                        if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
-                                ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
-                                shopRecommendHotTopicBean.setItemType(TYPE_2);
-                                shopRecommendHotTopicBean.setType(PRO_COMMENT);
-                                proRecommendBeans.add(shopRecommendHotTopicBean);
-                            }
-                            int size = recommendHotTopicEntity.getShopRecommendHotTopicList().size();
-                            for (int i = 0; i < (size > 4 ? 4 : size); i++) {
-                                proRecommendBeans.add(recommendHotTopicEntity.getShopRecommendHotTopicList().get(i));
-                            }
-                            if (proRecommendBeans.size() > 4) {
-                                ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
-                                shopRecommendHotTopicBean.setItemType(TYPE_3);
-                                shopRecommendHotTopicBean.setType(PRO_COMMENT);
-                                shopRecommendHotTopicBean.setId(id);
-                                proRecommendBeans.add(shopRecommendHotTopicBean);
-                            }
-                            shopRecommendHotTopicBeans.addAll(proRecommendBeans);
-                            if (topicRecommendBeans.size() > 0) {
-                                shopRecommendHotTopicBeans.addAll(topicRecommendBeans);
-                            }
+        String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
+                if (recommendHotTopicEntity != null) {
+                    if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
+                            ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
+                            shopRecommendHotTopicBean.setItemType(TYPE_2);
+                            shopRecommendHotTopicBean.setType(PRO_COMMENT);
+                            proRecommendBeans.add(shopRecommendHotTopicBean);
+                        }
+                        int size = recommendHotTopicEntity.getShopRecommendHotTopicList().size();
+                        for (int i = 0; i < (size > 4 ? 4 : size); i++) {
+                            proRecommendBeans.add(recommendHotTopicEntity.getShopRecommendHotTopicList().get(i));
+                        }
+                        if (proRecommendBeans.size() > 4) {
+                            ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
+                            shopRecommendHotTopicBean.setItemType(TYPE_3);
+                            shopRecommendHotTopicBean.setType(PRO_COMMENT);
+                            shopRecommendHotTopicBean.setId(id);
+                            proRecommendBeans.add(shopRecommendHotTopicBean);
+                        }
+                        shopRecommendHotTopicBeans.addAll(proRecommendBeans);
+                        if (topicRecommendBeans.size() > 0) {
+                            shopRecommendHotTopicBeans.addAll(topicRecommendBeans);
                         }
                     }
-                    shopRecommendHotTopicAdapter.notifyDataSetChanged();
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+                shopRecommendHotTopicAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**
@@ -735,49 +709,42 @@ public class ShopScrollDetailsActivity extends BaseActivity {
      * @param id
      */
     private void getTopicRecommend(final int id) {
-        if (NetWorkUtils.checkNet(ShopScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", id);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
-                    if (recommendHotTopicEntity != null) {
-                        if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
-                                ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
-                                shopRecommendHotTopicBean.setItemType(TYPE_2);
-                                shopRecommendHotTopicBean.setType(PRO_TOPIC);
-                                topicRecommendBeans.add(shopRecommendHotTopicBean);
-                            }
-                            int size = recommendHotTopicEntity.getShopRecommendHotTopicList().size();
-                            for (int i = 0; i < (size > 1 ? 1 : size); i++) {
-                                ShopRecommendHotTopicBean shopRecommendHotTopicBean = recommendHotTopicEntity.getShopRecommendHotTopicList().get(i);
-                                shopRecommendHotTopicBean.setItemType(TYPE_1);
-                                topicRecommendBeans.add(shopRecommendHotTopicBean);
-                            }
-                            if (topicRecommendBeans.size() > 1) {
-                                ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
-                                shopRecommendHotTopicBean.setItemType(TYPE_3);
-                                shopRecommendHotTopicBean.setType(PRO_TOPIC);
-                                shopRecommendHotTopicBean.setId(id);
-                                topicRecommendBeans.add(shopRecommendHotTopicBean);
-                            }
-                            if (shopRecommendHotTopicBeans.size() > 0 && topicRecommendBeans.size() > 0) {
-                                shopRecommendHotTopicBeans.addAll(topicRecommendBeans);
-                                shopRecommendHotTopicAdapter.notifyDataSetChanged();
-                            }
+        String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
+                if (recommendHotTopicEntity != null) {
+                    if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
+                            ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
+                            shopRecommendHotTopicBean.setItemType(TYPE_2);
+                            shopRecommendHotTopicBean.setType(PRO_TOPIC);
+                            topicRecommendBeans.add(shopRecommendHotTopicBean);
+                        }
+                        int size = recommendHotTopicEntity.getShopRecommendHotTopicList().size();
+                        for (int i = 0; i < (size > 1 ? 1 : size); i++) {
+                            ShopRecommendHotTopicBean shopRecommendHotTopicBean = recommendHotTopicEntity.getShopRecommendHotTopicList().get(i);
+                            shopRecommendHotTopicBean.setItemType(TYPE_1);
+                            topicRecommendBeans.add(shopRecommendHotTopicBean);
+                        }
+                        if (topicRecommendBeans.size() > 1) {
+                            ShopRecommendHotTopicBean shopRecommendHotTopicBean = new ShopRecommendHotTopicBean();
+                            shopRecommendHotTopicBean.setItemType(TYPE_3);
+                            shopRecommendHotTopicBean.setType(PRO_TOPIC);
+                            shopRecommendHotTopicBean.setId(id);
+                            topicRecommendBeans.add(shopRecommendHotTopicBean);
+                        }
+                        if (shopRecommendHotTopicBeans.size() > 0 && topicRecommendBeans.size() > 0) {
+                            shopRecommendHotTopicBeans.addAll(topicRecommendBeans);
+                            shopRecommendHotTopicAdapter.notifyDataSetChanged();
                         }
                     }
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            }
+        });
     }
 
     private void setProductEvaLike(View view) {
@@ -787,15 +754,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
         goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
@@ -811,7 +770,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_ql_sp_pro_details.finishRefresh();
@@ -827,21 +786,23 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         showToast(ShopScrollDetailsActivity.this, shopDetailsEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, shopDetailsEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_ql_sp_pro_details.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
             }
 
             @Override
             public void netClose() {
-                smart_ql_sp_pro_details.finishRefresh();
                 showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, shopDetailsEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_ql_sp_pro_details.finishRefresh();
                 showToast(ShopScrollDetailsActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, shopDetailsEntity);
             }
         });
     }
@@ -865,7 +826,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 goodsComments.clear();
@@ -880,12 +841,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     setCommentCount(goodsCommentEntity);
                     directEvaluationAdapter.setNewData(goodsComments);
                 }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -1254,61 +1209,55 @@ public class ShopScrollDetailsActivity extends BaseActivity {
      */
     private void getServiceData(String productId) {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_SERVICE_COMMITMENT;
-        if (NetWorkUtils.checkNet(ShopScrollDetailsActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("productId", productId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    DirectGoodsServerEntity directGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
-                    if (directGoodsServerEntity != null) {
-                        if (directGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
-                            serviceDataList.clear();
-                            serviceDataTotalList.clear();
-                            DirectGoodsServerBean directGoodsServerBean = directGoodsServerEntity.getDirectGoodsServerBean();
-                            if (directGoodsServerBean != null) {
-                                List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
-                                if (servicePromiseList.size() > 0) {
-                                    CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
-                                    communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
-                                    communalDetailObjectBean.setContent("服务承诺");
-                                    serviceDataList.add(communalDetailObjectBean);
-                                    serviceDataTotalList.add(communalDetailObjectBean);
-                                    int serviceSize = servicePromiseList.size();
-                                    for (int i = 0; i < serviceSize; i++) {
-                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-                                        if (i == 0) {
-                                            communalDetailObjectBean.setFirstLinePadding(true);
-                                        }
-                                        DirectGoodsServerBean.ServicePromiseBean servicePromiseBean = servicePromiseList.get(i);
-                                        communalDetailObjectBean.setContent(servicePromiseBean.getContent());
-                                        if (i <= 10) {
-                                            serviceDataList.add(communalDetailObjectBean);
-                                        }
-                                        serviceDataTotalList.add(communalDetailObjectBean);
+        Map<String, Object> params = new HashMap<>();
+        params.put("productId", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                DirectGoodsServerEntity directGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
+                if (directGoodsServerEntity != null) {
+                    if (directGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
+                        serviceDataList.clear();
+                        serviceDataTotalList.clear();
+                        DirectGoodsServerBean directGoodsServerBean = directGoodsServerEntity.getDirectGoodsServerBean();
+                        if (directGoodsServerBean != null) {
+                            List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
+                            if (servicePromiseList.size() > 0) {
+                                CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+                                communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
+                                communalDetailObjectBean.setContent("服务承诺");
+                                serviceDataList.add(communalDetailObjectBean);
+                                serviceDataTotalList.add(communalDetailObjectBean);
+                                int serviceSize = servicePromiseList.size();
+                                for (int i = 0; i < serviceSize; i++) {
+                                    communalDetailObjectBean = new CommunalDetailObjectBean();
+                                    if (i == 0) {
+                                        communalDetailObjectBean.setFirstLinePadding(true);
                                     }
-                                    if (serviceSize > 10) {
-                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-                                        communalDetailObjectBean.setItemType(TYPE_PRODUCT_MORE);
-                                        communalDetailObjectBean.setMoreDataList(serviceDataTotalList);
+                                    DirectGoodsServerBean.ServicePromiseBean servicePromiseBean = servicePromiseList.get(i);
+                                    communalDetailObjectBean.setContent(servicePromiseBean.getContent());
+                                    if (i <= 10) {
                                         serviceDataList.add(communalDetailObjectBean);
                                     }
+                                    serviceDataTotalList.add(communalDetailObjectBean);
+                                }
+                                if (serviceSize > 10) {
+                                    communalDetailObjectBean = new CommunalDetailObjectBean();
+                                    communalDetailObjectBean.setItemType(TYPE_PRODUCT_MORE);
+                                    communalDetailObjectBean.setMoreDataList(serviceDataTotalList);
+                                    serviceDataList.add(communalDetailObjectBean);
                                 }
                             }
-                            if (shopDetailBeanList.size() > 0) {
-                                shopDetailBeanList.addAll(serviceDataList);
-                                communalDetailAdapter.notifyDataSetChanged();
-                            }
+                        }
+                        if (shopDetailBeanList.size() > 0) {
+                            shopDetailBeanList.addAll(serviceDataList);
+                            communalDetailAdapter.notifyDataSetChanged();
                         }
                     }
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                }
-            });
-        }
+            }
+        });
     }
 
     private void setActCountTime() {
@@ -1620,7 +1569,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (!TextUtils.isEmpty(shopCarGoodsSkuDif.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSkuDif.getActivityCode());
             }
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Properties prop = new Properties();
@@ -1651,9 +1600,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     tv_sp_details_add_car.setEnabled(true);
-                    super.onError(ex, isOnCallback);
                 }
             });
         } else {
@@ -1681,7 +1629,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -1763,7 +1711,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         params.put("uid", userId);
         params.put("object_id", shopPropertyBean.getId());
         params.put("type", "goods");
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -1780,10 +1728,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(ShopScrollDetailsActivity.this, String.format(getResources().getString(R.string.collect_failed), "商品"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -1843,7 +1799,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case 1:
-                NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
                 productId = String.valueOf(shopRecommendHotTopicBean.getId());
                 recommendType = RECOMMEND_PRODUCT;
                 setTotalData();
@@ -1923,7 +1879,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("couponId", id);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -1941,11 +1897,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    super.onError(ex, isOnCallback);
                 }
             });
         } else {
@@ -1976,7 +1931,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -1994,11 +1949,20 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(ShopScrollDetailsActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(ShopScrollDetailsActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -2079,7 +2043,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("skuId", skuSaleBeanId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

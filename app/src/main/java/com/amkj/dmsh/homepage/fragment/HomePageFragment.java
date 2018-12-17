@@ -25,7 +25,6 @@ import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleTypeAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
@@ -36,24 +35,18 @@ import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MarqueeTextView;
-import com.amkj.dmsh.views.SystemBarHelper;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
-import org.xutils.ex.HttpException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +75,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.H_AD_LIST;
+import static com.amkj.dmsh.constant.Url.H_CATEGORY_LIST;
+import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_LIST;
+import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
+import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
+import static com.amkj.dmsh.constant.Url.H_REGION_ACTIVITY;
 
 ;
 ;
@@ -146,12 +144,7 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        smart_refresh_home.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_refresh_home.setOnRefreshListener(refreshLayout -> loadData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
                 , LinearLayoutManager.HORIZONTAL, false);
         communal_recycler_wrap.setLayoutManager(linearLayoutManager);
@@ -184,7 +177,6 @@ public class HomePageFragment extends BaseFragment {
         std_home_art_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 40));
         std_home_art_type.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 1));
         std_home_art_type.setIndicatorCornerRadius(AutoSizeUtils.mm2px(mAppContext, 1));
-        setStatusColor();
         rel_home_page.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -195,11 +187,6 @@ public class HomePageFragment extends BaseFragment {
                 rel_home_page.setLayoutParams(layoutParams);
             }
         });
-    }
-
-    private void setStatusColor() {
-        SystemBarHelper.setPadding(getActivity(), tb_tool_home);
-        SystemBarHelper.immersiveStatusBar(getActivity());
     }
 
     @Override
@@ -223,67 +210,57 @@ public class HomePageFragment extends BaseFragment {
     }
 
     private void getFloatAd() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.H_Q_FLOAT_AD;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
-                    if (floatAdEntity != null) {
-                        if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (floatAdEntity.getCommunalADActivityBean() != null) {
-                                iv_float_ad_icon.setVisibility(View.VISIBLE);
-                                GlideImageLoaderUtil.loadFitCenter(getActivity(), iv_float_ad_icon,
-                                        getStrings(floatAdEntity.getCommunalADActivityBean().getPicUrl()));
-                                iv_float_ad_icon.setTag(R.id.iv_tag, floatAdEntity.getCommunalADActivityBean());
-                            }
-                        } else {
-                            iv_float_ad_icon.setVisibility(View.GONE);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_Q_FLOAT_AD, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
+                if (floatAdEntity != null) {
+                    if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (floatAdEntity.getCommunalADActivityBean() != null) {
+                            iv_float_ad_icon.setVisibility(View.VISIBLE);
+                            GlideImageLoaderUtil.loadFitCenter(getActivity(), iv_float_ad_icon,
+                                    getStrings(floatAdEntity.getCommunalADActivityBean().getPicUrl()));
+                            iv_float_ad_icon.setTag(R.id.iv_tag, floatAdEntity.getCommunalADActivityBean());
                         }
+                    } else {
+                        iv_float_ad_icon.setVisibility(View.GONE);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    iv_float_ad_icon.setVisibility(View.GONE);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onNotNetOrException() {
+                iv_float_ad_icon.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void getMarqueeData() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.H_Q_MARQUEE_AD;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    MarqueeTextEntity marqueeTextEntity = MarqueeTextEntity.objectFromData(result);
-                    if (marqueeTextEntity != null) {
-                        if (marqueeTextEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (marqueeTextEntity.getMarqueeTextList() != null && marqueeTextEntity.getMarqueeTextList().size() > 0) {
-                                ll_home_marquee.setVisibility(View.VISIBLE);
-                                tv_marquee_text.setText(getStrings(marqueeTextEntity.getMarqueeTextList().get(0).getContent()));
-                                tv_marquee_text.setMarqueeRepeatLimit(marqueeTextEntity.getMarqueeTextList().get(0).getShow_count());
-                            } else {
-                                ll_home_marquee.setVisibility(View.GONE);
-                            }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_Q_MARQUEE_AD, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                MarqueeTextEntity marqueeTextEntity = MarqueeTextEntity.objectFromData(result);
+                if (marqueeTextEntity != null) {
+                    if (marqueeTextEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (marqueeTextEntity.getMarqueeTextList() != null && marqueeTextEntity.getMarqueeTextList().size() > 0) {
+                            ll_home_marquee.setVisibility(View.VISIBLE);
+                            tv_marquee_text.setText(getStrings(marqueeTextEntity.getMarqueeTextList().get(0).getContent()));
+                            tv_marquee_text.setMarqueeRepeatLimit(marqueeTextEntity.getMarqueeTextList().get(0).getShow_count());
                         } else {
                             ll_home_marquee.setVisibility(View.GONE);
                         }
+                    } else {
+                        ll_home_marquee.setVisibility(View.GONE);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    ll_home_marquee.setVisibility(View.GONE);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            ll_home_marquee.setVisibility(View.GONE);
-        }
+            @Override
+            public void onNotNetOrException() {
+                ll_home_marquee.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -329,226 +306,117 @@ public class HomePageFragment extends BaseFragment {
 
     //
     private void getMessageWarm() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                            if (messageTotalEntity != null) {
-                                if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
-                                    MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                                    int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                            + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                            + messageTotalBean.getCommOffifialTotal();
-                                    if (badge != null) {
-                                        badge.setBadgeNumber(totalCount);
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void netClose() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-
-                        }
-                    });
-        } else {
+        if (userId < 1) {
             if (badge != null) {
                 badge.setBadgeNumber(0);
             }
+            return;
         }
+        String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                        if (messageTotalEntity != null) {
+                            if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
+                                MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
+                                int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
+                                        + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
+                                        + messageTotalBean.getCommOffifialTotal();
+                                if (badge != null) {
+                                    badge.setBadgeNumber(totalCount);
+                                }
+                            }
+                        }
+                    }
+                });
+
     }
 
     private void getHotActivityList() {
-        String url = BASE_URL + Url.H_HOT_ACTIVITY_LIST;
-        XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
-            private boolean hasError = false;
-            private String result = null;
-
-            @Override
-            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                this.result = result;
-//                getHotActivityListJson(result);
-//                判断当前网络是否连接
-                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-            }
-
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_HOT_ACTIVITY_LIST,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                //如果服务返回304或onCache选择了信任缓存,这时result为null
-                if (result != null) {
-                    this.result = result;
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                hasError = true;
-//                showToast(x.app(), ex.getMessage());
-                if (ex instanceof HttpException) { //网络错误
-                    HttpException httpEx = (HttpException) ex;
-                    int responseCode = httpEx.getCode();
-                    String responseMsg = httpEx.getMessage();
-                    String errorResult = httpEx.getResult();
-                    //...
-                } else { //其他错误
-                    //...
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-
-            @Override
-            public void onFinished() {
-                if (!hasError && result != null) {
-                    //成功获取数据
-//                    showToast(x.app(), result);
-                    getHotActivityListJson(result);
-                }
-            }
-        });
-    }
-
-    private void getHotActivityListJson(String result) {
-        Gson gson = new Gson();
-        hotActivityList.clear();
-        CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
-        if (communalADActivityEntity != null) {
-            if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
-                hotActivityList.addAll(communalADActivityEntity.getCommunalADActivityBeanList());
-            } else if (!communalADActivityEntity.getCode().equals(EMPTY_CODE)) {
-                showToast(getActivity(), communalADActivityEntity.getMsg());
-            }
-            hotActivityAdapter.notifyDataSetChanged();
-
-            if (hotActivityList.size() > 0) {
-                communal_recycler_wrap.setVisibility(View.VISIBLE);
-            } else {
-                communal_recycler_wrap.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void getAdLoop() {
-        String url = Url.BASE_URL + Url.H_AD_LIST;
-        Map<String, String> params = new HashMap<>();
-        params.put("vidoShow", "1");
-        XUtil.GetCache(url, 0, params, new MyCacheCallBack<String>() {
-            private boolean hasError = false;
-            private String result = null;
-
-            @Override
-            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                this.result = result;
-//                判断当前网络是否连接
-                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                //如果服务返回304或onCache选择了信任缓存,这时result为null
-                if (result != null) {
-                    this.result = result;
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                hasError = true;
-//                showToast(x.app(), ex.getMessage());
-                if (ex instanceof HttpException) { //网络错误
-                    HttpException httpEx = (HttpException) ex;
-                    int responseCode = httpEx.getCode();
-                    String responseMsg = httpEx.getMessage();
-                    String errorResult = httpEx.getResult();
-                    //...
-                } else { //其他错误
-                    //...
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-
-            @Override
-            public void onFinished() {
-                if (!hasError && result != null) {
-                    //成功获取数据
-//                    showToast(x.app(), result);
-                    if (NetWorkUtils.checkNet(getActivity())) {
-                        getHomeAdNoCache();
+                Gson gson = new Gson();
+                hotActivityList.clear();
+                CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+                if (communalADActivityEntity != null) {
+                    if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
+                        hotActivityList.addAll(communalADActivityEntity.getCommunalADActivityBeanList());
+                    } else if (!communalADActivityEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), communalADActivityEntity.getMsg());
+                    }
+                    hotActivityAdapter.notifyDataSetChanged();
+                    if (hotActivityList.size() > 0) {
+                        communal_recycler_wrap.setVisibility(View.VISIBLE);
                     } else {
-                        getADJsonData(result);
+                        communal_recycler_wrap.setVisibility(View.GONE);
                     }
                 }
             }
+
+            @Override
+            public void onNotNetOrException() {
+                if (hotActivityList.size() > 0) {
+                    communal_recycler_wrap.setVisibility(View.VISIBLE);
+                } else {
+                    communal_recycler_wrap.setVisibility(View.GONE);
+                }
+            }
         });
     }
 
-    private void getHomeAdNoCache() {
-        String url = Url.BASE_URL + Url.H_AD_LIST;
-        Map<String, Object> params = new HashMap<>();
+    private void getAdLoop() {
+        Map<String, String> params = new HashMap<>();
         params.put("vidoShow", "1");
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_AD_LIST,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                getADJsonData(result);
+                Gson gson = new Gson();
+                adBeanList.clear();
+                CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+                if (adActivityEntity != null) {
+                    if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
+                        adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
+                        rel_communal_banner.setVisibility(View.VISIBLE);
+                        if (cbViewHolderCreator == null) {
+                            cbViewHolderCreator = new CBViewHolderCreator() {
+                                @Override
+                                public Holder createHolder(View itemView) {
+                                    return new CommunalAdHolderView(itemView, getActivity(), true);
+                                }
+
+                                @Override
+                                public int getLayoutId() {
+                                    return R.layout.layout_ad_image_video;
+                                }
+                            };
+                        }
+                        ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+                                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+                    } else if (adActivityEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), adActivityEntity.getMsg());
+                        rel_communal_banner.setVisibility(View.GONE);
+                    }
+                }
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onNotNetOrException() {
+                if(adBeanList.size()<1){
+                    rel_communal_banner.setVisibility(View.GONE);
+                }
             }
         });
-    }
-
-    private void getADJsonData(String result) {
-        Gson gson = new Gson();
-        adBeanList.clear();
-        CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
-        if (adActivityEntity != null) {
-            if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
-                adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
-                rel_communal_banner.setVisibility(View.VISIBLE);
-                if (cbViewHolderCreator == null) {
-                    cbViewHolderCreator = new CBViewHolderCreator() {
-                        @Override
-                        public Holder createHolder(View itemView) {
-                            return new CommunalAdHolderView(itemView, getActivity(), true);
-                        }
-
-                        @Override
-                        public int getLayoutId() {
-                            return R.layout.layout_ad_image_video;
-                        }
-                    };
-                }
-                ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
-                        .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
-                        .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-            } else if (adActivityEntity.getCode().equals(EMPTY_CODE)) {
-                showToast(getActivity(), adActivityEntity.getMsg());
-                rel_communal_banner.setVisibility(View.GONE);
-            }
-        }
     }
 
     private void getRegionActivity() {
-        String url = Url.BASE_URL + Url.H_REGION_ACTIVITY;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_REGION_ACTIVITY,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -570,93 +438,50 @@ public class HomePageFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 rv_home_activity.setVisibility(View.GONE);
-                super.onError(ex, isOnCallback);
             }
         });
     }
 
     private void getArticleTypeList() {
-        String url = BASE_URL + Url.H_CATEGORY_LIST;
-        XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
-            private boolean hasError = false;
-            private String result = null;
-
-            @Override
-            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                this.result = result;
-//                getArticleTypeListJson(result);
-//                判断当前网络是否连接
-                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-            }
-
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_CATEGORY_LIST,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                //如果服务返回304或onCache选择了信任缓存,这时result为null
-                if (result != null) {
-                    this.result = result;
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                hasError = true;
-//                showToast(x.app(), ex.getMessage());
-                if (ex instanceof HttpException) { //网络错误
-                    HttpException httpEx = (HttpException) ex;
-                    int responseCode = httpEx.getCode();
-                    String responseMsg = httpEx.getMessage();
-                    String errorResult = httpEx.getResult();
-                    //...
-                } else { //其他错误
-                    //...
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-
-            @Override
-            public void onFinished() {
                 smart_refresh_home.finishRefresh();
-                if (!hasError && result != null) {
-                    //成功获取数据
-//                    showToast(x.app(), result);
-                    getArticleTypeListJson(result);
+                Gson gson = new Gson();
+                categoryList.clear();
+                CategoryTypeEntity categoryTypeEntity = gson.fromJson(result, CategoryTypeEntity.class);
+                if (categoryTypeEntity != null) {
+                    if (categoryTypeEntity.getCode().equals(SUCCESS_CODE)) {
+                        categoryList.addAll(categoryTypeEntity.getCategoryTypeList());
+                    } else if (!categoryTypeEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), categoryTypeEntity.getMsg());
+                    }
+                    setDefaultCategoryType();
+                    if (categoryList.size() > 0) {
+                        HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getChildFragmentManager(), categoryList);
+                        viewpager_container.setAdapter(qualityPageAdapter);
+                        std_home_art_type.setViewPager(viewpager_container);
+                        setDefaultCategoryType();
+                    }
                 }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_refresh_home.finishRefresh();
             }
         });
-    }
-
-    private void getArticleTypeListJson(String result) {
-        Gson gson = new Gson();
-        categoryList.clear();
-        CategoryTypeEntity categoryTypeEntity = gson.fromJson(result, CategoryTypeEntity.class);
-        if (categoryTypeEntity != null) {
-            if (categoryTypeEntity.getCode().equals(SUCCESS_CODE)) {
-                categoryList.addAll(categoryTypeEntity.getCategoryTypeList());
-            } else if (!categoryTypeEntity.getCode().equals(EMPTY_CODE)) {
-                showToast(getActivity(), categoryTypeEntity.getMsg());
-            }
-            setDefaultCategoryType();
-            if (categoryList.size() > 0) {
-                HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getChildFragmentManager(), categoryList);
-                viewpager_container.setAdapter(qualityPageAdapter);
-                std_home_art_type.setViewPager(viewpager_container);
-                setDefaultCategoryType();
-            }
-        }
     }
 
     /**
      * 刷新 tab恢复默认
      */
     private void setDefaultCategoryType() {
-        if(viewpager_container.getAdapter()!=null
-                &&std_home_art_type.getCurrentTab()!=0
-                &&viewpager_container.getCurrentItem()!=0){
+        if (viewpager_container.getAdapter() != null
+                && std_home_art_type.getCurrentTab() != 0
+                && viewpager_container.getCurrentItem() != 0) {
             std_home_art_type.setCurrentTab(0);
             viewpager_container.setCurrentItem(0);
         }
@@ -700,5 +525,14 @@ public class HomePageFragment extends BaseFragment {
     public void onResume() {
         getMessageWarm();
         super.onResume();
+    }
+    @Override
+    public boolean immersionBarEnabled() {
+        return true;
+    }
+    @Override
+    public void initImmersionBar() {
+        ImmersionBar.with(this).titleBar(tb_tool_home)
+                .statusBarDarkFont(true).init();
     }
 }

@@ -10,17 +10,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
@@ -45,6 +42,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.ACCOUNT_UNBIND_WECHAT;
+import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT;
+import static com.amkj.dmsh.constant.Url.MINE_PAGE;
+import static com.amkj.dmsh.constant.Url.MINE_SYNC_LOGIN;
 import static com.umeng.socialize.bean.SHARE_MEDIA.QQ;
 import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 
@@ -114,11 +115,10 @@ public class AccountSafeActivity extends BaseActivity {
     }
 
     private void getCurrentAccountData() {
-        String url = Url.BASE_URL + Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         Gson gson = new Gson();
@@ -131,16 +131,6 @@ public class AccountSafeActivity extends BaseActivity {
                                 showToast(AccountSafeActivity.this, minePageData.getMsg());
                             }
                         }
-                    }
-
-                    @Override
-                    public void netClose() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-
                     }
                 });
     }
@@ -157,11 +147,10 @@ public class AccountSafeActivity extends BaseActivity {
     }
 
     private void getOtherAccountData() {
-        String url = Url.BASE_URL + Url.MINE_SYNC_LOGIN;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_SYNC_LOGIN
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         Gson gson = new Gson();
@@ -175,19 +164,22 @@ public class AccountSafeActivity extends BaseActivity {
                                 showToast(AccountSafeActivity.this, otherAccountBindEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, otherAccountBindEntity);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void netClose() {
                         showToast(mAppContext, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, otherAccountBindEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(mAppContext, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, otherAccountBindEntity);
+                        showToast(mAppContext, R.string.invalidData);
                     }
                 });
     }
@@ -443,7 +435,6 @@ public class AccountSafeActivity extends BaseActivity {
     }
 
     private void bindOtherAccount(OtherAccountBindInfo accountInfo) {
-        String url = Url.BASE_URL + Url.MINE_BIND_ACCOUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("openid", accountInfo.getOpenid());
         params.put("type", accountInfo.getType());
@@ -453,7 +444,7 @@ public class AccountSafeActivity extends BaseActivity {
         params.put("nickname", accountInfo.getNickname());
         params.put("avatar", accountInfo.getAvatar());
         params.put("id", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_BIND_ACCOUNT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -469,45 +460,44 @@ public class AccountSafeActivity extends BaseActivity {
                     }
                 }
             }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
         });
     }
 
     private void unBindWeChatAccount() {
-        String url = Url.BASE_URL + Url.ACCOUNT_UNBIND_WECHAT;
-        if (NetWorkUtils.checkNet(this)) {
-            loadHud.show();
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        loadData();
-                        isBindWeChat = false;
-                        tv_account_safe_weChat.setText("未绑定");
-                        showToast(AccountSafeActivity.this, String.format(getResources().getString(R.string.doSuccess), "解绑"));
-                    } else {
-                        showToast(AccountSafeActivity.this, getStrings(requestStatus.getMsg()));
-                    }
+        loadHud.show();
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,ACCOUNT_UNBIND_WECHAT,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                loadHud.dismiss();
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
+                    loadData();
+                    isBindWeChat = false;
+                    tv_account_safe_weChat.setText("未绑定");
+                    showToast(AccountSafeActivity.this, String.format(getResources().getString(R.string.doSuccess), "解绑"));
+                } else {
+                    showToast(AccountSafeActivity.this, getStrings(requestStatus.getMsg()));
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    loadHud.dismiss();
-                    showToast(AccountSafeActivity.this, R.string.unConnectedNetwork);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            showToast(this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void onNotNetOrException() {
+                loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(AccountSafeActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(AccountSafeActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     @Override

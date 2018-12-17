@@ -14,8 +14,8 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.IntegralIndentListAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
@@ -25,7 +25,6 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -53,7 +52,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
@@ -63,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_APPLY;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_FEEDBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_INTEGRAL_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.VIRTUAL_COUPON;
 
 ;
@@ -128,12 +127,8 @@ public class IntegralIndentFragment extends BaseFragment {
         integralIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= orderListBeanList.size()) {
-                    page++;
-                    getIntegralIndentList();
-                } else {
-                    integralIndentListAdapter.loadMoreEnd();
-                }
+                page++;
+                getIntegralIndentList();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -297,7 +292,7 @@ public class IntegralIndentFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("no", orderListBean.getNo());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -313,9 +308,13 @@ public class IntegralIndentFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
                 showToast(getActivity(), R.string.do_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -345,12 +344,12 @@ public class IntegralIndentFragment extends BaseFragment {
             String url = Url.BASE_URL + Url.INTEGRAL_INDENT_LIST;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
+            params.put("showCount", TOTAL_COUNT_TEN);
             params.put("currentPage", page);
             if (!TextUtils.isEmpty(typeStatus)) {
                 params.put("statusCategory", typeStatus);
             }
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
@@ -374,28 +373,33 @@ public class IntegralIndentFragment extends BaseFragment {
                         orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
                     } else if (!code.equals(EMPTY_CODE)) {
                         showToast(getActivity(), msg);
+                    }else{
+                        integralIndentListAdapter.loadMoreEnd();
                     }
                     integralIndentListAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    smart_communal_refresh.finishRefresh();
+                    integralIndentListAdapter.loadMoreEnd(true);
+                    NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                 }
 
                 @Override
                 public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    integralIndentListAdapter.loadMoreComplete();
+
                     showToast(getActivity(), R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    integralIndentListAdapter.loadMoreComplete();
-                    NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                    showToast(getActivity(), R.string.invalidData);
                 }
             });
         } else {
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -422,7 +426,7 @@ public class IntegralIndentFragment extends BaseFragment {
         params.put("no", orderListBean.getNo());
         params.put("userId", userId);
         params.put("orderProductId",/*orderBean.getId()*/0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -436,6 +440,16 @@ public class IntegralIndentFragment extends BaseFragment {
                                 requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     }
                 }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(getActivity(),R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(getActivity(),R.string.do_failed);
             }
         });
     }

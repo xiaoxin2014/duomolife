@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -36,13 +38,13 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity;
 import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity.PromotionProductDetailBean;
 import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity.PromotionProductDetailBean.LuckyMoneyBean;
@@ -50,12 +52,11 @@ import com.amkj.dmsh.dominant.fragment.TopRecommendAtTimeEndGroupFragment;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -66,9 +67,11 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
+import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
@@ -95,6 +98,7 @@ import cn.iwgang.countdownview.DynamicConfig;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
@@ -107,6 +111,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.ADD_MINE_WARM;
+import static com.amkj.dmsh.constant.Url.CANCEL_MINE_WARM;
+import static com.amkj.dmsh.constant.Url.H_TIME_GOODS_DETAILS;
+import static com.amkj.dmsh.constant.Url.TIME_PRODUCT_CLICK_TOTAL;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_WARM;
+import static com.amkj.dmsh.constant.Url.TIME_WARM_PRO;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
@@ -117,6 +127,8 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 public class ShopTimeScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_time_product_details)
     SmartRefreshLayout smart_communal_refresh;
+    @BindView(R.id.nsv_time_detail)
+    NestedScrollView nsv_time_detail;
     @BindView(R.id.tv_header_title)
     TextView tvHeaderTitle;
     @BindView(R.id.banner_shop_time_details)
@@ -147,6 +159,10 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     TextView tvTimeProductDetailsWarm;
     @BindView(R.id.tv_time_product_details_buy_it)
     TextView tvTimeProductDetailsBuyIt;
+    @BindView(R.id.ll_time_details_bottom)
+    LinearLayout ll_time_details_bottom;
+    @BindView(R.id.download_btn_communal)
+    FloatingActionButton download_btn_communal;
     //    轮播图片视频
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
     private List<CommunalDetailObjectBean> itemBodyList = new ArrayList<>();
@@ -167,6 +183,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private Fragment lastFragment;
     private PromotionProductDetailEntity productDetailEntity;
     private PromotionProductDetailBean productDetailBean;
+    private int screenHeight;
 
     @Override
     protected int getContentView() {
@@ -251,6 +268,33 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
         });
         changeProductPage("topRecommend");
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
+        nsv_time_detail.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView nestedScrollView, int i, int newY, int i2, int oldY) {
+                if (newY > screenHeight * 1.5) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.show(false);
+                    }
+                    if(!download_btn_communal.isVisible()){
+                        download_btn_communal.show(false);
+                    }
+                }else{
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide(false);
+                    }
+                }
+            }
+        });
+        download_btn_communal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nsv_time_detail.scrollTo(0, 0);
+                download_btn_communal.hide(false);
+            }
+        });
     }
 
 
@@ -284,14 +328,13 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     //商品详情内容
     private void getProductDetailsData() {
-        String url = Url.BASE_URL + Url.H_TIME_GOODS_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
         if (userId > 0) {
             params.put("userId", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(ShopTimeScrollDetailsActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(ShopTimeScrollDetailsActivity.this, H_TIME_GOODS_DETAILS
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -306,31 +349,32 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                                 showToast(ShopTimeScrollDetailsActivity.this, productDetailEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
                         showToast(ShopTimeScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
                         showToast(ShopTimeScrollDetailsActivity.this, R.string.connectedFaile);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
                     }
                 });
     }
 
     private void cancelWarm(int productId) {
-        String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,CANCEL_MINE_WARM,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -349,20 +393,18 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 tvTimeProductDetailsWarm.setEnabled(true);
                 loadHud.dismiss();
-                super.onError(ex, isOnCallback);
             }
         });
     }
 
     private void setWarm(int productId) {
-        String url = Url.BASE_URL + Url.ADD_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,ADD_MINE_WARM,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -381,10 +423,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
                 tvTimeProductDetailsWarm.setEnabled(true);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -627,10 +668,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     }
 
     private void isFirstRemind(PromotionProductDetailBean productDetailBean) {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_SHOW_PRO_WARM,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -658,7 +698,12 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showToast(ShopTimeScrollDetailsActivity.this,R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(ShopTimeScrollDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
@@ -700,11 +745,10 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     });
 
     private void setWarmTime(String number) {
-        String url = Url.BASE_URL + Url.TIME_WARM_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("m_uid", userId);
         params.put("longtime", number);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_WARM_PRO,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -712,10 +756,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)) {
                     showToast(ShopTimeScrollDetailsActivity.this, "已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
                 }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
             }
         });
     }
@@ -856,13 +896,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
      * 设置限时特惠购买统计
      */
     private void setClickProductTotal() {
-        if (NetWorkUtils.checkNet(ShopTimeScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.TIME_PRODUCT_CLICK_TOTAL;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", productId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-            });
-        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_PRODUCT_CLICK_TOTAL,params,null);
     }
 
     public void skipAliBCWebView(final String url) {

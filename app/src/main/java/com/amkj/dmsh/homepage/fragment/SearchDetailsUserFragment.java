@@ -17,6 +17,7 @@ import com.amkj.dmsh.bean.UserSearchEntity.UserSearchBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -36,7 +37,6 @@ import butterknife.BindView;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -88,12 +88,8 @@ public class SearchDetailsUserFragment extends BaseFragment {
             }
         });
         userRecyclerAdapter.setOnLoadMoreListener(() -> {
-            if (page * DEFAULT_TOTAL_COUNT <= userRecyclerAdapter.getItemCount()) {
-                page++;
-                getUserDetails();
-            } else {
-                userRecyclerAdapter.loadMoreEnd();
-            }
+            page++;
+            getUserDetails();
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
@@ -186,8 +182,8 @@ public class SearchDetailsUserFragment extends BaseFragment {
         }
         params.put("keyword", data);
         params.put("currentPage", page);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -210,27 +206,26 @@ public class SearchDetailsUserFragment extends BaseFragment {
                                     userAttentionFansBean.setFnickname(user.getNickname());
                                     userAttentionFansList.add(userAttentionFansBean);
                                 }
-                            } else if (!userSearchEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (userSearchEntity.getCode().equals(EMPTY_CODE)) {
+                                userRecyclerAdapter.loadMoreEnd(true);
+                            } else {
                                 showToast(getActivity(), userSearchEntity.getMsg());
                             }
                             userRecyclerAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        userRecyclerAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        userRecyclerAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        userRecyclerAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
                     }
                 });
     }

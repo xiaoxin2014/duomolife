@@ -33,7 +33,6 @@ import com.amkj.dmsh.address.AddressUtils;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
@@ -44,10 +43,10 @@ import com.amkj.dmsh.bean.OSSConfigEntity;
 import com.amkj.dmsh.bean.OSSConfigEntity.OSSConfigBean;
 import com.amkj.dmsh.bean.PushInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.bean.SysNotificationEntity;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.fragment.QualityFragment;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
@@ -58,16 +57,16 @@ import com.amkj.dmsh.homepage.fragment.HomePageFragment;
 import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.utils.FileStreamUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -94,14 +93,13 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
-import static com.amkj.dmsh.constant.ConstantMethod.getCurrentTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrEndTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.isSameTimeDay;
+import static com.amkj.dmsh.constant.ConstantMethod.isTimeDayEligibility;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -120,6 +118,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
+import static com.amkj.dmsh.constant.Url.APP_SYS_NOTIFICATION;
+import static com.amkj.dmsh.constant.Url.H_AD_DIALOG;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
@@ -214,6 +214,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             setShareTint();
 //            检查推送权限
             checkPushPermission();
+
         }
         rp_bottom_main.setOnCheckedChangeListener((group, checkedId) -> {
             isChecked = true;
@@ -239,38 +240,52 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
      * 检查推送权限
      */
     private void checkPushPermission() {
-        SharedPreferences preferences = getSharedPreferences(PUSH_CHECK, MODE_PRIVATE);
-        String pushCheckTime = preferences.getString(PUSH_CHECK_TIME, "");
-        String currentTime = getCurrentTime();
-        if (TextUtils.isEmpty(pushCheckTime) || isEndOrEndTimeAddSeconds(currentTime, pushCheckTime, 10 * 24 * 60 * 60)) {
-            SharedPreferences.Editor edit = preferences.edit();
-            edit.putString(PUSH_CHECK_TIME, currentTime);
-            edit.apply();
-            if (!getDeviceAppNotificationStatus(this)) {
-                AlertDialogHelper alertDialogHelper = new AlertDialogHelper(MainActivity.this);
-                alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                    @Override
-                    public void confirm() {
-                        // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        alertDialogHelper.dismiss();
-                    }
+        if (!getDeviceAppNotificationStatus(this)) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson = new Gson();
+                    SysNotificationEntity sysNotificationEntity = gson.fromJson(result, SysNotificationEntity.class);
+                    SharedPreferences preferences = getSharedPreferences(PUSH_CHECK, MODE_PRIVATE);
+                    String pushCheckTime = preferences.getString(PUSH_CHECK_TIME, "");
+                    SharedPreferences.Editor edit = preferences.edit();
+                    if (sysNotificationEntity != null && sysNotificationEntity.getSysNotificationBean() != null &&
+                            SUCCESS_CODE.equals(sysNotificationEntity.getCode())) {
+                        SysNotificationEntity.SysNotificationBean sysNotificationBean = sysNotificationEntity.getSysNotificationBean();
+                        if (TextUtils.isEmpty(pushCheckTime) ||
+                                isTimeDayEligibility(pushCheckTime, sysNotificationEntity.getSystemTime(), sysNotificationBean.getIntervalDay())) {
+                            edit.putString(PUSH_CHECK_TIME, sysNotificationEntity.getSystemTime());
+                            edit.apply();
+                            AlertDialogHelper alertDialogHelper = new AlertDialogHelper(MainActivity.this);
+                            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
+                                    Intent intent = new Intent();
+                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                    intent.setData(uri);
+                                    startActivity(intent);
+                                    alertDialogHelper.dismiss();
+                                }
 
-                    @Override
-                    public void cancel() {
-                        alertDialogHelper.dismiss();
+                                @Override
+                                public void cancel() {
+                                    alertDialogHelper.dismiss();
+                                }
+                            });
+                            alertDialogHelper.setTitle("通知提示")
+                                    .setMsg(TextUtils.isEmpty(sysNotificationBean.getContent()) ? "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。" :
+                                            sysNotificationBean.getContent())
+                                    .setSingleButton(true)
+                                    .setConfirmText("去设置");
+                            alertDialogHelper.show();
+                        }
+                    } else {
+                        edit.clear().apply();
                     }
-                });
-                alertDialogHelper.setTitle("通知提示")
-                        .setMsg("“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。")
-                        .setSingleButton(true)
-                        .setConfirmText("去设置");
-                alertDialogHelper.show();
-            }
+                }
+            });
         }
     }
 
@@ -301,7 +316,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             String url = Url.BASE_URL + Url.FIRST_PUSH_INFO;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     PushInfoEntity pushInfoEntity = PushInfoEntity.objectFromData(result);
@@ -355,8 +370,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("pushId", pushInfoEntity.getAppPushInfo().getId());
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         if (pushMap == null) {
             pushMap = new HashMap<>();
@@ -613,7 +627,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
          * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
          */
         params.put("version", 2);
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -639,16 +653,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     }
                 }
             }
-
-            @Override
-            public void netClose() {
-
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
         });
     }
 
@@ -672,7 +676,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     !TextUtils.isEmpty(personalInfo.getUnionId())) {
                 params.put("unionid", getStrings(personalInfo.getUnionId()));
             }
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -684,7 +688,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 //                            上传设备信息
                             setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no()
                                     , communalUserInfoBean.getDevice_model()
-                                    , communalUserInfoBean.getDevice_sys_version(),communalUserInfoBean.getSysNotice());
+                                    , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
                         } else {
                             personalInfo.setLogin(false);
                             savePersonalInfoCache(MainActivity.this, personalInfo);
@@ -693,8 +697,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
+                public void onError(Throwable throwable) {
                     personalInfo.setLogin(false);
                     savePersonalInfoCache(MainActivity.this, personalInfo);
                 }
@@ -712,8 +715,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         String url = Url.BASE_URL + Url.H_LOGIN_LAST_TIME;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
     }
 
     /**
@@ -721,7 +723,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
      */
     private void getUpTotalSize() {
         String url = Url.BASE_URL + Url.TOTAL_UP_SIZE;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -737,7 +739,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     private void getAddressVersion() {
         String url = Url.BASE_URL + Url.H_ADDRESS_VERSION;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -766,7 +768,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 //        地址初始化
                 AddressUtils.getQyInstance().initAddress();
             }
@@ -776,7 +778,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     private void getAddressData() {
         String url = Url.BASE_URL + Url.H_ADDRESS_DATA;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 String code = "";
@@ -797,7 +799,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 //        地址初始化
                 AddressUtils.getQyInstance().initAddress();
             }
@@ -805,29 +807,27 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     private void getOSSConfig() {
-        if (NetWorkUtils.checkNet(MainActivity.this)) {
-            String url = Url.BASE_URL + Url.H_OSS_CONFIG;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    OSSConfigEntity ossConfigEntity = gson.fromJson(result, OSSConfigEntity.class);
-                    if (ossConfigEntity != null) {
-                        if (ossConfigEntity.getCode().equals(SUCCESS_CODE)) {
-                            OSSConfigBean ossConfigBean = ossConfigEntity.getOssConfigBean();
-                            SharedPreferences preferences = getSharedPreferences("ossConfig", MODE_PRIVATE);
-                            SharedPreferences.Editor edit = preferences.edit();
-                            edit.putString("endpoint", ossConfigBean.getEndpoint());
-                            edit.putString("bucketName", ossConfigBean.getBucketname());
-                            edit.putString("accessKeyId", ossConfigBean.getAccesskeyid());
-                            edit.putString("accessKeySecret", ossConfigBean.getAccesskeysecret());
-                            edit.putString("url", ossConfigBean.getUrl());
-                            edit.apply();
-                        }
+        String url = Url.BASE_URL + Url.H_OSS_CONFIG;
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                OSSConfigEntity ossConfigEntity = gson.fromJson(result, OSSConfigEntity.class);
+                if (ossConfigEntity != null) {
+                    if (ossConfigEntity.getCode().equals(SUCCESS_CODE)) {
+                        OSSConfigBean ossConfigBean = ossConfigEntity.getOssConfigBean();
+                        SharedPreferences preferences = getSharedPreferences("ossConfig", MODE_PRIVATE);
+                        SharedPreferences.Editor edit = preferences.edit();
+                        edit.putString("endpoint", ossConfigBean.getEndpoint());
+                        edit.putString("bucketName", ossConfigBean.getBucketname());
+                        edit.putString("accessKeyId", ossConfigBean.getAccesskeyid());
+                        edit.putString("accessKeySecret", ossConfigBean.getAccesskeysecret());
+                        edit.putString("url", ossConfigBean.getUrl());
+                        edit.apply();
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -836,33 +836,31 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private void getLaunchBanner() {
         String url = Url.BASE_URL + Url.H_LAUNCH_AD_DIALOG;
         adActivityList.clear();
-        if (NetWorkUtils.checkNet(MainActivity.this)) {
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    CommunalADActivityEntity categoryAD = gson.fromJson(result, CommunalADActivityEntity.class);
-                    if (categoryAD != null) {
-                        if (categoryAD.getCode().equals(SUCCESS_CODE)) {
-                            adActivityList.addAll(categoryAD.getCommunalADActivityBeanList());
-                            if (adActivityList.size() > 0) {
-                                SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
-                                final SharedPreferences.Editor edit = sharedPreferences.edit();
-                                CommunalADActivityBean communalADActivityBean = adActivityList.get(adActivityList.size() - 1);
-                                if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
-                                    String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
-                                    if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
-                                        setLaunchAdData(adActivityList, edit);
-                                    }
-                                } else {
-                                    edit.clear().apply();
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                CommunalADActivityEntity categoryAD = gson.fromJson(result, CommunalADActivityEntity.class);
+                if (categoryAD != null) {
+                    if (categoryAD.getCode().equals(SUCCESS_CODE)) {
+                        adActivityList.addAll(categoryAD.getCommunalADActivityBeanList());
+                        if (adActivityList.size() > 0) {
+                            SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
+                            final SharedPreferences.Editor edit = sharedPreferences.edit();
+                            CommunalADActivityBean communalADActivityBean = adActivityList.get(adActivityList.size() - 1);
+                            if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
+                                String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
+                                if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
+                                    setLaunchAdData(adActivityList, edit);
                                 }
+                            } else {
+                                edit.clear().apply();
                             }
                         }
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private void setLaunchAdData(List<CommunalADActivityBean> adActivityList, SharedPreferences.Editor edit) {
@@ -952,11 +950,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         selectServer.show();
     }
 
-    @Override
-    public void setStatusColor() {
-        super.setStatusColor();
-    }
-
     private void closeKeyboard() {
         //关闭软键盘
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -964,51 +957,60 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     private void getADDialog() {
-        String url = Url.BASE_URL + Url.H_AD_DIALOG;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_AD_DIALOG, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
-                if (communalADActivityEntity != null) {
-                    if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
-                        List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
-                        if (communalADActivityBeanList != null && communalADActivityBeanList.size() > 0) {
-                            CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
-                            SharedPreferences sp = getSharedPreferences("ADDialog", MODE_PRIVATE);
-                            String createTime = sp.getString("createTime", "0");
-                            String create_time = communalADActivityBean.getCtime();
-                            if (!createTime.equals(create_time)) {
-                                SharedPreferences.Editor edit = sp.edit();
-                                edit.putString("createTime", create_time);
-                                edit.apply();
-                                GlideImageLoaderUtil.loadFinishImgDrawable(MainActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                    @Override
-                                    public void onSuccess(Bitmap bitmap) {
-                                        if (alertDialogAdImage == null) {
-                                            alertDialogAdImage = new AlertDialogImage(MainActivity.this);
-                                        }
-                                        alertDialogAdImage.show();
-                                        alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                            @Override
-                                            public void imageClick() {
-                                                adClickTotal(communalADActivityBean.getObjectId());
-                                                setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
-                                                alertDialogAdImage.dismiss();
-                                            }
-                                        });
-                                        alertDialogAdImage.setImage(bitmap);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
-                            }
+                SharedPreferences sp = getSharedPreferences("ADDialog", MODE_PRIVATE);
+                SharedPreferences.Editor edit = sp.edit();
+                if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
+                    List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
+                    if (communalADActivityBeanList != null && communalADActivityBeanList.size() > 0) {
+                        CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
+                        String saveTime = sp.getString("createTime", "0");
+                        String lastShowTime = sp.getString("showTime", "0");
+                        String newTime = communalADActivityBean.getCtime();
+                        if (!saveTime.equals(newTime) || (communalADActivityBean.getFrequency_type() == 1 &&
+                                isTimeDayEligibility(lastShowTime, communalADActivityEntity.getSystemTime(),
+                                        communalADActivityBean.getInterval_day()))) {
+                            edit.putString("showTime", communalADActivityEntity.getSystemTime());
+                            showAdDialog(communalADActivityBean, saveTime, newTime);
                         }
+                        if (!saveTime.equals(newTime)) {
+                            edit.putString("createTime", newTime);
+                        }
+                        edit.apply();
                     }
+                } else {
+                    edit.clear().apply();
                 }
+            }
+        });
+    }
+
+    private void showAdDialog(CommunalADActivityBean communalADActivityBean, String saveTime, String newTime) {
+        GlideImageLoaderUtil.loadFinishImgDrawable(MainActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+            @Override
+            public void onSuccess(Bitmap bitmap) {
+                if (alertDialogAdImage == null) {
+                    alertDialogAdImage = new AlertDialogImage(MainActivity.this);
+                }
+                alertDialogAdImage.show();
+                alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                    @Override
+                    public void imageClick() {
+                        adClickTotal(communalADActivityBean.getObjectId());
+                        setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
+                        alertDialogAdImage.dismiss();
+                    }
+                });
+                alertDialogAdImage.setImage(bitmap);
+            }
+
+            @Override
+            public void onError() {
+
             }
         });
     }
@@ -1193,9 +1195,12 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         isChecked = false;
     }
 
+    /**
+     * 获取统计字段 上传大小
+     */
     public void getAppUpdateJson() {
         String url = Url.BASE_URL + Url.APP_TOTAL_ACTION;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 TotalActionEntity totalActionEntity = TotalActionEntity.objectFromData(result);

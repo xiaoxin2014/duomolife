@@ -16,10 +16,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.find.adapter.TagDetailHorizontalAdapter;
 import com.amkj.dmsh.find.adapter.TagRelProAdapter;
@@ -29,13 +26,12 @@ import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TagBe
 import com.amkj.dmsh.find.bean.RelevanceTagInfoEntity.RelevanceTagInfoBean.TopTagListBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -58,10 +54,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_ARTICLE;
+import static com.amkj.dmsh.constant.Url.FIND_RELEVANCE_TAG;
+import static com.amkj.dmsh.constant.Url.FIND_RELEVANCE_TAG_INFO;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 
 ;
 
@@ -141,12 +141,8 @@ public class FindTagDetailsActivity extends BaseActivity {
         adapterInvitationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= adapterInvitationAdapter.getItemCount()) {
-                    page++;
-                    getData();
-                } else {
-                    adapterInvitationAdapter.loadMoreEnd();
-                }
+                page++;
+                getRelevanceTagList();
             }
         }, communal_recycler);
         adapterInvitationAdapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
@@ -259,7 +255,6 @@ public class FindTagDetailsActivity extends BaseActivity {
     }
 
     private void getRelevanceTagList() {
-        String url = Url.BASE_URL + Url.FIND_RELEVANCE_TAG;
         Map<String, Object> params = new HashMap<>();
         if (userId > 0) {
             params.put("fuid", userId);
@@ -267,8 +262,8 @@ public class FindTagDetailsActivity extends BaseActivity {
         params.put("currentPage", page);
         params.put("tagId", tagId);
         params.put("version", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(FindTagDetailsActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(FindTagDetailsActivity.this, FIND_RELEVANCE_TAG
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -281,28 +276,31 @@ public class FindTagDetailsActivity extends BaseActivity {
                         if (invitationDetailEntity != null) {
                             if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                            } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                adapterInvitationAdapter.loadMoreEnd();
+                            } else {
                                 showToast(FindTagDetailsActivity.this, invitationDetailEntity.getMsg());
                             }
                             adapterInvitationAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitationAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        adapterInvitationAdapter.loadMoreComplete();
                         showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        adapterInvitationAdapter.loadMoreComplete();
                         showToast(FindTagDetailsActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
                     }
                 });
     }
@@ -311,39 +309,31 @@ public class FindTagDetailsActivity extends BaseActivity {
      * 关联标签其它信息
      */
     private void getRelevanceTagOtherInfo() {
-        if (NetWorkUtils.checkNet(FindTagDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.FIND_RELEVANCE_TAG_INFO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("tagId", tagId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RelevanceTagInfoEntity relevanceTagInfoEntity = gson.fromJson(result, RelevanceTagInfoEntity.class);
-                    if (relevanceTagInfoEntity != null) {
-                        if (relevanceTagInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                            relevanceTagInfoBean = relevanceTagInfoEntity.getRelevanceTagInfoBean();
-                            if (relevanceTagInfoBean.getProductList() != null && relevanceTagInfoBean.getProductList().size() > 0) {
-                                relevanceProList.clear();
-                                relevanceProList.addAll(relevanceTagInfoBean.getProductList());
-                                tagHeaderView.rel_tag_rel_pro.setVisibility(View.VISIBLE);
-                            } else {
-                                tagHeaderView.rel_tag_rel_pro.setVisibility(View.GONE);
-                            }
-                            setTagData(relevanceTagInfoBean);
-                        } else if (!relevanceTagInfoEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(FindTagDetailsActivity.this, relevanceTagInfoEntity.getMsg());
+        Map<String, Object> params = new HashMap<>();
+        params.put("tagId", tagId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_RELEVANCE_TAG_INFO, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RelevanceTagInfoEntity relevanceTagInfoEntity = gson.fromJson(result, RelevanceTagInfoEntity.class);
+                if (relevanceTagInfoEntity != null) {
+                    if (relevanceTagInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        relevanceTagInfoBean = relevanceTagInfoEntity.getRelevanceTagInfoBean();
+                        if (relevanceTagInfoBean.getProductList() != null && relevanceTagInfoBean.getProductList().size() > 0) {
+                            relevanceProList.clear();
+                            relevanceProList.addAll(relevanceTagInfoBean.getProductList());
+                            tagHeaderView.rel_tag_rel_pro.setVisibility(View.VISIBLE);
+                        } else {
+                            tagHeaderView.rel_tag_rel_pro.setVisibility(View.GONE);
                         }
-                        tagRelProAdapter.notifyDataSetChanged();
+                        setTagData(relevanceTagInfoBean);
+                    } else if (!relevanceTagInfoEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(FindTagDetailsActivity.this, relevanceTagInfoEntity.getMsg());
                     }
+                    tagRelProAdapter.notifyDataSetChanged();
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            }
+        });
     }
 
     private void setTagData(RelevanceTagInfoBean relevanceTagInfoBean) {
@@ -389,14 +379,13 @@ public class FindTagDetailsActivity extends BaseActivity {
     //    文章收藏
     private void setArticleCollect(final InvitationDetailBean invitationDetailBean, View view) {
         final TextView tv_collect = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
-        params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        params.put("type", TYPE_C_ARTICLE);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -411,28 +400,31 @@ public class FindTagDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(FindTagDetailsActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void setArticleLiked(InvitationDetailBean invitationDetailBean, View view) {
         TextView tv_like = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
@@ -507,7 +499,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                     if (topTagListBean != null) {
                         tagId = String.valueOf(topTagListBean.getId());
                         loadData();
-                        NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
                     }
                 }
             });

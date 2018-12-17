@@ -23,17 +23,15 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -58,12 +56,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
+import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -141,12 +140,8 @@ public class QualityProductActActivity extends BaseActivity {
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= actProActivityList.size()) {
-                    page++;
-                    getActProActivityData();
-                } else {
-                    qualityTypeProductAdapter.loadMoreEnd();
-                }
+                page++;
+                getActProActivityData();
             }
         }, communal_recycler);
         qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -254,7 +249,6 @@ public class QualityProductActActivity extends BaseActivity {
     }
 
     private void getActProActivityData() {
-        String url = Url.BASE_URL + Url.Q_ACT_PRO_LIST;
         final Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
@@ -262,8 +256,8 @@ public class QualityProductActActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityProductActActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityProductActActivity.this, Q_ACT_PRO_LIST
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -277,28 +271,31 @@ public class QualityProductActActivity extends BaseActivity {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 actProActivityList.addAll(likedProductEntity.getLikedProductBeanList());
                                 setActProInfo(likedProductEntity);
-                            } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                            }else{
                                 showToast(QualityProductActActivity.this, likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityProductActActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityProductActActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
                 });
     }
@@ -326,10 +323,9 @@ public class QualityProductActActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();

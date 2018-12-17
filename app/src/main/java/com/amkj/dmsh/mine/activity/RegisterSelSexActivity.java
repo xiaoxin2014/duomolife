@@ -17,12 +17,11 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.TextWatchListener;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -42,6 +41,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
 ;
 
@@ -141,12 +141,11 @@ public class RegisterSelSexActivity extends BaseActivity {
                     sexSelector = 0;
                     break;
             }
-            String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
             params.put("sex", sexSelector);
             params.put("nickname", nickName);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -179,12 +178,20 @@ public class RegisterSelSexActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
                     showToast(RegisterSelSexActivity.this, R.string.do_failed);
-                    super.onError(ex, isOnCallback);
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(RegisterSelSexActivity.this, R.string.unConnectedNetwork);
                 }
             });
         } else {

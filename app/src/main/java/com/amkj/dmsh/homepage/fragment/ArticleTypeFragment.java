@@ -9,16 +9,14 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 
@@ -33,10 +31,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.CATE_DOC_LIST;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 
 ;
 
@@ -125,39 +124,31 @@ public class ArticleTypeFragment extends BaseFragment {
             }
         });
         homeArticleAdapter.setOnLoadMoreListener(() -> {
-            if (page * DEFAULT_TOTAL_COUNT <= articleTypeList.size()) {
-                page++;
-                getArticleTypeData();
-            } else {
-                homeArticleAdapter.loadMoreEnd();
-            }
+            page++;
+            getArticleTypeData();
         }, communal_recycler);
     }
 
     //    收藏
     private void setArticleCollected(CommunalArticleBean articleBean) {
-        String url = BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", articleBean.getId());
         params.put("type", "document");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_COLLECT,params,null);
     }
 
     //  点赞
     private void setArticleLiked(CommunalArticleBean articleBean) {
-        String url = BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //文章id
         params.put("id", articleBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_DETAILS_FAVOR,params,null);
     }
 
     @Override
@@ -172,7 +163,6 @@ public class ArticleTypeFragment extends BaseFragment {
     }
 
     public void getArticleTypeData() {
-        String url = BASE_URL + Url.CATE_DOC_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         if (userId > 0) {
@@ -181,39 +171,35 @@ public class ArticleTypeFragment extends BaseFragment {
         if (categoryTypeBean.getId() > 0) {
             params.put("categoryid", categoryTypeBean.getId());
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                homeArticleAdapter.loadMoreComplete();
-                if (page == 1) {
-                    articleTypeList.clear();
-                }
-                Gson gson = new Gson();
-                categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
-                if (categoryDocBean != null) {
-                    if (categoryDocBean.getCode().equals(SUCCESS_CODE)) {
-                        articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
-                    } else if (!categoryDocBean.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), categoryDocBean.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), CATE_DOC_LIST
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        homeArticleAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            articleTypeList.clear();
+                        }
+                        Gson gson = new Gson();
+                        categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
+                        if (categoryDocBean != null) {
+                            if (categoryDocBean.getCode().equals(SUCCESS_CODE)) {
+                                articleTypeList.addAll(categoryDocBean.getCommunalArticleList());
+                            } else if (categoryDocBean.getCode().equals(EMPTY_CODE)) {
+                                homeArticleAdapter.loadMoreEnd();
+                            } else {
+                                showToast(getActivity(), categoryDocBean.getMsg());
+                            }
+                            homeArticleAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
                     }
-                    homeArticleAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,articleTypeList,categoryDocBean);
-            }
 
-            @Override
-            public void netClose() {
-                homeArticleAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,articleTypeList,categoryDocBean);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                homeArticleAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,articleTypeList,categoryDocBean);
-            }
-        });
+                    @Override
+                    public void onNotNetOrException() {
+                        homeArticleAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
+                    }
+                });
     }
 
     @Override

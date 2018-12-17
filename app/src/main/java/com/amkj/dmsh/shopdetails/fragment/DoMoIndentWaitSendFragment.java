@@ -14,10 +14,10 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
@@ -27,8 +27,6 @@ import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -55,7 +53,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
@@ -63,6 +60,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
@@ -120,12 +118,8 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= doMoIndentListAdapter.getItemCount()) {
-                    page++;
-                    getWaitSendData();
-                } else {
-                    doMoIndentListAdapter.loadMoreEnd();
-                }
+                page++;
+                getWaitSendData();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -250,12 +244,12 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
         String url = BASE_URL + Url.Q_INQUIRY_WAIT_SEND;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", page);
         params.put("orderType", "currency");
         //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -279,23 +273,18 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                 } else if (!code.equals(EMPTY_CODE)) {
                     showToast(getActivity(), msg);
+                }else{
+                    doMoIndentListAdapter.loadMoreEnd();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
+                NetLoadUtils.getNetInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                doMoIndentListAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
         });
     }
@@ -307,39 +296,44 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
      */
     private void getInviteGroupInfo(String no) {
         String url = BASE_URL + Url.GROUP_MINE_SHARE;
-        if (NetWorkUtils.checkNet(getActivity())) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderNo", no);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                    if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                            QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            invitePartnerGroup(qualityGroupShareBean, no);
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    showToast(getActivity(), R.string.do_failed);
-                }
-            });
-        } else {
-            showToast(getActivity(), R.string.unConnectedNetwork);
+        if (loadHud != null) {
+            loadHud.show();
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderNo", no);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
+                if (qualityGroupShareEntity != null) {
+                    if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
+                        QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
+                        invitePartnerGroup(qualityGroupShareBean, no);
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(getActivity(), R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(getActivity(), R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
@@ -351,7 +345,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("orderNo", orderBean.getNo());
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), BASE_URL + Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -370,18 +364,19 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
                 showToast(mAppContext, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
                 showToast(mAppContext, R.string.do_failed);
             }
         });

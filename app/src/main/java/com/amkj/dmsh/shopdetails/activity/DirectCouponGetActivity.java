@@ -12,6 +12,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.bean.SelCouponGoodsEntity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity;
@@ -38,7 +39,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -109,12 +109,8 @@ public class DirectCouponGetActivity extends BaseActivity {
         directMyCouponAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= directMyCouponAdapter.getItemCount()) {
-                    page++;
-                    selfChoiceCoupon();
-                } else {
-                    directMyCouponAdapter.loadMoreEnd();
-                }
+                page++;
+                selfChoiceCoupon();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -230,7 +226,7 @@ public class DirectCouponGetActivity extends BaseActivity {
             params.put("uid", userId);
             params.put("isApp", 1);
             params.put("orderList", new Gson().toJson(selCouponGoodsEntityList));
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
@@ -259,30 +255,33 @@ public class DirectCouponGetActivity extends BaseActivity {
                             couponList.addAll(directCouponEntity.getDirectCouponBeanList());
                         } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DirectCouponGetActivity.this, directCouponEntity.getMsg());
+                        }else{
+                            directMyCouponAdapter.loadMoreEnd();
                         }
                         directMyCouponAdapter.notifyDataSetChanged();
                     }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, couponList, directCouponEntity);
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    smart_communal_refresh.finishRefresh();
+                    directMyCouponAdapter.loadMoreComplete();
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, couponList, directCouponEntity);
                 }
 
                 @Override
                 public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    directMyCouponAdapter.loadMoreComplete();
                     showToast(mAppContext, R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    directMyCouponAdapter.loadMoreComplete();
                     showToast(mAppContext, R.string.invalidData);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService, couponList, directCouponEntity);
                 }
             });
         } else {
-            NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
         }
     }
 }

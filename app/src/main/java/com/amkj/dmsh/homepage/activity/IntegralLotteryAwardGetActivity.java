@@ -13,14 +13,11 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardGetEntity;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -37,8 +34,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
+import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_GET;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_INFO;
 
 /**
  * @author LGuiPeng
@@ -137,12 +136,12 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
      * 积分夺宝领取
      */
     private void getIntegralLotteryAward() {
-        String url = BASE_URL + Url.H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("activityId", activityId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(IntegralLotteryAwardGetActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(IntegralLotteryAwardGetActivity.this,
+                H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_INFO
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         Gson gson = new Gson();
@@ -154,19 +153,22 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                                 showToast(IntegralLotteryAwardGetActivity.this, integralLotteryAwardEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
                     }
 
                     @Override
                     public void netClose() {
                         showToast(IntegralLotteryAwardGetActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
                     }
                 });
     }
@@ -186,7 +188,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
         } else if (integralLotteryAwardEntity.getStatus() == 3) {
             tv_integral_lottery_award_confirm_get.setEnabled(false);
             tv_integral_lottery_award_confirm_get.setText("已领取");
-        }else if (integralLotteryAwardEntity.getStatus() == 4) {
+        } else if (integralLotteryAwardEntity.getStatus() == 4) {
             tv_integral_lottery_award_confirm_get.setEnabled(false);
             tv_integral_lottery_award_confirm_get.setText("已过期");
         } else {
@@ -210,15 +212,16 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                 addressId = data.getIntExtra("addressId", 0);
                 isFirst = false;
                 getAddressDetails();
-            }else if (requestCode == IS_LOGIN_CODE) {
+            } else if (requestCode == IS_LOGIN_CODE) {
                 loadData();
             }
         }
     }
 
     private void getDefaultAddress() {
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -237,9 +240,9 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
     }
 
     private void getAddressDetails() {
-        //地址详情内容
-        String url = Url.BASE_URL + Url.ADDRESS_DETAILS + addressId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", addressId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -272,40 +275,45 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
     }
 
     private void setLotteryAward() {
-        if (NetWorkUtils.checkNet(this)) {
-            String url = BASE_URL + H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_GET;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("activityId", activityId);
-            params.put("addressId", addressId);
-            params.put("recordId", integralLotteryAwardEntity.getId());
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (SUCCESS_CODE.equals(requestStatus.getCode())) {
-                            showToast(IntegralLotteryAwardGetActivity.this,"领取成功");
-                            finish();
-                        } else {
-                            showToast(IntegralLotteryAwardGetActivity.this, requestStatus.getMsg());
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("activityId", activityId);
+        params.put("addressId", addressId);
+        params.put("recordId", integralLotteryAwardEntity.getId());
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_GET,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        loadHud.dismiss();
+                        Gson gson = new Gson();
+                        RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                        if (requestStatus != null) {
+                            if (SUCCESS_CODE.equals(requestStatus.getCode())) {
+                                showToast(IntegralLotteryAwardGetActivity.this, "领取成功");
+                                finish();
+                            } else {
+                                showToast(IntegralLotteryAwardGetActivity.this, requestStatus.getMsg());
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                    loadHud.dismiss();
-                }
-            });
-        } else {
-            showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
-            loadHud.dismiss();
-        }
+                    @Override
+                    public void onNotNetOrException() {
+                        loadHud.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(IntegralLotteryAwardGetActivity.this, R.string.invalidData);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
+                    }
+                });
     }
+
     //    地址列表为空 跳转新建地址
     @OnClick(R.id.tv_lv_top)
     void skipNewAddress(View view) {
@@ -322,12 +330,12 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_integral_lottery_award_confirm_get)
-    void awardGet(View view){
-        if(addressId>0){
+    void awardGet(View view) {
+        if (addressId > 0) {
             loadHud.show();
             setLotteryAward();
-        }else{
-            showToast(this,R.string.address_not_null);
+        } else {
+            showToast(this, R.string.address_not_null);
         }
     }
 

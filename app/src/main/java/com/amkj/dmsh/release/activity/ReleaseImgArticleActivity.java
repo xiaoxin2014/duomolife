@@ -26,9 +26,9 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.ReplaceData;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.AddRelevanceProAdapter;
 import com.amkj.dmsh.release.adapter.ImgGArticleRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
@@ -41,9 +41,8 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.ReleaseEditView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -77,6 +76,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RELEVANCE_PRO_REQ;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.F_REL_INDENT_PRO_LIST;
+import static com.amkj.dmsh.constant.Url.F_SEND_INVITATION;
+import static com.amkj.dmsh.constant.Url.RELEASE_RELEVANCE_PRODUCT;
 import static com.amkj.dmsh.release.tutu.CameraComponentSample.DEFAULT_PATH;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
@@ -168,10 +170,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_img_white)
 
 
-
-
-
-
                 .create());
         rv_img_article.setAdapter(imgGArticleRecyclerAdapter);
         imgGArticleRecyclerAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -202,10 +200,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-
-
-
-
 
 
                 .create());
@@ -508,7 +502,6 @@ public class ReleaseImgArticleActivity extends BaseActivity {
     private void sendData(List<String> callBackPath, String content) {
         //图片地址
         StringBuffer imgPath = new StringBuffer();
-        String url = Url.BASE_URL + Url.F_SEND_INVITATION;
         Map<String, Object> params = new HashMap<>();
         //用户Id
         params.put("fuid", userId);
@@ -547,7 +540,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         if (!TextUtils.isEmpty(orderNo)) {
             params.put("productOrderNo", orderNo);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_SEND_INVITATION, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -570,13 +563,17 @@ public class ReleaseImgArticleActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 tv_find_release_topic.setEnabled(true);
                 header_shared.setText("发送");
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ReleaseImgArticleActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -594,12 +591,11 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
-        String url = Url.BASE_URL + Url.RELEASE_RELEVANCE_PRODUCT;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, RELEASE_RELEVANCE_PRODUCT, params, new NetLoadListenerHelper() {
             @Override
-            public void onSuccess(@NonNull String result) {
+            public void onSuccess(String result) {
                 relevanceProList.clear();
                 RelevanceProEntity relevanceProEntity = RelevanceProEntity.objectFromData(result);
                 if (relevanceProEntity != null) {
@@ -619,8 +615,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onNotNetOrException() {
                 relevanceDataException();
             }
         });
@@ -639,10 +634,9 @@ public class ReleaseImgArticleActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
-        String url = Url.BASE_URL + Url.F_REL_INDENT_PRO_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("productOrderNo", orderNo);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_REL_INDENT_PRO_LIST,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 IndentOrderProBean indentOrderProBean = IndentOrderProBean.objectFromData(result);
@@ -671,8 +665,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onNotNetOrException() {
                 relevanceDataException();
             }
         });

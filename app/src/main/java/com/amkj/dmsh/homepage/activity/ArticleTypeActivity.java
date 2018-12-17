@@ -10,21 +10,17 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.HomeArticleAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -40,11 +36,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.CATE_DOC_LIST;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 
 ;
 
@@ -92,12 +89,7 @@ public class ArticleTypeActivity extends BaseActivity {
         }
         tv_header_titleAll.setText(getStrings(categoryTitle));
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArticleTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
         homeArticleAdapter = new HomeArticleAdapter(ArticleTypeActivity.this, articleTypeList);
@@ -156,12 +148,8 @@ public class ArticleTypeActivity extends BaseActivity {
         homeArticleAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= articleTypeList.size()) {
-                    page++;
-                    getArticleTypeList();
-                } else {
-                    homeArticleAdapter.loadMoreEnd();
-                }
+                page++;
+                getArticleTypeList();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -230,28 +218,24 @@ public class ArticleTypeActivity extends BaseActivity {
 
     //    收藏
     private void setArticleCollected(CommunalArticleBean articleBean) {
-        String url = BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", articleBean.getId());
         params.put("type", "document");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,null);
     }
 
     //  点赞
     private void setArticleLiked(CommunalArticleBean articleBean) {
-        String url = BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //文章id
         params.put("id", articleBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
     }
 
     @Override
@@ -261,15 +245,14 @@ public class ArticleTypeActivity extends BaseActivity {
     }
 
     private void getArticleTypeList() {
-        String url = BASE_URL + Url.CATE_DOC_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         if (userId > 0) {
             params.put("uid", userId);
         }
         params.put("categoryid", categoryId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, CATE_DOC_LIST
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -286,27 +269,26 @@ public class ArticleTypeActivity extends BaseActivity {
                                         && TextUtils.isEmpty(articleTypeList.get(0).getCategory_name())) {
                                     tv_header_titleAll.setText(articleTypeList.get(0).getCategory_name());
                                 }
-                            } else if (!categoryDocBean.getCode().equals(EMPTY_CODE)) {
+                            } else if (categoryDocBean.getCode().equals(EMPTY_CODE)) {
+                                homeArticleAdapter.loadMoreEnd();
+                            }else{
                                 showToast(ArticleTypeActivity.this, categoryDocBean.getMsg());
                             }
                             homeArticleAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, articleTypeList, categoryDocBean);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        homeArticleAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, articleTypeList, null);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        homeArticleAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
                         showToast(ArticleTypeActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        homeArticleAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, articleTypeList, null);
                     }
                 });
     }

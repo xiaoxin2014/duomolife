@@ -11,6 +11,7 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -74,14 +75,7 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), likedProductBeans);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         qualityTypeProductAdapter.setEnableLoadMore(false);
@@ -159,8 +153,8 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         qualityTypeProductAdapter.loadMoreComplete();
@@ -179,21 +173,23 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
                     }
 
                     @Override
                     public void netClose() {
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, likedProductBeans, typeProductBean);
                     }
                 });
     }

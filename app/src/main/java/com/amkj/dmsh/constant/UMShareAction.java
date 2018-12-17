@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.utils.FileStreamUtils;
@@ -258,7 +259,7 @@ public class UMShareAction {
         params.put("page", routineUrl);
         params.put("productId", productId);
         params.put("scene", "id=" + productId + "&pid=0");
-        NetLoadUtils.getQyInstance().loadNetDataPost(context, BASE_URL + SHARE_SAVE_IMAGE_URL, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, BASE_URL + SHARE_SAVE_IMAGE_URL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
@@ -287,6 +288,7 @@ public class UMShareAction {
                                             e.printStackTrace();
                                         }
                                     }
+
                                     @Override
                                     public void onError() {
                                     }
@@ -308,14 +310,7 @@ public class UMShareAction {
             }
 
             @Override
-            public void netClose() {
-                if (alertDialogShareHelper != null) {
-                    alertDialogShareHelper.setLoading(1);
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
+            public void onNotNetOrException() {
                 if (alertDialogShareHelper != null) {
                     alertDialogShareHelper.setLoading(1);
                 }

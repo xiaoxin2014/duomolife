@@ -18,7 +18,8 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectPaySuccessActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
@@ -33,9 +34,7 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity.IntegralSettlementBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity.IntegralSettlementBean.ProductInfoBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -69,6 +68,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
+import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 
 /**
  * @author Liuguipeng
@@ -189,8 +190,9 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
      * 获取默认地址
      */
     private void getDefaultAddress() {
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -227,46 +229,46 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
      * 获取结算信息
      */
     private void getProductSettlementInfo() {
-        if (NetWorkUtils.checkNet(IntegrationIndentWriteActivity.this)) {
-            String url = Url.BASE_URL + Url.INTEGRAL_DIRECT_SETTLEMENT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            if (addressId > 0) {
-                params.put("addressId", addressId);
-            }
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("saleSkuId", shopCarGoodsSku.getSaleSkuId());
-                jsonObject.put("id", shopCarGoodsSku.getProductId());
-                jsonObject.put("count", shopCarGoodsSku.getCount());
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(jsonObject);
-                params.put("goods", jsonArray.toString().trim());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    IntegralSettlementEntity settlementEntity = gson.fromJson(result, IntegralSettlementEntity.class);
-                    if (settlementEntity != null) {
-                        if (settlementEntity.getCode().equals(SUCCESS_CODE)) {
-                            integralSettlementBean = settlementEntity.getIntegralSettlementBean();
-                            setIntegralSettlementInfo(integralSettlementBean);
-                        }
+        String url = Url.BASE_URL + Url.INTEGRAL_DIRECT_SETTLEMENT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        if (addressId > 0) {
+            params.put("addressId", addressId);
+        }
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("saleSkuId", shopCarGoodsSku.getSaleSkuId());
+            jsonObject.put("id", shopCarGoodsSku.getProductId());
+            jsonObject.put("count", shopCarGoodsSku.getCount());
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(jsonObject);
+            params.put("goods", jsonArray.toString().trim());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                IntegralSettlementEntity settlementEntity = gson.fromJson(result, IntegralSettlementEntity.class);
+                if (settlementEntity != null) {
+                    if (settlementEntity.getCode().equals(SUCCESS_CODE)) {
+                        integralSettlementBean = settlementEntity.getIntegralSettlementBean();
+                        setIntegralSettlementInfo(integralSettlementBean);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    showToast(IntegrationIndentWriteActivity.this, R.string.connectedFaile);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            showToast(IntegrationIndentWriteActivity.this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(IntegrationIndentWriteActivity.this, R.string.connectedFaile);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(IntegrationIndentWriteActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
@@ -388,7 +390,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 //                默认实物
         params.put("integralProductType", shopCarGoodsSku.getIntegralProductType());
         params.put("source", 0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 tvIntegralDetailsCreateInt.setEnabled(true);
@@ -454,17 +456,25 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             }
                         }else{
                             showToast(IntegrationIndentWriteActivity.this, createIntegralIndentInfo.getIntegrationIndentBean()==null?
-                            createIntegralIndentInfo.getMsg():createIntegralIndentInfo.getIntegrationIndentBean().getMsg());
+                                    createIntegralIndentInfo.getMsg():createIntegralIndentInfo.getIntegrationIndentBean().getMsg());
                         }
                     }
                 }
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 tvIntegralDetailsCreateInt.setEnabled(true);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(IntegrationIndentWriteActivity.this,R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(IntegrationIndentWriteActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -554,11 +564,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderCreateNo);
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
     }
 
     /**
@@ -588,9 +594,9 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     }
 
     private void getAddressDetails() {
-        //地址详情内容
-        String url = Url.BASE_URL + Url.ADDRESS_DETAILS + addressId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", addressId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

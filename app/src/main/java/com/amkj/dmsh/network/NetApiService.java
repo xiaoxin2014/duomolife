@@ -4,6 +4,7 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -29,12 +30,29 @@ public interface NetApiService {
     Observable<String> getPostNetData(@Url String url);
 
     /**
+     * 获取同步方法
+     * @param url
+     * @return
+     */
+    @POST
+    Call<String> getPostSyncNetData(@Url String url);
+
+    /**
      * @param url    地址
      * @param params 参数
      * @return
      */
     @POST()
     Observable<String> getPostNetData(@Url String url, @QueryMap Map<String, Object> params);
+
+    /**
+     * 获取同步方法
+     * @param url
+     * @param params
+     * @return
+     */
+    @POST()
+    Call<String> getPostSyncNetData(@Url String url, @QueryMap Map<String, Object> params);
 
     /**
      * Get请求

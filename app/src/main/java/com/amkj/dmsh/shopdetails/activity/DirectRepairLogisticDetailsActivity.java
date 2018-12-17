@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectLogisticsAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean.LogisticsDetailsBean.LogisticsBean.LogisticTextBean;
@@ -35,6 +35,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_LOGISTIC;
 
 ;
 
@@ -100,11 +101,10 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_LOGISTIC;
         Map<String, Object> params = new HashMap<>();
         params.put("orderRefundProductId", orderRefundProductId);
         params.put("orderProductId", orderProductId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_REPAIR_LOGISTIC, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -117,21 +117,23 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
                         showToast(DirectRepairLogisticDetailsActivity.this, directLogisticsEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, directLogisticsEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, directLogisticsEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
                 showToast(DirectRepairLogisticDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
                 showToast(DirectRepairLogisticDetailsActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, directLogisticsEntity);
             }
         });
     }

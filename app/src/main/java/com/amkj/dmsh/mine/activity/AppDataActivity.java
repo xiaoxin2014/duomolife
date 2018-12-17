@@ -16,20 +16,21 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.google.gson.Gson;
 import com.luck.picture.lib.tools.PictureFileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -43,6 +44,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 ;
@@ -113,8 +115,9 @@ public class AppDataActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,DELIVERY_ADDRESS,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

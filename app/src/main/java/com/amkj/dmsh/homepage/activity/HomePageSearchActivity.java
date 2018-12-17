@@ -17,12 +17,11 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.HotSearchTagEntity;
 import com.amkj.dmsh.bean.HotSearchTagEntity.HotSearchTagBean;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.HotSearchAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.IndentSearchDetailsActivity;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxItemDecoration;
@@ -44,6 +43,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_LIST;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -233,8 +233,7 @@ public class HomePageSearchActivity extends BaseActivity {
     protected void loadData() {
         if(!TextUtils.isEmpty(searchType)
                 &&searchType.equals(SEARCH_ALL)){
-            String url = Url.BASE_URL + Url.H_HOT_SEARCH_LIST;
-            XUtil.Get(url, null, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,H_HOT_SEARCH_LIST,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     hotSearchList.clear();
@@ -254,11 +253,10 @@ public class HomePageSearchActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (hotSearchList.size() < 1) {
                         ll_search_hot.setVisibility(View.GONE);
                     }
-                    super.onError(ex, isOnCallback);
                 }
             });
         }else{

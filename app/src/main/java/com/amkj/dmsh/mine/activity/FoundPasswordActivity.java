@@ -15,14 +15,12 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.PasswordEncrypt;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.MinePassword;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -40,8 +38,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
+import static com.amkj.dmsh.constant.Url.MINE_RESET_PASSWORD;
 import static com.amkj.dmsh.utils.NetWorkUtils.isConnectedByState;
 
 ;
@@ -110,7 +108,7 @@ public class FoundPasswordActivity extends BaseActivity {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) { //提交验证码成功
                     //请求服务器
                     // 上传新密码
-                    ResetPassword(password);
+                    resetPassword(password);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码成功
                     //请求验证码成功，进入倒计时
                     showToast(FoundPasswordActivity.this, R.string.GetSmsCodeSuccess);
@@ -142,55 +140,56 @@ public class FoundPasswordActivity extends BaseActivity {
     @OnClick(R.id.tv_bind_send_code)
     void sendSmsCode(View view) {
         String phoneNumber = edit_binding_mobile.getText().toString().trim();
-        if (phoneNumber.length() == 11) {
+        if (phoneNumber.length() != 11) {
+            showToast(this, R.string.MobileError);
+            return;
+        }
 //            判断手机号是否注册
-            Map<String, Object> params = new HashMap<>();
-            params.put("mobile", phoneNumber);
-            NetLoadUtils.getQyInstance().loadNetDataPost(this, BASE_URL + CHECK_PHONE_IS_REG, params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    String code = "";
-                    String msg = "";
-                    try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        code = (String) jsonObject.get("code");
-                        msg = (String) jsonObject.get("msg");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (code.equals(SUCCESS_CODE)) {
-                        Gson gson = new Gson();
-                        RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
-                        if (status != null && status.getRegisterFlag() == 1) {
-                            if (isConnectedByState(FoundPasswordActivity.this)) {
-                                //            请求验证码
-                                tv_bind_send_code.setVisibility(View.GONE);
-                                reg_bind_code_gif_view.setVisibility(View.VISIBLE);
-                                SMSSDK.getVerificationCode("86", phoneNumber);
-                            } else {
-                                showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
-                            }
-                        } else if (status != null && status.getRegisterFlag() != 1) {
-                            showToast(FoundPasswordActivity.this, status.getResult());
+        Map<String, Object> params = new HashMap<>();
+        params.put("mobile", phoneNumber);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, CHECK_PHONE_IS_REG,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        String code = "";
+                        String msg = "";
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            code = (String) jsonObject.get("code");
+                            msg = (String) jsonObject.get("msg");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } else {
+                        if (code.equals(SUCCESS_CODE)) {
+                            Gson gson = new Gson();
+                            RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
+                            if (status != null && status.getRegisterFlag() == 1) {
+                                if (isConnectedByState(FoundPasswordActivity.this)) {
+                                    //            请求验证码
+                                    tv_bind_send_code.setVisibility(View.GONE);
+                                    reg_bind_code_gif_view.setVisibility(View.VISIBLE);
+                                    SMSSDK.getVerificationCode("86", phoneNumber);
+                                } else {
+                                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                                }
+                            } else if (status != null && status.getRegisterFlag() != 1) {
+                                showToast(FoundPasswordActivity.this, status.getResult());
+                            }
+                        } else {
+                            showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                        }
+                    }
+
+                    @Override
+                    public void netClose() {
                         showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
                     }
-                }
 
-                @Override
-                public void netClose() {
-                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
-                }
-            });
-        } else if (phoneNumber.length() < 11) {
-            showToast(this, "手机号码有误，请重新输入");
-        }
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(FoundPasswordActivity.this, R.string.do_failed);
+                    }
+                });
     }
 
     @OnClick(R.id.tv_bind_mobile_click)
@@ -198,36 +197,38 @@ public class FoundPasswordActivity extends BaseActivity {
         phoneNumber = edit_binding_mobile.getText().toString().trim();
         password = edit_bind_set_password_new.getText().toString().trim();
         String msgCode = edit_get_code.getText().toString().trim();
-        if (phoneNumber.length() == 11 && !TextUtils.isEmpty(msgCode)) {
-            //            提交验证码
-            if (isConnectedByState(FoundPasswordActivity.this)) {
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                SMSSDK.submitVerificationCode("86", phoneNumber, msgCode);
-            } else {
-                showToast(this, R.string.unConnectedNetwork);
-            }
-        } else {
-            if (phoneNumber.length() < 11) {
-                showToast(this, R.string.MobileError);
-            } else if (TextUtils.isEmpty(msgCode)) {
-                showToast(this, R.string.SmsCodeNull);
-            }
+        if (phoneNumber.length() < 11) {
+            showToast(this, R.string.MobileError);
+            return;
         }
+        if (TextUtils.isEmpty(msgCode)) {
+            showToast(this, R.string.SmsCodeNull);
+            return;
+        }
+        if (!isConnectedByState(FoundPasswordActivity.this)) {
+            showToast(this, R.string.unConnectedNetwork);
+            return;
+        }
+
+        if (setPasswordRule(password)) return;
+
+        if (loadHud != null) {
+            loadHud.show();
+        }
+        SMSSDK.submitVerificationCode("86", phoneNumber, msgCode);
     }
 
     //重置密码
-    private void ResetPassword(String newPassword) {
+    private void resetPassword(String newPassword) {
+        if (setPasswordRule(newPassword)) return;
         if (loadHud != null) {
             loadHud.show();
         }
         String passwordNewLock = PasswordEncrypt.getEncryptedPassword(newPassword);
-        String url = BASE_URL + Url.MINE_RESET_PASSWORD;
         Map<String, Object> params = new HashMap<>();
         params.put("mobile", phoneNumber);
         params.put("newPassword", passwordNewLock);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_RESET_PASSWORD, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -252,14 +253,38 @@ public class FoundPasswordActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showException(getResources().getString(R.string.do_failed));
             }
+
+            @Override
+            public void netClose() {
+                showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+            }
         });
+    }
+
+    private boolean setPasswordRule(String newPassword) {
+        if (TextUtils.isEmpty(newPassword)) {
+            showToast(this, "请输入新密码");
+            return true;
+        }
+        if (newPassword.length() < 5) {
+            showToast(this, R.string.PasswordLessSix);
+            return true;
+        }
+        if (!PasswordEncrypt.isPwEligibility(newPassword)) {
+            showToast(this, R.string.PasswordInconformity);
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -21,9 +21,6 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean.ChildCategoryListBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
 import com.amkj.dmsh.dominant.adapter.QualityPageAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityProductTypeAdapter;
@@ -31,16 +28,13 @@ import com.amkj.dmsh.dominant.adapter.QualityProductTypeSpecificAdapter;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.SystemBarHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
-
-import org.xutils.ex.HttpException;
+import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,8 +48,10 @@ import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
@@ -68,6 +64,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HOR_TYPE;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_TYPE;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -209,7 +209,6 @@ public class QualityFragment extends BaseFragment {
         });
         std_quality_type.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         std_quality_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 30));
-        setStatusColor();
         badge = getBadge(getActivity(), fl_shop_car_quality);
     }
 
@@ -217,12 +216,6 @@ public class QualityFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) rv_quality_product_type.getLayoutManager();
         linearLayoutManager.scrollToPositionWithOffset(position, 0);
         linearLayoutManager.setStackFromEnd(true);
-    }
-
-    private void setStatusColor() {
-        SystemBarHelper.setPadding(getActivity(), rel_quality_header);
-        SystemBarHelper.setPadding(getActivity(), ll_drawer_quality);
-        SystemBarHelper.immersiveStatusBar(getActivity());
     }
 
     @Override
@@ -235,34 +228,30 @@ public class QualityFragment extends BaseFragment {
     }
 
     private void getFloatAd() {
-        if (NetWorkUtils.checkNet(getActivity())) {
-            String url = Url.BASE_URL + Url.H_Q_FLOAT_AD;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
-                    if (floatAdEntity != null) {
-                        if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (floatAdEntity.getCommunalADActivityBean() != null) {
-                                iv_float_ad_icon.setVisibility(View.VISIBLE);
-                                GlideImageLoaderUtil.loadFitCenter(getActivity(), iv_float_ad_icon,
-                                        getStrings(floatAdEntity.getCommunalADActivityBean().getPicUrl()));
-                                iv_float_ad_icon.setTag(R.id.iv_tag, floatAdEntity.getCommunalADActivityBean());
-                            }
-                        } else {
-                            iv_float_ad_icon.setVisibility(View.GONE);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_Q_FLOAT_AD,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
+                if (floatAdEntity != null) {
+                    if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (floatAdEntity.getCommunalADActivityBean() != null) {
+                            iv_float_ad_icon.setVisibility(View.VISIBLE);
+                            GlideImageLoaderUtil.loadFitCenter(getActivity(), iv_float_ad_icon,
+                                    getStrings(floatAdEntity.getCommunalADActivityBean().getPicUrl()));
+                            iv_float_ad_icon.setTag(R.id.iv_tag, floatAdEntity.getCommunalADActivityBean());
                         }
+                    } else {
+                        iv_float_ad_icon.setVisibility(View.GONE);
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    iv_float_ad_icon.setVisibility(View.GONE);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onNotNetOrException() {
+                iv_float_ad_icon.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void getCarCount() {
@@ -271,10 +260,9 @@ public class QualityFragment extends BaseFragment {
             return;
         }
         //购物车数量展示
-        String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -317,174 +305,68 @@ public class QualityFragment extends BaseFragment {
 
 
     private void getQualityHorType() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_HOR_TYPE;
-        XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
-            private boolean hasError = false;
-            private String result = null;
-            private boolean hasCache = false;
-
-            @Override
-            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                this.result = result;
-                hasCache = true;
-                getTypeHorDataJson(result);
-//                判断当前网络是否连接
-                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-            }
-
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),QUALITY_SHOP_HOR_TYPE,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                //如果服务返回304或onCache选择了信任缓存,这时result为null
-                if (result != null) {
-                    this.result = result;
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                hasError = true;
-//                    showToast(x.app(), ex.getMessage());
-                if (ex instanceof HttpException) { //网络错误
-                    HttpException httpEx = (HttpException) ex;
-                    int responseCode = httpEx.getCode();
-                    String responseMsg = httpEx.getMessage();
-                    String errorResult = httpEx.getResult();
-                    //...
-                } else { //其他错误
-                    //...
-                }
-                if (hasCache) {
-                    showToast(getActivity(), R.string.unConnectedNetwork);
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-
-            @Override
-            public void onFinished() {
-                if (!hasError && result != null) {
-                    //成功获取数据
-//                    showToast(x.app(), result);
-                    getTypeHorDataJson(result);
+                Gson gson = new Gson();
+                QualityTypeEntity typeBean = gson.fromJson(result, QualityTypeEntity.class);
+                if (typeBean != null) {
+                    if (typeBean.getCode().equals(SUCCESS_CODE)) {
+                        setSlideData(typeBean.getQualityTypeBeanList());
+                    } else if(!EMPTY_CODE.equals(typeBean.getCode())){
+                        showToast(getActivity(), typeBean.getMsg());
+                    }
                 }
             }
         });
-    }
-
-    private void getTypeHorDataJson(String result) {
-        Gson gson = new Gson();
-        QualityTypeEntity typeBean = gson.fromJson(result, QualityTypeEntity.class);
-        if (typeBean != null) {
-            if (typeBean.getCode().equals(SUCCESS_CODE)) {
-                setSlideData(typeBean.getQualityTypeBeanList());
-            } else {
-                showToast(getActivity(), typeBean.getMsg());
-            }
-        }
     }
 
     private void getQualitySideType() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_TYPE;
-        XUtil.GetCache(url, 0, null, new MyCacheCallBack<String>() {
-            private boolean hasError = false;
-            private String result = null;
-            private boolean hasCache = false;
-
-            @Override
-            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                this.result = result;
-                hasCache = true;
-                getTypeDataJson(result);
-//                判断当前网络是否连接
-                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-            }
-
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),QUALITY_SHOP_TYPE,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                //如果服务返回304或onCache选择了信任缓存,这时result为null
-                if (result != null) {
-                    this.result = result;
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                hasError = true;
-//                    showToast(x.app(), ex.getMessage());
-                if (ex instanceof HttpException) { //网络错误
-                    HttpException httpEx = (HttpException) ex;
-                    int responseCode = httpEx.getCode();
-                    String responseMsg = httpEx.getMessage();
-                    String errorResult = httpEx.getResult();
-                    //...
-                } else { //其他错误
-                    //...
-                }
-                if (hasCache) {
-                    showToast(getActivity(), R.string.unConnectedNetwork);
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-
-            @Override
-            public void onFinished() {
-                if (!hasError && result != null) {
-                    //成功获取数据
-//                    showToast(x.app(), result);
-                    getTypeDataJson(result);
+                Gson gson = new Gson();
+                QualityTypeEntity typeBean = gson.fromJson(result, QualityTypeEntity.class);
+                qualityTypeSpecificBeanList.clear();
+                qualityTypeBeanList.clear();
+                if (typeBean != null) {
+                    if (typeBean.getCode().equals(SUCCESS_CODE)) {
+                        qualityTypeBeanList.addAll(typeBean.getQualityTypeBeanList());
+                        if (qualityTypeBeanList.size() > 0) {
+                            QualityTypeBean qualityTypeBean = qualityTypeBeanList.get(0);
+                            qualityTypeBean.setSelect(true);
+                        }
+                        for (QualityTypeBean qualityTypeBean : qualityTypeBeanList) {
+                            qualityTypeBean.setItemType(TYPE_1);
+                            qualityTypeSpecificBeanList.add(qualityTypeBean);
+                            if (qualityTypeBean.getChildCategoryList() == null) {
+                                QualityTypeBean qualityType = new QualityTypeBean();
+                                qualityType.setId(qualityTypeBean.getId());
+                                qualityType.setName(qualityTypeBean.getName());
+                                qualityType.setPicUrl(qualityTypeBean.getPicUrl());
+                                qualityType.setType(qualityTypeBean.getType());
+                                qualityTypeSpecificBeanList.add(qualityType);
+                            } else {
+                                for (ChildCategoryListBean childCategoryListBean : qualityTypeBean.getChildCategoryList()) {
+                                    QualityTypeBean qualityType = new QualityTypeBean();
+                                    qualityType.setPicUrl(getStrings(childCategoryListBean.getPicUrl()));
+                                    qualityType.setPid(childCategoryListBean.getPid());
+                                    qualityType.setId(childCategoryListBean.getId());
+                                    qualityType.setName(getStrings(childCategoryListBean.getName()));
+                                    qualityType.setType(childCategoryListBean.getType());
+                                    qualityType.setpName(getStrings(qualityTypeBean.getName()));
+                                    qualityTypeSpecificBeanList.add(qualityType);
+                                }
+                            }
+                        }
+                        productTypeSpecificAdapter.notifyDataSetChanged();
+                        productTypeAdapter.notifyDataSetChanged();
+                    } else if (!typeBean.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), typeBean.getMsg());
+                    }
                 }
             }
         });
-    }
-
-    private void getTypeDataJson(String result) {
-        Gson gson = new Gson();
-        QualityTypeEntity typeBean = gson.fromJson(result, QualityTypeEntity.class);
-        qualityTypeSpecificBeanList.clear();
-        qualityTypeBeanList.clear();
-        if (typeBean != null) {
-            if (typeBean.getCode().equals(SUCCESS_CODE)) {
-                qualityTypeBeanList.addAll(typeBean.getQualityTypeBeanList());
-                if (qualityTypeBeanList.size() > 0) {
-                    QualityTypeBean qualityTypeBean = qualityTypeBeanList.get(0);
-                    qualityTypeBean.setSelect(true);
-                }
-                for (QualityTypeBean qualityTypeBean : qualityTypeBeanList) {
-                    qualityTypeBean.setItemType(TYPE_1);
-                    qualityTypeSpecificBeanList.add(qualityTypeBean);
-                    if (qualityTypeBean.getChildCategoryList() == null) {
-                        QualityTypeBean qualityType = new QualityTypeBean();
-                        qualityType.setId(qualityTypeBean.getId());
-                        qualityType.setName(qualityTypeBean.getName());
-                        qualityType.setPicUrl(qualityTypeBean.getPicUrl());
-                        qualityType.setType(qualityTypeBean.getType());
-                        qualityTypeSpecificBeanList.add(qualityType);
-                    } else {
-                        for (ChildCategoryListBean childCategoryListBean : qualityTypeBean.getChildCategoryList()) {
-                            QualityTypeBean qualityType = new QualityTypeBean();
-                            qualityType.setPicUrl(getStrings(childCategoryListBean.getPicUrl()));
-                            qualityType.setPid(childCategoryListBean.getPid());
-                            qualityType.setId(childCategoryListBean.getId());
-                            qualityType.setName(getStrings(childCategoryListBean.getName()));
-                            qualityType.setType(childCategoryListBean.getType());
-                            qualityType.setpName(getStrings(qualityTypeBean.getName()));
-                            qualityTypeSpecificBeanList.add(qualityType);
-                        }
-                    }
-                }
-                productTypeSpecificAdapter.notifyDataSetChanged();
-                productTypeAdapter.notifyDataSetChanged();
-            } else if (typeBean.getCode().equals(EMPTY_CODE)) {
-                showToast(getActivity(), R.string.invalidData);
-            } else {
-                showToast(getActivity(), typeBean.getMsg());
-            }
-        }
     }
 
     private void setSlideData(List<QualityTypeBean> qualityTypeBeanList) {
@@ -539,8 +421,18 @@ public class QualityFragment extends BaseFragment {
     void floatAdSkip(View view) {
         CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag(R.id.iv_tag);
         if (communalADActivityBean != null) {
-            ConstantMethod.adClickTotal(communalADActivityBean.getObjectId());
-            ConstantMethod.setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
+            adClickTotal(communalADActivityBean.getObjectId());
+            setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
+    }
+    @Override
+    public boolean immersionBarEnabled() {
+        return true;
+    }
+
+    @Override
+    public void initImmersionBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
+                .statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 }

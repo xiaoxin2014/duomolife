@@ -12,17 +12,14 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
 import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -44,10 +41,15 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_ARTICLE;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
+import static com.amkj.dmsh.constant.Url.MINE_INVITATION_DEL;
+import static com.amkj.dmsh.constant.Url.MINE_INVITATION_LIST;
 
 ;
 ;
@@ -204,12 +206,8 @@ public class MineInvitationListActivity extends BaseActivity {
         adapterInvitationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (invitationDetailList.size() >= page * DEFAULT_TOTAL_COUNT) {
-                    page++;
-                    getMyInvitationData();
-                } else {
-                    adapterInvitationAdapter.loadMoreEnd();
-                }
+                page++;
+                getMyInvitationData();
             }
         }, communal_recycler);
     }
@@ -232,62 +230,57 @@ public class MineInvitationListActivity extends BaseActivity {
 
     private void getMyInvitationData() {
         if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
             return;
         }
-        String url = Url.BASE_URL + Url.MINE_INVITATION_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("uid", userId);
         params.put("version", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                if (page == 1) {
-                    invitationDetailList.clear();
-                }
-                Gson gson = new Gson();
-                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                if (invitationDetailEntity != null) {
-                    if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
-                    } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(MineInvitationListActivity.this, invitationDetailEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_INVITATION_LIST,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitationAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            invitationDetailList.clear();
+                        }
+                        Gson gson = new Gson();
+                        invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                        if (invitationDetailEntity != null) {
+                            if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                                invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
+                            } else if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                adapterInvitationAdapter.loadMoreEnd();
+                            } else {
+                                showToast(MineInvitationListActivity.this, invitationDetailEntity.getMsg());
+                            }
+                            adapterInvitationAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
                     }
-                    adapterInvitationAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                adapterInvitationAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
-            }
-        });
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        adapterInvitationAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
+                    }
+                });
     }
 
     //    文章收藏
     private void setArticleCollect(final InvitationDetailBean invitationDetailBean, View view) {
         final TextView tv_collect = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
-        params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        params.put("type", TYPE_C_ARTICLE);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -302,38 +295,40 @@ public class MineInvitationListActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(MineInvitationListActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(MineInvitationListActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void setArticleLiked(InvitationDetailBean invitationDetailBean, View view) {
         TextView tv_like = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
 
     private void delArticle() {
-        String url = Url.BASE_URL + Url.MINE_INVITATION_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", invitationDetailBean.getId());
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_INVITATION_DEL,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

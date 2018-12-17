@@ -11,14 +11,13 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.TimeShowPagerAdapter;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.SystemBarHelper;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +32,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_SHAFT;
 
 ;
 
@@ -66,7 +66,6 @@ public class TimeShowNewFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        setStatusColor();
         tv_life_back.setVisibility(View.GONE);
         tv_header_shared.setVisibility(View.GONE);
         tv_header_title.setText("限时特惠");
@@ -80,11 +79,15 @@ public class TimeShowNewFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    private void setStatusColor() {
-        SystemBarHelper.setPadding(getActivity(), ll_spr_sale);
-        SystemBarHelper.immersiveStatusBar(getActivity());
+        vp_show_time.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageSelected(int position) {
+                if(position<rp_time_spring.getChildCount()){
+                    RadioButton radioButton = (RadioButton) rp_time_spring.getChildAt(position);
+                    radioButton.setChecked(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -93,8 +96,7 @@ public class TimeShowNewFragment extends BaseFragment {
     }
 
     private void getTimeShaft() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_SHAFT;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),TIME_SHOW_SHAFT,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if(loadHud!=null){
@@ -122,8 +124,7 @@ public class TimeShowNewFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onNotNetOrException() {
                 if(loadHud!=null){
                     loadHud.dismiss();
                 }
@@ -170,5 +171,14 @@ public class TimeShowNewFragment extends BaseFragment {
             }
             getTimeShaft();
         }
+    }
+    @Override
+    public boolean immersionBarEnabled() {
+        return true;
+    }
+    @Override
+    public void initImmersionBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
+                .statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 }

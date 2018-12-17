@@ -19,14 +19,13 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectPublishAppraiseAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
@@ -51,6 +50,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.Q_SEND_APPRAISE;
 
 ;
 
@@ -272,7 +272,6 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
     }
 
     private void sendAppraiseData(List<DirectAppraisePassBean> directAppraisePassList) {
-        String url = Url.BASE_URL + Url.Q_SEND_APPRAISE;
         Map<String, Object> params = new HashMap<>();
         params.put("orderNo", orderNo);
         params.put("userId", userId);
@@ -298,7 +297,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
             }
         }
         params.put("evaluates", jsonArray.toString());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_SEND_APPRAISE,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -320,14 +319,22 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 tv_header_shared.setText("发表评价");
                 tv_header_shared.setEnabled(true);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(DirectPublishAppraiseActivity.this, R.string.commit_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DirectPublishAppraiseActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

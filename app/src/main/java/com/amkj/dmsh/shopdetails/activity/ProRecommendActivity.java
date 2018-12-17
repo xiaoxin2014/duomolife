@@ -13,6 +13,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.ShopRecommendHotTopicAdapter;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
@@ -40,6 +41,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.Url.Q_SP_DETAIL_RECOMMEND;
 
 ;
 ;
@@ -155,10 +157,9 @@ public class ProRecommendActivity extends BaseActivity {
      * 获取推荐商品
      */
     private void getDoMoRecommend() {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_SP_DETAIL_RECOMMEND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -172,21 +173,23 @@ public class ProRecommendActivity extends BaseActivity {
                     }
                 }
                 shopRecommendHotTopicAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
         });
     }
@@ -198,7 +201,7 @@ public class ProRecommendActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -215,21 +218,23 @@ public class ProRecommendActivity extends BaseActivity {
                     }
                 }
                 shopRecommendHotTopicAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
                 showToast(ProRecommendActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, proRecommendBeans, recommendHotTopicEntity);
             }
         });
     }

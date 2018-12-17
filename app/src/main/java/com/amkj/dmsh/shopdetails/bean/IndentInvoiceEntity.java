@@ -12,7 +12,7 @@ import java.util.Map;
  * class description:请输入类描述
  */
 
-public class IndentInvoiceEntity extends BaseEntity{
+public class IndentInvoiceEntity extends BaseEntity {
 
     /**
      * result : {"invoice":{"imgUrl":"http://img.domolife.cn/platform/M6wBbjNxbX.png","amount":0,"orderNo":"cX27863X4763X1492755883425","id":7,"title":"测试","type":1,"content":"明细","status":2},"type":{"1":"电子发票","2":"纸质发票 "},"status":{"0":"未开","1":"待开","2":"已开 "}}
@@ -76,6 +76,12 @@ public class IndentInvoiceEntity extends BaseEntity{
              * type : 1
              * content : 明细
              * status : 2
+             * taxpayer_on：纳税人识别号
+             * content：发票内容
+             * address：地址
+             * mobile：电话
+             * bankOfDeposit：开户行
+             * account：账号
              */
 
             private String imgUrl;
@@ -85,6 +91,11 @@ public class IndentInvoiceEntity extends BaseEntity{
             private String title;
             private int type;
             private String content;
+            private String taxpayer_on;
+            private String address;
+            private String mobile;
+            private String bankOfDeposit;
+            private String account;
             private int status;
 
             public String getImgUrl() {
@@ -125,6 +136,46 @@ public class IndentInvoiceEntity extends BaseEntity{
 
             public void setTitle(String title) {
                 this.title = title;
+            }
+
+            public String getTaxpayer_on() {
+                return taxpayer_on;
+            }
+
+            public void setTaxpayer_on(String taxpayer_on) {
+                this.taxpayer_on = taxpayer_on;
+            }
+
+            public String getAddress() {
+                return address;
+            }
+
+            public void setAddress(String address) {
+                this.address = address;
+            }
+
+            public String getMobile() {
+                return mobile;
+            }
+
+            public void setMobile(String mobile) {
+                this.mobile = mobile;
+            }
+
+            public String getBankOfDeposit() {
+                return bankOfDeposit;
+            }
+
+            public void setBankOfDeposit(String bankOfDeposit) {
+                this.bankOfDeposit = bankOfDeposit;
+            }
+
+            public String getAccount() {
+                return account;
+            }
+
+            public void setAccount(String account) {
+                this.account = account;
             }
 
             public int getType() {

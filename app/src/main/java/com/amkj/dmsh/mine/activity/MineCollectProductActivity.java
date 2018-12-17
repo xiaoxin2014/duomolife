@@ -15,22 +15,17 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineCollectProAdapter;
 import com.amkj.dmsh.mine.bean.CollectProEntity;
 import com.amkj.dmsh.mine.bean.CollectProEntity.CollectProBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -46,10 +41,12 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.CANCEL_MULTI_COLLECT_PRO;
+import static com.amkj.dmsh.constant.Url.COLLECT_PRO;
 
 ;
 ;
@@ -107,12 +104,8 @@ public class MineCollectProductActivity extends BaseActivity {
         mineCollectProAdapter = new MineCollectProAdapter(MineCollectProductActivity.this, collectProList);
         communal_recycler.setAdapter(mineCollectProAdapter);
         mineCollectProAdapter.setOnLoadMoreListener(() -> {
-            if (page * DEFAULT_TOTAL_COUNT <= collectProList.size()) {
-                page++;
-                getCollectPro();
-            } else {
-                mineCollectProAdapter.loadMoreEnd();
-            }
+            page++;
+            getCollectPro();
         }, communal_recycler);
         mineCollectProAdapter.setOnItemClickListener((adapter, view, position) -> {
             CollectProBean collectProBean = (CollectProBean) view.getTag();
@@ -144,12 +137,7 @@ public class MineCollectProductActivity extends BaseActivity {
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -200,12 +188,14 @@ public class MineCollectProductActivity extends BaseActivity {
     }
 
     private void getCollectPro() {
-        String url = Url.BASE_URL + Url.COLLECT_PRO;
+        if(userId<1){
+            return;
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", page);
-        params.put("count", DEFAULT_TOTAL_COUNT);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        params.put("count", TOTAL_COUNT_TWENTY);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_PRO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -219,29 +209,23 @@ public class MineCollectProductActivity extends BaseActivity {
                     if (collectProEntity.getCode().equals(SUCCESS_CODE)) {
                         collectProList.addAll(collectProEntity.getCollectProList());
                         tv_header_titleAll.setText("收藏商品(" + collectProEntity.getCount() + ")");
-                    } else if (!collectProEntity.getCode().equals(EMPTY_CODE)) {
+                    } else if (collectProEntity.getCode().equals(EMPTY_CODE)) {
+                        mineCollectProAdapter.loadMoreEnd();
+                    }else{
                         showToast(MineCollectProductActivity.this, collectProEntity.getMsg());
                     }
                     mineCollectProAdapter.notifyDataSetChanged();
                 }
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, collectProList, collectProEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, collectProList, collectProEntity);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                mineCollectProAdapter.loadMoreComplete();
+                mineCollectProAdapter.loadMoreEnd(true);
                 setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, collectProList, collectProEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                mineCollectProAdapter.loadMoreComplete();
-                setEditStatusVisible();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, collectProList, collectProEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, collectProList, collectProEntity);
             }
         });
     }
@@ -345,45 +329,48 @@ public class MineCollectProductActivity extends BaseActivity {
      * @param collectProList
      */
     private void delMultiSelGoods(List<CollectProBean> collectProList) {
-        if (NetWorkUtils.checkNet(MineCollectProductActivity.this)) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            String url = Url.BASE_URL + Url.CANCEL_MULTI_COLLECT_PRO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            params.put("ids", getCancelProId(collectProList));
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    RequestStatus status = gson.fromJson(result, RequestStatus.class);
-                    if (status != null) {
-                        if (status.getCode().equals(SUCCESS_CODE)) {
-                            showToast(MineCollectProductActivity.this, "已取消收藏");
-                            page = 1;
-                            loadData();
-                        } else {
-                            showToast(MineCollectProductActivity.this, status.getMsg());
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    showToast(MineCollectProductActivity.this, R.string.do_failed);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            showToast(MineCollectProductActivity.this, R.string.unConnectedNetwork);
+        if (loadHud != null) {
+            loadHud.show();
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("ids", getCancelProId(collectProList));
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,CANCEL_MULTI_COLLECT_PRO,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+                if (status != null) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
+                        showToast(MineCollectProductActivity.this, "已取消收藏");
+                        page = 1;
+                        loadData();
+                    } else {
+                        showToast(MineCollectProductActivity.this, status.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(MineCollectProductActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(MineCollectProductActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**

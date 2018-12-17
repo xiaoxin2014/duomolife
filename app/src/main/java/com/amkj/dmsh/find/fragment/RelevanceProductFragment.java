@@ -12,7 +12,7 @@ import android.widget.CheckBox;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.RelevanceProAdapter;
 import com.amkj.dmsh.release.bean.RelevanceProEntity;
@@ -22,8 +22,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -47,6 +45,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RELEVANCE_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.REL_COLLECT_PRO;
+import static com.amkj.dmsh.constant.Url.REL_INDENT_PRO;
+import static com.amkj.dmsh.constant.Url.REL_SHOP_CAR_PRO;
 
 ;
 
@@ -132,29 +133,21 @@ public class RelevanceProductFragment extends BaseFragment {
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
-        relevanceProAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                switch (relevanceType) {
-                    case COLLECT_PRODUCT:
-                        colProPage++;
-                        getColProData();
-                        break;
-                    case CART_PRODUCT:
-                        carProPage++;
-                        getShopCarProData();
-                        break;
-                    default:
-                        indentProPage++;
-                        getDoMoIndentProData();
-                        break;
-                }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
+        relevanceProAdapter.setOnLoadMoreListener(() -> {
+            switch (relevanceType) {
+                case COLLECT_PRODUCT:
+                    colProPage++;
+                    getColProData();
+                    break;
+                case CART_PRODUCT:
+                    carProPage++;
+                    getShopCarProData();
+                    break;
+                default:
+                    indentProPage++;
+                    getDoMoIndentProData();
+                    break;
             }
         }, communal_recycler);
         relevanceProAdapter.setEmptyView(getEmptyView(getActivity(), "商品"));
@@ -209,13 +202,12 @@ public class RelevanceProductFragment extends BaseFragment {
 
     //  订单关联商品
     private void getDoMoIndentProData() {
-        String url = Url.BASE_URL + Url.REL_INDENT_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", indentProPage);
         params.put("showCount", TOTAL_COUNT_TWENTY);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), REL_INDENT_PRO
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -239,24 +231,24 @@ public class RelevanceProductFragment extends BaseFragment {
                             }
                             relevanceProAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        relevanceProAdapter.loadMoreComplete();
-                        relevanceProAdapter.loadMoreEnd(false);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                        showToast(getActivity(), R.string.unConnectedNetwork);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        relevanceProAdapter.loadMoreComplete();
-                        relevanceProAdapter.loadMoreEnd(false);
                         showToast(getActivity(), R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
                 });
     }
@@ -277,66 +269,64 @@ public class RelevanceProductFragment extends BaseFragment {
     }
 
     private void getShopCarProData() {
-        String url = Url.BASE_URL + Url.REL_SHOP_CAR_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", carProPage);
         params.put("showCount", TOTAL_COUNT_TWENTY);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                relevanceProAdapter.loadMoreComplete();
-                if (carProPage == 1) {
-                    relevanceCarProList.clear();
-                    relevanceProList.clear();
-                }
-                Gson gson = new Gson();
-                relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
-                if (relevanceProEntity != null) {
-                    if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
-                        relevanceCarProList.addAll(relevanceProEntity.getRelevanceProList());
-                        relevanceProList.removeAll(relevanceCarProList);
-                        relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList, relevanceSelProList));
-                    } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
-                        relevanceProAdapter.loadMoreEnd(false);
-                    } else {
-                        relevanceProAdapter.loadMoreEnd(false);
-                        showToast(getActivity(), relevanceProEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), REL_SHOP_CAR_PRO,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        relevanceProAdapter.loadMoreComplete();
+                        if (carProPage == 1) {
+                            relevanceCarProList.clear();
+                            relevanceProList.clear();
+                        }
+                        Gson gson = new Gson();
+                        relevanceProEntity = gson.fromJson(result, RelevanceProEntity.class);
+                        if (relevanceProEntity != null) {
+                            if (relevanceProEntity.getCode().equals(SUCCESS_CODE)) {
+                                relevanceCarProList.addAll(relevanceProEntity.getRelevanceProList());
+                                relevanceProList.removeAll(relevanceCarProList);
+                                relevanceProList.addAll(changeRelevanceProduct(relevanceCarProList, relevanceSelProList));
+                            } else if (relevanceProEntity.getCode().equals(EMPTY_CODE)) {
+                                relevanceProAdapter.loadMoreEnd();
+                            } else {
+                                relevanceProAdapter.loadMoreEnd();
+                                showToast(getActivity(), relevanceProEntity.getMsg());
+                            }
+                            relevanceProAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
-                    relevanceProAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
-            }
 
-            @Override
-            public void netClose() {
-                relevanceProAdapter.loadMoreComplete();
-                relevanceProAdapter.loadMoreEnd(false);
-                smart_communal_refresh.finishRefresh();
-                showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        relevanceProAdapter.loadMoreEnd(true);
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                relevanceProAdapter.loadMoreComplete();
-                relevanceProAdapter.loadMoreEnd(false);
-                smart_communal_refresh.finishRefresh();
-                showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(getActivity(), R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(getActivity(), R.string.invalidData);
+                    }
+                });
     }
 
     private void getColProData() {
-        String url = Url.BASE_URL + Url.REL_COLLECT_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", colProPage);
         params.put("showCount", TOTAL_COUNT_TWENTY);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), REL_COLLECT_PRO
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         relevanceProAdapter.loadMoreComplete();
@@ -360,25 +350,24 @@ public class RelevanceProductFragment extends BaseFragment {
                             }
                             relevanceProAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        relevanceProAdapter.loadMoreEnd(true);
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        relevanceProAdapter.loadMoreEnd(false);
-                        smart_communal_refresh.finishRefresh();
-                        relevanceProAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        relevanceProAdapter.loadMoreEnd(false);
-                        smart_communal_refresh.finishRefresh();
-                        relevanceProAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, relevanceProList, relevanceProEntity);
                     }
                 });
     }

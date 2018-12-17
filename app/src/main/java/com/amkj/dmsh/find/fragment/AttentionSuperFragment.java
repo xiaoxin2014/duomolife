@@ -13,17 +13,13 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
 import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -36,11 +32,15 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_ARTICLE;
+import static com.amkj.dmsh.constant.Url.FIND_RECOMMEND;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 
 ;
 
@@ -75,12 +75,8 @@ public class AttentionSuperFragment extends BaseFragment {
         adapterInvitationAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= adapterInvitationAdapter.getItemCount()) {
-                    page++;
-                    getAttentionInvitationData();
-                } else {
-                    adapterInvitationAdapter.loadMoreEnd();
-                }
+                page++;
+                getAttentionInvitationData();
             }
         }, communal_recycler);
         adapterInvitationAdapter.setEmptyView(R.layout.layout_attention_empty, (ViewGroup) communal_recycler.getParent());
@@ -151,14 +147,13 @@ public class AttentionSuperFragment extends BaseFragment {
     //    文章收藏
     private void setArticleCollect(final InvitationDetailBean invitationDetailBean, View view) {
         final TextView tv_collect = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", invitationDetailBean.getId());
-        params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        params.put("type", TYPE_C_ARTICLE);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -167,36 +162,39 @@ public class AttentionSuperFragment extends BaseFragment {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());
-                        tv_collect.setText(ConstantMethod.getNumCount(tv_collect.isSelected(), invitationDetailBean.isCollect(), invitationDetailBean.getCollect(), "收藏"));
+                        tv_collect.setText(getNumCount(tv_collect.isSelected(), invitationDetailBean.isCollect(), invitationDetailBean.getCollect(), "收藏"));
                     }
                 }
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(getActivity(), String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }
 
     private void setArticleLiked(InvitationDetailBean invitationDetailBean, View view) {
         TextView tv_like = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_DETAILS_FAVOR,params,null);
         tv_like.setSelected(!tv_like.isSelected());
-        tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
+        tv_like.setText(getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
 
     //设置显示
@@ -219,50 +217,54 @@ public class AttentionSuperFragment extends BaseFragment {
     }
 
     private void getAttentionInvitationData() {
-        if (userId != 0) {
-            String url = Url.BASE_URL + Url.FIND_RECOMMEND;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", page);
-            params.put("fuid", userId);
-            params.put("isFllow", "fllow");
-            params.put("version", 1);
-            NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            adapterInvitationAdapter.loadMoreComplete();
-                            if (page == 1) {
-                                invitationSearchList.clear();
-                            }
-                            Gson gson = new Gson();
-                            invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
-                            if (invitationDetailEntity != null) {
-                                if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                                    invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
-                                }else if(!EMPTY_CODE.equals(invitationDetailEntity.getCode())){
-                                    showToast(getActivity(), invitationDetailEntity.getMsg());
-                                }
-                                adapterInvitationAdapter.notifyDataSetChanged();
-                            }
-                            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                        }
-
-                        @Override
-                        public void netClose() {
-                            adapterInvitationAdapter.loadMoreComplete();
-                            showToast(getActivity(), R.string.unConnectedNetwork);
-                            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            adapterInvitationAdapter.loadMoreComplete();
-                            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                        }
-                    });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("fuid", userId);
+        params.put("isFllow", "fllow");
+        params.put("version", 1);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_RECOMMEND
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        adapterInvitationAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            invitationSearchList.clear();
+                        }
+                        Gson gson = new Gson();
+                        invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+                        if (invitationDetailEntity != null) {
+                            if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                                invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
+                            } else if (!EMPTY_CODE.equals(invitationDetailEntity.getCode())) {
+                                showToast(getActivity(), invitationDetailEntity.getMsg());
+                            }
+                            adapterInvitationAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        adapterInvitationAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(getActivity(), R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(getActivity(), R.string.invalidData);
+                    }
+                });
+
+
     }
 
     @Override

@@ -16,21 +16,18 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -55,9 +52,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
+import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
 ;
@@ -150,12 +149,8 @@ public class QualityCustomTopicFragment extends BaseFragment {
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= customProList.size()) {
-                    page++;
-                    getQualityCustomPro();
-                } else {
-                    qualityTypeProductAdapter.loadMoreEnd();
-                }
+                page++;
+                getQualityCustomPro();
             }
         }, communal_recycler);
         qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -220,80 +215,78 @@ public class QualityCustomTopicFragment extends BaseFragment {
      * 获取自定义专区封面描述
      */
     private void getCustomCoverDescription() {
-        String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_COVER;
-        if (NetWorkUtils.checkNet(getActivity())
-                && !TextUtils.isEmpty(productType)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("productType", productType);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (descriptionList.size() > 0) {
-                        descriptionList.clear();
-                        communalDetailAdapter.notifyDataSetChanged();
-                    }
-                    Gson gson = new Gson();
-                    CustomCoverDesEntity customCoverDesEntity = gson.fromJson(result, CustomCoverDesEntity.class);
-                    if (customCoverDesEntity != null) {
-                        if (customCoverDesEntity.getCode().equals(SUCCESS_CODE)
-                                && customCoverDesEntity.getCoverDesList() != null
-                                && customCoverDesEntity.getCoverDesList().size() > 0) {
-                            CustomCoverDesBean customCoverDesBean = customCoverDesEntity.getCoverDesList().get(0);
-                            if (!TextUtils.isEmpty(customCoverDesBean.getPicUrl())) {
-                                qNewProView.iv_communal_cover_wrap.setVisibility(View.VISIBLE);
-                                GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), qNewProView.iv_communal_cover_wrap,
-                                        getStrings(customCoverDesBean.getPicUrl()));
-                            } else {
-                                qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
-                            }
-                            if (customCoverDesBean.getDescriptionList() != null
-                                    && customCoverDesBean.getDescriptionList().size() > 0) {
-                                qNewProView.communal_recycler_wrap.setVisibility(View.VISIBLE);
-                                qNewProView.v_line_bottom.setVisibility(View.VISIBLE);
-                                List<CommunalDetailObjectBean> detailsDataList = ConstantMethod.getDetailsDataList(customCoverDesBean.getDescriptionList());
-                                if (detailsDataList != null) {
-                                    descriptionList.addAll(detailsDataList);
-                                    communalDetailAdapter.notifyDataSetChanged();
-                                }
-                            } else {
-                                qNewProView.v_line_bottom.setVisibility(View.GONE);
-                                qNewProView.communal_recycler_wrap.setVisibility(View.GONE);
-                            }
-                            if (qualityTypeProductAdapter.getHeaderLayoutCount() < 1) {
-                                qualityTypeProductAdapter.addHeaderView(headerView);
-                                qualityTypeProductAdapter.notifyDataSetChanged();
-                            }
-                        } else {
-                            qualityTypeProductAdapter.removeAllHeaderView();
-                            qualityTypeProductAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                    qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
-                }
-            });
-        } else {
-            qualityTypeProductAdapter.removeAllHeaderView();
+        if (TextUtils.isEmpty(productType)) {
+            return;
         }
-    }
-
-    private void getQualityCustomPro() {
-        String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_LIST;
         Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
         params.put("productType", productType);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_CUSTOM_PRO_COVER, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (descriptionList.size() > 0) {
+                    descriptionList.clear();
+                    communalDetailAdapter.notifyDataSetChanged();
+                }
+                Gson gson = new Gson();
+                CustomCoverDesEntity customCoverDesEntity = gson.fromJson(result, CustomCoverDesEntity.class);
+                if (customCoverDesEntity != null) {
+                    if (customCoverDesEntity.getCode().equals(SUCCESS_CODE)
+                            && customCoverDesEntity.getCoverDesList() != null
+                            && customCoverDesEntity.getCoverDesList().size() > 0) {
+                        CustomCoverDesBean customCoverDesBean = customCoverDesEntity.getCoverDesList().get(0);
+                        if (!TextUtils.isEmpty(customCoverDesBean.getPicUrl())) {
+                            qNewProView.iv_communal_cover_wrap.setVisibility(View.VISIBLE);
+                            GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), qNewProView.iv_communal_cover_wrap,
+                                    getStrings(customCoverDesBean.getPicUrl()));
+                        } else {
+                            qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
+                        }
+                        if (customCoverDesBean.getDescriptionList() != null
+                                && customCoverDesBean.getDescriptionList().size() > 0) {
+                            qNewProView.communal_recycler_wrap.setVisibility(View.VISIBLE);
+                            qNewProView.v_line_bottom.setVisibility(View.VISIBLE);
+                            List<CommunalDetailObjectBean> detailsDataList = ConstantMethod.getDetailsDataList(customCoverDesBean.getDescriptionList());
+                            if (detailsDataList != null) {
+                                descriptionList.addAll(detailsDataList);
+                                communalDetailAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            qNewProView.v_line_bottom.setVisibility(View.GONE);
+                            qNewProView.communal_recycler_wrap.setVisibility(View.GONE);
+                        }
+                        if (qualityTypeProductAdapter.getHeaderLayoutCount() < 1) {
+                            qualityTypeProductAdapter.addHeaderView(headerView);
+                            qualityTypeProductAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        qualityTypeProductAdapter.removeAllHeaderView();
+                        qualityTypeProductAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
+                if (qualityTypeProductAdapter.getHeaderLayoutCount() > 0) {
+                    qualityTypeProductAdapter.removeAllHeaderView();
+                }
+            }
+        });
+    }
+
+    private void getQualityCustomPro() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("productType", productType);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_CUSTOM_PRO_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -307,28 +300,31 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 if (userLikedProductEntity != null) {
                     if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         customProList.addAll(removeExistUtils.removeExistList(userLikedProductEntity.getLikedProductBeanList()));
-                    } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                    } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        qualityTypeProductAdapter.loadMoreEnd();
+                    } else {
                         showToast(getActivity(), userLikedProductEntity.getMsg());
                     }
                     qualityTypeProductAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
                 showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
             }
         });
     }

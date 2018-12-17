@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_98"
     android:divider="@drawable/divider_ll_1dp_red"
+    android:id="@+id/ll_gp_detail_bottom"
     android:showDividers="middle"
     android:orientation="horizontal">
 

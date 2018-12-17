@@ -27,14 +27,14 @@ import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
@@ -48,7 +48,6 @@ import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.WaitDeli
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.google.gson.Gson;
@@ -89,6 +88,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
+import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
+import static com.amkj.dmsh.constant.Url.Q_CANCEL_INDENT_REFUND;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_APPLY_REFUND;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_REFUND_REPAIR_SUB;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 ;
@@ -316,7 +320,6 @@ public class DirectApplyRefundActivity extends BaseActivity{
         if(userId<1){
             return;
         }
-        String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND;
         Map<String, Object> params = new HashMap<>();
         params.put("no", refundBean.getOrderNo());
         params.put("userId", userId);
@@ -339,7 +342,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
         if (refundBean.getType() == 1) {
             params.put("refundPrice", refundBean.getRefundPrice());
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_APPLY_REFUND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -356,21 +359,25 @@ public class DirectApplyRefundActivity extends BaseActivity{
                         showToast(DirectApplyRefundActivity.this, refundApplyEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                sv_layout_refund.setVisibility(View.GONE);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
             public void netClose() {
-                sv_layout_refund.setVisibility(View.GONE);
-                showToast(DirectApplyRefundActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 sv_layout_refund.setVisibility(View.GONE);
-                showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                showToast(DirectApplyRefundActivity.this, R.string.invalidData);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
         });
     }
@@ -494,8 +501,9 @@ public class DirectApplyRefundActivity extends BaseActivity{
      * 获取默认地址
      */
     private void getDefaultAddress() {
-        String url = Url.BASE_URL + Url.DELIVERY_ADDRESS + userId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String,Object> params = new HashMap<>();
+        params.put("uid",userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,DELIVERY_ADDRESS,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -517,9 +525,9 @@ public class DirectApplyRefundActivity extends BaseActivity{
      * 获取地址详情
      */
     private void getAddressDetails() {
-        //地址详情内容
-        String url = Url.BASE_URL + Url.ADDRESS_DETAILS + addressId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", addressId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -719,7 +727,6 @@ public class DirectApplyRefundActivity extends BaseActivity{
      */
     private void refundRepair(final DirectApplyRefundBean refundBean, Map<String, Object> params
             , final DirectRefundProBean directRefundProBean) {
-        String url = Url.BASE_URL + Url.Q_INDENT_REFUND_REPAIR_SUB;
         params.put("no", refundBean.getOrderNo());
         params.put("userId", userId);
         try {
@@ -739,7 +746,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
             e.printStackTrace();
         }
         params.put("userAddressId", addressId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_REFUND_REPAIR_SUB,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -765,11 +772,20 @@ public class DirectApplyRefundActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(DirectApplyRefundActivity.this, ex.getMessage() + "");
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DirectApplyRefundActivity.this,R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DirectApplyRefundActivity.this,R.string.unConnectedNetwork);
             }
         });
     }
@@ -825,7 +841,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
             }
             params.put("refundType", refundBean.getRefundType());
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -844,11 +860,20 @@ public class DirectApplyRefundActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(DirectApplyRefundActivity.this, ex.getMessage() + "");
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DirectApplyRefundActivity.this,R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DirectApplyRefundActivity.this,R.string.do_failed);
             }
         });
     }
@@ -860,14 +885,13 @@ public class DirectApplyRefundActivity extends BaseActivity{
      * @param params
      */
     private void cancelIndent(DirectApplyRefundBean refundBean, Map<String, Object> params) {
-        String url = Url.BASE_URL + Url.Q_CANCEL_INDENT_REFUND;
         params.put("no", refundBean.getOrderNo());
         params.put("userId", userId);
         if (!TextUtils.isEmpty(refundBean.getContent())) {
             params.put("msg", refundBean.getContent());
         }
         params.put("reason", refundBean.getReason());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CANCEL_INDENT_REFUND,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -903,12 +927,20 @@ public class DirectApplyRefundActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(DirectApplyRefundActivity.this, R.string.Submit_Failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DirectApplyRefundActivity.this,R.string.unConnectedNetwork);
             }
         });
     }

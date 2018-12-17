@@ -10,19 +10,17 @@ import android.widget.Toast;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.message.adapter.PlatformDataEntity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -37,6 +35,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_MES_PLATFORM_DETAILS;
 
 ;
 ;
@@ -87,12 +86,7 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
         communal_recycler.setNestedScrollingEnabled(false);
         communal_recycler.setLayoutManager(new LinearLayoutManager(PlatformNotifyDetailsActivity.this));
         communal_recycler.setAdapter(contentPlatformAdapter);
-        smart_official_details.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_official_details.setOnRefreshListener(refreshLayout -> loadData());
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -128,46 +122,48 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.H_MES_PLATFORM_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", platformId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_official_details.finishRefresh();
-                platformNotifyList.clear();
-                Gson gson = new Gson();
-                platformDataEntity = gson.fromJson(result, PlatformDataEntity.class);
-                if (platformDataEntity != null) {
-                    if (platformDataEntity.getCode().equals(SUCCESS_CODE)
-                            && platformDataEntity.getPlatformDataBean() != null) {
-                        List<CommunalDetailBean> contentBeanList = platformDataEntity.getPlatformDataBean().getDescriptionList();
-                        if (contentBeanList != null) {
-                            platformNotifyList.clear();
-                            platformNotifyList.addAll(ConstantMethod.getDetailsDataList(contentBeanList));
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, H_MES_PLATFORM_DETAILS,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_official_details.finishRefresh();
+                        platformNotifyList.clear();
+                        Gson gson = new Gson();
+                        platformDataEntity = gson.fromJson(result, PlatformDataEntity.class);
+                        if (platformDataEntity != null) {
+                            if (platformDataEntity.getCode().equals(SUCCESS_CODE)
+                                    && platformDataEntity.getPlatformDataBean() != null) {
+                                List<CommunalDetailBean> contentBeanList = platformDataEntity.getPlatformDataBean().getDescriptionList();
+                                if (contentBeanList != null) {
+                                    platformNotifyList.clear();
+                                    platformNotifyList.addAll(ConstantMethod.getDetailsDataList(contentBeanList));
+                                }
+                            } else if (!platformDataEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(PlatformNotifyDetailsActivity.this, platformDataEntity.getMsg());
+                            }
+                            contentPlatformAdapter.notifyDataSetChanged();
                         }
-                    } else if (!platformDataEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(PlatformNotifyDetailsActivity.this, platformDataEntity.getMsg());
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, platformNotifyList, platformDataEntity);
                     }
-                    contentPlatformAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, platformNotifyList, platformDataEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_official_details.finishRefresh();
-                showToast(PlatformNotifyDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, platformNotifyList, platformDataEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_official_details.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, platformNotifyList, platformDataEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_official_details.finishRefresh();
-                showToast(PlatformNotifyDetailsActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, platformNotifyList, platformDataEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(PlatformNotifyDetailsActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(PlatformNotifyDetailsActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     @Override

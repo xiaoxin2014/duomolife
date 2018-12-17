@@ -47,6 +47,8 @@ public class Url {
     public static final String DEVICE_INFO = "api/my/updateUserDeviceInfo";
     //    版本信息
     public static final String APP_VERSION_INFO = "api/my/getVersions";
+//    开启通知接口
+    public static final String APP_SYS_NOTIFICATION = "api/my/remind/getSysNoticeInfo";
     //    用户关注
     public static final String UPDATE_ATTENTION = "api/find/followsaveOrupdate";
     //    用户手机密码登录
@@ -66,7 +68,7 @@ public class Url {
     //    首页广告轮播图
     public static final String H_AD_LIST = "api/home/getHomeAdList";
     //是否有新消息提醒
-    public static final String H_MESSAGE_WARM = "api/message/remind?uid=";
+    public static final String H_MESSAGE_WARM = "api/message/remind";
     //    弹窗广告
     public static final String H_AD_DIALOG = "api/home/getAdByPopup";
     //    统计字段
@@ -568,9 +570,9 @@ public class Url {
      * 收货地址
      */
 //    读取默认地址
-    public static final String DELIVERY_ADDRESS = "api/user/address/getDefaultAddress?uid=";
+    public static final String DELIVERY_ADDRESS = "api/user/address/getDefaultAddress";
     //    地址详情
-    public static final String ADDRESS_DETAILS = "api/user/address/getUserAddressDetail?id=";
+    public static final String ADDRESS_DETAILS = "api/user/address/getUserAddressDetail";
     //    添加地址
     public static final String ADD_ADDRESS = "api/user/address/addUserAddress";
     //    修改地址

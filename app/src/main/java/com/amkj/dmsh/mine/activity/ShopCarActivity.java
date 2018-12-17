@@ -24,7 +24,6 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
@@ -35,6 +34,7 @@ import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShoppingCartBiz;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -43,9 +43,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
@@ -80,7 +78,13 @@ import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_CAR;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.MINE_SHOP_CAR_GOODS;
+import static com.amkj.dmsh.constant.Url.MINE_SHOP_CAR_RECOMMEND_GOODS;
+import static com.amkj.dmsh.constant.Url.PRO_SETTLE_PRICE;
+import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_CHANGE_CAR;
+import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
+import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
+import static com.amkj.dmsh.constant.Url.SHOP_CART_RECOMMEND_EMPTY_GOODS;
 
 ;
 ;
@@ -175,12 +179,8 @@ public class ShopCarActivity extends BaseActivity {
             }
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
-            if (page * TOTAL_COUNT_TWENTY <= shopGoodsList.size()) {
-                page++;
-                getShopCarProInfo();
-            } else {
-                shopCarGoodsAdapter.setEnableLoadMore(false);
-            }
+            page++;
+            getShopCarProInfo();
         }, communal_recycler);
 
         shopCarGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -304,59 +304,69 @@ public class ShopCarActivity extends BaseActivity {
      */
     private void updateCartData(final int position) {
         if (shopGoodsList.size() > position) {
+            if (loadHud != null) {
+                loadHud.show();
+            }
             final CartInfoBean oldCartInfoBean = shopGoodsList.get(position);
-            String url = Url.BASE_URL + Url.MINE_SHOP_CAR_GOODS;
+            String url = Url.BASE_URL + MINE_SHOP_CAR_GOODS;
             Map<String, Object> params = new HashMap<>();
             params.put("showCount", TOTAL_COUNT_FORTY);
             params.put("currentPage", oldCartInfoBean.getCurrentPage());
             params.put("userId", userId);
             params.put("version", "v3.1.5");
-            if (NetWorkUtils.checkNet(this)) {
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        Gson gson = new Gson();
-                        ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
-                        if (shopCarNewInfoEntity != null) {
-                            if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                                if (shopCarNewInfoEntity.getShopCarNewInfoList().size() > 0) {
-                                    ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
-                                    ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(oldCartInfoBean.getOldPosition());
-                                    CartInfoBean newCartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(position);
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    Gson gson = new Gson();
+                    ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
+                    if (shopCarNewInfoEntity != null) {
+                        if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                            if (shopCarNewInfoEntity.getShopCarNewInfoList().size() > 0) {
+                                ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
+                                ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(oldCartInfoBean.getOldPosition());
+                                CartInfoBean newCartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(position);
 //                                id 是否相等
-                                    if (oldCartInfoBean.getId() == newCartInfoBean.getId()) {
-                                        newCartInfoBean.setCurrentPosition(oldCartInfoBean.getCurrentPosition());
-                                        newCartInfoBean.setOldPosition(oldCartInfoBean.getOldPosition());
-                                        newCartInfoBean.setCurrentPage(oldCartInfoBean.getCurrentPage());
-                                        newCartInfoBean.setSelected(oldCartInfoBean.isSelected());
-                                        shopGoodsList.set(position, newCartInfoBean);
-                                        shopCarGoodsAdapter.notifyItemChanged(position);
-                                        setCartCount();
-                                        getSettlePrice();
-                                    } else {
-                                        page = 1;
-                                        loadData();
-                                    }
+                                if (oldCartInfoBean.getId() == newCartInfoBean.getId()) {
+                                    newCartInfoBean.setCurrentPosition(oldCartInfoBean.getCurrentPosition());
+                                    newCartInfoBean.setOldPosition(oldCartInfoBean.getOldPosition());
+                                    newCartInfoBean.setCurrentPage(oldCartInfoBean.getCurrentPage());
+                                    newCartInfoBean.setSelected(oldCartInfoBean.isSelected());
+                                    shopGoodsList.set(position, newCartInfoBean);
+                                    shopCarGoodsAdapter.notifyItemChanged(position);
+                                    setCartCount();
+                                    getSettlePrice();
                                 } else {
                                     page = 1;
                                     loadData();
                                 }
+                            } else {
+                                page = 1;
+                                loadData();
                             }
                         }
                     }
+                }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        showToast(ShopCarActivity.this, R.string.invalidData);
-                        super.onError(ex, isOnCallback);
+                @Override
+                public void onNotNetOrException() {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
                     }
-                });
-            } else {
-                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-            }
+                }
+
+                @Override
+                public void onError(Throwable ex) {
+                    showToast(ShopCarActivity.this, R.string.do_failed);
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+                }
+            });
         }
     }
 
@@ -409,190 +419,181 @@ public class ShopCarActivity extends BaseActivity {
     }
 
     private void getShopCarProInfo() {
-        String url = Url.BASE_URL + Url.MINE_SHOP_CAR_GOODS;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_FORTY);
         params.put("currentPage", page);
         params.put("userId", userId);
         params.put("version", "v3.1.5");
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                smart_communal_refresh.finishRefresh();
-                shopCarGoodsAdapter.loadMoreComplete();
-                if (page == 1) {
-                    shopGoodsList.clear();
-                }
-                Gson gson = new Gson();
-                ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
-                if (shopCarNewInfoEntity != null) {
-                    if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        rel_shop_car_bottom.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < shopCarNewInfoEntity.getShopCarNewInfoList().size(); i++) {
-                            ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);
-                            for (int j = 0; j < shopCarNewInfoBean.getCartInfoBeanList().size(); j++) {
-                                CartInfoBean cartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(j);
-                                cartInfoBean.setOldPosition(i);
-                                cartInfoBean.setCurrentPage(page);
-                                if (shopCarNewInfoBean.getActivityInfoBean() != null) {
-                                    ActivityInfoBean activityInfoBean = shopCarNewInfoBean.getActivityInfoBean();
-                                    if (j == 0) {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_SHOP_CAR_GOODS,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        smart_communal_refresh.finishRefresh();
+                        shopCarGoodsAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            shopGoodsList.clear();
+                        }
+                        Gson gson = new Gson();
+                        ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
+                        if (shopCarNewInfoEntity != null) {
+                            if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                                rel_shop_car_bottom.setVisibility(View.VISIBLE);
+                                for (int i = 0; i < shopCarNewInfoEntity.getShopCarNewInfoList().size(); i++) {
+                                    ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);
+                                    for (int j = 0; j < shopCarNewInfoBean.getCartInfoBeanList().size(); j++) {
+                                        CartInfoBean cartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(j);
+                                        cartInfoBean.setOldPosition(i);
+                                        cartInfoBean.setCurrentPage(page);
+                                        if (shopCarNewInfoBean.getActivityInfoBean() != null) {
+                                            ActivityInfoBean activityInfoBean = shopCarNewInfoBean.getActivityInfoBean();
+                                            if (j == 0) {
 //                                            是否显示活动消息
-                                        ActivityInfoBean activityInfo = new ActivityInfoBean();
-                                        activityInfo.setActivityCode(activityInfoBean.getActivityCode());
-                                        activityInfo.setShowActInfo(1);
-                                        activityInfo.setActivityRule(activityInfoBean.getActivityRule());
-                                        activityInfo.setLimitBuy(activityInfoBean.getLimitBuy());
-                                        activityInfo.setActivityTag(activityInfoBean.getActivityTag());
-                                        activityInfo.setActivityType(activityInfoBean.getActivityType());
-                                        cartInfoBean.setActivityInfoData(activityInfo);
-                                    } else {
-                                        activityInfoBean.setShowActInfo(0);
-                                        cartInfoBean.setActivityInfoData(activityInfoBean);
+                                                ActivityInfoBean activityInfo = new ActivityInfoBean();
+                                                activityInfo.setActivityCode(activityInfoBean.getActivityCode());
+                                                activityInfo.setShowActInfo(1);
+                                                activityInfo.setActivityRule(activityInfoBean.getActivityRule());
+                                                activityInfo.setLimitBuy(activityInfoBean.getLimitBuy());
+                                                activityInfo.setActivityTag(activityInfoBean.getActivityTag());
+                                                activityInfo.setActivityType(activityInfoBean.getActivityType());
+                                                cartInfoBean.setActivityInfoData(activityInfo);
+                                            } else {
+                                                activityInfoBean.setShowActInfo(0);
+                                                cartInfoBean.setActivityInfoData(activityInfoBean);
+                                            }
+                                        }
+                                        if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
+                                                && cartInfoBean.getSaleSku().getQuantity() > 0) {
+                                            cartInfoBean.setSelected(true);
+                                        } else {
+                                            cartInfoBean.setSelected(false);
+                                        }
+                                        if (shopGoodsList.size() > 0) {
+                                            cartInfoBean.setCurrentPosition(shopGoodsList.size());
+                                        }
+                                        shopGoodsList.add(cartInfoBean);
+                                    }
+                                    if (shopCarNewInfoBean.getActivityInfoBean() != null && shopGoodsList.size() > 0
+                                            && shopCarNewInfoEntity.getShopCarNewInfoList().size() > i + 1) {
+                                        CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
+                                        cartInfoBean.setShowLine(1);
                                     }
                                 }
-                                if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
-                                        && cartInfoBean.getSaleSku().getQuantity() > 0) {
-                                    cartInfoBean.setSelected(true);
-                                } else {
-                                    cartInfoBean.setSelected(false);
-                                }
-                                if (shopGoodsList.size() > 0) {
-                                    cartInfoBean.setCurrentPosition(shopGoodsList.size());
-                                }
-                                shopGoodsList.add(cartInfoBean);
+                                ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
+                                updatePrice(shopCarNewInfoEntity);
+                                isEditStatus = true;
+                                setEditStatus();
+                            } else if (!shopCarNewInfoEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(ShopCarActivity.this, shopCarNewInfoEntity.getMsg());
+                            } else {
+                                shopCarGoodsAdapter.loadMoreEnd(true);
                             }
-                            if (shopCarNewInfoBean.getActivityInfoBean() != null && shopGoodsList.size() > 0
-                                    && shopCarNewInfoEntity.getShopCarNewInfoList().size() > i + 1) {
-                                CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
-                                cartInfoBean.setShowLine(1);
+                            if (shopGoodsList.size() < 1) {
+                                rel_shop_car_bottom.setVisibility(View.GONE);
+                            } else {
+                                rel_shop_car_bottom.setVisibility(View.VISIBLE);
                             }
+                            shopCarGoodsAdapter.notifyDataSetChanged();
+                            setCartCount();
                         }
-                        ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
-                        updatePrice(shopCarNewInfoEntity);
-                        isEditStatus = true;
-                        setEditStatus();
-                    } else if (!shopCarNewInfoEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(ShopCarActivity.this, shopCarNewInfoEntity.getMsg());
+                        if (shopGoodsList.size() < 1) {
+                            shopCarGoodsAdapter.setEmptyView(R.layout.adapter_car_pro_empty, communal_recycler);
+                            shopCarGoodsAdapter.setHeaderFooterEmpty(false, true);
+                            getCartRecommendEmpty();
+                        } else if (shopGoodsList.size() < page * TOTAL_COUNT_FORTY) {
+                            shopCarGoodsAdapter.loadMoreEnd(true);
+                            getCartRecommend();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
-                    if (shopGoodsList.size() < 1) {
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        shopCarGoodsAdapter.loadMoreEnd(true);
                         rel_shop_car_bottom.setVisibility(View.GONE);
-                    } else {
-                        rel_shop_car_bottom.setVisibility(View.VISIBLE);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
-                    shopCarGoodsAdapter.notifyDataSetChanged();
-                    setCartCount();
-                }
-                if (shopGoodsList.size() < 1) {
-                    shopCarGoodsAdapter.setEmptyView(R.layout.adapter_car_pro_empty, communal_recycler);
-                    shopCarGoodsAdapter.setHeaderFooterEmpty(false, true);
-                    getCartRecommendEmpty();
-                } else if (shopGoodsList.size() < page * TOTAL_COUNT_FORTY) {
-                    getCartRecommend();
-                }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                shopCarGoodsAdapter.loadMoreComplete();
-                rel_shop_car_bottom.setVisibility(View.GONE);
-                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
+                    @Override
+                    public void netClose() {
+                        showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                shopCarGoodsAdapter.loadMoreComplete();
-                rel_shop_car_bottom.setVisibility(View.GONE);
-                showToast(ShopCarActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
-        });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(ShopCarActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     /**
      * 购物车无商品推荐
      */
     private void getCartRecommendEmpty() {
-        if (NetWorkUtils.checkNet(ShopCarActivity.this)) {
-            String url = Url.BASE_URL + Url.SHOP_CART_RECOMMEND_EMPTY_GOODS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    cartProRecommendList.clear();
-                    Gson gson = new Gson();
-                    likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (likedProduct != null) {
-                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                            cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
-                            if (cartProRecommendList.size() > 0) {
-                                if (cartHeaderView.getParent() == null) {
-                                    shopCarGoodsAdapter.addFooterView(cartHeaderView);
-                                }
-                                recommendHeaderView.tv_pro_title.setText("-商品推荐-");
-                                proNoShopCarAdapter.notifyDataSetChanged();
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, SHOP_CART_RECOMMEND_EMPTY_GOODS, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                cartProRecommendList.clear();
+                Gson gson = new Gson();
+                likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProduct != null) {
+                    if (likedProduct.getCode().equals(SUCCESS_CODE)) {
+                        cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
+                        if (cartProRecommendList.size() > 0) {
+                            if (cartHeaderView.getParent() == null) {
+                                shopCarGoodsAdapter.addFooterView(cartHeaderView);
                             }
-                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                            showToast(ShopCarActivity.this, likedProduct.getMsg());
+                            recommendHeaderView.tv_pro_title.setText("-商品推荐-");
+                            proNoShopCarAdapter.notifyDataSetChanged();
                         }
+                    } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
+                        showToast(ShopCarActivity.this, likedProduct.getMsg());
                     }
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            }
+        });
     }
 
     /**
      * 购物车有商品推荐
      */
     private void getCartRecommend() {
-        if (NetWorkUtils.checkNet(ShopCarActivity.this)) {
-            String url = Url.BASE_URL + Url.MINE_SHOP_CAR_RECOMMEND_GOODS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    proNoShopCarAdapter.loadMoreComplete();
-                    if (cartPage == 1) {
-                        cartProRecommendList.clear();
-                        shopCarGoodsAdapter.notifyDataSetChanged();
-                    }
-                    Gson gson = new Gson();
-                    likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (likedProduct != null) {
-                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                            cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
-                            if (cartProRecommendList.size() > 0) {
-                                shopCarGoodsAdapter.addFooterView(cartHeaderView);
-                                recommendHeaderView.tv_pro_title.setText("-商品推荐-");
-                                proNoShopCarAdapter.notifyDataSetChanged();
-                            }
-                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                            showToast(ShopCarActivity.this, likedProduct.getMsg());
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_SHOP_CAR_RECOMMEND_GOODS, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                proNoShopCarAdapter.loadMoreComplete();
+                if (cartPage == 1) {
+                    cartProRecommendList.clear();
+                    shopCarGoodsAdapter.notifyDataSetChanged();
+                }
+                Gson gson = new Gson();
+                likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProduct != null) {
+                    if (likedProduct.getCode().equals(SUCCESS_CODE)) {
+                        cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
+                        if (cartProRecommendList.size() > 0) {
+                            shopCarGoodsAdapter.addFooterView(cartHeaderView);
+                            recommendHeaderView.tv_pro_title.setText("-商品推荐-");
+                            proNoShopCarAdapter.notifyDataSetChanged();
                         }
+                    } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
+                        showToast(ShopCarActivity.this, likedProduct.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    proNoShopCarAdapter.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onNotNetOrException() {
+                proNoShopCarAdapter.loadMoreEnd(true);
+            }
+        });
     }
 
     private void setCartCount() {
@@ -708,54 +709,55 @@ public class ShopCarActivity extends BaseActivity {
         if (loadHud != null) {
             loadHud.show();
         }
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_DEL_CAR;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("ids", carIds);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
-                if (status != null) {
-                    if (status.getCode().equals(SUCCESS_CODE)) {
-                        loadData();
-                    } else if (!status.getCode().equals(EMPTY_CODE)) {
-                        showToast(ShopCarActivity.this, status.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_SHOP_DETAILS_DEL_CAR,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        Gson gson = new Gson();
+                        RequestStatus status = gson.fromJson(result, RequestStatus.class);
+                        if (status != null) {
+                            if (status.getCode().equals(SUCCESS_CODE)) {
+                                loadData();
+                            } else if (!status.getCode().equals(EMPTY_CODE)) {
+                                showToast(ShopCarActivity.this, status.getMsg());
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void netClose() {
-                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(ShopCarActivity.this, R.string.do_failed);
+                    }
+                });
     }
 
     private void getGoodsSkuDetails(final View view) {
         final TextView textView = (TextView) view;
         final CartInfoBean cartInfoBean = (CartInfoBean) view.getTag();
-        if (cartInfoBean != null && cartInfoBean.getSaleSku() != null) {
+        if (cartInfoBean != null
+                && cartInfoBean.getSaleSku() != null) {
             //商品详情内容
-            String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_GET_SKU_CAR;
             Map<String, Object> params = new HashMap<>();
             params.put("productId", cartInfoBean.getProductId());
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_GET_SKU_CAR, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -809,7 +811,6 @@ public class ShopCarActivity extends BaseActivity {
 
     private void changeGoodsSku(int productId, ShopCarGoodsSku shopCarGoodsSku, final CartInfoBean cartInfoBean) {
         //商品属性修改
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_CHANGE_CAR;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("count", shopCarGoodsSku.getCount() < 1 ? cartInfoBean.getCount() : shopCarGoodsSku.getCount());
@@ -833,7 +834,7 @@ public class ShopCarActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_CHANGE_CAR, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -846,6 +847,16 @@ public class ShopCarActivity extends BaseActivity {
                         showToast(ShopCarActivity.this, status.getResult() != null ? status.getResult().getMsg() : status.getMsg());
                     }
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(ShopCarActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -878,7 +889,7 @@ public class ShopCarActivity extends BaseActivity {
             params.put("cartProductInfo", jsonArray.toString().trim());
             params.put("userId", userId);
             params.put("version", "v3.1.5");
-            XUtil.Post(Url.BASE_URL + Url.PRO_SETTLE_PRICE, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, PRO_SETTLE_PRICE, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     loadHud.dismiss();
@@ -895,11 +906,19 @@ public class ShopCarActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     loadHud.dismiss();
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
                     updateLocalPrice();
                     showToast(ShopCarActivity.this, R.string.refrence_only);
-                    super.onError(ex, isOnCallback);
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
                 }
             });
         }

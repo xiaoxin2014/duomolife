@@ -31,12 +31,12 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -63,9 +63,7 @@ import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundPayInfoBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.google.gson.Gson;
@@ -129,8 +127,15 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_APPLY_REFUND_CHECK;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_CANCEL;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_CONFIRM;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_DEL;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_DETAILS;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_DETAIL_REFUND;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
+import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 
 ;
 
@@ -300,7 +305,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     private void requestRefundData(final OrderProductInfoBean orderProductInfoBean) {
-        String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND_CHECK;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderDetailBean.getNo());
         params.put("userId", orderDetailBean.getUserId());
@@ -315,7 +319,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_APPLY_REFUND_CHECK, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -396,9 +400,13 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showToast(DirectExchangeDetailsActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -415,13 +423,12 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     @Override
     protected void loadData() {
         ll_indent_detail_bottom.setVisibility(GONE);
-        String url = Url.BASE_URL + Url.Q_INDENT_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
         //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_DETAILS
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -450,25 +457,25 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                             showToast(DirectExchangeDetailsActivity.this, msg);
                         }
                         communal_recycler.smoothScrollToPosition(0);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        directProductListAdapter.loadMoreComplete();
+                        ll_indent_detail_bottom.setVisibility(GONE);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, infoDetailEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        directProductListAdapter.loadMoreComplete();
-                        ll_indent_detail_bottom.setVisibility(GONE);
                         showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, infoDetailEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        directProductListAdapter.loadMoreComplete();
-                        ll_indent_detail_bottom.setVisibility(GONE);
                         showToast(DirectExchangeDetailsActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, infoDetailEntity);
                     }
                 });
     }
@@ -501,6 +508,12 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 }
                 if (orderDetailBean.getStatus() == 15 || orderDetailBean.getStatus() == 14) {
                     orderProductInfoBean.setStatus(15);
+                }
+                /**
+                 *强制把商品状态改为拼团失败
+                 */
+                if (orderDetailBean.getStatus() == -26) {
+                    orderProductInfoBean.setStatus(-26);
                 }
                 goodsBeanList.add(orderProductInfoBean);
             }
@@ -585,55 +598,49 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
      * 整单退款金额去向
      */
     private void getRefundPrice() {
-        if (NetWorkUtils.checkNet(DirectExchangeDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_INDENT_DETAIL_REFUND;
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", orderNo);
-            params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    String code = "";
-                    String msg = "";
-                    try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        code = (String) jsonObject.get("code");
-                        msg = (String) jsonObject.get("msg");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (code.equals(SUCCESS_CODE)) {
-                        Gson gson = new Gson();
-                        RefundDetailEntity refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
-                        if (refundDetailEntity != null) {
-                            RefundDetailBean refundDetailBean = refundDetailEntity.getRefundDetailBean();
-                            if (refundDetailBean.getRefundPayInfo() != null
-                                    && !TextUtils.isEmpty(refundDetailBean.getRefundPayInfo().getRefundAccount())) {
-                                setRefundToPrice(View.VISIBLE);
-                                RefundPayInfoBean refundPayInfo = refundDetailBean.getRefundPayInfo();
-                                lvHeaderView.tv_indent_detail_to_refund.setText(getResources().getString(R.string.refund_account_time_price,
-                                        getStrings(refundPayInfo.getRefundAccount()),
-                                        getStrings(refundPayInfo.getReceiveRefundTime())));
-                            } else {
-                                setRefundToPrice(View.GONE);
-                            }
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", orderNo);
+        params.put("userId", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_DETAIL_REFUND, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                String code = "";
+                String msg = "";
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    code = (String) jsonObject.get("code");
+                    msg = (String) jsonObject.get("msg");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (code.equals(SUCCESS_CODE)) {
+                    Gson gson = new Gson();
+                    RefundDetailEntity refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
+                    if (refundDetailEntity != null) {
+                        RefundDetailBean refundDetailBean = refundDetailEntity.getRefundDetailBean();
+                        if (refundDetailBean.getRefundPayInfo() != null
+                                && !TextUtils.isEmpty(refundDetailBean.getRefundPayInfo().getRefundAccount())) {
+                            setRefundToPrice(View.VISIBLE);
+                            RefundPayInfoBean refundPayInfo = refundDetailBean.getRefundPayInfo();
+                            lvHeaderView.tv_indent_detail_to_refund.setText(getResources().getString(R.string.refund_account_time_price,
+                                    getStrings(refundPayInfo.getRefundAccount()),
+                                    getStrings(refundPayInfo.getReceiveRefundTime())));
                         } else {
                             setRefundToPrice(View.GONE);
                         }
                     } else {
                         setRefundToPrice(View.GONE);
                     }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                } else {
                     setRefundToPrice(View.GONE);
-                    super.onError(ex, isOnCallback);
                 }
-            });
-        } else {
-            setRefundToPrice(View.GONE);
-        }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                setRefundToPrice(View.GONE);
+            }
+        });
     }
 
     private void setRefundToPrice(int viewType) {
@@ -1020,40 +1027,44 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     private void getInviteGroupInfo(String no) {
-        String url = Url.BASE_URL + Url.GROUP_MINE_SHARE;
-        if (NetWorkUtils.checkNet(DirectExchangeDetailsActivity.this)) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderNo", no);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                    if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                            QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            invitePartnerGroup(qualityGroupShareBean);
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    showToast(DirectExchangeDetailsActivity.this, R.string.do_failed);
-                }
-            });
-        } else {
-            showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
+        if (loadHud != null) {
+            loadHud.show();
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderNo", no);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_SHARE, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
+                if (qualityGroupShareEntity != null) {
+                    if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
+                        QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
+                        invitePartnerGroup(qualityGroupShareBean);
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DirectExchangeDetailsActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
@@ -1144,12 +1155,11 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     private void paymentIndent() {
-        String url = Url.BASE_URL + Url.Q_PAYMENT_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderDetailBean.getNo());
         params.put("userId", orderDetailBean.getUserId());
         params.put("buyType", payWay);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1179,9 +1189,13 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showToast(DirectExchangeDetailsActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -1276,12 +1290,11 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     private void confirmOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
         params.put("userId", userId);
         params.put("orderProductId", 0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_CONFIRM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1301,11 +1314,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
 
     //  取消订单
     private void cancelOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_CANCEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1325,11 +1337,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
 
     //  订单删除
     private void delOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_DEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1580,7 +1591,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("orderNo", orderDetailBean.getNo());
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, BASE_URL + Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -1599,18 +1610,19 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
                 showToast(mAppContext, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
                 showToast(mAppContext, R.string.do_failed);
             }
         });

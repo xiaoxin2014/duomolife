@@ -18,11 +18,13 @@ import com.kingja.loadsir.core.Convertor;
 import com.kingja.loadsir.core.LoadService;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import retrofit2.Response;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -46,7 +48,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     private NetLoadUtils() {
     }
 
-    public static NetLoadUtils getQyInstance() {
+    public static NetLoadUtils getNetInstance() {
         if (netLoadUtils == null) {
             synchronized (NetLoadUtils.class) {
                 if (netLoadUtils == null) {
@@ -88,6 +90,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                             netLoadListener.onSuccess(result);
                         }
                     } catch (Exception e) {
+                        netLoadListener.onNotNetOrException();
                         netLoadListener.onError(e);
                     }
                 }
@@ -95,6 +98,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 @Override
                 public void onError(Throwable exception) {
                     if (netLoadListener != null) {
+                        netLoadListener.onNotNetOrException();
                         netLoadListener.onError(exception);
                     }
                 }
@@ -111,8 +115,37 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             }
         } else {
             if (netLoadListener != null) {
+                netLoadListener.onNotNetOrException();
                 netLoadListener.netClose();
             }
+        }
+    }
+
+    /**
+     * @param context
+     * @param url
+     */
+    public void loadNetDataPostSync(Context context, String url)  throws IOException {
+        loadNetDataPostSync(context, url, null);
+    }
+
+    /**
+     * post 同步方法
+     *
+     * @param context
+     * @param url
+     * @param params
+     */
+    public Response<String> loadNetDataPostSync(Context context, String url, Map<String, Object> params) throws IOException {
+        if (NetWorkUtils.checkNet(context)) {
+            NetApiService netApiService = NetApiManager.getNetApiService();
+            if (params != null) {
+                return netApiService.getPostSyncNetData(url, params).execute();
+            } else {
+                return netApiService.getPostSyncNetData(url).execute();
+            }
+        } else {
+            return null;
         }
     }
 
@@ -139,34 +172,36 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (NetWorkUtils.checkNet(context)) {
             NetApiService netApiService = NetApiManager.getNetApiService();
             Observer<String> observer = new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+                @Override
+                public void onSubscribe(Disposable d) {
 
-                    }
+                }
 
-                    @Override
-                    public void onNext(String result) {
-                        try {
-                            if (netLoadListener != null) {
-                                netLoadListener.onSuccess(result);
-                            }
-                        } catch (Exception e) {
-                            netLoadListener.onError(e);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable exception) {
+                @Override
+                public void onNext(String result) {
+                    try {
                         if (netLoadListener != null) {
-                            netLoadListener.onError(exception);
+                            netLoadListener.onSuccess(result);
                         }
+                    } catch (Exception e) {
+                        netLoadListener.onNotNetOrException();
+                        netLoadListener.onError(e);
                     }
+                }
 
-                    @Override
-                    public void onComplete() {
-
+                @Override
+                public void onError(Throwable exception) {
+                    if (netLoadListener != null) {
+                        netLoadListener.onNotNetOrException();
+                        netLoadListener.onError(exception);
                     }
-                };
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            };
             if (params != null) {
                 netApiService.getGetNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
             } else {
@@ -174,6 +209,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             }
         } else {
             if (netLoadListener != null) {
+                netLoadListener.onNotNetOrException();
                 netLoadListener.netClose();
             }
         }
@@ -192,34 +228,34 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (!TextUtils.isEmpty(url)) {
             NetApiService netApiService = NetApiManager.getNetCacheApiService(isForceNet);
             Observer<String> observer = new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+                @Override
+                public void onSubscribe(Disposable d) {
 
-                    }
+                }
 
-                    @Override
-                    public void onNext(String result) {
-                        try {
-                            if (netLoadListener != null) {
-                                netLoadListener.onSuccess(result);
-                            }
-                        } catch (Exception e) {
-                            netLoadListener.onError(e);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable exception) {
+                @Override
+                public void onNext(String result) {
+                    try {
                         if (netLoadListener != null) {
-                            netLoadListener.onError(exception);
+                            netLoadListener.onSuccess(result);
                         }
+                    } catch (Exception e) {
+                        netLoadListener.onError(e);
                     }
+                }
 
-                    @Override
-                    public void onComplete() {
-
+                @Override
+                public void onError(Throwable exception) {
+                    if (netLoadListener != null) {
+                        netLoadListener.onError(exception);
                     }
-                };
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            };
             if (params != null) {
                 netApiService.getGetNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
             } else {
@@ -253,17 +289,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 netLoadProgressListener.onFail(new Throwable(mAppContext.getString(R.string.unConnectedNetwork)));
             }
         }
-    }
-
-    /**
-     * 正常网络回调
-     */
-    public interface NetLoadListener {
-        void onSuccess(String result);
-
-        void netClose();
-
-        void onError(Throwable throwable);
     }
 
     /**

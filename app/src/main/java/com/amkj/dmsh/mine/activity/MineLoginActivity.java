@@ -20,9 +20,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Sha1Md5;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
 import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData.OtherAccountBean;
@@ -30,10 +28,9 @@ import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
-import com.amkj.dmsh.views.SystemBarHelper;
 import com.google.gson.Gson;
 import com.tencent.stat.StatConfig;
 import com.umeng.analytics.MobclickAgent;
@@ -59,6 +56,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.LOGIN_ACCOUNT;
+import static com.amkj.dmsh.constant.Url.LOGIN_CHECK_SMS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_OTHER_ACCOUNT;
+import static com.amkj.dmsh.constant.Url.REQ_SEND_SMS_CODE;
 import static com.umeng.socialize.bean.SHARE_MEDIA.QQ;
 import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
@@ -123,13 +124,6 @@ public class MineLoginActivity extends BaseActivity {
     }
 
     @Override
-    public void setStatusColor() {
-        super.setStatusColor();
-        SystemBarHelper.setPadding(MineLoginActivity.this, Margin_title);
-        SystemBarHelper.immersiveStatusBar(MineLoginActivity.this);
-    }
-
-    @Override
     protected void loadData() {
     }
 
@@ -144,19 +138,14 @@ public class MineLoginActivity extends BaseActivity {
     }
 
     public void getData() {
-        Sha1Md5 sha1Md5 = new Sha1Md5();
-        final String t = "g{faJ&)H<34rz(q*\"C0S=Xy`TW~ZGD.wt6_1j@dU";
-        String passwordLock;
-        String url = Url.BASE_URL + Url.LOGIN_ACCOUNT;
         Map<String, Object> params = new HashMap<>();
         String phoneNumber = edit_login_mobile.getText().toString().trim();
         String password = edit_login_password.getText().toString().trim();
-        passwordLock = sha1Md5.getMD5(toLowerCase(sha1Md5.getDigestOfString(password.getBytes()).getBytes()) + t);
         //手机号
         params.put("mobile", phoneNumber);
         //密码
-        params.put("password", passwordLock);
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url, params, new NetLoadUtils.NetLoadListener() {
+        params.put("password", PasswordEncrypt.getEncryptedPassword(password));
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, LOGIN_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -175,18 +164,19 @@ public class MineLoginActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
                 showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
                 showToast(MineLoginActivity.this, R.string.login_failed);
             }
         });
@@ -327,7 +317,6 @@ public class MineLoginActivity extends BaseActivity {
     }
 
     private void bindOtherAccount(final OtherAccountBindInfo otherAccountBindInfo) {
-        String url = Url.BASE_URL + Url.MINE_OTHER_ACCOUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("openid", otherAccountBindInfo.getOpenid());
         params.put("type", otherAccountBindInfo.getType());
@@ -336,7 +325,7 @@ public class MineLoginActivity extends BaseActivity {
         if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
             params.put("unionid", otherAccountBindInfo.getUnionId());
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_OTHER_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -405,16 +394,25 @@ public class MineLoginActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(MineLoginActivity.this, R.string.do_failed);
             }
         });
     }
 
     private void reqSMSCode(String phoneNumber) {
-        String url = Url.BASE_URL + Url.REQ_SEND_SMS_CODE;
         Map<String, Object> params = new HashMap<>();
         String smsType = "login";
         params.put("mobile", phoneNumber);
@@ -427,46 +425,50 @@ public class MineLoginActivity extends BaseActivity {
         params.put("verify_token", toMD5("" + currentTimeMillis + smsType + phoneNumber + "Domolife2018"));
 //        时间戳
         params.put("unixtime", currentTimeMillis);
-        NetLoadUtils.getQyInstance().loadNetDataPost(MineLoginActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        RequestStatus.Result resultData = requestStatus.getResult();
-                        if (resultData != null) {
-                            if (resultData.getResultCode().equals(SUCCESS_CODE)) {
-                                showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
-                                tv_login_send_code.setVisibility(View.VISIBLE);
-                                reg_login_code_gif_view.setVisibility(View.GONE);
-                                if (countDownHelper == null) {
-                                    countDownHelper = CountDownHelper.getTimerInstance();
+        NetLoadUtils.getNetInstance().loadNetDataPost(MineLoginActivity.this, REQ_SEND_SMS_CODE,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        loadHud.dismiss();
+                        Gson gson = new Gson();
+                        RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                        if (requestStatus != null) {
+                            if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                                RequestStatus.Result resultData = requestStatus.getResult();
+                                if (resultData != null) {
+                                    if (resultData.getResultCode().equals(SUCCESS_CODE)) {
+                                        showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
+                                        tv_login_send_code.setVisibility(View.VISIBLE);
+                                        reg_login_code_gif_view.setVisibility(View.GONE);
+                                        if (countDownHelper == null) {
+                                            countDownHelper = CountDownHelper.getTimerInstance();
+                                        }
+                                        countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
+                                    } else {
+                                        showException(resultData.getMsg());
+                                    }
                                 }
-                                countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
                             } else {
-                                showException(resultData.getMsg());
+                                showException(requestStatus.getMsg());
                             }
                         }
-                    } else {
-                        showException(requestStatus.getMsg());
                     }
-                }
-            }
 
-            @Override
-            public void netClose() {
-                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
-                loadHud.dismiss();
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        loadHud.dismiss();
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                loadHud.dismiss();
-                showException(getResources().getString(R.string.do_failed));
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showException(getResources().getString(R.string.do_failed));
+                    }
+                });
     }
 
     /**
@@ -489,47 +491,50 @@ public class MineLoginActivity extends BaseActivity {
     }
 
     private void checkPhoneCode(String phoneNumber, String smsCode) {
-        String url = Url.BASE_URL + Url.LOGIN_CHECK_SMS_CODE;
         Map<String, Object> params = new HashMap<>();
         params.put("mobile", phoneNumber);
         params.put("checkcode", smsCode);
         params.put("smsType", "login");
-        NetLoadUtils.getQyInstance().loadNetDataPost(MineLoginActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-                Gson gson = new Gson();
-                LoginPhoneCodeEntity loginPhoneCodeEntity = gson.fromJson(result, LoginPhoneCodeEntity.class);
-                if (loginPhoneCodeEntity != null) {
-                    if (loginPhoneCodeEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (loginPhoneCodeEntity.getLoginPhoneCodeBean() != null) {
-                            LoginPhoneCodeBean loginPhoneCodeBean = loginPhoneCodeEntity.getLoginPhoneCodeBean();
-                            if (loginPhoneCodeBean.getResultCode().equals(SUCCESS_CODE)) {
-                                CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
-                                communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
-                                loginSuccessSetData(communalUserInfoEntity);
+        NetLoadUtils.getNetInstance().loadNetDataPost(MineLoginActivity.this, LOGIN_CHECK_SMS_CODE,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        loadHud.dismiss();
+                        Gson gson = new Gson();
+                        LoginPhoneCodeEntity loginPhoneCodeEntity = gson.fromJson(result, LoginPhoneCodeEntity.class);
+                        if (loginPhoneCodeEntity != null) {
+                            if (loginPhoneCodeEntity.getCode().equals(SUCCESS_CODE)) {
+                                if (loginPhoneCodeEntity.getLoginPhoneCodeBean() != null) {
+                                    LoginPhoneCodeBean loginPhoneCodeBean = loginPhoneCodeEntity.getLoginPhoneCodeBean();
+                                    if (loginPhoneCodeBean.getResultCode().equals(SUCCESS_CODE)) {
+                                        CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
+                                        communalUserInfoEntity.setCommunalUserInfoBean(loginPhoneCodeBean.getCommunalUserInfoBean());
+                                        loginSuccessSetData(communalUserInfoEntity);
+                                    } else {
+                                        showException(loginPhoneCodeBean.getResultMsg());
+                                    }
+                                }
                             } else {
-                                showException(loginPhoneCodeBean.getResultMsg());
+                                showException(loginPhoneCodeEntity.getMsg());
                             }
                         }
-                    } else {
-                        showException(loginPhoneCodeEntity.getMsg());
                     }
-                }
-            }
 
-            @Override
-            public void netClose() {
-                loadHud.dismiss();
-                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        loadHud.dismiss();
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                loadHud.dismiss();
-                showException(getResources().getString(R.string.do_failed));
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showException(getResources().getString(R.string.do_failed));
+                    }
+                });
     }
 
     @Override

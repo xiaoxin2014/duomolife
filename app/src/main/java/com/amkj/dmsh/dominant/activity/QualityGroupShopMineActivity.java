@@ -13,17 +13,16 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -53,7 +52,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.Url.GROUP_MINE_INDENT;
+import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 
 ;
 
@@ -101,33 +102,22 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-            loadData();
-        }});
+                loadData();
+            }
+        });
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopMineActivity.this));
         qualityGroupMineAdapter = new QualityGroupMineAdapter(QualityGroupShopMineActivity.this, qualityGroupMineList);
         communal_recycler.setAdapter(qualityGroupMineAdapter);
         qualityGroupMineAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * TOTAL_COUNT_TWENTY <= qualityGroupMineList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    qualityGroupMineAdapter.loadMoreEnd();
-                    qualityGroupMineAdapter.setEnableLoadMore(false);
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -229,48 +219,47 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     }
 
     private void paymentIndent() {
-        String url = Url.BASE_URL + Url.Q_PAYMENT_INDENT;
-        if (qualityGroupMineBean != null) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", qualityGroupMineBean.getOrderNo());
-            params.put("userId", userId);
-            params.put("buyType", payWay);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    if (payWay.equals(PAY_WX_PAY)) {
-                        qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
-                        if (qualityWeChatIndent != null) {
-                            if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
-                                //返回成功，调起微信支付接口
-                                doWXPay(qualityWeChatIndent.getResult().getPayKey());
-                            } else {
-                                showToast(QualityGroupShopMineActivity.this, qualityWeChatIndent.getResult() == null
-                                        ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
-                            }
+        if (qualityGroupMineBean == null) {
+            return;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", qualityGroupMineBean.getOrderNo());
+        params.put("userId", userId);
+        params.put("buyType", payWay);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                if (payWay.equals(PAY_WX_PAY)) {
+                    qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
+                    if (qualityWeChatIndent != null) {
+                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
+                            //返回成功，调起微信支付接口
+                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
+                        } else {
+                            showToast(QualityGroupShopMineActivity.this, qualityWeChatIndent.getResult() == null
+                                    ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
-                    } else if (payWay.equals(PAY_ALI_PAY)) {
-                        qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
-                        if (qualityAliPayIndent != null) {
-                            if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
-                                //返回成功，调起支付宝支付接口
-                                doAliPay(qualityAliPayIndent.getResult().getPayKey());
-                            } else {
-                                showToast(QualityGroupShopMineActivity.this, qualityWeChatIndent.getResult() == null
-                                        ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
-                            }
+                    }
+                } else if (payWay.equals(PAY_ALI_PAY)) {
+                    qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
+                    if (qualityAliPayIndent != null) {
+                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
+                            //返回成功，调起支付宝支付接口
+                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
+                        } else {
+                            showToast(QualityGroupShopMineActivity.this, qualityWeChatIndent.getResult() == null
+                                    ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void netClose() {
+                showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean pay_param) {
@@ -359,7 +348,6 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 //                    , null, getStrings(qualityGroupMineBean.getOrderNo()), getStrings(qualityGroupMineBean.getGpPrice()));
 //        }
 //    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -368,7 +356,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
             loadData();
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
@@ -393,15 +381,15 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     @Override
     protected void getData() {
         if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
             return;
         }
-        String url = Url.BASE_URL + Url.GROUP_MINE_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_INDENT
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -419,28 +407,31 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                                             .get(String.valueOf(qualityGroupMineBean.getGpStatus())));
                                     qualityGroupMineList.add(qualityGroupMineBean);
                                 }
-                            } else if (!qualityGroupMineEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (qualityGroupMineEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityGroupMineAdapter.loadMoreEnd();
+                            } else {
                                 showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
                             }
                             qualityGroupMineAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        qualityGroupMineAdapter.loadMoreEnd(true);
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        qualityGroupMineAdapter.loadMoreComplete();
-                        smart_communal_refresh.finishRefresh();
                         showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityGroupMineAdapter.loadMoreComplete();
                         showToast(QualityGroupShopMineActivity.this, R.string.connectedFaile);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
                     }
                 });
     }

@@ -13,8 +13,8 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
@@ -25,7 +25,6 @@ import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -51,12 +50,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEL;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 
 ;
 ;
@@ -116,12 +115,8 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= doMoIndentListAdapter.getItemCount()) {
-                    page++;
-                    getWaitAppraiseData();
-                } else {
-                    doMoIndentListAdapter.loadMoreEnd();
-                }
+                page++;
+                getWaitAppraiseData();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -252,12 +247,12 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.Q_INQUIRY_FINISH;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", page);
         //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -281,23 +276,18 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
                             orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                         } else if (!code.equals(EMPTY_CODE)) {
                             showToast(getActivity(), msg);
+                        }else{
+                            doMoIndentListAdapter.loadMoreEnd();
                         }
                         doMoIndentListAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSirString(loadService, orderListBeanList, code);
+                        NetLoadUtils.getNetInstance().showLoadSirString(loadService, orderListBeanList, code);
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         doMoIndentListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        doMoIndentListAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
                     }
                 });
     }
@@ -308,7 +298,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

@@ -10,16 +10,16 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageListAdapter;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +35,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_MES_STATISTICS;
 
 ;
 
@@ -82,14 +83,7 @@ public class MessageActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         messageListAdapter = new MessageListAdapter(MessageActivity.this, messageList);
         communal_recycler.setAdapter(messageListAdapter);
         messageListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -162,41 +156,43 @@ public class MessageActivity extends BaseActivity {
 
     // 消息统计数目
     private void getMessageTotal() {
-        if (userId != 0) {
-            String url = Url.BASE_URL + Url.H_MES_STATISTICS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(this, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                            if (messageTotalEntity != null) {
-                                if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
-                                    setMessageTotalData(messageTotalEntity.getMessageTotalBean());
-                                } else if (!messageTotalEntity.getCode().equals(EMPTY_CODE)) {
-                                    showToast(MessageActivity.this, messageTotalEntity.getMsg());
-                                }
-                            }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
-                        }
-
-                        @Override
-                        public void netClose() {
-                            showToast(MessageActivity.this, R.string.unConnectedNetwork);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            showToast(MessageActivity.this, R.string.unConnectedNetwork);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
-                        }
-                    });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSir(loadService,messageTotalEntity);
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_STATISTICS
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                        if (messageTotalEntity != null) {
+                            if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
+                                setMessageTotalData(messageTotalEntity.getMessageTotalBean());
+                            } else if (!messageTotalEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(MessageActivity.this, messageTotalEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageTotalEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageTotalEntity);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(MessageActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(MessageActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     private void setMessageTotalData(MessageTotalBean messageTotalBean) {
@@ -246,6 +242,6 @@ public class MessageActivity extends BaseActivity {
     void skipService() {
         QyServiceUtils.getQyInstance()
                 .openQyServiceChat(MessageActivity.this
-                        , "通知消息","");
+                        , "通知消息", "");
     }
 }

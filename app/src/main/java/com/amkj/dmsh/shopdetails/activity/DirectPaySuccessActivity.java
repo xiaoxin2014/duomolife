@@ -19,24 +19,19 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.IntegExchangeDetailActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -63,6 +58,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PAY_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_AD_DIALOG;
+import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_PRODUCT;
 
 ;
 ;
@@ -111,12 +108,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
         Intent intent = getIntent();
         indentNo = intent.getStringExtra("indentNo");
         indentProductType = intent.getStringExtra(INDENT_PRODUCT_TYPE);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                getRecommendProductData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> getRecommendProductData());
         communal_recycler.setLayoutManager(new GridLayoutManager(DirectPaySuccessActivity.this, 2));
         View headerView = LayoutInflater.from(DirectPaySuccessActivity.this)
                 .inflate(R.layout.layout_pay_success_header, (ViewGroup) communal_recycler.getParent(), false);
@@ -211,58 +203,59 @@ public class DirectPaySuccessActivity extends BaseActivity {
     }
 
     private void getPaySucAd() {
-        if (NetWorkUtils.checkNet(DirectPaySuccessActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_PAY_SUCCESS_AD_DIALOG;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
-                    if (floatAdEntity != null) {
-                        if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
-                            CommunalADActivityBean communalADActivityBean = floatAdEntity.getCommunalADActivityBean();
-                            if (communalADActivityBean != null) {
-                                GlideImageLoaderUtil.loadFinishImgDrawable(DirectPaySuccessActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                    @Override
-                                    public void onSuccess(Bitmap bitmap) {
-                                        if (alertDialogAdImage == null) {
-                                            alertDialogAdImage = new AlertDialogImage(DirectPaySuccessActivity.this);
-                                        }
-                                        alertDialogAdImage.show();
-                                        alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                            @Override
-                                            public void imageClick() {
-                                                adClickTotal(communalADActivityBean.getObjectId());
-                                                setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
-                                                alertDialogAdImage.dismiss();
-                                            }
-                                        });
-                                        alertDialogAdImage.setImage(bitmap);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
-                            }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAY_SUCCESS_AD_DIALOG, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
+                if (floatAdEntity != null) {
+                    if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
+                        CommunalADActivityBean communalADActivityBean = floatAdEntity.getCommunalADActivityBean();
+                        if (communalADActivityBean != null) {
+                            setPaySuccessDialog(communalADActivityBean);
                         }
                     }
                 }
-            });
-        }
+            }
+        });
+    }
+
+    private void setPaySuccessDialog(CommunalADActivityBean communalADActivityBean) {
+        GlideImageLoaderUtil.loadFinishImgDrawable(DirectPaySuccessActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+            @Override
+            public void onSuccess(Bitmap bitmap) {
+                if (alertDialogAdImage == null) {
+                    alertDialogAdImage = new AlertDialogImage(DirectPaySuccessActivity.this);
+                }
+                alertDialogAdImage.show();
+                alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                    @Override
+                    public void imageClick() {
+                        adClickTotal(communalADActivityBean.getObjectId());
+                        setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
+                        alertDialogAdImage.dismiss();
+                    }
+                });
+                alertDialogAdImage.setImage(bitmap);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     //    推荐商品列表
     private void getRecommendProductData() {
         if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             return;
         }
-        String url = Url.BASE_URL + Url.Q_PAY_SUCCESS_PRODUCT;
         Map<String, Object> params = new HashMap<>();
         params.put("order_no", indentNo);
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_PAY_SUCCESS_PRODUCT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -277,23 +270,24 @@ public class DirectPaySuccessActivity extends BaseActivity {
                     }
                 }
                 qualityTypeProductAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
                 showToast(DirectPaySuccessActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
                 showToast(DirectPaySuccessActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, typeDetails, likedProductEntity);
             }
         });
     }

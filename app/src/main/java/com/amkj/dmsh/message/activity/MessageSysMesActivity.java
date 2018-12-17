@@ -9,10 +9,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageNotifyAdapter;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -37,10 +37,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_MES_NOTIFY;
 
 ;
 
@@ -103,12 +103,8 @@ public class MessageSysMesActivity extends BaseActivity {
         messageNotifyAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= messageNotifyList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    messageNotifyAdapter.loadMoreEnd();
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
 
@@ -183,14 +179,13 @@ public class MessageSysMesActivity extends BaseActivity {
 
     @Override
     protected void getData() {
-        String url = Url.BASE_URL + Url.H_MES_NOTIFY;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_NOTIFY
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -203,28 +198,31 @@ public class MessageSysMesActivity extends BaseActivity {
                         if (messageOfficialEntity != null) {
                             if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
                                 messageNotifyList.addAll(messageOfficialEntity.getMessageNotifyList());
-                            } else if (!messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
+                                messageNotifyAdapter.loadMoreEnd();
+                            }else{
                                 showToast(MessageSysMesActivity.this, messageOfficialEntity.getMsg());
                             }
                         }
                         messageNotifyAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        messageNotifyAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        messageNotifyAdapter.loadMoreComplete();
                         showToast(MessageSysMesActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        messageNotifyAdapter.loadMoreComplete();
                         showToast(MessageSysMesActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageNotifyList, messageOfficialEntity);
                     }
                 });
     }

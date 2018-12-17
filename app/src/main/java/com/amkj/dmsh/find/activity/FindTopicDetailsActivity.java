@@ -15,16 +15,14 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.adapter.FindPagerAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
 import com.amkj.dmsh.find.bean.FindTopicDetailEntity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.utils.AppBarStateChangeListener;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
@@ -38,7 +36,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.Jzvd;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -49,6 +47,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.F_TOPIC_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_TOPIC_DES;
 import static com.amkj.dmsh.utils.AppBarStateChangeListener.State.COLLAPSED;
 
 ;
@@ -144,54 +144,48 @@ public class FindTopicDetailsActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if (NetWorkUtils.checkNet(FindTopicDetailsActivity.this)) {
-            String url = BASE_URL + Url.F_TOPIC_DES;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", topicId);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    dismissDialog();
-                    Gson gson = new Gson();
-                    FindTopicDetailEntity findHotTopicEntity = gson.fromJson(result, FindTopicDetailEntity.class);
-                    if (findHotTopicEntity != null) {
-                        if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                            findHotTopicBean = findHotTopicEntity.getFindHotTopicBean();
-                            if (findHotTopicBean != null) {
-                                setTopicData(findHotTopicBean);
-                            }
-                        } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(FindTopicDetailsActivity.this, findHotTopicEntity.getMsg());
+        String url = BASE_URL + F_TOPIC_DES;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", topicId);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_TOPIC_DES, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissDialog();
+                Gson gson = new Gson();
+                FindTopicDetailEntity findHotTopicEntity = gson.fromJson(result, FindTopicDetailEntity.class);
+                if (findHotTopicEntity != null) {
+                    if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                        findHotTopicBean = findHotTopicEntity.getFindHotTopicBean();
+                        if (findHotTopicBean != null) {
+                            setTopicData(findHotTopicBean);
                         }
+                    } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(FindTopicDetailsActivity.this, findHotTopicEntity.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    dismissDialog();
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            dismissDialog();
-        }
+            @Override
+            public void onNotNetOrException() {
+                dismissDialog();
+            }
+        });
     }
 
     private void getCollectTopic() {
         if (loadHud != null) {
             loadHud.show();
         }
-        String url = Url.BASE_URL + Url.F_TOPIC_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", findHotTopicBean.getId());
         params.put("type", "findtopic");
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_TOPIC_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -209,10 +203,18 @@ public class FindTopicDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(FindTopicDetailsActivity.this, String.format(getResources().getString(R.string.collect_failed), "话题"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(FindTopicDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -225,7 +227,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
             rel_find_topic_cover.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(findHotTopicBean.getVideo_url())) {
                 jvp_find_video_play.setVisibility(View.VISIBLE);
-                jvp_find_video_play.setUp(getStrings(findHotTopicBean.getVideo_url()), JZVideoPlayer.SCREEN_WINDOW_NORMAL, "");
+                jvp_find_video_play.setUp(getStrings(findHotTopicBean.getVideo_url()), "", Jzvd.SCREEN_WINDOW_NORMAL);
                 GlideImageLoaderUtil.loadCenterCrop(FindTopicDetailsActivity.this, jvp_find_video_play.thumbImageView
                         , getStrings(findHotTopicBean.getFirst_img_url()));
                 iv_find_topic_details_cover.setVisibility(View.GONE);

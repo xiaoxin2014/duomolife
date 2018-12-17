@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,37 +10,19 @@ import java.util.List;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2016/11/22
- * class description:请输入类描述
+ * update 2018/12/10
+ * class description:广告数据
  */
 
-public class CommunalADActivityEntity {
+public class CommunalADActivityEntity extends BaseTimeEntity{
 
     /**
      * result : [{"beginTime":"","link":"app://DMLSpringSaleViewController","objectId":0,"width":"100%","web_link":"http://ts.domolife.cn/DMLSpringSaleViewController","object":3,"subtitle":"SpringSale","picUrl":"http://img.domolife.cn/platform/sn5bcT3CTx.png","title":"限时特惠","height":"100%","endTime":"","bcolor":"fdeee9","showTime":"0"},{"beginTime":"","link":"app://DMLWelfareServiceViewController","objectId":0,"width":"100%","web_link":"http://ts.domolife.cn/DMLWelfareServiceViewController","object":1,"subtitle":"DomoLife","picUrl":"http://img.domolife.cn/platform/Ap4Q8AY5aK.png","title":"多么福利社","height":"100%","endTime":"","bcolor":"b3d9fe","showTime":"0"},{"beginTime":"","link":"app://DMLPointsMallViewController","objectId":0,"width":"100%","web_link":"http://ts.domolife.cn/DMLPointsMallViewController","object":3,"subtitle":"Integral mall","picUrl":"http://img.domolife.cn/platform/NBJJWhB4sr.png","title":"积分商城","height":"100%","endTime":"","bcolor":"ffdddc","showTime":"0"},{"beginTime":"","link":"app://DMLPointsSignInViewController","objectId":0,"width":"100%","web_link":"http://ts.domolife.cn/DMLPointsSignInViewController","object":1,"subtitle":"Sign in polite","picUrl":"http://img.domolife.cn/platform/PxjRC2T8J7.png","title":"签到有礼","height":"100%","endTime":"","bcolor":"fff596","showTime":"0"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     @SerializedName("result")
     private List<CommunalADActivityBean> communalADActivityBeanList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<CommunalADActivityBean> getCommunalADActivityBeanList() {
         return communalADActivityBeanList;
@@ -86,6 +69,10 @@ public class CommunalADActivityEntity {
         @SerializedName(value = "show_time",alternate = "showTime")
         private String showTime;
         private String ctime;
+//        弹窗频率：0只弹一次，1循环弹窗
+        private int frequency_type;
+//        间隔天数，如果频率是循环弹窗，就根据这个间隔天数来弹
+        private int interval_day;
         @SerializedName("vido_url")
         private String videoUrl;
 
@@ -95,6 +82,22 @@ public class CommunalADActivityEntity {
 
         public void setVideoUrl(String videoUrl) {
             this.videoUrl = videoUrl;
+        }
+
+        public int getFrequency_type() {
+            return frequency_type;
+        }
+
+        public void setFrequency_type(int frequency_type) {
+            this.frequency_type = frequency_type;
+        }
+
+        public int getInterval_day() {
+            return interval_day;
+        }
+
+        public void setInterval_day(int interval_day) {
+            this.interval_day = interval_day;
         }
 
         public String getAndroidLink() {

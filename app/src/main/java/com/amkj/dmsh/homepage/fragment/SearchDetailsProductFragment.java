@@ -14,25 +14,21 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.QualityTypeEntity;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.activity.SearchGoodProMoreActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -48,14 +44,17 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_SEARCH;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_PRODUCT;
+import static com.amkj.dmsh.constant.Url.H_SEARCH_PRODUCT_RECOMMEND;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_TYPE;
 
 ;
 
@@ -152,7 +151,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
             }
         });
         adapterProduct.setOnLoadMoreListener(() -> {
-            if (page * DEFAULT_TOTAL_COUNT <= productSearList.size()) {
+            if (page * TOTAL_COUNT_TEN <= productSearList.size()) {
                 page++;
                 getDetailsProduct();
             } else {
@@ -162,12 +161,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
         }, communal_recycler);
         communal_recycler.setAdapter(adapterProduct);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -236,49 +230,42 @@ public class SearchDetailsProductFragment extends BaseFragment {
         if (TextUtils.isEmpty(data)) {
             return;
         }
-        String url = Url.BASE_URL + Url.H_HOT_SEARCH_PRODUCT;
         Map<String, Object> params = new HashMap<>();
         params.put("keyword", data);
         params.put("currentPage", page);
         params.put("searchType", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                adapterProduct.loadMoreComplete();
-                if (page == 1) {
-                    productSearList.clear();
-                    proRecommendList.clear();
-                    removeExistUtils.clearData();
-                }
-                Gson gson = new Gson();
-                likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                if (likedProduct != null) {
-                    if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                        productSearList.addAll(removeExistUtils.removeExistList(likedProduct.getLikedProductBeanList()));
-                    } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), likedProduct.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_HOT_SEARCH_PRODUCT,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        adapterProduct.loadMoreComplete();
+                        if (page == 1) {
+                            productSearList.clear();
+                            proRecommendList.clear();
+                            removeExistUtils.clearData();
+                        }
+                        Gson gson = new Gson();
+                        likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProduct != null) {
+                            if (likedProduct.getCode().equals(SUCCESS_CODE)) {
+                                productSearList.addAll(removeExistUtils.removeExistList(likedProduct.getLikedProductBeanList()));
+                            } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), likedProduct.getMsg());
+                            }
+                            setEmptyUI();
+                            adapterProduct.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
-                    setEmptyUI();
-                    adapterProduct.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-            }
 
-            @Override
-            public void netClose() {
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                smart_communal_refresh.finishRefresh();
-                adapterProduct.loadMoreComplete();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                smart_communal_refresh.finishRefresh();
-                adapterProduct.loadMoreComplete();
-            }
-        });
+                    @Override
+                    public void onNotNetOrException() {
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                        smart_communal_refresh.finishRefresh();
+                        adapterProduct.loadMoreEnd(true);
+                    }
+                });
     }
 
     private void setEmptyUI() {
@@ -295,35 +282,29 @@ public class SearchDetailsProductFragment extends BaseFragment {
      * 获取商品分类
      */
     private void getProductType() {
-        if (NetWorkUtils.isConnectedByState(getActivity())) {
-            String url = Url.BASE_URL + Url.QUALITY_SHOP_TYPE;
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
-                            if (qualityTypeEntity != null && qualityTypeEntity.getCode().equals(SUCCESS_CODE)
-                                    && qualityTypeEntity.getQualityTypeBeanList() != null && qualityTypeEntity.getQualityTypeBeanList().size() > 0) {
-                                qualityTypeBean = qualityTypeEntity.getQualityTypeBeanList().get(0);
-                            }
-                        }
-                    }
-            );
-        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+                if (qualityTypeEntity != null && qualityTypeEntity.getCode().equals(SUCCESS_CODE)
+                        && qualityTypeEntity.getQualityTypeBeanList() != null && qualityTypeEntity.getQualityTypeBeanList().size() > 0) {
+                    qualityTypeBean = qualityTypeEntity.getQualityTypeBeanList().get(0);
+                }
+            }
+        });
     }
 
     /**
      * 获取相同类目商品
      */
     private void getSameTypeProData() {
-        if (NetWorkUtils.checkNet(getActivity())
-                && likedProduct != null && !TextUtils.isEmpty(likedProduct.getNoIds())
+        if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getNoIds())
                 && !TextUtils.isEmpty(likedProduct.getCategory_id())) {
-            String url = Url.BASE_URL + Url.H_SEARCH_PRODUCT_RECOMMEND;
             Map<String, Object> params = new HashMap<>();
             params.put("id", getStrings(likedProduct.getCategory_id()));
             params.put("noIds", getStrings(likedProduct.getNoIds()));
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_SEARCH_PRODUCT_RECOMMEND,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     proRecommendList.clear();
@@ -346,10 +327,9 @@ public class SearchDetailsProductFragment extends BaseFragment {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     smart_communal_refresh.finishRefresh();
-                    adapterProduct.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
+                    adapterProduct.loadMoreEnd(true);
                 }
             });
         }

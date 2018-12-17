@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,16 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
+import com.amkj.dmsh.shopdetails.adapter.InvoiceInfoShowAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean.OrderProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity.IndentInvoiceBean;
+import com.amkj.dmsh.shopdetails.bean.InvoiceInfoBean;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
@@ -49,6 +52,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.INVOICE_DETAIL;
 
 ;
 ;
@@ -127,6 +131,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
     private void setOrderDetailBean(OrderDetailBean orderDetailBean) {
         goodsBeanList.clear();
         lvHeaderView.tv_indent_invoice_orderID.setText("订单编号：" + getStrings(orderDetailBean.getNo()));
+        lvHeaderView.tv_indent_invoice_orderID.setTag(getStrings(orderDetailBean.getNo()));
         lvHeaderView.tv_indent_invoice_orderTime.setText("下单时间：" + getStrings(orderDetailBean.getCreateTime()));
         lvHeaderView.tv_indent_invoice_header_type.setText(getStrings(INDENT_PRO_STATUS != null ?
                 INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())) : ""));
@@ -151,13 +156,12 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.INVOICE_DETAIL;
         Map<String, Object> params = new HashMap<>();
 //        订单号
         if (orderDetailBean != null) {
             params.put("no", orderDetailBean.getNo());
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, INVOICE_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -178,21 +182,23 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
                     showToast(DirectIndentInvoiceActivity.this, msg);
                 }
                 directProductListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, indentInvoiceEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
                 showToast(DirectIndentInvoiceActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, indentInvoiceEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
                 showToast(DirectIndentInvoiceActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, indentInvoiceEntity);
             }
         });
     }
@@ -219,11 +225,28 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
             case 1:
             case 2:
                 lvFootView.ll_indent_invoice_type.setVisibility(View.VISIBLE);
-                lvFootView.ll_indent_invoice_detail.setVisibility(View.VISIBLE);
-                lvFootView.ll_indent_invoice_title.setVisibility(View.VISIBLE);
+                lvFootView.ll_indent_invoice_type.setVisibility(View.VISIBLE);
                 lvFootView.tv_indent_invoice_type.setText(invoiceBeanType.get(String.valueOf(invoiceBean.getType())));
-                lvFootView.tv_indent_invoice_detail.setText(getStrings(invoiceBean.getContent()));
-                lvFootView.tv_indent_invoice_title.setText(getStrings(invoiceBean.getTitle()));
+                List<InvoiceInfoBean> invoiceInfoBeans = new ArrayList<>();
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getContent(), "发票内容：");
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getTitle(), "发票抬头：");
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getTaxpayer_on(), "纳税人识别号：");
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getAddress(), "公司地址：");
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getMobile(),  "电  话：");
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getBankOfDeposit(), "开户行：");
+                setInvoiceInfo(invoiceInfoBeans, invoiceBean.getAccount(), "账  号：");
+                if(invoiceInfoBeans.size()>0){
+                    lvFootView.communal_recycler_wrap.setVisibility(View.VISIBLE);
+                    if(lvFootView.communal_recycler_wrap.getAdapter()==null){
+                        lvFootView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(this));
+                        lvFootView.communal_recycler_wrap.setNestedScrollingEnabled(false);
+                        InvoiceInfoShowAdapter invoiceInfoShowAdapter = new InvoiceInfoShowAdapter(invoiceInfoBeans);
+                        lvFootView.communal_recycler_wrap.setAdapter(invoiceInfoShowAdapter);
+                    }
+                    lvFootView.communal_recycler_wrap.getAdapter().notifyDataSetChanged();
+                }else{
+                    lvFootView.communal_recycler_wrap.setVisibility(View.GONE);
+                }
                 if (invoiceBean.getStatus() == 2) {
                     lvFootView.tv_indent_invoice_status.setText(invoiceBeanStatus.get(String.valueOf(invoiceBean.getStatus())));
                     lvFootView.tv_indent_invoice_status_check.setText("(下载)");
@@ -239,14 +262,25 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
                 break;
             default:
                 lvFootView.ll_indent_invoice_type.setVisibility(View.GONE);
-                lvFootView.ll_indent_invoice_detail.setVisibility(View.GONE);
-                lvFootView.ll_indent_invoice_title.setVisibility(View.GONE);
+                lvFootView.communal_recycler_wrap.setVisibility(View.GONE);
                 lvFootView.tv_indent_invoice_status_check.setEnabled(true);
                 lvFootView.tv_indent_invoice_status_check.setTag(indentInvoiceBean);
                 lvFootView.tv_indent_invoice_status_check.setTextColor(getResources().getColor(R.color.green_base));
                 lvFootView.tv_indent_invoice_status_check.setText("(去开发票)");
                 lvFootView.tv_indent_invoice_status.setText(invoiceBeanStatus.get(String.valueOf(invoiceBean.getStatus())));
                 break;
+        }
+    }
+
+    /**
+     * 设置发票信息
+     * @param invoiceInfoBeans
+     * @param content
+     * @param invoiceType
+     */
+    private void setInvoiceInfo(List<InvoiceInfoBean> invoiceInfoBeans, String content, String invoiceType) {
+        if (!TextUtils.isEmpty(content)) {
+            invoiceInfoBeans.add(new InvoiceInfoBean(invoiceType, content));
         }
     }
 
@@ -283,16 +317,9 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         LinearLayout ll_indent_invoice_type;
         @BindView(R.id.tv_indent_invoice_type)
         TextView tv_indent_invoice_type;
-        //        发票内容
-        @BindView(R.id.ll_indent_invoice_detail)
-        LinearLayout ll_indent_invoice_detail;
-        @BindView(R.id.tv_indent_invoice_detail)
-        TextView tv_indent_invoice_detail;
-        //        发票抬头
-        @BindView(R.id.ll_indent_invoice_title)
-        LinearLayout ll_indent_invoice_title;
-        @BindView(R.id.tv_indent_invoice_title)
-        TextView tv_indent_invoice_title;
+        //        发票信息
+        @BindView(R.id.communal_recycler_wrap)
+        RecyclerView communal_recycler_wrap;
         //        查看
         @BindView(R.id.tv_indent_invoice_status_check)
         TextView tv_indent_invoice_status_check;

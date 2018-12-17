@@ -24,7 +24,6 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
@@ -32,20 +31,19 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityShopDescripEntity;
 import com.amkj.dmsh.dominant.bean.QualityShopDescripEntity.QualityShopDescBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -73,10 +71,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_DETAIL_LIST;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
@@ -190,12 +192,8 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= qualityTypeProductAdapter.getItemCount()) {
-                    page++;
-                    getRecommendData();
-                } else {
-                    qualityTypeProductAdapter.loadMoreEnd();
-                }
+                page++;
+                getRecommendData();
             }
         }, communal_recycler);
 
@@ -357,13 +355,12 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
 
     private void getOverseasThemeDetailsData() {
         String url = Url.BASE_URL + Url.QUALITY_OVERSEAS_THEME_DETAIL;
-        if (NetWorkUtils.checkNet(QualityOverseasDetailsActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", overseasId);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", overseasId);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
@@ -383,32 +380,36 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     }
                 }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+            }
+
+            @Override
+                public void onError(Throwable ex) {
                     smart_communal_refresh.finishRefresh();
                     qualityTypeProductAdapter.loadMoreComplete();
                     showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
                 }
-            });
-        } else {
-            smart_communal_refresh.finishRefresh();
-            qualityTypeProductAdapter.loadMoreComplete();
-            showToast(this, R.string.unConnectedNetwork);
-        }
+
+            @Override
+            public void netClose() {
+                showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     private void getRecommendData() {
-        String url = Url.BASE_URL + Url.QUALITY_OVERSEAS_DETAIL_LIST;
         Map<String, Object> params = new HashMap<>();
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("currentPage", page);
         params.put("id", overseasId);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityOverseasDetailsActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityOverseasDetailsActivity.this, QUALITY_OVERSEAS_DETAIL_LIST
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -422,38 +423,40 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                         if (userLikedProductEntity != null) {
                             if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 proDetailList.addAll(userLikedProductEntity.getLikedProductBeanList());
-                            } else if (!userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                            } else {
                                 showToast(QualityOverseasDetailsActivity.this, userLikedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, proDetailList, userLikedProductEntity);
                     }
                 });
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_ARTICLE_COUPON,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -471,21 +474,30 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(QualityOverseasDetailsActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityOverseasDetailsActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
+        String url = Url.BASE_URL + COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,COUPON_PACKAGE,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -503,11 +515,20 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(QualityOverseasDetailsActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityOverseasDetailsActivity.this, R.string.Get_Coupon_Fail);
             }
         });
     }
@@ -579,10 +600,9 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();

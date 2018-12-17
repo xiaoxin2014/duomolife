@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_98"
+    android:id="@+id/ll_time_details_bottom"
     android:background="@drawable/border_top_5dp_gray"
     android:paddingTop="@dimen/dimen_5_dp"
     android:orientation="horizontal">

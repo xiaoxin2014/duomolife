@@ -14,13 +14,11 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.MineHabitTypeAdapter;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity.HabitTypeBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -45,6 +43,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.CHANGE_USER_HABIT;
+import static com.amkj.dmsh.constant.Url.MINE_HABIT_TYPE;
 
 ;
 ;
@@ -121,11 +121,10 @@ public class PersonalHabitActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.MINE_HABIT_TYPE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_HABIT_TYPE
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -142,23 +141,25 @@ public class PersonalHabitActivity extends BaseActivity {
                                 showToast(PersonalHabitActivity.this, habitTypeEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, habitTypeEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        rel_habit_type.setVisibility(GONE);
+                        mineHabitTypeAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, habitTypeEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        mineHabitTypeAdapter.loadMoreComplete();
                         showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        rel_habit_type.setVisibility(GONE);
-                        smart_communal_refresh.finishRefresh();
-                        showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, habitTypeEntity);
+                        showToast(PersonalHabitActivity.this, R.string.invalidData);
                     }
                 });
     }
@@ -210,13 +211,12 @@ public class PersonalHabitActivity extends BaseActivity {
     }
 
     private void setUserHabitTag(String habitTag) {
-        String url = Url.BASE_URL + Url.CHANGE_USER_HABIT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("interest_ids", habitTag);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,CHANGE_USER_HABIT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -232,10 +232,18 @@ public class PersonalHabitActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(PersonalHabitActivity.this, R.string.do_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

@@ -9,11 +9,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.TextWatchListener;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
 ;
 
@@ -119,11 +119,10 @@ public class SettingPersonalNameActivity extends BaseActivity {
     }
 
     private void getData(String name) {
-        String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("nickname", name);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -144,11 +143,20 @@ public class SettingPersonalNameActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(SettingPersonalNameActivity.this,R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(SettingPersonalNameActivity.this,R.string.unConnectedNetwork);
             }
         });
     }

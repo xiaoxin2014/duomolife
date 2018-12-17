@@ -16,15 +16,13 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.PersonalBgImgSelAdapter;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity;
 import com.amkj.dmsh.mine.bean.MineBgImgEntity.MineBgImgBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -53,6 +51,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_BG_IMG_LIST;
+import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
 ;
 ;
@@ -167,11 +167,10 @@ public class PersonalBgImgSelActivity extends BaseActivity {
 
     private void setBgImgUrl(final String imgUrl) {
         if (!TextUtils.isEmpty(imgUrl)) {
-            String url = Url.BASE_URL + Url.MINE_CHANGE_DATA;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
             params.put("bgimg_url", imgUrl);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -194,11 +193,10 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    super.onError(ex, isOnCallback);
                 }
             });
         } else {
@@ -208,8 +206,7 @@ public class PersonalBgImgSelActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.MINE_BG_IMG_LIST;
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, null, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_BG_IMG_LIST, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -228,23 +225,24 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                     setBgImg();
                     personalBgImgSelAdapter.setNewData(mineBgImgBeanList);
                 }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                setBgImg();
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
             public void netClose() {
-                setBgImg();
-                smart_communal_refresh.finishRefresh();
                 showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                setBgImg();
-                smart_communal_refresh.finishRefresh();
-                showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                showToast(PersonalBgImgSelActivity.this, R.string.do_failed);
             }
         });
     }

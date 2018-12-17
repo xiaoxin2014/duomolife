@@ -35,10 +35,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
@@ -60,6 +59,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
+import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_ADD_LOTTERY;
 
 ;
 
@@ -242,11 +242,10 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         if(userId<1){
             return;
         }
-        final String url = Url.BASE_URL + Url.H_HOT_ACTIVITY_ADD_LOTTERY;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("turn_id", TextUtils.isEmpty(turnId) ? "3" : turnId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_HOT_ACTIVITY_ADD_LOTTERY,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 String code = "";
@@ -274,11 +273,9 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                     Toast.makeText(DoMoLifeLotteryActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void netClose() {
                 Toast.makeText(DoMoLifeLotteryActivity.this, R.string.unConnectedNetwork, Toast.LENGTH_SHORT).show();
-                super.onError(ex, isOnCallback);
             }
         });
     }

@@ -20,19 +20,17 @@ import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.NewUserCouponAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityNewUserShopAdapter;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity.CouponGiftBean;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity;
 import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -62,6 +60,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_COUPON_LIST;
+import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_COVER;
+import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_GET_COUPON;
+import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_LIST;
 
 ;
 
@@ -238,8 +240,7 @@ public class QualityNewUserActivity extends BaseActivity {
     }
 
     private void getCoverImg() {
-        String url = Url.BASE_URL + Url.QUALITY_NEW_USER_COVER;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_NEW_USER_COVER, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -259,23 +260,23 @@ public class QualityNewUserActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-                qualityNewUserShopAdapter.removeAllHeaderView();
+            public void onNotNetOrException() {
+                if (qualityNewUserShopAdapter.getHeaderLayoutCount() > 0) {
+                    qualityNewUserShopAdapter.removeAllHeaderView();
+                }
             }
         });
     }
 
     private void getQualityTypePro() {
-        String url = Url.BASE_URL + Url.QUALITY_NEW_USER_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
         params.put("showCount", TOTAL_COUNT_TWENTY);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityNewUserActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityNewUserActivity.this, QUALITY_NEW_USER_LIST
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -294,23 +295,25 @@ public class QualityNewUserActivity extends BaseActivity {
                                 qualityNewUserShopAdapter.notifyDataSetChanged();
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityNewUserShopAdapter.loadMoreComplete();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
+
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        qualityNewUserShopAdapter.loadMoreComplete();
                         showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityNewUserShopAdapter.loadMoreComplete();
                         showToast(QualityNewUserActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityNewUserShopList, qualityNewUserShopEntity);
                     }
                 });
     }
@@ -319,8 +322,7 @@ public class QualityNewUserActivity extends BaseActivity {
      * 新人专享
      */
     private void getNewUserCouponProduct() {
-        String url = Url.BASE_URL + Url.QUALITY_NEW_USER_COUPON_LIST;
-        XUtil.Post(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_NEW_USER_COUPON_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityNewUserCouponList.clear();
@@ -345,8 +347,7 @@ public class QualityNewUserActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onNotNetOrException() {
                 if (qualityNewUserShopList.size() > 0) {
                     qualityNewUserShopList.addAll(qualityNewUserCouponList);
                     qualityNewUserShopAdapter.notifyDataSetChanged();
@@ -359,42 +360,44 @@ public class QualityNewUserActivity extends BaseActivity {
      * 领取 新人优惠券礼包
      */
     private void getNewUserCouponGift() {
-        if (NetWorkUtils.checkNet(QualityNewUserActivity.this)) {
-            loadHud.show();
-            String url = Url.BASE_URL + Url.QUALITY_NEW_USER_GET_COUPON;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    loadHud.dismiss();
-                    Gson gson = new Gson();
-                    NewUserCouponEntity newUserCouponEntity = gson.fromJson(result, NewUserCouponEntity.class);
-                    if (newUserCouponEntity != null) {
-                        if (newUserCouponEntity.getCode().equals(SUCCESS_CODE)) {
-                            couponGiftList.clear();
-                            couponGiftList.addAll(newUserCouponEntity.getCouponGiftList());
-                            setNewUserCouponShowWay();
-                        } else if (!newUserCouponEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(QualityNewUserActivity.this, newUserCouponEntity.getMsg());
-                            setNewUserGetCouponShowWay();
-                        }
-                        newUserCouponAdapter.notifyDataSetChanged();
+        loadHud.show();
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_NEW_USER_GET_COUPON, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                loadHud.dismiss();
+                Gson gson = new Gson();
+                NewUserCouponEntity newUserCouponEntity = gson.fromJson(result, NewUserCouponEntity.class);
+                if (newUserCouponEntity != null) {
+                    if (newUserCouponEntity.getCode().equals(SUCCESS_CODE)) {
+                        couponGiftList.clear();
+                        couponGiftList.addAll(newUserCouponEntity.getCouponGiftList());
+                        setNewUserCouponShowWay();
+                    } else if (!newUserCouponEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityNewUserActivity.this, newUserCouponEntity.getMsg());
+                        setNewUserGetCouponShowWay();
                     }
+                    newUserCouponAdapter.notifyDataSetChanged();
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                    loadHud.dismiss();
-                    showToast(QualityNewUserActivity.this, "领取失败");
-                    setNewUserGetCouponShowWay();
-                }
-            });
-        } else {
-            showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
-            setNewUserGetCouponShowWay();
-        }
+            @Override
+            public void onNotNetOrException() {
+                loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(QualityNewUserActivity.this, "领取失败");
+            }
+
+            @Override
+            public void netClose() {
+                showToast(QualityNewUserActivity.this, R.string.unConnectedNetwork);
+                setNewUserGetCouponShowWay();
+            }
+        });
     }
 
     private void setNewUserGetCouponShowWay() {
@@ -426,10 +429,7 @@ public class QualityNewUserActivity extends BaseActivity {
             communal_recycler_wrap.setAdapter(newUserCouponAdapter);
             communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
-                    .setDividerId(R.drawable.item_divider_coupon_white)
-
-
-                    .create());
+                    .setDividerId(R.drawable.item_divider_coupon_white).create());
         }
 
         @OnClick(R.id.tv_look_mine_coupon)

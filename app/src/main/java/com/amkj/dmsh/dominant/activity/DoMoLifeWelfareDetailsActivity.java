@@ -38,7 +38,6 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity;
@@ -51,15 +50,14 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -85,6 +83,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.R.id.ll_communal_pro_list;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -96,10 +95,17 @@ import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.H_DML_THEME_DETAIL;
+import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
+import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
@@ -255,12 +261,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             return false;
         });
         adapterTopicComment.setOnLoadMoreListener(() -> {
-            if (page * DEFAULT_TOTAL_COUNT <= articleCommentList.size()) {
-                page++;
-                getTopicComment();
-            } else {
-                adapterTopicComment.loadMoreEnd();
-            }
+            page++;
+            getTopicComment();
         }, communal_recycler);
 //        侧滑菜单
         rv_wel_details_pro.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareDetailsActivity.this));
@@ -414,7 +416,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void getThemeDetailsData() {
-        String url = Url.BASE_URL + Url.H_DML_THEME_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", welfareId);
         params.put("is_up", 1);
@@ -425,8 +426,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(DoMoLifeWelfareDetailsActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareDetailsActivity.this, H_DML_THEME_DETAIL
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -440,21 +441,23 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
                         showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
                         showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
                 });
     }
@@ -489,7 +492,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void getShareData() {
-        XUtil.Get(Url.BASE_URL + Url.SHARE_COMMUNAL_ARTICLE, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,SHARE_COMMUNAL_ARTICLE,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -530,11 +533,10 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -552,21 +554,29 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, COUPON_PACKAGE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -584,11 +594,20 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -658,58 +677,55 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void getTopicComment() {
-        if (NetWorkUtils.checkNet(DoMoLifeWelfareDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_DML_SEARCH_COMMENT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", welfareId);
-            params.put("currentPage", page);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("replyCurrentPage", 1);
-            params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
-            params.put("comtype", "topic");
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    adapterTopicComment.loadMoreComplete();
-                    if (page == 1) {
-                        articleCommentList.clear();
-                    }
-                    Gson gson = new Gson();
-                    dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
-                    if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                            articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoLifeWelfareDetailsActivity.this, dmlSearchCommentEntity.getMsg());
-                        }
-                        adapterTopicComment.removeHeaderView(commentHeaderView);
-                        if (articleCommentList.size() > 0) {
-                            adapterTopicComment.addHeaderView(commentHeaderView);
-                            commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
-                        }
-                        adapterTopicComment.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    adapterTopicComment.loadMoreComplete();
-                    super.onError(ex, isOnCallback);
-                }
-            });
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", welfareId);
+        params.put("currentPage", page);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("replyCurrentPage", 1);
+        params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
+        params.put("comtype", "topic");
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_DML_SEARCH_COMMENT,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                adapterTopicComment.loadMoreComplete();
+                if (page == 1) {
+                    articleCommentList.clear();
+                }
+                Gson gson = new Gson();
+                dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
+                if (dmlSearchCommentEntity != null) {
+                    if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                        articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
+                    } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
+                        adapterTopicComment.loadMoreEnd();
+                    }else{
+                        showToast(DoMoLifeWelfareDetailsActivity.this, dmlSearchCommentEntity.getMsg());
+                    }
+                    adapterTopicComment.removeHeaderView(commentHeaderView);
+                    if (articleCommentList.size() > 0) {
+                        adapterTopicComment.addHeaderView(commentHeaderView);
+                        commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
+                    }
+                    adapterTopicComment.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                adapterTopicComment.loadMoreEnd(true);
+            }
+        });
     }
 
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -762,7 +778,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    ConstantMethod.addArticleShareCount(qualityWefBean.getId());
+                    addArticleShareCount(qualityWefBean.getId());
                 }
             });
         }
@@ -780,23 +796,12 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
-        String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                super.onSuccess(result);
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_AND_COMMENT_FAV,params,null);
     }
 
     //发送评论

@@ -11,16 +11,14 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.IntegralProductAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +31,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.H_INTEGRAL_PRODUCT_FILTRATE;
 
 /**
  * @author LGuiPeng
@@ -66,10 +64,7 @@ public class IntegralProductFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         integralProductAdapter = new IntegralProductAdapter(getActivity(), integrationBeanList);
         communal_recycler.setAdapter(integralProductAdapter);
         integralProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -90,60 +85,56 @@ public class IntegralProductFragment extends BaseFragment {
                 getIntegralData();
             }
         }, communal_recycler);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     private void getIntegralData() {
-        String url = BASE_URL + Url.H_INTEGRAL_PRODUCT_FILTRATE;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("currentPage", page);
 //            积分类型.-1为全部,0为纯积分,1为积分+金钱
         params.put("integralType", integralType);
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                smart_communal_refresh.finishRefresh();
-                integralProductAdapter.loadMoreComplete();
-                if (page == 1) {
-                    integrationBeanList.clear();
-                }
-                integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
-                if (integrationProEntity != null) {
-                    if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
-                        integrationBeanList.addAll(integrationProEntity.getIntegrationList());
-                    } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), integrationProEntity.getMsg());
-                    } else {
-                        integralProductAdapter.loadMoreEnd();
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_INTEGRAL_PRODUCT_FILTRATE,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        smart_communal_refresh.finishRefresh();
+                        integralProductAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            integrationBeanList.clear();
+                        }
+                        integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
+                        if (integrationProEntity != null) {
+                            if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
+                                integrationBeanList.addAll(integrationProEntity.getIntegrationList());
+                            } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), integrationProEntity.getMsg());
+                            } else {
+                                integralProductAdapter.loadMoreEnd();
+                            }
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
+                        integralProductAdapter.notifyDataSetChanged();
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
-                integralProductAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                integralProductAdapter.loadMoreComplete();
-                showToast(getActivity(), R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        integralProductAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                integralProductAdapter.loadMoreComplete();
-                showToast(getActivity(), R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, integrationBeanList, integrationProEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(getActivity(), R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(getActivity(), R.string.invalidData);
+                    }
+                });
     }
 
     @Override

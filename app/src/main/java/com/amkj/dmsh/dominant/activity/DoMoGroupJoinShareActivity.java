@@ -16,17 +16,16 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity.GroupShopCommunalInfoBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
 import com.google.gson.Gson;
@@ -59,6 +58,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
+import static com.amkj.dmsh.constant.Url.GROUP_SHOP_COMMUNAL;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
@@ -134,8 +135,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     }
 
     private void getCommunalInfo() {
-        String url = Url.BASE_URL + Url.GROUP_SHOP_COMMUNAL;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,GROUP_SHOP_COMMUNAL,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -160,11 +160,10 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     }
 
     private void getGroupShareInfo() {
-        String url = Url.BASE_URL + Url.GROUP_MINE_SHARE;
         Map<String, Object> params = new HashMap<>();
         params.put("orderNo", orderNo);
-        NetLoadUtils.getQyInstance().loadNetDataPost(DoMoGroupJoinShareActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(DoMoGroupJoinShareActivity.this, GROUP_MINE_SHARE
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_scroll_communal_refresh.finishRefresh();
@@ -173,27 +172,27 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                         if (qualityGroupShareEntity != null) {
                             if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                                 setGpDataInfo(qualityGroupShareEntity);
-                            } else if (qualityGroupShareEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-                            } else {
+                            } else if (!qualityGroupShareEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_scroll_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_scroll_communal_refresh.finishRefresh();
                         showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_scroll_communal_refresh.finishRefresh();
                         showToast(DoMoGroupJoinShareActivity.this, R.string.connectedFaile);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
                     }
                 });
     }

@@ -12,9 +12,9 @@ import com.amkj.dmsh.R;
 
 import java.util.LinkedHashMap;
 
-import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.JZDataSource;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static cn.jzvd.JZDataSource.URL_KEY_DEFAULT;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 
 
@@ -28,7 +28,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     private VideoStatusListener videoStatusListener;
     private ImageView iv_video_product;
-//    objects[] 1 视频标题 2 跳转地址 3 视频状态监听 4 是否已抢光
+    private final String urlType = "skipUrl";
+    private final String listenerType = "videoListener";
+    private LinkedHashMap linkedHashMap = new LinkedHashMap();
+    //    objects[] 1 视频标题 2 跳转地址 3 视频状态监听 4 是否已抢光
 
     public JzVideoPlayerStatus(Context context) {
         super(context);
@@ -60,23 +63,32 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
         if (!TextUtils.isEmpty(skipUrl)) {
             iv_video_product.setTag(skipUrl);
         }
-        LinkedHashMap map = new LinkedHashMap();
-        map.put(URL_KEY_DEFAULT, videoUrl);
-        Object[] dataSourceObjects = new Object[1];
-        dataSourceObjects[0] = map;
+        linkedHashMap.put(URL_KEY_DEFAULT, videoUrl);
+        if(!TextUtils.isEmpty(skipUrl)){
+            linkedHashMap.put(urlType,skipUrl);
+        }
 //        第一个可变参数 为标题 第二个为跳转地址
-        setUp(dataSourceObjects, 0, JZVideoPlayer.SCREEN_WINDOW_NORMAL, "",getStrings(skipUrl),videoStatusListener);
+        JZDataSource jzDataSource = new JZDataSource(linkedHashMap,"");
+        setUp(jzDataSource, SCREEN_WINDOW_NORMAL);
     }
 
     @Override
-    public void setUp(Object[] dataSourceObjects, int defaultUrlMapIndex, int screen, Object... objects) {
-        super.setUp(dataSourceObjects, defaultUrlMapIndex, screen, objects);
+    public void setUp(JZDataSource jzDataSource, int screen) {
+        super.setUp(jzDataSource, screen);
         if (currentScreen == SCREEN_WINDOW_FULLSCREEN) {
-            if(objects.length>1&&!TextUtils.isEmpty(objects[1].toString())){
-                iv_video_product.setVisibility(VISIBLE);
-            }else{
-                iv_video_product.setVisibility(GONE);
-            }
+            setADVideoView();
+        }
+    }
+
+    /**
+     * 设置广告栏 跳转详情按钮
+     */
+    private void setADVideoView() {
+        if(linkedHashMap !=null&& linkedHashMap.get(urlType)!=null&&
+                !TextUtils.isEmpty(linkedHashMap.get(urlType).toString())){
+            iv_video_product.setVisibility(VISIBLE);
+        }else{
+            iv_video_product.setVisibility(GONE);
         }
     }
 
@@ -128,6 +140,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     public void onStateError() {
         super.onStateError();
         getStartVideoStatusListener();
+
     }
 
     @Override
@@ -140,30 +153,26 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
         iv_video_product.setVisibility(GONE);
         if (videoStatusListener != null) {
             videoStatusListener.startTurning();
-        }else if(objects!=null&&objects.length>2&&objects[2]!=null){
-            videoStatusListener = (VideoStatusListener) objects[2];
+        }else if(linkedHashMap !=null&&linkedHashMap.get(listenerType)!=null){
+            videoStatusListener = (VideoStatusListener) linkedHashMap.get(listenerType);
             videoStatusListener.startTurning();
         }
     }
 
     private void getStopVideoStatusListener() {
-        if(objects!=null&&objects.length>1&&!TextUtils.isEmpty(objects[1].toString())){
-            iv_video_product.setVisibility(VISIBLE);
-        }else{
-            iv_video_product.setVisibility(GONE);
-        }
+        setADVideoView();
         if (videoStatusListener != null) {
             videoStatusListener.stopTurning();
-        }else if(objects!=null&&objects.length>2&&objects[2]!=null){
-            videoStatusListener = (VideoStatusListener) objects[2];
+        }else if(linkedHashMap !=null&&linkedHashMap.get(listenerType)!=null){
+            videoStatusListener = (VideoStatusListener) linkedHashMap.get(listenerType);
             videoStatusListener.stopTurning();
         }
     }
 
     public void setVideoStatusListener(VideoStatusListener videoStatusListener) {
         this.videoStatusListener = videoStatusListener;
-        if (objects!=null&&objects.length>2){
-            objects[2] = videoStatusListener;
+        if (linkedHashMap!=null&&linkedHashMap.containsKey(urlType)){
+            linkedHashMap.put(listenerType,videoStatusListener);
         }
     }
 
@@ -171,14 +180,14 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     public void onClick(View v) {
         super.onClick(v);
         if (v.getId() == R.id.iv_video_product) {
-            if (objects!=null&&objects.length>1&&!TextUtils.isEmpty(objects[1].toString())) {
+            if (linkedHashMap!=null&&linkedHashMap.containsKey(urlType)&&!TextUtils.isEmpty(linkedHashMap.get(urlType).toString())) {
                 /**
                  * 当前状态在播放，先暂停再跳转
                  */
                 if (currentState == CURRENT_STATE_PLAYING) {
                     onStatePause();
                 }
-                setSkipPath(getContext(), objects[1].toString(),true, false);
+                setSkipPath(getContext(), linkedHashMap.get(urlType).toString(),true, false);
             }
         }
     }

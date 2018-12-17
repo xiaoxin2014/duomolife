@@ -13,13 +13,12 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -36,6 +35,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_CHANGE_MOBILE;
 
 ;
 
@@ -193,12 +193,11 @@ public class ChangeMobileActivity extends BaseActivity {
 
     private void changeMobileNumber() {
         String newPhoneNumber = et_change_mobile.getText().toString().trim();
-        String url = Url.BASE_URL + Url.MINE_CHANGE_MOBILE;
         Map<String, Object> params = new HashMap<>();
         params.put("id", uid);
         params.put("oldMobile", infoObject.getMobileNum());
         params.put("newMobile", newPhoneNumber);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_MOBILE,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -217,11 +216,20 @@ public class ChangeMobileActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showException(getResources().getString(R.string.do_failed));
+            }
+
+            @Override
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showException(getResources().getString(R.string.do_failed));
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ChangeMobileActivity.this,R.string.unConnectedNetwork);
             }
         });
     }

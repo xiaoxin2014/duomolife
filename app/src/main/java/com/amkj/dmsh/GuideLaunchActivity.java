@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.amkj.dmsh.base.BaseActivity;
 
@@ -30,6 +31,7 @@ public class GuideLaunchActivity extends BaseActivity {
     }
 
     protected void initViews() {
+        hideNavStatus();
         if (!this.isTaskRoot()) {
             finish();
             return;
@@ -72,6 +74,13 @@ public class GuideLaunchActivity extends BaseActivity {
         } else {
             skipWelcome();
         }
+    }
+
+    private void hideNavStatus() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
     }
 
     private void skipWelcome() {

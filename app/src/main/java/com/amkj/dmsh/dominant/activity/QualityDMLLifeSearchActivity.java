@@ -14,15 +14,13 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.RecyclerArticleAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -45,9 +43,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
+import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_LIST;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -148,19 +149,15 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-            loadData();
-            scrollY = 0;
-
-        }});
+                loadData();
+                scrollY = 0;
+            }
+        });
         recyclerArticleAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= recyclerArticleAdapter.getItemCount()) {
-                    page++;
-                    getData();
-                } else {
-                    recyclerArticleAdapter.loadMoreEnd();
-                }
+                page++;
+                getSearchData();
             }
         }, communal_recycler);
 
@@ -224,10 +221,9 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -236,8 +232,6 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(QualityDMLLifeSearchActivity.this, requestStatus.getMsg());
                         }
                     }
                 }
@@ -253,63 +247,65 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
 
     // 分类文章列表
     private void getSearchData() {
-        String url = Url.BASE_URL + Url.Q_DML_SEARCH_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         if (userId > 0) {
             params.put("fuid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityDMLLifeSearchActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                recyclerArticleAdapter.loadMoreComplete();
-                if (page == 1) {
-                    communalArtList.clear();
-                }
-                Gson gson = new Gson();
-                communalArticleEntity = gson.fromJson(result, CommunalArticleEntity.class);
-                if (communalArticleEntity != null) {
-                    if (communalArticleEntity.getCode().equals(SUCCESS_CODE)) {
-                        tv_header_titleAll.setText(getStrings(communalArticleEntity.getTitle()));
-                        communalArtList.addAll(communalArticleEntity.getCommunalArticleList());
-                    } else if (!communalArticleEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityDMLLifeSearchActivity.this, communalArticleEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityDMLLifeSearchActivity.this, Q_DML_SEARCH_LIST,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        recyclerArticleAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            communalArtList.clear();
+                        }
+                        Gson gson = new Gson();
+                        communalArticleEntity = gson.fromJson(result, CommunalArticleEntity.class);
+                        if (communalArticleEntity != null) {
+                            if (communalArticleEntity.getCode().equals(SUCCESS_CODE)) {
+                                tv_header_titleAll.setText(getStrings(communalArticleEntity.getTitle()));
+                                communalArtList.addAll(communalArticleEntity.getCommunalArticleList());
+                            } else if (communalArticleEntity.getCode().equals(EMPTY_CODE)) {
+                                recyclerArticleAdapter.loadMoreEnd();
+                            } else {
+                                showToast(QualityDMLLifeSearchActivity.this, communalArticleEntity.getMsg());
+                            }
+                            recyclerArticleAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, communalArtList, communalArticleEntity);
                     }
-                    recyclerArticleAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,communalArtList,communalArticleEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                recyclerArticleAdapter.loadMoreComplete();
-                showToast(QualityDMLLifeSearchActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,communalArtList,communalArticleEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        recyclerArticleAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, communalArtList, communalArticleEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                recyclerArticleAdapter.loadMoreComplete();
-                showToast(QualityDMLLifeSearchActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,communalArtList,communalArticleEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(QualityDMLLifeSearchActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(QualityDMLLifeSearchActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     //    收藏
     private void setArticleCollected(final CommunalArticleBean articleBean, final int position) {
         loadHud.show();
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", articleBean.getId());
         params.put("type", ConstantVariable.TYPE_C_WELFARE);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -320,25 +316,22 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
                 showToast(QualityDMLLifeSearchActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
             }
         });
     }
 
     //  点赞
     private void setArticleLiked(CommunalArticleBean articleBean) {
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //文章id
         params.put("id", articleBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
     }
 
     @Override

@@ -13,12 +13,10 @@ import com.amkj.dmsh.address.adapter.SelectedAddressAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.network.NetLoadUtils.NetLoadListener;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -40,6 +38,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.DEL_ADDRESS;
+import static com.amkj.dmsh.constant.Url.UPDATE_DEFAULT_ADDRESS;
 
 ;
 
@@ -203,10 +203,9 @@ public class SelectedAddressActivity extends BaseActivity {
     //  删除地址
 
     private void delAddress(int id) {
-        String url = Url.BASE_URL + Url.DEL_ADDRESS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,DEL_ADDRESS,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -225,10 +224,13 @@ public class SelectedAddressActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        if(userId<0){
+            return;
+        }
         String url = Url.BASE_URL + Url.ADDRESS_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -244,33 +246,33 @@ public class SelectedAddressActivity extends BaseActivity {
                         showToast(SelectedAddressActivity.this, addressListEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                selectedAddressAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                selectedAddressAdapter.loadMoreComplete();
                 showToast(SelectedAddressActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                selectedAddressAdapter.loadMoreComplete();
                 showToast(SelectedAddressActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
             }
         });
     }
 
     private void upDateDefaultAddress(final AddressListBean addressAllBean) {
-        String url = Url.BASE_URL + Url.UPDATE_DEFAULT_ADDRESS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", addressAllBean.getId());
         params.put("user_id", addressAllBean.getUser_id());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,UPDATE_DEFAULT_ADDRESS,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -287,6 +289,11 @@ public class SelectedAddressActivity extends BaseActivity {
                         showToast(SelectedAddressActivity.this, status.getMsg());
                     }
                 }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(SelectedAddressActivity.this,R.string.unConnectedNetwork);
             }
         });
     }

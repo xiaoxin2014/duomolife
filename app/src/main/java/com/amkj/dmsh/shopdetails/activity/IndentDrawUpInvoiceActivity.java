@@ -3,6 +3,8 @@ package com.amkj.dmsh.shopdetails.activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -15,28 +17,30 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoicePromptEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoicePromptEntity.IndentInvoicePromptBean;
-import com.amkj.dmsh.shopdetails.bean.IndentInvoicePromptEntity.IndentInvoicePromptBean.DescriptionBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUMBER_BAR;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.INDENT_DRAW_UP_INVOICE;
+import static com.amkj.dmsh.constant.Url.INVOICE_DRAW_UP;
 
 ;
 
@@ -67,6 +71,18 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
     //    纳税人识别号
     @BindView(R.id.et_invoice_info_num)
     EditText et_invoice_info_num;
+    //    公司地址
+    @BindView(R.id.et_invoice_company_address)
+    EditText et_invoice_company_address;
+    //    公司电话
+    @BindView(R.id.et_invoice_company_phone)
+    EditText et_invoice_company_phone;
+    //    开户行
+    @BindView(R.id.et_invoice_company_bank_deposit)
+    EditText et_invoice_company_bank_deposit;
+    //    开户行账号
+    @BindView(R.id.et_invoice_company_account_number)
+    EditText et_invoice_company_account_number;
     //    底栏完成
     @BindView(R.id.bt_draw_up_invoice_finish)
     Button bt_draw_up_invoice_finish;
@@ -78,10 +94,12 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
     private List<CommunalDetailObjectBean> descriptionBeanList = new ArrayList<>();
     private CommunalDetailAdapter communalDetailAdapter;
     private String invoiceNum;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_indent_invoice_draw_up;
     }
+
     @Override
     protected void initViews() {
         header_shared.setVisibility(View.GONE);
@@ -132,6 +150,18 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
         communalDetailAdapter = new CommunalDetailAdapter(IndentDrawUpInvoiceActivity.this, descriptionBeanList);
         communal_recycler_wrap.setAdapter(communalDetailAdapter);
         setEtFilter(et_invoice_info_title);
+        InputFilter phoneFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                Pattern phone = Pattern.compile(REGEX_NUMBER_BAR);
+                Matcher phoneMatcher = phone.matcher(source);
+                if (phoneMatcher.find()) {
+                    return source;
+                }
+                return null;
+            }
+        };
+        et_invoice_company_phone.setFilters(new InputFilter[]{phoneFilter});
     }
 
     @Override
@@ -140,21 +170,20 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
     }
 
     private void getWarmPrompt() {
-        String url = Url.BASE_URL + Url.INDENT_DRAW_UP_INVOICE;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, INDENT_DRAW_UP_INVOICE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 descriptionBeanList.clear();
                 Gson gson = new Gson();
                 IndentInvoicePromptEntity indentInvoicePromptEntity = gson.fromJson(result, IndentInvoicePromptEntity.class);
-                if (indentInvoicePromptEntity.getCode().equals(SUCCESS_CODE)) {
-                    if (indentInvoicePromptEntity != null) {
+                if (indentInvoicePromptEntity != null) {
+                    if (indentInvoicePromptEntity.getCode().equals(SUCCESS_CODE)) {
                         IndentInvoicePromptBean indentInvoicePromptBean = indentInvoicePromptEntity.getIndentInvoicePromptBean();
                         if (indentInvoicePromptBean != null) {
-                            List<DescriptionBean> descriptionList = indentInvoicePromptBean.getDescriptionList();
+                            List<IndentInvoicePromptEntity.IndentInvoicePromptBean.DescriptionBean> descriptionList = indentInvoicePromptBean.getDescriptionList();
                             CommunalDetailObjectBean detailObjectBean;
                             for (int i = 0; i < descriptionList.size(); i++) {
-                                DescriptionBean descriptionBean = descriptionList.get(i);
+                                IndentInvoicePromptEntity.IndentInvoicePromptBean.DescriptionBean descriptionBean = descriptionList.get(i);
                                 detailObjectBean = new CommunalDetailObjectBean();
                                 if (descriptionBean.getType().equals("text")) {
                                     detailObjectBean.setContent(descriptionBean.getContent());
@@ -163,9 +192,10 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
                             }
                             communalDetailAdapter.setNewData(descriptionBeanList);
                         }
-
                     }
+
                 }
+
             }
         });
     }
@@ -209,46 +239,72 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
         } else {
             if (TextUtils.isEmpty(indentNo)) {
                 showToast(this, "订单号为空，请联系客服");
-            } else {
+            } else if (TextUtils.isEmpty(invoiceTitle)) {
                 showToast(this, "请输入发票抬头");
             }
         }
     }
 
     private void setInvoice(String invoiceTitle, String invoiceNum) {
-        String url = Url.BASE_URL + Url.INVOICE_DRAW_UP;
-        if (NetWorkUtils.checkNet(IndentDrawUpInvoiceActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", indentNo);
-            params.put("title", invoiceTitle);
-            if (!TextUtils.isEmpty(invoiceNum)) {
-                params.put("taxpayer_on", invoiceNum);
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", indentNo);
+        params.put("title", invoiceTitle);
+        if (!TextUtils.isEmpty(invoiceNum)) {
+            params.put("taxpayer_on", invoiceNum);
+        }
+        String companyAddress = et_invoice_company_address.getText().toString();
+        if (!TextUtils.isEmpty(companyAddress)) {
+            params.put("address", companyAddress);
+        }
+        String companyPhone = et_invoice_company_phone.getText().toString();
+        if (!TextUtils.isEmpty(companyPhone)) {
+            Pattern phone = Pattern.compile(REGEX_NUMBER_BAR);
+            Matcher phoneMatcher = phone.matcher(companyPhone);
+            if (!phoneMatcher.matches()) {
+                loadHud.dismiss();
+                showToast(this,"电话包含特殊字符，请重新更改提交");
+                return;
             }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToast(IndentDrawUpInvoiceActivity.this, "发票开具成功");
-                            finish();
-                        } else {
-                            showToast(IndentDrawUpInvoiceActivity.this, requestStatus.getMsg());
-                        }
+            params.put("mobile", companyPhone);
+        }
+        String companyBankDeposit = et_invoice_company_bank_deposit.getText().toString();
+        if (!TextUtils.isEmpty(companyBankDeposit)) {
+            params.put("bankOfDeposit", companyBankDeposit);
+        }
+        String companyAccount = et_invoice_company_account_number.getText().toString();
+        if (!TextUtils.isEmpty(companyAccount)) {
+            params.put("account", companyAccount);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, INVOICE_DRAW_UP, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                loadHud.dismiss();
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        showToast(IndentDrawUpInvoiceActivity.this, "发票开具成功");
+                        finish();
+                    } else {
+                        showToast(IndentDrawUpInvoiceActivity.this, requestStatus.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    loadHud.dismiss();
-                    showToast(IndentDrawUpInvoiceActivity.this, R.string.invalidData);
-                }
-            });
-        } else {
-            loadHud.dismiss();
-            showToast(this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void onNotNetOrException() {
+                loadHud.dismiss();
+            }
+
+            @Override
+            public void netClose() {
+                showToast(IndentDrawUpInvoiceActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(IndentDrawUpInvoiceActivity.this, R.string.do_failed);
+            }
+        });
     }
 }

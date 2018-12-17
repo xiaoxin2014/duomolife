@@ -248,6 +248,11 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //        initBaiCHotFix();
 
         if (isAppMainProcess()) {
+            if (isDebugTag) {
+                SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
+                int selectServer = sharedPreferences.getInt("selectServer", 0);
+                new Url(mAppContext, selectServer);
+            }
             // 初始化xUtils
             x.Ext.init(getApplication());
             NetApiManager.getInstance().init();
@@ -289,11 +294,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDebugTag) {
-                        SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
-                        int selectServer = sharedPreferences.getInt("selectServer", 0);
-                        new Url(mAppContext, selectServer);
-                    }
                     SharedPreferences sp = mAppContext.getSharedPreferences("delOldVersion", MODE_PRIVATE);
                     boolean isDelOldVersionCache = sp.getBoolean("delOldVersionCache", true);
                     if (isDelOldVersionCache) {
@@ -541,7 +541,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             InputStream totalStream = asset.open("totalAction.txt");
             totalActionMap = new HashMap<>();
             String fileTotal = FileStreamUtils.InputStreamTOString(totalStream);
-            for (String totalString : fileTotal.split("\r\n")) {
+            for (String totalString : fileTotal.split("\n")) {
                 String[] split = totalString.split(",");
                 if (split.length == 3) {
                     Map<String, String> totalIdName = new HashMap<>();

@@ -22,8 +22,9 @@ import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
 import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
@@ -32,7 +33,6 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -356,7 +356,7 @@ public class SalesReturnAppealActivity extends BaseActivity {
         params.put("no", orderNo);
         params.put("userId", userId);
         params.put("goods", new Gson().toJson(list));
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -391,11 +391,20 @@ public class SalesReturnAppealActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 header_shared.setEnabled(true);
                 header_shared.setText("提交");
                 progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(SalesReturnAppealActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(SalesReturnAppealActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

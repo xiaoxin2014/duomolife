@@ -7,10 +7,11 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.AppUpdateDialogActivity;
+import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.AppVersionEntity;
 import com.amkj.dmsh.bean.AppVersionEntity.AppVersionBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.UpgradeInfo;
 
@@ -23,6 +24,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_VERSION_INFO;
@@ -68,58 +70,61 @@ public class AppUpdateUtils {
      */
     public void getAppUpdate(Context context, boolean isManual) {
         this.context = context;
-        if (NetWorkUtils.checkNet(context)) {
-            String url = Url.BASE_URL + Url.APP_VERSION_INFO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("device_type_id", 2);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    AppVersionEntity appVersionEntity = AppVersionEntity.objectFromData(result);
-                    if (appVersionEntity != null) {
-                        if (appVersionEntity.getCode().equals(SUCCESS_CODE)
-                                && appVersionEntity.getAppVersionBean() != null) {
-                            AppVersionBean appVersionBean = appVersionEntity.getAppVersionBean();
-                            SharedPreferences sharedPreferences = context.getSharedPreferences(APP_VERSION_INFO, MODE_PRIVATE);
-                            String updateTime = sharedPreferences.getString(UPDATE_TIME, "");
-                            String lastUpdateTime = sharedPreferences.getString(LAST_UPDATE_TIME, "");
-                            long intervalTime = sharedPreferences.getLong(INTERVAL_TIME, 0);
-                            /**
-                             * 更新时间  时间间隔
-                             */
-                            if (isMandatoryUpdateVersion(appVersionBean.getCompel_version())) { // 是否是强制版本
-                                openDialog(appVersionBean,true);
-                            } else if (isManual) {
-                                setAppUpdateData(appVersionEntity, sharedPreferences);
-                                if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
-                                    openDialog(appVersionBean,false);
+        String url = Url.BASE_URL + Url.APP_VERSION_INFO;
+        Map<String, Object> params = new HashMap<>();
+        params.put("device_type_id", 2);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                AppVersionEntity appVersionEntity = AppVersionEntity.objectFromData(result);
+                if (appVersionEntity != null) {
+                    if (appVersionEntity.getCode().equals(SUCCESS_CODE)
+                            && appVersionEntity.getAppVersionBean() != null) {
+                        AppVersionBean appVersionBean = appVersionEntity.getAppVersionBean();
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(APP_VERSION_INFO, MODE_PRIVATE);
+                        String updateTime = sharedPreferences.getString(UPDATE_TIME, "");
+                        String lastUpdateTime = sharedPreferences.getString(LAST_UPDATE_TIME, "");
+                        long intervalTime = sharedPreferences.getLong(INTERVAL_TIME, 0);
+                        /**
+                         * 更新时间  时间间隔
+                         */
+                        if (isMandatoryUpdateVersion(appVersionBean.getCompel_version())) { // 是否是强制版本
+                            openDialog(appVersionBean,true);
+                        } else if (isManual) {
+                            setAppUpdateData(appVersionEntity, sharedPreferences);
+                            if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
+                                openDialog(appVersionBean,false);
+                            } else {
+                                /**
+                                 * 获取升级信息
+                                 */
+                                UpgradeInfo upgradeInfo = Beta.getUpgradeInfo();
+                                if (upgradeInfo == null) {
+                                    getMarketApp(context, "暂无更多更新，稍晚留意新版本~");
                                 } else {
-                                    /**
-                                     * 获取升级信息
-                                     */
-                                    UpgradeInfo upgradeInfo = Beta.getUpgradeInfo();
-                                    if (upgradeInfo == null) {
-                                        getMarketApp(context, "暂无更多更新，稍晚留意新版本~");
-                                    } else {
-                                        Beta.checkUpgrade();
-                                    }
+                                    Beta.checkUpgrade();
                                 }
-                            } else if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
-                                if (!appVersionBean.getUpdateTime().equals(updateTime)) {
-                                    setAppUpdateData(appVersionEntity, sharedPreferences);
-                                    if (appVersionBean.getShowPop() == 1) {
-                                        openDialog(appVersionBean,false);
-                                    }
-                                } else if (!isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
-                                    setAppUpdateData(appVersionEntity, sharedPreferences);
+                            }
+                        } else if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
+                            if (!appVersionBean.getUpdateTime().equals(updateTime)) {
+                                setAppUpdateData(appVersionEntity, sharedPreferences);
+                                if (appVersionBean.getShowPop() == 1) {
                                     openDialog(appVersionBean,false);
                                 }
+                            } else if (!isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
+                                setAppUpdateData(appVersionEntity, sharedPreferences);
+                                openDialog(appVersionBean,false);
                             }
                         }
                     }
                 }
-            });
-        }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context,R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**

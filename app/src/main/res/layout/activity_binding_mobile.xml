@@ -103,7 +103,7 @@
                     android:id="@+id/edit_bind_set_password_new"
                     android:gravity="center_vertical"
                     android:textColorHint="@color/text_gray_hint_n"
-                    android:hint="请输入密码，最少6位"
+                    android:hint="@string/PasswordRule"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/sc_mm_115"/>
             </RelativeLayout>

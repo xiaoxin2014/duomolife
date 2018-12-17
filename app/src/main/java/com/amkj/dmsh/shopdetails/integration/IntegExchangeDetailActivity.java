@@ -21,7 +21,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
@@ -45,7 +45,6 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity.Inte
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -187,7 +186,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         Map<String, Object> params = new HashMap<>();
         params.put("no", indentNum);
         params.put("userId", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -215,21 +214,21 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 } else {
                     showToast(IntegExchangeDetailActivity.this, msg);
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
             }
 
             @Override
             public void netClose() {
                 smart_communal_refresh.finishRefresh();
-                showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, integralOrderDetailEntity);
+                showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_communal_refresh.finishRefresh();
                 showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, integralOrderDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
         });
     }
@@ -399,7 +398,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("no", no);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -415,9 +414,13 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
                 showToast(IntegExchangeDetailActivity.this, R.string.do_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -428,7 +431,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());
         params.put("orderProductId", 0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -470,8 +473,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             showToast(IntegExchangeDetailActivity.this, "数据异常，请刷新重试");
             return;
         }
-
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -546,9 +548,13 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showToast(IntegExchangeDetailActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -786,7 +792,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());
         params.put("buyType", payWay);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -816,9 +822,13 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showToast(IntegExchangeDetailActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }

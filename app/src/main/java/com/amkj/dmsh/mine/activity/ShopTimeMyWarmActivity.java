@@ -15,13 +15,12 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.mine.adapter.ShopTimeMyWarmAdapter;
 import com.amkj.dmsh.mine.bean.MineWarmEntity;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -43,10 +42,11 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_WARM;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_WARM;
 
 ;
 ;
@@ -107,12 +107,8 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         shopTimeMyWarmAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= shopTimeMyWarmAdapter.getItemCount()) {
-                    page++;
-                    getWarmTimeShop();
-                } else {
-                    shopTimeMyWarmAdapter.loadMoreEnd();
-                }
+                page++;
+                getWarmTimeShop();
             }
         }, communal_recycler);
 
@@ -179,7 +175,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -213,11 +209,10 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     }
 
     private void getWarmTimeShop() {
-        String url = Url.BASE_URL + Url.MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", page);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -241,33 +236,32 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                         tv_header_titleAll.setText("秒杀提醒(" + mineWarmEntity.getCount() + ")");
                     } else if (!mineWarmEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ShopTimeMyWarmActivity.this, mineWarmEntity.getMsg());
+                    }else{
+                        shopTimeMyWarmAdapter.loadMoreEnd();
                     }
                     shopTimeMyWarmAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                shopTimeMyWarmAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                shopTimeMyWarmAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                shopTimeMyWarmAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
+                showToast(ShopTimeMyWarmActivity.this,R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getWarmTime() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_SHOW_PRO_WARM,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -279,11 +273,6 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                         }
                     }
                 }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(ShopTimeMyWarmActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

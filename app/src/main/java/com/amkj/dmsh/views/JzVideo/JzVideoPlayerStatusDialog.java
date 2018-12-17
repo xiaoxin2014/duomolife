@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 
-import cn.jzvd.JZUserActionStandard;
-import cn.jzvd.JZVideoPlayerStandard;
+import cn.jzvd.JZUserActionStd;
+import cn.jzvd.JzvdStd;
 
 
 /**
@@ -18,7 +18,7 @@ import cn.jzvd.JZVideoPlayerStandard;
  * version 3.1.3
  * class description:请输入类描述
  */
-public class JzVideoPlayerStatusDialog extends JZVideoPlayerStandard {
+public class JzVideoPlayerStatusDialog extends JzvdStd {
     public AlertDialog wifiAlertView;
     private AlertDialogHelper alertDialogHelper;
 
@@ -43,7 +43,7 @@ public class JzVideoPlayerStatusDialog extends JZVideoPlayerStandard {
                 @Override
                 public void confirm() {
                     alertDialogHelper.dismiss();
-                    onEvent(JZUserActionStandard.ON_CLICK_START_WIFIDIALOG);
+                    onEvent(JZUserActionStd.ON_CLICK_START_WIFIDIALOG);
                     startVideo();
                     WIFI_TIP_DIALOG_SHOWED = true;
                 }

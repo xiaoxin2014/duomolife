@@ -12,8 +12,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -39,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_LIST;
 
 ;
 ;
@@ -143,60 +144,58 @@ public class CouponProductActivity extends BaseActivity {
     }
 
     private void getCouponProductData() {
-        String url = Url.BASE_URL + Url.Q_COUPON_PRODUCT_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("user_coupon_id", userCouponId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                if (page == 1) {
-                    couponProductList.clear();
-                }
-                Gson gson = new Gson();
-                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                if (likedProductEntity != null) {
-                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        couponProductList.addAll(likedProductEntity.getLikedProductBeanList());
-                    } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                        qualityTypeProductAdapter.loadMoreEnd();
-                    } else {
-                        qualityTypeProductAdapter.loadMoreEnd();
-                        showToast(CouponProductActivity.this, likedProductEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_COUPON_PRODUCT_LIST,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            couponProductList.clear();
+                        }
+                        Gson gson = new Gson();
+                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProductEntity != null) {
+                            if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                couponProductList.addAll(likedProductEntity.getLikedProductBeanList());
+                            } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                            } else {
+                                qualityTypeProductAdapter.loadMoreEnd();
+                                showToast(CouponProductActivity.this, likedProductEntity.getMsg());
+                            }
+                            qualityTypeProductAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
                     }
-                    qualityTypeProductAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
-            }
 
-            @Override
-            public void netClose() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                showToast(CouponProductActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        smart_communal_refresh.finishRefresh();
+                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityTypeProductAdapter.loadMoreComplete();
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(CouponProductActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(CouponProductActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(CouponProductActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
@@ -31,6 +30,7 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeShaftBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeShaftRecordBean;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -67,6 +67,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRODUCT_TOPIC_SHAFT;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_TOP_PRODUCT;
 
 ;
 
@@ -258,7 +260,7 @@ public class SpringSaleFragment extends BaseFragment {
             searchDateHour = timeShowBean.getHourShaft()[0];
             getProductData();
         } else {
-            NetLoadUtils.getQyInstance().showLoadSirEmpty(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
             saleTimeTotalList.clear();
             getTopRecommendData();
         }
@@ -270,7 +272,6 @@ public class SpringSaleFragment extends BaseFragment {
     }
 
     private void getProductData() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRODUCT_TOPIC_SHAFT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("searchDate", searchDateDay);
@@ -279,8 +280,8 @@ public class SpringSaleFragment extends BaseFragment {
         if (userId != 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), TIME_SHOW_PRODUCT_TOPIC_SHAFT
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -370,23 +371,24 @@ public class SpringSaleFragment extends BaseFragment {
                             }
                             springSaleRecyclerAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, saleTimeTotalList, timeForeShowEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, saleTimeTotalList, timeForeShowEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        springSaleRecyclerAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, saleTimeTotalList, timeForeShowEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        springSaleRecyclerAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, saleTimeTotalList, timeForeShowEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        springSaleRecyclerAdapter.loadMoreComplete();
                         showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, saleTimeTotalList, timeForeShowEntity);
                     }
                 });
     }
@@ -395,14 +397,13 @@ public class SpringSaleFragment extends BaseFragment {
      * 获取
      */
     private void getTopRecommendData() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_TOP_PRODUCT;
         Map<String, Object> params = new HashMap<>();
         params.put("recommendType", "top");
         if (userId != 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), TIME_SHOW_PRO_TOP_PRODUCT
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         springSaleRecyclerAdapter.loadMoreComplete();
@@ -410,7 +411,7 @@ public class SpringSaleFragment extends BaseFragment {
                         timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
-                                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                                 if (timeForeShowEntity.getTimeForeShowList() != null
                                         && timeForeShowEntity.getTimeForeShowList().size() > 0) {
                                     BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
@@ -425,15 +426,8 @@ public class SpringSaleFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        springSaleRecyclerAdapter.loadMoreComplete();
-                        springSaleRecyclerAdapter.loadMoreEnd();
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        springSaleRecyclerAdapter.loadMoreComplete();
-                        springSaleRecyclerAdapter.loadMoreEnd();
+                    public void onNotNetOrException() {
+                        springSaleRecyclerAdapter.loadMoreEnd(true);
                     }
                 });
     }

@@ -8,14 +8,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -24,7 +21,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -34,7 +31,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_PAGE;
+import static com.amkj.dmsh.constant.Url.MINE_RESET_REAL_NAME;
 
+;
 ;
 
 /**
@@ -74,84 +74,82 @@ public class PersonalRealNameActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.MINE_PAGE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
-                            if (communalUserInfoEntity != null) {
-                                if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                                    CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
-                                    setPersonalData(communalUserInfoBean);
-                                } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
-                                    showToast(PersonalRealNameActivity.this, communalUserInfoEntity.getMsg());
-                                }
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
+            return;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+                        if (communalUserInfoEntity != null) {
+                            if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                                CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
+                                setPersonalData(communalUserInfoBean);
+                            } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(PersonalRealNameActivity.this, communalUserInfoEntity.getMsg());
                             }
                         }
-
-                        @Override
-                        public void netClose() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-
-                        }
-                    });
-        }
+                    }
+                });
     }
 
     /**
      * 修改真实信息
      */
     private void changeRealName() {
+        if (userId < 1) {
+            return;
+        }
         String realName = et_per_real_name.getText().toString().trim();
         String idCard = et_per_real_id_card.getText().toString().trim();
         if (!TextUtils.isEmpty(realName) && !TextUtils.isEmpty(idCard)) {
-            if (userId > 0) {
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                if (NetWorkUtils.checkNet(PersonalRealNameActivity.this)) {
-                    String url = Url.BASE_URL + Url.MINE_RESET_REAL_NAME;
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("uid", userId);
-                    params.put("idcard", idCard);
-                    params.put("realName", realName);
-                    XUtil.Post(url, params, new MyCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                            if (requestStatus != null) {
-                                if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                                    showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
-                                    finish();
-                                } else {
-                                    showToast(PersonalRealNameActivity.this, requestStatus.getMsg());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable ex, boolean isOnCallback) {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            showToast(PersonalRealNameActivity.this, R.string.do_failed);
-                        }
-                    });
-                }
+            if (loadHud != null) {
+                loadHud.show();
             }
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            params.put("idcard", idCard);
+            params.put("realName", realName);
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_RESET_REAL_NAME,params,new NetLoadListenerHelper(){
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson = new Gson();
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
+                            finish();
+                        } else {
+                            showToast(PersonalRealNameActivity.this, requestStatus.getMsg());
+                        }
+                    }
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    showToast(PersonalRealNameActivity.this, R.string.do_failed);
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(PersonalRealNameActivity.this, R.string.unConnectedNetwork);
+                }
+            });
         } else if (TextUtils.isEmpty(realName)) {
             showToast(PersonalRealNameActivity.this, "请输入收货人姓名");
         } else {

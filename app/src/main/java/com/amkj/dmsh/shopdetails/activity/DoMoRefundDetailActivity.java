@@ -23,13 +23,13 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.RefundTypeAdapter;
@@ -45,7 +45,6 @@ import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -79,6 +78,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_REPAIR;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_LOGISTIC_COM;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_LOGISTIC_SUB;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_REFUND_DETAIL;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_DETAIL;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_LOGISTIC_SUB;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_RECEIVE;
 
 ;
 ;
@@ -279,13 +284,12 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         if(userId<1){
             return;
         }
-        String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("orderRefundProductId", orderRefundProductId);
         params.put("orderProductId", orderProductId);
         params.put("userId", userId);
         params.put("no", no);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_REPAIR_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -304,19 +308,22 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                         showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void netClose() {
                 showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
         });
     }
@@ -325,13 +332,12 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         if(userId<1){
             return;
         }
-        String url = Url.BASE_URL + Url.Q_INDENT_REFUND_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", no);
         params.put("orderProductId", orderProductId);
         params.put("orderRefundProductId", orderRefundProductId);
         params.put("userId", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_REFUND_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -348,19 +354,22 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                         showToast(DoMoRefundDetailActivity.this, refundDetailEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void netClose() {
                 showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, refundDetailEntity);
             }
         });
     }
@@ -393,7 +402,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     private void cancelRefund(String url, Map<String, Object> params) {
         params.put("orderRefundProductId", refundDetailBean.getOrderRefundProductId());
         params.put("orderProductId", refundDetailBean.getOrderProductId());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -411,40 +420,45 @@ public class DoMoRefundDetailActivity extends BaseActivity{
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
                 showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getLogisticCompany() {
-        String url = Url.BASE_URL + Url.Q_INDENT_LOGISTIC_COM;
-        if (NetWorkUtils.checkNet(DoMoRefundDetailActivity.this)) {
-            XUtil.Get(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RefundLogisticEntity refundLogisticEntity = gson.fromJson(result, RefundLogisticEntity.class);
-                    if (refundLogisticEntity != null) {
-                        if (refundLogisticEntity.getCode().equals(SUCCESS_CODE)) {
-                            expressCompanies = refundLogisticEntity.getExpressCompanys();
-                            setRefundLogisticData(expressCompanies);
-                        } else if (refundLogisticEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DoMoRefundDetailActivity.this, refundLogisticEntity.getMsg());
-                        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_LOGISTIC_COM,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RefundLogisticEntity refundLogisticEntity = gson.fromJson(result, RefundLogisticEntity.class);
+                if (refundLogisticEntity != null) {
+                    if (refundLogisticEntity.getCode().equals(SUCCESS_CODE)) {
+                        expressCompanies = refundLogisticEntity.getExpressCompanys();
+                        setRefundLogisticData(expressCompanies);
+                    } else if (refundLogisticEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DoMoRefundDetailActivity.this, refundLogisticEntity.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     private void setRefundLogisticData(final List<String> expressCompanys) {
@@ -823,40 +837,41 @@ public class DoMoRefundDetailActivity extends BaseActivity{
      * @param logisticFee
      */
     private void submitRepairLogisticInfo(String logistic, String logisticNo, String logisticFee) {
-        String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_LOGISTIC_SUB;
-        if (NetWorkUtils.checkNet(DoMoRefundDetailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", no);
-            params.put("orderProductId", orderProductId);
-            params.put("orderRefundProductId", orderRefundProductId);
-            params.put("expressCompany", logistic);
-            params.put("refundNo", refundDetailBean.getRefundNo());
-            params.put("expressNo", logisticNo);
-            params.put("expressFee", TextUtils.isEmpty(logisticFee) ? "0" : logisticFee);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "提交"));
-                            loadData();
-                        } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", no);
+        params.put("orderProductId", orderProductId);
+        params.put("orderRefundProductId", orderRefundProductId);
+        params.put("expressCompany", logistic);
+        params.put("refundNo", refundDetailBean.getRefundNo());
+        params.put("expressNo", logisticNo);
+        params.put("expressFee", TextUtils.isEmpty(logisticFee) ? "0" : logisticFee);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_REPAIR_LOGISTIC_SUB,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "提交"));
+                        loadData();
+                    } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
@@ -866,74 +881,76 @@ public class DoMoRefundDetailActivity extends BaseActivity{
      * @param logisticNo
      */
     private void submitLogisticInfo(String logistic, String logisticNo) {
-        String url = Url.BASE_URL + Url.Q_INDENT_LOGISTIC_SUB;
-        if (NetWorkUtils.checkNet(DoMoRefundDetailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("no", no);
-            params.put("orderProductId", orderProductId);
-            params.put("orderRefundProductId", orderRefundProductId);
-            params.put("userId", userId);
-            params.put("expressCompany", logistic);
-            params.put("expressNo", logisticNo);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "提交"));
-                            loadData();
-                        } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", no);
+        params.put("orderProductId", orderProductId);
+        params.put("orderRefundProductId", orderRefundProductId);
+        params.put("userId", userId);
+        params.put("expressCompany", logistic);
+        params.put("expressNo", logisticNo);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_LOGISTIC_SUB,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, String.format(getResources().getString(R.string.doSuccess), "提交"));
+                        loadData();
+                    } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
      * 确认维修商品已收货
      */
     private void confirmRepairReceive() {
-        String url = Url.BASE_URL + Url.Q_INDENT_REPAIR_RECEIVE;
-        if (NetWorkUtils.checkNet(DoMoRefundDetailActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("orderNo", no);
-            params.put("orderProductId", orderProductId);
-            params.put("orderRefundProductId", orderRefundProductId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            loadData();
-                        } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                        } else {
-                            showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
-                        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderNo", no);
+        params.put("orderProductId", orderProductId);
+        params.put("orderRefundProductId", orderRefundProductId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_REPAIR_RECEIVE,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        loadData();
+                    } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+                    } else {
+                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DoMoRefundDetailActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     //    选取物流公司

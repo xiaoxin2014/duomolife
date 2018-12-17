@@ -16,8 +16,8 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
@@ -26,7 +26,6 @@ import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -57,7 +56,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DEL;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
@@ -67,6 +65,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.Url.INDENT_SEARCH;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_CANCEL;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_CONFIRM;
+import static com.amkj.dmsh.constant.Url.Q_INDENT_DEL;
 
 ;
 ;
@@ -136,12 +139,8 @@ public class IndentSearchDetailsActivity extends BaseActivity {
         doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= doMoIndentListAdapter.getItemCount()) {
-                    page++;
-                    getData();
-                } else {
-                    doMoIndentListAdapter.loadMoreEnd();
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -333,18 +332,18 @@ public class IndentSearchDetailsActivity extends BaseActivity {
     @Override
     protected void getData() {
         if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
             return;
         }
         //        订单搜索
-        String url = Url.BASE_URL + Url.INDENT_SEARCH;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", page);
 //        3 组合赠品兼容
         params.put("version", 3);
         params.put("productName", getStrings(searchKey));
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, INDENT_SEARCH, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -375,25 +374,28 @@ public class IndentSearchDetailsActivity extends BaseActivity {
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                 } else if (!code.equals(EMPTY_CODE)) {
                     showToast(IndentSearchDetailsActivity.this, msg);
+                }else{
+                    doMoIndentListAdapter.loadMoreEnd();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, code);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                doMoIndentListAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                doMoIndentListAdapter.loadMoreComplete();
                 showToast(mAppContext, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                doMoIndentListAdapter.loadMoreComplete();
                 showToast(mAppContext, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, inquiryOrderEntry);
             }
         });
     }
@@ -410,11 +412,11 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
     //  订单删除
     private void delOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_DEL;
+        String url = Url.BASE_URL + Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_DEL,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -433,12 +435,12 @@ public class IndentSearchDetailsActivity extends BaseActivity {
     }
 
     private void confirmOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
+        String url = Url.BASE_URL + Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
         params.put("orderProductId", 0);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_CONFIRM,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -458,11 +460,11 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
     //  取消订单
     private void cancelOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
+        String url = Url.BASE_URL + Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_CANCEL,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -476,6 +478,16 @@ public class IndentSearchDetailsActivity extends BaseActivity {
                                 requestStatus.getResult().getMsg() : requestStatus.getMsg());
                     }
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(IndentSearchDetailsActivity.this,R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(IndentSearchDetailsActivity.this,R.string.unConnectedNetwork);
             }
         });
     }
@@ -518,7 +530,7 @@ public class IndentSearchDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("orderNo", orderBean.getNo());
-        NetLoadUtils.getQyInstance().loadNetDataPost(this, Url.Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_INQUIRY_WAIT_SEND_EXPEDITING, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -537,18 +549,19 @@ public class IndentSearchDetailsActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
                 showToast(mAppContext, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
                 showToast(mAppContext, R.string.do_failed);
             }
         });

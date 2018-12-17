@@ -70,11 +70,14 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
-        <!--不处理刘海屏-->
+        <!--适配华为（huawei）刘海屏-->
         <meta-data
             android:name="android.notch_support"
-            android:value="true" />
+            android:value="true"/>
+        <!--适配小米（xiaomi）刘海屏-->
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
         <meta-data
             android:name="linkedme.sdk.key"
             android:value="576097e25440399c5fabbbbaa1ce989d" />

@@ -11,16 +11,16 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
 import com.amkj.dmsh.homepage.bean.BaseTimeProductTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeForeShowBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_TOP_PRODUCT;
 
 /**
  * @author LGuiPeng
@@ -62,14 +63,7 @@ public class TopRecommendAtTimeEndGroupFragment extends BaseFragment {
         springSaleRecyclerAdapter = new SpringSaleRecyclerAdapterNew(getActivity(), saleTimeTotalList);
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_white)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_white).create());
         communal_recycler_wrap.setAdapter(springSaleRecyclerAdapter);
         springSaleRecyclerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -93,7 +87,6 @@ public class TopRecommendAtTimeEndGroupFragment extends BaseFragment {
     }
 
     private void getTopOverRecommendProduct() {
-        String url = Url.BASE_URL + Url.TIME_SHOW_PRO_TOP_PRODUCT;
         Map<String, Object> params = new HashMap<>();
         if("topRecommend".equals(promotionProductType)){
             params.put("recommendType", "top");
@@ -103,35 +96,29 @@ public class TopRecommendAtTimeEndGroupFragment extends BaseFragment {
         if (userId != 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
-                    @Override
-                    public void onSuccess(String result) {
-                        springSaleRecyclerAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        TimeForeShowEntity timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
-                        if (timeForeShowEntity != null) {
-                            if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
-                                springSaleRecyclerAdapter.setEnableLoadMore(true);
-                                if (timeForeShowEntity.getTimeForeShowList() != null
-                                        && timeForeShowEntity.getTimeForeShowList().size() > 0) {
-                                    saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
-                                }
-                                springSaleRecyclerAdapter.notifyDataSetChanged();
-                            }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),TIME_SHOW_PRO_TOP_PRODUCT,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                springSaleRecyclerAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                TimeForeShowEntity timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+                if (timeForeShowEntity != null) {
+                    if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
+                        springSaleRecyclerAdapter.setEnableLoadMore(true);
+                        if (timeForeShowEntity.getTimeForeShowList() != null
+                                && timeForeShowEntity.getTimeForeShowList().size() > 0) {
+                            saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
                         }
+                        springSaleRecyclerAdapter.notifyDataSetChanged();
                     }
+                }
+            }
 
-                    @Override
-                    public void netClose() {
-                        springSaleRecyclerAdapter.loadMoreComplete();
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        springSaleRecyclerAdapter.loadMoreComplete();
-                    }
-                });
+            @Override
+            public void onNotNetOrException() {
+                springSaleRecyclerAdapter.loadMoreEnd(true);
+            }
+        });
     }
 
     @Override

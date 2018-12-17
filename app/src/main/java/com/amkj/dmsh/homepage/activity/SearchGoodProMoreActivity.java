@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
@@ -34,6 +34,7 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_SEARCH_PRODUCT_GOOD;
 
 ;
 
@@ -123,9 +124,8 @@ public class SearchGoodProMoreActivity extends BaseActivity {
      * 获取推荐商品
      */
     private void getSearchGoodPro() {
-        String url = Url.BASE_URL + Url.H_SEARCH_PRODUCT_GOOD;
-        NetLoadUtils.getQyInstance().loadNetDataPost(SearchGoodProMoreActivity.this, url,
-                null, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(SearchGoodProMoreActivity.this, H_SEARCH_PRODUCT_GOOD,
+                null, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -139,22 +139,24 @@ public class SearchGoodProMoreActivity extends BaseActivity {
                                 showToast(SearchGoodProMoreActivity.this, likedProduct.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productSearList, likedProduct);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, likedProduct);
                         adapterProduct.notifyDataSetChanged();
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, likedProduct);
+                    }
+
+                    @Override
+                    public void netClose() {
                         showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productSearList, likedProduct);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, productSearList, likedProduct);
+                        showToast(SearchGoodProMoreActivity.this, R.string.invalidData);
                     }
                 });
     }

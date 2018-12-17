@@ -11,17 +11,18 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -32,15 +33,15 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
+;
 ;
 
 /**
@@ -76,24 +77,13 @@ public class UserFansFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         communal_recycler.setAdapter(detailsUserAdapter);
         detailsUserAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= attentionFansList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    detailsUserAdapter.loadMoreEnd();
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -163,7 +153,7 @@ public class UserFansFragment extends BaseFragment {
             params.put("buid", userId);
         }
         params.put("currentPage", page);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 detailsUserAdapter.loadMoreComplete();
@@ -177,22 +167,18 @@ public class UserFansFragment extends BaseFragment {
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
                     } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), userAttentionFansEntity.getMsg());
+                    }else{
+                        detailsUserAdapter.loadMoreEnd();
                     }
                 }
                 detailsUserAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, userAttentionFansEntity);
             }
 
             @Override
-            public void netClose() {
-                detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                detailsUserAdapter.loadMoreComplete();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,userAttentionFansEntity);
+            public void onNotNetOrException() {
+                detailsUserAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, userAttentionFansEntity);
             }
         });
     }
@@ -203,7 +189,7 @@ public class UserFansFragment extends BaseFragment {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE ) {
+        if (requestCode == IS_LOGIN_CODE) {
             loadData();
         }
     }

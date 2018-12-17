@@ -16,13 +16,11 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.homepage.AttendanceMarqueeView;
 import com.amkj.dmsh.homepage.adapter.AttendanceAwardAdapter;
@@ -39,15 +37,16 @@ import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertRuleDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.gongwen.marqueen.MarqueeFactory;
 import com.gongwen.marqueen.MarqueeView;
@@ -55,10 +54,7 @@ import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,17 +76,25 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_PREFECTURE;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_AWARD;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_DETAIL;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_INTEGRAL_LOTTERY;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_INTEGRAL_LOTTERY_RULE;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_MORE_ACTIVITY;
 import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_RULE;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_WARM;
+import static com.amkj.dmsh.constant.Url.H_INTEGRAL_PRODUCT_FILTRATE;
+import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 
 
 /**
@@ -177,14 +181,7 @@ public class AttendanceActivity extends BaseActivity {
         communal_recycler.setAdapter(integrationRecyclerAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_gray_f).create());
         integrationRecyclerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -213,12 +210,7 @@ public class AttendanceActivity extends BaseActivity {
                 return integrationBeanList.get(position).getItemType() == TYPE_1 ? 3 : 1;
             }
         });
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     @Override
@@ -228,8 +220,8 @@ public class AttendanceActivity extends BaseActivity {
             getAttendanceDetail();
 //        积分夺宝
             getIntegralLottery();
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        } else {
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -264,136 +256,129 @@ public class AttendanceActivity extends BaseActivity {
      * 夺宝规则
      */
     private void getLotteryRule() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            String url = BASE_URL + Url.H_ATTENDANCE_INTEGRAL_LOTTERY_RULE;
-            XUtil.Post(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
-                    if (communalRuleEntity != null) {
-                        if (communalRuleEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (communalRuleEntity.getCommunalRuleList() != null
-                                    && communalRuleEntity.getCommunalRuleList().size() > 0) {
-                                lotteryRuleList.clear();
-                                lotteryRuleList.addAll(getDetailsDataList(communalRuleEntity.getCommunalRuleList()));
-                                if (alertLotteryRuleDialogHelper == null) {
-                                    alertLotteryRuleDialogHelper = new AlertRuleDialogHelper(AttendanceActivity.this);
-                                }
-                                alertLotteryRuleDialogHelper.setRuleData("夺宝规则", lotteryRuleList);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_INTEGRAL_LOTTERY_RULE,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
+                if (communalRuleEntity != null) {
+                    if (communalRuleEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (communalRuleEntity.getCommunalRuleList() != null
+                                && communalRuleEntity.getCommunalRuleList().size() > 0) {
+                            lotteryRuleList.clear();
+                            lotteryRuleList.addAll(getDetailsDataList(communalRuleEntity.getCommunalRuleList()));
+                            if (alertLotteryRuleDialogHelper == null) {
+                                alertLotteryRuleDialogHelper = new AlertRuleDialogHelper(AttendanceActivity.this);
                             }
+                            alertLotteryRuleDialogHelper.setRuleData("夺宝规则", lotteryRuleList);
                         }
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
      * 积分规则
      */
     private void getIntegralRule() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            String url = BASE_URL + H_ATTENDANCE_RULE;
-            XUtil.Post(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
-                    if (communalRuleEntity != null) {
-                        if (communalRuleEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (communalRuleEntity.getCommunalRuleList() != null
-                                    && communalRuleEntity.getCommunalRuleList().size() > 0) {
-                                integralRuleList.clear();
-                                integralRuleList.addAll(getDetailsDataList(communalRuleEntity.getCommunalRuleList()));
-                                if (alertIntegralRuleDialogHelper == null) {
-                                    alertIntegralRuleDialogHelper = new AlertRuleDialogHelper(AttendanceActivity.this);
-                                }
-                                alertIntegralRuleDialogHelper.setRuleData("积分规则", integralRuleList);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_RULE,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
+                if (communalRuleEntity != null) {
+                    if (communalRuleEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (communalRuleEntity.getCommunalRuleList() != null
+                                && communalRuleEntity.getCommunalRuleList().size() > 0) {
+                            integralRuleList.clear();
+                            integralRuleList.addAll(getDetailsDataList(communalRuleEntity.getCommunalRuleList()));
+                            if (alertIntegralRuleDialogHelper == null) {
+                                alertIntegralRuleDialogHelper = new AlertRuleDialogHelper(AttendanceActivity.this);
                             }
+                            alertIntegralRuleDialogHelper.setRuleData("积分规则", integralRuleList);
                         }
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private void getIntegralPro() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            String url = BASE_URL + Url.H_INTEGRAL_PRODUCT_FILTRATE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("showCount", 9);
-            params.put("currentPage", 1);
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", 9);
+        params.put("currentPage", 1);
 //            积分类型.-1为全部,0为纯积分,1为积分+金钱
-            params.put("integralType", -1);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    integrationBeanList.clear();
-                    IntegrationProEntity integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
-                    if (integrationProEntity != null) {
-                        if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
-                            IntegrationBean integrationBean = new IntegrationBean();
-                            integrationBean.setcItemType(TYPE_1);
-                            integrationBeanList.add(integrationBean);
-                            integrationBeanList.addAll(integrationProEntity.getIntegrationList().size()>9
-                                    ?integrationProEntity.getIntegrationList().subList(0,9):integrationProEntity.getIntegrationList());
-                        } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(AttendanceActivity.this, integrationProEntity.getMsg());
-                        }
+        params.put("integralType", -1);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_INTEGRAL_PRODUCT_FILTRATE,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                integrationBeanList.clear();
+                IntegrationProEntity integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
+                if (integrationProEntity != null) {
+                    if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
+                        IntegrationBean integrationBean = new IntegrationBean();
+                        integrationBean.setcItemType(TYPE_1);
+                        integrationBeanList.add(integrationBean);
+                        integrationBeanList.addAll(integrationProEntity.getIntegrationList().size() > 9
+                                ? integrationProEntity.getIntegrationList().subList(0, 9) : integrationProEntity.getIntegrationList());
+                    } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(AttendanceActivity.this, integrationProEntity.getMsg());
                     }
-                    integrationRecyclerAdapter.notifyDataSetChanged();
                 }
+                integrationRecyclerAdapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    integrationRecyclerAdapter.loadMoreComplete();
-                    showToast(AttendanceActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        } else {
-            integrationRecyclerAdapter.loadMoreComplete();
-            showToast(this, R.string.unConnectedNetwork);
-        }
+            @Override
+            public void onNotNetOrException() {
+                integrationRecyclerAdapter.loadMoreEnd(true);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(AttendanceActivity.this, R.string.invalidData);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
      * 签到详情
      */
     private void getAttendanceDetail() {
-        String url = BASE_URL + Url.H_ATTENDANCE_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(AttendanceActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
-                attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
-                if (attendanceDetailEntity != null
-                        && SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
-                    setAttendanceDetail(attendanceDetailEntity);
-                    loadWaitData();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,attendanceDetailEntity);
-            }
+        NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this, H_ATTENDANCE_DETAIL
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        Gson gson = new Gson();
+                        attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
+                        if (attendanceDetailEntity != null
+                                && SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
+                            setAttendanceDetail(attendanceDetailEntity);
+                            loadWaitData();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, attendanceDetailEntity);
+                    }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,attendanceDetailEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, attendanceDetailEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,attendanceDetailEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
+                    }
+                });
     }
 
     private void setAttendanceDetail(AttendanceDetailEntity attendanceDetailEntity) {
@@ -470,138 +455,129 @@ public class AttendanceActivity extends BaseActivity {
      * 积分夺宝
      */
     private void getIntegralLottery() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            String url = BASE_URL + Url.H_ATTENDANCE_INTEGRAL_LOTTERY;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    IntegralLotteryEntity integralLotteryEntity = gson.fromJson(result, IntegralLotteryEntity.class);
-                    if (integralLotteryEntity != null) {
-                        if (SUCCESS_CODE.equals(integralLotteryEntity.getCode())) {
-                            integralLotteryList.clear();
-                            integralLotteryList.addAll(integralLotteryEntity.getPreviousInfoList());
-                            int scrollPosition = 0;
-                            int lotteryStatus = 0;//0 已结束 1 待开始 2 进行中
-                            for (int i = 0; i < integralLotteryList.size(); i++) {
-                                PreviousInfoBean previousInfoBean = integralLotteryList.get(i);
-                                previousInfoBean.setmCurrentTime(integralLotteryEntity.getSystemTime());
-                                if (integralLotteryList.size() >= 2) {
-                                    if (lotteryStatus < 2 && isEndOrStartTime(previousInfoBean.getmCurrentTime(), previousInfoBean.getStartTime())
-                                            && isEndOrStartTime(previousInfoBean.getEndTime(), previousInfoBean.getmCurrentTime())) {
-                                        scrollPosition = i;
-                                        lotteryStatus = 2;
-                                    } else if (lotteryStatus < 1 && isEndOrStartTime(previousInfoBean.getmCurrentTime(), previousInfoBean.getStartTime())) {
-                                        scrollPosition = i;
-                                        lotteryStatus = 1;
-                                    }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_INTEGRAL_LOTTERY,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                IntegralLotteryEntity integralLotteryEntity = gson.fromJson(result, IntegralLotteryEntity.class);
+                if (integralLotteryEntity != null) {
+                    if (SUCCESS_CODE.equals(integralLotteryEntity.getCode())) {
+                        integralLotteryList.clear();
+                        integralLotteryList.addAll(integralLotteryEntity.getPreviousInfoList());
+                        int scrollPosition = 0;
+                        int lotteryStatus = 0;//0 已结束 1 待开始 2 进行中
+                        for (int i = 0; i < integralLotteryList.size(); i++) {
+                            PreviousInfoBean previousInfoBean = integralLotteryList.get(i);
+                            previousInfoBean.setmCurrentTime(integralLotteryEntity.getSystemTime());
+                            if (integralLotteryList.size() >= 2) {
+                                if (lotteryStatus < 2 && isEndOrStartTime(previousInfoBean.getmCurrentTime(), previousInfoBean.getStartTime())
+                                        && isEndOrStartTime(previousInfoBean.getEndTime(), previousInfoBean.getmCurrentTime())) {
+                                    scrollPosition = i;
+                                    lotteryStatus = 2;
+                                } else if (lotteryStatus < 1 && isEndOrStartTime(previousInfoBean.getmCurrentTime(), previousInfoBean.getStartTime())) {
+                                    scrollPosition = i;
+                                    lotteryStatus = 1;
                                 }
                             }
-                            attendanceIntegralLottery.rvp_integral_lottery.scrollToPosition(scrollPosition < 1 ? (lotteryStatus > 0 ? scrollPosition : integralLotteryList.size() - 1) : scrollPosition);
                         }
-                        if (integralLotteryList.size() < 1) {
-                            integrationRecyclerAdapter.removeHeaderView(integralLotteryView);
-                        }
-                        integralLotteryAdapter.notifyDataSetChanged();
+                        attendanceIntegralLottery.rvp_integral_lottery.scrollToPosition(scrollPosition < 1 ? (lotteryStatus > 0 ? scrollPosition : integralLotteryList.size() - 1) : scrollPosition);
                     }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
                     if (integralLotteryList.size() < 1) {
                         integrationRecyclerAdapter.removeHeaderView(integralLotteryView);
                     }
+                    integralLotteryAdapter.notifyDataSetChanged();
                 }
-            });
-        } else {
-            if (integralLotteryList.size() < 1) {
-                integrationRecyclerAdapter.removeHeaderView(integralLotteryView);
             }
-        }
+
+            @Override
+            public void onNotNetOrException() {
+                if (integralLotteryList.size() < 1) {
+                    integrationRecyclerAdapter.removeHeaderView(integralLotteryView);
+                }
+            }
+        });
     }
 
     //签到
     private void getAttendance() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            String url = BASE_URL + Url.H_ATTENDANCE;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    AttendanceDetailEntity attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
-                    if (attendanceDetailEntity != null) {
-                        if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
-                            attendanceHeader.tv_attendance_sign_in.setEnabled(false);
-                            attendanceHeader.tv_attendance_sign_in.setText(attendanceDetailEntity.isSign() ? "已签到" : "签到");
-                            attendanceHeader.tv_attendance_integral_count.setText(String.valueOf(attendanceDetailEntity.getScore()));
-                            if (attendanceDetailEntity.getAttendanceDetailList() != null
-                                    && attendanceDetailEntity.getAttendanceDetailList().size() > 0) {
-                                for (int i = 0; i < attendanceDetailEntity.getAttendanceDetailList().size(); i++) {
-                                    AttendanceDetailBean attendanceDetailBean = attendanceDetailEntity.getAttendanceDetailList().get(i);
-                                    int dataFormatWeek = getDataFormatWeek(attendanceDetailBean.getCtime());
-                                    if (dataFormatWeek <= attendanceDetailBeanList.size()) {
-                                        attendanceDetailBeanList.get(dataFormatWeek - 1).setWeekCode(1);
-                                    }
+        if (loadHud != null) {
+            loadHud.show();
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                AttendanceDetailEntity attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
+                if (attendanceDetailEntity != null) {
+                    if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
+                        attendanceHeader.tv_attendance_sign_in.setEnabled(false);
+                        attendanceHeader.tv_attendance_sign_in.setText(attendanceDetailEntity.isSign() ? "已签到" : "签到");
+                        attendanceHeader.tv_attendance_integral_count.setText(String.valueOf(attendanceDetailEntity.getScore()));
+                        if (attendanceDetailEntity.getAttendanceDetailList() != null
+                                && attendanceDetailEntity.getAttendanceDetailList().size() > 0) {
+                            for (int i = 0; i < attendanceDetailEntity.getAttendanceDetailList().size(); i++) {
+                                AttendanceDetailBean attendanceDetailBean = attendanceDetailEntity.getAttendanceDetailList().get(i);
+                                int dataFormatWeek = getDataFormatWeek(attendanceDetailBean.getCtime());
+                                if (dataFormatWeek <= attendanceDetailBeanList.size()) {
+                                    attendanceDetailBeanList.get(dataFormatWeek - 1).setWeekCode(1);
                                 }
                             }
-                            attendanceAwardAdapter.notifyDataSetChanged();
-                            if (alertDialogHelper == null) {
-                                alertDialogHelper = new AlertDialogHelper(AttendanceActivity.this)
-                                        .setSingleButton(true)
-                                        .setConfirmText("确认")
-                                        .setConfirmTextColor(getResources().getColor(R.color.text_login_gray_s))
-                                        .setTitle("签到成功")
-                                        .setMsgTextGravity(Gravity.CENTER)
-                                        .setTitleGravity(Gravity.CENTER)
-                                        .setConfirmTextColor(getResources().getColor(R.color.text_gray_hint_n))
-                                        .setCancelable(false);
-                            }
-                            TextView msgTextView = alertDialogHelper.getMsgTextView();
-                            msgTextView.setText(getStrings(attendanceDetailEntity.getSignExplain()));
-                            Link link = new Link(Pattern.compile(REGEX_NUM));
-                            link.setTextColor(getResources().getColor(R.color.text_normal_red))
-                                    .setUnderlined(false)
-                                    .setHighlightAlpha(0f)
-                                    .setOnClickListener(null);
-                            LinkBuilder.on(msgTextView)
-                                    .addLink(link)
-                                    .build();
-                            alertDialogHelper.show();
-                        } else {
-                            showToast(AttendanceActivity.this, attendanceDetailEntity.getMsg());
                         }
+                        attendanceAwardAdapter.notifyDataSetChanged();
+                        if (alertDialogHelper == null) {
+                            alertDialogHelper = new AlertDialogHelper(AttendanceActivity.this)
+                                    .setSingleButton(true)
+                                    .setConfirmText("确认")
+                                    .setConfirmTextColor(getResources().getColor(R.color.text_login_gray_s))
+                                    .setTitle("签到成功")
+                                    .setMsgTextGravity(Gravity.CENTER)
+                                    .setTitleGravity(Gravity.CENTER)
+                                    .setConfirmTextColor(getResources().getColor(R.color.text_gray_hint_n))
+                                    .setCancelable(false);
+                        }
+                        TextView msgTextView = alertDialogHelper.getMsgTextView();
+                        msgTextView.setText(getStrings(attendanceDetailEntity.getSignExplain()));
+                        Link link = new Link(Pattern.compile(REGEX_NUM));
+                        link.setTextColor(getResources().getColor(R.color.text_normal_red))
+                                .setUnderlined(false)
+                                .setHighlightAlpha(0f)
+                                .setOnClickListener(null);
+                        LinkBuilder.on(msgTextView)
+                                .addLink(link)
+                                .build();
+                        alertDialogHelper.show();
+                    } else {
+                        showToast(AttendanceActivity.this, attendanceDetailEntity.getMsg());
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    if (loadHud != null) {
-                        loadHud.show();
-                    }
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
                 }
-            });
-        } else {
-            showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
-        }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     /**
      * 更多积分
      */
     private void getRegionActivity() {
-        String url = Url.BASE_URL + Url.H_ATTENDANCE_MORE_ACTIVITY;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_MORE_ACTIVITY,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -627,10 +603,9 @@ public class AttendanceActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 integrationRecyclerAdapter.removeFooterView(hotActivityView);
                 hotActivityHelper.rv_activity_prefecture.setVisibility(View.GONE);
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -639,44 +614,39 @@ public class AttendanceActivity extends BaseActivity {
      * 双倍积分
      */
     private void getDoubleIntegration() {
-        if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_CUSTOM_PRO_LIST;
-            Map<String, Object> params = new HashMap<>();
-            params.put("currentPage", 1);
-            params.put("productType", DOUBLE_INTEGRAL_PREFECTURE);
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    doubleIntegrationList.clear();
-                    integralDoubleHelper.rv_integral_double.setVisibility(View.VISIBLE);
-                    Gson gson = new Gson();
-                    UserLikedProductEntity userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (userLikedProductEntity != null) {
-                        if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                            LikedProductBean likedProductBean = new LikedProductBean();
-                            likedProductBean.setItemType(TYPE_2);
-                            doubleIntegrationList.add(likedProductBean);
-                            for (LikedProductBean likedProduct : userLikedProductEntity.getLikedProductBeanList()) {
-                                likedProduct.setItemType(TYPE_1);
-                                doubleIntegrationList.add(likedProduct);
-                            }
-                        }
-                        qualityCustomTopicAdapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    integralDoubleHelper.rv_integral_double.setVisibility(View.GONE);
-                }
-            });
-        } else {
-            integralDoubleHelper.rv_integral_double.setVisibility(View.GONE);
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", 1);
+        params.put("productType", DOUBLE_INTEGRAL_PREFECTURE);
+        params.put("showCount", TOTAL_COUNT_TEN);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CUSTOM_PRO_LIST,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                doubleIntegrationList.clear();
+                integralDoubleHelper.rv_integral_double.setVisibility(View.VISIBLE);
+                Gson gson = new Gson();
+                UserLikedProductEntity userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (userLikedProductEntity != null) {
+                    if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        LikedProductBean likedProductBean = new LikedProductBean();
+                        likedProductBean.setItemType(TYPE_2);
+                        doubleIntegrationList.add(likedProductBean);
+                        for (LikedProductBean likedProduct : userLikedProductEntity.getLikedProductBeanList()) {
+                            likedProduct.setItemType(TYPE_1);
+                            doubleIntegrationList.add(likedProduct);
+                        }
+                    }
+                    qualityCustomTopicAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                integralDoubleHelper.rv_integral_double.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
@@ -705,10 +675,10 @@ public class AttendanceActivity extends BaseActivity {
                 loadHud.show();
             }
             textView.setEnabled(false);
-            String url = BASE_URL + Url.H_ATTENDANCE_WARM;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this,H_ATTENDANCE_WARM,
+                    params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -732,7 +702,7 @@ public class AttendanceActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
@@ -801,7 +771,7 @@ public class AttendanceActivity extends BaseActivity {
             marquee_attendance_text.setInAndOutAnim(R.anim.in_bottom, R.anim.out_top);
             GradientDrawable gradientDrawable = new GradientDrawable();
             gradientDrawable.setShape(GradientDrawable.RECTANGLE);
-            int radius = AutoSizeUtils.mm2px(mAppContext,30);
+            int radius = AutoSizeUtils.mm2px(mAppContext, 30);
             gradientDrawable.setCornerRadius(radius);
             try {
                 gradientDrawable.setColor(getResources().getColor(R.color.light_gray_f));
@@ -816,34 +786,31 @@ public class AttendanceActivity extends BaseActivity {
          * 领取周日礼物
          */
         private void getAttendanceAward() {
-            if (NetWorkUtils.checkNet(AttendanceActivity.this)) {
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                String url = BASE_URL + Url.H_ATTENDANCE_AWARD;
-                Map<String, Object> params = new HashMap<>();
-                params.put("uid", userId);
-                XUtil.Post(url, params, new MyCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        Gson gson = new Gson();
-                        RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                        if (requestStatus != null) {
-                            showToast(AttendanceActivity.this, requestStatus.getMsg());
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                    }
-                });
+            if (loadHud != null) {
+                loadHud.show();
             }
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this,H_ATTENDANCE_AWARD,params,new NetLoadListenerHelper(){
+                @Override
+                public void onSuccess(String result) {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    Gson gson = new Gson();
+                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        showToast(AttendanceActivity.this, requestStatus.getMsg());
+                    }
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                }
+            });
         }
     }
 
@@ -918,7 +885,7 @@ public class AttendanceActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            NetLoadUtils.getQyInstance().showLoadSirLoading(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
             loadData();
         }
     }
@@ -970,10 +937,6 @@ public class AttendanceActivity extends BaseActivity {
                     .setDividerId(R.drawable.item_divider_img_white)
 
 
-
-
-
-
                     .create());
             homeImgActivityAdapter = new HomeImgActivityAdapter(AttendanceActivity.this, adActivityBeans);
             rv_activity_prefecture.setAdapter(homeImgActivityAdapter);
@@ -996,10 +959,6 @@ public class AttendanceActivity extends BaseActivity {
             rv_integral_double.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
-
-
 
 
                     .create());

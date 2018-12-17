@@ -1,10 +1,14 @@
 package com.amkj.dmsh.constant;
 
+import java.util.regex.Pattern;
+
+import static com.amkj.dmsh.constant.ConstantVariable.REGEX_PW_ALPHABET_NUMBER;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2016/11/11
- * class description:请输入类描述
+ * class description:密码设置类
  */
 
 public class PasswordEncrypt {
@@ -23,5 +27,14 @@ public class PasswordEncrypt {
             }
         }
         return new String(data);
+    }
+
+    /**
+     * 密码6-20 字母数字组合
+     * @param password
+     * @return
+     */
+    public static boolean isPwEligibility(String password){
+        return Pattern.compile(REGEX_PW_ALPHABET_NUMBER).matcher(password).matches();
     }
 }

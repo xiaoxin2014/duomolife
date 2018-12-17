@@ -15,8 +15,6 @@ import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeAreaNewAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
@@ -25,13 +23,11 @@ import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity;
 import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity.QualityHomeTypeBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
-import com.amkj.dmsh.utils.inteface.MyCacheCallBack;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.multitypejson.MultiTypeJsonParser;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -43,7 +39,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
-import org.xutils.ex.HttpException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +48,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -64,6 +60,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
+import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
+import static com.amkj.dmsh.constant.Url.Q_HOME_CENTER_TYPE;
+import static com.amkj.dmsh.constant.Url.Q_HOME_CLASS_TYPE;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
 ;
@@ -146,6 +146,10 @@ public class QualityDefaultNewFragment extends BaseFragment {
                         break;
                     case "ad":
                         CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) attribute;
+                        /**
+                         * 3.1.9 加入好物广告统计
+                         */
+                        adClickTotal(communalADActivityBean.getObjectId());
                         setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
                         break;
                 }
@@ -195,73 +199,12 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getAdLoop() {
-        String url = Url.BASE_URL + Url.Q_HOME_AD_LOOP;
         Map<String, String> params = new HashMap<>();
         params.put("vidoShow", "1");
-        XUtil.GetCache(url, 0, params, new MyCacheCallBack<String>() {
-            private boolean hasError = false;
-            private String result = null;
-
-            @Override
-            public boolean onCache(String result) { //得到缓存数据, 缓存过期后不会进入
-                this.result = result;
-//                判断当前网络是否连接
-                return !NetWorkUtils.isConnectedByState(getActivity()); //true: 信任缓存数据, 不再发起网络请求; false不信任缓存数据
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                //如果服务返回304或onCache选择了信任缓存,这时result为null
-                if (result != null) {
-                    this.result = result;
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                hasError = true;
-//                showToast(x.app(), ex.getMessage());
-                if (ex instanceof HttpException) { //网络错误
-                    HttpException httpEx = (HttpException) ex;
-                    int responseCode = httpEx.getCode();
-                    String responseMsg = httpEx.getMessage();
-                    String errorResult = httpEx.getResult();
-                    //...
-                } else { //其他错误
-                    //...
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-            }
-
-            @Override
-            public void onFinished() {
-                if (!hasError && result != null) {
-                    if (NetWorkUtils.checkNet(getActivity())) {
-                        getQualityAdNoCache();
-                    } else {
-                        getADJsonData(result);
-                    }
-                }
-            }
-        });
-    }
-
-    private void getQualityAdNoCache() {
-        String url = Url.BASE_URL + Url.Q_HOME_AD_LOOP;
-        Map<String, Object> params = new HashMap<>();
-        params.put("vidoShow", "1");
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_HOME_AD_LOOP,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 getADJsonData(result);
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -300,7 +243,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getGoodsPro() {
-        String url = Url.BASE_URL + Url.QUALITY_SHOP_GOODS_PRO;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         /**
@@ -310,8 +252,8 @@ public class QualityDefaultNewFragment extends BaseFragment {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_SHOP_GOODS_PRO
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -337,29 +279,21 @@ public class QualityDefaultNewFragment extends BaseFragment {
                                 showToast(getActivity(), qualityGoodProductEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                         qualityGoodNewProAdapter.notifyDataSetChanged();
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        qualityGoodNewProAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityGoodNewProAdapter.loadMoreComplete();
-                        NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                        qualityGoodNewProAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                     }
                 });
     }
 
     private void getCenterType() {
-        String url = Url.BASE_URL + Url.Q_HOME_CENTER_TYPE;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_HOME_CENTER_TYPE,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -431,16 +365,14 @@ public class QualityDefaultNewFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                super.onError(ex, isOnCallback);
             }
         });
     }
 
     private void getHomeIndexType() {
-        String url = Url.BASE_URL + Url.Q_HOME_CLASS_TYPE;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_HOME_CLASS_TYPE,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -461,9 +393,8 @@ public class QualityDefaultNewFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -486,10 +417,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
             communal_recycler_wrap.setAdapter(qualityTypeAreaAdapter);
             rv_ql_center_pro.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
-                    .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                    .create());
+                    .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         }
     }
 

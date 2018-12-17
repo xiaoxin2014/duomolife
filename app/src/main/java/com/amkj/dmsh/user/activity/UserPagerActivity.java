@@ -17,20 +17,19 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.adapter.UserPageAdapter;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity.UserInfoBean;
 import com.amkj.dmsh.utils.AppBarStateChangeListener;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import org.greenrobot.eventbus.EventBus;
@@ -105,12 +104,9 @@ public class UserPagerActivity extends BaseActivity {
         UserPageAdapter userPageAdapter = new UserPageAdapter(getSupportFragmentManager(), userId);
         vp_user_container.setAdapter(userPageAdapter);
         communal_stl_tab.setViewPager(vp_user_container);
-        smart_refresh_mine.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-                EventBus.getDefault().post(new EventMessage("refreshMineData", 1));
-            }
+        smart_refresh_mine.setOnRefreshListener(refreshLayout -> {
+            loadData();
+            EventBus.getDefault().post(new EventMessage("refreshMineData", 1));
         });
         user_appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
@@ -143,7 +139,7 @@ public class UserPagerActivity extends BaseActivity {
         if (mineId > 0) {
             params.put("uid", mineId);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 smart_refresh_mine.finishRefresh();
@@ -163,11 +159,19 @@ public class UserPagerActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 smart_refresh_mine.finishRefresh();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(UserPagerActivity.this, R.string.userDataNull);
-                super.onError(ex, isOnCallback);
                 finish();
+            }
+
+            @Override
+            public void netClose() {
+                showToast(UserPagerActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -239,7 +243,7 @@ public class UserPagerActivity extends BaseActivity {
             flag = "add";
         }
         params.put("ftype", flag);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -265,8 +269,7 @@ public class UserPagerActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
+            public void onNotNetOrException() {
                 loadHud.dismiss();
             }
         });

@@ -11,17 +11,15 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageOfficialAdapter;
 import com.amkj.dmsh.message.bean.MessageOfficialEntity;
 import com.amkj.dmsh.message.bean.MessageOfficialEntity.MessageOfficialBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -36,10 +34,10 @@ import static android.view.View.GONE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_MES_OFFICIAL;
 
 ;
 
@@ -107,21 +105,12 @@ public class MessageHotActivity extends BaseActivity {
         messageOfficialAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= messageArticleList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    messageOfficialAdapter.loadMoreEnd();
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -187,14 +176,13 @@ public class MessageHotActivity extends BaseActivity {
 
     @Override
     protected void getData() {
-        String url = Url.BASE_URL + Url.H_MES_OFFICIAL;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(MessageHotActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(MessageHotActivity.this, H_MES_OFFICIAL
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -207,28 +195,31 @@ public class MessageHotActivity extends BaseActivity {
                         if (messageOfficialEntity != null) {
                             if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
                                 messageArticleList.addAll(messageOfficialEntity.getMessageOfficialList());
-                            } else if (!messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
+                            } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
+                                messageOfficialAdapter.loadMoreEnd();
+                            }else{
                                 showToast(MessageHotActivity.this, messageOfficialEntity.getMsg());
                             }
                         }
                         messageOfficialAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        messageOfficialAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_communal_refresh.finishRefresh();
-                        messageOfficialAdapter.loadMoreComplete();
                         showToast(MessageHotActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        messageOfficialAdapter.loadMoreComplete();
                         showToast(MessageHotActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
                     }
                 });
     }

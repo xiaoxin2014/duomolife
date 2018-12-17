@@ -23,7 +23,6 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.adapter.FindImageListAdapter;
@@ -31,6 +30,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -46,9 +46,7 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralProductInfoEntity.Inte
 import com.amkj.dmsh.shopdetails.integration.initview.IntegralPopWindows;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.amkj.dmsh.views.bottomdialog.SimpleSkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -279,7 +277,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_integral_details.finishRefresh();
@@ -295,62 +293,57 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                         showToast(IntegralScrollDetailsActivity.this, productInfoEntity.getMsg());
                     }
                 }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, productInfoEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, productInfoEntity);
             }
 
             @Override
             public void netClose() {
                 smart_integral_details.finishRefresh();
                 showToast(IntegralScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, productInfoEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, productInfoEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 smart_integral_details.finishRefresh();
                 showToast(IntegralScrollDetailsActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, productInfoEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, productInfoEntity);
             }
         });
     }
 
     private void getIntegralComment() {
-        if (NetWorkUtils.checkNet(IntegralScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COMMENT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("showCount", 1);
-            params.put("currentPage", 1);
-            params.put("id", productId);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    ll_product_comment.setVisibility(View.GONE);
-                    Gson gson = new Gson();
-                    GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
-                    if (goodsCommentEntity != null) {
-                        if (goodsCommentEntity.getCode().equals(SUCCESS_CODE) && goodsCommentEntity.getGoodsComments() != null
-                                && goodsCommentEntity.getGoodsComments().size() > 0) {
-                            ll_product_comment.setVisibility(View.VISIBLE);
-                            List<GoodsCommentBean> goodsComments = goodsCommentEntity.getGoodsComments();
-                            tv_shop_comment_count.setText(String.format(getResources().getString(R.string.product_comment_count), goodsCommentEntity.getEvaluateCount()));
-                            goodsCommentBean = goodsComments.get(0);
-                            setCommentData();
-                        }
+        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COMMENT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", 1);
+        params.put("currentPage", 1);
+        params.put("id", productId);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                ll_product_comment.setVisibility(View.GONE);
+                Gson gson = new Gson();
+                GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
+                if (goodsCommentEntity != null) {
+                    if (goodsCommentEntity.getCode().equals(SUCCESS_CODE) && goodsCommentEntity.getGoodsComments() != null
+                            && goodsCommentEntity.getGoodsComments().size() > 0) {
+                        ll_product_comment.setVisibility(View.VISIBLE);
+                        List<GoodsCommentBean> goodsComments = goodsCommentEntity.getGoodsComments();
+                        tv_shop_comment_count.setText(String.format(getResources().getString(R.string.product_comment_count), goodsCommentEntity.getEvaluateCount()));
+                        goodsCommentBean = goodsComments.get(0);
+                        setCommentData();
                     }
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                    ll_product_comment.setVisibility(View.GONE);
-                }
-            });
-        } else {
-            ll_product_comment.setVisibility(View.GONE);
-        }
+            @Override
+            public void onNotNetOrException() {
+                ll_product_comment.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
@@ -592,42 +585,36 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
      * 积分商品服务承诺
      */
     private void getIntegralProductRule() {
-        if (NetWorkUtils.checkNet(IntegralScrollDetailsActivity.this)) {
-            String url = Url.BASE_URL + Url.INTEGRAL_PRODUCT_SERVICE;
-            XUtil.Post(url, null, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
-                    if (communalRuleEntity != null && SUCCESS_CODE.equals(communalRuleEntity.getCode())) {
-                        if (communalRuleEntity.getCommunalRuleList() != null
-                                && communalRuleEntity.getCommunalRuleList().size() > 0) {
-                            CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
-                            communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
-                            communalDetailObjectBean.setContent("服务承诺");
-                            itemBodyList.add(communalDetailObjectBean);
-                            List<CommunalDetailObjectBean> detailsDataList = getDetailsDataList(communalRuleEntity.getCommunalRuleList());
-                            if (detailsDataList != null && detailsDataList.size() > 0) {
-                                itemBodyList.addAll(detailsDataList);
-                            }
-                            communalDetailAdapter.notifyDataSetChanged();
+        String url = Url.BASE_URL + Url.INTEGRAL_PRODUCT_SERVICE;
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
+                if (communalRuleEntity != null && SUCCESS_CODE.equals(communalRuleEntity.getCode())) {
+                    if (communalRuleEntity.getCommunalRuleList() != null
+                            && communalRuleEntity.getCommunalRuleList().size() > 0) {
+                        CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+                        communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
+                        communalDetailObjectBean.setContent("服务承诺");
+                        itemBodyList.add(communalDetailObjectBean);
+                        List<CommunalDetailObjectBean> detailsDataList = getDetailsDataList(communalRuleEntity.getCommunalRuleList());
+                        if (detailsDataList != null && detailsDataList.size() > 0) {
+                            itemBodyList.addAll(detailsDataList);
                         }
+                        communalDetailAdapter.notifyDataSetChanged();
                     }
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                }
-            });
-        }
+            }
+        });
     }
 
     private void getIntegration() {
         String url = Url.BASE_URL + Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         Gson gson = new Gson();
@@ -640,16 +627,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                                 showToast(IntegralScrollDetailsActivity.this, pagerInfoBean.getMsg());
                             }
                         }
-                    }
-
-                    @Override
-                    public void netClose() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-
                     }
                 });
     }
@@ -833,15 +810,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
         goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));

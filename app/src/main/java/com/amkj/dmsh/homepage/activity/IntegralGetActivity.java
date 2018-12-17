@@ -10,17 +10,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.IntegralGetAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralGetEntity;
 import com.amkj.dmsh.homepage.bean.IntegralGetEntity.IntegralGetBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +33,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_GET;
 
 /**
  * @author LGuiPeng
@@ -77,29 +75,14 @@ public class IntegralGetActivity extends BaseActivity {
         communal_recycler.setAdapter(integralGetAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
-        integralGetAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                IntegralGetBean integralGetBean = (IntegralGetBean) view.getTag();
-                if (integralGetBean != null && integralGetBean.getButtonFlag() == 0) {
-                    setSkipPath(IntegralGetActivity.this, integralGetBean.getAndroidLink(), false);
-                }
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+        integralGetAdapter.setOnItemClickListener((adapter, view, position) -> {
+            IntegralGetBean integralGetBean = (IntegralGetBean) view.getTag();
+            if (integralGetBean != null && integralGetBean.getButtonFlag() == 0) {
+                setSkipPath(IntegralGetActivity.this, integralGetBean.getAndroidLink(), false);
             }
         });
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     @Override
@@ -133,50 +116,47 @@ public class IntegralGetActivity extends BaseActivity {
     }
 
     private void getIntegralGetData() {
-        if (userId > 0) {
-            String url = Url.BASE_URL + Url.H_ATTENDANCE_GET;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(IntegralGetActivity.this, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    integralGetBeanList.clear();
-                    Gson gson = new Gson();
-                    attendanceDetailEntity = gson.fromJson(result, IntegralGetEntity.class);
-                    if (attendanceDetailEntity != null) {
-                        if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
-                            integralGetBeanList.addAll(attendanceDetailEntity.getIntegralGetList());
-                            integralGetAdapter.notifyDataSetChanged();
-                            fl_integral_get_hint.setVisibility(View.VISIBLE);
-                        } else {
-                            smart_communal_refresh.finishRefresh();
-                            fl_integral_get_hint.setVisibility(View.GONE);
-                            showToast(IntegralGetActivity.this, attendanceDetailEntity.getMsg());
-                        }
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    fl_integral_get_hint.setVisibility(View.GONE);
-                    showToast(IntegralGetActivity.this, R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    fl_integral_get_hint.setVisibility(View.GONE);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralGetBeanList,attendanceDetailEntity);
-                }
-            });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(IntegralGetActivity.this, H_ATTENDANCE_GET
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        integralGetBeanList.clear();
+                        Gson gson = new Gson();
+                        attendanceDetailEntity = gson.fromJson(result, IntegralGetEntity.class);
+                        if (attendanceDetailEntity != null) {
+                            if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
+                                integralGetBeanList.addAll(attendanceDetailEntity.getIntegralGetList());
+                                integralGetAdapter.notifyDataSetChanged();
+                                fl_integral_get_hint.setVisibility(View.VISIBLE);
+                            } else {
+                                smart_communal_refresh.finishRefresh();
+                                fl_integral_get_hint.setVisibility(View.GONE);
+                                showToast(IntegralGetActivity.this, attendanceDetailEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralGetBeanList, attendanceDetailEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        fl_integral_get_hint.setVisibility(View.GONE);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralGetBeanList, attendanceDetailEntity);
+
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(IntegralGetActivity.this, R.string.unConnectedNetwork);
+                    }
+                });
     }
 
     @Override

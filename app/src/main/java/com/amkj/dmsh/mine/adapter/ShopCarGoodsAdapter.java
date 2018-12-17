@@ -16,7 +16,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.EvenBusTransmitObject;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -24,9 +23,10 @@ import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityI
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.SaleSkuBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -301,7 +301,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
                 e.printStackTrace();
             }
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context,url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -318,10 +318,19 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(context, R.string.do_failed);
+            public void onNotNetOrException() {
                 view.setNum(transmitObject.getOldCount());
                 view.setEnabled(true);
+            }
+
+            @Override
+            public void onError(Throwable ex) {
+                showToast(context, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context, R.string.unConnectedNetwork);
             }
         });
     }

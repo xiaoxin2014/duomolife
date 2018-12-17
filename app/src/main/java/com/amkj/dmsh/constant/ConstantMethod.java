@@ -58,6 +58,8 @@ import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
@@ -69,13 +71,10 @@ import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.MarketUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -215,16 +214,18 @@ public class ConstantMethod {
 
     /**
      * 判空并且返回值
-     * @param object 基本类型，对象为空
+     *
+     * @param object       基本类型，对象为空
      * @param defaultValue 空值默认返回
      * @return
      */
-    public static Object getMapValue(Object object,Object defaultValue) {
-        if(object == null){
+    public static Object getMapValue(Object object, Object defaultValue) {
+        if (object == null) {
             return defaultValue;
         }
         return object;
     }
+
     /**
      * @param text
      * @return
@@ -390,10 +391,10 @@ public class ConstantMethod {
                     /**
                      * 先识别是否是打开客服 app://ManagerServiceChat
                      */
-                    if(link.contains("ManagerServiceChat")){
+                    if (link.contains("ManagerServiceChat")) {
                         QyServiceUtils.getQyInstance().openQyServiceChat(context);
                         return;
-                    }else{
+                    } else {
                         int prefixLength = link.indexOf(prefix) + prefix.length();
                         int urlIndex = link.indexOf("?", prefixLength);
                         if (urlIndex != -1) {
@@ -496,17 +497,17 @@ public class ConstantMethod {
 //                        if (link.contains("taobao")) {
 //                            skipAliBCWebView(link, context);
 //                        } else {
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                                context.startActivity(intent);
-                            } else {
-                                skipNonsupportEmpty(context);
-                                return;
-                            }
-                            if (isCloseActivity) {
-                                ((Activity) context).finish();
-                                ((Activity) context).overridePendingTransition(0, 0);
-                            }
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (intent.resolveActivity(context.getPackageManager()) != null) {
+                            context.startActivity(intent);
+                        } else {
+                            skipNonsupportEmpty(context);
+                            return;
+                        }
+                        if (isCloseActivity) {
+                            ((Activity) context).finish();
+                            ((Activity) context).overridePendingTransition(0, 0);
+                        }
 //                        }
                     } catch (Exception e) {
                         showToast(context, R.string.skip_empty_page_hint);
@@ -662,12 +663,10 @@ public class ConstantMethod {
             public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
                 //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
 //                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
             }
 
             @Override
             public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
 //                showToast(ShopTimeScrollDetailsActivity.this, msg);
             }
@@ -804,7 +803,7 @@ public class ConstantMethod {
             //回复文章或帖子
             params.put("is_reply", 0);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -825,12 +824,20 @@ public class ConstantMethod {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(context.getApplicationContext(), R.string.comment_send_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context.getApplicationContext(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -851,7 +858,7 @@ public class ConstantMethod {
             params.put("pid_type", communalComment.getCommType());
             params.put("main_comment_id", communalComment.getMainCommentId() > 0 ? String.valueOf(communalComment.getMainCommentId()) : "");
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -871,11 +878,20 @@ public class ConstantMethod {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(context.getApplicationContext(), R.string.comment_send_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context.getApplicationContext(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -891,7 +907,7 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", communalComment.getUserId());
         params.put("content", getStrings(communalComment.getContent()));
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -915,15 +931,23 @@ public class ConstantMethod {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(context, R.string.commit_failed);
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context, R.string.unConnectedNetwork);
             }
         });
     }
@@ -939,7 +963,7 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", communalComment.getUserId());
         params.put("remark", getStrings(communalComment.getContent()));
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -964,14 +988,23 @@ public class ConstantMethod {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(context, R.string.commit_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context, R.string.unConnectedNetwork);
             }
         });
     }
@@ -1009,14 +1042,15 @@ public class ConstantMethod {
 
     /**
      * 放大展示图片
+     *
      * @param context
      * @param imageType
      * @param firstShowPosition
      * @param imagePathList
      */
-    public static void showImageActivity(Context context,String imageType,int firstShowPosition,List<String> imagePathList){
-        if(imagePathList==null||imagePathList.size()<1){
-            showToast(context,"图片地址错误~");
+    public static void showImageActivity(Context context, String imageType, int firstShowPosition, List<String> imagePathList) {
+        if (imagePathList == null || imagePathList.size() < 1) {
+            showToast(context, "图片地址错误~");
             return;
         }
         ImageBean imageBean = null;
@@ -1027,8 +1061,9 @@ public class ConstantMethod {
             imageBeanList.add(imageBean);
         }
         ImagePagerActivity.startImagePagerActivity(context, imageType, imageBeanList
-                ,firstShowPosition,new ImagePagerActivity.ImageSize(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+                , firstShowPosition, new ImagePagerActivity.ImageSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
+
     /**
      * 默认图片 文字描述
      *
@@ -1049,12 +1084,12 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", articleId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     /**
      * 推送点击统计
+     *
      * @param pushId
      */
     public static void totalPushMessage(@NonNull String pushId) {
@@ -1065,8 +1100,7 @@ public class ConstantMethod {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     //    分享成功 奖励
@@ -1075,7 +1109,7 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", uid);
         params.put("version", 2);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -1115,8 +1149,7 @@ public class ConstantMethod {
         //回复文章或帖子
         params.put("product_id", productId);
         params.put("doc_id", artId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     //      统计福利社点击商品
@@ -1126,8 +1159,7 @@ public class ConstantMethod {
         //回复文章或帖子
         params.put("productId", productId);
         params.put("topId", topId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     //      统计官方通知点击商品
@@ -1137,8 +1169,7 @@ public class ConstantMethod {
         //回复文章或帖子
         params.put("productId", productId);
         params.put("cId", officialId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     //    统计广告点击
@@ -1147,8 +1178,7 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", adId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     /**
@@ -1163,8 +1193,7 @@ public class ConstantMethod {
         if (!TextUtils.isEmpty(id)) {
             params.put("id", id);
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     /**
@@ -1306,7 +1335,7 @@ public class ConstantMethod {
         if (!getStrings(oldVersionName).equals(versionName)
                 || !getStrings(oldMobileModel).equals(mobileModel)
                 || !getStrings(oldOsVersion).equals(osVersion) || notificationStatus != sysNotice) {
-            upDeviceInfo(context, osVersion, mobileModel, versionName,notificationStatus);
+            upDeviceInfo(context, osVersion, mobileModel, versionName, notificationStatus);
         }
     }
 
@@ -1317,33 +1346,22 @@ public class ConstantMethod {
 
     /**
      * 上传设备信息
-     *  @param osVersion 系统版本
-     * @param mobileModel 手机型号
-     * @param versionName 版本名称
+     *
+     * @param osVersion          系统版本
+     * @param mobileModel        手机型号
+     * @param versionName        版本名称
      * @param notificationStatus app 通知开关
      */
     private static void upDeviceInfo(Context context, String osVersion, String mobileModel, String versionName, int notificationStatus) {
-        if (NetWorkUtils.checkNet(context)) {
-            String url = Url.BASE_URL + Url.DEVICE_INFO;
-            Map<String, Object> params = new HashMap<>();
-            params.put("device_source", "android");
-            params.put("app_version_no", versionName);
-            params.put("device_sys_version", osVersion);
-            params.put("device_model", mobileModel);
-            params.put("sysNotice", notificationStatus);
-            params.put("uid", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    super.onSuccess(result);
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
-                }
-            });
-        }
+        String url = Url.BASE_URL + Url.DEVICE_INFO;
+        Map<String, Object> params = new HashMap<>();
+        params.put("device_source", "android");
+        params.put("app_version_no", versionName);
+        params.put("device_sys_version", osVersion);
+        params.put("device_model", mobileModel);
+        params.put("sysNotice", notificationStatus);
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
     }
 
     /**
@@ -1594,7 +1612,7 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         params.put("productId", baseAddCarProInfoBean.getProductId());
         params.put("uid", userId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -1639,12 +1657,20 @@ public class ConstantMethod {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(context, context.getString(R.string.unConnectedNetwork));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(context, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(context, R.string.unConnectedNetwork);
             }
         });
     }
@@ -1687,7 +1713,7 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(shopCarGoodsSku.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSku.getActivityCode());
             }
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -1713,12 +1739,20 @@ public class ConstantMethod {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    showToast(context, context.getString(R.string.unConnectedNetwork));
-                    super.onError(ex, isOnCallback);
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(context, R.string.unConnectedNetwork);
+                }
+
+                @Override
+                public void onError(Throwable ex) {
+                    showToast(context, R.string.do_failed);
                 }
             });
         }
@@ -2053,12 +2087,12 @@ public class ConstantMethod {
     }
 
     public void getNewUserCouponDialog(Context context) {
-        if (NetWorkUtils.checkNet(context) && NEW_USER_DIALOG) {
+        if ( NEW_USER_DIALOG) {
             NEW_USER_DIALOG = false;
             String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
             Map<String, Object> params = new HashMap<>();
             params.put("user_id", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(context,url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -2119,7 +2153,7 @@ public class ConstantMethod {
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("couponId", couponId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(context,url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -2621,6 +2655,30 @@ public class ConstantMethod {
     }
 
     /**
+     * @param t1          起始时间
+     * @param t2          当前时间
+     * @param intervalDay 间隔天数
+     * @return
+     */
+    public static boolean isTimeDayEligibility(String t1, String t2, int intervalDay) {
+        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
+            try {
+                SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+                Date d1 = timeFormat.parse(t1);
+                long milliseconds = d1.getTime() + intervalDay * 24 * 60 * 60 * 1000;
+                d1.setTime(milliseconds);
+                Date d2 = timeFormat.parse(t2);
+                return d1.getTime() <= d2.getTime();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 话题高粱配置
      *
      * @param context
@@ -2801,8 +2859,9 @@ public class ConstantMethod {
      * @param message
      */
     public static void showToast(Context context, String message) {
+        Context applicationContext = context.getApplicationContext();
         if (toast == null) {
-            toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+            toast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT);
         } else {
             toast.setText(message);
         }
@@ -2817,10 +2876,11 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
+        Context applicationContext = context.getApplicationContext();
         if (context.getResources() == null) {
-            showToast(context, "数据异常，请稍后再试");
+            showToast(applicationContext, "数据异常，请稍后再试");
         } else {
-            showToast(context, context.getResources().getString(resId));
+            showToast(applicationContext, applicationContext.getResources().getString(resId));
         }
     }
 

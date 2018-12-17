@@ -24,10 +24,8 @@ import com.amkj.dmsh.address.widget.WheelView;
 import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
-import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -42,6 +40,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
+import static com.amkj.dmsh.constant.Url.ADD_ADDRESS;
+import static com.amkj.dmsh.constant.Url.EDIT_ADDRESS;
 
 ;
 
@@ -120,7 +121,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         mZipDataMap = addressUtils.getZipCodeDataMap();
         mCitiesDataMap = addressUtils.getCitiesDataMap();
         mCurrentProvinceId = addressUtils.getCurrentProvince();
-        if (mProvinceData == null||mDistrictDataMap==null||mZipDataMap==null||mCitiesDataMap==null) {
+        if (mProvinceData == null || mDistrictDataMap == null || mZipDataMap == null || mCitiesDataMap == null) {
             finish();
         }
     }
@@ -139,8 +140,9 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 
     private void getAddressDetails() {
         //地址详情内容
-        String url = Url.BASE_URL + Url.ADDRESS_DETAILS + addressId;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", addressId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -153,11 +155,6 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                         showToast(AddressNewCreatedActivity.this, addressInfoEntity.getMsg());
                     }
                 }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(getClass().getSimpleName(), " onError: ", ex);
             }
         });
     }
@@ -221,7 +218,6 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     //  添加地址
     private void addAddress(AddressInfoBean myAddress) {
         //地址详情内容
-        String url = Url.BASE_URL + Url.ADD_ADDRESS;
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
 //        收货人
@@ -238,7 +234,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 //        纤细街道地址
         params.put("address", myAddress.getAddress());
         params.put("isDefault", myAddress.getStatus());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADD_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -257,8 +253,13 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("shopDetailsError", "onError: " + ex);
+            public void netClose() {
+                showToast(AddressNewCreatedActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(AddressNewCreatedActivity.this, R.string.do_failed);
             }
         });
     }
@@ -266,7 +267,6 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     //  修改地址
     private void alterAddress(AddressInfoBean myAddress) {
         //地址详情内容
-        String url = Url.BASE_URL + Url.EDIT_ADDRESS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", addressInfoBean.getId());
         params.put("user_id", userId);
@@ -283,7 +283,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 //        纤细街道地址
         params.put("address", myAddress.getAddress());
         params.put("isDefault", myAddress.getStatus());
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,EDIT_ADDRESS,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -301,8 +301,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d("shopDetailsError", "onError: " + ex);
+            public void netClose() {
+                showToast(AddressNewCreatedActivity.this,R.string.unConnectedNetwork);
             }
         });
     }
@@ -324,8 +324,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
             provinceName = new String[mProvinceData.length];
             for (int i = 0; i < mProvinceData.length; i++) {
                 ProvinceModel mProvinceDatum = mProvinceData[i];
-                if(mProvinceDatum!=null){
-                    if(!TextUtils.isEmpty(mProvinceData[i].getName())){
+                if (mProvinceDatum != null) {
+                    if (!TextUtils.isEmpty(mProvinceData[i].getName())) {
                         provinceName[i] = mProvinceData[i].getName();
                     }
                 }

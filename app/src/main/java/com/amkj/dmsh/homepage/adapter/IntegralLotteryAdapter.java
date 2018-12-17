@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.activity.IntegralLotteryAwardGetActivity;
 import com.amkj.dmsh.homepage.activity.IntegralLotteryAwardHistoryActivity;
 import com.amkj.dmsh.homepage.activity.IntegralLotteryAwardPersonActivity;
@@ -29,9 +28,9 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinListBean;
 import com.amkj.dmsh.homepage.initviews.AttendanceLotteryCodePopWindow;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
@@ -505,38 +504,41 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
         private void joinInIntegralLottery(int activityId, TextView textView) {
             if (userId > 0) {
-                if (NetWorkUtils.checkNet(context)) {
-                    String url = BASE_URL + H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("uid", userId);
-                    params.put("activityId", activityId);
-                    XUtil.Post(url, params, new MyCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            textView.setEnabled(true);
-                            Gson gson = new Gson();
-                            IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
-                            if (integralLotteryAwardEntity != null) {
-                                if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
-                                    showToast(context, "夺宝参与成功");
-                                    EventBus.getDefault().post(new EventMessage(messageType, "joinInIntegralLottery"));
-                                } else {
-                                    showToast(context, integralLotteryAwardEntity.getMsg());
-                                }
+                String url = BASE_URL + H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
+                Map<String, Object> params = new HashMap<>();
+                params.put("uid", userId);
+                params.put("activityId", activityId);
+                NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params,new NetLoadListenerHelper(){
+                    @Override
+                    public void onSuccess(String result) {
+                        textView.setEnabled(true);
+                        Gson gson = new Gson();
+                        IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
+                        if (integralLotteryAwardEntity != null) {
+                            if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
+                                showToast(context, "夺宝参与成功");
+                                EventBus.getDefault().post(new EventMessage(messageType, "joinInIntegralLottery"));
+                            } else {
+                                showToast(context, integralLotteryAwardEntity.getMsg());
                             }
                         }
+                    }
 
-                        @Override
-                        public void onError(Throwable ex, boolean isOnCallback) {
-                            super.onError(ex, isOnCallback);
-                            textView.setEnabled(true);
-                            showToast(context, R.string.unConnectedNetwork);
-                        }
-                    });
-                } else {
-                    textView.setEnabled(true);
-                    showToast(context, R.string.unConnectedNetwork);
-                }
+                    @Override
+                    public void onNotNetOrException() {
+                        textView.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(context, R.string.do_failed);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(context, R.string.unConnectedNetwork);
+                    }
+                });
             }else{
                 getLoginStatus((Activity) context);
                 textView.setEnabled(true);

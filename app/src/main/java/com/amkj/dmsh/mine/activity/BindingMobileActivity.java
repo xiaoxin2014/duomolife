@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -23,13 +21,13 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,6 +47,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT_MOBILE;
 
 ;
 
@@ -135,25 +134,6 @@ public class BindingMobileActivity extends BaseActivity {
             ll_phone_change.setVisibility(View.GONE);
             ll_phone_unBind.setVisibility(View.VISIBLE);
         }
-        //监测密码位数
-        edit_binding_mobile.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().length() > 5) {
-                    tv_bind_mobile_click.setEnabled(true);
-                } else {
-                    tv_bind_mobile_click.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
 
         //注册短信回调
         SMSSDK.registerEventHandler(new EventHandler() {
@@ -226,7 +206,6 @@ public class BindingMobileActivity extends BaseActivity {
     private void setBindMobile() {
         if (!TextUtils.isEmpty(newPassword)) {
             String encryptedPassword = PasswordEncrypt.getEncryptedPassword(newPassword);
-            String url = Url.BASE_URL + Url.MINE_BIND_ACCOUNT_MOBILE;
             Map<String, Object> params = new HashMap<>();
             if (uid != 0) {
                 params.put("uid", uid);
@@ -241,7 +220,7 @@ public class BindingMobileActivity extends BaseActivity {
             params.put("sex", otherAccountBindInfo.getSex());
             params.put("mobile", phoneNumber);
             params.put("password", encryptedPassword);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_BIND_ACCOUNT_MOBILE, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -280,26 +259,25 @@ public class BindingMobileActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
                     showException(getResources().getString(R.string.do_failed));
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(BindingMobileActivity.this, R.string.unConnectedNetwork);
                 }
             });
         } else {
             showException("请输入新密码！");
         }
-    }
-
-    private String toLowerCase(byte[] data) {
-        int dist = 'a' - 'A';
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] >= 'A' && data[i] <= 'Z') {
-                data[i] += dist;
-            }
-        }
-        return new String(data);
     }
 
     /**
@@ -330,38 +308,37 @@ public class BindingMobileActivity extends BaseActivity {
     void addCode(View view) {
         if (!isBindMobile) {
             String newPassword = edit_bind_set_password_new.getText().toString().trim();
-            if (!TextUtils.isEmpty(newPassword)) {
-                if (newPassword.length() > 5) {
-                    this.newPassword = newPassword;
-                } else {
-                    showToast(this, R.string.PasswordLessSix);
-                    return;
-                }
-            } else {
+            if (TextUtils.isEmpty(newPassword)) {
                 showToast(this, "请输入新密码");
                 return;
             }
+            if (newPassword.length() < 5) {
+                showToast(this, R.string.PasswordLessSix);
+                return;
+            }
+            if (!PasswordEncrypt.isPwEligibility(newPassword)) {
+                showToast(this, R.string.PasswordInconformity);
+                return;
+            }
+            this.newPassword = newPassword;
         }
         final String smsCode = edit_get_code.getText().toString().trim();
         phoneNumber = edit_binding_mobile.getText().toString().trim();
-        if (!TextUtils.isEmpty(smsCode) && !TextUtils.isEmpty(phoneNumber)) {
-            if (phoneNumber.length() == 11) {
-                //            提交验证码
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                if (NetWorkUtils.isConnectedByState(BindingMobileActivity.this)) {
-                    SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
-                } else {
-                    showToast(this, R.string.unConnectedNetwork);
-                }
-            } else {
-                showToast(this, R.string.MobileError);
-            }
-        } else if (TextUtils.isEmpty(phoneNumber)) {
+        if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() != 11) {
             showToast(this, R.string.MobileError);
-        } else {
+            return;
+        }
+        if (TextUtils.isEmpty(smsCode)) {
             showToast(this, R.string.SmsCodeNull);
+            return;
+        }
+        if (NetWorkUtils.isConnectedByState(BindingMobileActivity.this)) {
+            if (loadHud != null) {
+                loadHud.show();
+            }
+            SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
+        } else {
+            showToast(this, R.string.unConnectedNetwork);
         }
 
     }
@@ -402,7 +379,7 @@ public class BindingMobileActivity extends BaseActivity {
         params.put("id", uid);
         params.put("oldMobile", otherAccountBindInfo.getMobileNum());
         params.put("newMobile", newPhoneNumber);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -421,11 +398,20 @@ public class BindingMobileActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showException(getResources().getString(R.string.do_failed));
+            }
+
+            @Override
+            public void netClose() {
+                showException(getResources().getString(R.string.unConnectedNetwork));
             }
         });
     }

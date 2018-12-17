@@ -10,11 +10,11 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityGroupShopAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupEntity.QualityGroupBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -78,21 +78,15 @@ public class QualityGroupShopAllActivity extends BaseActivity {
         qualityGroupShopAdapter = new QualityGroupShopAdapter(QualityGroupShopAllActivity.this, constantMethod, qualityGroupBeanList);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         communal_recycler.setAdapter(qualityGroupShopAdapter);
 
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-            loadData();
-        }});
+                loadData();
+            }
+        });
         qualityGroupShopAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -107,13 +101,8 @@ public class QualityGroupShopAllActivity extends BaseActivity {
         qualityGroupShopAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * TOTAL_COUNT_TWENTY <= qualityGroupBeanList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    qualityGroupShopAdapter.loadMoreEnd();
-                    qualityGroupShopAdapter.setEnableLoadMore(false);
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
@@ -165,67 +154,71 @@ public class QualityGroupShopAllActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
+
     @Override
     protected void getData() {
         String url = Url.BASE_URL + Url.GROUP_SHOP_JOIN_ALL;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", ConstantVariable.TOTAL_COUNT_TWENTY);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
 //            区分新人团
         params.put("version", 1);
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityGroupShopAllActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                qualityGroupShopAdapter.loadMoreComplete();
-                if (page == 1) {
-                    qualityGroupBeanList.clear();
-                }
-                Gson gson = new Gson();
-                qualityGroupEntity = gson.fromJson(result, QualityGroupEntity.class);
-                if (qualityGroupEntity != null) {
-                    if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
-                        for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {
-                            QualityGroupBean qualityGroupBean = qualityGroupEntity.getQualityGroupBeanList().get(i);
-                            qualityGroupBean.setCurrentTime(qualityGroupEntity.getCurrentTime());
-                            qualityGroupBeanList.add(qualityGroupBean);
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityGroupShopAllActivity.this, url,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGroupShopAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            qualityGroupBeanList.clear();
                         }
-                    } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityGroupShopAllActivity.this, R.string.unConnectedNetwork);
-                    } else {
-                        showToast(QualityGroupShopAllActivity.this, qualityGroupEntity.getMsg());
+                        Gson gson = new Gson();
+                        qualityGroupEntity = gson.fromJson(result, QualityGroupEntity.class);
+                        if (qualityGroupEntity != null) {
+                            if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
+                                for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {
+                                    QualityGroupBean qualityGroupBean = qualityGroupEntity.getQualityGroupBeanList().get(i);
+                                    qualityGroupBean.setCurrentTime(qualityGroupEntity.getCurrentTime());
+                                    qualityGroupBeanList.add(qualityGroupBean);
+                                }
+                            } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
+                                qualityGroupShopAdapter.loadMoreEnd();
+                            } else {
+                                showToast(QualityGroupShopAllActivity.this, qualityGroupEntity.getMsg());
+                            }
+                            qualityGroupShopAdapter.notifyDataSetChanged();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupBeanList, qualityGroupEntity);
                     }
-                    qualityGroupShopAdapter.notifyDataSetChanged();
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList, qualityGroupEntity);
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                qualityGroupShopAdapter.loadMoreComplete();
-                showToast(QualityGroupShopAllActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList, qualityGroupEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        qualityGroupShopAdapter.loadMoreEnd(true);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupBeanList, qualityGroupEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                qualityGroupShopAdapter.loadMoreComplete();
-                showToast(QualityGroupShopAllActivity.this, R.string.connectedFaile);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService,qualityGroupBeanList, qualityGroupEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(QualityGroupShopAllActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(QualityGroupShopAllActivity.this, R.string.connectedFaile);
+                    }
+                });
     }
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(constantMethod !=null){
+        if (constantMethod != null) {
             constantMethod.stopSchedule();
             constantMethod.releaseHandlers();
         }

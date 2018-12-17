@@ -64,7 +64,7 @@ public class ServiceDownUtils extends Service {
         if (!pathFile.exists()) {
             pathFile.mkdir();
         }
-        NetLoadUtils.getQyInstance().downFile(url, filePath, fileName, new DownloadListener() {
+        NetLoadUtils.getNetInstance().downFile(url, filePath, fileName, new DownloadListener() {
             @Override
             public void onStartDownload() {
                 if (isShowProgress) {

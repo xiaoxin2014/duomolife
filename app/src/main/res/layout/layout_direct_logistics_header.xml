@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@color/gray_bg"
+    android:showDividers="middle"
+    android:orientation="vertical">
+    <include layout="@layout/layout_communal_recycler_wrap"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_114"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_22"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_logistics_indent_dispatch_way"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <TextView
+            android:id="@+id/tv_logistics_indent_express_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_logistics_indent_dispatch_way"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+    </RelativeLayout>
+</LinearLayout>

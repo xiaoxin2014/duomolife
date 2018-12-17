@@ -40,7 +40,6 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity;
@@ -53,6 +52,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
@@ -60,9 +60,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -89,6 +87,7 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
@@ -98,10 +97,19 @@ import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
+import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
+import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
+import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TAG;
@@ -271,12 +279,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         adapterArticleComment.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= articleCommentList.size()) {
-                    page++;
-                    getSearchComment();
-                } else {
-                    adapterArticleComment.loadMoreEnd();
-                }
+                page++;
+                getSearchComment();
             }
         }, communal_recycler);
 //      侧滑布局
@@ -466,54 +470,50 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     }
 
     private void getSearchComment() {
-        if (NetWorkUtils.checkNet(DmlLifeSearchDetailActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_DML_SEARCH_COMMENT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", searchId);
-            params.put("currentPage", page);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("replyCurrentPage", 1);
-            params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
-            params.put("comtype", "doc");
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    adapterArticleComment.loadMoreComplete();
-                    if (page == 1) {
-                        articleCommentList.clear();
-                    }
-                    Gson gson = new Gson();
-                    DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
-                    if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                            articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(DmlLifeSearchDetailActivity.this, dmlSearchCommentEntity.getMsg());
-                        }
-                        adapterArticleComment.removeHeaderView(commentHeaderView);
-                        if (articleCommentList.size() > 0) {
-                            adapterArticleComment.addHeaderView(commentHeaderView);
-                            commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
-                        }
-                        adapterArticleComment.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    adapterArticleComment.loadMoreComplete();
-                    showToast(DmlLifeSearchDetailActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", searchId);
+        params.put("currentPage", page);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("replyCurrentPage", 1);
+        params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
+        params.put("comtype", "doc");
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                adapterArticleComment.loadMoreComplete();
+                if (page == 1) {
+                    articleCommentList.clear();
+                }
+                Gson gson = new Gson();
+                DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
+                if (dmlSearchCommentEntity != null) {
+                    if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                        articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
+                    } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
+                        adapterArticleComment.loadMoreEnd();
+                    } else {
+                        showToast(DmlLifeSearchDetailActivity.this, dmlSearchCommentEntity.getMsg());
+                    }
+                    adapterArticleComment.removeHeaderView(commentHeaderView);
+                    if (articleCommentList.size() > 0) {
+                        adapterArticleComment.addHeaderView(commentHeaderView);
+                        commentCountView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_handpick_count), dmlSearchCommentEntity.getCommentSize()));
+                    }
+                    adapterArticleComment.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                adapterArticleComment.loadMoreEnd(true);
+            }
+        });
     }
 
     private void getSearchData() {
-        String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", searchId);
 //            params.put("isV2", "true");
@@ -524,38 +524,42 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         if (userId > 0) {
             params.put("fuid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(DmlLifeSearchDetailActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
-                dmlSearchDetailEntity = gson.fromJson(result, DmlSearchDetailEntity.class);
-                if (dmlSearchDetailEntity != null) {
-                    if (dmlSearchDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                        descripDetailList.clear();
-                        dmlSearchDetailBean = dmlSearchDetailEntity.getDmlSearchDetailBean();
-                        setSearchData(dmlSearchDetailBean);
-                    } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(DmlLifeSearchDetailActivity.this, dmlSearchDetailEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(DmlLifeSearchDetailActivity.this, F_INVITATION_DETAIL,
+                params,
+                new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        Gson gson = new Gson();
+                        dmlSearchDetailEntity = gson.fromJson(result, DmlSearchDetailEntity.class);
+                        if (dmlSearchDetailEntity != null) {
+                            if (dmlSearchDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                                descripDetailList.clear();
+                                dmlSearchDetailBean = dmlSearchDetailEntity.getDmlSearchDetailBean();
+                                setSearchData(dmlSearchDetailBean);
+                            } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(DmlLifeSearchDetailActivity.this, dmlSearchDetailEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
                     }
-                }
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
-            }
 
-            @Override
-            public void netClose() {
-                showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
-                smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(DmlLifeSearchDetailActivity.this, R.string.invalidData);
-                smart_communal_refresh.finishRefresh();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        showToast(DmlLifeSearchDetailActivity.this, R.string.invalidData);
+                    }
+                });
     }
 
     private void setSearchData(DmlSearchDetailBean dmlSearchDetailBean) {
@@ -594,7 +598,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     }
 
     private void getShareData() {
-        XUtil.Get(Url.BASE_URL + Url.SHARE_COMMUNAL_ARTICLE, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, SHARE_COMMUNAL_ARTICLE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -637,10 +641,9 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -649,8 +652,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DmlLifeSearchDetailActivity.this, requestStatus.getMsg());
                         }
                     }
                 }
@@ -659,11 +660,10 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -681,21 +681,29 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DmlLifeSearchDetailActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DmlLifeSearchDetailActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, COUPON_PACKAGE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -713,11 +721,20 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DmlLifeSearchDetailActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DmlLifeSearchDetailActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -792,38 +809,22 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     }
 
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
-        String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                super.onSuccess(result);
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_AND_COMMENT_FAV,params,null);
     }
 
     private void setArticleLike() {
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //关注id
         params.put("id", dmlSearchDetailBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
         tv_article_bottom_like.setSelected(!tv_article_bottom_like.isSelected());
         String likeCount = getNumber(tv_article_bottom_like.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
@@ -843,14 +844,13 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
     //    文章收藏
     private void setArticleCollect() {
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
         //文章id
         params.put("object_id", dmlSearchDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_SEARCH);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -859,20 +859,24 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_article_bottom_collect.setSelected(!tv_article_bottom_collect.isSelected());
-//                        String likeCount = getNumber(tv_article_bottom_collect.getText().toString().trim());
-//                        int collectNum = Integer.parseInt(likeCount);
-//                        tv_article_bottom_collect.setText(String.valueOf(tv_article_bottom_collect.isSelect()
-//                                ? collectNum + 1 : collectNum - 1 > 0 ? collectNum - 1 : "收藏"));
                         tv_article_bottom_collect.setText("收藏");
                     }
                 }
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(DmlLifeSearchDetailActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DmlLifeSearchDetailActivity.this,R.string.unConnectedNetwork);
             }
         });
     }
@@ -995,7 +999,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    ConstantMethod.addArticleShareCount(dmlSearchDetailBean.getId());
+                    addArticleShareCount(dmlSearchDetailBean.getId());
                 }
             });
         }

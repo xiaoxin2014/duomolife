@@ -33,19 +33,18 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelDetailEntity;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelDetailEntity.DmlOptimizedSelDetailBean;
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.ProductListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -79,6 +78,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.totalProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.Q_DML_OPTIMIZED_DETAIL;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
@@ -150,14 +153,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(DmlOptimizedSelDetailActivity.this));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         optimizedSlideProAdapter = new WelfareSlideProAdapter(DmlOptimizedSelDetailActivity.this, welfareProductList);
         optimizedSlideProAdapter.setEnableLoadMore(false);
         rv_communal_pro.setAdapter(optimizedSlideProAdapter);
@@ -177,7 +173,8 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
                 loadData();
-        }});
+            }
+        });
         optimizedDetailsAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -264,10 +261,10 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                             loadHud.show();
                         }
                         CommunalDetailObjectBean tbLink = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
-                        if(tbLink == null){
+                        if (tbLink == null) {
                             tbLink = (CommunalDetailObjectBean) view.getTag();
                         }
-                        if(tbLink!=null){
+                        if (tbLink != null) {
                             skipAliBCWebView(tbLink.getUrl());
                         }
                         break;
@@ -277,7 +274,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         optimizedDetailsAdapter.setOnItemClickListener((adapter, view, position) -> {
             CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
             if (communalDetailBean != null) {
-               skipProductUrl(DmlOptimizedSelDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
+                skipProductUrl(DmlOptimizedSelDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                 //                    统计商品点击
                 totalProNum(communalDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
             }
@@ -285,7 +282,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         //          关闭手势滑动
         dr_welfare_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
         badge = getBadge(DmlOptimizedSelDetailActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(DmlOptimizedSelDetailActivity.this,optimizedId);
+        totalPersonalTrajectory = insertNewTotalData(DmlOptimizedSelDetailActivity.this, optimizedId);
     }
 
     @Override
@@ -304,14 +301,13 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     }
 
     private void getOptDetailData() {
-        String url = Url.BASE_URL + Url.Q_DML_OPTIMIZED_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", optimizedId);
-        if(userId >0){
-            params.put("uid",userId);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(DmlOptimizedSelDetailActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(DmlOptimizedSelDetailActivity.this, Q_DML_OPTIMIZED_DETAIL
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_refresh_ql_welfare_details.finishRefresh();
@@ -327,23 +323,24 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                                 showToast(DmlOptimizedSelDetailActivity.this, optimizedSelDetailEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,optDetailsList, optimizedSelDetailEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, optDetailsList, optimizedSelDetailEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_refresh_ql_welfare_details.finishRefresh();
+                        optimizedDetailsAdapter.loadMoreComplete();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, optDetailsList, optimizedSelDetailEntity);
                     }
 
                     @Override
                     public void netClose() {
-                        smart_refresh_ql_welfare_details.finishRefresh();
-                        optimizedDetailsAdapter.loadMoreComplete();
                         showToast(DmlOptimizedSelDetailActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,optDetailsList, optimizedSelDetailEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_refresh_ql_welfare_details.finishRefresh();
-                        optimizedDetailsAdapter.loadMoreComplete();
                         showToast(DmlOptimizedSelDetailActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService,optDetailsList, optimizedSelDetailEntity);
                     }
                 });
     }
@@ -374,7 +371,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         ll_communal_pro_list.setVisibility(View.VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        int radius = AutoSizeUtils.mm2px(mAppContext,50);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
         drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
         try {
             drawable.setColor(0xffffffff);
@@ -394,11 +391,10 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -416,21 +412,29 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DmlOptimizedSelDetailActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DmlOptimizedSelDetailActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DmlOptimizedSelDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, COUPON_PACKAGE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -448,11 +452,20 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(DmlOptimizedSelDetailActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(DmlOptimizedSelDetailActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(DmlOptimizedSelDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -524,10 +537,9 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -544,6 +556,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             });
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -612,9 +625,9 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(totalPersonalTrajectory!=null){
-            Map<String,String> totalMap = new HashMap<>();
-            totalMap.put("relate_id",optimizedId);
+        if (totalPersonalTrajectory != null) {
+            Map<String, String> totalMap = new HashMap<>();
+            totalMap.put("relate_id", optimizedId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
@@ -622,9 +635,9 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(totalPersonalTrajectory!=null){
-            Map<String,String> totalMap = new HashMap<>();
-            totalMap.put("relate_id",optimizedId);
+        if (totalPersonalTrajectory != null) {
+            Map<String, String> totalMap = new HashMap<>();
+            totalMap.put("relate_id", optimizedId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }

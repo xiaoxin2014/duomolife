@@ -10,10 +10,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.adapter.MessageIndentAdapter;
 import com.amkj.dmsh.message.bean.MessageIndentEntity;
 import com.amkj.dmsh.message.bean.MessageIndentEntity.MessageIndentBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.integration.IntegExchangeDetailActivity;
@@ -38,10 +38,10 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.H_MES_INDENT;
 
 ;
 ;
@@ -110,12 +110,8 @@ public class MessageIndentActivity extends BaseActivity {
         messageIndentAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= messageArticleList.size()) {
-                    page++;
-                    getData();
-                } else {
-                    messageIndentAdapter.loadMoreEnd();
-                }
+                page++;
+                getData();
             }
         }, communal_recycler);
 
@@ -190,13 +186,12 @@ public class MessageIndentActivity extends BaseActivity {
 
     @Override
     protected void getData() {
-        String url = Url.BASE_URL + Url.H_MES_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getQyInstance().loadNetDataPost(mAppContext, url, params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, H_MES_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -209,28 +204,30 @@ public class MessageIndentActivity extends BaseActivity {
                 if (messageOfficialEntity != null) {
                     if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
                         messageArticleList.addAll(messageOfficialEntity.getMessageIndentList());
-                    } else if (!messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
+                    } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
+                        messageIndentAdapter.loadMoreEnd();
+                    } else {
                         showToast(MessageIndentActivity.this, messageOfficialEntity.getMsg());
                     }
                 }
                 messageIndentAdapter.notifyDataSetChanged();
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                messageIndentAdapter.loadMoreEnd(true);
             }
 
             @Override
             public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                messageIndentAdapter.loadMoreComplete();
                 showToast(MessageIndentActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                messageIndentAdapter.loadMoreComplete();
                 showToast(MessageIndentActivity.this, R.string.invalidData);
-                NetLoadUtils.getQyInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
             }
         });
     }

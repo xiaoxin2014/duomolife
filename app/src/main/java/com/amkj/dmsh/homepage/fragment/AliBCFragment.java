@@ -23,6 +23,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -54,19 +55,16 @@ import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
-import com.amkj.dmsh.views.SystemBarHelper;
+import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -84,16 +82,16 @@ import butterknife.OnClick;
 import me.jessyan.autosize.AutoSize;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
-import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
+import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
@@ -128,17 +126,12 @@ public class AliBCFragment extends BaseFragment {
     SmartRefreshLayout smart_web_fragment_refresh;
     private String webUrl;
     private String shareData;
-    //    分享数据
-    private Map<String, String> shareDataMap = new HashMap<>();
-    //    顶部标题栏
-    private Map<String, String> titleMap = new HashMap<>();
-    //    顶部导航
-    private Map<String, String> headerBarMap = new HashMap<>();
     private String paddingStatus;
     private String jsIdentifying;
     private String refreshStatus;
     private AlertDialogHelper alertDialogHelper;
-    private String errorUrl;
+    private boolean isCanEditStatusBar = false;
+    private ImmersionBar immersionBar;
 
     @Override
     protected int getContentView() {
@@ -148,7 +141,6 @@ public class AliBCFragment extends BaseFragment {
     @Override
     protected void initViews() {
         tv_header_shared.setVisibility(View.GONE);
-        tv_life_back.setVisibility(View.GONE);
         tl_normal_bar.setVisibility(View.GONE);
         ll_communal_net_error.setVisibility(View.GONE);
         ll_web_ali.setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -203,7 +195,6 @@ public class AliBCFragment extends BaseFragment {
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 // 断网或者网络连接超时
                 if (errorCode == ERROR_HOST_LOOKUP || errorCode == ERROR_CONNECT || errorCode == ERROR_TIMEOUT) {
-                    errorUrl = failingUrl;
                     setErrorException(view);
                 }
             }
@@ -213,7 +204,6 @@ public class AliBCFragment extends BaseFragment {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 int errorCode = error.getErrorCode();
                 if (404 == errorCode || 500 == errorCode || errorCode == -2) {
-                    errorUrl = request.getUrl().toString();
                     setErrorException(view);
                 }
             }
@@ -223,7 +213,6 @@ public class AliBCFragment extends BaseFragment {
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 int errorCode = errorResponse.getStatusCode();
                 if (404 == errorCode || 500 == errorCode || errorCode == -2) {
-                    errorUrl = request.getUrl().toString();
                     setErrorException(view);
                 }
             }
@@ -231,39 +220,6 @@ public class AliBCFragment extends BaseFragment {
             @Override
             public void onPageFinished(final WebView view, final String url) {
 //                    是否显示顶部导航栏
-                if (view.canGoBack()) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String showType = headerBarMap.get(url);
-                            if (!TextUtils.isEmpty(showType) && showType.equals("1")) {
-                                tl_normal_bar.setVisibility(View.VISIBLE);
-                            } else {
-                                tl_normal_bar.setVisibility(View.GONE);
-                            }
-
-//                    是否显示分享
-                            String showShareType = shareDataMap.get(url);
-                            if (!TextUtils.isEmpty(showShareType) && showShareType.equals("1")) {
-                                tv_header_shared.setVisibility(View.VISIBLE);
-                            } else {
-                                tv_header_shared.setVisibility(View.GONE);
-                            }
-
-//                    修改顶栏标题
-                            String headTitle = titleMap.get(url);
-                            if (!TextUtils.isEmpty(headTitle) && headTitle.toString().trim().length() > 0) {
-                                tv_header_title.setText(getStrings(headTitle));
-                            } else {
-                                tv_header_title.setText("");
-                            }
-
-                            if (!view.canGoBack()) {
-                                tv_life_back.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-                }
                 if (RefreshState.Refreshing.equals(smart_web_fragment_refresh.getState())) {
                     smart_web_fragment_refresh.finishRefresh();
                 }
@@ -276,7 +232,7 @@ public class AliBCFragment extends BaseFragment {
                 String url = request.getUrl().toString();
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME)|| url.contains(WEB_JD_SCHEME)
+                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME) || url.contains(WEB_JD_SCHEME)
                                 || url.contains(WEB_TMALL_SCHEME)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             startActivity(intent);
@@ -286,14 +242,14 @@ public class AliBCFragment extends BaseFragment {
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                 }
 //                因返回true 会导致重定向而无法返回问题 todo
-                return super.shouldOverrideUrlLoading(view,request);
+                return super.shouldOverrideUrlLoading(view, request);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME)|| url.contains(WEB_JD_SCHEME)
+                        if (url.contains(WEB_TAOBAO_SCHEME) || url.contains(WEB_TB_SCHEME) || url.contains(WEB_JD_SCHEME)
                                 || url.contains(WEB_TMALL_SCHEME)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             startActivity(intent);
@@ -303,7 +259,7 @@ public class AliBCFragment extends BaseFragment {
                 } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                 }
 //                因返回true 会导致重定向而无法返回问题 todo
-                return super.shouldOverrideUrlLoading(view,url);
+                return super.shouldOverrideUrlLoading(view, url);
             }
         });
 
@@ -321,19 +277,13 @@ public class AliBCFragment extends BaseFragment {
         smart_web_fragment_refresh.setEnableNestedScroll(false);
         smart_web_fragment_refresh.setEnableOverScrollBounce(false);
         smart_web_fragment_refresh.setEnableOverScrollDrag(false);
-        smart_web_fragment_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                web_fragment_communal.reload();
-            }
-        });
+        smart_web_fragment_refresh.setOnRefreshListener(refreshLayout -> web_fragment_communal.reload());
         if (paddingStatus.contains("true")) {
-            setStatusColor();
+            isCanEditStatusBar = true;
         }
     }
 
     private void setErrorException(WebView view) {
-        view.loadUrl(WEB_BLACK_PAGE);// 避免出现默认的错误界面
         ll_communal_net_error.setVisibility(View.VISIBLE);
     }
 
@@ -343,11 +293,6 @@ public class AliBCFragment extends BaseFragment {
         } else {
             smart_web_fragment_refresh.setEnableRefresh(refreshStatus == 1);
         }
-    }
-
-    private void setStatusColor() {
-        SystemBarHelper.setPadding(getActivity(), ll_web_ali);
-        SystemBarHelper.immersiveStatusBar(getActivity());
     }
 
     private String getRandomString(int length) { //length表示生成字符串的长度
@@ -636,96 +581,6 @@ public class AliBCFragment extends BaseFragment {
             qyServiceUtils.openQyServiceChat(getActivity(), "web", "");
         }
 
-        //      顶栏导航是否展示
-        @JavascriptInterface
-        public void isShowHeadBar(final String showData) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!TextUtils.isEmpty(showData) && showData.lastIndexOf(",") != -1) {
-                        int indexCode = showData.lastIndexOf(",");
-                        String urlPage = showData.substring(0, indexCode);
-                        if (showData.length() <= indexCode + 2) {
-                            tl_normal_bar.setVisibility(View.GONE);
-                            return;
-                        }
-                        Map<String, String> urlParams = getUrlParams(showData.substring(indexCode + 1));
-                        String showType = urlParams.get("showType");
-                        if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
-                                && !TextUtils.isEmpty(showType)) {
-                            headerBarMap.put(urlPage, showType);
-                            tl_normal_bar.setVisibility(View.VISIBLE);
-                            if (web_fragment_communal.canGoBack()) {
-                                tv_life_back.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            tl_normal_bar.setVisibility(View.GONE);
-                        }
-                    } else {
-                        tl_normal_bar.setVisibility(View.GONE);
-                    }
-                }
-            });
-        }
-
-        //        是否显示分享按钮
-        @JavascriptInterface
-        public void isShowShare(final String showData) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!TextUtils.isEmpty(showData)) {
-                        int indexCode = showData.lastIndexOf(",");
-                        Map<String, String> urlParams = getUrlParams(showData);
-                        String urlPage = showData.substring(0, indexCode);
-                        if (showData.length() <= indexCode + 2) {
-                            tv_header_shared.setVisibility(View.GONE);
-                            return;
-                        }
-                        String showType = urlParams.get("showType");
-                        if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
-                                && !TextUtils.isEmpty(showType)) {
-                            shareDataMap.put(urlPage, showType);
-                            tv_header_shared.setVisibility(View.VISIBLE);
-                        } else {
-                            tv_header_shared.setVisibility(View.GONE);
-                        }
-                    } else {
-                        tv_header_shared.setVisibility(View.GONE);
-                    }
-                }
-            });
-        }
-
-        //        修改导航标题
-        @JavascriptInterface
-        public void showTitle(final String showTitle) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!TextUtils.isEmpty(showTitle)) {
-                        int indexCode = showTitle.lastIndexOf(",");
-                        Map<String, String> urlParams = getUrlParams(showTitle);
-                        String urlPage = showTitle.substring(0, indexCode);
-                        if (showTitle.length() <= indexCode + 2) {
-                            tv_header_shared.setVisibility(View.GONE);
-                            return;
-                        }
-                        String headTitle = urlParams.get("headTitle");
-                        if (!TextUtils.isEmpty(urlPage) && urlPage.length() > 0
-                                && !TextUtils.isEmpty(headTitle)) {
-                            titleMap.put(urlPage, headTitle);
-                            tv_header_title.setText(getStrings(headTitle));
-                        } else {
-                            tv_header_title.setText("");
-                        }
-                    } else {
-                        tv_header_title.setText("");
-                    }
-                }
-            });
-        }
-
         @JavascriptInterface
         public void sharePage(String result) {
             if (!TextUtils.isEmpty(result)) {
@@ -759,39 +614,222 @@ public class AliBCFragment extends BaseFragment {
             });
             constantMethod.getPermissions(getActivity(), Permission.Group.STORAGE);
         }
+
+        /**
+         * v 3.1.8 后提供公用方法交互 避免版本控制
+         *
+         * @param resultJson json 数据
+         */
+        /**
+         * v 3.1.8 后提供公用方法交互 避免版本控制
+         *
+         * @param resultJson json 数据
+         */
+        @JavascriptInterface
+        public void androidJsInteractive(String resultJson) {
+            try {
+                if (TextUtils.isEmpty(resultJson)) {
+                    jsInteractiveException();
+                }
+                JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
+                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                    switch (jsInteractiveBean.getType()) {
+//                        获取用户Id
+                        case "userId":
+                            jsGetUserId(jsInteractiveBean);
+                            break;
+//                            刷新设置
+                        case "refresh":
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    jsRefreshStatus(jsInteractiveBean);
+                                }
+                            });
+                            break;
+//                            导航栏设置
+                        case "navigationBar":
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    jsSetNavBar(jsInteractiveBean);
+                                }
+                            });
+                            break;
+//                            获取app设备信息
+                        case "appDeviceInfo":
+                            jsGetAppDeviceInfo();
+                            break;
+//                            app更新弹窗
+                        case "appUpdate":
+                            jsInteractiveEmpty(jsInteractiveBean);
+                            break;
+                        case "finishWebPage":
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    jsAutoFinishPage(jsInteractiveBean);
+                                }
+                            });
+                            break;
+                        case "alibcUrl":
+                            jsSkipTaoBao(jsInteractiveBean);
+                            break;
+                        case "statusBar":
+                            if (isCanEditStatusBar) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        jsSetStatusBar(jsInteractiveBean);
+                                    }
+                                });
+                            }
+                            break;
+                        default:
+                            jsInteractiveEmpty(null);
+                            break;
+                    }
+                } else {
+                    jsInteractiveException();
+                }
+            } catch (Exception e) {
+                jsInteractiveException();
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
-     * v 3.1.8 后提供公用方法交互 避免版本控制
+     * 设置状态栏
      *
-     * @param resultJson json 数据
+     * @param jsInteractiveBean
      */
-    @JavascriptInterface
-    public void androidJsInteractive(String resultJson) {
-        try {
-            if (TextUtils.isEmpty(resultJson)) {
-                jsInteractiveException();
+    private void jsSetStatusBar(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null) {
+            //            背景颜色
+            String statusBarBgColor = (String) getMapValue(otherData.get("statusBarBgColor"), "ffffff");
+//            背景色透明度
+            String statusBarBgAlpha = (String) getMapValue(otherData.get("statusBarBgAlpha"), "0");
+//            状态栏字体颜色
+            int statusBarTextColorValue = (int) getMapValue(otherData.get("statusBarTextColor"), 1);
+            String colorValue = "#ffffff";
+            float alpha = 0;
+            try {
+                colorValue = "#" + statusBarBgColor;
+                alpha = Float.parseFloat(statusBarBgAlpha);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-            if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
-                switch (jsInteractiveBean.getType()) {
-                    case "userId":
-                        jsGetUserId(jsInteractiveBean);
-                        break;
-                    case "refresh":
-                        jsRefreshStatus(jsInteractiveBean);
-                        break;
-                    default:
-                        jsInteractiveEmpty();
-                        break;
+            setWebFragmentStatusBar(statusBarTextColorValue, colorValue, alpha);
+        }
+    }
+
+    /**
+     * @param statusBarTextColorValue
+     * @param colorValue
+     * @param alpha
+     */
+    private void setWebFragmentStatusBar(int statusBarTextColorValue, String colorValue, float alpha) {
+        immersionBar = ImmersionBar.with(AliBCFragment.this).statusBarColor(colorValue, alpha).keyboardEnable(true)
+                .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true);
+        immersionBar.init();
+    }
+
+    /**
+     * js跳转阿里百川
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsSkipTaoBao(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null) {
+            String thirdId = (String) getMapValue(otherData.get("tbThirdId"), "");
+            if (TextUtils.isEmpty(thirdId)) {
+                String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
+                if (!TextUtils.isEmpty(tbUrl)) {
+                    skipAliBCWebView(tbUrl, null);
                 }
             } else {
-                jsInteractiveException();
+                skipAliBCWebView(null, thirdId);
             }
+        }
+    }
+
+    /**
+     * js关闭自带页面
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsAutoFinishPage(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null && otherData.get("pageCount") != null) {
+            int pageCount = (int) getMapValue(otherData.get("pageCount"), 1);
+            finishWebPage(pageCount);
+        } else {
+            finishWebPage(1);
+        }
+    }
+
+    /**
+     * js获取app信息
+     */
+    private void jsGetAppDeviceInfo() {
+        try {
+//        app版本号
+            String versionName = getVersionName(getActivity());
+//        系统版本号
+            String osVersion = Build.VERSION.RELEASE;
+//        手机型号
+            String mobileModel = Build.MODEL;
+//        android设备号
+            String deviceId = getDeviceId(getActivity());
+            com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+            jsonObject.put("appVersion", versionName);
+            jsonObject.put("sysVersion", osVersion);
+            jsonObject.put("deviceModel", mobileModel);
+            jsonObject.put("deviceId", deviceId);
+            webViewJs("javascript:" + "getDeviceInfo(" + jsonObject.toJSONString() + ")");
         } catch (Exception e) {
-            jsInteractiveException();
             e.printStackTrace();
         }
+    }
+
+    /**
+     * js设置导航栏
+     *
+     * @param jsInteractiveBean
+     */
+    private void jsSetNavBar(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null && otherData.get("navBarVisibility") != null) {
+            try {
+                int navBarVisibility = (int) otherData.get("navBarVisibility");
+                if (navBarVisibility == 1) {
+                    tl_normal_bar.setVisibility(View.VISIBLE);
+                    String navBarTitle = (String) getMapValue(otherData.get("navTitle"), "");
+                    tv_header_title.setText(getStrings(navBarTitle));
+                    tv_header_shared.setVisibility(((int) getMapValue(otherData.get("navShareVisibility"), 0)) == 1 ?
+                            View.VISIBLE : View.GONE);
+                } else {
+                    setDefaultNavBar(View.GONE);
+                }
+            } catch (Exception e) {
+                setDefaultNavBar(View.GONE);
+                e.printStackTrace();
+            }
+        } else {
+            setDefaultNavBar(View.GONE);
+        }
+    }
+
+    /**
+     * 设置导航栏默认设置
+     */
+    private void setDefaultNavBar(int navBarVisibility) {
+        tv_header_title.setText("");
+        tv_header_shared.setVisibility(View.GONE);
+        tl_normal_bar.setVisibility(navBarVisibility);
     }
 
     /**
@@ -825,12 +863,13 @@ public class AliBCFragment extends BaseFragment {
         if (userId > 0) {
             transmitUid();
         } else {
-            getLoginStatus(AliBCFragment.this);
+            getLoginStatus(this);
         }
     }
 
     /**
      * js刷新状态
+     *
      * @param jsInteractiveBean
      */
     private void jsRefreshStatus(JsInteractiveBean jsInteractiveBean) {
@@ -853,13 +892,14 @@ public class AliBCFragment extends BaseFragment {
      */
     private void jsInteractiveException() {
         showToast(getActivity(), "数据异常呦，攻城狮正在加急处理呢~");
-        return;
     }
 
     /**
      * 方法不支持，弹窗更新版本
+     *
+     * @param jsInteractiveBean
      */
-    private void jsInteractiveEmpty() {
+    private void jsInteractiveEmpty(JsInteractiveBean jsInteractiveBean) {
         if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(getActivity());
             alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
@@ -874,12 +914,21 @@ public class AliBCFragment extends BaseFragment {
                     alertDialogHelper.dismiss();
                 }
             });
-            alertDialogHelper.setTitle("通知提示")
-                    .setTitleGravity(Gravity.CENTER)
-                    .setMsg(getResources().getString(R.string.skip_empty_page_hint))
-                    .setSingleButton(true)
-                    .setConfirmText("更新");
         }
+        String title = "通知提示";
+        String content = getResources().getString(R.string.skip_empty_page_hint);
+        if (jsInteractiveBean != null
+                && jsInteractiveBean.getOtherData() != null) {
+            Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+            title = (String) getMapValue(otherData.get("alertTitle"), "");
+            content = (String) getMapValue(otherData.get("alertContent"), content);
+        }
+        alertDialogHelper.setTitle(title)
+                .setTitleVisibility(!TextUtils.isEmpty(title) ? View.VISIBLE : View.GONE)
+                .setTitleGravity(Gravity.CENTER)
+                .setMsg(content)
+                .setSingleButton(true)
+                .setConfirmText("更新");
         AutoSize.autoConvertDensityOfGlobal(getActivity());
         alertDialogHelper.show();
     }
@@ -951,12 +1000,10 @@ public class AliBCFragment extends BaseFragment {
             public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
                 //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
 //                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
             }
 
             @Override
             public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
 //                showToast(ShopTimeScrollDetailsActivity.this, msg);
             }
@@ -965,12 +1012,10 @@ public class AliBCFragment extends BaseFragment {
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
-        if (web_fragment_communal.canGoBack()) {
-            web_fragment_communal.goBack();//返回上一页面
-        }
+        finishWebPage(1);
     }
 
-    Handler handler = new Handler(new Handler.Callback() {
+    private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             shareData = (String) msg.obj;
@@ -1044,25 +1089,56 @@ public class AliBCFragment extends BaseFragment {
         super.onDestroy();
     }
 
+    /**
+     * 此方法不能删除 主页面返回键调用
+     *
+     * @return
+     */
     public boolean goBack() {
-        if (web_fragment_communal.canGoBack()) {
-            web_fragment_communal.goBack();//返回上一页面
-            if (ll_communal_net_error.getVisibility() == View.VISIBLE) {
-                ll_communal_net_error.setVisibility(View.GONE);
+        return finishWebPage(1);
+    }
+
+    /**
+     * 关闭web界面
+     *
+     * @param finishCount
+     */
+    private boolean finishWebPage(int finishCount) {
+        finishCount = Math.abs(finishCount);
+        int finalFinishCount = finishCount;
+        WebBackForwardList webBackForwardList = web_fragment_communal.copyBackForwardList();
+//        当前页面index
+        int currentIndex = webBackForwardList.getCurrentIndex();
+        boolean isCanGoBack = web_fragment_communal.canGoBack();
+        if (isCanGoBack) {
+            if (currentIndex - finalFinishCount < 0) {
+                web_fragment_communal.goBackOrForward(-currentIndex);
+            } else {
+                web_fragment_communal.goBackOrForward(-finalFinishCount);
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @OnClick(R.id.tv_communal_net_refresh)
     void clickError() {
         ll_communal_net_error.setVisibility(View.GONE);
-        if (isWebLinkUrl(errorUrl)) {
-            web_fragment_communal.loadUrl(errorUrl);
+        web_fragment_communal.reload();
+    }
+
+    @Override
+    public void initImmersionBar() {
+        if (immersionBar != null) {
+            immersionBar.init();
         } else {
-            web_fragment_communal.loadUrl(webUrl);
+//            默认黑色字体，白色背景，透明度为0
+            setWebFragmentStatusBar(1, "#ffffff", 0);
         }
+    }
+
+    @Override
+    public boolean immersionBarEnabled() {
+        return isCanEditStatusBar;
     }
 }

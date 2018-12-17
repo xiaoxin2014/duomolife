@@ -9,12 +9,12 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
-import com.amkj.dmsh.views.SystemBarHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.gyf.barlibrary.ImmersionBar;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -32,7 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
-import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.JzvdStd;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import me.jessyan.autosize.AutoSize;
@@ -40,6 +40,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
 ;
 
@@ -67,7 +68,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                     loadService.showCallback(NetLoadCallback.class);
                     loadData();
                 }
-            }, NetLoadUtils.getQyInstance().getLoadSirCover());
+            }, NetLoadUtils.getNetInstance().getLoadSirCover());
             String hintText;
             switch (getClass().getSimpleName()) {
                 case "ShopScrollDetailsActivity":
@@ -84,6 +85,21 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                     break;
                 case "MineCollectProductActivity":
                     hintText = "你还没有收藏商品\n赶快去收藏";
+                    break;
+                case "MessageSysMesActivity":
+                    hintText = "最近20天没有通知消息哦";
+                    break;
+                case "MessageIndentActivity":
+                    hintText = "最近20天没有订单消息哦";
+                    break;
+                case "MessageHotActivity":
+                    hintText = "最近20天没有活动消息哦";
+                    break;
+                case "MessageCommentActivity":
+                    hintText = "最近20天没有评论消息哦";
+                    break;
+                case "MessageLikedActivity":
+                    hintText = "最近20天没有赞消息哦";
                     break;
                 default:
                     hintText = "暂无数据，稍后重试";
@@ -104,12 +120,15 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         EventBus eventBus = EventBus.getDefault();
         eventBus.register(this);
         loadData();
-//        设置状态栏
-        setStatusColor();
+        setStatusBar();
     }
 
-    public void setStatusColor() {
-        SystemBarHelper.setStatusBarDarkMode(BaseActivity.this);
+    /**
+     * 设置状态栏颜色
+     */
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
+                .statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 
     @Override
@@ -142,7 +161,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 //        腾讯移动分析
         StatService.onPause(this);
 
-        JZVideoPlayer.releaseAllVideos();
+        JzvdStd.releaseAllVideos();
+//        避免播放 置于后台，释放滚动
+        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
         saveTotalData();
     }
 
@@ -185,7 +206,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (JZVideoPlayer.backPress()) {
+        if (JzvdStd.backPress()) {
             return;
         }
         super.onBackPressed();
@@ -210,9 +231,12 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if (newConfig.fontScale != 1)//非默认值
+        if (newConfig.fontScale != 1) {//非默认值
             getResources();
+        }
         super.onConfigurationChanged(newConfig);
+        // 如果你的app可以横竖屏切换，并且适配4.4或者emui3手机请务必在onConfigurationChanged方法里添加这句话
+        setStatusBar();
     }
 
     /**
@@ -258,12 +282,21 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     //    获取数据
     protected void getData() {
     }
-
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(loadService != null&&
+                loadService.getCurrentCallback().getName().equals(NetLoadCallback.class.getName())){
+            loadService.showSuccess();
+        }
+    }
     @Override
     protected void onDestroy() {
         if (EventBus.getDefault().isRegistered(BaseActivity.this)) {
             EventBus.getDefault().unregister(this);
         }
         super.onDestroy();
+        // 必须调用该方法，防止内存泄漏
+        ImmersionBar.with(this).destroy();
     }
 }

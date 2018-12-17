@@ -71,10 +71,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.Jzvd;
 import emojicon.EmojiconTextView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static cn.jzvd.Jzvd.CURRENT_STATE_PAUSE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -373,6 +374,14 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case TYPE_AUDIO:
                 CustomAudioPlayer jvp_audio_play = holder.getView(R.id.jvp_audio_play);
+                int currentState = jvp_audio_play.currentState;
+//                解决当前框架问题，播放中刷新视图，导致视图被销毁回调onSurfaceTextureDestroyed -> 黑屏
+                if(currentState>0){
+                    // TODO: 2018/12/17  刷新黑屏问题
+                    jvp_audio_play.setState(CURRENT_STATE_PAUSE);
+                    jvp_audio_play.startButton.performClick();
+                    jvp_audio_play.release();
+                }
                 if (!TextUtils.isEmpty(detailObjectBean.getUrl())) {
                     jvp_audio_play.setVisibility(View.VISIBLE);
                     jvp_audio_play.setAudioData(getStrings(detailObjectBean.getUrl())
@@ -385,7 +394,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 JzVideoPlayerStatusDialog jvp_video_play = holder.getView(R.id.jvp_video_play);
                 if (!TextUtils.isEmpty(detailObjectBean.getUrl())) {
                     jvp_video_play.setVisibility(View.VISIBLE);
-                    jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), JZVideoPlayer.SCREEN_WINDOW_NORMAL, "");
+                    jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
                     GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.thumbImageView, getStrings(detailObjectBean.getPicUrl()));
                 } else {
                     jvp_video_play.setVisibility(View.GONE);

@@ -23,21 +23,17 @@ import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityHistoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -66,10 +62,15 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
+import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
+import static com.amkj.dmsh.constant.Url.H_DML_THEME;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -163,13 +164,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         qualityPreviousAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * ConstantVariable.TOTAL_COUNT_TWENTY <= welfarePreviousList.size()) {
-                    page++;
-                    getPreviousTopic();
-                } else {
-                    qualityPreviousAdapter.loadMoreComplete();
-                    qualityPreviousAdapter.setEnableLoadMore(false);
-                }
+                page++;
+                getPreviousTopic();
             }
         }, rv_communal_pro);
         rv_communal_pro.setAdapter(qualityPreviousAdapter);
@@ -189,8 +185,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (productPage * DEFAULT_TOTAL_COUNT <= qualityTypeProductAdapter.getItemCount()) {
-                    if (themeList.size() < themePage * DEFAULT_TOTAL_COUNT) {
+                if (productPage * TOTAL_COUNT_TEN <= qualityTypeProductAdapter.getItemCount()) {
+                    if (themeList.size() < themePage * TOTAL_COUNT_TEN) {
                         productPage++;
                         getWelfareProData();
                     } else {
@@ -292,49 +288,40 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
 
     //    商品列表
     private void getWelfareProData() {
-        String url = Url.BASE_URL + Url.H_DML_RECOMMEND;
-        if (NetWorkUtils.checkNet(DoMoLifeWelfareActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("currentPage", productPage);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    if (productPage == 1) {
-                        //重新加载数据
-                        typeDetails.clear();
-                    }
-                    Gson gson = new Gson();
-                    UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (likedProductEntity != null) {
-                        if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                            typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
-                        } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
-                        }
-                    }
-                    qualityTypeProductAdapter.notifyDataSetChanged();
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("currentPage", productPage);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_DML_RECOMMEND,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                qualityTypeProductAdapter.loadMoreComplete();
+                if (productPage == 1) {
+                    //重新加载数据
+                    typeDetails.clear();
                 }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    super.onError(ex, isOnCallback);
+                Gson gson = new Gson();
+                UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                if (likedProductEntity != null) {
+                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                    } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
+                    }
                 }
-            });
-        }
+                qualityTypeProductAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     //    福利社主题商品列表
     private void getWelfareThemeData() {
-        String url = Url.BASE_URL + Url.H_DML_THEME;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", themePage);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("goodsCurrentPage", 1);
         params.put("goodsShowCount", 8);
-        NetLoadUtils.getQyInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, url
-                , params, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, H_DML_THEME
+                , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
@@ -362,16 +349,18 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
+                        qualityTypeProductAdapter.loadMoreEnd(true);
+                    }
+
+                    @Override
+                    public void netClose() {
                         showToast(DoMoLifeWelfareActivity.this, R.string.unConnectedNetwork);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
                         showToast(DoMoLifeWelfareActivity.this, R.string.invalidData);
                     }
                 });
@@ -386,10 +375,9 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -411,30 +399,34 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
      * 往期福利社
      */
     private void getPreviousTopic() {
-        String url = Url.BASE_URL + Url.H_DML_PREVIOUS_THEME;
-        if (NetWorkUtils.checkNet(DoMoLifeWelfareActivity.this)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("showCount", ConstantVariable.TOTAL_COUNT_TWENTY);
-            params.put("currentPage", page);
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    qualityPreviousAdapter.loadMoreComplete();
-                    Gson gson = new Gson();
-                    if (page == 1) {
-                        welfarePreviousList.clear();
-                    }
-                    QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
-                    if (qualityHistoryListEntity != null) {
-                        if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
-                            welfarePreviousList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
-                            setHistoryListData();
-                        }
-                        qualityPreviousAdapter.notifyDataSetChanged();
-                    }
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("currentPage", page);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_DML_PREVIOUS_THEME,params,new NetLoadListenerHelper(){
+            @Override
+            public void onSuccess(String result) {
+                qualityPreviousAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                if (page == 1) {
+                    welfarePreviousList.clear();
                 }
-            });
-        }
+                QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
+                if (qualityHistoryListEntity != null) {
+                    if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
+                        welfarePreviousList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
+                        setHistoryListData();
+                    }else if(qualityHistoryListEntity.getCode().equals(EMPTY_CODE)){
+                        qualityPreviousAdapter.loadMoreEnd();
+                    }
+                    qualityPreviousAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                qualityPreviousAdapter.loadMoreEnd(true);
+            }
+        });
     }
 
     private void setHistoryListData() {

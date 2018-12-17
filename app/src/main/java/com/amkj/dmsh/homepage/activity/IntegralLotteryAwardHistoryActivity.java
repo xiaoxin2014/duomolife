@@ -11,15 +11,15 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAwardHistoryAdapter;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardHistoryEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +36,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_HISTORY;
 
 /**
@@ -74,20 +73,13 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
         header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("每日夺宝");
         communal_recycler.setBackgroundColor(getResources().getColor(R.color.light_gray_f));
-        communal_recycler.setPadding(0, AutoSizeUtils.mm2px(mAppContext,10), 0, 0);
+        communal_recycler.setPadding(0, AutoSizeUtils.mm2px(mAppContext, 10), 0, 0);
         communal_recycler.setLayoutManager(new LinearLayoutManager(IntegralLotteryAwardHistoryActivity.this));
         integralLotteryAwardHistoryAdapter = new IntegralLotteryAwardHistoryAdapter(IntegralLotteryAwardHistoryActivity.this, lotteryInfoListBeanList);
         communal_recycler.setAdapter(integralLotteryAwardHistoryAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_gray_f).create());
         integralLotteryAwardHistoryAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -117,12 +109,7 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                getIntegralLotteryAwardData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> getIntegralLotteryAwardData());
     }
 
     @Override
@@ -133,7 +120,7 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(isOnPause){
+        if (isOnPause) {
             getIntegralLotteryAwardData();
             isOnPause = false;
         }
@@ -151,46 +138,44 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
     }
 
     private void getIntegralLotteryAwardData() {
-        if (userId > 0) {
-            String url = BASE_URL + H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_HISTORY;
-            Map<String, Object> params = new HashMap<>();
-            params.put("uid", userId);
-            NetLoadUtils.getQyInstance().loadNetDataPost(IntegralLotteryAwardHistoryActivity.this, url
-                    , params, new NetLoadUtils.NetLoadListener() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    lotteryInfoListBeanList.clear();
-                    Gson gson = new Gson();
-                    integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardHistoryEntity.class);
-                    if (integralLotteryAwardEntity != null) {
-                        if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
-                            lotteryInfoListBeanList.addAll(integralLotteryAwardEntity.getOverLotteryInfoList());
-                            integralLotteryAwardHistoryAdapter.notifyDataSetChanged();
-                        } else {
-                            smart_communal_refresh.finishRefresh();
-                            showToast(IntegralLotteryAwardHistoryActivity.this, integralLotteryAwardEntity.getMsg());
-                        }
-                    }
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    smart_communal_refresh.finishRefresh();
-                    showToast(IntegralLotteryAwardHistoryActivity.this, R.string.unConnectedNetwork);
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    smart_communal_refresh.finishRefresh();
-                    NetLoadUtils.getQyInstance().showLoadSir(loadService,integralLotteryAwardEntity);
-                }
-            });
-        }else{
-            NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+        if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            return;
         }
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(IntegralLotteryAwardHistoryActivity.this,
+                H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_HISTORY
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        lotteryInfoListBeanList.clear();
+                        Gson gson = new Gson();
+                        integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardHistoryEntity.class);
+                        if (integralLotteryAwardEntity != null) {
+                            if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
+                                lotteryInfoListBeanList.addAll(integralLotteryAwardEntity.getOverLotteryInfoList());
+                                integralLotteryAwardHistoryAdapter.notifyDataSetChanged();
+                            } else {
+                                smart_communal_refresh.finishRefresh();
+                                showToast(IntegralLotteryAwardHistoryActivity.this, integralLotteryAwardEntity.getMsg());
+                            }
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
+                    }
+
+                    @Override
+                    public void netClose() {
+                        showToast(IntegralLotteryAwardHistoryActivity.this, R.string.unConnectedNetwork);
+                    }
+                });
     }
 
     @Override

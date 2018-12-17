@@ -30,7 +30,6 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean;
@@ -40,15 +39,15 @@ import com.amkj.dmsh.find.bean.InvitationImgDetailEntity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
@@ -77,6 +76,7 @@ import emojicon.EmojiconEditText;
 import emojicon.EmojiconTextView;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -86,11 +86,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
+import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
+import static com.amkj.dmsh.constant.Url.UPDATE_ATTENTION;
 import static com.amkj.dmsh.find.activity.FindTopicDetailsActivity.TOPIC_TYPE;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
@@ -168,13 +171,15 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
         isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
         View headerView = LayoutInflater.from(ArticleDetailsImgActivity.this).inflate(R.layout.layout_find_img_details, (ViewGroup) communal_recycler.getParent(), false);
         imgHeaderView = new ImgDetailsHeaderView();
         ButterKnife.bind(imgHeaderView, headerView);
         imgHeaderView.initView();
         adapterArticleComment = new ArticleCommentAdapter(ArticleDetailsImgActivity.this, articleCommentList, COMMENT_TYPE);
         adapterArticleComment.addHeaderView(headerView);
-        communal_recycler.setLayoutManager(new LinearLayoutManager(this));
+        communal_recycler.setLayoutManager(new OffsetLinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp).create());
@@ -184,7 +189,6 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
                 //                滚动距离置0
-                scrollY = 0;
                 page = 1;
                 isForceNet = true;
                 getDetailData();
@@ -193,30 +197,28 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         adapterArticleComment.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * DEFAULT_TOTAL_COUNT <= adapterArticleComment.getItemCount()) {
-                    page++;
-                    getArticleImgComment();
-                } else {
-                    adapterArticleComment.loadMoreEnd();
-                }
+                page++;
+                getArticleImgComment();
             }
         }, communal_recycler);
 
-        download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
+        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                scrollY += dy;
-                if (screenHeight == 0) {
-                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                    screenHeight = app.getScreenHeight();
-                }
-                if (scrollY >= screenHeight) {
-                    download_btn_communal.setVisibility(View.VISIBLE);
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                OffsetLinearLayoutManager layoutManager = (OffsetLinearLayoutManager) recyclerView.getLayoutManager();
+                int scrollY = layoutManager.computeVerticalScrollOffset();
+                if (scrollY > screenHeight * 1.5) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.hide(false);
+                    }
+                    if(!download_btn_communal.isVisible()){
+                        download_btn_communal.show(true);
+                    }
                 } else {
-                    download_btn_communal.setVisibility(GONE);
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide();
+                    }
                 }
             }
         });
@@ -224,13 +226,8 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
+                download_btn_communal.hide();
+                linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
         adapterArticleComment.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -367,11 +364,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
         tv_article_bottom_like.setSelected(!tv_article_bottom_like.isSelected());
         String likeCount = getNumber(tv_article_bottom_like.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
@@ -389,6 +382,10 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         return "0";
     }
 
+    /**
+     * 设置评论点赞
+     * @param dmlSearchCommentBean
+     */
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
         String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
@@ -396,17 +393,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        XUtil.Post(url, params, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                super.onSuccess(result);
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-            }
-        });
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
     }
 
     //    文章收藏
@@ -418,7 +405,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -432,10 +419,18 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onNotNetOrException() {
                 loadHud.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
                 showToast(ArticleDetailsImgActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ArticleDetailsImgActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -554,57 +549,55 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     }
 
     private void getArticleImgComment() {
-        if (NetWorkUtils.checkNet(ArticleDetailsImgActivity.this)) {
-            String url = Url.BASE_URL + Url.Q_DML_SEARCH_COMMENT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", artId);
-            params.put("currentPage", page);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            params.put("showCount", DEFAULT_TOTAL_COUNT);
-            params.put("replyCurrentPage", 1);
-            params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
-            params.put("comtype", "doc");
-            XUtil.Post(url, params, new MyCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    adapterArticleComment.loadMoreComplete();
-                    if (page == 1) {
-                        articleCommentList.clear();
-                    }
-                    Gson gson = new Gson();
-                    DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
-                    if (dmlSearchCommentEntity != null) {
-                        if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                            articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                        } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(ArticleDetailsImgActivity.this, dmlSearchCommentEntity.getMsg());
-                        }
-                        if (articleCommentList.size() > 0) {
-                            imgHeaderView.rel_img_art_com.setVisibility(View.VISIBLE);
-                            imgHeaderView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_count), dmlSearchCommentEntity.getCommentSize()));
-                        } else {
-                            imgHeaderView.rel_img_art_com.setVisibility(GONE);
-                        }
-                        if (page == 1) {
-                            adapterArticleComment.setNewData(articleCommentList);
-                        } else {
-                            adapterArticleComment.notifyDataSetChanged();
-                        }
-                    }
-                    scrollToComment();
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    adapterArticleComment.loadMoreComplete();
-                    showToast(ArticleDetailsImgActivity.this, R.string.invalidData);
-                    super.onError(ex, isOnCallback);
-                }
-            });
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", artId);
+        params.put("currentPage", page);
+        if (userId > 0) {
+            params.put("uid", userId);
         }
+        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("replyCurrentPage", 1);
+        params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
+        params.put("comtype", "doc");
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                adapterArticleComment.loadMoreComplete();
+                if (page == 1) {
+                    articleCommentList.clear();
+                }
+                Gson gson = new Gson();
+                DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
+                if (dmlSearchCommentEntity != null) {
+                    if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                        articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
+                    } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
+                        adapterArticleComment.loadMoreEnd();
+                    } else {
+                        showToast(ArticleDetailsImgActivity.this, dmlSearchCommentEntity.getMsg());
+                    }
+                    if (articleCommentList.size() > 0) {
+                        imgHeaderView.rel_img_art_com.setVisibility(View.VISIBLE);
+                        imgHeaderView.tv_comm_comment_count.setText(String.format(getString(R.string.comment_count), dmlSearchCommentEntity.getCommentSize()));
+                    } else {
+                        imgHeaderView.rel_img_art_com.setVisibility(GONE);
+                    }
+                    adapterArticleComment.notifyDataSetChanged();
+                }
+                scrollToComment();
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                adapterArticleComment.loadMoreEnd(true);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(ArticleDetailsImgActivity.this, R.string.invalidData);
+            }
+        });
     }
 
     class ImgDetailsHeaderView {
@@ -804,7 +797,6 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         public void setAttentionFlag(final InvitationImgDetailBean imgDetailBean, final View v) {
             final TextView textView = (TextView) v;
             isAttention = textView.isSelected();
-            String url = Url.BASE_URL + Url.UPDATE_ATTENTION;
             Map<String, Object> params = new HashMap<>();
             //用户id
             params.put("fuid", userId);
@@ -817,7 +809,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 flag = "add";
             }
             params.put("ftype", flag);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleDetailsImgActivity.this,UPDATE_ATTENTION,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -844,15 +836,13 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
+                public void onNotNetOrException() {
                     textView.setEnabled(true);
-                    super.onError(ex, isOnCallback);
                 }
             });
         }
 
         public void getDetailsData() {
-            String url = Url.BASE_URL + Url.F_INVITATION_DETAIL;
             Map<String, String> params = new HashMap<>();
             params.put("id", artId);
 //            帖子改版 3.0.9
@@ -860,51 +850,35 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             if (userId > 0) {
                 params.put("fuid", String.valueOf(userId));
             }
-            NetLoadUtils.getQyInstance().loadNetDataGetCache(url
-                    , params
-                    , isForceNet, new NetLoadUtils.NetLoadListener() {
-                        @Override
-                        public void onSuccess(String result) {
-                            smart_communal_refresh.finishRefresh();
-                            adapterArticleComment.loadMoreComplete();
-                            getDetailsDataJson(result);
+            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleDetailsImgActivity.this,F_INVITATION_DETAIL,params,new NetLoadListenerHelper(){
+                @Override
+                public void onSuccess(String result) {
+                    smart_communal_refresh.finishRefresh();
+                    adapterArticleComment.loadMoreComplete();
+                    rel_article_img_bottom.setVisibility(View.VISIBLE);
+                    Gson gson = new Gson();
+                    invitationDetailEntity = gson.fromJson(result, InvitationImgDetailEntity.class);
+                    if (invitationDetailEntity != null) {
+                        if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                            invitationDetailBean = invitationDetailEntity.getInvitationImgDetailBean();
+                            setData(invitationDetailBean);
+                        } else {
+                            if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(ArticleDetailsImgActivity.this, invitationDetailEntity.getMsg());
+                            }
                         }
-
-                        @Override
-                        public void netClose() {
-                            smart_communal_refresh.finishRefresh();
-                            adapterArticleComment.loadMoreComplete();
-                            rel_article_img_bottom.setVisibility(GONE);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
-                        }
-
-                        @Override
-                        public void onError(Throwable throwable) {
-                            smart_communal_refresh.finishRefresh();
-                            adapterArticleComment.loadMoreComplete();
-                            rel_article_img_bottom.setVisibility(GONE);
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
-                        }
-                    });
-        }
-
-        private void getDetailsDataJson(String result) {
-            rel_article_img_bottom.setVisibility(View.VISIBLE);
-            Gson gson = new Gson();
-            invitationDetailEntity = gson.fromJson(result, InvitationImgDetailEntity.class);
-            if (invitationDetailEntity != null) {
-                if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                    invitationDetailBean = invitationDetailEntity.getInvitationImgDetailBean();
-                    setData(invitationDetailBean);
-                } else {
-                    if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(ArticleDetailsImgActivity.this, R.string.invalidData);
-                    } else {
-                        showToast(ArticleDetailsImgActivity.this, invitationDetailEntity.getMsg());
                     }
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
                 }
-            }
-            NetLoadUtils.getQyInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
+
+                @Override
+                public void onNotNetOrException() {
+                    smart_communal_refresh.finishRefresh();
+                    adapterArticleComment.loadMoreEnd(true);
+                    rel_article_img_bottom.setVisibility(GONE);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationDetailBean, invitationDetailEntity);
+                }
+            });
         }
     }
 

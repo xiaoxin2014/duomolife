@@ -15,10 +15,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
@@ -32,7 +33,6 @@ import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBea
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
@@ -103,9 +103,9 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
                     helper.setGone(R.id.tv_direct_pro_count, goodsBean.getStatus() == 0)
                             .setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
-                    priceChnText = context.getString(R.string.combine_price) + getStringsChNPrice(context,goodsBean.getPrice());
+                    priceChnText = context.getString(R.string.combine_price) + getStringsChNPrice(context, goodsBean.getPrice());
                 } else {
-                    priceChnText = getStringsChNPrice(context,goodsBean.getPrice());
+                    priceChnText = getStringsChNPrice(context, goodsBean.getPrice());
                     helper.setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
                 }
                 tv_direct_indent_product_price.setText(priceChnText);
@@ -154,11 +154,11 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 }
                 setIndentProStatus(helper, orderProductInfoBean);
                 if (orderProductInfoBean.getCombineProductInfoList() != null && orderProductInfoBean.getCombineProductInfoList().size() > 0) {
-                    helper.setText(R.id.tv_direct_indent_pro_price, context.getString(R.string.combine_price) + getStringsChNPrice(context,orderProductInfoBean.getPrice()))
+                    helper.setText(R.id.tv_direct_indent_pro_price, context.getString(R.string.combine_price) + getStringsChNPrice(context, orderProductInfoBean.getPrice()))
                             .setGone(R.id.tv_direct_pro_count, orderProductInfoBean.getStatus() == 0)
                             .setText(R.id.tv_direct_pro_count, "x" + orderProductInfoBean.getCount());
                 } else {
-                    helper.setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context,orderProductInfoBean.getPrice()))
+                    helper.setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, orderProductInfoBean.getPrice()))
                             .setText(R.id.tv_direct_pro_count, "x" + orderProductInfoBean.getCount());
                 }
                 if (orderProductInfoBean.getCombineProductInfoList() != null
@@ -214,14 +214,14 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (productInfoBean.getCombineProductInfoList() != null
                         && productInfoBean.getCombineProductInfoList().size() > 0) {
                     helper.setText(R.id.tv_direct_indent_pro_price,
-                            context.getString(R.string.combine_price) + getStringsChNPrice(context,productInfoBean.getPrice()));
+                            context.getString(R.string.combine_price) + getStringsChNPrice(context, productInfoBean.getPrice()));
                 } else {
                     if (!TextUtils.isEmpty(productInfoBean.getActivityPriceDesc())) {
                         TextView tv_direct_indent_pro_price = helper.getView(R.id.tv_direct_indent_pro_price);
                         tv_direct_indent_pro_price.setSelected(true);
                         Link link = new Link(productInfoBean.getActivityPriceDesc());
                         link.setTextColor(Color.parseColor("#ff5a6b"));
-                        link.setTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+                        link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
                         link.setBgColor(Color.parseColor("#ffffff"));
                         link.setUnderlined(false);
                         link.setHighlightAlpha(0f);
@@ -271,7 +271,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(groupShopDetailsBean.getName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(groupShopDetailsBean.getProductSkuValue()))
-                        .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context,groupShopDetailsBean.getGpPrice()))
+                        .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, groupShopDetailsBean.getGpPrice()))
                         .setText(R.id.tv_direct_pro_count, "x" + 1);
                 helper.itemView.setTag(groupShopDetailsBean);
                 break;
@@ -282,19 +282,19 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(applyRefundBean.getSaleSkuValue()))
                         .setText(R.id.tv_direct_pro_count, "x" + applyRefundBean.getCount());
                 String priceName;
-                if(applyRefundBean.getIntegralPrice()>0){
+                if (applyRefundBean.getIntegralPrice() > 0) {
                     float moneyPrice = getFloatNumber(applyRefundBean.getPrice());
-                    if(moneyPrice>0){
+                    if (moneyPrice > 0) {
                         priceName = String.format(context.getResources().getString(R.string.integral_product_and_price)
-                                ,applyRefundBean.getIntegralPrice(),getStrings(applyRefundBean.getPrice()));
-                    }else{
+                                , applyRefundBean.getIntegralPrice(), getStrings(applyRefundBean.getPrice()));
+                    } else {
                         priceName = String.format(context.getResources().getString(R.string.integral_indent_product_price)
-                                ,applyRefundBean.getIntegralPrice());
+                                , applyRefundBean.getIntegralPrice());
                     }
-                }else{
-                    priceName = getStringsChNPrice(context,applyRefundBean.getPrice());
+                } else {
+                    priceName = getStringsChNPrice(context, applyRefundBean.getPrice());
                 }
-                helper.setText(R.id.tv_direct_indent_pro_price,priceName);
+                helper.setText(R.id.tv_direct_indent_pro_price, priceName);
                 if (applyRefundBean.getCartProductInfoList() != null) {
                     helper.setGone(R.id.rel_indent_com_pre_pro, true);
                     preComProInfoBeanList = new ArrayList<>();
@@ -313,7 +313,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), orderProductInfoBean.getPicUrl());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderProductInfoBean.getName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderProductInfoBean.getSaleSkuValue()))
-                        .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context,orderProductInfoBean.getPrice()))
+                        .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, orderProductInfoBean.getPrice()))
                         .setText(R.id.tv_direct_pro_count, "x" + orderProductInfoBean.getCount());
                 if (orderProductInfoBean.getActivityInfoDetailBean() != null) {
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
@@ -333,7 +333,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
 //                    发票只展示组合购商品
                     if (orderProductInfoBean.getPresentProductInfoList() != null
                             && orderProductInfoBean.getPresentProductInfoList().size() > 0) {
-                        for (CartProductInfoBean cartProductInfoBean:orderProductInfoBean.getPresentProductInfoList()) {
+                        for (CartProductInfoBean cartProductInfoBean : orderProductInfoBean.getPresentProductInfoList()) {
                             cartProductInfoBean.setItemType(TYPE_0);
                             preComProInfoBeanList.add(cartProductInfoBean);
                         }
@@ -341,7 +341,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
 
                     if (orderProductInfoBean.getCombineProductInfoList() != null
                             && orderProductInfoBean.getCombineProductInfoList().size() > 0) {
-                        for (CartProductInfoBean cartProductInfoBean:orderProductInfoBean.getCombineProductInfoList()) {
+                        for (CartProductInfoBean cartProductInfoBean : orderProductInfoBean.getCombineProductInfoList()) {
                             cartProductInfoBean.setItemType(TYPE_0);
                             preComProInfoBeanList.add(cartProductInfoBean);
                         }
@@ -423,7 +423,16 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                     helper.setGone(R.id.tv_dir_indent_pro_status, false);
                 }
                 break;
+//                订单详情
             case INDENT_DETAILS_TYPE:
+                /**
+                 * 订单详情商品子状态处理
+                 * status 10 申请退款
+                 *        30-40 申请售后
+                 *        -30 -- -40 售后处理 可以点击
+                 *        50-58 维修状态
+                 * 不可点击，仅做展示 11 13 -10 -26 -50
+                 */
                 OrderProductInfoBean orderProductInfoBean = (OrderProductInfoBean) obj;
                 fl_dir_indent_pro_status = helper.getView(R.id.fl_dir_indent_pro_status);
                 tv_dir_indent_pro_status = helper.getView(R.id.tv_dir_indent_pro_status);
@@ -438,7 +447,11 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                     tv_dir_indent_pro_status.setEnabled(true);
                     tv_dir_indent_pro_status.setText("申请售后");
                     helper.addOnClickListener(R.id.fl_dir_indent_pro_status).setTag(R.id.fl_dir_indent_pro_status, orderProductInfoBean);
-                } else if (orderProductInfoBean.getStatus() == 11 || orderProductInfoBean.getStatus() == 13 || orderProductInfoBean.getStatus() == -10) {
+                } else if (orderProductInfoBean.getStatus() == 11
+                        || orderProductInfoBean.getStatus() == 13
+                        || orderProductInfoBean.getStatus() == -10
+                        || orderProductInfoBean.getStatus() == -26
+                        || orderProductInfoBean.getStatus() == -50) {
                     fl_dir_indent_pro_status.setVisibility(View.VISIBLE);
                     tv_dir_indent_pro_status.setEnabled(false);
                     tv_dir_indent_pro_status.setText(INDENT_PRO_STATUS != null ?
@@ -473,7 +486,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 intent.putExtra(REFUND_TYPE, REFUND_TYPE);
                 context.startActivity(intent);
             }
-        }else if(50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58){
+        } else if (50 <= cartProductInfoBean.getStatus() && cartProductInfoBean.getStatus() <= 58) {
             if (cartProductInfoBean.getOrderRefundProductId() > 0) {
                 intent.setClass(context, DoMoRefundDetailActivity.class);
                 intent.putExtra("no", cartProductInfoBean.getOrderNo());
@@ -523,7 +536,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -597,9 +610,13 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+            public void onError(Throwable throwable) {
+                showToast(context, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
                 showToast(context, R.string.unConnectedNetwork);
-                super.onError(ex, isOnCallback);
             }
         });
     }

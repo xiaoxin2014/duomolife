@@ -29,11 +29,11 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityProTitleAdapter;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalDescriptionEntity;
 import com.amkj.dmsh.homepage.bean.CommunalDescriptionEntity.CommunalDescriptionBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -41,14 +41,11 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.Log;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -65,11 +62,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.H_COUPON_CENTER_DATA;
+import static com.amkj.dmsh.constant.Url.Q_SP_DETAIL_DOMO_RECOM;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
@@ -118,12 +118,7 @@ public class HomeCouponGetActivity extends BaseActivity {
         tv_header_titleAll.setText("领券中心");
         communal_recycler.setLayoutManager(new GridLayoutManager(HomeCouponGetActivity.this, 2));
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -157,10 +152,7 @@ public class HomeCouponGetActivity extends BaseActivity {
         });
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         couponProTitleAdapter = new QualityProTitleAdapter(HomeCouponGetActivity.this, likedProductBeanList);
         couponProTitleAdapter.setHeaderAndEmpty(true);
         View headerView = LayoutInflater.from(HomeCouponGetActivity.this).inflate(R.layout.layout_communal_detail_scroll_rec, (ViewGroup) communal_recycler.getParent(), false);
@@ -176,12 +168,9 @@ public class HomeCouponGetActivity extends BaseActivity {
         couponProTitleAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                if (page * TOTAL_COUNT_TWENTY <= likedProductBeanList.size()) {
+                if (communalDescriptionBean != null) {
                     page++;
-                    getCouponData();
-                } else {
-                    couponProTitleAdapter.loadMoreEnd();
-                    couponProTitleAdapter.setEnableLoadMore(false);
+                    getCouponProData(communalDescriptionBean.getId());
                 }
             }
         }, communal_recycler);
@@ -303,8 +292,7 @@ public class HomeCouponGetActivity extends BaseActivity {
     }
 
     private void getCouponData() {
-        String url = Url.BASE_URL + Url.H_COUPON_CENTER_DATA;
-        XUtil.Get(url, null, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_COUPON_CENTER_DATA,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 couponDescriptionList.clear();
@@ -324,65 +312,63 @@ public class HomeCouponGetActivity extends BaseActivity {
                     }
                     communalDetailAdapter.setNewData(couponDescriptionList);
                 }
-                NetLoadUtils.getQyInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-                NetLoadUtils.getQyInstance().showLoadSirLoadFailed(loadService);
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
             }
         });
     }
 
     private void getCouponProData(int id) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_DOMO_RECOM;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", DEFAULT_TOTAL_COUNT);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("reminder_id", id);
-        NetLoadUtils.getQyInstance().loadNetDataPost(HomeCouponGetActivity.this, url, params, new NetLoadUtils.NetLoadListener() {
-            @Override
-            public void onSuccess(String result) {
-                smart_communal_refresh.finishRefresh();
-                couponProTitleAdapter.loadMoreComplete();
-                if (page == 1) {
-                    likedProductBeanList.clear();
-                }
-                Gson gson = new Gson();
-                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                if (likedProductEntity != null) {
-                    if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        likedProductBeanList.addAll(likedProductEntity.getLikedProductBeanList());
+        NetLoadUtils.getNetInstance().loadNetDataPost(HomeCouponGetActivity.this, Q_SP_DETAIL_DOMO_RECOM,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        smart_communal_refresh.finishRefresh();
+                        couponProTitleAdapter.loadMoreComplete();
+                        if (page == 1) {
+                            likedProductBeanList.clear();
+                        }
+                        Gson gson = new Gson();
+                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProductEntity != null) {
+                            if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                likedProductBeanList.addAll(likedProductEntity.getLikedProductBeanList());
+                            } else if (EMPTY_CODE.equals(likedProductEntity.getCode())) {
+                                couponProTitleAdapter.loadMoreEnd();
+                            }
+                        }
+                        if (likedProductBeanList.size() > 0) {
+                            recommendGoodView.tv_pro_title.setVisibility(View.VISIBLE);
+                        }
+                        couponProTitleAdapter.notifyDataSetChanged();
                     }
-                }
-                if (likedProductBeanList.size() > 0) {
-                    recommendGoodView.tv_pro_title.setVisibility(View.VISIBLE);
-                }
-                couponProTitleAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void netClose() {
-                smart_communal_refresh.finishRefresh();
-                couponProTitleAdapter.loadMoreComplete();
-                showToast(HomeCouponGetActivity.this, R.string.unConnectedNetwork);
-            }
+                    @Override
+                    public void onNotNetOrException() {
+                        smart_communal_refresh.finishRefresh();
+                        couponProTitleAdapter.loadMoreEnd(true);
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                couponProTitleAdapter.loadMoreComplete();
-            }
-        });
+                    @Override
+                    public void netClose() {
+                        showToast(HomeCouponGetActivity.this, R.string.unConnectedNetwork);
+                    }
+                });
     }
 
     private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_ARTICLE_COUPON,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -400,21 +386,29 @@ public class HomeCouponGetActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(HomeCouponGetActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(HomeCouponGetActivity.this, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(HomeCouponGetActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        XUtil.Post(url, params, new MyCallBack<String>() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this,COUPON_PACKAGE,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -432,11 +426,20 @@ public class HomeCouponGetActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                showToast(HomeCouponGetActivity.this, R.string.Get_Coupon_Fail);
+            public void onNotNetOrException() {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
+            }
+
+            @Override
+            public void netClose() {
+                showToast(HomeCouponGetActivity.this, R.string.unConnectedNetwork);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(HomeCouponGetActivity.this, R.string.Get_Coupon_Fail);
             }
         });
     }

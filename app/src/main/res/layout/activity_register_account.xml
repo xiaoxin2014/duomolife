@@ -42,7 +42,7 @@
                     android:minHeight="@dimen/sc_mm_115"
                     android:textColor="@color/login_text_color"
                     android:textColorHint="@color/text_gray_hint_n"
-                    android:textSize="@dimen/sc_mm_32" />
+                    android:textSize="@dimen/sc_mm_28" />
 
 
                 <RelativeLayout
@@ -63,7 +63,7 @@
                         android:singleLine="true"
                         android:textColor="@color/login_text_color"
                         android:textColorHint="@color/text_gray_hint_n"
-                        android:textSize="@dimen/sc_mm_32" />
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <TextView
                         android:id="@+id/tv_sms_code"
@@ -102,13 +102,13 @@
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
                         android:gravity="center_vertical"
-                        android:hint="设置登录密码，不少于6位"
+                        android:hint="@string/PasswordRule"
                         android:inputType="textPassword"
                         android:minHeight="@dimen/sc_mm_115"
                         android:singleLine="true"
                         android:textColor="@color/login_text_color"
                         android:textColorHint="@color/text_gray_hint_n"
-                        android:textSize="@dimen/sc_mm_32" />
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <ImageView
                         android:id="@+id/iv_password_code_visibility"

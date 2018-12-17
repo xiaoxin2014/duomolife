@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:padding="@dimen/sc_mm_10">
+                    android:padding="@dimen/sc_mm_5">
 
                     <TextView
                         android:id="@+id/tv_dir_indent_pro_status"
@@ -144,12 +144,13 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/sel_border_clickable_gray_white"
                         android:enabled="false"
+                        android:text="退款成功"
                         android:gravity="center"
                         android:paddingBottom="@dimen/sc_mm_10"
                         android:paddingLeft="@dimen/sc_mm_15"
                         android:paddingRight="@dimen/sc_mm_15"
                         android:paddingTop="@dimen/sc_mm_10"
-                        android:textColor="@color/text_gray_hint_n"
+                        android:textColor="@color/sel_text_enable_light_blue_gray"
                         android:textSize="@dimen/sc_mm_28"
                         android:visibility="visible" />
                 </FrameLayout>

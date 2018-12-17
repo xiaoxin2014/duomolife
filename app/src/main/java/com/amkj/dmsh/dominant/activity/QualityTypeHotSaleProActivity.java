@@ -16,16 +16,14 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.dominant.adapter.QualityHotSaleAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity.HotSaleShaftBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.inteface.MyCallBack;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -57,6 +55,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_AD;
+import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_SHAFT;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -105,10 +106,13 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         stdDominantHotSale.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
-        smart_refresh_hot_sale.setOnRefreshListener(new OnRefreshListener() {            @Override            public void onRefresh(RefreshLayout refreshLayout) {
-            loadData();
-            EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
-        }});
+        smart_refresh_hot_sale.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                loadData();
+                EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
+            }
+        });
         relCommunalBanner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -129,16 +133,6 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         getCarCount();
     }
 
-//    @Override
-//    protected View getLoadView() {
-//        return smart_refresh_hot_sale;
-//    }
-//
-//    @Override
-//    protected boolean isAddLoad() {
-//        return true;
-//    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -158,9 +152,8 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     }
 
     private void getHotSaleAd() {
-        String url = Url.BASE_URL + Url.QUALITY_HOT_SALE_AD;
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeHotSaleProActivity.this, url
-                , null, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeHotSaleProActivity.this, QUALITY_HOT_SALE_AD
+                , null, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         adBeanList.clear();
@@ -191,30 +184,21 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                             } else {
                                 relCommunalBanner.setVisibility(View.GONE);
                             }
-                            NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                            NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                         }
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_refresh_hot_sale.finishRefresh();
-                        showToast(QualityTypeHotSaleProActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_refresh_hot_sale.finishRefresh();
-                        showToast(QualityTypeHotSaleProActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
                 });
     }
 
     private void getQualityProductShaft() {
-        String url = Url.BASE_URL + Url.QUALITY_HOT_SALE_SHAFT;
-        NetLoadUtils.getQyInstance().loadNetDataPost(QualityTypeHotSaleProActivity.this, url
-                , null, new NetLoadUtils.NetLoadListener() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeHotSaleProActivity.this, QUALITY_HOT_SALE_SHAFT
+                , null, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_refresh_hot_sale.finishRefresh();
@@ -227,21 +211,21 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                                 showToast(QualityTypeHotSaleProActivity.this, qualityHotSaleShaftEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
 
                     @Override
                     public void netClose() {
                         smart_refresh_hot_sale.finishRefresh();
                         showToast(QualityTypeHotSaleProActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         smart_refresh_hot_sale.finishRefresh();
                         showToast(QualityTypeHotSaleProActivity.this, R.string.invalidData);
-                        NetLoadUtils.getQyInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
                 });
     }
@@ -274,10 +258,9 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     private void getCarCount() {
         if (userId > 0) {
             //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            XUtil.Post(url, params, new MyCallBack<String>() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();

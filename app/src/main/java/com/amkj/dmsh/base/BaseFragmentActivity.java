@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
-import com.amkj.dmsh.views.SystemBarHelper;
+import com.gyf.barlibrary.ImmersionBar;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.tencent.stat.StatService;
 import com.trello.rxlifecycle2.android.ActivityEvent;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.Jzvd;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import me.jessyan.autosize.AutoSize;
@@ -30,6 +31,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
 ;
 
@@ -54,16 +56,20 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         eventBus.register(this);
         loadData();
 //        设置状态栏
-        setStatusColor();
+        setStatusBar();
     }
 
-    public void setStatusColor() {
-        SystemBarHelper.setStatusBarDarkMode(BaseFragmentActivity.this);
+    /**
+     * 设置状态栏颜色
+     */
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
+                .statusBarDarkFont(true) .fitsSystemWindows(true).init();
     }
 
     @Override
     public void onBackPressed() {
-        if (JZVideoPlayer.backPress()) {
+        if (Jzvd.backPress()) {
             return;
         }
         super.onBackPressed();
@@ -121,7 +127,9 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
 //        腾讯移动分析
         StatService.onPause(this);
 
-        JZVideoPlayer.releaseAllVideos();
+        Jzvd.releaseAllVideos();
+        //        避免播放 置于后台，释放滚动
+        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
         saveTotalData();
     }
 
@@ -168,6 +176,7 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         if (EventBus.getDefault().isRegistered(BaseFragmentActivity.this)) {
             EventBus.getDefault().unregister(this);
         }
+        setStatusBar();
     }
 
     @Override
@@ -176,6 +185,8 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
             getResources();
         }
         super.onConfigurationChanged(newConfig);
+        // 如果你的app可以横竖屏切换，并且适配4.4或者emui3手机请务必在onConfigurationChanged方法里添加这句话
+        ImmersionBar.with(this).init();
     }
 
     @Override
@@ -188,7 +199,6 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         }
         return res;
     }
-
     protected abstract int getContentView();
 
     protected abstract void initViews();
