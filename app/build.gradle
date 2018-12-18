@@ -149,6 +149,11 @@ dependencies {
 
     //    下拉刷新
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-16'
+//    leakcanary 内存
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.2'
 
     //ButterKnife view注解
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -281,7 +286,6 @@ dependencies {
     implementation project(':Luban')
     implementation project(':picture_library')
     implementation project(':convenientbanner')
-//    implementation project(':jiaozivideoplayer')
     implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
     implementation project(':FloatingActionButton')
 }

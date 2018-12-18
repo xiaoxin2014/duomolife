@@ -63,9 +63,11 @@ public class NetApiManager {
      *
      * @return
      */
-    public static NetApiService getNetApiService() {
+    public NetApiService getNetApiService() {
         if (netApiService == null) {
             synchronized (NetApiService.class) {
+//                初始化
+                init();
                 if (retrofit == null) {
                     throw new NullPointerException("retrofit未初始化！");
                 }
@@ -80,7 +82,7 @@ public class NetApiManager {
      *
      * @return
      */
-    public static NetApiService getNetCacheApiService(boolean isForceNet) {
+    public NetApiService getNetCacheApiService(boolean isForceNet) {
         /**
          * 初始化Cache
          */

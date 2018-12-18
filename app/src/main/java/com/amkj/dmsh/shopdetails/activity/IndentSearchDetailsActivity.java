@@ -378,14 +378,14 @@ public class IndentSearchDetailsActivity extends BaseActivity {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
+                NetLoadUtils.getNetInstance().showLoadSirString(loadService,orderListBeanList,code);
             }
 
             @Override
             public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreEnd(true);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, inquiryOrderEntry);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService,orderListBeanList, inquiryOrderEntry);
             }
 
             @Override

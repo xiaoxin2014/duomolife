@@ -198,20 +198,6 @@ public abstract class BaseFragment extends ImmersionFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         isCanLoadData();
-        if (!isVisibleToUser) {
-            if (totalPersonalTrajectory != null) {
-                switch (getClass().getSimpleName()) {
-                    case "QualityNormalFragment":
-                    case "QualityOverseasMailFragment":
-                        break;
-                    default:
-                        totalPersonalTrajectory.stopTotal();
-                        break;
-                }
-            }
-        } else {
-            totalPersonalTrajectory = new TotalPersonalTrajectory(getContext(), getClass().getSimpleName());
-        }
     }
 
     /**
@@ -356,5 +342,13 @@ public abstract class BaseFragment extends ImmersionFragment {
         JzvdStd.releaseAllVideos();
         //        避免播放 置于后台，释放滚动
         EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+        if (totalPersonalTrajectory != null) {
+            totalPersonalTrajectory.stopTotal();
+        }
+    }
+
+    @Override
+    public void onVisible() {
+        totalPersonalTrajectory = new TotalPersonalTrajectory(getContext(), getClass().getSimpleName());
     }
 }

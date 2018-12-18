@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -19,6 +20,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +40,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
@@ -215,7 +216,9 @@ public class GlideImageLoaderUtil {
     }
 
     public static String getThumbImgUrl(String imgUrl, String waterRemark, boolean isDouble) {
-        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(OSS_URL)) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String ossDataUrl = applicationLike.getOSSDataUrl();
+        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
             String ossImgResizeOri = "/auto-orient,1";
             String ossImgDoubleThumb = "/resize,w_400";
@@ -230,8 +233,10 @@ public class GlideImageLoaderUtil {
     }
 
     public static String getThumbImgUrl(String imgUrl, int sizeValue) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String ossDataUrl = applicationLike.getOSSDataUrl();
         if (!TextUtils.isEmpty(imgUrl)
-                && imgUrl.contains(OSS_URL)) {
+                && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
             String ossImgResizeOri = "/auto-orient,1";
             if (sizeValue < 50) {
@@ -256,7 +261,9 @@ public class GlideImageLoaderUtil {
      * @return
      */
     public static String getWaterMarkImgUrl(String imgUrl, String waterRemark) {
-        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(OSS_URL)) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String ossDataUrl = applicationLike.getOSSDataUrl();
+        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
             String ossImgResizeOri = "/auto-orient,1";
             if (imgUrl.contains(ossPrefix)) {
@@ -275,7 +282,9 @@ public class GlideImageLoaderUtil {
      * @return
      */
     private static String getHeaderThumbImgUrl(String imgUrl) {
-        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(OSS_URL)) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String ossDataUrl = applicationLike.getOSSDataUrl();
+        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
             String ossImgResizeOri = "/auto-orient,1";
             String ossImgHeaderThumb = "/resize,w_200";

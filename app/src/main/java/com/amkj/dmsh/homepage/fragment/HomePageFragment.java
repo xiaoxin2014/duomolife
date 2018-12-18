@@ -505,7 +505,7 @@ public class HomePageFragment extends BaseFragment {
     void floatAdSkip(View view) {
         CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag(R.id.iv_tag);
         if (communalADActivityBean != null) {
-            adClickTotal(communalADActivityBean.getObjectId());
+            adClickTotal(communalADActivityBean.getId());
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
     }

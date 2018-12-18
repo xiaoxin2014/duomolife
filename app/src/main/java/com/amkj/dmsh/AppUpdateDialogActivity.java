@@ -88,7 +88,8 @@ public class AppUpdateDialogActivity extends BaseActivity {
 //        强制更新此版本详情
         String mandatoryDescription = intent.getStringExtra(MANDATORY_UPDATE_DESCRIPTION);
 //        是否强制更新此版本
-        boolean isMandatoryUpdate = intent.getBooleanExtra(APP_MANDATORY_UPDATE_VERSION, false);
+        String mandatoryUpdateCode = intent.getStringExtra(APP_MANDATORY_UPDATE_VERSION);
+        boolean isMandatoryUpdate = !TextUtils.isEmpty(mandatoryUpdateCode) && Integer.parseInt(mandatoryUpdateCode) == 1;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             saveAppPath = Environment.getExternalStorageDirectory() + "/download" + (
                     downLink.contains("/") ? downLink.substring(downLink.lastIndexOf("/")) : "domolife.apk");
@@ -170,7 +171,8 @@ public class AppUpdateDialogActivity extends BaseActivity {
         if (message.type.equals("appVersionProgress")) {
             int total = 0;
             try {
-                total = (int) message.result;
+                float totalCurrent = (float) message.result;
+                total = (int) totalCurrent;
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -255,7 +255,7 @@ public class AppDataActivity extends BaseActivity {
     @OnClick(R.id.tv_mine_setting_address)
     void setAddress(View view) {
         Intent intent = new Intent(AppDataActivity.this, SelectedAddressActivity.class);
-        intent.putExtra("isMineSkip", true);
+        intent.putExtra("isMineSkip", "1");
         startActivity(intent);
     }
 

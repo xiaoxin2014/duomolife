@@ -94,6 +94,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -206,7 +207,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         tv_header_titleAll.setText("");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
-        isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
+        isScrollToComment = getStringChangeBoolean(intent.getStringExtra("scrollToComment"));
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         rel_article_bottom.setVisibility(GONE);

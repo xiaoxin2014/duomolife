@@ -137,7 +137,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
      */
     private void newTaskActivity(Context context) {
         TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        if(!tinkerBaseApplicationLike.isExistActivity(MainActivity.class.getName())){
+        if(!tinkerBaseApplicationLike.existActivity(MainActivity.class.getName())){
             Intent data = new Intent(context, MainActivity.class);
             // 说明系统中不存在这个activity
             data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

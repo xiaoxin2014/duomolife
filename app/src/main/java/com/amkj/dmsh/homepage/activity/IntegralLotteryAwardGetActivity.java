@@ -325,7 +325,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
     @OnClick({R.id.ll_indent_address_default, R.id.img_skip_address})
     void skipAddressList(View view) {
         Intent intent = new Intent(IntegralLotteryAwardGetActivity.this, SelectedAddressActivity.class);
-        intent.putExtra("addressId", addressId);
+        intent.putExtra("addressId", String.valueOf(addressId));
         startActivityForResult(intent, SEL_ADDRESS_REQ);
     }
 

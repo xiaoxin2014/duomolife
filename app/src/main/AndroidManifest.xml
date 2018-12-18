@@ -83,7 +83,7 @@
             android:value="576097e25440399c5fabbbbaa1ce989d" />
 
         <activity
-            android:name=".GuideLaunchActivity"
+            android:name=".SplashLaunchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/fullTheme">
             <intent-filter>

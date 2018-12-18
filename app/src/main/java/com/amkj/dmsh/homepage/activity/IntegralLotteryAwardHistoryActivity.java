@@ -162,13 +162,13 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
                                 showToast(IntegralLotteryAwardHistoryActivity.this, integralLotteryAwardEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, lotteryInfoListBeanList,integralLotteryAwardEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, lotteryInfoListBeanList,integralLotteryAwardEntity);
                     }
 
                     @Override

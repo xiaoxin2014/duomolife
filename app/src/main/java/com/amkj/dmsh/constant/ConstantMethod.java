@@ -49,6 +49,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
@@ -81,6 +82,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -117,6 +119,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.jzvd.Jzvd;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
@@ -126,8 +129,6 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlParameterTransform;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.webUrlTransform;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
@@ -151,6 +152,8 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
+import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
+import static com.amkj.dmsh.constant.Url.TOTAL_AD_DIALOG_COUNT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
 
@@ -226,11 +229,11 @@ public class ConstantMethod {
         return object;
     }
 
-    /**
+    /**String转换成int
      * @param text
      * @return
      */
-    public static int getIntegers(String text) {
+    public static int getStringChangeIntegers(String text) {
         if (TextUtils.isEmpty(text)) {
             return 0;
         } else {
@@ -239,6 +242,25 @@ public class ConstantMethod {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return 0;
+            }
+        }
+    }
+
+    /**
+     * String转换成boolean
+     *
+     * @param text
+     * @return
+     */
+    public static boolean getStringChangeBoolean(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return false;
+        } else {
+            try {
+                return Integer.parseInt(text) == 1;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return false;
             }
         }
     }
@@ -382,6 +404,9 @@ public class ConstantMethod {
         String prefix = "app://";
         String smallRoutine = "minip://";
         link = getStringFilter(link);
+        TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        Map<String, String> webUrlTransform = tinkerApplicationLike.getWebUrlTransform();
+        Map<String, Map<String, String>> webUrlParameterTransform = tinkerApplicationLike.getWebUrlParameterTransform();
         boolean isMiniRoutine = false;
         if (context != null) {
             if (!TextUtils.isEmpty(link)) {
@@ -1173,12 +1198,29 @@ public class ConstantMethod {
     }
 
     //    统计广告点击
+
+    /**
+     * 3.1.9 adId （objectId 改为 id）
+     *
+     * @param adId
+     */
     public static void adClickTotal(int adId) {
-        String url = Url.BASE_URL + Url.TOTAL_AD_COUNT;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", adId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, TOTAL_AD_COUNT, params, null);
+    }
+
+    /**
+     * 启动弹窗统计
+     *
+     * @param adId
+     */
+    public static void adDialogClickTotal(int adId) {
+        Map<String, Object> params = new HashMap<>();
+        //回复文章或帖子
+        params.put("id", adId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, TOTAL_AD_DIALOG_COUNT, params, null);
     }
 
     /**
@@ -1548,6 +1590,8 @@ public class ConstantMethod {
                 }
             }
         }
+//      暂时解决当前框架问题，播放中刷新视图，导致视图被销毁回调onSurfaceTextureDestroyed -> 黑屏
+        Jzvd.releaseAllVideos();
         return descriptionDetailList;
     }
 
@@ -2087,12 +2131,12 @@ public class ConstantMethod {
     }
 
     public void getNewUserCouponDialog(Context context) {
-        if ( NEW_USER_DIALOG) {
+        if (NEW_USER_DIALOG) {
             NEW_USER_DIALOG = false;
             String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
             Map<String, Object> params = new HashMap<>();
             params.put("user_id", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(context,url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -2153,7 +2197,7 @@ public class ConstantMethod {
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("couponId", couponId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(context,url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();

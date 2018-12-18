@@ -197,7 +197,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
                     intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
                     intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
-                    intent.putExtra("invitePartnerJoin", true);
+                    intent.putExtra("invitePartnerJoinCode", "1");
                     startActivity(intent);
                 } else {
                     showToast(QualityGroupShopMineActivity.this, "已结束拼团");

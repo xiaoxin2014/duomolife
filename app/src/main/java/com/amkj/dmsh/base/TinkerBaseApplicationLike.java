@@ -30,16 +30,15 @@ import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
-import com.amkj.dmsh.network.NetApiManager;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
-import com.amkj.dmsh.utils.Log;
 import com.kingja.loadsir.core.LoadSir;
 import com.leon.channel.helper.ChannelReaderUtil;
 import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
+import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
@@ -79,6 +78,8 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
+import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
@@ -96,30 +97,31 @@ import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
         flags = ShareConstants.TINKER_ENABLE_ALL,
         loadVerifyFlag = false)
 public class TinkerBaseApplicationLike extends DefaultApplicationLike {
-    public OSS oss;
+    private OSS oss;
     private final String MobAPPKEY = "1693fa0f7b0a0";
     private final String MobAPPSECRET = "435ac0137e0179dafee0139a85f6ed92";
-    private String BUGLY_APP_ID = "385d38aeeb";
-    public OSSCredentialProvider credentialProvider;
-    public static String BUCKET_NAME = "domolifes";
-    public static String OSS_URL;
-    public ClientConfiguration conf;
+    private final String BUGLY_APP_ID = "385d38aeeb";
+    private String BUCKET_NAME = "domolifes";
+    private String OSS_URL;
     public IWXAPI api;
-    public static int screenWidth;
+    private int screenWidth;
     private int screenHeight;
     private String analyzeKey = "A1M12V8YKBTI";
-    public static final String INIT_TAG = "初始化";            //安全加密和安全签名使用的秘钥在jpg中对应的key
+    private final String INIT_TAG = "初始化";            //安全加密和安全签名使用的秘钥在jpg中对应的key
     private float density;
     //    web链接替换
-    public static Map<String, String> webUrlTransform;
+    private Map<String, String> webUrlTransform;
     //    web链接参数转换
-    public static Map<String, Map<String, String>> webUrlParameterTransform;
+    private Map<String, Map<String, String>> webUrlParameterTransform;
     //
-    public static Map<String, Map<String, String>> totalActionMap;
+    private Map<String, Map<String, String>> totalActionMap;
     // 此处采用 LinkedList作为容器，增删速度快
-    public static LinkedList<Activity> activityLinkedList;
+    private LinkedList<Activity> activityLinkedList;
     //    全局上下文
     public static Context mAppContext;
+//    是否已初始化TuSdk
+    private boolean isInitTuSdk;
+    private Map<String, Object> ossMap;
 
     public TinkerBaseApplicationLike(Application application, int tinkerFlags,
                                      boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
@@ -246,51 +248,26 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         }
         super.onCreate();
 //        initBaiCHotFix();
-
+        if (LeakCanary.isInAnalyzerProcess(getApplication())) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(getApplication());
+        initAutoSizeScreen();
+        //        LinkedMe 深度链接
+        initLinkMe();
+        // 初始化xUtils
+        x.Ext.init(getApplication());
         if (isAppMainProcess()) {
             if (isDebugTag) {
                 SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
                 int selectServer = sharedPreferences.getInt("selectServer", 0);
                 new Url(mAppContext, selectServer);
             }
-            // 初始化xUtils
-            x.Ext.init(getApplication());
-            NetApiManager.getInstance().init();
-
-//        腾讯移动分析初始化
-            // 第三个参数必须为：com.tencent.stat.common.StatConstants.VERSION
-            try {
-                StatService.startStatService(mAppContext, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
-            } catch (MtaSDkException e) {
-                e.printStackTrace();
-            }
-            //      友盟初始化
-            youMengInit();
-
-            initAutoSizeScreen();
             initLoadSir();
-            //        LinkedMe 深度链接
-            initLinkMe();
-            getScreenInfo();
-            initTotalAction();
-            //      jPush 初始化
-            JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
-            JPushInterface.init(mAppContext);
-            //        oss初始化
-            initOSS();
-            //        阿里百川初始化
+            //        阿里百川 在异步初始化
             initNewAliBaiC();
-            //        七鱼客服初始化
-            initQYService();
-// web自动识别
-            initWebUrlTransformLocation();
-            try {
-//                不能放到子线程初始化
-                TuSdk.enableDebugLog(isDebugTag);
-                TuSdk.init(mAppContext, "08b501fdf166d42d-02-5dvwp1");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -304,6 +281,21 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                     }
                     //shareSDK
                     MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
+
+                    //      友盟初始化
+                    youMengInit();
+
+                    //      jPush 初始化
+                    JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
+                    JPushInterface.init(mAppContext);
+                    //        oss初始化
+                    initOSS();
+                    QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
+                    try {
+                        StatService.startStatService(mAppContext, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
+                    } catch (MtaSDkException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -343,11 +335,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                 .addCallback(new NetEmptyCallback())//空值
                 .setDefaultCallback(NetLoadCallback.class)//设置默认状态页
                 .commit();
-    }
-
-    private void initQYService() {
-        QyServiceUtils qyInstance = QyServiceUtils.getQyInstance();
-        qyInstance.initQyService(getContext());
     }
 
     private void initLinkMe() {
@@ -406,19 +393,15 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     private void initNewAliBaiC() {
-//        MemberSDK.turnOnDebug();
         AlibcTradeSDK.asyncInit(getApplication(), new AlibcTradeInitCallback() {
             @Override
             public void onSuccess() {
                 //初始化成功，设置相关的全局配置参数
-                Log.d(INIT_TAG, "alibc_onSuccess: ");
-                // ...
             }
 
             @Override
             public void onFailure(int code, String msg) {
                 //初始化失败，可以根据code和msg判断失败原因，详情参见错误说明
-                Log.d(INIT_TAG, "alibc_onFailure: " + "errorCode:" + code + msg);
             }
         });
     }
@@ -437,16 +420,26 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     public int getScreenWidth() {
+        if (screenWidth == 0) {
+            getScreenInfo();
+        }
         return screenWidth;
     }
 
     public int getScreenHeight() {
+        if (screenHeight == 0) {
+            getScreenInfo();
+        }
         return screenHeight;
     }
 
     public float getDensity() {
+        if (density == 0) {
+            getScreenInfo();
+        }
         return density;
     }
+
 
     private void youMengInit() {
         //SDK 初始化
@@ -475,24 +468,31 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     public Map<String, Map<String, String>> getTotalActionMap() {
+        if (totalActionMap == null) {
+            initTotalAction();
+        }
         return totalActionMap;
     }
 
     private void initOSS() {
+        ossMap = new HashMap<>();
         // 明文设置secret的方式建议只在测试时使用，更多鉴权模式请参考后面的访问控制章节
         SharedPreferences preferences = mAppContext.getSharedPreferences("ossConfig", MODE_PRIVATE);
         String endpoint = new String(Base64.decode(preferences.getString("endpoint", "b3NzLWNuLWJlaWppbmcuYWxpeXVuY3MuY29t"), Base64.DEFAULT));
-        BUCKET_NAME = new String(Base64.decode(preferences.getString("bucketName", "ZG9tb2xpZmVz"), Base64.DEFAULT));
         String accessKeyId = new String(Base64.decode(preferences.getString("accessKeyId", "TFRBSVd3d2FkcjdidGJpMg=="), Base64.DEFAULT));
         String accessKeySecret = new String(Base64.decode(preferences.getString("accessKeySecret", "UnVVTWh4ZHEwejJucnNLZkRvemY3MmU0R1ZnNWFE"), Base64.DEFAULT));
+        BUCKET_NAME = new String(Base64.decode(preferences.getString("bucketName", "ZG9tb2xpZmVz"), Base64.DEFAULT));
         OSS_URL = new String(Base64.decode(preferences.getString("url", "aHR0cDovL2ltYWdlLmRvbW9saWZlLmNu"), Base64.DEFAULT)) + "/";
-        credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKeyId, accessKeySecret);
-        conf = new ClientConfiguration();
+        OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKeyId, accessKeySecret);
+        ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         oss = new OSSClient(mAppContext, endpoint, credentialProvider, conf);
+        ossMap.put(OSS_BUCKET_NAME,BUCKET_NAME);
+        ossMap.put(OSS_URL,OSS_URL);
+        ossMap.put(OSS_OBJECT,oss);
     }
 
     /**
@@ -537,7 +537,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      */
     private void initTotalAction() {
         try {
-            AssetManager asset = mAppContext.getAssets();
+            AssetManager asset = getApplication().getApplicationContext().getAssets();
             InputStream totalStream = asset.open("totalAction.txt");
             totalActionMap = new HashMap<>();
             String fileTotal = FileStreamUtils.InputStreamTOString(totalStream);
@@ -665,8 +665,18 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         return parameterMap;
     }
 
-    public OSS getOSS() {
-        return oss;
+    public Map<String, Object> getOSSDataMap() {
+        if(ossMap==null){
+            initOSS();
+        }
+        return ossMap;
+    }
+
+    public String getOSSDataUrl() {
+        if(ossMap==null||ossMap.get(OSS_URL)==null){
+            initOSS();
+        }
+        return (String) ossMap.get(OSS_URL);
     }
 
     public Context getContext() {
@@ -697,18 +707,16 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         for (Activity activity : activityLinkedList) {
             activity.finish();
         }
-
-        //  结束进程
-        // System.exit(0);
     }
 
     /**
      * 栈内是否存在当前activity
      * 确保推送进来，finish后返回主页
+     *
      * @param currentActivityName 当前类名
      * @return
      */
-    public boolean isExistActivity(String currentActivityName) {
+    public boolean existActivity(String currentActivityName) {
         if (TextUtils.isEmpty(currentActivityName)) {
             return false;
         }
@@ -718,5 +726,44 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取 webUrlTransform
+     *
+     * @return
+     */
+    public Map<String, String> getWebUrlTransform() {
+        if (webUrlTransform == null) {
+            //          web自动识别
+            initWebUrlTransformLocation();
+        }
+        return webUrlTransform;
+    }
+
+    /**
+     * webUrlParameterTransform
+     *
+     * @return
+     */
+    public Map<String, Map<String, String>> getWebUrlParameterTransform() {
+        if (webUrlParameterTransform == null) {
+            //          web自动识别
+            initWebUrlTransformLocation();
+        }
+        return webUrlParameterTransform;
+    }
+
+    public void initTuSdk(){
+        if(!isInitTuSdk){
+            try {
+//                不能放到子线程初始化
+                TuSdk.enableDebugLog(isDebugTag);
+                TuSdk.init(getApplication().getApplicationContext(), "08b501fdf166d42d-02-5dvwp1");
+                isInitTuSdk = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -1027,7 +1027,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("refundPro", refundBean);
                 intent.putExtras(bundle);
-                intent.putExtra("cancelRefund", true);
+                intent.putExtra("cancelRefund", "1");
                 intent.putExtra(REFUND_TYPE, REFUND_TYPE);
                 startActivity(intent);
                 finish();

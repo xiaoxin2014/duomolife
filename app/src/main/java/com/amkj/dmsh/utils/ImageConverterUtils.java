@@ -2,7 +2,8 @@ package com.amkj.dmsh.utils;
 
 import android.text.TextUtils;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 /**
  * @author LGuiPeng
@@ -16,7 +17,9 @@ public class ImageConverterUtils {
 
     public static String getFormatImg(String url) {
         if (!TextUtils.isEmpty(url)) {
-            if (url.contains(OSS_URL) && (url.contains(".jpg") || url.contains(".JPG"))) {
+            TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+            String ossDataUrl = applicationLike.getOSSDataUrl();
+            if (url.contains(ossDataUrl) && (url.contains(".jpg") || url.contains(".JPG"))) {
                 return url + formatImg;
             } else {
                 return url;

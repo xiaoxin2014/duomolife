@@ -79,7 +79,7 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
                     public void onClick(View v) {
                         CommunalADActivityBean communalADActivity = (CommunalADActivityBean) v.getTag(R.id.iv_tag);
                         if (communalADActivity != null) {
-                            adClickTotal(communalADActivityBean.getObjectId());
+                            adClickTotal(communalADActivityBean.getId());
                             setSkipPath(v.getContext(), communalADActivity.getAndroidLink(),true, false);
                         }
                     }

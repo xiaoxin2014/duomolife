@@ -637,7 +637,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     @OnClick(R.id.ll_indent_address_default)
     void skipAddressList() {
         Intent intent = new Intent(IntegrationIndentWriteActivity.this, SelectedAddressActivity.class);
-        intent.putExtra("addressId", addressId);
+        intent.putExtra("addressId", String.valueOf(addressId));
         startActivityForResult(intent, SEL_ADDRESS_REQ);
     }
 }

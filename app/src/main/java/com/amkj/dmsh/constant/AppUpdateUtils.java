@@ -178,7 +178,7 @@ public class AppUpdateUtils {
             intent.putExtra(VERSION_UPDATE_LOW, getStrings(appVersionBean.getLowestVersion()));
             intent.putExtra(APP_CURRENT_UPDATE_VERSION, getStrings(appVersionBean.getVersion()));
             if(isMandatoryUpdate){
-                intent.putExtra(APP_MANDATORY_UPDATE_VERSION, true);
+                intent.putExtra(APP_MANDATORY_UPDATE_VERSION, "1");
                 intent.putExtra(MANDATORY_UPDATE_DESCRIPTION, getStrings(appVersionBean.getCompel_up_desc()));
             }
             context.startActivity(intent);

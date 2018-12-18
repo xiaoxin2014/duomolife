@@ -35,7 +35,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
  * class description:标签创建
  */
 public class ProductLabelCreateUtils implements View.OnClickListener {
-    private static ProductLabelCreateUtils productLabelCreateUtils;
+    private static volatile ProductLabelCreateUtils productLabelCreateUtils;
     private Context context;
 
     private ProductLabelCreateUtils() {

@@ -79,6 +79,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -133,12 +134,6 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     TextView tv_article_bottom_collect;
     @BindView(R.id.tv_publish_comment)
     TextView tv_publish_comment;
-    //    文章关注
-    private final int IS_ATT_REQCODE = 10;
-    //    文章点赞请求码
-    private final int IS_LIKED_REQCODE = 11;
-    //    评论请求码
-    private final int IS_COMMENT_REQCODE = 101;
     private ArticleCommentAdapter adapterArticleComment;
     //    评论数
     private List<DmlSearchCommentBean> articleCommentList = new ArrayList<>();
@@ -150,14 +145,12 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     private ImgDetailsHeaderView imgHeaderView;
     private InvitationImgDetailEntity invitationDetailEntity;
     private String type = "articleDetails";
-    private int scrollY = 0;
     private float screenHeight;
     //    按下点击位置
     private float locationY;
     private InvitationProAdapter invitationProAdapter;
     private InvitationImgDetailBean invitationDetailBean;
     private FindImageListAdapter findImageListAdapter;
-    private boolean isForceNet;
     private boolean isScrollToComment;
 
     @Override
@@ -170,7 +163,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         tv_header_titleAll.setText("帖子详情");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
-        isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
+        isScrollToComment = getStringChangeBoolean(intent.getStringExtra("scrollToComment"));
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         View headerView = LayoutInflater.from(ArticleDetailsImgActivity.this).inflate(R.layout.layout_find_img_details, (ViewGroup) communal_recycler.getParent(), false);
@@ -190,7 +183,6 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             public void onRefresh(RefreshLayout refreshLayout) {
                 //                滚动距离置0
                 page = 1;
-                isForceNet = true;
                 getDetailData();
             }
         });
@@ -545,7 +537,6 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     private void getDetailData() {
         getArticleImgComment();
         imgHeaderView.getDetailsData();
-        isForceNet = false;
     }
 
     private void getArticleImgComment() {

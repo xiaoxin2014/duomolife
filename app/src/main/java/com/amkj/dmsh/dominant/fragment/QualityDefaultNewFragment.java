@@ -149,7 +149,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                         /**
                          * 3.1.9 加入好物广告统计
                          */
-                        adClickTotal(communalADActivityBean.getObjectId());
+                        adClickTotal(communalADActivityBean.getId());
                         setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
                         break;
                 }

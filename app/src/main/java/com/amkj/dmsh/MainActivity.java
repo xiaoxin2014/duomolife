@@ -92,11 +92,12 @@ import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
+import static com.amkj.dmsh.constant.ConstantMethod.adDialogClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isSameTimeDay;
 import static com.amkj.dmsh.constant.ConstantMethod.isTimeDayEligibility;
@@ -179,7 +180,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         fragmentManager = getSupportFragmentManager();
         Intent intent = getIntent();
         String type = intent.getStringExtra("type");
-        boolean isFirstTime = intent.getBooleanExtra("isFirstTime", true);
+        String firstTimeCode = intent.getStringExtra("isFirstTime");
+        boolean isFirstTime = TextUtils.isEmpty(firstTimeCode) || getStringChangeBoolean(firstTimeCode);
         setNavData();
         if (!TextUtils.isEmpty(type)) {
             changeAdaptivePage(type);
@@ -214,7 +216,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             setShareTint();
 //            检查推送权限
             checkPushPermission();
-
         }
         rp_bottom_main.setOnCheckedChangeListener((group, checkedId) -> {
             isChecked = true;
@@ -873,7 +874,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     if (edit != null && file != null) {
                         edit.putString(ImgKey, file.getAbsolutePath());
                         edit.putString(OriginalImgUrl, communalADActivityBean.getPicUrl());
-                        edit.putInt(LauncherAdIdKey, communalADActivityBean.getObjectId());
+                        edit.putInt(LauncherAdIdKey, communalADActivityBean.getId());
                         edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
                         edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
                                 ? communalADActivityBean.getAndroidLink() : "app://");
@@ -1000,9 +1001,9 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                 alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                     @Override
                     public void imageClick() {
-                        adClickTotal(communalADActivityBean.getObjectId());
-                        setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
                         alertDialogAdImage.dismiss();
+                        adDialogClickTotal(communalADActivityBean.getId());
+                        setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
                     }
                 });
                 alertDialogAdImage.setImage(bitmap);

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.mine.bean.MineBabyEntity;
@@ -29,6 +30,7 @@ import com.bigkoo.pickerview.listener.CustomListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.google.gson.Gson;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.lasque.tusdk.TuSdkGeeV1;
 import org.lasque.tusdk.core.TuSdkResult;
@@ -270,6 +272,8 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     //    头像设置
     @OnClick(R.id.ll_per_avatar)
     public void changAvatar(View view) {
+        TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        tinkerApplicationLike.initTuSdk();
         TuAvatarComponent component = TuSdkGeeV1.avatarCommponent(PersonalDataActivity.this, new TuSdkComponent.TuSdkComponentDelegate() {
             @Override
             public void onComponentFinished(TuSdkResult result, Error error, TuFragment lastFragment) {
@@ -438,8 +442,11 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
     @OnClick(R.id.rel_per_bg_cover)
     public void setBgCover(View view) {
-        Intent intent = new Intent(PersonalDataActivity.this, PersonalBgImgActivity.class);
-        startActivity(intent);
+        if(userId>0&&communalUserInfoBean!=null){
+            Intent intent = new Intent(PersonalDataActivity.this, PersonalBgImgActivity.class);
+            intent.putExtra("imgUrl", getStrings(communalUserInfoBean.getBgimg_url()));
+            startActivity(intent);
+        }
     }
 
     //    宝宝信息

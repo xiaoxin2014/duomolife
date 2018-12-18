@@ -42,7 +42,14 @@ public class AlertDialogImage {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_image, null, false);
-        iv_ad_image = dialogView.findViewById(R.id.iv_ad_image);
+        iv_ad_image = dialogView.findViewById(R.id.iv_dialog_image_show);
+        ImageView iv_dialog_image_close = dialogView.findViewById(R.id.iv_dialog_image_close);
+        iv_dialog_image_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         builder.setCancelable(true);
         imageAlertDialog = builder.create();
         iv_ad_image.setOnClickListener(new View.OnClickListener() {

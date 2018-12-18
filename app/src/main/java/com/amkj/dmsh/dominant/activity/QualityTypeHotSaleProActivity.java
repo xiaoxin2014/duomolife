@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.dominant.adapter.QualityHotSaleAdapter;
@@ -32,6 +33,7 @@ import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,7 +48,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.screenWidth;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
@@ -93,6 +94,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     private QualityHotSaleShaftEntity qualityHotSaleShaftEntity;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
+    private int screenWidth;
 
     @Override
     protected int getContentView() {
@@ -240,6 +242,10 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         if (hotSaleShaft != null && hotSaleShaft.size() > 0) {
             QualityHotSaleAdapter qualityHotSaleAdapter = new QualityHotSaleAdapter(getSupportFragmentManager(), hotSaleShaft);
             stdDominantHotSale.setVisibility(View.VISIBLE);
+            if(screenWidth ==0){
+                TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                screenWidth = applicationLike.getScreenWidth();
+            }
             if (hotSaleShaft.size() > 3) {
                 stdDominantHotSale.setTabWidth((float) (screenWidth / 3.5));
             } else {

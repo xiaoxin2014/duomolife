@@ -3,6 +3,7 @@ package com.amkj.dmsh;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
@@ -15,7 +16,10 @@ import butterknife.BindView;
 
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 
-public class GuideLaunchActivity extends BaseActivity {
+/**
+ * 闪屏页
+ */
+public class SplashLaunchActivity extends BaseActivity {
     @BindView(R.id.vp_guide_images)
     ViewPager vp_guide_images;
     //    网络图片
@@ -42,7 +46,7 @@ public class GuideLaunchActivity extends BaseActivity {
             localImages.add(R.mipmap.guide2);
             localImages.add(R.mipmap.guide3);
             localImages.add(R.mipmap.guide4);
-            vp_guide_images.setAdapter(new GuideImagesPagerAdapter(GuideLaunchActivity.this, localImages));
+            vp_guide_images.setAdapter(new GuideImagesPagerAdapter(SplashLaunchActivity.this, localImages));
             vp_guide_images.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -78,13 +82,18 @@ public class GuideLaunchActivity extends BaseActivity {
 
     private void hideNavStatus() {
         View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT < 19) { // lower api
+            decorView.setSystemUiVisibility(View.GONE);
+        } else {
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     private void skipWelcome() {
-        Intent intent = new Intent(GuideLaunchActivity.this, WelcomeLaunchActivity.class);
+        Intent intent = new Intent(SplashLaunchActivity.this, WelcomeLaunchActivity.class);
         startActivity(intent);
         finish();
         overridePendingTransition(0, 0);

@@ -135,7 +135,7 @@ public class AttentionSuperFragment extends BaseFragment {
                                     break;
                             }
                             intent.putExtra("ArtId", String.valueOf(invitationDetailBean.getId()));
-                            intent.putExtra("scrollToComment", true);
+                            intent.putExtra("scrollToComment", "1");
                             startActivity(intent);
                             break;
                     }

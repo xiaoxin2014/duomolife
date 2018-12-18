@@ -383,6 +383,7 @@ public class FindFragment extends BaseFragment {
     }
 
     private void findActivityEmptyError() {
+        smart_refresh_find.finishRefresh();
         if (findActivityList.size() == 0) {
             rv_find_act.setVisibility(View.GONE);
         } else {

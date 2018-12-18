@@ -96,7 +96,9 @@ public class QyServiceUtils {
      * 初始化网易七鱼
      */
     public void initQyService(Context context) {
-        isQyInit = Unicorn.init(context, qyAppKey, QyOptions(), new QYGlideImageLoader(context.getApplicationContext()));
+        if(!isQyInit){
+            isQyInit = Unicorn.init(context.getApplicationContext(), qyAppKey, QyOptions(), new QYGlideImageLoader(context.getApplicationContext()));
+        }
     }
 
     private YSFOptions QyOptions() {
@@ -190,6 +192,10 @@ public class QyServiceUtils {
     }
 
     public void openQyServiceChat(Context context, String sourceTitle, String sourceUrl, QyProductIndentInfo qyProductIndentInfo) {
+//            是否已初始化
+        if(!isQyInit){
+            initQyService(context);
+        }
         ConsultSource pageSource;
         if (!TextUtils.isEmpty(sourceTitle) || !TextUtils.isEmpty(sourceUrl)) {
             /**
@@ -276,7 +282,9 @@ public class QyServiceUtils {
      * 建议在工作线程中执行该操作。
      */
     public void clearQyCache() {
-        Unicorn.clearCache();
+        if(isQyInit){
+            Unicorn.clearCache();
+        }
     }
 
     public void loginQyUserInfo(Context context, int userId, String nickName, String mobile, String avatar) {
@@ -356,10 +364,6 @@ public class QyServiceUtils {
                     .setDividerId(R.drawable.item_divider_gray_f_two_px)
 
 
-
-
-
-
                     .create());
             productIndentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
@@ -395,7 +399,7 @@ public class QyServiceUtils {
                 window.setBackgroundDrawableResource(R.color.translucence);
                 WindowManager.LayoutParams params = window.getAttributes();
                 params.width = WindowManager.LayoutParams.MATCH_PARENT;
-                params.height = AutoSizeUtils.mm2px(mAppContext,600);
+                params.height = AutoSizeUtils.mm2px(mAppContext, 600);
                 window.setGravity(Gravity.BOTTOM);
                 window.setAttributes(params);
                 window.setContentView(indentDialogView);
@@ -403,13 +407,13 @@ public class QyServiceUtils {
         }
 
         public void show() {
-            if (imageAlertDialog!=null&&!imageAlertDialog.isShowing()) {
+            if (imageAlertDialog != null && !imageAlertDialog.isShowing()) {
                 imageAlertDialog.show();
             }
         }
 
         public void dismiss() {
-            if(imageAlertDialog!=null&& isContextExisted(context)){
+            if (imageAlertDialog != null && isContextExisted(context)) {
                 imageAlertDialog.dismiss();
             }
         }
@@ -427,7 +431,7 @@ public class QyServiceUtils {
         params.put("orderType", "currency");
 //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext,url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 orderListBeanList.clear();

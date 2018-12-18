@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ReplaceData;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity;
@@ -49,6 +50,7 @@ import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
 
 import org.greenrobot.eventbus.EventBus;
@@ -303,6 +305,8 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                             .isShowGif(true)
                             .openGallery(ReleaseImgArticleActivity.this);
                 } else {
+                    TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                    tinkerApplicationLike.initTuSdk();
                     TuSdkComponent.TuSdkComponentDelegate delegate = new TuSdkComponent.TuSdkComponentDelegate() {
                         @Override
                         public void onComponentFinished(TuSdkResult result, Error error, TuFragment lastFragment) {
@@ -316,6 +320,7 @@ public class ReleaseImgArticleActivity extends BaseActivity {
                             }
                         }
                     };
+
                     // 组件选项配置
                     TuEditMultipleComponent component = TuSdkGeeV1.editMultipleCommponent(ReleaseImgArticleActivity.this, delegate);
                     // 设置图片

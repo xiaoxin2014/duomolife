@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.gyf.barlibrary.ImmersionBar;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -85,5 +86,8 @@ public class PersonalBgImgActivity extends BaseActivity {
         finish();
     }
 
-
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarDarkFont(true).init();
+    }
 }

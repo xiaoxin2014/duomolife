@@ -104,6 +104,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
@@ -247,7 +248,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         gpInfoId = intent.getStringExtra("gpInfoId");
         gpRecordId = intent.getStringExtra("gpRecordId");
         orderNo = intent.getStringExtra("orderNo");
-        invitePartnerJoin = intent.getBooleanExtra("invitePartnerJoin", false);
+        invitePartnerJoin = getStringChangeBoolean(intent.getStringExtra("invitePartnerJoinCode"));
         ll_gp_detail_bottom.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

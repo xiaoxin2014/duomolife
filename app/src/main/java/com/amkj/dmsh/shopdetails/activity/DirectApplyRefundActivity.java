@@ -78,6 +78,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -222,7 +223,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
         if (extras != null && extras.getParcelable("refundPro") != null) {
             refundBean = extras.getParcelable("refundPro");
         }
-        cancelRefund = intent.getBooleanExtra("cancelRefund", false);
+        cancelRefund = getStringChangeBoolean(intent.getStringExtra("cancelRefund"));
         tv_dir_indent_apply_reason.setText(APPLY_REASON);
         Link link = new Link("*");
         //        @用户昵称
@@ -573,8 +574,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
     @OnClick({R.id.ll_indent_address_default})
     void skipAddressList(View view) {
         Intent intent = new Intent(DirectApplyRefundActivity.this, SelectedAddressActivity.class);
-        intent.putExtra("addressId", addressId);
-        intent.putExtra("hasDefaultAddress", true);
+        intent.putExtra("addressId", String.valueOf(addressId));
         startActivityForResult(intent, SEL_ADDRESS_REQ);
     }
 

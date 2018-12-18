@@ -1438,8 +1438,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (TextUtils.isEmpty(orderCreateNo)) {
                 if (type.equals(INDENT_W_TYPE) || type.equals(INDENT_GROUP_SHOP)) {
                     Intent intent = new Intent(DirectIndentWriteActivity.this, SelectedAddressActivity.class);
-                    intent.putExtra("addressId", addressId);
-                    intent.putExtra("hasDefaultAddress", true);
+                    intent.putExtra("addressId", String.valueOf(addressId));
                     startActivityForResult(intent, SEL_ADDRESS_REQ);
                 } else {
                     img_skip_address.setVisibility(View.GONE);

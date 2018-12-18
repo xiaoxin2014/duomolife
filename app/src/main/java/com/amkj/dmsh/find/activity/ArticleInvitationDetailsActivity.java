@@ -87,6 +87,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -177,7 +178,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
-        isScrollToComment = intent.getBooleanExtra("scrollToComment", false);
+        isScrollToComment = getStringChangeBoolean(intent.getStringExtra("scrollToComment"));
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         View headerView = LayoutInflater.from(ArticleInvitationDetailsActivity.this).inflate(R.layout.layout_find_article_invitation_details, (ViewGroup) communal_recycler.getParent(), false);

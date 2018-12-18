@@ -31,8 +31,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -108,12 +106,7 @@ public class QualityGroupShopActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp).create());
         communal_recycler.setAdapter(qualityGroupShopAdapter);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         qualityGroupShopAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

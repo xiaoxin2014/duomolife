@@ -35,6 +35,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -105,7 +106,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         tv_header_shared.setText("保存");
         tv_header_titleAll.setText("新增地址");
         Intent intent = getIntent();
-        addressId = intent.getIntExtra("addressId", 0);
+        addressId = getStringChangeIntegers(intent.getStringExtra("addressId"));
         setEtFilter(et_address_consignee);
         //手机号匹配
         setUpListener();

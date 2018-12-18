@@ -231,7 +231,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                     @Override
                     public void imageClick() {
-                        adClickTotal(communalADActivityBean.getObjectId());
+                        adClickTotal(communalADActivityBean.getId());
                         setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
                         alertDialogAdImage.dismiss();
                     }

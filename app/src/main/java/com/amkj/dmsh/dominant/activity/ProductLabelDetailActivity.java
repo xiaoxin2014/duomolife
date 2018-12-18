@@ -256,7 +256,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
+                        qualityTypeProductAdapter.loadMoreEnd(true);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, labelProductList, likedProductEntity);
                     }
 

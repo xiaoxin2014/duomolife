@@ -33,6 +33,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -79,8 +81,8 @@ public class SelectedAddressActivity extends BaseActivity {
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("新增");
         Intent intent = getIntent();
-        isMineSkip = intent.getBooleanExtra("isMineSkip", false);
-        addressId = intent.getIntExtra("addressId", 0);
+        isMineSkip = getStringChangeBoolean(intent.getStringExtra("isMineSkip"));
+        addressId = getStringChangeIntegers(intent.getStringExtra("addressId"));
         if (!isMineSkip || addressId > 0) {
             isShowDel = false;
         }
@@ -131,7 +133,7 @@ public class SelectedAddressActivity extends BaseActivity {
                             break;
                         case R.id.tv_address_item_edit:
                             Intent addressData = new Intent(SelectedAddressActivity.this, AddressNewCreatedActivity.class);
-                            addressData.putExtra("addressId", addressAllBean.getId());
+                            addressData.putExtra("addressId", String.valueOf(addressAllBean.getId()));
                             addressData.putExtra("uid", addressAllBean.getUser_id());
                             startActivityForResult(addressData, EDIT_ADDRESS_REQ);
                             break;

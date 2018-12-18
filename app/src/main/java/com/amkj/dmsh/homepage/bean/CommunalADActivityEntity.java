@@ -51,8 +51,6 @@ public class CommunalADActivityEntity extends BaseTimeEntity{
         @SerializedName(value = "begin_time",alternate = "beginTime")
         private String beginTime;
         private String link;
-        @SerializedName(value = "object_id",alternate = "objectId")
-        private int objectId;
         private String width;
         @SerializedName(value = "android_link",alternate = "androidLink")
         private String androidLink;
@@ -122,14 +120,6 @@ public class CommunalADActivityEntity extends BaseTimeEntity{
 
         public void setLink(String link) {
             this.link = link;
-        }
-
-        public int getObjectId() {
-            return objectId;
-        }
-
-        public void setObjectId(int objectId) {
-            this.objectId = objectId;
         }
 
         public String getWidth() {

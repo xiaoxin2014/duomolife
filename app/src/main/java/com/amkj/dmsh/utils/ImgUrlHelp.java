@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import io.reactivex.Flowable;
@@ -32,8 +33,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import top.zibin.luban.Luban;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.BUCKET_NAME;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.OSS_URL;
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
+import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
+import static com.amkj.dmsh.constant.ConstantVariable.OSS_URL;
 
 
 /**
@@ -52,6 +55,8 @@ public class ImgUrlHelp {
     private String imgName;
     private Context context;
     private OSS oss;
+    private String ossUrl;
+    private String ossBucketName;
 
     public void setUrl(Context context, List<String> data) {
         //获取oss服务
@@ -64,6 +69,7 @@ public class ImgUrlHelp {
 
     /**
      * 鲁班压缩
+     *
      * @param photos
      */
     private void compressWithRx(final List<String> photos) {
@@ -76,7 +82,7 @@ public class ImgUrlHelp {
                     } catch (IOException e) {
                         e.printStackTrace();
                         List<File> errorList = new ArrayList<>();
-                        for (String pathUrl:photos) {
+                        for (String pathUrl : photos) {
                             errorList.add(new File(pathUrl));
                         }
                         return errorList;
@@ -93,8 +99,7 @@ public class ImgUrlHelp {
     }
 
     private void sendOSSImg(Context context) {
-        TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        oss = application.getOSS();
+        getOssData(context);
         //        上传网址
         // 构造上传请求
         //        objectkey 时间戳 + 十位随机数
@@ -111,7 +116,7 @@ public class ImgUrlHelp {
                     buffer.append((int) (Math.random() * 10));
                 }
                 String imgName = date + buffer + ".jpg";
-                put = new PutObjectRequest(BUCKET_NAME, imgName, imgZip.get(i));
+                put = new PutObjectRequest(ossBucketName, imgName, imgZip.get(i));
                 UpLoadImage(oss, put);
             }
         }
@@ -125,6 +130,7 @@ public class ImgUrlHelp {
                 Message message = handler.obtainMessage(2, request);
                 handler.sendMessage(message);
             }
+
             @Override
             public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
                 // 请求异常
@@ -145,7 +151,7 @@ public class ImgUrlHelp {
         public boolean handleMessage(Message msg) {
             PutObjectRequest request = (PutObjectRequest) msg.obj;
             if (msg.what == 2) {
-                imgUrlMap.put(request.getUploadFilePath(), OSS_URL + request.getObjectKey());
+                imgUrlMap.put(request.getUploadFilePath(), ossUrl + request.getObjectKey());
                 if (imgZip.size() == imgUrlMap.size()) {
                     for (int i = 0; i < imgZip.size(); i++) {
                         callBackPath.add(imgUrlMap.get(imgZip.get(i)));
@@ -155,8 +161,8 @@ public class ImgUrlHelp {
                     }
                 }
             } else if (msg.what == 1) {
-                filePath = OSS_URL + request.getObjectKey();
-                if (listener != null && filePath != null) {
+                filePath = ossUrl + request.getObjectKey();
+                if (listener != null) {
                     listener.finishSingleImg(filePath, handler);
                 }
             } else if (msg.what == 0) {
@@ -171,29 +177,32 @@ public class ImgUrlHelp {
 
     /**
      * 删除本次上传图片
+     *
      * @param bucketName
      * @param objectKey
      */
     private void deleteOssImage(@Nullable String bucketName, @Nullable String objectKey) {
         // 创建删除请求
         DeleteObjectRequest delete = new DeleteObjectRequest(bucketName, objectKey);
-    // 异步删除
+        // 异步删除
         oss.asyncDeleteObject(delete, new OSSCompletedCallback<DeleteObjectRequest, DeleteObjectResult>() {
             @Override
-            public void onSuccess(DeleteObjectRequest request, DeleteObjectResult result) {}
+            public void onSuccess(DeleteObjectRequest request, DeleteObjectResult result) {
+            }
+
             @Override
-            public void onFailure(DeleteObjectRequest request, ClientException clientException, ServiceException serviceException) {}
+            public void onFailure(DeleteObjectRequest request, ClientException clientException, ServiceException serviceException) {
+            }
 
         });
     }
 
     public void setSingleImg(Context context, Bitmap bitmap) {
-        TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        OSS oss = application.getOSS();
+        getOssData(context);
         //        上传网址
         // 构造上传请求
         //        objectkey 时间戳 + 十位随机数
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
         String date = format.format(new Date(System.currentTimeMillis()));
         StringBuffer buffer = new StringBuffer();
         PutObjectRequest put = null;
@@ -205,8 +214,23 @@ public class ImgUrlHelp {
         }
         imgName = date + buffer + ".png";
         byte[] uploadData = getBitmapByte(bitmap);
-        put = new PutObjectRequest(BUCKET_NAME, imgName, uploadData);
+        put = new PutObjectRequest(ossBucketName, imgName, uploadData);
         UpLoadImageSingle(oss, put);
+    }
+
+    private void getOssData(Context context) {
+        TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        Map<String, Object> ossDataMap = application.getOSSDataMap();
+        if (ossDataMap.get(OSS_OBJECT) == null || ossDataMap.get(OSS_URL) == null || ossDataMap.get(OSS_BUCKET_NAME) == null) {
+            showToast(context, "图片上传失败……");
+            if (listener != null) {
+                listener.finishError("图片上传失败……");
+            }
+            return;
+        }
+        oss = (OSS) ossDataMap.get(OSS_OBJECT);
+        ossUrl = (String) ossDataMap.get(OSS_URL);
+        ossBucketName = (String) ossDataMap.get(OSS_BUCKET_NAME);
     }
 
     private void UpLoadImageSingle(OSS oss, PutObjectRequest put) {
@@ -215,9 +239,6 @@ public class ImgUrlHelp {
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                 Message message = handler.obtainMessage(1, request);
                 handler.sendMessage(message);
-                Log.d("PutObject", "UploadSuccess");
-                Log.d("ETag", result.getETag());
-                Log.d("RequestId", result.getRequestId());
             }
 
             @Override
@@ -226,13 +247,6 @@ public class ImgUrlHelp {
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
                     clientExcepion.printStackTrace();
-                }
-                if (serviceException != null) {
-                    // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
                 }
                 Message message = handler.obtainMessage();
                 message.what = 0;

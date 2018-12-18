@@ -136,7 +136,7 @@ public class ArticleTypeActivity extends BaseActivity {
                         case R.id.tv_com_art_comment_count:
                             Intent intent = new Intent(ArticleTypeActivity.this, ArticleOfficialActivity.class);
                             intent.putExtra("ArtId", String.valueOf(articleBean.getId()));
-                            intent.putExtra("scrollToComment", true);
+                            intent.putExtra("scrollToComment", "1");
                             startActivity(intent);
                             break;
                         default:

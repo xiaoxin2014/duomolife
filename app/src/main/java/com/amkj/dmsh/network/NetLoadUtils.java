@@ -76,7 +76,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
         if (NetWorkUtils.checkNet(context)) {
-            NetApiService netApiService = NetApiManager.getNetApiService();
+            NetApiService netApiService = NetApiManager.getInstance().getNetApiService();
             Observer<String> observer = new Observer<String>() {
                 @Override
                 public void onSubscribe(Disposable d) {
@@ -138,7 +138,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public Response<String> loadNetDataPostSync(Context context, String url, Map<String, Object> params) throws IOException {
         if (NetWorkUtils.checkNet(context)) {
-            NetApiService netApiService = NetApiManager.getNetApiService();
+            NetApiService netApiService = NetApiManager.getInstance().getNetApiService();
             if (params != null) {
                 return netApiService.getPostSyncNetData(url, params).execute();
             } else {
@@ -170,7 +170,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void loadNetDataGet(Context context, String url, Map<String, String> params, NetLoadListener netLoadListener) {
         if (NetWorkUtils.checkNet(context)) {
-            NetApiService netApiService = NetApiManager.getNetApiService();
+            NetApiService netApiService = NetApiManager.getInstance().getNetApiService();
             Observer<String> observer = new Observer<String>() {
                 @Override
                 public void onSubscribe(Disposable d) {
@@ -226,7 +226,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     // TODO: 2018/12/4 缓存待加入
     public void loadNetDataGetCache(String url, Map<String, String> params, boolean isForceNet, NetLoadListener netLoadListener) {
         if (!TextUtils.isEmpty(url)) {
-            NetApiService netApiService = NetApiManager.getNetCacheApiService(isForceNet);
+            NetApiService netApiService = NetApiManager.getInstance().getNetCacheApiService(isForceNet);
             Observer<String> observer = new Observer<String>() {
                 @Override
                 public void onSubscribe(Disposable d) {
@@ -314,6 +314,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param list
      * @param resultClass
      */
+    @SuppressWarnings("unchecked")
     public void showLoadSir(LoadService loadService, List<T> list, E resultClass) {
         if (loadService != null) {
             if (list != null && list.size() > 0) {
@@ -333,6 +334,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param list
      * @param resultCode  返回码
      */
+    @SuppressWarnings("unchecked")
     public void showLoadSirString(LoadService loadService, List<T> list, String resultCode) {
         if (loadService != null) {
             if (list != null && list.size() > 0) {
@@ -349,6 +351,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param loadService
      * @param resultClass
      */
+    @SuppressWarnings("unchecked")
     public void showLoadSir(LoadService loadService, T resultBean, E resultClass) {
         if (loadService != null) {
             if (resultBean != null) {
@@ -367,6 +370,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param loadService
      * @param resultClass
      */
+    @SuppressWarnings("unchecked")
     public void showLoadSir(LoadService loadService, E resultClass) {
         if (loadService != null) {
             if (resultClass != null) {
@@ -383,6 +387,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param loadService
      * @param code
      */
+    @SuppressWarnings("unchecked")
     public void showLoadSir(LoadService loadService, String code) {
         if (loadService != null) {
             if (!TextUtils.isEmpty(code)) {

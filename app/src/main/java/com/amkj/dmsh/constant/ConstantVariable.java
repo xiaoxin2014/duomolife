@@ -320,4 +320,11 @@ public class ConstantVariable {
 
     //    下载Map
     public static Map<String, String> downFileMap = new HashMap<>();
+
+    /**
+     * oss 获取变量
+     */
+    public static final String OSS_BUCKET_NAME = "O_B_N";
+    public static final String OSS_URL = "O_S_U";
+    public static final String OSS_OBJECT = "O_S_Obj";
 }

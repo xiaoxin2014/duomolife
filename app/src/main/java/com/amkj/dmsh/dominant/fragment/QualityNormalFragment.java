@@ -50,7 +50,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getIntegers;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -438,8 +438,8 @@ public class QualityNormalFragment extends BaseFragment {
         if (bundle != null) {
             qualityTypeBeanChange = new QualityTypeBean();
             qualityTypeBeanChange.setChildCategory(getStrings(bundle.getString(CATEGORY_CHILD)));
-            qualityTypeBeanChange.setId(getIntegers(bundle.getString(CATEGORY_ID)));
-            qualityTypeBeanChange.setType(getIntegers(bundle.getString(CATEGORY_TYPE)));
+            qualityTypeBeanChange.setId(getStringChangeIntegers(bundle.getString(CATEGORY_ID)));
+            qualityTypeBeanChange.setType(getStringChangeIntegers(bundle.getString(CATEGORY_TYPE)));
             qualityTypeBeanChange.setName(getStrings(bundle.getString(CATEGORY_NAME)));
         }
     }

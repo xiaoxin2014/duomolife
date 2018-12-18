@@ -171,13 +171,13 @@ public class UserAttentionFragment extends BaseFragment {
                             }
                         }
                         detailsUserAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService,userAttentionFansEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService,attentionFansList,userAttentionFansEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         detailsUserAdapter.loadMoreEnd(true);
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService,userAttentionFansEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService,attentionFansList,userAttentionFansEntity);
                     }
                 });
     }

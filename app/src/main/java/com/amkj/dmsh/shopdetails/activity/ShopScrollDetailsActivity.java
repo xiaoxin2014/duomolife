@@ -94,8 +94,6 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
@@ -356,12 +354,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             showToast(ShopScrollDetailsActivity.this, "商品信息有误，请重试");
             finish();
         }
-        smart_ql_sp_pro_details.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_ql_sp_pro_details.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(ShopScrollDetailsActivity.this));
         directEvaluationAdapter = new DirectEvaluationAdapter(ShopScrollDetailsActivity.this, goodsComments);
         directEvaluationAdapter.setHeaderAndEmpty(true);

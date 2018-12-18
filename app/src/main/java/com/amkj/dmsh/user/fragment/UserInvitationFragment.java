@@ -208,13 +208,13 @@ public class UserInvitationFragment extends BaseFragment {
                     }
                     adapterInvitationAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getNetInstance().showLoadSir(loadService,invitationDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 adapterInvitationAdapter.loadMoreEnd(true);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService,invitationDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
             }
         });
     }

@@ -60,7 +60,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import razerdp.basepopup.BasePopupWindow;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getIntegers;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -155,9 +155,9 @@ public class QualityTypeProductActivity extends BaseActivity {
         ctb_qt_tab_product_type.setTextSize(AutoSizeUtils.mm2px(mAppContext, 32));
         Intent intent = getIntent();
         if (intent != null) {
-            categoryChildId = getIntegers(intent.getStringExtra(CATEGORY_CHILD));
-            categoryId = getIntegers(intent.getStringExtra(CATEGORY_ID));
-            categoryType = getIntegers(intent.getStringExtra(CATEGORY_TYPE));
+            categoryChildId = getStringChangeIntegers(intent.getStringExtra(CATEGORY_CHILD));
+            categoryId = getStringChangeIntegers(intent.getStringExtra(CATEGORY_ID));
+            categoryType = getStringChangeIntegers(intent.getStringExtra(CATEGORY_TYPE));
             categoryName = getStrings(intent.getStringExtra(CATEGORY_NAME));
             couponId = intent.getStringExtra("couponId");
         }
@@ -531,7 +531,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                                             QualityTypeBean qualityType = sortTypeList.get(0);
                                             qualityType.setSelect(true);
                                             sortTypeList.set(0, qualityType);
-                                            sortType = getIntegers(sortTypeList.get(0).getSortType());
+                                            sortType = getStringChangeIntegers(sortTypeList.get(0).getSortType());
                                             sortTypeName = getStrings(sortTypeList.get(0).getSortName());
 //                                    获取子类
                                             getChildrenType();
