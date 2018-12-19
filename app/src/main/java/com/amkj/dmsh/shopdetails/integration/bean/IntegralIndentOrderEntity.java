@@ -1,6 +1,6 @@
 package com.amkj.dmsh.shopdetails.integration.bean;
 
-import com.amkj.dmsh.base.BaseTimeEntity;
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
 import com.google.gson.annotations.SerializedName;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * version 3.1.5
  * class description:积分订单
  */
-public class IntegralIndentOrderEntity extends BaseTimeEntity{
+public class IntegralIndentOrderEntity extends BaseEntity{
 
     /**
      * code : string

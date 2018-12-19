@@ -226,7 +226,7 @@ public class SelectedAddressActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if(userId<0){
+        if(userId<1){
             return;
         }
         String url = Url.BASE_URL + Url.ADDRESS_LIST;

@@ -423,6 +423,9 @@ public class AccountSafeActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
+            if(requestCode==IS_LOGIN_CODE){
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -431,7 +434,9 @@ public class AccountSafeActivity extends BaseActivity {
                 loadData();
                 break;
         }
-        mShareAPI.onActivityResult(requestCode, resultCode, data);
+        if(mShareAPI!=null){
+            mShareAPI.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void bindOtherAccount(OtherAccountBindInfo accountInfo) {

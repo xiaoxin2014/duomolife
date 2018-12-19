@@ -409,9 +409,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private void setNavData() {
         iconDataList.clear();
         SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
-        String modifyTime = sharedPreferences.getString("modifyTime", "");
-        if (!TextUtils.isEmpty(modifyTime)) {
-            String result = sharedPreferences.getString("NavDate", "");
+        String result = sharedPreferences.getString("NavDate", "");
+        if(!TextUtils.isEmpty(result)){
             Gson gson = new Gson();
             MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
             if (mainNavEntity != null && mainNavEntity.getMainNavBeanList().size() == 5
@@ -420,7 +419,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             } else {
                 setNorMal();
             }
-        } else {
+        }else{
             setNorMal();
         }
     }
@@ -628,31 +627,35 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
          * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
          */
         params.put("version", 2);
+        SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
-                if (mainNavEntity != null) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
-                    if (mainNavEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (mainNavEntity.getMainNavBeanList().size() == 5) {
-                            String modifyTime = sharedPreferences.getString("modifyTime", "");
-                            if (!modifyTime.equals(mainNavEntity.getModifyTime())) {
-                                SharedPreferences.Editor edit = sharedPreferences.edit();
-                                edit.putString("modifyTime", getStrings(mainNavEntity.getModifyTime()));
-                                edit.putString("NavDate", result);
-                                edit.apply();
-                                for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
-                                    saveImageToFile(MainActivity.this, mainNavBean.getPicUrl());
-                                    saveImageToFile(MainActivity.this, mainNavBean.getPicUrlSecond());
-                                }
-                            }
-                        }
-                    } else {
-                        sharedPreferences.edit().clear().apply();
+                if (mainNavEntity != null
+                        && mainNavEntity.getCode().equals(SUCCESS_CODE)
+                        && mainNavEntity.getMainNavBeanList().size() == 5
+                        && !isTimeExpress(mainNavEntity)) {
+                    /**
+                     * v3.1.9 修改判断 当前时间是否大于过期时间
+                     */
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                    edit.putString("modifyTime", getStrings(mainNavEntity.getModifyTime()));
+                    edit.putString("NavDate", result);
+                    edit.apply();
+                    for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
+                        saveImageToFile(MainActivity.this, mainNavBean.getPicUrl());
+                        saveImageToFile(MainActivity.this, mainNavBean.getPicUrlSecond());
                     }
+                } else {
+                    sharedPreferences.edit().clear().apply();
                 }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                sharedPreferences.edit().clear().apply();
             }
         });
     }
@@ -690,6 +693,14 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                             setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no()
                                     , communalUserInfoBean.getDevice_model()
                                     , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
+                            //        更新最新个人信息
+                            SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
+                            savePersonalInfo.setAvatar(getStrings(communalUserInfoBean.getAvatar()));
+                            savePersonalInfo.setNickName(getStrings(communalUserInfoBean.getNickname()));
+                            savePersonalInfo.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
+                            savePersonalInfo.setUid(communalUserInfoBean.getUid());
+                            savePersonalInfo.setLogin(true);
+                            savePersonalInfoCache(MainActivity.this, savePersonalInfo);
                         } else {
                             personalInfo.setLogin(false);
                             savePersonalInfoCache(MainActivity.this, personalInfo);
@@ -705,7 +716,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             });
         } else {
             userId = 0;
-            QyServiceUtils.getQyInstance().logoutQyUser();
+            QyServiceUtils.getQyInstance().logoutQyUser(MainActivity.this);
         }
     }
 

@@ -268,6 +268,11 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             initLoadSir();
             //        阿里百川 在异步初始化
             initNewAliBaiC();
+            //      jPush 初始化
+            JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
+            JPushInterface.init(mAppContext);
+//            必须在主线程调用
+            QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -284,13 +289,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
                     //      友盟初始化
                     youMengInit();
-
-                    //      jPush 初始化
-                    JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
-                    JPushInterface.init(mAppContext);
                     //        oss初始化
                     initOSS();
-                    QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
                     try {
                         StatService.startStatService(mAppContext, analyzeKey, "com.tencent.stat.common.StatConstants.VERSION");
                     } catch (MtaSDkException e) {

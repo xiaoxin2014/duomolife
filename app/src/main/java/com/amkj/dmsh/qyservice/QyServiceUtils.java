@@ -96,7 +96,7 @@ public class QyServiceUtils {
      * 初始化网易七鱼
      */
     public void initQyService(Context context) {
-        if(!isQyInit){
+        if (!isQyInit) {
             isQyInit = Unicorn.init(context.getApplicationContext(), qyAppKey, QyOptions(), new QYGlideImageLoader(context.getApplicationContext()));
         }
     }
@@ -193,9 +193,7 @@ public class QyServiceUtils {
 
     public void openQyServiceChat(Context context, String sourceTitle, String sourceUrl, QyProductIndentInfo qyProductIndentInfo) {
 //            是否已初始化
-        if(!isQyInit){
-            initQyService(context);
-        }
+        initQyService(context);
         ConsultSource pageSource;
         if (!TextUtils.isEmpty(sourceTitle) || !TextUtils.isEmpty(sourceUrl)) {
             /**
@@ -282,12 +280,14 @@ public class QyServiceUtils {
      * 建议在工作线程中执行该操作。
      */
     public void clearQyCache() {
-        if(isQyInit){
+        if (isQyInit) {
             Unicorn.clearCache();
         }
     }
 
     public void loginQyUserInfo(Context context, int userId, String nickName, String mobile, String avatar) {
+        //            是否已初始化
+        initQyService(context);
         String osVersion = Build.VERSION.RELEASE;
 //        手机型号
         String mobileModel = Build.MODEL;
@@ -299,7 +299,9 @@ public class QyServiceUtils {
             array.put(userInfoDataItem("mobile_phone", getStrings(mobile), -1, null, null));
 //            array.add(userInfoDataItem("email", email, -1,null, null)); // email
             array.put(userInfoDataItem("avatar", getStrings(avatar), -1, null, null));
-            uiCustomization.rightAvatar = avatar;
+            if(!TextUtils.isEmpty(avatar)){
+                uiCustomization.rightAvatar = avatar;
+            }
         }
         array.put(userInfoDataItem("system_version", osVersion, 0, "系统版本", null));
         array.put(userInfoDataItem("app_version", getVersionName(context), 1, "app版本", null));
@@ -331,8 +333,10 @@ public class QyServiceUtils {
 
     /**
      * 注销用户
+     * @param context
      */
-    public void logoutQyUser() {
+    public void logoutQyUser(Context context) {
+        initQyService(context);
         uiCustomization.rightAvatar = "";
         Unicorn.logout();
     }

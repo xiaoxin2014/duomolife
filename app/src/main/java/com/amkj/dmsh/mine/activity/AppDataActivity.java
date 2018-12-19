@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
@@ -60,8 +59,6 @@ public class AppDataActivity extends BaseActivity {
     Toolbar tl_normal_bar;
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
-    @BindView(R.id.ll_mine_personal)
-    LinearLayout ll_mine_personal;
     //    展示默认地址
     @BindView(R.id.tv_mine_setting_address)
     TextView tv_mine_setting_address;
@@ -95,11 +92,10 @@ public class AppDataActivity extends BaseActivity {
      * 根据是否登录展示UI
      */
     private void setLayoutUI() {
-        if (userId < 1 &&ll_mine_personal.getVisibility() == View.VISIBLE) {
-            ll_mine_personal.setVisibility(View.GONE);
+        if (userId < 1) {
             tv_set_account_exit.setVisibility(View.GONE);
-        } else if (ll_mine_personal.getVisibility() == View.GONE) {
-            ll_mine_personal.setVisibility(View.VISIBLE);
+            tv_mine_setting_address.setText("");
+        } else {
             tv_set_account_exit.setVisibility(View.VISIBLE);
             loadData();
         }
@@ -252,7 +248,7 @@ public class AppDataActivity extends BaseActivity {
     }
 
     //    地址管理
-    @OnClick(R.id.tv_mine_setting_address)
+    @OnClick(R.id.ll_personal_address)
     void setAddress(View view) {
         Intent intent = new Intent(AppDataActivity.this, SelectedAddressActivity.class);
         intent.putExtra("isMineSkip", "1");

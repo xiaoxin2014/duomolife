@@ -27,9 +27,6 @@
                 app:contentScrim="@android:color/white"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 <!--enterAlwaysCollapsed exitUntilCollapsed-->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 <!--app:layout_collapseMode="parallax"-->
                     <LinearLayout
                         android:id="@+id/ll_find_header"
@@ -72,7 +69,6 @@
                             <include layout="@layout/layout_communal_recycler_wrap" />
                         </LinearLayout>
                     </LinearLayout>
-                </RelativeLayout>
 
                 <include layout="@layout/find_header" />
             </android.support.design.widget.CollapsingToolbarLayout>

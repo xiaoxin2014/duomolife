@@ -289,7 +289,10 @@ public class MineDataFragment extends BaseFragment {
             MineTypeBean mineTypeBean = mineTypeList.get(i);
             String androidLink = getStrings(mineTypeBean.getAndroidUrl());
             if (androidLink.contains("ManagerServiceChat")) {
-                mineTypeBean.setMesCount(serviceTotalCount);
+                if(serviceTotalCount!=mineTypeBean.getMesCount()){
+                    mineTypeBean.setMesCount(serviceTotalCount);
+                    typeMineAdapter.notifyDataSetChanged();
+                }
                 break;
             }
         }

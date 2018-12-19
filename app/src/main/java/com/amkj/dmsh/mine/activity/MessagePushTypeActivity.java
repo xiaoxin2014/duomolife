@@ -130,7 +130,7 @@ public class MessagePushTypeActivity extends BaseActivity {
             }
         }
         params.put("ids", stringBuffer.toString().trim());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_MES_PUSH_SWITCH,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_MES_PUSH_SWITCH, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -165,6 +165,9 @@ public class MessagePushTypeActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        if (userId < 1) {
+            return;
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_MES_PUSH_LIST

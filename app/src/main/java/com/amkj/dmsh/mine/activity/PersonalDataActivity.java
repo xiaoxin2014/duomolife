@@ -133,7 +133,6 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
     private void getDataInfo() {
         if (userId < 1) {
-            NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -252,7 +251,9 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            finish();
+            if(requestCode==IS_LOGIN_CODE){
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);

@@ -1943,11 +1943,11 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(savePersonalInfo.getUnionId())) {
                 edit.putString("UNION_ID", getStrings(savePersonalInfo.getUnionId()));
             }
-            edit.apply();
+            edit.commit();
         } else {
             userId = 0;
 //            七鱼注销
-            QyServiceUtils.getQyInstance().logoutQyUser();
+            QyServiceUtils.getQyInstance().logoutQyUser(context);
             //            注销账号 关闭账号统计
             MobclickAgent.onProfileSignOff();
 //            解绑JPush
@@ -1955,7 +1955,7 @@ public class ConstantMethod {
             SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
             edit.clear();
-            edit.apply();
+            edit.commit();
         }
     }
 

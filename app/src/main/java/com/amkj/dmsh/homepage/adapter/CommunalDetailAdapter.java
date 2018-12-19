@@ -185,7 +185,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 //        淘宝链接
         addItemType(TYPE_LINK_TAOBAO, R.layout.layout_communal_taobao_link);
 //        商品推荐
-        addItemType(TYPE_PRODUCT_RECOMMEND, R.layout.layout_communal_recycler_wrap);
+        addItemType(TYPE_PRODUCT_RECOMMEND, R.layout.layout_top_communal_wrap);
 //        关联商品
         addItemType(TYPE_RELEVANCE_PRODUCT, R.layout.layout_top_communal_wrap);
 //        占位

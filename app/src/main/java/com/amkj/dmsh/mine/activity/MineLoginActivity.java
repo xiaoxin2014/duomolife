@@ -310,7 +310,9 @@ public class MineLoginActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            mShareAPI.onActivityResult(requestCode, resultCode, data);
+            if(mShareAPI!=null){
+                mShareAPI.onActivityResult(requestCode, resultCode, data);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

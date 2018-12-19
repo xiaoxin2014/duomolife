@@ -29,6 +29,7 @@ import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 
@@ -303,5 +304,9 @@ public class UserPagerActivity extends BaseActivity {
         }
     }
 
-
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).titleBar(tl_user_header).keyboardEnable(true).navigationBarEnable(false)
+                .statusBarDarkFont(true).init();
+    }
 }
