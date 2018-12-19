@@ -807,10 +807,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             }
             try {
                 ImmersionBar.with(DoMoLifeCommunalActivity.this).statusBarColor(colorValue, alpha).keyboardEnable(true)
-                        .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true).init();
+                        .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true).navigationBarEnable(false).init();
             } catch (Exception e) {
                 ImmersionBar.with(DoMoLifeCommunalActivity.this).statusBarColor("#ffffff", alpha > 1 ? 1 : alpha < 0 ? 0 : alpha).keyboardEnable(true)
-                        .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true).init();
+                        .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true).navigationBarEnable(false).init();
             }
 
         }

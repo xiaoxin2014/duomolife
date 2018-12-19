@@ -21,7 +21,6 @@ import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
 import com.tencent.stat.StatService;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.umeng.analytics.MobclickAgent;
 
@@ -29,12 +28,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.concurrent.TimeUnit;
-
 import butterknife.ButterKnife;
 import cn.jzvd.JzvdStd;
-import io.reactivex.Observable;
-import io.reactivex.functions.Action;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -127,7 +122,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false)
                 .statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 
@@ -142,15 +137,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         if (totalPersonalTrajectory == null) {
             totalPersonalTrajectory = new TotalPersonalTrajectory(this);
         }
-//取消rxjava 订阅
-        Observable.interval(1, TimeUnit.SECONDS)
-                .doOnDispose(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                    }
-                })
-                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe();
     }
 
     @Override

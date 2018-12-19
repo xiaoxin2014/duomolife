@@ -732,7 +732,7 @@ public class AliBCFragment extends BaseFragment {
      */
     private void setWebFragmentStatusBar(int statusBarTextColorValue, String colorValue, float alpha) {
         immersionBar = ImmersionBar.with(AliBCFragment.this).statusBarColor(colorValue, alpha).keyboardEnable(true)
-                .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true);
+                .statusBarDarkFont(statusBarTextColorValue == 1).fitsSystemWindows(true).navigationBarEnable(false);
         immersionBar.init();
     }
 

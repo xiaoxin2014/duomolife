@@ -805,7 +805,7 @@ public class MineDataFragment extends BaseFragment {
     @Override
     public void initImmersionBar() {
         ImmersionBar.with(this).titleBar(rel_header_mine)
-                .statusBarDarkFont(true).init();
+                .statusBarDarkFont(true).keyboardEnable(true).navigationBarEnable(false).init();
     }
 
     @Override

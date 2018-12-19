@@ -182,7 +182,7 @@ public class HomePageFragment extends BaseFragment {
             public void onGlobalLayout() {
                 rel_home_page.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) rel_home_page.getLayoutParams();
-                int measuredHeight = tb_tool_home.getMeasuredHeight();
+                int measuredHeight = tb_tool_home.getMeasuredHeight() + ImmersionBar.getStatusBarHeight(getActivity());
                 layoutParams.setMargins(0, measuredHeight, 0, 0);
                 rel_home_page.setLayoutParams(layoutParams);
             }
@@ -532,7 +532,7 @@ public class HomePageFragment extends BaseFragment {
     }
     @Override
     public void initImmersionBar() {
-        ImmersionBar.with(this).titleBar(tb_tool_home)
+        ImmersionBar.with(this).titleBar(tb_tool_home).keyboardEnable(true).navigationBarEnable(false)
                 .statusBarDarkFont(true).init();
     }
 }

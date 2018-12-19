@@ -69,8 +69,6 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -192,7 +190,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     private CommentCountView commentCountView;
     private View commentHeaderView;
     private DmlSearchDetailEntity dmlSearchDetailEntity;
-    private boolean isForceNet;
     private boolean isScrollToComment;
     private float screenHeight;
 
@@ -397,13 +394,7 @@ public class ArticleOfficialActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                isForceNet = true;
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -466,7 +457,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void loadData() {
         page = 1;
         getArticleData();
-        isForceNet = false;
         getArticleComment();
     }
 

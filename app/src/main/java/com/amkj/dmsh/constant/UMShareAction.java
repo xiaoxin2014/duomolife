@@ -15,9 +15,9 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
 import com.amkj.dmsh.utils.alertdialog.ShareIconTitleBean;
@@ -233,7 +233,24 @@ public class UMShareAction {
                             .share();
                 }
                 break;
-
+            case QQ:
+//                qq需要获取读写文件权限
+                if(constantMethod==null){
+                    constantMethod = new ConstantMethod();
+                }
+                constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+                    @Override
+                    public void getPermissionsSuccess() {
+                        new ShareAction(context).setPlatform(platformType)
+                                .withMedia(web)
+                                .setCallback(umShareListener)
+                                .share();
+                    }
+                });
+                alertDialogShareHelper.setLoading(1);
+                constantMethod.getPermissions(context, com.yanzhenjie.permission.Permission.WRITE_EXTERNAL_STORAGE);
+                isSharing = false;
+                break;
             default:
                 //                        分享链接
                 new ShareAction(context).setPlatform(platformType)

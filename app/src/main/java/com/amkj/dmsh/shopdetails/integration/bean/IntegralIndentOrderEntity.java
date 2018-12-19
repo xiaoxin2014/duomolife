@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.integration.bean;
 
+import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  * version 3.1.5
  * class description:积分订单
  */
-public class IntegralIndentOrderEntity {
+public class IntegralIndentOrderEntity extends BaseTimeEntity{
 
     /**
      * code : string
@@ -22,20 +23,9 @@ public class IntegralIndentOrderEntity {
      * result : {"currentTime":"string","orderList":[{"address":"string","consignee":"string","createTime":"string","goods":[{"count":0,"id":0,"integralPrice":0,"integralProductType":0,"integralType":0,"name":"string","orderProductId":0,"picUrl":"string","price":"string","saleSkuValue":"string","status":0}],"id":0,"integralAmount":0,"mobile":"string","no":"string","payAmount":"string","status":0,"userId":0}],"second":"string","status":[{}]}
      * sysTime : string
      */
-
-    private String code;
     private String currentTime;
-    private String msg;
     @SerializedName("result")
     private IntegralIndentOrderBean integralIndentOrderBean;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getCurrentTime() {
         return currentTime;
@@ -43,14 +33,6 @@ public class IntegralIndentOrderEntity {
 
     public void setCurrentTime(String currentTime) {
         this.currentTime = currentTime;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public IntegralIndentOrderBean getIntegralIndentOrderBean() {

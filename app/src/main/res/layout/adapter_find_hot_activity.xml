@@ -12,7 +12,7 @@
         android:id="@+id/iv_find_hot_img"
         android:layout_width="@dimen/sc_mm_120"
         android:layout_height="@dimen/sc_mm_120"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"/>
 
     <TextView

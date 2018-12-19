@@ -45,7 +45,6 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getEmptyView;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
@@ -89,6 +88,7 @@ public class IntegralIndentFragment extends BaseFragment {
     private OrderListBean orderListBean;
     private AlertDialogHelper cancelOrderDialogHelper;
     private AlertDialogHelper confirmOrderDialogHelper;
+    private IntegralIndentOrderEntity indentOrderEntity;
 
     @Override
     protected int getContentView() {
@@ -279,7 +279,6 @@ public class IntegralIndentFragment extends BaseFragment {
                 }
             }
         });
-        integralIndentListAdapter.setEmptyView(getEmptyView(getActivity(), "订单"));
     }
 
     /**
@@ -368,7 +367,7 @@ public class IntegralIndentFragment extends BaseFragment {
                         orderListBeanList.clear();
                     }
                     if (code.equals(SUCCESS_CODE)) {
-                        IntegralIndentOrderEntity indentOrderEntity = gson.fromJson(result, IntegralIndentOrderEntity.class);
+                        indentOrderEntity = gson.fromJson(result, IntegralIndentOrderEntity.class);
                         INDENT_PRO_STATUS = indentOrderEntity.getIntegralIndentOrderBean().getStatus();
                         orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
                     } else if (!code.equals(EMPTY_CODE)) {
@@ -377,19 +376,18 @@ public class IntegralIndentFragment extends BaseFragment {
                         integralIndentListAdapter.loadMoreEnd();
                     }
                     integralIndentListAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    NetLoadUtils.getNetInstance().showLoadSirString(loadService,orderListBeanList,code);;
                 }
 
                 @Override
                 public void onNotNetOrException() {
                     smart_communal_refresh.finishRefresh();
                     integralIndentListAdapter.loadMoreEnd(true);
-                    NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService,orderListBeanList,indentOrderEntity);
                 }
 
                 @Override
                 public void netClose() {
-
                     showToast(getActivity(), R.string.unConnectedNetwork);
                 }
 
@@ -399,7 +397,7 @@ public class IntegralIndentFragment extends BaseFragment {
                 }
             });
         } else {
-            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
         }
     }
 

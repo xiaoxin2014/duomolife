@@ -179,6 +179,6 @@ public class TimeShowNewFragment extends BaseFragment {
     @Override
     public void initImmersionBar() {
         ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
-                .statusBarDarkFont(true).fitsSystemWindows(true).init();
+                .statusBarDarkFont(true).fitsSystemWindows(true).navigationBarEnable(false).init();
     }
 }

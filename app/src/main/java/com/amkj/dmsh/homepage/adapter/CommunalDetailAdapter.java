@@ -120,7 +120,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     private final Context context;
     private final int screenWidth;
     private final KProgressHUD loadHud;
-    private final float density;
     //    换行
     private String br = "<br/>";
     //    换行字体样式
@@ -186,7 +185,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 //        淘宝链接
         addItemType(TYPE_LINK_TAOBAO, R.layout.layout_communal_taobao_link);
 //        商品推荐
-        addItemType(TYPE_PRODUCT_RECOMMEND, R.layout.layout_top_communal_wrap);
+        addItemType(TYPE_PRODUCT_RECOMMEND, R.layout.layout_communal_recycler_wrap);
 //        关联商品
         addItemType(TYPE_RELEVANCE_PRODUCT, R.layout.layout_top_communal_wrap);
 //        占位
@@ -199,7 +198,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         urlMap = new HashMap<>();
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenWidth = app.getScreenWidth();
-        density = app.getDensity();
         loadHud = KProgressHUD.create(context)
                 .setCancellable(false)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
@@ -277,10 +275,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 if (holder.communal_recycler_wrap.getItemDecorationCount() < 1) {
                     holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                             // 设置分隔线资源ID
-                            .setDividerId(R.drawable.item_divider_five_dp)
-
-
-                            .create());
+                            .setDividerId(R.drawable.item_divider_five_dp).create());
                 }
                 holder.communal_recycler_wrap.setAdapter(qualityTypeProductAdapter);
                 qualityTypeProductAdapter.setOnItemClickListener(new OnItemClickListener() {

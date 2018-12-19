@@ -148,8 +148,9 @@ public class FindFragment extends BaseFragment {
             @Override
             public void onGlobalLayout() {
                 ll_find_header.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int statusBarHeight = ImmersionBar.getStatusBarHeight(getActivity());
                 ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) ll_find_header.getLayoutParams();
-                layoutParams.setMargins(0, tl_find_header.getMeasuredHeight(), 0, 0);
+                layoutParams.setMargins(0, tl_find_header.getMeasuredHeight() + statusBarHeight, 0, 0);
                 ll_find_header.setLayoutParams(layoutParams);
             }
         });
@@ -328,7 +329,7 @@ public class FindFragment extends BaseFragment {
                     if (communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         findActivityList.addAll(communalADActivityEntity.getCommunalADActivityBeanList());
                     }
-                    recyclerFindHotAdapter.setNewData(findActivityList);
+                    recyclerFindHotAdapter.notifyDataSetChanged();
                     findActivityEmptyError();
                 }
             }
@@ -399,7 +400,7 @@ public class FindFragment extends BaseFragment {
     @Override
     public void initImmersionBar() {
         ImmersionBar.with(this).titleBar(tl_find_header)
-                .statusBarDarkFont(true).init();
+                .statusBarDarkFont(true).keyboardEnable(true).navigationBarEnable(false).init();
     }
 
     @Override

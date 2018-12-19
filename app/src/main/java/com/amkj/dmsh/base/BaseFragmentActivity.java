@@ -63,8 +63,8 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
-                .statusBarDarkFont(true) .fitsSystemWindows(true).init();
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false)
+                .statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 
     @Override
@@ -108,15 +108,6 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
 //        腾讯分析
         StatService.onResume(this);
         totalPersonalTrajectory = new TotalPersonalTrajectory(this);
-        //取消rxjava 订阅
-        Observable.interval(1, TimeUnit.SECONDS)
-                .doOnDispose(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                    }
-                })
-                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe();
     }
 
     @Override
@@ -187,6 +178,15 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // 如果你的app可以横竖屏切换，并且适配4.4或者emui3手机请务必在onConfigurationChanged方法里添加这句话
         ImmersionBar.with(this).init();
+        //取消rxjava 订阅
+        Observable.interval(1, TimeUnit.SECONDS)
+                .doOnDispose(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                    }
+                })
+                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe();
     }
 
     @Override

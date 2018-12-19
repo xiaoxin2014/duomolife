@@ -88,6 +88,6 @@ public class PersonalBgImgActivity extends BaseActivity {
 
     @Override
     public void setStatusBar() {
-        ImmersionBar.with(this).statusBarDarkFont(true).init();
+        ImmersionBar.with(this).statusBarDarkFont(true).navigationBarEnable(false).init();
     }
 }
