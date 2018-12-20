@@ -68,7 +68,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  */
 public class QyServiceUtils {
 
-    private static QyServiceUtils qyServiceUtils;
+    private static volatile QyServiceUtils qyServiceUtils;
     private boolean isQyInit;
     private UnreadCountChangeListener listener;
     private List<OrderListBean> orderListBeanList = new ArrayList<>();

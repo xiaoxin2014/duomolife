@@ -1,0 +1,391 @@
+package com.amkj.dmsh.utils;
+
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.view.View;
+
+import com.amkj.dmsh.R;
+import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
+import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.GoodsParataxisBean;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.kaopiz.kprogresshud.KProgressHUD;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import cn.jzvd.Jzvd;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
+import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
+
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2018/12/20
+ * version 3.2.0
+ * class description:web数据解析 点击处理
+ */
+public class CommunalWebDetailUtils {
+
+    private static volatile CommunalWebDetailUtils communalWebDetailUtils;
+
+    private CommunalWebDetailUtils() {
+    }
+
+    public static CommunalWebDetailUtils getCommunalWebInstance() {
+        if (communalWebDetailUtils == null) {
+            synchronized (QyServiceUtils.class) {
+                if (communalWebDetailUtils == null) {
+                    communalWebDetailUtils = new CommunalWebDetailUtils();
+                }
+            }
+        }
+        return communalWebDetailUtils;
+    }
+
+    /**
+     * web数据解析
+     *
+     * @param descriptionList
+     * @return
+     */
+    public List<CommunalDetailObjectBean> getDetailsDataList(List<CommunalDetailBean> descriptionList) {
+        CommunalDetailObjectBean detailObjectBean;
+        List<CommunalDetailObjectBean> descriptionDetailList = new ArrayList<>();
+        if (descriptionList != null && descriptionList.size() > 0) {
+            for (int i = 0; i < descriptionList.size(); i++) {
+                detailObjectBean = new CommunalDetailObjectBean();
+                CommunalDetailBean descriptionBean = descriptionList.get(i);
+                if (descriptionBean.getType().equals("goods")) {
+                    try {
+                        Map<String, Object> hashMap = (Map<String, Object>) descriptionBean.getContent();
+                        detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GOODS_WEL);
+                        detailObjectBean.setName(hashMap.get("name") + "");
+                        detailObjectBean.setId(((Double) hashMap.get("id")).intValue());
+                        detailObjectBean.setItemTypeId(((Double) hashMap.get("itemTypeId")).intValue());
+                        detailObjectBean.setPicUrl((String) hashMap.get("picUrl"));
+                        detailObjectBean.setPrice(hashMap.get("price") + "");
+                    } catch (Exception e) {
+                        detailObjectBean = null;
+                    }
+                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType())
+                        || "goodsX2".equals(descriptionBean.getType())
+                        || "pictureGoodsX2".equals(descriptionBean.getType())
+                        || "pictureGoodsX3".equals(descriptionBean.getType()))) {
+                    try {
+                        Gson gson = new Gson();
+                        String strContent = gson.toJson(descriptionBean.getContent());
+                        List<GoodsParataxisBean> goodList = gson.fromJson(strContent
+                                , new TypeToken<List<GoodsParataxisBean>>() {
+                                }.getType());
+                        if (goodList == null || goodList.size() < 1) {
+                            continue;
+                        }
+                        if ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType())) {
+                            goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
+                        } else {
+                            goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
+                        }
+                        for (GoodsParataxisBean goodsParataxisBean : goodList) {
+                            if (descriptionBean.getType().contains("goodsX")) {
+                                goodsParataxisBean.setItemType(TYPE_0);
+                            } else {
+                                goodsParataxisBean.setItemType(TYPE_1);
+                            }
+                        }
+                        detailObjectBean.setItemType(TYPE_PARATAXIS_GOOD);
+                        detailObjectBean.setGoodsList(goodList);
+                    } catch (Exception e) {
+                        detailObjectBean = null;
+                        e.printStackTrace();
+                    }
+                } else if (descriptionBean.getType().equals("coupon")) {
+                    try {
+                        detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_COUPON);
+                        Map<String, Object> hashMap = (Map<String, Object>) descriptionBean.getContent();
+                        detailObjectBean.setPicUrl((String) hashMap.get("picUrl"));
+                        detailObjectBean.setNewPirUrl((String) hashMap.get("newPirUrl"));
+                        detailObjectBean.setId(((Double) hashMap.get("id")).intValue());
+                    } catch (Exception e) {
+                        detailObjectBean = null;
+                    }
+                } else if (descriptionBean.getType().equals("taobaoLink")) {
+                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_LINK_TAOBAO);
+                    detailObjectBean.setContent(getStrings(descriptionBean.getText()));
+                    detailObjectBean.setPicUrl(getStrings(descriptionBean.getImage()));
+                    detailObjectBean.setUrl(getStrings(descriptionBean.getAndroidLink()));
+                } else if (descriptionBean.getType().equals("text")) {
+                    String content = (String) descriptionBean.getContent();
+                    if (!TextUtils.isEmpty(content)) {
+//                    判断是否有图片
+                        Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
+                        boolean isImageTag = imgIsFind.find();
+                        if (isImageTag) {
+                            detailObjectBean = null;
+                            String stringContent = imgIsFind.group();
+                            //                    匹配网址
+                            Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
+                            CommunalDetailObjectBean communalDetailObjectBean;
+                            if (aMatcher.find()) {
+                                communalDetailObjectBean = new CommunalDetailObjectBean();
+                                communalDetailObjectBean.setContent(content);
+                                communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                descriptionDetailList.add(communalDetailObjectBean);
+                            } else {
+                                Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
+                                boolean hasImgUrl = matcher.find();
+                                while (hasImgUrl) {
+                                    String imgUrl = matcher.group();
+                                    if (imgUrl.contains(".gif")) {
+                                        communalDetailObjectBean = new CommunalDetailObjectBean();
+                                        communalDetailObjectBean.setPicUrl(imgUrl);
+                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
+                                        descriptionDetailList.add(communalDetailObjectBean);
+                                    } else {
+                                        String imgHeightSizeTag = "_height=";
+                                        if (content.contains(imgHeightSizeTag)) {
+                                            int heightStart = content.indexOf(imgHeightSizeTag) + imgHeightSizeTag.length() + 1;
+                                            int heightEnd = content.indexOf("\"", heightStart);
+                                            if (heightStart != -1 && heightEnd != -1) {
+                                                String substring = content.substring(heightStart, heightEnd);
+                                                List<String> imageCropList = getImageCrop(imgUrl, Integer.parseInt(getNumber(substring)));
+                                                for (String imageUrl : imageCropList) {
+                                                    addImagePath(descriptionDetailList, imageUrl);
+                                                }
+                                            } else {
+                                                addImagePath(descriptionDetailList, imgUrl);
+                                            }
+                                        } else {
+                                            addImagePath(descriptionDetailList, imgUrl);
+                                        }
+                                    }
+                                    hasImgUrl = matcher.find();
+                                }
+                            }
+                        } else {
+//                        正文
+                            if (i == 0) {
+                                detailObjectBean.setFirstLinePadding(true);
+                            }
+                            detailObjectBean.setContent(content);
+                            detailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                        }
+                    }
+                } else if (descriptionBean.getType().equals("pictureGoods")) { //图片地址
+                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GOODS_IMG);
+                    detailObjectBean.setNewPirUrl(getStrings(descriptionBean.getPicUrl()));
+                    detailObjectBean.setId(descriptionBean.getId());
+                } else if (descriptionBean.getType().equals("video")) {
+                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_VIDEO);
+                    detailObjectBean.setUrl(getStrings((String) descriptionBean.getContent()));
+                    detailObjectBean.setPicUrl(getStrings(descriptionBean.getImage()));
+                } else if (descriptionBean.getType().equals("audio")) {
+                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_AUDIO);
+                    detailObjectBean.setUrl(getStrings((String) descriptionBean.getContent()));
+                    detailObjectBean.setPicUrl(getStrings(descriptionBean.getImage()));
+                    detailObjectBean.setName(getStrings(descriptionBean.getName()));
+                    detailObjectBean.setFrom(getStrings(descriptionBean.getFrom()));
+                } else if (descriptionBean.getType().equals("share")) {
+                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_SHARE);
+                } else if (descriptionBean.getType().equals("couponPackage")) {
+                    try {
+                        Map<String, Object> hashMap = (Map<String, Object>) descriptionBean.getContent();
+                        detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_COUPON_PACKAGE);
+                        detailObjectBean.setPicUrl((String) hashMap.get("imgUrl"));
+                        detailObjectBean.setCpName((String) hashMap.get("cpName"));
+                        detailObjectBean.setId(((Double) hashMap.get("cpId")).intValue());
+                    } catch (Exception e) {
+                        detailObjectBean = null;
+                    }
+                } else {
+                    detailObjectBean = null;
+                }
+                if (detailObjectBean != null) {
+                    descriptionDetailList.add(detailObjectBean);
+                }
+            }
+        }
+//      暂时解决当前框架问题，播放中刷新视图，导致视图被销毁回调onSurfaceTextureDestroyed -> 黑屏
+        Jzvd.releaseAllVideos();
+        return descriptionDetailList;
+    }
+
+    /**
+     * 仅针对 json串图片地址
+     *
+     * @param descriptionDetailList 详情信息集合
+     * @param imgUrl                图片地址
+     */
+    private void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl) {
+        CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
+        communalDetailObjectBean.setContent(imgUrlContent);
+        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+        descriptionDetailList.add(communalDetailObjectBean);
+    }
+
+    /**
+     * 暂时限制每张图片不能超过4096*4096
+     * 图片大图截取
+     */
+    private List<String> getImageCrop(String imageUrl, int sizeHeight) {
+        int maxSize = 4096;
+        List<String> imageCropList = new ArrayList<>();
+//        oss图片样式
+//        根据图片大小 获取展示在屏幕的真正大小
+        if (sizeHeight > maxSize) {
+            int imageNormalSize = 2000;
+            int imageCount = sizeHeight / imageNormalSize;
+            if (imageCount > 0) {
+                imageCount += (sizeHeight % imageNormalSize != 0 ? 1 : 0);
+                String ossPrefix = "?x-oss-process=image";
+                String imageNewUrl;
+                if (!imageUrl.contains(ossPrefix)) {
+                    imageNewUrl = imageUrl + ossPrefix;
+                } else {
+                    imageNewUrl = imageUrl;
+                }
+                for (int i = 0; i < imageCount; i++) {
+                    String cropNewUrl = imageNewUrl + String.format(mAppContext.getString(R.string.image_crop_style), imageNormalSize, i);
+                    imageCropList.add(cropNewUrl);
+                }
+            } else {
+                imageCropList.add(imageUrl);
+            }
+        } else {
+            imageCropList.add(imageUrl);
+        }
+        return imageCropList;
+    }
+
+    /**
+     * Fragment 必须用这个方法，涉及到登录回调问题
+     *
+     * @param fragment
+     * @param view
+     */
+    public void setWebDataClick(Fragment fragment, View view) {
+        setWebDataClick(fragment.getContext(), view);
+    }
+
+    /**
+     * 设置web数据点击
+     *
+     * @param context
+     * @param view
+     */
+    public void setWebDataClick(Context context, View view, KProgressHUD loadHud) {
+        if (loadHud != null) {
+            loadHud.show();
+        }
+        switch (view.getId()) {
+            case R.id.img_product_coupon_pic:
+                int couponId = (int) view.getTag(R.id.iv_avatar_tag);
+                int type = (int) view.getTag(R.id.iv_type_tag);
+                if (couponId > 0) {
+                    if (userId != 0) {
+                        if (type == TYPE_COUPON) {
+                            getDirectCoupon(couponId);
+                        } else if (type == TYPE_COUPON_PACKAGE) {
+                            getDirectCouponPackage(couponId);
+                        }
+                    } else {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        getLoginStatus(context);
+                    }
+                }
+                break;
+            case R.id.iv_communal_cover_wrap:
+                CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
+                if (detailObjectBean != null) {
+                    if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG) {
+                        Intent newIntent = new Intent(context, ShopScrollDetailsActivity.class);
+                        newIntent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
+                        context.startActivity(newIntent);
+                    }
+                }
+                loadHud.dismiss();
+                break;
+
+            case R.id.ll_layout_tb_coupon:
+                CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
+                if (couponBean != null) {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    if (userId != 0) {
+                        skipAliBCWebView(couponBean.getCouponUrl());
+                    } else {
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        getLoginStatus(ArticleOfficialActivity.this);
+                    }
+                }
+                break;
+            case R.id.iv_ql_bl_add_car:
+                CommunalDetailObjectBean qualityWelPro = (CommunalDetailObjectBean) view.getTag();
+                if (qualityWelPro != null) {
+                    if (userId > 0) {
+                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                        baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
+                        baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
+                        baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
+                        ConstantMethod constantMethod = new ConstantMethod();
+                        constantMethod.addShopCarGetSku(ArticleOfficialActivity.this, baseAddCarProInfoBean, loadHud);
+                    } else {
+                        loadHud.dismiss();
+                        getLoginStatus(ArticleOfficialActivity.this);
+                    }
+                }
+                break;
+            case R.id.tv_communal_share:
+                loadHud.dismiss();
+                setShareData();
+                break;
+            case R.id.tv_communal_tb_link:
+            case R.id.iv_communal_tb_cover:
+                if (loadHud != null) {
+                    loadHud.show();
+                }
+                CommunalDetailObjectBean tbLink = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
+                if (tbLink == null) {
+                    tbLink = (CommunalDetailObjectBean) view.getTag();
+                }
+                if (tbLink != null) {
+                    skipAliBCWebView(tbLink.getUrl());
+                }
+                break;
+            default:
+                if (loadHud != null) {{
+                    loadHud.dismiss();
+                }
+                break;
+        }
+    }
+}
