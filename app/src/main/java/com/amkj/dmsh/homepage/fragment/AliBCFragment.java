@@ -629,7 +629,7 @@ public class AliBCFragment extends BaseFragment {
         public void androidJsInteractive(String resultJson) {
             try {
                 if (TextUtils.isEmpty(resultJson)) {
-                    jsInteractiveException();
+                    jsInteractiveException("web");
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
                 if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
@@ -690,10 +690,10 @@ public class AliBCFragment extends BaseFragment {
                             break;
                     }
                 } else {
-                    jsInteractiveException();
+                    jsInteractiveException("web");
                 }
             } catch (Exception e) {
-                jsInteractiveException();
+                jsInteractiveException(null);
                 e.printStackTrace();
             }
         }
@@ -890,8 +890,9 @@ public class AliBCFragment extends BaseFragment {
     /**
      * js交互数据异常
      */
-    private void jsInteractiveException() {
-        showToast(getActivity(), "数据异常呦，攻城狮正在加急处理呢~");
+    private void jsInteractiveException(String errorType) {
+        showToast(getActivity(), "数据异常呦，"
+                + (!TextUtils.isEmpty(errorType) && errorType.contains("web") ? "w" : "a") + "攻城狮正在加急处理呢~");
     }
 
     /**

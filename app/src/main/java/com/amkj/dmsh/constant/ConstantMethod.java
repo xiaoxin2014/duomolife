@@ -229,7 +229,9 @@ public class ConstantMethod {
         return object;
     }
 
-    /**String转换成int
+    /**
+     * String转换成int
+     *
      * @param text
      * @return
      */
@@ -519,21 +521,21 @@ public class ConstantMethod {
                 }
                 if (!isMiniRoutine) {
                     try {
-//                        if (link.contains("taobao")) {
-//                            skipAliBCWebView(link, context);
-//                        } else {
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        if (intent.resolveActivity(context.getPackageManager()) != null) {
-                            context.startActivity(intent);
+                        if (link.contains("taobao")) {
+                            skipAliBCWebView(link, context);
                         } else {
-                            skipNonsupportEmpty(context);
-                            return;
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                                context.startActivity(intent);
+                            } else {
+                                skipNonsupportEmpty(context);
+                                return;
+                            }
+                            if (isCloseActivity) {
+                                ((Activity) context).finish();
+                                ((Activity) context).overridePendingTransition(0, 0);
+                            }
                         }
-                        if (isCloseActivity) {
-                            ((Activity) context).finish();
-                            ((Activity) context).overridePendingTransition(0, 0);
-                        }
-//                        }
                     } catch (Exception e) {
                         showToast(context, R.string.skip_empty_page_hint);
                         e.printStackTrace();

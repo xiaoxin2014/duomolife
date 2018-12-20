@@ -80,6 +80,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
+import static com.amkj.dmsh.constant.ConstantVariable.OSS_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
@@ -97,12 +98,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
         flags = ShareConstants.TINKER_ENABLE_ALL,
         loadVerifyFlag = false)
 public class TinkerBaseApplicationLike extends DefaultApplicationLike {
-    private OSS oss;
     private final String MobAPPKEY = "1693fa0f7b0a0";
     private final String MobAPPSECRET = "435ac0137e0179dafee0139a85f6ed92";
     private final String BUGLY_APP_ID = "385d38aeeb";
-    private String BUCKET_NAME = "domolifes";
-    private String OSS_URL;
     public IWXAPI api;
     private int screenWidth;
     private int screenHeight;
@@ -481,17 +479,17 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         String endpoint = new String(Base64.decode(preferences.getString("endpoint", "b3NzLWNuLWJlaWppbmcuYWxpeXVuY3MuY29t"), Base64.DEFAULT));
         String accessKeyId = new String(Base64.decode(preferences.getString("accessKeyId", "TFRBSVd3d2FkcjdidGJpMg=="), Base64.DEFAULT));
         String accessKeySecret = new String(Base64.decode(preferences.getString("accessKeySecret", "UnVVTWh4ZHEwejJucnNLZkRvemY3MmU0R1ZnNWFE"), Base64.DEFAULT));
-        BUCKET_NAME = new String(Base64.decode(preferences.getString("bucketName", "ZG9tb2xpZmVz"), Base64.DEFAULT));
-        OSS_URL = new String(Base64.decode(preferences.getString("url", "aHR0cDovL2ltYWdlLmRvbW9saWZlLmNu"), Base64.DEFAULT)) + "/";
+        String bucketName = new String(Base64.decode(preferences.getString("bucketName", "ZG9tb2xpZmVz"), Base64.DEFAULT));
+        String ossUrl = new String(Base64.decode(preferences.getString("url", "aHR0cDovL2ltYWdlLmRvbW9saWZlLmNu"), Base64.DEFAULT)) + "/";
         OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKeyId, accessKeySecret);
         ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        oss = new OSSClient(mAppContext, endpoint, credentialProvider, conf);
-        ossMap.put(OSS_BUCKET_NAME,BUCKET_NAME);
-        ossMap.put(OSS_URL,OSS_URL);
+        OSS oss = new OSSClient(mAppContext, endpoint, credentialProvider, conf);
+        ossMap.put(OSS_BUCKET_NAME,bucketName);
+        ossMap.put(OSS_URL,ossUrl);
         ossMap.put(OSS_OBJECT,oss);
     }
 
