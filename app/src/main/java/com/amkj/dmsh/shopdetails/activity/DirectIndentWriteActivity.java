@@ -59,6 +59,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
@@ -1386,7 +1387,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             tv_act_topic_rule_skip.setTag(activityInfoBean);
             if (activityInfoBean.getActivityRuleDetailList() != null && activityInfoBean.getActivityRuleDetailList().size() > 0) {
                 communalDetailBeanList.clear();
-                communalDetailBeanList.addAll(ConstantMethod.getDetailsDataList(activityInfoBean.getActivityRuleDetailList()));
+                communalDetailBeanList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(activityInfoBean.getActivityRuleDetailList()));
                 actRuleDetailsAdapter.notifyDataSetChanged();
             }
         }

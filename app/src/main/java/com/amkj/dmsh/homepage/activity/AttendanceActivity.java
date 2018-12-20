@@ -47,6 +47,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertRuleDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.gongwen.marqueen.MarqueeFactory;
 import com.gongwen.marqueen.MarqueeView;
@@ -69,7 +70,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDataFormatWeek;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
@@ -266,7 +266,7 @@ public class AttendanceActivity extends BaseActivity {
                         if (communalRuleEntity.getCommunalRuleList() != null
                                 && communalRuleEntity.getCommunalRuleList().size() > 0) {
                             lotteryRuleList.clear();
-                            lotteryRuleList.addAll(getDetailsDataList(communalRuleEntity.getCommunalRuleList()));
+                            lotteryRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(communalRuleEntity.getCommunalRuleList()));
                             if (alertLotteryRuleDialogHelper == null) {
                                 alertLotteryRuleDialogHelper = new AlertRuleDialogHelper(AttendanceActivity.this);
                             }
@@ -292,7 +292,7 @@ public class AttendanceActivity extends BaseActivity {
                         if (communalRuleEntity.getCommunalRuleList() != null
                                 && communalRuleEntity.getCommunalRuleList().size() > 0) {
                             integralRuleList.clear();
-                            integralRuleList.addAll(getDetailsDataList(communalRuleEntity.getCommunalRuleList()));
+                            integralRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(communalRuleEntity.getCommunalRuleList()));
                             if (alertIntegralRuleDialogHelper == null) {
                                 alertIntegralRuleDialogHelper = new AlertRuleDialogHelper(AttendanceActivity.this);
                             }

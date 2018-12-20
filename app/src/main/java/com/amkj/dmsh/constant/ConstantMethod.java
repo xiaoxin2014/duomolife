@@ -65,8 +65,6 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.GoodsParataxisBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
@@ -78,7 +76,6 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -119,7 +116,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.jzvd.Jzvd;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
@@ -131,7 +127,6 @@ import static com.ali.auth.third.core.context.KernelContext.getApplicationContex
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
@@ -142,10 +137,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
-import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_DELETE;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
@@ -154,7 +146,6 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_DIALOG_COUNT;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
 
 /**
@@ -1405,7 +1396,7 @@ public class ConstantMethod {
         params.put("device_model", mobileModel);
         params.put("sysNotice", notificationStatus);
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, null);
     }
 
     /**
@@ -1434,215 +1425,6 @@ public class ConstantMethod {
             e.printStackTrace();
         }
         return newBitmap;
-    }
-
-    public static List<CommunalDetailObjectBean> getDetailsDataList(List<CommunalDetailBean> descriptionList) {
-        CommunalDetailObjectBean detailObjectBean;
-        List<CommunalDetailObjectBean> descriptionDetailList = new ArrayList<>();
-        if (descriptionList != null && descriptionList.size() > 0) {
-            for (int i = 0; i < descriptionList.size(); i++) {
-                detailObjectBean = new CommunalDetailObjectBean();
-                CommunalDetailBean descriptionBean = descriptionList.get(i);
-                if (descriptionBean.getType().equals("goods")) {
-                    try {
-                        Map<String, Object> hashMap = (Map<String, Object>) descriptionBean.getContent();
-                        detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GOODS_WEL);
-                        detailObjectBean.setName(hashMap.get("name") + "");
-                        detailObjectBean.setId(((Double) hashMap.get("id")).intValue());
-                        detailObjectBean.setItemTypeId(((Double) hashMap.get("itemTypeId")).intValue());
-                        detailObjectBean.setPicUrl((String) hashMap.get("picUrl"));
-                        detailObjectBean.setPrice(hashMap.get("price") + "");
-                    } catch (Exception e) {
-                        detailObjectBean = null;
-                    }
-                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType())
-                        || "goodsX2".equals(descriptionBean.getType())
-                        || "pictureGoodsX2".equals(descriptionBean.getType())
-                        || "pictureGoodsX3".equals(descriptionBean.getType()))) {
-                    try {
-                        Gson gson = new Gson();
-                        String strContent = gson.toJson(descriptionBean.getContent());
-                        List<GoodsParataxisBean> goodList = gson.fromJson(strContent
-                                , new TypeToken<List<GoodsParataxisBean>>() {
-                                }.getType());
-                        if (goodList == null || goodList.size() < 1) {
-                            continue;
-                        }
-                        if ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType())) {
-                            goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
-                        } else {
-                            goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
-                        }
-                        for (GoodsParataxisBean goodsParataxisBean : goodList) {
-                            if (descriptionBean.getType().contains("goodsX")) {
-                                goodsParataxisBean.setItemType(TYPE_0);
-                            } else {
-                                goodsParataxisBean.setItemType(TYPE_1);
-                            }
-                        }
-                        detailObjectBean.setItemType(TYPE_PARATAXIS_GOOD);
-                        detailObjectBean.setGoodsList(goodList);
-                    } catch (Exception e) {
-                        detailObjectBean = null;
-                        e.printStackTrace();
-                    }
-                } else if (descriptionBean.getType().equals("coupon")) {
-                    try {
-                        detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_COUPON);
-                        Map<String, Object> hashMap = (Map<String, Object>) descriptionBean.getContent();
-                        detailObjectBean.setPicUrl((String) hashMap.get("picUrl"));
-                        detailObjectBean.setNewPirUrl((String) hashMap.get("newPirUrl"));
-                        detailObjectBean.setId(((Double) hashMap.get("id")).intValue());
-                    } catch (Exception e) {
-                        detailObjectBean = null;
-                    }
-                } else if (descriptionBean.getType().equals("taobaoLink")) {
-                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_LINK_TAOBAO);
-                    detailObjectBean.setContent(getStrings(descriptionBean.getText()));
-                    detailObjectBean.setPicUrl(getStrings(descriptionBean.getImage()));
-                    detailObjectBean.setUrl(getStrings(descriptionBean.getAndroidLink()));
-                } else if (descriptionBean.getType().equals("text")) {
-                    String content = (String) descriptionBean.getContent();
-                    if (!TextUtils.isEmpty(content)) {
-//                    判断是否有图片
-                        Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
-                        boolean isImageTag = imgIsFind.find();
-                        if (isImageTag) {
-                            detailObjectBean = null;
-                            String stringContent = imgIsFind.group();
-                            //                    匹配网址
-                            Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
-                            CommunalDetailObjectBean communalDetailObjectBean;
-                            if (aMatcher.find()) {
-                                communalDetailObjectBean = new CommunalDetailObjectBean();
-                                communalDetailObjectBean.setContent(content);
-                                communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-                                descriptionDetailList.add(communalDetailObjectBean);
-                            } else {
-                                Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
-                                boolean hasImgUrl = matcher.find();
-                                while (hasImgUrl) {
-                                    String imgUrl = matcher.group();
-                                    if (imgUrl.contains(".gif")) {
-                                        communalDetailObjectBean = new CommunalDetailObjectBean();
-                                        communalDetailObjectBean.setPicUrl(imgUrl);
-                                        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
-                                        descriptionDetailList.add(communalDetailObjectBean);
-                                    } else {
-                                        String imgHeightSizeTag = "_height=";
-                                        if (content.contains(imgHeightSizeTag)) {
-                                            int heightStart = content.indexOf(imgHeightSizeTag) + imgHeightSizeTag.length() + 1;
-                                            int heightEnd = content.indexOf("\"", heightStart);
-                                            if (heightStart != -1 && heightEnd != -1) {
-                                                String substring = content.substring(heightStart, heightEnd);
-                                                List<String> imageCropList = getImageCrop(imgUrl, Integer.parseInt(getNumber(substring)));
-                                                for (String imageUrl : imageCropList) {
-                                                    addImagePath(descriptionDetailList, imageUrl);
-                                                }
-                                            } else {
-                                                addImagePath(descriptionDetailList, imgUrl);
-                                            }
-                                        } else {
-                                            addImagePath(descriptionDetailList, imgUrl);
-                                        }
-                                    }
-                                    hasImgUrl = matcher.find();
-                                }
-                            }
-                        } else {
-//                        正文
-                            if (i == 0) {
-                                detailObjectBean.setFirstLinePadding(true);
-                            }
-                            detailObjectBean.setContent(content);
-                            detailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-                        }
-                    }
-                } else if (descriptionBean.getType().equals("pictureGoods")) { //图片地址
-                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GOODS_IMG);
-                    detailObjectBean.setNewPirUrl(getStrings(descriptionBean.getPicUrl()));
-                    detailObjectBean.setId(descriptionBean.getId());
-                } else if (descriptionBean.getType().equals("video")) {
-                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_VIDEO);
-                    detailObjectBean.setUrl(getStrings((String) descriptionBean.getContent()));
-                    detailObjectBean.setPicUrl(getStrings(descriptionBean.getImage()));
-                } else if (descriptionBean.getType().equals("audio")) {
-                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_AUDIO);
-                    detailObjectBean.setUrl(getStrings((String) descriptionBean.getContent()));
-                    detailObjectBean.setPicUrl(getStrings(descriptionBean.getImage()));
-                    detailObjectBean.setName(getStrings(descriptionBean.getName()));
-                    detailObjectBean.setFrom(getStrings(descriptionBean.getFrom()));
-                } else if (descriptionBean.getType().equals("share")) {
-                    detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_SHARE);
-                } else if (descriptionBean.getType().equals("couponPackage")) {
-                    try {
-                        Map<String, Object> hashMap = (Map<String, Object>) descriptionBean.getContent();
-                        detailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_COUPON_PACKAGE);
-                        detailObjectBean.setPicUrl((String) hashMap.get("imgUrl"));
-                        detailObjectBean.setCpName((String) hashMap.get("cpName"));
-                        detailObjectBean.setId(((Double) hashMap.get("cpId")).intValue());
-                    } catch (Exception e) {
-                        detailObjectBean = null;
-                    }
-                } else {
-                    detailObjectBean = null;
-                }
-                if (detailObjectBean != null) {
-                    descriptionDetailList.add(detailObjectBean);
-                }
-            }
-        }
-//      暂时解决当前框架问题，播放中刷新视图，导致视图被销毁回调onSurfaceTextureDestroyed -> 黑屏
-        Jzvd.releaseAllVideos();
-        return descriptionDetailList;
-    }
-
-    /**
-     * 仅针对 json串图片地址
-     *
-     * @param descriptionDetailList 详情信息集合
-     * @param imgUrl                图片地址
-     */
-    private static void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl) {
-        CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
-        String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
-        communalDetailObjectBean.setContent(imgUrlContent);
-        communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
-        descriptionDetailList.add(communalDetailObjectBean);
-    }
-
-    /**
-     * 暂时限制每张图片不能超过4096*4096
-     * 图片大图截取
-     */
-    private static List<String> getImageCrop(String imageUrl, int sizeHeight) {
-        int maxSize = 4096;
-        List<String> imageCropList = new ArrayList<>();
-//        oss图片样式
-//        根据图片大小 获取展示在屏幕的真正大小
-        if (sizeHeight > maxSize) {
-            int imageNormalSize = 2000;
-            int imageCount = sizeHeight / imageNormalSize;
-            if (imageCount > 0) {
-                imageCount += (sizeHeight % imageNormalSize != 0 ? 1 : 0);
-                String ossPrefix = "?x-oss-process=image";
-                String imageNewUrl;
-                if (!imageUrl.contains(ossPrefix)) {
-                    imageNewUrl = imageUrl + ossPrefix;
-                } else {
-                    imageNewUrl = imageUrl;
-                }
-                for (int i = 0; i < imageCount; i++) {
-                    String cropNewUrl = imageNewUrl + String.format(mAppContext.getString(R.string.image_crop_style), imageNormalSize, i);
-                    imageCropList.add(cropNewUrl);
-                }
-            } else {
-                imageCropList.add(imageUrl);
-            }
-        } else {
-            imageCropList.add(imageUrl);
-        }
-        return imageCropList;
     }
 
     /**
@@ -2922,6 +2704,9 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
+        if(context==null){
+            return;
+        }
         Context applicationContext = context.getApplicationContext();
         if (context.getResources() == null) {
             showToast(applicationContext, "数据异常，请稍后再试");

@@ -29,6 +29,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -248,7 +249,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                                 && customCoverDesBean.getDescriptionList().size() > 0) {
                             qNewProView.communal_recycler_wrap.setVisibility(View.VISIBLE);
                             qNewProView.v_line_bottom.setVisibility(View.VISIBLE);
-                            List<CommunalDetailObjectBean> detailsDataList = ConstantMethod.getDetailsDataList(customCoverDesBean.getDescriptionList());
+                            List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(customCoverDesBean.getDescriptionList());
                             if (detailsDataList != null) {
                                 descriptionList.addAll(detailsDataList);
                                 communalDetailAdapter.notifyDataSetChanged();

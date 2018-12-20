@@ -193,7 +193,6 @@ public abstract class BaseFragment extends ImmersionFragment {
         // 获取参数，子类实现
         getReqParams(getArguments());
     }
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

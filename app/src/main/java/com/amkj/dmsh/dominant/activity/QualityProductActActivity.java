@@ -33,6 +33,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -410,7 +411,7 @@ public class QualityProductActActivity extends BaseActivity {
                         , getStrings(likedProductEntity.getActivityTag())));
                 if (likedProductEntity.getActivityRuleDetailList() != null && likedProductEntity.getActivityRuleDetailList().size() > 0) {
                     communalDetailBeanList.clear();
-                    communalDetailBeanList.addAll(ConstantMethod.getDetailsDataList(likedProductEntity.getActivityRuleDetailList()));
+                    communalDetailBeanList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(likedProductEntity.getActivityRuleDetailList()));
                     actRuleDetailsAdapter.notifyDataSetChanged();
                 }
             }

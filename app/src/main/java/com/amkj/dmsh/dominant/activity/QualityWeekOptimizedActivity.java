@@ -3,23 +3,12 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
@@ -40,9 +29,10 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -72,12 +62,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
-import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
-import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_PRO;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 
 ;
 
@@ -183,72 +169,6 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                 getBuyListRecommend();
             }
         }, communal_recycler);
-        communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                switch (view.getId()) {
-                    case R.id.img_product_coupon_pic:
-                        int couponId = (int) view.getTag(R.id.iv_avatar_tag);
-                        int type = (int) view.getTag(R.id.iv_type_tag);
-                        if (couponId > 0) {
-                            if (userId != 0) {
-                                if (type == TYPE_COUPON) {
-                                    getDirectCoupon(couponId);
-                                } else if (type == TYPE_COUPON_PACKAGE) {
-                                    getDirectCouponPackage(couponId);
-                                }
-                            } else {
-                                if (loadHud != null) {
-                                    loadHud.dismiss();
-                                }
-                                getLoginStatus(QualityWeekOptimizedActivity.this);
-                            }
-                        }
-                        break;
-                    case R.id.iv_communal_cover_wrap:
-                        CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
-                        if (detailObjectBean != null) {
-                            if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG) {
-                                Intent intent = new Intent(QualityWeekOptimizedActivity.this, ShopScrollDetailsActivity.class);
-                                intent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
-                                startActivity(intent);
-                            }
-                        }
-                        loadHud.dismiss();
-                        break;
-
-                    case R.id.ll_layout_tb_coupon:
-                        CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                        if (couponBean != null) {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            if (userId != 0) {
-                                skipAliBCWebView(couponBean.getCouponUrl());
-                            } else {
-                                if (loadHud != null) {
-                                    loadHud.dismiss();
-                                }
-                                getLoginStatus(QualityWeekOptimizedActivity.this);
-                            }
-                        }
-                        break;
-
-                }
-            }
-        });
-        communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                if (communalDetailBean != null) {
-                    ConstantMethod.skipProductUrl(QualityWeekOptimizedActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                }
-            }
-        });
         qualityBuyListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -301,7 +221,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -406,7 +326,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     }
 
     private void getBuyListDetailData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,QUALITY_WEEK_OPTIMIZED_DETAIL,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 itemDescriptionList.clear();
@@ -420,7 +340,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                                 , shopBuyDetailBean.getCoverImgUrl());
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
-                            itemDescriptionList.addAll(ConstantMethod.getDetailsDataList(descriptionBeanList));
+                            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityWeekOptimizedActivity.this, shopDetailsEntity.getMsg());
@@ -443,151 +363,31 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager((QualityWeekOptimizedActivity.this)));
             communalDetailAdapter = new CommunalDetailAdapter(QualityWeekOptimizedActivity.this, itemDescriptionList);
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
-        }
-    }
+            communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    ShareDataBean shareDataBean = null;
+                    if (view.getId() == R.id.tv_communal_share && shopBuyDetailBean != null) {
+                        shareDataBean = new ShareDataBean(shopBuyDetailBean.getCoverImgUrl()
+                                , "每周优选"
+                                , "摸透你的心，为你精选最应季最实用最优质的热门精品"
+                                , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html");
 
-    private void getDirectCoupon(int id) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("couponId", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_ARTICLE_COUPON,params,new NetLoadListenerHelper(){
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
+                    }
+                    CommunalWebDetailUtils.getCommunalWebInstance()
+                            .setWebDataClick(QualityWeekOptimizedActivity.this, shareDataBean, view, loadHud);
                 }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+            });
+            communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
+                    if (communalDetailBean != null) {
+                        ConstantMethod.skipProductUrl(QualityWeekOptimizedActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                     }
                 }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(QualityWeekOptimizedActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(QualityWeekOptimizedActivity.this, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    private void getDirectCouponPackage(int couponId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("uId", userId);
-        params.put("cpId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,COUPON_PACKAGE,params,new NetLoadListenerHelper(){
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(QualityWeekOptimizedActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(QualityWeekOptimizedActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(QualityWeekOptimizedActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-        });
-    }
-
-    public void skipAliBCWebView(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (userId != 0) {
-                skipNewTaoBao(url);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus(QualityWeekOptimizedActivity.this);
-            }
-        } else {
-            showToast(QualityWeekOptimizedActivity.this, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
+            });
         }
-    }
-
-    private void skipNewTaoBao(final String url) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(url);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(QualityWeekOptimizedActivity.this, "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewShopDetails(String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTrade.show(QualityWeekOptimizedActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
     }
 
     @OnClick(R.id.tv_life_back)

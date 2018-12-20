@@ -63,6 +63,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity;
 import com.amkj.dmsh.shopdetails.fragment.DirectImgArticleFragment;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -102,7 +103,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -641,7 +641,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 //        拼团规则
         if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
             gpRuleList.clear();
-            gpRuleList.addAll(getDetailsDataList(groupShopCommunalInfoBean.getGpRule()));
+            gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(groupShopCommunalInfoBean.getGpRule()));
             shopCommentHeaderView.gpRuleDetailsAdapter.notifyDataSetChanged();
         }
         final String[] tagArray = groupShopCommunalInfoBean.getServicePromiseTitle().split(",");

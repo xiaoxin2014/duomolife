@@ -23,21 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.TabEntity;
@@ -78,6 +67,8 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -123,7 +114,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -151,8 +141,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
@@ -420,65 +408,16 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
         communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            switch (view.getId()) {
-                case R.id.img_product_coupon_pic:
-                    int couponId = (int) view.getTag(R.id.iv_avatar_tag);
-                    int type = (int) view.getTag(R.id.iv_type_tag);
-                    if (couponId > 0) {
-                        if (userId != 0) {
-                            if (type == TYPE_COUPON) {
-                                getDirectCoupon(couponId);
-                            } else if (type == TYPE_COUPON_PACKAGE) {
-                                getDirectCouponPackage(couponId);
-                            }
-                        } else {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            getLoginStatus(ShopScrollDetailsActivity.this);
-                        }
-                    }
-                    break;
+            ShareDataBean shareDataBean = null;
+            if (view.getId() == R.id.tv_communal_share && shopPropertyBean != null) {
+                shareDataBean = new ShareDataBean(shopPropertyBean.getPicUrl()
+                        , "我在多么生活看中了" + shopPropertyBean.getName()
+                        , getStrings(shopPropertyBean.getSubtitle())
+                        , sharePageUrl + shopPropertyBean.getId());
 
-                case R.id.ll_layout_tb_coupon:
-                    CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                    if (couponBean != null) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        if (userId != 0) {
-                            skipAliBCWebView(couponBean.getCouponUrl());
-                        } else {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            getLoginStatus(ShopScrollDetailsActivity.this);
-                        }
-                    }
-                    break;
-                case R.id.iv_ql_bl_add_car:
-                    CommunalDetailObjectBean qualityWelPro = (CommunalDetailObjectBean) view.getTag();
-                    if (qualityWelPro != null) {
-                        if (userId > 0) {
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
-                            baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(ShopScrollDetailsActivity.this, baseAddCarProInfoBean, loadHud);
-                        } else {
-                            loadHud.dismiss();
-                            getLoginStatus(ShopScrollDetailsActivity.this);
-                        }
-                    }
-                    break;
-                default:
-                    loadHud.dismiss();
-                    break;
             }
+            CommunalWebDetailUtils.getCommunalWebInstance()
+                    .setWebDataClick(ShopScrollDetailsActivity.this, shareDataBean, view, loadHud);
         });
         rv_ql_sp_good_recommend.setLayoutManager(new GridLayoutManager(ShopScrollDetailsActivity.this, 2));
         rv_ql_sp_good_recommend.addItemDecoration(new ItemDecoration.Builder()
@@ -1162,7 +1101,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         tv_sp_details_collect.setSelected(shopProperty.isCollect());
 
         if (serviceDataList.size() > 0) {
-            List<CommunalDetailObjectBean> detailsDataList = getDetailsDataList(shopProperty.getItemBody());
+            List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(shopProperty.getItemBody());
             CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
             communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
             communalDetailObjectBean.setContent("商品详情");
@@ -1170,7 +1109,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             shopDetailBeanList.addAll(detailsDataList);
             shopDetailBeanList.addAll(serviceDataList);
         } else {
-            List<CommunalDetailObjectBean> detailsDataList = getDetailsDataList(shopProperty.getItemBody());
+            List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(shopProperty.getItemBody());
             CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
             communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
             communalDetailObjectBean.setContent("商品详情");
@@ -1899,109 +1838,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             getLoginStatus(ShopScrollDetailsActivity.this);
         }
-    }
-
-    public void skipAliBCWebView(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (userId != 0) {
-                skipNewTaoBao(url);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus(ShopScrollDetailsActivity.this);
-            }
-        } else {
-            showToast(ShopScrollDetailsActivity.this, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-        }
-    }
-
-    private void getDirectCouponPackage(int couponId) {
-        String url = Url.BASE_URL + Url.COUPON_PACKAGE;
-        Map<String, Object> params = new HashMap<>();
-        params.put("uId", userId);
-        params.put("cpId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(ShopScrollDetailsActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(ShopScrollDetailsActivity.this, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    private void skipNewTaoBao(final String url) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(url);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(ShopScrollDetailsActivity.this, "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewShopDetails(String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTrade.show(ShopScrollDetailsActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
     }
 
     //  客服

@@ -20,28 +20,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
@@ -56,14 +43,14 @@ import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription;
 import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -89,8 +76,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -104,18 +89,13 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUN
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
-import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
-import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_RECOMMEND;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TAG;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
@@ -305,93 +285,17 @@ public class ArticleOfficialActivity extends BaseActivity {
             }
         });
         communalDescripAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            switch (view.getId()) {
-                case R.id.img_product_coupon_pic:
-                    int couponId = (int) view.getTag(R.id.iv_avatar_tag);
-                    int type = (int) view.getTag(R.id.iv_type_tag);
-                    if (couponId > 0) {
-                        if (userId != 0) {
-                            if (type == TYPE_COUPON) {
-                                getDirectCoupon(couponId);
-                            } else if (type == TYPE_COUPON_PACKAGE) {
-                                getDirectCouponPackage(couponId);
-                            }
-                        } else {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            getLoginStatus(ArticleOfficialActivity.this);
-                        }
-                    }
-                    break;
-                case R.id.iv_communal_cover_wrap:
-                    CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
-                    if (detailObjectBean != null) {
-                        if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG) {
-                            Intent newIntent = new Intent(ArticleOfficialActivity.this, ShopScrollDetailsActivity.class);
-                            newIntent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
-                            startActivity(newIntent);
-                        }
-                    }
-                    loadHud.dismiss();
-                    break;
+            ShareDataBean shareDataBean = null;
+            if (view.getId() == R.id.tv_communal_share && dmlSearchDetailBean != null) {
+                shareDataBean = new ShareDataBean(dmlSearchDetailBean.getPath()
+                        , getStrings(dmlSearchDetailBean.getTitle())
+                        , getStrings(dmlSearchDetailBean.getDigest())
+                        , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
+                        + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")), dmlSearchDetailBean.getId());
 
-                case R.id.ll_layout_tb_coupon:
-                    CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                    if (couponBean != null) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        if (userId != 0) {
-                            skipAliBCWebView(couponBean.getCouponUrl());
-                        } else {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            getLoginStatus(ArticleOfficialActivity.this);
-                        }
-                    }
-                    break;
-                case R.id.iv_ql_bl_add_car:
-                    CommunalDetailObjectBean qualityWelPro = (CommunalDetailObjectBean) view.getTag();
-                    if (qualityWelPro != null) {
-                        if (userId > 0) {
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
-                            baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(ArticleOfficialActivity.this, baseAddCarProInfoBean, loadHud);
-                        } else {
-                            loadHud.dismiss();
-                            getLoginStatus(ArticleOfficialActivity.this);
-                        }
-                    }
-                    break;
-                case R.id.tv_communal_share:
-                    loadHud.dismiss();
-                    setShareData();
-                    break;
-                case R.id.tv_communal_tb_link:
-                case R.id.iv_communal_tb_cover:
-                    if (loadHud != null) {
-                        loadHud.show();
-                    }
-                    CommunalDetailObjectBean tbLink = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
-                    if (tbLink == null) {
-                        tbLink = (CommunalDetailObjectBean) view.getTag();
-                    }
-                    if (tbLink != null) {
-                        skipAliBCWebView(tbLink.getUrl());
-                    }
-                    break;
-                default:
-                    loadHud.dismiss();
-                    break;
             }
+            CommunalWebDetailUtils.getCommunalWebInstance()
+                    .setWebDataClick(ArticleOfficialActivity.this, shareDataBean, view, loadHud);
         });
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
@@ -405,7 +309,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.hide(false);
                     }
-                    if(!download_btn_communal.isVisible()){
+                    if (!download_btn_communal.isVisible()) {
                         download_btn_communal.show(true);
                     }
                 } else {
@@ -471,7 +375,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         params.put("replyCurrentPage", 1);
         params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
         params.put("comtype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_DML_SEARCH_COMMENT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 adapterArticleComment.loadMoreComplete();
@@ -485,7 +389,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                         articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
                     } else if (!dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(ArticleOfficialActivity.this, dmlSearchCommentEntity.getMsg());
-                    }else{
+                    } else {
                         adapterArticleComment.loadMoreEnd();
                     }
                     adapterArticleComment.removeHeaderView(commentHeaderView);
@@ -528,7 +432,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         if (userId > 0) {
             params.put("fuid", String.valueOf(userId));
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_INVITATION_DETAIL, params,new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_INVITATION_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -605,7 +509,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         List<CommunalDetailBean> descriptionList = dmlSearchDetailBean.getDescription();
         if (descriptionList != null) {
             descripDetailList.clear();
-            descripDetailList.addAll(getDetailsDataList(descriptionList));
+            descripDetailList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionList));
             if (dmlSearchDetailBean.getDocumentProductList() != null
                     && dmlSearchDetailBean.getDocumentProductList().size() > 0) {
                 CommunalDetailObjectBean communalDetailBean = new CommunalDetailObjectBean();
@@ -626,7 +530,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
     private void getShareData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,SHARE_COMMUNAL_ARTICLE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, SHARE_COMMUNAL_ARTICLE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -639,7 +543,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                             CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
                             communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_SHARE);
                             descripDetailList.add(communalDetailObjectBean);
-                            descripDetailList.addAll(getDetailsDataList(comOnlyDesBean.getDescriptionList()));
+                            descripDetailList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(comOnlyDesBean.getDescriptionList()));
                             communalDescripAdapter.notifyDataSetChanged();
                         }
                     }
@@ -666,163 +570,13 @@ public class ArticleOfficialActivity extends BaseActivity {
         tv_communal_pro_title.setText(getStrings(dmlSearchDetailBean.getTitle()));
     }
 
-    private void getDirectCoupon(int id) {
-        String url = Url.BASE_URL + FIND_ARTICLE_COUPON;
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("couponId", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_ARTICLE_COUPON,params,new NetLoadListenerHelper(){
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(ArticleOfficialActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(ArticleOfficialActivity.this,R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    private void getDirectCouponPackage(int couponId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("uId", userId);
-        params.put("cpId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,COUPON_PACKAGE,params,new NetLoadListenerHelper(){
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(ArticleOfficialActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(ArticleOfficialActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(ArticleOfficialActivity.this, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    public void skipAliBCWebView(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (userId != 0) {
-                skipNewTaoBao(url);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus(ArticleOfficialActivity.this);
-            }
-        } else {
-            showToast(ArticleOfficialActivity.this, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-        }
-    }
-
-    private void skipNewTaoBao(final String url) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(url);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(ArticleOfficialActivity.this, "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewShopDetails(String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTaokeParams alibcTaokeParams = new AlibcTaokeParams();
-//        alibcTaokeParams.setPid(TAOBAO_PID);
-//        alibcTaokeParams.setAdzoneid(TAOBAO_ADZONEID);
-        alibcTaokeParams.extraParams = new HashMap<>();
-        alibcTaokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
-        AlibcTrade.show(ArticleOfficialActivity.this, ordersPage, showParams, alibcTaokeParams, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
-    }
-
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_AND_COMMENT_FAV,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_AND_COMMENT_FAV, params, null);
     }
 
     private void setArticleLike() {
@@ -832,7 +586,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         //关注id
         params.put("id", dmlSearchDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_article_bottom_like.setSelected(!tv_article_bottom_like.isSelected());
         String likeCount = getNumber(tv_article_bottom_like.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
@@ -858,7 +612,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         //文章id
         params.put("object_id", dmlSearchDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -883,7 +637,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
             @Override
             public void netClose() {
-                showToast(ArticleOfficialActivity.this,R.string.unConnectedNetwork);
+                showToast(ArticleOfficialActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -983,20 +737,13 @@ public class ArticleOfficialActivity extends BaseActivity {
     //    页面分享
     @OnClick(R.id.tv_header_shared)
     void sendShare() {
-        setShareData();
-    }
-
-    private void setShareData() {
         if (dmlSearchDetailBean != null) {
-            UMShareAction umShareAction = new UMShareAction(ArticleOfficialActivity.this
-                    , dmlSearchDetailBean.getPath()
-                    , getStrings(dmlSearchDetailBean.getTitle())
-                    , getStrings(dmlSearchDetailBean.getDigest())
-                    , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
-                    + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")));
-            umShareAction.setOnShareSuccessListener(() ->
-                    addArticleShareCount(dmlSearchDetailBean.getId())
-            );
+            CommunalWebDetailUtils.getCommunalWebInstance()
+                    .setShareData(this, new ShareDataBean(dmlSearchDetailBean.getPath()
+                            , getStrings(dmlSearchDetailBean.getTitle())
+                            , getStrings(dmlSearchDetailBean.getDigest())
+                            , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
+                            + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")), dmlSearchDetailBean.getId()));
         }
     }
 

@@ -1,16 +1,31 @@
-package com.amkj.dmsh.utils;
+package com.amkj.dmsh.utils.webformatdata;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.alibaba.baichuan.android.trade.AlibcTrade;
+import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
+import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
+import com.alibaba.baichuan.android.trade.model.OpenType;
+import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
+import com.alibaba.baichuan.android.trade.page.AlibcPage;
+import com.alibaba.baichuan.trade.biz.AlibcConstants;
+import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
+import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
+import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
+import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
+import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
@@ -20,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,15 +44,21 @@ import java.util.regex.Pattern;
 import cn.jzvd.Jzvd;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
+import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
@@ -72,7 +94,7 @@ public class CommunalWebDetailUtils {
      * @param descriptionList
      * @return
      */
-    public List<CommunalDetailObjectBean> getDetailsDataList(List<CommunalDetailBean> descriptionList) {
+    public List<CommunalDetailObjectBean> getWebDetailsFormatDataList(List<CommunalDetailBean> descriptionList) {
         CommunalDetailObjectBean detailObjectBean;
         List<CommunalDetailObjectBean> descriptionDetailList = new ArrayList<>();
         if (descriptionList != null && descriptionList.size() > 0) {
@@ -282,41 +304,107 @@ public class CommunalWebDetailUtils {
     }
 
     /**
-     * Fragment 必须用这个方法，涉及到登录回调问题
-     *
-     * @param fragment
+     * 带分享数据
+     * @param object
+     * @param shareDataBean
      * @param view
+     * @param loadHud
      */
-    public void setWebDataClick(Fragment fragment, View view) {
-        setWebDataClick(fragment.getContext(), view);
+    public void setWebDataClick(Object object, ShareDataBean shareDataBean, View view, KProgressHUD loadHud) {
+        if (object instanceof Activity) {
+            setWebDataClick((Activity) object, null, shareDataBean, view, loadHud);
+        } else if (object instanceof Fragment) {
+            setWebDataClick(null, (Fragment) object, shareDataBean, view, loadHud);
+        }
     }
 
     /**
+     * 无分享数据
+     * @param object
+     * @param view
+     * @param loadHud
+     */
+    public void setWebDataClick(Object object,View view, KProgressHUD loadHud) {
+        if (object instanceof Activity) {
+            setWebDataClick((Activity) object, null, null, view, loadHud);
+        } else if (object instanceof Fragment) {
+            setWebDataClick(null, (Fragment) object, null, view, loadHud);
+        }
+    }
+    /**
      * 设置web数据点击
      *
-     * @param context
+     * @param activity
+     * @param fragment
      * @param view
+     * @param loadHud
      */
-    public void setWebDataClick(Context context, View view, KProgressHUD loadHud) {
+    private void setWebDataClick(Activity activity, Fragment fragment, ShareDataBean shareDataBean, View view, KProgressHUD loadHud) {
+        if (activity == null && fragment == null) {
+            return;
+        }
+        Context mContext = activity != null ? activity : fragment.getContext();
+        Activity mActivity = activity != null ? activity : fragment.getActivity();
+        if (mActivity == null || mContext == null) {
+            return;
+        }
         if (loadHud != null) {
             loadHud.show();
         }
         switch (view.getId()) {
             case R.id.img_product_coupon_pic:
-                int couponId = (int) view.getTag(R.id.iv_avatar_tag);
-                int type = (int) view.getTag(R.id.iv_type_tag);
-                if (couponId > 0) {
-                    if (userId != 0) {
-                        if (type == TYPE_COUPON) {
-                            getDirectCoupon(couponId);
-                        } else if (type == TYPE_COUPON_PACKAGE) {
-                            getDirectCouponPackage(couponId);
-                        }
+            case R.id.ll_layout_tb_coupon:
+            case R.id.iv_ql_bl_add_car:
+                if (userId < 1) {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    if (activity != null) {
+                        getLoginStatus(activity);
                     } else {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        getLoginStatus(context);
+                        getLoginStatus(fragment);
+                    }
+                    return;
+                } else {
+                    switch (view.getId()) {
+                        case R.id.img_product_coupon_pic:
+                            int couponId = (int) view.getTag(R.id.iv_avatar_tag);
+                            int type = (int) view.getTag(R.id.iv_type_tag);
+                            if (couponId > 0) {
+                                if (type == TYPE_COUPON) {
+                                    getDirectCoupon(mContext, couponId, loadHud);
+                                } else if (type == TYPE_COUPON_PACKAGE) {
+                                    getDirectCouponPackage(mContext, couponId, loadHud);
+                                }
+                            }
+                            break;
+                        case R.id.ll_layout_tb_coupon:
+                            CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
+                            if (couponBean != null && !TextUtils.isEmpty(couponBean.getCouponUrl())) {
+                                if (loadHud != null) {
+                                    loadHud.dismiss();
+                                }
+                                skipNewTaoBao(mActivity, couponBean.getCouponUrl(), loadHud);
+                            } else {
+                                showToast(mContext, "数据异常，地址缺失，请刷新重试~");
+                            }
+                            break;
+                        case R.id.iv_ql_bl_add_car:
+                            CommunalDetailObjectBean qualityWelPro = (CommunalDetailObjectBean) view.getTag();
+                            if (qualityWelPro != null) {
+                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                                baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
+                                baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
+                                baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
+                                ConstantMethod constantMethod = new ConstantMethod();
+                                constantMethod.addShopCarGetSku(mContext, baseAddCarProInfoBean, loadHud);
+                            }
+                            break;
+                        default:
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            break;
                     }
                 }
                 break;
@@ -324,49 +412,22 @@ public class CommunalWebDetailUtils {
                 CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
                 if (detailObjectBean != null) {
                     if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG) {
-                        Intent newIntent = new Intent(context, ShopScrollDetailsActivity.class);
+                        Intent newIntent = new Intent(mContext, ShopScrollDetailsActivity.class);
                         newIntent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
-                        context.startActivity(newIntent);
+                        mContext.startActivity(newIntent);
                     }
                 }
-                loadHud.dismiss();
-                break;
-
-            case R.id.ll_layout_tb_coupon:
-                CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                if (couponBean != null) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    if (userId != 0) {
-                        skipAliBCWebView(couponBean.getCouponUrl());
-                    } else {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        getLoginStatus(ArticleOfficialActivity.this);
-                    }
-                }
-                break;
-            case R.id.iv_ql_bl_add_car:
-                CommunalDetailObjectBean qualityWelPro = (CommunalDetailObjectBean) view.getTag();
-                if (qualityWelPro != null) {
-                    if (userId > 0) {
-                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                        baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
-                        baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
-                        baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
-                        ConstantMethod constantMethod = new ConstantMethod();
-                        constantMethod.addShopCarGetSku(ArticleOfficialActivity.this, baseAddCarProInfoBean, loadHud);
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(ArticleOfficialActivity.this);
-                    }
+                if (loadHud != null) {
+                    loadHud.dismiss();
                 }
                 break;
             case R.id.tv_communal_share:
-                loadHud.dismiss();
-                setShareData();
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                if (shareDataBean != null) {
+                    setShareData(mActivity, shareDataBean);
+                }
                 break;
             case R.id.tv_communal_tb_link:
             case R.id.iv_communal_tb_cover:
@@ -378,14 +439,192 @@ public class CommunalWebDetailUtils {
                     tbLink = (CommunalDetailObjectBean) view.getTag();
                 }
                 if (tbLink != null) {
-                    skipAliBCWebView(tbLink.getUrl());
+                    skipNewTaoBao(mActivity, tbLink.getUrl(), loadHud);
                 }
                 break;
             default:
-                if (loadHud != null) {{
+                if (loadHud != null) {
                     loadHud.dismiss();
                 }
                 break;
+        }
+
+    }
+
+    /**
+     * 获取优惠券 单张
+     *
+     * @param mContext
+     * @param id
+     * @param loadHud
+     */
+    private void getDirectCoupon(Context mContext, int id, KProgressHUD loadHud) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("couponId", id);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                    } else {
+                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(mContext, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(mContext, R.string.unConnectedNetwork);
+            }
+        });
+    }
+
+    /**
+     * 获取优惠券礼包 多张
+     *
+     * @param mContext
+     * @param couponId
+     * @param loadHud
+     */
+    private void getDirectCouponPackage(Context mContext, int couponId, KProgressHUD loadHud) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uId", userId);
+        params.put("cpId", couponId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, COUPON_PACKAGE, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                    } else {
+                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(mContext, R.string.Get_Coupon_Fail);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(mContext, R.string.unConnectedNetwork);
+            }
+        });
+    }
+
+    /**
+     * 跳转淘宝登录
+     *
+     * @param context
+     * @param url
+     * @param loadHud
+     */
+    private void skipNewTaoBao(Activity context, String url, KProgressHUD loadHud) {
+        AlibcLogin alibcLogin = AlibcLogin.getInstance();
+        alibcLogin.showLogin(new AlibcLoginCallback() {
+            @Override
+            public void onSuccess(int i) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                skipNewShopDetails(context, url);
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(context, "登录失败 ");
+            }
+        });
+    }
+
+    /**
+     * 跳转阿里百川
+     *
+     * @param activity
+     * @param url
+     */
+    private void skipNewShopDetails(Activity activity, String url) {
+        //提供给三方传递配置参数
+        Map<String, String> exParams = new HashMap<>();
+        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
+        //设置页面打开方式
+        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
+        //实例化商品详情 itemID打开page
+        AlibcBasePage ordersPage = new AlibcPage(url);
+        AlibcTaokeParams alibcTaokeParams = new AlibcTaokeParams();
+//        alibcTaokeParams.setPid(TAOBAO_PID);
+//        alibcTaokeParams.setAdzoneid(TAOBAO_ADZONEID);
+        alibcTaokeParams.extraParams = new HashMap<>();
+        alibcTaokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
+        AlibcTrade.show(activity, ordersPage, showParams, alibcTaokeParams, exParams, new AlibcTradeCallback() {
+            @Override
+            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
+                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
+//                showToast(context, "获取详情成功");
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
+//                showToast(ShopTimeScrollDetailsActivity.this, msg);
+            }
+        });
+    }
+
+    /**
+     * 设置分享
+     *
+     * @param activity
+     * @param shareDataBean
+     */
+    public void setShareData(Activity activity, ShareDataBean shareDataBean) {
+        if (shareDataBean != null && !TextUtils.isEmpty(shareDataBean.getImgUrl())) {
+            UMShareAction umShareAction = new UMShareAction(activity
+                    , shareDataBean.getImgUrl()
+                    , getStrings(shareDataBean.getTitle())
+                    , getStrings(shareDataBean.getDescription())
+                    , getStrings(shareDataBean.getUrlLink()));
+            if (shareDataBean.getBackId() > 0) {
+                umShareAction.setOnShareSuccessListener(() ->
+                        addArticleShareCount(shareDataBean.getBackId())
+                );
+            }
         }
     }
 }

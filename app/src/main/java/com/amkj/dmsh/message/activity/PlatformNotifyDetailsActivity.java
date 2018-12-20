@@ -12,12 +12,13 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.message.adapter.PlatformDataEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -83,6 +84,16 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
             finish();
         }
         contentPlatformAdapter = new CommunalDetailAdapter(this, platformNotifyList);
+        contentPlatformAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                if (view.getId() == R.id.tv_communal_share ) {
+                    return;
+                }
+                CommunalWebDetailUtils.getCommunalWebInstance()
+                        .setWebDataClick(PlatformNotifyDetailsActivity.this, view, loadHud);
+            }
+        });
         communal_recycler.setNestedScrollingEnabled(false);
         communal_recycler.setLayoutManager(new LinearLayoutManager(PlatformNotifyDetailsActivity.this));
         communal_recycler.setAdapter(contentPlatformAdapter);
@@ -138,7 +149,7 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
                                 List<CommunalDetailBean> contentBeanList = platformDataEntity.getPlatformDataBean().getDescriptionList();
                                 if (contentBeanList != null) {
                                     platformNotifyList.clear();
-                                    platformNotifyList.addAll(ConstantMethod.getDetailsDataList(contentBeanList));
+                                    platformNotifyList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(contentBeanList));
                                 }
                             } else if (!platformDataEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(PlatformNotifyDetailsActivity.this, platformDataEntity.getMsg());

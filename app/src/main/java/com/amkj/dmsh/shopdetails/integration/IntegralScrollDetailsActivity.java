@@ -26,6 +26,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.adapter.FindImageListAdapter;
+import com.amkj.dmsh.homepage.activity.HomeCouponGetActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
@@ -47,6 +48,7 @@ import com.amkj.dmsh.shopdetails.integration.initview.IntegralPopWindows;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.amkj.dmsh.views.bottomdialog.SimpleSkuDialog;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -80,7 +82,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
@@ -198,6 +199,16 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(IntegralScrollDetailsActivity.this));
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communalDetailAdapter = new CommunalDetailAdapter(IntegralScrollDetailsActivity.this, itemBodyList);
+        communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                if (view.getId() == R.id.tv_communal_share) {
+                    return;
+                }
+                CommunalWebDetailUtils.getCommunalWebInstance()
+                        .setWebDataClick(IntegralScrollDetailsActivity.this, view, loadHud);
+            }
+        });
         communal_recycler_wrap.setAdapter(communalDetailAdapter);
         smart_integral_details.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -479,7 +490,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
             itemBodyList.add(communalDetailObjectBean);
             List<CommunalDetailBean> productDetails = productInfoBean.getProductDetails();
             if (productDetails != null) {
-                itemBodyList.addAll(getDetailsDataList(productDetails));
+                itemBodyList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(productDetails));
             }
             getIntegralProductRule();
             communalDetailAdapter.notifyDataSetChanged();
@@ -598,7 +609,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                         communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
                         communalDetailObjectBean.setContent("服务承诺");
                         itemBodyList.add(communalDetailObjectBean);
-                        List<CommunalDetailObjectBean> detailsDataList = getDetailsDataList(communalRuleEntity.getCommunalRuleList());
+                        List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(communalRuleEntity.getCommunalRuleList());
                         if (detailsDataList != null && detailsDataList.size() > 0) {
                             itemBodyList.addAll(detailsDataList);
                         }

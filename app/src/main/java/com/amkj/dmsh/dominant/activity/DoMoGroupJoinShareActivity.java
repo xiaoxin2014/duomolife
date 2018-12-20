@@ -26,6 +26,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
 import com.google.gson.Gson;
@@ -51,7 +52,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -61,8 +61,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_COMMUNAL;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
-
-;
 
 
 /**
@@ -154,7 +152,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
 //        拼团规则
         if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
             gpRuleList.clear();
-            gpRuleList.addAll(getDetailsDataList(gpRuleBeanList));
+            gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(gpRuleBeanList));
             gpRuleDetailsAdapter.notifyDataSetChanged();
         }
     }

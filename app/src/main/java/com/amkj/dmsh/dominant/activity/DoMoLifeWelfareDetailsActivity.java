@@ -18,21 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -52,13 +41,13 @@ import com.amkj.dmsh.homepage.bean.CommunalOnlyDescription.ComOnlyDesBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -85,7 +74,6 @@ import static com.amkj.dmsh.R.id.ll_communal_pro_list;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
@@ -99,18 +87,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
-import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
-import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
-
-;
 
 public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
@@ -293,102 +275,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 loadData();
             }
         });
-        communalWelfareDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                switch (view.getId()) {
-                    case R.id.img_product_coupon_pic:
-                        int couponId = (int) view.getTag(R.id.iv_avatar_tag);
-                        int type = (int) view.getTag(R.id.iv_type_tag);
-                        if (couponId > 0) {
-                            if (userId != 0) {
-                                if (type == TYPE_COUPON) {
-                                    getDirectCoupon(couponId);
-                                } else if (type == TYPE_COUPON_PACKAGE) {
-                                    getDirectCouponPackage(couponId);
-                                }
-                            } else {
-                                if (loadHud != null) {
-                                    loadHud.dismiss();
-                                }
-                                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
-                            }
-                        }
-                        break;
-                    case R.id.iv_communal_cover_wrap:
-                        CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
-                        if (detailObjectBean != null) {
-                            if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG) {
-                                Intent intent = new Intent(DoMoLifeWelfareDetailsActivity.this, ShopScrollDetailsActivity.class);
-                                intent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
-                                startActivity(intent);
-                                //                    统计商品点击
-                                totalWelfareProNum(detailObjectBean.getId(), Integer.parseInt(welfareId));
-                            }
-                        }
-                        loadHud.dismiss();
-                        break;
-
-                    case R.id.ll_layout_tb_coupon:
-                        CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                        if (couponBean != null) {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            if (userId != 0) {
-                                skipAliBCWebView(couponBean.getCouponUrl());
-                            } else {
-                                if (loadHud != null) {
-                                    loadHud.dismiss();
-                                }
-                                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
-                            }
-                        }
-                        break;
-                    case R.id.iv_ql_bl_add_car:
-                        CommunalDetailObjectBean qualityWelPro = (CommunalDetailObjectBean) view.getTag();
-                        loadHud.show();
-                        if (qualityWelPro != null) {
-                            if (userId > 0) {
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
-                                baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(DoMoLifeWelfareDetailsActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
-                            } else {
-                                loadHud.dismiss();
-                                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
-                            }
-                        }
-                        break;
-                    case R.id.tv_communal_share:
-                        loadHud.dismiss();
-                        setShareData();
-                        break;
-                }
-            }
-        });
-        communalWelfareDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                if (communalDetailBean != null) {
-                    skipProductUrl(DoMoLifeWelfareDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    //                    统计商品点击
-                    totalWelfareProNum(communalDetailBean.getId(), Integer.parseInt(welfareId));
-                }
-            }
-        });
         //          关闭手势滑动
         dr_welfare_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
         badge = getBadge(DoMoLifeWelfareDetailsActivity.this, fl_header_service);
@@ -485,7 +371,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         List<CommunalDetailBean> descriptionList = qualityWefBean.getDescriptionList();
         if (descriptionList != null) {
             itemDescriptionList.clear();
-            itemDescriptionList.addAll(getDetailsDataList(descriptionList));
+            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionList));
             getShareData();
             communalWelfareDetailAdapter.setNewData(itemDescriptionList);
         }
@@ -505,7 +391,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                             CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
                             communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_SHARE);
                             itemDescriptionList.add(communalDetailObjectBean);
-                            itemDescriptionList.addAll(getDetailsDataList(comOnlyDesBean.getDescriptionList()));
+                            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(comOnlyDesBean.getDescriptionList()));
                             communalWelfareDetailAdapter.notifyDataSetChanged();
                         }
                     }
@@ -530,150 +416,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         tv_wel_pro_tag.setBackground(drawable);
         tv_wel_pro_tag.setText(welfareProductList.size() + "商品");
         tv_slid_pro_title.setText(getStrings(qualityWefBean.getTitle()));
-    }
-
-    private void getDirectCoupon(int id) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("couponId", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    private void getDirectCouponPackage(int couponId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("uId", userId);
-        params.put("cpId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, COUPON_PACKAGE, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    public void skipAliBCWebView(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (userId != 0) {
-                skipNewTaoBao(url);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
-            }
-        } else {
-            showToast(DoMoLifeWelfareDetailsActivity.this, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-        }
-    }
-
-    private void skipNewTaoBao(final String url) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(url);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(DoMoLifeWelfareDetailsActivity.this, "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewShopDetails(String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTrade.show(DoMoLifeWelfareDetailsActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-                Log.d("商品详情", "onTradeSuccess: ");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                Log.d("商品详情", "onFailure: " + code + msg);
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
     }
 
     private void getTopicComment() {
@@ -945,6 +687,33 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             communal_recycler_wrap.setNestedScrollingEnabled(false);
             communalWelfareDetailAdapter = new CommunalDetailAdapter(DoMoLifeWelfareDetailsActivity.this, itemDescriptionList);
             communal_recycler_wrap.setAdapter(communalWelfareDetailAdapter);
+            communalWelfareDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    ShareDataBean shareDataBean = null;
+                    if (view.getId() == R.id.tv_communal_share && qualityWefBean != null) {
+                        shareDataBean = new ShareDataBean(qualityWefBean.getPicUrl()
+                                , qualityWefBean.getTitle()
+                                , ""
+                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
+                                + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")),qualityWefBean.getId());
+
+                    }
+                    CommunalWebDetailUtils.getCommunalWebInstance()
+                            .setWebDataClick(DoMoLifeWelfareDetailsActivity.this, shareDataBean, view, loadHud);
+                }
+            });
+            communalWelfareDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
+                    if (communalDetailBean != null) {
+                        skipProductUrl(DoMoLifeWelfareDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
+                        //                    统计商品点击
+                        totalWelfareProNum(communalDetailBean.getId(), Integer.parseInt(welfareId));
+                    }
+                }
+            });
         }
     }
 

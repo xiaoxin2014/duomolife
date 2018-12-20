@@ -22,6 +22,7 @@ import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
+import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.adapter.QualityCustomTopicAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
@@ -33,6 +34,8 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -283,7 +286,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                                 && customCoverDesBean.getDescriptionList().size() > 0) {
                             qNewProView.communal_recycler_wrap.setVisibility(View.VISIBLE);
                             qNewProView.v_line_bottom.setVisibility(View.VISIBLE);
-                            List<CommunalDetailObjectBean> detailsDataList = ConstantMethod.getDetailsDataList(customCoverDesBean.getDescriptionList());
+                            List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(customCoverDesBean.getDescriptionList());
                             if (detailsDataList != null) {
                                 descriptionList.addAll(detailsDataList);
                                 communalDetailAdapter.notifyDataSetChanged();
@@ -419,6 +422,22 @@ public class QualityCustomTopicActivity extends BaseActivity {
             communal_recycler_wrap.setNestedScrollingEnabled(false);
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager((QualityCustomTopicActivity.this)));
             communalDetailAdapter = new CommunalDetailAdapter(QualityCustomTopicActivity.this, descriptionList);
+            communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    ShareDataBean shareDataBean = null;
+                    if (view.getId() == R.id.tv_communal_share && customProList.size() > 0) {
+                        LikedProductBean likedProductBean = customProList.get(0);
+                        shareDataBean = new ShareDataBean(likedProductBean.getPicUrl()
+                                , "推荐你看看这个"
+                                , "我在多么生活发现这几样好物，性价比不错，还包邮"
+                                , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType);
+
+                    }
+                    CommunalWebDetailUtils.getCommunalWebInstance()
+                            .setWebDataClick(QualityCustomTopicActivity.this, shareDataBean, view, loadHud);
+                }
+            });
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
         }
     }

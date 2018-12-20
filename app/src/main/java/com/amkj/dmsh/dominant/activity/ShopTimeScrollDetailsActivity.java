@@ -56,7 +56,10 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -100,7 +103,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getDetailsDataList;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -210,27 +212,16 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         contentOfficialAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (loadHud != null) {
-                    loadHud.show();
+                ShareDataBean shareDataBean = null;
+                if (view.getId() == R.id.tv_communal_share && productDetailBean != null) {
+                    shareDataBean = new ShareDataBean(productDetailBean.getPicUrl()
+                            , "我在多么生活看中了" + productDetailBean.getName()
+                            , getStrings(productDetailBean.getSubtitle())
+                            , sharePageUrl + productDetailBean.getId());
+
                 }
-                switch (view.getId()) {
-                    case R.id.ll_layout_tb_coupon:
-                        CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                        if (couponBean != null) {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            if (userId != 0) {
-                                skipAliBCWebView(couponBean.getCouponUrl());
-                            } else {
-                                if (loadHud != null) {
-                                    loadHud.dismiss();
-                                }
-                                getLoginStatus(ShopTimeScrollDetailsActivity.this);
-                            }
-                        }
-                        break;
-                }
+                CommunalWebDetailUtils.getCommunalWebInstance()
+                        .setWebDataClick(ShopTimeScrollDetailsActivity.this, shareDataBean, view, loadHud);
             }
         });
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
@@ -592,7 +583,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 communalDetailObjectBean.setItemType(TYPE_PROMOTION_TITLE);
                 communalDetailObjectBean.setName("团长推荐");
                 itemBodyList.add(communalDetailObjectBean);
-                itemBodyList.addAll(getDetailsDataList(productDetailBean.getItemBodyList()));
+                itemBodyList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(productDetailBean.getItemBodyList()));
             }
             if (productDetailBean.getLuckyMoneyList() != null
                     && productDetailBean.getLuckyMoneyList().size() > 0) {
@@ -620,7 +611,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 communalDetailObjectBean.setItemType(TYPE_PROMOTION_TITLE);
                 communalDetailObjectBean.setName("参团须知");
                 itemBodyList.add(communalDetailObjectBean);
-                itemBodyList.addAll(getDetailsDataList(productDetailBean.getFlashsaleInfoList()));
+                itemBodyList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(productDetailBean.getFlashsaleInfoList()));
             }
             contentOfficialAdapter.notifyDataSetChanged();
         }
