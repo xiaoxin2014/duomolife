@@ -6,7 +6,7 @@ def bakPath = file("${buildDir}/bakApk/")
  * 此处填写每次构建生成的基准包目录
  * 时间 年 月日 版本号
  */
-def baseApkDir = "app-1219-14-17-43"
+def baseApkDir = "app-1220-10-00-01"
 
 /**
  * 对于插件各参数的详细解析请参考
@@ -36,7 +36,7 @@ tinkerSupport {
 
     // 构建基准包和补丁包都要指定不同的tinkerId，并且必须保证唯一性
     //    版本号-年月日时分-补丁包几
-    tinkerId = "base-3.1.9-1812191418-patch0"
+    tinkerId = "base-3.1.9-1812201001-patch0"
 
     // 构建多渠道补丁时使用
     // buildAllFlavorsDir = "${bakPath}/${baseApkDir}"

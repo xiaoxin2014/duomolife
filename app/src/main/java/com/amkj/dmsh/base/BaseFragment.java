@@ -349,6 +349,7 @@ public abstract class BaseFragment extends ImmersionFragment {
 
     @Override
     public void onVisible() {
+        AutoSize.autoConvertDensityOfGlobal(getActivity());
         totalPersonalTrajectory = new TotalPersonalTrajectory(getContext(), getClass().getSimpleName());
     }
 }

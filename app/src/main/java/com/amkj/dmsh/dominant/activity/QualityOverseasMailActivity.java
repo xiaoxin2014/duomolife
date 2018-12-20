@@ -223,7 +223,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
         overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityOverseasMailActivity.this));
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_product)
+                .setDividerId(R.drawable.item_divider_five_gray_f)
 
 
                 .create());

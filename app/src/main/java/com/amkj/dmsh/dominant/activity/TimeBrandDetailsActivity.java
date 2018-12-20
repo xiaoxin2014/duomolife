@@ -105,7 +105,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         communal_recycler.setAdapter(duoMoLifeTimeBrandAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_product).create());
+                .setDividerId(R.drawable.item_divider_five_white).create());
         duoMoLifeTimeBrandAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

@@ -82,7 +82,7 @@ public class SearchGoodProMoreActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new GridLayoutManager(SearchGoodProMoreActivity.this, 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_product)
+                .setDividerId(R.drawable.item_divider_five_gray_f)
 
 
                 .create());

@@ -245,7 +245,7 @@ dependencies {
     //    广告轮播图
 
     //最新版本
-    implementation 'cc.linkedme.deeplinks:link-page:1.0.25'
+    implementation 'cc.linkedme.deeplinks:link-page:1.0.26'
 
     //    倒计时
 

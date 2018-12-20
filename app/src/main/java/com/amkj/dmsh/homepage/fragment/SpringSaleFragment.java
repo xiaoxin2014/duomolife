@@ -123,12 +123,7 @@ public class SpringSaleFragment extends BaseFragment {
     protected void initViews() {
         communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         springSaleRecyclerAdapter = new SpringSaleRecyclerAdapterNew(getActivity(), saleTimeTotalList);
-        springSaleRecyclerAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
-                return (saleTimeTotalList.get(position).getItemType() == TYPE_0) ? 1 : gridLayoutManager.getSpanCount();
-            }
-        });
+        springSaleRecyclerAdapter.setSpanSizeLookup((gridLayoutManager, position) -> (saleTimeTotalList.get(position).getItemType() == TYPE_0) ? 1 : gridLayoutManager.getSpanCount());
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_white).create());
