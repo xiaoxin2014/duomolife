@@ -641,7 +641,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                      * v3.1.9 修改判断 当前时间是否大于过期时间
                      */
                     SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.putString("modifyTime", getStrings(mainNavEntity.getModifyTime()));
                     edit.putString("NavDate", result);
                     edit.apply();
                     for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {

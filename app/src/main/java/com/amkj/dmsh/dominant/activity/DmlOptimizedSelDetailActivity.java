@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -96,9 +98,11 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     TextView tv_communal_pro_title;
     @BindView(R.id.rv_communal_pro)
     RecyclerView rv_communal_pro;
-
-    @BindView(tv_communal_pro_tag)
+    @BindView(R.id.tv_communal_pro_tag)
     TextView tv_wel_pro_tag;
+
+    @BindView(R.id.tl_quality_bar)
+    Toolbar tl_quality_bar;
     private List<CommunalDetailObjectBean> optDetailsList = new ArrayList();
     //侧滑商品列表
     private List<ProductListBean> welfareProductList = new ArrayList();
@@ -398,5 +402,10 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             totalMap.put("relate_id", optimizedId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
+    }
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_quality_bar).keyboardEnable(true).navigationBarEnable(false)
+                .statusBarDarkFont(true).init();
     }
 }

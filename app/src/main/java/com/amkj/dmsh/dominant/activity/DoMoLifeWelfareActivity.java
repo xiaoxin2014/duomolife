@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -55,7 +57,6 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
-import static com.amkj.dmsh.R.id.tv_communal_pro_tag;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -103,8 +104,10 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     @BindView(R.id.rv_communal_pro)
     RecyclerView rv_communal_pro;
     //  打开标签
-    @BindView(tv_communal_pro_tag)
+    @BindView(R.id.tv_communal_pro_tag)
     TextView tv_wel_pro_tag;
+    @BindView(R.id.tl_quality_bar)
+    Toolbar tl_quality_bar;
     private int scrollY;
     private float screenHeight;
     private QualityTypeProductAdapter qualityTypeProductAdapter;
@@ -508,5 +511,10 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         } else {
             dr_communal_pro.openDrawer(ll_communal_pro_list);
         }
+    }
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_quality_bar).keyboardEnable(true).navigationBarEnable(false)
+                .statusBarDarkFont(true).init();
     }
 }

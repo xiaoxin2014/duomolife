@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,6 +51,7 @@ import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -137,6 +139,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     TextView tv_article_bottom_like;
     @BindView(R.id.tv_article_bottom_collect)
     TextView tv_article_bottom_collect;
+    @BindView(R.id.tl_quality_bar)
+    Toolbar tl_quality_bar;
 
 
     private List<CommunalDetailObjectBean> itemDescriptionList = new ArrayList();
@@ -751,5 +755,11 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             totalMap.put("relate_id", welfareId);
             totalPersonalTrajectory.stopTotal(totalMap);
         }
+    }
+
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_quality_bar).keyboardEnable(true).navigationBarEnable(false)
+                .statusBarDarkFont(true).init();
     }
 }

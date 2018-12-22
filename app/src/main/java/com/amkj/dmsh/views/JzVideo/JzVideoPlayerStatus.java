@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -13,6 +14,7 @@ import com.amkj.dmsh.R;
 import java.util.LinkedHashMap;
 
 import cn.jzvd.JZDataSource;
+import cn.jzvd.JZMediaManager;
 
 import static cn.jzvd.JZDataSource.URL_KEY_DEFAULT;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -31,6 +33,8 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     private final String urlType = "skipUrl";
     private final String listenerType = "videoListener";
     private LinkedHashMap linkedHashMap = new LinkedHashMap();
+    private ImageView iv_video_volume;
+    private boolean volumeOn = true;
     //    objects[] 1 视频标题 2 跳转地址 3 视频状态监听 4 是否已抢光
 
     public JzVideoPlayerStatus(Context context) {
@@ -50,7 +54,9 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     public void init(Context context) {
         super.init(context);
         iv_video_product = findViewById(R.id.iv_video_product);
+        iv_video_volume = findViewById(R.id.iv_video_volume);
         iv_video_product.setOnClickListener(this);
+        iv_video_volume.setOnClickListener(this);
     }
 
     /**
@@ -64,11 +70,11 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
             iv_video_product.setTag(skipUrl);
         }
         linkedHashMap.put(URL_KEY_DEFAULT, videoUrl);
-        if(!TextUtils.isEmpty(skipUrl)){
-            linkedHashMap.put(urlType,skipUrl);
+        if (!TextUtils.isEmpty(skipUrl)) {
+            linkedHashMap.put(urlType, skipUrl);
         }
 //        第一个可变参数 为标题 第二个为跳转地址
-        JZDataSource jzDataSource = new JZDataSource(linkedHashMap,"");
+        JZDataSource jzDataSource = new JZDataSource(linkedHashMap, "");
         setUp(jzDataSource, SCREEN_WINDOW_NORMAL);
     }
 
@@ -78,16 +84,36 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
         if (currentScreen == SCREEN_WINDOW_FULLSCREEN) {
             setADVideoView();
         }
+        Log.d(TAG + "volume", "setUp: " + currentScreen + "控件状态->"
+                + iv_video_volume.isSelected() + "\t"+"音量->"+volumeOn);
+        syncVideoVolume();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void startWindowFullscreen() {
+        super.startWindowFullscreen();
+        Log.d(TAG + "volume", "startWindowFullscreen: " + currentScreen + "控件状态->"
+                + iv_video_volume.isSelected() + "\t"+"音量->"+volumeOn);
+    }
+
+    @Override
+    public void playOnThisJzvd() {
+        super.playOnThisJzvd();
+        Log.d(TAG + "volume", "playOnThisJzvd: " + currentScreen + "控件状态->"
+                + iv_video_volume.isSelected() + "\t"+"音量->"+volumeOn);
     }
 
     /**
      * 设置广告栏 跳转详情按钮
      */
     private void setADVideoView() {
-        if(linkedHashMap !=null&& linkedHashMap.get(urlType)!=null&&
-                !TextUtils.isEmpty(linkedHashMap.get(urlType).toString())){
+        if (linkedHashMap != null && linkedHashMap.get(urlType) != null &&
+                !TextUtils.isEmpty(linkedHashMap.get(urlType).toString())) {
             iv_video_product.setVisibility(VISIBLE);
-        }else{
+        } else {
             iv_video_product.setVisibility(GONE);
         }
     }
@@ -102,7 +128,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     public void showWifiDialog() {
         getStopVideoStatusListener();
         super.showWifiDialog();
-        if(wifiAlertView!=null){
+        if (wifiAlertView != null) {
             wifiAlertView.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
@@ -149,11 +175,16 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
         getStartVideoStatusListener();
     }
 
+    @Override
+    public void onPrepared() {
+        super.onPrepared();
+        adjustVolume(volumeOn);
+    }
     private void getStartVideoStatusListener() {
         iv_video_product.setVisibility(GONE);
         if (videoStatusListener != null) {
             videoStatusListener.startTurning();
-        }else if(linkedHashMap !=null&&linkedHashMap.get(listenerType)!=null){
+        } else if (linkedHashMap != null && linkedHashMap.get(listenerType) != null) {
             videoStatusListener = (VideoStatusListener) linkedHashMap.get(listenerType);
             videoStatusListener.startTurning();
         }
@@ -163,7 +194,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
         setADVideoView();
         if (videoStatusListener != null) {
             videoStatusListener.stopTurning();
-        }else if(linkedHashMap !=null&&linkedHashMap.get(listenerType)!=null){
+        } else if (linkedHashMap != null && linkedHashMap.get(listenerType) != null) {
             videoStatusListener = (VideoStatusListener) linkedHashMap.get(listenerType);
             videoStatusListener.stopTurning();
         }
@@ -171,24 +202,75 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
 
     public void setVideoStatusListener(VideoStatusListener videoStatusListener) {
         this.videoStatusListener = videoStatusListener;
-        if (linkedHashMap!=null&&linkedHashMap.containsKey(urlType)){
-            linkedHashMap.put(listenerType,videoStatusListener);
+        if (linkedHashMap != null && linkedHashMap.containsKey(urlType)) {
+            linkedHashMap.put(listenerType, videoStatusListener);
         }
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        if (v.getId() == R.id.iv_video_product) {
-            if (linkedHashMap!=null&&linkedHashMap.containsKey(urlType)&&!TextUtils.isEmpty(linkedHashMap.get(urlType).toString())) {
-                /**
-                 * 当前状态在播放，先暂停再跳转
-                 */
-                if (currentState == CURRENT_STATE_PLAYING) {
-                    onStatePause();
+        switch (v.getId()) {
+            case R.id.iv_video_product:
+                if (linkedHashMap != null && linkedHashMap.containsKey(urlType)
+                        && !TextUtils.isEmpty(linkedHashMap.get(urlType).toString())) {
+                    /**
+                     * 当前状态在播放，先暂停再跳转
+                     */
+                    if (currentState == CURRENT_STATE_PLAYING) {
+                        onStatePause();
+                    }
+                    setSkipPath(getContext(), linkedHashMap.get(urlType).toString(), true, false);
                 }
-                setSkipPath(getContext(), linkedHashMap.get(urlType).toString(),true, false);
-            }
+                break;
+            case R.id.iv_video_volume:
+                v.setEnabled(false);
+                volumeOn = !volumeOn;
+                syncVideoVolume();
+                adjustVolume(volumeOn);
+                v.setEnabled(true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean isVolumeOn() {
+        return volumeOn;
+    }
+
+    /**
+     * true 为打开 false静音
+     *
+     * @param volumeOn
+     */
+    public void setVolumeOn(boolean volumeOn) {
+        // TODO: 2018/12/22 全屏非全屏音量键状态同步
+        this.volumeOn = volumeOn;
+        if (iv_video_volume.getVisibility() == GONE) {
+            iv_video_volume.setVisibility(VISIBLE);
+        }
+        syncVideoVolume();
+    }
+
+    /**
+     * 同步音量状态
+     */
+    private void syncVideoVolume() {
+        if(iv_video_volume.getVisibility() == VISIBLE){
+            iv_video_volume.setSelected(volumeOn);
+        }
+    }
+
+    /**
+     * 设置视频音量
+     *
+     * @param volumeOn
+     */
+    private void adjustVolume(boolean volumeOn) {
+        if (iv_video_volume.getVisibility() == VISIBLE) {
+            float volumeValue = volumeOn ? 1f : 0f;
+            JZMediaManager.instance().jzMediaInterface.setVolume(volumeValue, volumeValue);
         }
     }
 

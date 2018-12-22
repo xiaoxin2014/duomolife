@@ -81,7 +81,7 @@ public class GlideImageLoaderUtil {
     public static void loadImage(Context context, final ImageView iv, String imgUrl) {
         if (isContextExisted(context)) {
             Glide.with(context).load(imgUrl)
-                    .apply(new RequestOptions().dontAnimate()
+                    .apply(new RequestOptions()
                             .error(R.drawable.load_loading_image)
                             .diskCacheStrategy(DiskCacheStrategy.DATA))
                     .into(iv);
@@ -150,7 +150,6 @@ public class GlideImageLoaderUtil {
         if (null != context && iv != null) {
             Glide.with(context).load(getThumbImgUrl(imgUrl, waterRemark, isDouble))
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
-                            .dontAnimate()
                             .centerCrop().error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
                     .into(iv);
@@ -199,8 +198,7 @@ public class GlideImageLoaderUtil {
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
                             .centerCrop()
                             .placeholder(R.drawable.default_ava_img)
-                            .error(R.drawable.default_ava_img)
-                            .dontAnimate())
+                            .error(R.drawable.default_ava_img))
                     .into(iv);
         }
     }
@@ -307,7 +305,7 @@ public class GlideImageLoaderUtil {
                                          int defaultImgResource) {
         if (null != context) {
             Glide.with(context).load(imgUrl)
-                    .apply(new RequestOptions().dontAnimate()
+                    .apply(new RequestOptions()
                             .fitCenter().placeholder(defaultImgResource))
                     .transition(withCrossFade())
                     .into(iv);

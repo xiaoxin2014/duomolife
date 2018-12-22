@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatus;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -68,6 +69,10 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
                 });
             }else{
                 jvp_ad_video_play.setVideoSkipData(getStrings(communalADActivityBean.getVideoUrl()), "");
+                if(NetWorkUtils.isWifiByType(context)){
+                    jvp_ad_video_play.setVolumeOn(false);
+                    jvp_ad_video_play.startButton.performClick();
+                }
             }
         } else {
             jvp_ad_video_play.setVisibility(View.GONE);

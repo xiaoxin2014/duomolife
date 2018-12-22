@@ -52,6 +52,7 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.google.gson.Gson;
+import com.gyf.barlibrary.ImmersionBar;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
@@ -111,7 +112,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     @BindView(R.id.tl_normal_bar)
-    Toolbar toolbar;
+    Toolbar tl_normal_bar;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -180,7 +181,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        toolbar.setSelected(true);
+        tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
@@ -275,27 +276,6 @@ public class ArticleOfficialActivity extends BaseActivity {
 //                    统计商品点击
                 totalProNum(productListBean.getId(), dmlSearchDetailBean.getId());
             }
-        });
-        communalDescripAdapter.setOnItemClickListener((adapter, view, position) -> {
-            CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-            if (communalDetailBean != null) {
-                skipProductUrl(ArticleOfficialActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-//                    统计商品点击
-                totalProNum(communalDetailBean.getId(), dmlSearchDetailBean.getId());
-            }
-        });
-        communalDescripAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            ShareDataBean shareDataBean = null;
-            if (view.getId() == R.id.tv_communal_share && dmlSearchDetailBean != null) {
-                shareDataBean = new ShareDataBean(dmlSearchDetailBean.getPath()
-                        , getStrings(dmlSearchDetailBean.getTitle())
-                        , getStrings(dmlSearchDetailBean.getDigest())
-                        , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
-                        + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")), dmlSearchDetailBean.getId());
-
-            }
-            CommunalWebDetailUtils.getCommunalWebInstance()
-                    .setWebDataClick(ArticleOfficialActivity.this, shareDataBean, view, loadHud);
         });
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
@@ -856,6 +836,27 @@ public class ArticleOfficialActivity extends BaseActivity {
             communalDescripAdapter = new CommunalDetailAdapter(ArticleOfficialActivity.this, descripDetailList);
             communalDescripAdapter.setEnableLoadMore(false);
             communal_recycler_wrap.setAdapter(communalDescripAdapter);
+            communalDescripAdapter.setOnItemClickListener((adapter, view, position) -> {
+                CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
+                if (communalDetailBean != null) {
+                    skipProductUrl(ArticleOfficialActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
+//                    统计商品点击
+                    totalProNum(communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                }
+            });
+            communalDescripAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+                ShareDataBean shareDataBean = null;
+                if (view.getId() == R.id.tv_communal_share && dmlSearchDetailBean != null) {
+                    shareDataBean = new ShareDataBean(dmlSearchDetailBean.getPath()
+                            , getStrings(dmlSearchDetailBean.getTitle())
+                            , getStrings(dmlSearchDetailBean.getDigest())
+                            , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
+                            + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")), dmlSearchDetailBean.getId());
+
+                }
+                CommunalWebDetailUtils.getCommunalWebInstance()
+                        .setWebDataClick(ArticleOfficialActivity.this, shareDataBean, view, loadHud);
+            });
         }
 
         @OnClick(R.id.tv_article_label)
@@ -943,5 +944,11 @@ public class ArticleOfficialActivity extends BaseActivity {
                 linearLayoutManager.setStackFromEnd(true);
             }
         }
+    }
+
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_normal_bar).keyboardEnable(true).navigationBarEnable(false)
+                .statusBarDarkFont(true).init();
     }
 }
