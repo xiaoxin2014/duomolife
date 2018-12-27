@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.ServiceDownUtils;
 
 import java.io.File;
@@ -91,9 +90,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
         String mandatoryUpdateCode = intent.getStringExtra(APP_MANDATORY_UPDATE_VERSION);
         boolean isMandatoryUpdate = !TextUtils.isEmpty(mandatoryUpdateCode) && Integer.parseInt(mandatoryUpdateCode) == 1;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            saveAppPath = Environment.getExternalStorageDirectory() + "/download" + (
-                    downLink.contains("/") ? downLink.substring(downLink.lastIndexOf("/")) : "domolife.apk");
-            FileCacheUtils.deleteFile(saveAppPath);
+            saveAppPath = Environment.getExternalStorageDirectory() + "/download";
         }
         tvAppVersionDescription.setMovementMethod(ScrollingMovementMethod.getInstance());
         tvAppVersionDescription.setText(isMandatoryUpdate ? (!TextUtils.isEmpty(mandatoryDescription) ?
@@ -171,8 +168,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
         if (message.type.equals("appVersionProgress")) {
             int total = 0;
             try {
-                float totalCurrent = (float) message.result;
-                total = (int) totalCurrent;
+                total = (int) message.result;
             } catch (Exception e) {
                 e.printStackTrace();
             }

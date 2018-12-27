@@ -3,6 +3,7 @@ package com.amkj.dmsh.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -11,16 +12,13 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/9/13.
  */
-public class QualityTypeEntity {
+public class QualityTypeEntity extends BaseEntity{
 
     /**
      * result : [{"id":28,"picUrl":"/Uploads/goods_img/2016-04-21/571844b592752.png","category_name":"文体"},{"id":30,"picUrl":"/Uploads/goods_img/2016-04-21/571844ad9f042.png","category_name":"家电"},{"id":29,"picUrl":"/Uploads/goods_img/2016-04-21/5718449badabb.png","category_name":"数码"},{"id":18,"picUrl":"/Uploads/goods_img/2016-04-21/5718449343d0f.png","category_name":"母婴"},{"id":2,"picUrl":"/Uploads/goods_img/2016-04-21/57184486b6870.png","category_name":"男装"},{"id":4,"picUrl":"/Uploads/goods_img/2016-04-21/5718447e952e1.png","category_name":"家居"},{"id":31,"picUrl":"/Uploads/goods_img/2016-04-21/5718447739dc4.png","category_name":"化妆品"},{"id":25,"picUrl":"/Uploads/goods_img/2016-04-21/5718446f99e0c.png","category_name":"鞋包"},{"id":26,"picUrl":"/Uploads/goods_img/2016-04-21/57184468eb566.png","category_name":"配饰"},{"id":27,"picUrl":"/Uploads/goods_img/2016-04-21/5718445b1d04f.png","category_name":"美食"}]
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
     /**
      * id : 28
      * picUrl : /Uploads/goods_img/2016-04-21/571844b592752.png
@@ -29,22 +27,6 @@ public class QualityTypeEntity {
 
     @SerializedName("result")
     private List<QualityTypeBean> qualityTypeBeanList;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public List<QualityTypeBean> getQualityTypeBeanList() {
         return qualityTypeBeanList;

@@ -24,6 +24,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.google.gson.Gson;
 import com.luck.picture.lib.tools.PictureFileUtils;
+import com.zhouyou.http.EasyHttp;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -294,6 +295,8 @@ public class AppDataActivity extends BaseActivity {
                         }
 //                       七鱼客服清除缓存
                         QyServiceUtils.getQyInstance().clearQyCache();
+//                        网络缓存
+                        EasyHttp.clearCache();
                         PictureFileUtils.deleteCacheDirFile(AppDataActivity.this);
                         GlideImageLoaderUtil.clearMemoryByActivity(AppDataActivity.this);
                         SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);

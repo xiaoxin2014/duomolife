@@ -1,18 +1,14 @@
 package com.amkj.dmsh.network;
 
-import com.alibaba.fastjson.support.retrofit.Retrofit2ConverterFactory;
-import com.amkj.dmsh.constant.Url;
+import android.app.Application;
+
+import com.tencent.bugly.beta.tinker.TinkerManager;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.cache.converter.GsonDiskConverter;
 
 import java.io.File;
 
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
 
 /**
  * @author LGuiPeng
@@ -23,9 +19,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
  */
 public class NetApiManager {
     private static NetApiManager mInstance;
-    private static Retrofit retrofit;
-    private static NetApiService netApiService = null;
-
+    private boolean isInitNet;
     public static NetApiManager getInstance() {
         if (mInstance == null) {
             synchronized (NetApiManager.class) {
@@ -40,75 +34,20 @@ public class NetApiManager {
     /**
      * 初始化必要对象和参数
      */
-    public void init() {
-        // 初始化okhttp
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if (isDebugTag) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            builder.addInterceptor(logging);
-        }
-        OkHttpClient client = builder.build();
-        // 初始化Retrofit
-        retrofit = new Retrofit.Builder()
-                .client(client)
-                .baseUrl(Url.BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(new Retrofit2ConverterFactory())
-                .build();
-    }
-
-    /**
-     * 无缓存请求
-     *
-     * @return
-     */
-    public NetApiService getNetApiService() {
-        if (netApiService == null) {
-            synchronized (NetApiService.class) {
-//                初始化
-                init();
-                if (retrofit == null) {
-                    throw new NullPointerException("retrofit未初始化！");
-                }
-                netApiService = retrofit.create(NetApiService.class);
+    public void initNetInstance() {
+        if(!isInitNet){
+            Application application = TinkerManager.getTinkerApplicationLike().getApplication();
+            EasyHttp.init(application);//默认初始化
+            String rxCacheFileName = application.getCacheDir() + "/rxCache";
+            File rxCacheFile = new File(rxCacheFileName);
+            if(!rxCacheFile.exists()){
+                rxCacheFile.mkdir();
             }
+            EasyHttp.getInstance().setBaseUrl(BASE_URL).setConnectTimeout(15 * 1000)
+                    .setRetryDelay(500)//每次延时500ms重试
+                    .setCacheDirectory(rxCacheFile) //设置缓存路径
+                    .setCacheMaxSize(20*1024*1024)
+                    .setCacheDiskConverter(new GsonDiskConverter());//设置缓存转换器
         }
-        return netApiService;
-    }
-
-    /**
-     * 获取带缓存的get请求 每次都重新创建
-     *
-     * @return
-     */
-    public NetApiService getNetCacheApiService(boolean isForceNet) {
-        /**
-         * 初始化Cache
-         */
-        NoNetCacheInterceptor cacheInterceptor = new NoNetCacheInterceptor(isForceNet);
-        ConnectNetCacheInterceptor cacheConnectInterceptor = new ConnectNetCacheInterceptor(isForceNet);
-        OkHttpClient.Builder cacheClientBuilder = new OkHttpClient.Builder()
-                .addInterceptor(cacheInterceptor)
-                .addNetworkInterceptor(cacheConnectInterceptor);
-        if (isDebugTag) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            cacheClientBuilder.addInterceptor(logging);
-        }
-        File file = new File(mAppContext.getCacheDir(), "NetCache");
-        //缓存大小10M
-        int cacheSize = 10 * 1024 * 1024;
-        Cache cache = new Cache(file, cacheSize);
-        OkHttpClient cacheOkHttpClient = cacheClientBuilder
-                .cache(cache)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(cacheOkHttpClient)
-                .baseUrl(Url.BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(new Retrofit2ConverterFactory())
-                .build();
-        return retrofit.create(NetApiService.class);
     }
 }

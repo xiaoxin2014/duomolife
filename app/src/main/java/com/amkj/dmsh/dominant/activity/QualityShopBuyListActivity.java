@@ -43,7 +43,6 @@ import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.gyf.barlibrary.ImmersionBar;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -521,10 +520,5 @@ public class QualityShopBuyListActivity extends BaseActivity {
         } else {
             dr_communal_pro.openDrawer(ll_communal_pro_list);
         }
-    }
-    @Override
-    public void setStatusBar() {
-        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_quality_bar).keyboardEnable(true).navigationBarEnable(false)
-                .statusBarDarkFont(true).init();
     }
 }

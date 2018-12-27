@@ -2,27 +2,31 @@ package com.amkj.dmsh.network.downfile;
 
 import android.text.TextUtils;
 
-import com.amkj.dmsh.network.NetApiService;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.downFileMap;
+import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 
 /**
  * @author LGuiPeng
@@ -50,7 +54,13 @@ public class DownloadHelper {
     public DownloadHelper(DownloadListener listener, String url) {
         this.mDownloadListener = listener;
         DownloadInterceptor mInterceptor = new DownloadInterceptor(listener);
-        OkHttpClient httpClient = new OkHttpClient.Builder()
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (isDebugTag) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            builder.addInterceptor(logging);
+        }
+        OkHttpClient httpClient = builder
                 .addInterceptor(mInterceptor)
                 .retryOnConnectionFailure(true)
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
@@ -59,8 +69,7 @@ public class DownloadHelper {
 
         retrofit = new Retrofit.Builder()
                 .client(httpClient)
-//                .baseUrl(url)
-                .baseUrl("http://image.domolife.cn/")
+                .baseUrl(url)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
     }
@@ -68,15 +77,13 @@ public class DownloadHelper {
     /**
      * 进行文件下载
      *
-     * @param url      网址
-     * @param destDir  文件目录
-     * @param fileName 文件名称
+     * @param url     网址
+     * @param destDir 文件目录
      */
-    public void downloadFile(String url, final String destDir, final String fileName) {
+    public void downloadFile(String url, final String destDir) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
-        dispose();
 //        避免多次下载
         if (downFileMap == null) {
             downFileMap = new HashMap<>();
@@ -87,18 +94,49 @@ public class DownloadHelper {
         } else {
             downFileMap.put(url, url);
         }
-        retrofit.create(NetApiService.class)
-//                .downLoadFile(url.substring(url.lastIndexOf("/") + 1))
-                .downLoadFile("androidTest/app-debug.apk")
+        dispose();
+        retrofit.create(NetDownLoadApiService.class)
+                .downLoadFile(url)
                 .subscribeOn(Schedulers.io())//请求网络 在调度者的io线程
                 .observeOn(Schedulers.io()) //指定线程保存文件
                 .observeOn(Schedulers.computation())
-                .map(new Function<ResponseBody, File>() {
+                .map(new Function<Response<ResponseBody>, File>() {
                     @Override
-                    public File apply(ResponseBody responseBody) throws Exception {
+                    public File apply(Response<ResponseBody> responseBodyResponse) throws Exception {
+                        ResponseBody responseBody = responseBodyResponse.body();
+                        if (responseBody == null) {
+                            return null;
+                        }
                         mDownloadListener.onStartDownload();
-                        File file = saveFile(responseBody.byteStream(), destDir, fileName);
-                        return file;
+                        okhttp3.Response response = responseBodyResponse.raw();
+                        String downUrl = response.request().url().toString();
+                        String fileName = null;
+                        int lastCode = downUrl.lastIndexOf("/");
+                        if (lastCode != -1 && lastCode + 1 < downUrl.length()) {
+                            fileName = downUrl.substring(lastCode + 1);
+                            int parameterCode = fileName.indexOf("?");
+                            if (parameterCode != -1) {
+                                fileName = fileName.substring(0, parameterCode);
+                            }
+                        }
+                        Headers headers = responseBodyResponse.headers();
+                        Map<String, List<String>> stringListMap = headers.toMultimap();
+                        List<String> fileNameList = stringListMap.get("content-disposition");
+                        if (fileNameList != null && fileNameList.size() > 0
+                                && fileNameList.toString().contains("filename=")) {
+                            for (String typeParameter :fileNameList) {
+                                String[] split = typeParameter.split(";");
+                                for (String name : split) {
+                                    if(name.contains("filename=")){
+                                        String[] names = name.split("filename=");
+                                        if(names.length>1){
+                                            fileName = names[1];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return saveFile(responseBody.byteStream(), destDir, fileName);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())

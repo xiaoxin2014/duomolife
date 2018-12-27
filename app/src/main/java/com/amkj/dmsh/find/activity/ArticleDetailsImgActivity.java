@@ -1009,4 +1009,5 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         }
         isScrollToComment = false;
     }
+
 }

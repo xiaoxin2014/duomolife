@@ -6,6 +6,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:id="@+id/fl_fragment_quality"
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"

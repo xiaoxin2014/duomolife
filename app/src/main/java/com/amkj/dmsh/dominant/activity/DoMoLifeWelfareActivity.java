@@ -38,7 +38,6 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.gyf.barlibrary.ImmersionBar;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -511,10 +510,5 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         } else {
             dr_communal_pro.openDrawer(ll_communal_pro_list);
         }
-    }
-    @Override
-    public void setStatusBar() {
-        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_quality_bar).keyboardEnable(true).navigationBarEnable(false)
-                .statusBarDarkFont(true).init();
     }
 }

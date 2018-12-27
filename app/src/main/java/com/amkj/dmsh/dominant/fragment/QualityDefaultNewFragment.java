@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
 import static com.amkj.dmsh.constant.Url.Q_HOME_CENTER_TYPE;
@@ -90,6 +92,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private QualityTypeView qualityTypeView;
     private CBViewHolderCreator cbViewHolderCreator;
     private RemoveExistUtils removeExistUtils;
+    private boolean isUpdateCache;
 
     @Override
     protected int getContentView() {
@@ -104,6 +107,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
+                isUpdateCache = true;
                 loadData();
             }
         });
@@ -199,9 +203,9 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getAdLoop() {
-        Map<String, String> params = new HashMap<>();
+        LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_HOME_AD_LOOP,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_AD_LOOP, params, isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 getADJsonData(result);
@@ -293,7 +297,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getCenterType() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_HOME_CENTER_TYPE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CENTER_TYPE, isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -372,7 +376,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getHomeIndexType() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_HOME_CLASS_TYPE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CLASS_TYPE,isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

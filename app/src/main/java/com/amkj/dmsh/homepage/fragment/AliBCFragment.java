@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -177,6 +178,15 @@ public class AliBCFragment extends BaseFragment {
         } else {
             webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
+        web_fragment_communal.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                Intent action = new Intent();
+                action.setAction("android.intent.action.VIEW");
+                action.setData(Uri.parse(url));
+                startActivity(action);
+            }
+        });
         web_fragment_communal.getSettings().setUserAgentString(web_fragment_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
 //        js交互
         web_fragment_communal.addJavascriptInterface(new JsData(getActivity()), "JsToAndroid");

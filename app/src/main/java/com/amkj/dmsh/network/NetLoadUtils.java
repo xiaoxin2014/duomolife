@@ -1,6 +1,7 @@
 package com.amkj.dmsh.network;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
@@ -16,22 +17,26 @@ import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
 import com.kingja.loadsir.core.LoadService;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
+import com.zhouyou.http.model.HttpParams;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import retrofit2.Response;
-
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.network.RxJavaTransformer.getSchedulerObservableTransformer;
+import static com.zhouyou.http.cache.model.CacheMode.CACHEANDREMOTEDISTINCT;
+import static com.zhouyou.http.cache.model.CacheMode.FIRSTREMOTE;
+import static com.zhouyou.http.cache.model.CacheMode.ONLYCACHE;
 
 /**
  * @author LGuiPeng
@@ -76,15 +81,20 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
         if (NetWorkUtils.checkNet(context)) {
-            NetApiService netApiService = NetApiManager.getInstance().getNetApiService();
-            Observer<String> observer = new Observer<String>() {
+//            先进行框架初始化
+            NetApiManager.getInstance().initNetInstance();
+            HttpParams httpParams = getHttpParams(params);
+            EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
                 @Override
-                public void onSubscribe(Disposable d) {
-
+                public void onError(ApiException e) {
+                    if (netLoadListener != null) {
+                        netLoadListener.onNotNetOrException();
+                        netLoadListener.onError(e);
+                    }
                 }
 
                 @Override
-                public void onNext(String result) {
+                public void onSuccess(String result) {
                     try {
                         if (netLoadListener != null) {
                             netLoadListener.onSuccess(result);
@@ -94,25 +104,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         netLoadListener.onError(e);
                     }
                 }
-
-                @Override
-                public void onError(Throwable exception) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onNotNetOrException();
-                        netLoadListener.onError(exception);
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            };
-            if (params != null) {
-                netApiService.getPostNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
-            } else {
-                netApiService.getPostNetData(url).compose(getSchedulerObservableTransformer()).subscribe(observer);
-            }
+            });
         } else {
             if (netLoadListener != null) {
                 netLoadListener.onNotNetOrException();
@@ -122,10 +114,30 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     }
 
     /**
+     * 获取适配框架的参数
+     *
+     * @param params
+     * @return
+     */
+    @Nullable
+    private HttpParams getHttpParams(Map<String, Object> params) {
+        HttpParams httpParams = null;
+        if (params != null) {
+            httpParams = new HttpParams();
+            for (Map.Entry<String, Object> next1 : params.entrySet()) {
+                String key = next1.getKey();
+                String mapValue = getStringMapValue(next1.getValue());
+                httpParams.put(key, mapValue);
+            }
+        }
+        return httpParams;
+    }
+
+    /**
      * @param context
      * @param url
      */
-    public void loadNetDataPostSync(Context context, String url)  throws IOException {
+    public void loadNetDataPostSync(Context context, String url) throws IOException {
         loadNetDataPostSync(context, url, null);
     }
 
@@ -136,131 +148,78 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param url
      * @param params
      */
-    public Response<String> loadNetDataPostSync(Context context, String url, Map<String, Object> params) throws IOException {
+    public String loadNetDataPostSync(Context context, String url, Map<String, Object> params) {
         if (NetWorkUtils.checkNet(context)) {
-            NetApiService netApiService = NetApiManager.getInstance().getNetApiService();
-            if (params != null) {
-                return netApiService.getPostSyncNetData(url, params).execute();
-            } else {
-                return netApiService.getPostSyncNetData(url).execute();
-            }
+            //            先进行框架初始化
+            NetApiManager.getInstance().initNetInstance();
+            HttpParams httpParams = getHttpParams(params);
+            final String[] resultSuccess = {null};
+            EasyHttp.post(url).params(httpParams).syncRequest(true).execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    resultSuccess[0] = null;
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    resultSuccess[0] = s;
+                }
+            });
+            return resultSuccess[0];
         } else {
             return null;
         }
     }
 
-    /**
-     * get请求
-     *
-     * @param context
-     * @param url
-     * @param netLoadListener
-     */
-    public void loadNetDataGet(Context context, String url, NetLoadListener netLoadListener) {
-        loadNetDataGet(context, url, null, netLoadListener);
+    public void loadNetDataGetCache(String url, boolean isForceNet, NetLoadListener netLoadListener) {
+        loadNetDataGetCache(url, null, isForceNet, netLoadListener);
     }
 
     /**
-     * get请求
+     * 缓存策略-->
+     * 是否有网络-->有网-->是否强制刷新数据-->是，先请求网络，请求网络失败后再加载缓存
+     * 否，先使用缓存，不管是否存在，仍然请求网络
+     * -->无网-->只读取缓存，缓存没有会返回null
      *
-     * @param context
-     * @param url
-     * @param params
-     * @param netLoadListener
-     */
-    public void loadNetDataGet(Context context, String url, Map<String, String> params, NetLoadListener netLoadListener) {
-        if (NetWorkUtils.checkNet(context)) {
-            NetApiService netApiService = NetApiManager.getInstance().getNetApiService();
-            Observer<String> observer = new Observer<String>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(String result) {
-                    try {
-                        if (netLoadListener != null) {
-                            netLoadListener.onSuccess(result);
-                        }
-                    } catch (Exception e) {
-                        netLoadListener.onNotNetOrException();
-                        netLoadListener.onError(e);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable exception) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onNotNetOrException();
-                        netLoadListener.onError(exception);
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            };
-            if (params != null) {
-                netApiService.getGetNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
-            } else {
-                netApiService.getGetNetData(url).compose(getSchedulerObservableTransformer()).subscribe(observer);
-            }
-        } else {
-            if (netLoadListener != null) {
-                netLoadListener.onNotNetOrException();
-                netLoadListener.netClose();
-            }
-        }
-    }
-
-    /**
-     * 加载带缓存网络请求
-     *
-     * @param url
+     * @param url 必须是正常网址 区分正式测试库
      * @param params
      * @param isForceNet
      * @param netLoadListener
      */
-    // TODO: 2018/12/4 缓存待加入
-    public void loadNetDataGetCache(String url, Map<String, String> params, boolean isForceNet, NetLoadListener netLoadListener) {
+    public void loadNetDataGetCache(String url, LinkedHashMap<String, String> params, boolean isForceNet, NetLoadListener netLoadListener) {
         if (!TextUtils.isEmpty(url)) {
-            NetApiService netApiService = NetApiManager.getInstance().getNetCacheApiService(isForceNet);
-            Observer<String> observer = new Observer<String>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(String result) {
-                    try {
-                        if (netLoadListener != null) {
-                            netLoadListener.onSuccess(result);
+            //            先进行框架初始化
+            NetApiManager.getInstance().initNetInstance();
+            HttpParams httpParams = new HttpParams();
+            httpParams.put(params);
+            EasyHttp.get(url).params(httpParams)
+//                    cachekey 默认网址加参数
+                    .cacheKey(getUrlNameKey(url, params))
+                    .cacheTime(NetWorkUtils.isConnectedByState(mAppContext) ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000)
+                    .cacheMode(NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTEDISTINCT) : ONLYCACHE)
+                    .execute(new SimpleCallBack<String>() {
+                        @Override
+                        public void onError(ApiException e) {
+                            if (netLoadListener != null) {
+                                netLoadListener.onError(e);
+                                netLoadListener.onNotNetOrException();
+                            }
                         }
-                    } catch (Exception e) {
-                        netLoadListener.onError(e);
-                    }
-                }
 
-                @Override
-                public void onError(Throwable exception) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onError(exception);
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            };
-            if (params != null) {
-                netApiService.getGetNetData(url, params).compose(getSchedulerObservableTransformer()).subscribe(observer);
-            } else {
-                netApiService.getGetNetData(url).compose(getSchedulerObservableTransformer()).subscribe(observer);
-            }
+                        @Override
+                        public void onSuccess(String result) {
+                            if (!TextUtils.isEmpty(result)) {
+                                if (netLoadListener != null) {
+                                    netLoadListener.onSuccess(result);
+                                }
+                            } else {
+                                if (netLoadListener != null) {
+                                    netLoadListener.onError(new Throwable("缓存为空！"));
+                                    netLoadListener.onNotNetOrException();
+                                }
+                            }
+                        }
+                    });
         } else {
             if (netLoadListener != null) {
                 netLoadListener.onError(new Throwable("url为空"));
@@ -268,10 +227,49 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
     }
 
-    public void downFile(String url, String fileDir, String fileName, DownloadListener netLoadProgressListener) {
+    private String getUrlNameKey(String url, LinkedHashMap<String, String> linkedHashMap) {
+        try {
+            if (TextUtils.isEmpty(url)) {
+                throw new IllegalAccessException("url为空");
+            }
+            // 添加url参数
+            if (linkedHashMap != null) {
+                Iterator<String> it = linkedHashMap.keySet().iterator();
+                StringBuilder sb = null;
+                while (it.hasNext()) {
+                    String key = it.next();
+                    String value = linkedHashMap.get(key);
+                    if (sb == null) {
+                        sb = new StringBuilder();
+                        sb.append("?");
+                    } else {
+                        sb.append("&");
+                    }
+                    sb.append(key);
+                    sb.append("=");
+                    sb.append(value);
+                }
+                url += (sb == null ? "" : sb);
+            }
+            return url;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param url
+     * @param fileDir
+     * @param netLoadProgressListener
+     */
+    public void downFile(String url, String fileDir, DownloadListener netLoadProgressListener) {
         if (NetWorkUtils.checkNet(mAppContext)) {
             if (netLoadProgressListener != null) {
                 int lastCode = url.lastIndexOf("/");
+//                baseUrl 必须填写
                 if (lastCode == -1 || lastCode + 1 >= url.length()) {
                     showToast(mAppContext, "地址错误！");
                     return;
@@ -279,7 +277,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 String baseUrl = url.substring(0, lastCode + 1);
                 try {
                     DownloadHelper downloadHelper = new DownloadHelper(netLoadProgressListener, baseUrl);
-                    downloadHelper.downloadFile(url, fileDir, fileName);
+                    downloadHelper.downloadFile(url, fileDir);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -289,22 +287,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 netLoadProgressListener.onFail(new Throwable(mAppContext.getString(R.string.unConnectedNetwork)));
             }
         }
-    }
-
-    /**
-     * 带progres接口
-     */
-    public interface NetLoadProgressListener {
-
-        void onStart();
-
-        void onSuccess(File result);
-
-        void onLoading(long total, long current);
-
-        void onError(Throwable throwable);
-
-        void netClose();
     }
 
     /**

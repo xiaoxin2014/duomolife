@@ -50,6 +50,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.FIND_AD;
 import static com.amkj.dmsh.constant.Url.F_ACTIVITY_AD;
 import static com.amkj.dmsh.constant.Url.F_HOT_TOPIC_LIST;
@@ -121,6 +123,7 @@ public class FindFragment extends BaseFragment {
     //    发现活动图
     private List<CommunalADActivityBean> findActivityList = new ArrayList<>();
     private CBViewHolderCreator cbViewHolderCreator;
+    private boolean isUpdateCache;
 
     @Override
     protected int getContentView() {
@@ -138,6 +141,7 @@ public class FindFragment extends BaseFragment {
         smart_refresh_find.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
+                isUpdateCache = true;
                 loadData();
                 EventBus.getDefault().post(new EventMessage("refreshFindData", 1));
             }
@@ -273,9 +277,9 @@ public class FindFragment extends BaseFragment {
     }
 
     private void getFindAd() {
-        Map<String, Object> params = new HashMap<>();
+        LinkedHashMap<String, Object> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_AD, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + FIND_AD, params, isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -319,7 +323,7 @@ public class FindFragment extends BaseFragment {
      * 发现-活动图
      */
     private void getFindActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ACTIVITY_AD,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 findActivityList.clear();
@@ -345,7 +349,7 @@ public class FindFragment extends BaseFragment {
      * 获取热门主题
      */
     private void getHotTopic() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_HOT_TOPIC_LIST,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (topicPage == 1) {
@@ -397,6 +401,7 @@ public class FindFragment extends BaseFragment {
         Intent intent = new Intent(getActivity(), FindHotTopicListActivity.class);
         startActivity(intent);
     }
+
     @Override
     public void initImmersionBar() {
         ImmersionBar.with(this).titleBar(tl_find_header)

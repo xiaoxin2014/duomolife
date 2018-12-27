@@ -1,8 +1,6 @@
 package com.amkj.dmsh.homepage.activity;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +20,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -57,13 +56,11 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.XUtil;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.inteface.MyProgressCallBack;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.gyf.barlibrary.ImmersionBar;
@@ -78,7 +75,6 @@ import com.yanzhenjie.permission.Permission;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,12 +91,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
-import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
@@ -280,18 +274,14 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             }
         });
 
-        web_communal.setDownloadListener((url, userAgent, contentDisposition, mineType, contentLength) -> {
-            if (constantMethod == null) {
-                constantMethod = new ConstantMethod();
+        web_communal.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                Intent action = new Intent();
+                action.setAction("android.intent.action.VIEW");
+                action.setData(Uri.parse(url));
+                startActivity(action);
             }
-            constantMethod.setOnGetPermissionsSuccess(() -> {
-                String downFilePath = constantMethod.takePicRootDir(DoMoLifeCommunalActivity.this, "dmDownFile");
-                constantMethod.createFilePath(downFilePath);
-                downFilePath += "/" + url.substring(url.lastIndexOf("/"));
-                notifyId = (int) (System.currentTimeMillis() / 10000);
-                downLoadFile(url, downFilePath, notifyId);
-            });
-            constantMethod.getPermissions(DoMoLifeCommunalActivity.this.getApplicationContext(), Permission.Group.STORAGE);
         });
         web_communal.setOnScrollChangedCallback(new HtmlWebView.OnScrollChangedCallback() {
             @Override
@@ -327,66 +317,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 文件下载
-     *
-     * @param downUrl
-     * @param invoiceSavePath
-     * @param notifyId
-     */
-    private void downLoadFile(final String downUrl, final String invoiceSavePath, final int notifyId) {
-        if (constantMethod.fileIsExist(invoiceSavePath)) {
-            if (downUrl.contains(".apk")) {
-                installApps(DoMoLifeCommunalActivity.this, new File(invoiceSavePath));
-            }
-        } else {
-            XUtil.DownLoadFile(downUrl, invoiceSavePath, new MyProgressCallBack<File>() {
-                @Override
-                public void onStarted() {
-                    showToast(DoMoLifeCommunalActivity.this, "正在下载……");
-                    mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    mBuilder = new NotificationCompat.Builder(DoMoLifeCommunalActivity.this, channelId);
-                    mBuilder.setContentTitle(downUrl.substring(downUrl.lastIndexOf("/"))).setContentText("正在下载").setSmallIcon(R.mipmap.ic_launcher_round);
-                    mBuilder.setProgress(100, 0, false);
-                    Notification notification = mBuilder.build();
-                    mNotifyManager.notify(notifyId, notification);
-                }
-
-                @Override
-                public void onSuccess(File result) {
-                    mBuilder.setProgress(0, 0, false).setContentText("下载完成")
-                            .setAutoCancel(true);
-                    Intent intent = new Intent();
-                    intent.setAction(BROADCAST_NOTIFY);
-                    intent.putExtra("filePath", invoiceSavePath);
-                    Notification notification = mBuilder.build();
-                    notification.contentIntent = PendingIntent.getBroadcast(DoMoLifeCommunalActivity.this, DoMoLifeCommunalActivity.this.notifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    mNotifyManager.notify(notifyId, notification);
-                    showToast(DoMoLifeCommunalActivity.this, "下载完成：" + result.getAbsolutePath());
-                    if (downUrl.contains(".apk")) {
-                        installApps(DoMoLifeCommunalActivity.this, result);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-                    mBuilder.setContentText("下载失败");
-                    mNotifyManager.notify(notifyId, mBuilder.build());
-                    showToast(DoMoLifeCommunalActivity.this, "下载失败");
-                }
-
-                @Override
-                public void onLoading(long total, long current, boolean isDownloading) {
-                    //更新进度条
-                    int currentNum = (int) (100 * current / total);
-                    mBuilder.setProgress(100, currentNum, false);
-                    mBuilder.setContentText("下载中" + currentNum + "%");
-                    mNotifyManager.notify(notifyId, mBuilder.build());
-                }
-            });
-        }
-    }
-
     private String getRandomString(int length) { //length表示生成字符串的长度
         String base = "abcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
@@ -404,7 +334,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             finishWebPage(1);
             return true;
-        }else{
+        } else {
             return super.onKeyDown(keyCode, event);
         }
     }

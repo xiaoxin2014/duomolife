@@ -281,6 +281,33 @@ public static final int *;
 -keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
+#okhttp
+-dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.** { *;}
+-dontwarn okio.**
+
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Exceptions
+
+# Retrolambda
+-dontwarn java.lang.invoke.*
+
+# Gson
+-keep class com.google.gson.stream.** { *; }
+-keepattributes EnclosingMethod
+-keep class org.xz_sale.entity.**{*;}
+-keep class com.google.gson.** {*;}
+-keep class com.google.**{*;}
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+-keep class com.google.gson.examples.android.model.** { *; }
+
+#RxEasyHttp
+-keep class com.zhouyou.http.model.** {*;}
+-keep class com.zhouyou.http.cache.model.** {*;}
+-keep class com.zhouyou.http.cache.stategy.**{*;}
 
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule

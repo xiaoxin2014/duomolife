@@ -120,6 +120,7 @@ public class QualityFragment extends BaseFragment {
     //    上一次点击时间
     private long clickOldTime;
     private boolean isClickSelect;
+    private QualityTypeEntity qualityTypeEntity;
 
     @Override
     protected int getContentView() {
@@ -309,14 +310,20 @@ public class QualityFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                QualityTypeEntity typeBean = gson.fromJson(result, QualityTypeEntity.class);
-                if (typeBean != null) {
-                    if (typeBean.getCode().equals(SUCCESS_CODE)) {
-                        setSlideData(typeBean.getQualityTypeBeanList());
-                    } else if(!EMPTY_CODE.equals(typeBean.getCode())){
-                        showToast(getActivity(), typeBean.getMsg());
+                qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+                if (qualityTypeEntity != null) {
+                    if (qualityTypeEntity.getCode().equals(SUCCESS_CODE)) {
+                        setSlideData(qualityTypeEntity.getQualityTypeBeanList());
+                    } else if(!EMPTY_CODE.equals(qualityTypeEntity.getCode())){
+                        showToast(getActivity(), qualityTypeEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityTypeEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSir(loadService,qualityTypeEntity);
             }
         });
     }
@@ -434,5 +441,10 @@ public class QualityFragment extends BaseFragment {
     public void initImmersionBar() {
         ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
                 .statusBarDarkFont(true).fitsSystemWindows(true).navigationBarEnable(false).init();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 }

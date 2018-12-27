@@ -50,6 +50,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +76,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.H_AD_LIST;
 import static com.amkj.dmsh.constant.Url.H_CATEGORY_LIST;
 import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_LIST;
@@ -136,6 +138,7 @@ public class HomePageFragment extends BaseFragment {
     private HomeImgActivityAdapter homeImgActivityAdapter;
     private boolean isAutoClose;
     private CBViewHolderCreator cbViewHolderCreator;
+    private boolean isUpdateCache;
 
     @Override
     protected int getContentView() {
@@ -144,7 +147,10 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        smart_refresh_home.setOnRefreshListener(refreshLayout -> loadData());
+        smart_refresh_home.setOnRefreshListener(refreshLayout -> {
+            isUpdateCache = true;
+            loadData();
+        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
                 , LinearLayoutManager.HORIZONTAL, false);
         communal_recycler_wrap.setLayoutManager(linearLayoutManager);
@@ -337,8 +343,11 @@ public class HomePageFragment extends BaseFragment {
 
     }
 
+    /**
+     * 获取活动列表
+     */
     private void getHotActivityList() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_HOT_ACTIVITY_LIST,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_HOT_ACTIVITY_LIST,isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -371,9 +380,9 @@ public class HomePageFragment extends BaseFragment {
     }
 
     private void getAdLoop() {
-        Map<String, String> params = new HashMap<>();
+        LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_AD_LIST,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_AD_LIST, params,isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -408,15 +417,18 @@ public class HomePageFragment extends BaseFragment {
 
             @Override
             public void onNotNetOrException() {
-                if(adBeanList.size()<1){
+                if (adBeanList.size() < 1) {
                     rel_communal_banner.setVisibility(View.GONE);
                 }
             }
         });
     }
 
+    /**
+     * 专区活动广告
+     */
     private void getRegionActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_REGION_ACTIVITY,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_REGION_ACTIVITY, isUpdateCache, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -436,16 +448,11 @@ public class HomePageFragment extends BaseFragment {
                     }
                 }
             }
-
-            @Override
-            public void onNotNetOrException() {
-                rv_home_activity.setVisibility(View.GONE);
-            }
         });
     }
 
     private void getArticleTypeList() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_CATEGORY_LIST,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_CATEGORY_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_refresh_home.finishRefresh();
@@ -526,10 +533,12 @@ public class HomePageFragment extends BaseFragment {
         getMessageWarm();
         super.onResume();
     }
+
     @Override
     public boolean immersionBarEnabled() {
         return true;
     }
+
     @Override
     public void initImmersionBar() {
         ImmersionBar.with(this).titleBar(tb_tool_home).keyboardEnable(true).navigationBarEnable(false)

@@ -52,7 +52,6 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.google.gson.Gson;
-import com.gyf.barlibrary.ImmersionBar;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
@@ -944,11 +943,5 @@ public class ArticleOfficialActivity extends BaseActivity {
                 linearLayoutManager.setStackFromEnd(true);
             }
         }
-    }
-
-    @Override
-    public void setStatusBar() {
-        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).titleBar(tl_normal_bar).keyboardEnable(true).navigationBarEnable(false)
-                .statusBarDarkFont(true).init();
     }
 }

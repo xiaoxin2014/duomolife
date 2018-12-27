@@ -221,6 +221,19 @@ public class ConstantMethod {
     }
 
     /**
+     * 强制装换成String类型数据
+     *
+     * @param object 此方法仅适用非bean对象 为了过滤网络框架不支持value为Object
+     * @return
+     */
+    public static String getStringMapValue(Object object) {
+        if (object == null) {
+            return "";
+        }
+        return object + "";
+    }
+
+    /**
      * String转换成int
      *
      * @param text
@@ -2674,6 +2687,7 @@ public class ConstantMethod {
 
     public interface RefreshTimeListener {
         void refreshTime();
+
     }
 
     public void setRefreshTimeListener(RefreshTimeListener refreshTimeListener) {
@@ -2704,7 +2718,7 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
-        if(context==null){
+        if (context == null) {
             return;
         }
         Context applicationContext = context.getApplicationContext();

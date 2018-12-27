@@ -26,6 +26,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -46,7 +47,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.F_TOPIC_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_TOPIC_DES;
 import static com.amkj.dmsh.utils.AppBarStateChangeListener.State.COLLAPSED;
@@ -62,7 +62,7 @@ import static com.amkj.dmsh.utils.AppBarStateChangeListener.State.COLLAPSED;
  */
 public class FindTopicDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_refresh_find_topic)
-    public RefreshLayout smart_refresh_find;
+    public SmartRefreshLayout smart_refresh_find;
     @BindView(R.id.std_find_topic_art_type)
     public SlidingTabLayout std_find_topic_art_type;
     @BindView(R.id.rel_find_topic_cover)
@@ -93,6 +93,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
     public static final String TOPIC_TYPE = "topic";
     private String topicId;
     private FindHotTopicBean findHotTopicBean;
+    private FindTopicDetailEntity findHotTopicEntity;
 
     @Override
     protected int getContentView() {
@@ -144,7 +145,6 @@ public class FindTopicDetailsActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        String url = BASE_URL + F_TOPIC_DES;
         Map<String, Object> params = new HashMap<>();
         params.put("id", topicId);
         if (userId > 0) {
@@ -155,7 +155,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
             public void onSuccess(String result) {
                 dismissDialog();
                 Gson gson = new Gson();
-                FindTopicDetailEntity findHotTopicEntity = gson.fromJson(result, FindTopicDetailEntity.class);
+                findHotTopicEntity = gson.fromJson(result, FindTopicDetailEntity.class);
                 if (findHotTopicEntity != null) {
                     if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         findHotTopicBean = findHotTopicEntity.getFindHotTopicBean();
@@ -166,11 +166,13 @@ public class FindTopicDetailsActivity extends BaseActivity {
                         showToast(FindTopicDetailsActivity.this, findHotTopicEntity.getMsg());
                     }
                 }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, findHotTopicEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 dismissDialog();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService,findHotTopicEntity);
             }
         });
     }
@@ -273,5 +275,10 @@ public class FindTopicDetailsActivity extends BaseActivity {
                 getLoginStatus(FindTopicDetailsActivity.this);
             }
         }
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 }

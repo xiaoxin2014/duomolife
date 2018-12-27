@@ -28,8 +28,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import retrofit2.Response;
-
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
@@ -288,8 +286,8 @@ public class TotalPersonalTrajectory {
         params.put("deviceType", "Android");
         params.put("jsonData", JSON.toJSONString(jsonStr));
         try {
-            Response<String> response = NetLoadUtils.getNetInstance().loadNetDataPostSync(mAppContext, url, params);
-            if (response != null) {
+            String responseResult = NetLoadUtils.getNetInstance().loadNetDataPostSync(mAppContext, url, params);
+            if (!TextUtils.isEmpty(responseResult)) {
                 return true;
             } else {
                 return false;
