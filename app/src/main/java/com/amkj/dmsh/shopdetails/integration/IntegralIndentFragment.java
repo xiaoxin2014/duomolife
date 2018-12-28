@@ -46,6 +46,7 @@ import butterknife.BindView;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
@@ -301,7 +302,7 @@ public class IntegralIndentFragment extends BaseFragment {
                         showToast(getActivity(), "取消订单成功");
                         loadData();
                     } else {
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }
@@ -432,10 +433,9 @@ public class IntegralIndentFragment extends BaseFragment {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     } else {
-                        showToast(getActivity(), requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }

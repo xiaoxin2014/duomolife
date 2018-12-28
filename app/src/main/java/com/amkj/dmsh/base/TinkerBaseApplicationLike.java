@@ -57,7 +57,6 @@ import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
 import org.lasque.tusdk.core.TuSdk;
-import org.xutils.x;
 
 import java.io.File;
 import java.io.IOException;
@@ -256,7 +255,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         //        LinkedMe 深度链接
         initLinkMe();
         // 初始化xUtils
-        x.Ext.init(getApplication());
         if (isAppMainProcess()) {
             if (isDebugTag) {
                 SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);

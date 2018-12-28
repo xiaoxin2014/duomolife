@@ -56,6 +56,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -360,9 +361,9 @@ public class SalesReturnAppealActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
-                if (indentInfo != null) {
-                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (commitDialogHelper == null) {
                             commitDialogHelper = new AlertDialogHelper(SalesReturnAppealActivity.this);
                             commitDialogHelper.setTitle("提交成功").setMsgTextGravity(Gravity.CENTER)
@@ -381,8 +382,7 @@ public class SalesReturnAppealActivity extends BaseActivity {
                         }
                         commitDialogHelper.show();
                     } else {
-                        showToast(SalesReturnAppealActivity.this, indentInfo.getResult() != null ?
-                                indentInfo.getResult().getMsg() : indentInfo.getMsg());
+                        showToastRequestMsg(SalesReturnAppealActivity.this, requestStatus);
                     }
                     header_shared.setEnabled(true);
                     header_shared.setText("提交");

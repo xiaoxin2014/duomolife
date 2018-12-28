@@ -75,6 +75,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_PREFECTURE;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
@@ -695,7 +696,7 @@ public class AttendanceActivity extends BaseActivity {
                                 showToast(AttendanceActivity.this, "已关闭签到提醒");
                             }
                         } else {
-                            showToast(AttendanceActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(AttendanceActivity.this, requestStatus);
                         }
                         textView.setEnabled(true);
                     }
@@ -800,7 +801,7 @@ public class AttendanceActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        showToast(AttendanceActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(AttendanceActivity.this, requestStatus);
                     }
                 }
 

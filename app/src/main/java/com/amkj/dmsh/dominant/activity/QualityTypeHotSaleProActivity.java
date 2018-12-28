@@ -52,6 +52,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -276,7 +277,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(QualityTypeHotSaleProActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(QualityTypeHotSaleProActivity.this, requestStatus);
                         }
                     }
                 }

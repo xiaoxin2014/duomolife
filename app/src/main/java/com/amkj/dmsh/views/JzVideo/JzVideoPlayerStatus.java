@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZMediaManager;
+import cn.jzvd.JzvdMgr;
 
 import static cn.jzvd.JZDataSource.URL_KEY_DEFAULT;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -90,20 +91,27 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     }
 
     /**
-     *
+     *进去全屏
      */
     @Override
     public void startWindowFullscreen() {
         super.startWindowFullscreen();
-        Log.d(TAG + "volume", "startWindowFullscreen: " + currentScreen + "控件状态->"
-                + iv_video_volume.isSelected() + "\t"+"音量->"+volumeOn);
+        ImageView imageView = JzvdMgr.getSecondFloor().findViewById(R.id.iv_video_volume);
+        if(imageView.getVisibility() == VISIBLE){
+            imageView.setSelected(volumeOn);
+        }
     }
 
+    /**
+     * 退出全屏
+     */
     @Override
     public void playOnThisJzvd() {
         super.playOnThisJzvd();
-        Log.d(TAG + "volume", "playOnThisJzvd: " + currentScreen + "控件状态->"
-                + iv_video_volume.isSelected() + "\t"+"音量->"+volumeOn);
+        ImageView imageView = JzvdMgr.getFirstFloor().findViewById(R.id.iv_video_volume);
+        if(imageView.getVisibility() == VISIBLE){
+            imageView.setSelected(volumeOn);
+        }
     }
 
     /**
@@ -180,6 +188,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
         super.onPrepared();
         adjustVolume(volumeOn);
     }
+
     private void getStartVideoStatusListener() {
         iv_video_product.setVisibility(GONE);
         if (videoStatusListener != null) {

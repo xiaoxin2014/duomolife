@@ -109,6 +109,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -1098,7 +1099,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             startActivity(intent);
                         }
                     } else {
-                        showToast(QualityGroupShopDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(QualityGroupShopDetailActivity.this, requestStatus);
                     }
                 } else {
                     showToast(QualityGroupShopDetailActivity.this, R.string.invalidData);

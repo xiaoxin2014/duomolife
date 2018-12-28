@@ -82,6 +82,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -765,8 +766,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
                         startActivity(intent);
                         finish();
                     } else {
-                        showToast(DirectApplyRefundActivity.this, requestInfo.getResult() != null ?
-                                requestInfo.getResult().getMsg() : requestInfo.getMsg());
+                        showToastRequestMsg(DirectApplyRefundActivity.this, requestInfo);
                     }
                 }
             }
@@ -853,8 +853,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         finish();
                     } else {
-                        showToast(DirectApplyRefundActivity.this, requestInfo.getResult() != null ?
-                                requestInfo.getResult().getMsg() : requestInfo.getMsg());
+                        showToastRequestMsg(DirectApplyRefundActivity.this, requestInfo);
                     }
                 }
             }
@@ -898,9 +897,9 @@ public class DirectApplyRefundActivity extends BaseActivity{
                     loadHud.dismiss();
                 }
                 Gson gson = new Gson();
-                RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
-                if (indentInfo != null) {
-                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (commitDialogHelper == null) {
                             commitDialogHelper = new AlertDialogHelper(DirectApplyRefundActivity.this);
                             commitDialogHelper.setTitle("操作提示").setTitleGravity(Gravity.CENTER).setMsgTextGravity(Gravity.CENTER)
@@ -920,8 +919,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
                         }
                         commitDialogHelper.show();
                     } else {
-                        showToast(DirectApplyRefundActivity.this, indentInfo.getResult() != null ?
-                                indentInfo.getResult().getMsg() : indentInfo.getMsg());
+                        showToastRequestMsg(DirectApplyRefundActivity.this, requestStatus);
                     }
                 }
             }

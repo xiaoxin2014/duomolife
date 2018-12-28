@@ -27,6 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -128,7 +129,7 @@ public class PersonalRealNameActivity extends BaseActivity {
                             showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
                             finish();
                         } else {
-                            showToast(PersonalRealNameActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(PersonalRealNameActivity.this, requestStatus);
                         }
                     }
                 }

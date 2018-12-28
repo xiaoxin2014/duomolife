@@ -392,7 +392,7 @@ public class BindingMobileActivity extends BaseActivity {
                         showToast(BindingMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        showException(requestStatus.getMsg());
+                        showException(requestStatus.getResult()!=null?requestStatus.getResult().getMsg():requestStatus.getMsg());
                     }
                 }
             }

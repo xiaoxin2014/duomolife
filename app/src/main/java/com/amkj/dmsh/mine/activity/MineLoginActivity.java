@@ -451,7 +451,7 @@ public class MineLoginActivity extends BaseActivity {
                                     }
                                 }
                             } else {
-                                showException(requestStatus.getMsg());
+                                showException(requestStatus.getResult()!=null?requestStatus.getResult().getMsg():requestStatus.getMsg());
                             }
                         }
                     }

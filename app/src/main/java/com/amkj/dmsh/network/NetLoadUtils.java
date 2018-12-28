@@ -195,7 +195,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             EasyHttp.get(url).params(httpParams)
 //                    cachekey 默认网址加参数
                     .cacheKey(getUrlNameKey(url, params))
-                    .cacheTime(NetWorkUtils.isConnectedByState(mAppContext) ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000)
+//                    缓存过期时间 访问有网络，有效5分钟
+//                    .cacheTime(NetWorkUtils.isConnectedByState(mAppContext) ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000)
                     .cacheMode(NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTEDISTINCT) : ONLYCACHE)
                     .execute(new SimpleCallBack<String>() {
                         @Override

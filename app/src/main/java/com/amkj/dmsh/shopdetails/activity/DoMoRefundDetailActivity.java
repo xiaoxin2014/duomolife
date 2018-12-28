@@ -70,6 +70,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
@@ -414,7 +415,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                         showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                     } else {
-                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(DoMoRefundDetailActivity.this, requestStatus);
                     }
                 }
             }
@@ -857,7 +858,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                         showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                     } else {
-                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(DoMoRefundDetailActivity.this, requestStatus);
                     }
                 }
             }
@@ -900,7 +901,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                         showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                     } else {
-                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(DoMoRefundDetailActivity.this, requestStatus);
                     }
                 }
             }
@@ -936,7 +937,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
                         showToast(DoMoRefundDetailActivity.this, R.string.invalidData);
                     } else {
-                        showToast(DoMoRefundDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(DoMoRefundDetailActivity.this, requestStatus);
                     }
                 }
             }

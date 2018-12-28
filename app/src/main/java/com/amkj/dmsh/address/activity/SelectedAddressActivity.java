@@ -36,6 +36,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -217,7 +218,7 @@ public class SelectedAddressActivity extends BaseActivity {
                         showToast(SelectedAddressActivity.this, "删除地址完成");
                         loadData();
                     } else if (!status.getCode().equals(EMPTY_CODE)) {
-                        showToast(SelectedAddressActivity.this, status.getMsg());
+                        showToastRequestMsg(SelectedAddressActivity.this, status);
                     }
                 }
             }
@@ -288,7 +289,7 @@ public class SelectedAddressActivity extends BaseActivity {
                             loadData();
                         }
                     } else if (!status.getCode().equals(EMPTY_CODE)) {
-                        showToast(SelectedAddressActivity.this, status.getMsg());
+                        showToastRequestMsg(SelectedAddressActivity.this, status);
                     }
                 }
             }

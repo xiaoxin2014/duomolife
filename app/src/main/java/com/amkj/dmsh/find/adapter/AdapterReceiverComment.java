@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import static com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -244,7 +245,7 @@ public class AdapterReceiverComment extends BaseMultiItemQuickAdapter<ArticleCom
                         }
 
                     } else {
-                        showToast(context, requestStatus.getMsg());
+                        showToastRequestMsg(context, requestStatus);
                     }
                 }
             }

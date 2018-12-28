@@ -46,6 +46,7 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -304,14 +305,13 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
                     loadHud.dismiss();
                 }
                 Gson gson = new Gson();
-                RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
-                if (indentInfo != null) {
-                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectPublishAppraiseActivity.this, R.string.appraise_public_success);
                         finish();
                     } else {
-                        showToast(DirectPublishAppraiseActivity.this, indentInfo.getResult() != null
-                                ? indentInfo.getResult().getMsg() : indentInfo.getMsg());
+                        showToastRequestMsg(DirectPublishAppraiseActivity.this, requestStatus);
                     }
                     tv_header_shared.setText("发表评价");
                     tv_header_shared.setEnabled(true);

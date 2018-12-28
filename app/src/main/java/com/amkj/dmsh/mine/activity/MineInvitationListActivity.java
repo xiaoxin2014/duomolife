@@ -40,6 +40,7 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -339,7 +340,7 @@ public class MineInvitationListActivity extends BaseActivity {
                         page = 1;
                         loadData();
                     } else {
-                        showToast(MineInvitationListActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(MineInvitationListActivity.this, requestStatus);
                     }
                 }
             }

@@ -59,6 +59,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
@@ -428,14 +429,13 @@ public class DuMoIndentAllFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
-                if (indentInfo != null) {
-                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                     } else {
-                        showToast(getActivity(), indentInfo.getResult() != null ?
-                                indentInfo.getResult().getMsg() : indentInfo.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }
@@ -456,10 +456,9 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     } else {
-                        showToast(getActivity(), requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }
@@ -479,11 +478,10 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                         loadData();
                     } else {
-                        showToast(getActivity(), requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }
@@ -554,7 +552,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
                         orderBean.setWaitDeliveryFlag(false);
                         showToast(mAppContext, "已提醒商家尽快发货，请耐心等候~");
                     } else {
-                        showToast(mAppContext, requestStatus.getMsg());
+                        showToastRequestMsg(mAppContext, requestStatus);
                     }
                 }
             }

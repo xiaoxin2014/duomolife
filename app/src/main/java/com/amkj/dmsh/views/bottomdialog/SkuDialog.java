@@ -66,6 +66,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.formatFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -1473,7 +1474,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         }
                         skuSaleBean.setIsNotice(requestStatus.getIsNotice());
                     }else{
-                        showToast(baseAct, requestStatus.getMsg());
+                        showToastRequestMsg(baseAct, requestStatus);
                     }
                 }
             }

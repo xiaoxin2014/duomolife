@@ -57,6 +57,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -241,7 +242,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(QualityShopHistoryListActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(QualityShopHistoryListActivity.this, requestStatus);
                         }
                     }
                 }

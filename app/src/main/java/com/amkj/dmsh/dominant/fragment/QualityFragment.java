@@ -53,6 +53,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
@@ -273,7 +274,7 @@ public class QualityFragment extends BaseFragment {
                         int cartNumber = requestStatus.getResult().getCartNumber();
                         badge.setBadgeNumber(cartNumber);
                     } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }

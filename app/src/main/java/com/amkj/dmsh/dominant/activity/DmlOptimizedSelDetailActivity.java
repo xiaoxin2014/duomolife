@@ -61,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -310,7 +311,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DmlOptimizedSelDetailActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(DmlOptimizedSelDetailActivity.this, requestStatus);
                         }
                     }
                 }

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -125,6 +127,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -133,6 +136,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRO_TOPIC;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
+import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
@@ -387,7 +392,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 int topMargin = marginLayoutParams.topMargin;
                 int leftMargin = marginLayoutParams.leftMargin;
                 int rightMargin = marginLayoutParams.rightMargin;
-                marginLayoutParams.setMargins(leftMargin,topMargin,rightMargin,bottomMargin+measuredHeight);
+                marginLayoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin + measuredHeight);
                 download_btn_communal.setLayoutParams(marginLayoutParams);
             }
         });
@@ -498,10 +503,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.show(false);
                     }
-                    if(!download_btn_communal.isVisible()){
+                    if (!download_btn_communal.isVisible()) {
                         download_btn_communal.show(false);
                     }
-                }else{
+                } else {
                     if (download_btn_communal.isVisible()) {
                         download_btn_communal.hide(false);
                     }
@@ -529,7 +534,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (isShowTint) {
             SharedPreferences showShareTint = getSharedPreferences("showShareTint", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = showShareTint.edit();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.CHINA);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
             String format = simpleDateFormat.format(new Date());
             edit.putString("shareDate", format);
             edit.apply();
@@ -601,7 +606,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
@@ -644,7 +649,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
@@ -686,7 +691,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
         goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
@@ -758,7 +763,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 goodsComments.clear();
@@ -835,7 +840,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             };
         }
-        banner_ql_sp_pro_details.setPages(ShopScrollDetailsActivity.this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
+        banner_ql_sp_pro_details.setPages(ShopScrollDetailsActivity.this, cbViewHolderCreator, imagesVideoList).setCanScroll(true).setCanLoop(false)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
         int finalVideoCount = videoCount;
         banner_ql_sp_pro_details.setOnItemClickListener(new OnItemClickListener() {
@@ -1143,7 +1148,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_SERVICE_COMMITMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", productId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1501,7 +1506,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (!TextUtils.isEmpty(shopCarGoodsSkuDif.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSkuDif.getActivityCode());
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Properties prop = new Properties();
@@ -1525,7 +1530,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                                 shopCarGoodsSkuDif = null;
                             }
                         } else {
-                            showToast(ShopScrollDetailsActivity.this, status.getMsg());
+                            showToastRequestMsg(ShopScrollDetailsActivity.this, status);
                         }
                     }
                     tv_sp_details_add_car.setEnabled(true);
@@ -1561,7 +1566,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -1571,7 +1576,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(ShopScrollDetailsActivity.this, requestStatus);
                         }
                     }
                 }
@@ -1643,7 +1648,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         params.put("uid", userId);
         params.put("object_id", shopPropertyBean.getId());
         params.put("type", "goods");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -1811,7 +1816,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("couponId", id);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -1820,11 +1825,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                        } else {
-                            showToast(ShopScrollDetailsActivity.this, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                        }
+                        showToastRequestMsg(ShopScrollDetailsActivity.this, requestStatus);
                     }
                 }
 
@@ -1872,7 +1873,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("skuId", skuSaleBeanId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1882,7 +1883,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
                         showToast(ShopScrollDetailsActivity.this, requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
                     } else {
-                        showToast(ShopScrollDetailsActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(ShopScrollDetailsActivity.this, requestStatus);
                     }
                 }
             }
@@ -2002,5 +2003,28 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         Map<String, String> totalMap = new HashMap<>();
         totalMap.put("relate_id", productId);
         totalPersonalTrajectory.saveTotalDataToFile(totalMap);
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (START_AUTO_PAGE_TURN.equals(message.type)) {
+            if (banner_ql_sp_pro_details != null && !banner_ql_sp_pro_details.isCanScroll()) {
+                openScrollBanner();
+            }
+        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
+            if (banner_ql_sp_pro_details != null && banner_ql_sp_pro_details.isCanScroll()) {
+                stopScrollBanner();
+            }
+        }
+    }
+
+    private void stopScrollBanner() {
+        banner_ql_sp_pro_details.setCanScroll(false);
+        banner_ql_sp_pro_details.setPointViewVisible(false);
+    }
+
+    private void openScrollBanner() {
+        banner_ql_sp_pro_details.setCanScroll(true);
+        banner_ql_sp_pro_details.setPointViewVisible(true);
     }
 }

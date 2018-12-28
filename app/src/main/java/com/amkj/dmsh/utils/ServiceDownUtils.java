@@ -53,41 +53,7 @@ public class ServiceDownUtils extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    //    public void downAppFile(String url, String downFileUrl, boolean isInstallApp, boolean isShowProgress) {
-//        String filePath = downFileUrl.substring(0, downFileUrl.lastIndexOf("/"));
-//        int fileNameCode = downFileUrl.lastIndexOf("/") + 1;
-//        if(fileNameCode>=downFileUrl.length()){
-//            return;
-//        }
-//        String fileName = downFileUrl.substring(fileNameCode);
-//        File pathFile = new File(filePath);
-//        if (!pathFile.exists()) {
-//            pathFile.mkdir();
-//        }
-//        XUtil.DownLoadFile(url, downFileUrl, new MyProgressCallBack<File>() {
-//            @Override
-//            public void onLoading(long total, long current, boolean isDownloading) {
-//                if (isShowProgress) {
-//                    EventBus.getDefault().post(new EventMessage("appVersionProgress", current*1f / total * 100 + 1));
-//                }
-//            }
-//
-//            @Override
-//            public void onSuccess(File file) {
-//                if (isInstallApp
-//                        && file.getAbsolutePath().contains(".apk")) {
-//                    openFile(file, ServiceDownUtils.this);
-//                    stopSelf();
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable ex, boolean isOnCallback) {
-//                showToast(ServiceDownUtils.this, "下载失败");
-//                stopSelf();
-//            }
-//        });
-//    }
+
     public void downAppFile(String url, String downFileUrl, boolean isInstallApp, boolean isShowProgress) {
         NetLoadUtils.getNetInstance().downFile(url, downFileUrl, new DownloadListener() {
             @Override

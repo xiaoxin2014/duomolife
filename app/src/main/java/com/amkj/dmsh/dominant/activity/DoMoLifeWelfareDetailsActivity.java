@@ -79,6 +79,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -480,7 +481,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(DoMoLifeWelfareDetailsActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(DoMoLifeWelfareDetailsActivity.this, requestStatus);
                         }
                     }
                 }

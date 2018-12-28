@@ -45,6 +45,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -263,7 +264,7 @@ public class UserPagerActivity extends BaseActivity {
                         }
                         loadData();
                     } else {
-                        showToast(UserPagerActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(UserPagerActivity.this, requestStatus);
                     }
                 }
 

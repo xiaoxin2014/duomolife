@@ -49,10 +49,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
@@ -305,6 +305,7 @@ public class CommunalWebDetailUtils {
 
     /**
      * 带分享数据
+     *
      * @param object
      * @param shareDataBean
      * @param view
@@ -320,17 +321,19 @@ public class CommunalWebDetailUtils {
 
     /**
      * 无分享数据
+     *
      * @param object
      * @param view
      * @param loadHud
      */
-    public void setWebDataClick(Object object,View view, KProgressHUD loadHud) {
+    public void setWebDataClick(Object object, View view, KProgressHUD loadHud) {
         if (object instanceof Activity) {
             setWebDataClick((Activity) object, null, null, view, loadHud);
         } else if (object instanceof Fragment) {
             setWebDataClick(null, (Fragment) object, null, view, loadHud);
         }
     }
+
     /**
      * 设置web数据点击
      *
@@ -471,11 +474,7 @@ public class CommunalWebDetailUtils {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
+                    showToastRequestMsg(mContext, requestStatus);
                 }
             }
 
@@ -518,11 +517,7 @@ public class CommunalWebDetailUtils {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    } else {
-                        showToast(mContext, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
-                    }
+                    showToastRequestMsg(mContext, requestStatus);
                 }
             }
 

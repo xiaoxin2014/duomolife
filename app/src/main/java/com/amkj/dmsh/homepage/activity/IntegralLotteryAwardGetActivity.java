@@ -30,6 +30,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -292,7 +293,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                                 showToast(IntegralLotteryAwardGetActivity.this, "领取成功");
                                 finish();
                             } else {
-                                showToast(IntegralLotteryAwardGetActivity.this, requestStatus.getMsg());
+                                showToastRequestMsg(IntegralLotteryAwardGetActivity.this, requestStatus);
                             }
                         }
                     }

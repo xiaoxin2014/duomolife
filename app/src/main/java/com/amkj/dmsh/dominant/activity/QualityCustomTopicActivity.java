@@ -22,7 +22,6 @@ import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
-import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.adapter.QualityCustomTopicAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
@@ -57,6 +56,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -402,7 +402,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToast(QualityCustomTopicActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(QualityCustomTopicActivity.this, requestStatus);
                         }
                     }
                 }

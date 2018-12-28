@@ -104,6 +104,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
@@ -1302,11 +1303,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(DirectExchangeDetailsActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(DirectExchangeDetailsActivity.this, requestStatus);
                         finish();
                     } else {
-                        showToast(DirectExchangeDetailsActivity.this, requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(DirectExchangeDetailsActivity.this, requestStatus);
                     }
                 }
             }
@@ -1325,11 +1325,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(DirectExchangeDetailsActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(DirectExchangeDetailsActivity.this, requestStatus);
                         finish();
                     } else {
-                        showToast(DirectExchangeDetailsActivity.this, requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(DirectExchangeDetailsActivity.this, requestStatus);
                     }
                 }
             }
@@ -1345,14 +1344,13 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
-                if (indentInfo != null) {
-                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(DirectExchangeDetailsActivity.this, String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                         finish();
                     } else {
-                        showToast(DirectExchangeDetailsActivity.this, indentInfo.getResult() != null ?
-                                indentInfo.getResult().getMsg() : indentInfo.getMsg());
+                        showToastRequestMsg(DirectExchangeDetailsActivity.this, requestStatus);
                     }
                 }
             }
@@ -1605,7 +1603,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                         orderDetailBean.setWaitDeliveryFlag(false);
                         showToast(mAppContext, "已提醒商家尽快发货，请耐心等候~");
                     } else {
-                        showToast(mAppContext, requestStatus.getMsg());
+                        showToastRequestMsg(mAppContext, requestStatus);
                     }
                 }
             }

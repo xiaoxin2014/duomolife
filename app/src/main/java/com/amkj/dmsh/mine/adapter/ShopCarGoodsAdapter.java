@@ -50,6 +50,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.views.RectAddAndSubViewCommunal.TYPE_SUBTRACT;
@@ -311,7 +312,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
                         EventBus.getDefault().post(new EventMessage("updateData", transmitObject));
                     } else {
                         view.setNum(transmitObject.getOldCount());
-                        showToast(context, status.getMsg());
+                        showToastRequestMsg(context, status);
                     }
                     view.setEnabled(true);
                 }

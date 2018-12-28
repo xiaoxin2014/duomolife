@@ -47,6 +47,7 @@ import butterknife.BindView;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
@@ -302,14 +303,13 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                RequestStatus indentInfo = gson.fromJson(result, RequestStatus.class);
-                if (indentInfo != null) {
-                    if (indentInfo.getCode().equals(SUCCESS_CODE)) {
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                         showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "删除订单"));
                     } else {
-                        showToast(getActivity(), indentInfo.getResult() != null ?
-                                indentInfo.getResult().getMsg() : indentInfo.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }

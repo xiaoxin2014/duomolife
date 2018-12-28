@@ -84,6 +84,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
@@ -820,7 +821,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                             }
                             getDetailsData();
                         } else {
-                            showToast(ArticleDetailsImgActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(ArticleDetailsImgActivity.this, requestStatus);
                         }
                         textView.setEnabled(true);
                     }

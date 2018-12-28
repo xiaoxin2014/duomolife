@@ -50,6 +50,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
@@ -358,7 +359,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                         orderBean.setWaitDeliveryFlag(false);
                         showToast(mAppContext, "已提醒商家尽快发货，请耐心等候~");
                     } else {
-                        showToast(mAppContext, requestStatus.getMsg());
+                        showToastRequestMsg(mAppContext, requestStatus);
                     }
                 }
             }

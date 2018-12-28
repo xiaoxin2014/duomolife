@@ -849,7 +849,7 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToast(context.getApplicationContext(), requestStatus.getMsg());
+                        showToastRequestMsg(context.getApplicationContext(), requestStatus);
                     }
                 }
             }
@@ -903,7 +903,7 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToast(context.getApplicationContext(), requestStatus.getMsg());
+                        showToastRequestMsg(context.getApplicationContext(), requestStatus);
                     }
                 }
             }
@@ -1012,8 +1012,7 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToast(context, requestInfo.getResult() != null ?
-                                requestInfo.getResult().getMsg() : requestInfo.getMsg());
+                        showToastRequestMsg(context, requestInfo);
                     }
                 }
             }
@@ -1574,7 +1573,7 @@ public class ConstantMethod {
                             totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                         } else {
-                            showToast(context, status.getMsg());
+                            showToastRequestMsg(context, status);
                         }
                     }
                 }
@@ -2001,7 +2000,7 @@ public class ConstantMethod {
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToast(context, requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                            showToastRequestMsg(context, requestStatus);
                             Intent intent = new Intent(context, DirectMyCouponActivity.class);
                             context.startActivity(intent);
                         }
@@ -2701,14 +2700,16 @@ public class ConstantMethod {
      * @param message
      */
     public static void showToast(Context context, String message) {
-        Context applicationContext = context.getApplicationContext();
-        if (toast == null) {
-            toast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT);
-        } else {
-            toast.setText(message);
+        if (isContextExisted(context)) {
+            Context applicationContext = context.getApplicationContext();
+            if (toast == null) {
+                toast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT);
+            } else {
+                toast.setText(message);
+            }
+            //设置新的消息提示
+            toast.show();
         }
-        //设置新的消息提示
-        toast.show();
     }
 
     /**
@@ -2718,7 +2719,7 @@ public class ConstantMethod {
      * @param resId
      */
     public static void showToast(Context context, int resId) {
-        if (context == null) {
+        if (context == null || !isContextExisted(context)) {
             return;
         }
         Context applicationContext = context.getApplicationContext();
@@ -2727,6 +2728,17 @@ public class ConstantMethod {
         } else {
             showToast(applicationContext, applicationContext.getResources().getString(resId));
         }
+    }
+
+    /**
+     * 请求返回状态码提示
+     *
+     * @param context
+     * @param requestStatus
+     */
+    public static void showToastRequestMsg(Context context, RequestStatus requestStatus) {
+        showToast(context, requestStatus == null ? "操作失败！" :
+                requestStatus.getResult() != null ? getStrings(requestStatus.getResult().getMsg()) : getStrings(requestStatus.getMsg()));
     }
 
     /**

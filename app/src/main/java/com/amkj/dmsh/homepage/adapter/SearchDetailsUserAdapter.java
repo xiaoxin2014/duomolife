@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -128,7 +129,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
                             showToast(context, "已取消关注");
                         }
                     } else {
-                        showToast(context, requestStatus.getMsg());
+                        showToastRequestMsg(context, requestStatus);
                     }
                 }
 

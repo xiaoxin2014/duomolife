@@ -41,6 +41,7 @@ import butterknife.BindView;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -268,11 +269,10 @@ public class DoMoIndentWaitPayFragment extends BaseFragment {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                         loadData();
                     } else {
-                        showToast(getActivity(), requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
             }

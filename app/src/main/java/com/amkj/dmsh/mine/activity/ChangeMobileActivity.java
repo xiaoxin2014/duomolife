@@ -210,7 +210,7 @@ public class ChangeMobileActivity extends BaseActivity {
                         showToast(ChangeMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        showException(requestStatus.getMsg());
+                        showException(requestStatus.getResult()!=null?requestStatus.getResult().getMsg():requestStatus.getMsg());
                     }
                 }
             }

@@ -35,6 +35,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -484,7 +485,7 @@ public class AccountSafeActivity extends BaseActivity {
                     tv_account_safe_weChat.setText("未绑定");
                     showToast(AccountSafeActivity.this, String.format(getResources().getString(R.string.doSuccess), "解绑"));
                 } else {
-                    showToast(AccountSafeActivity.this, getStrings(requestStatus.getMsg()));
+                    showToastRequestMsg(AccountSafeActivity.this, requestStatus);
                 }
             }
 

@@ -79,6 +79,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -746,7 +747,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                             }
                             getDetailsData();
                         } else {
-                            showToast(ArticleInvitationDetailsActivity.this, requestStatus.getMsg());
+                            showToastRequestMsg(ArticleInvitationDetailsActivity.this, requestStatus);
                         }
                         textView.setEnabled(true);
                     }

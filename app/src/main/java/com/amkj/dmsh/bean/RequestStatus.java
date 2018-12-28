@@ -1,20 +1,13 @@
 package com.amkj.dmsh.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by atd48 on 2016/9/2.
  */
-public class RequestStatus {
-
-    /**
-     * code : 01
-     * msg : 请求成功
-     */
-
-    private String code;
-    private String msg;
+public class RequestStatus extends BaseEntity {
     private boolean isSign;
     private boolean isCollect;
     private int registerFlag;
@@ -271,22 +264,6 @@ public class RequestStatus {
 
     public void setSign(boolean sign) {
         isSign = sign;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public int getRegisterFlag() {

@@ -37,6 +37,7 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUMBER_BAR;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.INDENT_DRAW_UP_INVOICE;
@@ -286,7 +287,7 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
                         showToast(IndentDrawUpInvoiceActivity.this, "发票开具成功");
                         finish();
                     } else {
-                        showToast(IndentDrawUpInvoiceActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(IndentDrawUpInvoiceActivity.this, requestStatus);
                     }
                 }
             }

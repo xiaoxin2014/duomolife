@@ -54,20 +54,18 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
             iv_ad_image.setVisibility(View.GONE);
             GlideImageLoaderUtil.loadCenterCrop(context, jvp_ad_video_play.thumbImageView, getStrings(communalADActivityBean.getPicUrl()));
             jvp_ad_video_play.setVideoSkipData(getStrings(communalADActivityBean.getVideoUrl()), getStrings(communalADActivityBean.getAndroidLink()));
-            if(isShowProduct){
-                jvp_ad_video_play.setVideoStatusListener(new JzVideoPlayerStatus.VideoStatusListener() {
+            jvp_ad_video_play.setVideoStatusListener(new JzVideoPlayerStatus.VideoStatusListener() {
+                @Override
+                public void startTurning() {
+                    EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+                }
 
-                    @Override
-                    public void startTurning() {
-                        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
-                    }
-
-                    @Override
-                    public void stopTurning() {
-                        EventBus.getDefault().post(new EventMessage(STOP_AUTO_PAGE_TURN,STOP_AUTO_PAGE_TURN));
-                    }
-                });
-            }else{
+                @Override
+                public void stopTurning() {
+                    EventBus.getDefault().post(new EventMessage(STOP_AUTO_PAGE_TURN,STOP_AUTO_PAGE_TURN));
+                }
+            });
+            if(!isShowProduct){
                 jvp_ad_video_play.setVideoSkipData(getStrings(communalADActivityBean.getVideoUrl()), "");
                 if(NetWorkUtils.isWifiByType(context)){
                     jvp_ad_video_play.setVolumeOn(false);

@@ -72,6 +72,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_CAR;
@@ -725,7 +726,7 @@ public class ShopCarActivity extends BaseActivity {
                             if (status.getCode().equals(SUCCESS_CODE)) {
                                 loadData();
                             } else if (!status.getCode().equals(EMPTY_CODE)) {
-                                showToast(ShopCarActivity.this, status.getMsg());
+                                showToastRequestMsg(ShopCarActivity.this, status);
                             }
                         }
                     }
@@ -844,7 +845,7 @@ public class ShopCarActivity extends BaseActivity {
                         updateCartData(cartInfoBean.getCurrentPosition());
                         setEditStatus();
                     } else {
-                        showToast(ShopCarActivity.this, status.getResult() != null ? status.getResult().getMsg() : status.getMsg());
+                        showToastRequestMsg(ShopCarActivity.this, status);
                     }
                 }
             }

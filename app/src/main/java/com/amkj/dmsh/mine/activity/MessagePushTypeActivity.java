@@ -33,6 +33,7 @@ import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -141,7 +142,7 @@ public class MessagePushTypeActivity extends BaseActivity {
                         loadData();
                         showToast(MessagePushTypeActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
                     } else {
-                        showToast(MessagePushTypeActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(MessagePushTypeActivity.this, requestStatus);
                     }
                 }
             }

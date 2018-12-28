@@ -59,6 +59,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -343,8 +344,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                         showToast(SuggestionFeedBackActivity.this, "提交完成");
                         finish();
                     } else {
-                        showToast(SuggestionFeedBackActivity.this, requestInfo.getResult() != null ?
-                                requestInfo.getResult().getMsg() : requestInfo.getMsg());
+                        showToastRequestMsg(SuggestionFeedBackActivity.this, requestInfo);
                     }
                 }
                 tv_suggestion_commit.setText("提交");

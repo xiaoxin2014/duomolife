@@ -70,6 +70,7 @@ import butterknife.OnLongClick;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
@@ -408,7 +409,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                         showToast(IntegExchangeDetailActivity.this, "取消订单成功");
                         finish();
                     } else {
-                        showToast(IntegExchangeDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(IntegExchangeDetailActivity.this, requestStatus);
                     }
                 }
             }
@@ -438,11 +439,10 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(IntegExchangeDetailActivity.this, requestStatus.getMsg());
+                        showToastRequestMsg(IntegExchangeDetailActivity.this, requestStatus);
                         finish();
                     } else {
-                        showToast(IntegExchangeDetailActivity.this, requestStatus.getResult() != null ?
-                                requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                        showToastRequestMsg(IntegExchangeDetailActivity.this, requestStatus);
                     }
                 }
             }

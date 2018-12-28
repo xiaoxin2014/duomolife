@@ -56,7 +56,6 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
@@ -110,6 +109,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -377,7 +377,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         productDetailBean.setRemind(false);
                         showToast(mAppContext, "已取消提醒");
                     } else {
-                        showToast(ShopTimeScrollDetailsActivity.this, status.getMsg());
+                        showToastRequestMsg(ShopTimeScrollDetailsActivity.this, status);
                     }
                     tvTimeProductDetailsWarm.setEnabled(true);
                 }
@@ -407,7 +407,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         showToast(mAppContext, "已设置提醒");
                         productDetailBean.setRemind(true);
                     } else {
-                        showToast(ShopTimeScrollDetailsActivity.this, status.getMsg());
+                        showToastRequestMsg(ShopTimeScrollDetailsActivity.this, status);
                     }
                     tvTimeProductDetailsWarm.setEnabled(true);
                 }
@@ -683,7 +683,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             setDefaultWarm();
                         }
                     } else if (!foreShowBean.getCode().equals(EMPTY_CODE)) {
-                        showToast(ShopTimeScrollDetailsActivity.this, foreShowBean.getMsg());
+                        showToastRequestMsg(ShopTimeScrollDetailsActivity.this, foreShowBean);
                     }
                 }
             }
