@@ -18,11 +18,10 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.PasswordEncrypt;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
+import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -31,6 +30,7 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -46,12 +46,16 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
+import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT_MOBILE;
 
 ;
-
 /**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2017/3/6
  * 绑定/更换手机
  */
 public class BindingMobileActivity extends BaseActivity {
@@ -77,16 +81,6 @@ public class BindingMobileActivity extends BaseActivity {
     //    填写验证码
     @BindView(R.id.edit_get_code)
     EditText edit_get_code;
-    //更换手机
-    @BindView(R.id.ll_phone_change)
-    LinearLayout ll_phone_change;
-    //更换手机
-    //显示手机号
-    @BindView(R.id.tv_bind_mobile_num)
-    TextView tv_bind_mobile_num;
-    //更换手机号码
-    @BindView(R.id.tv_change_mobile_phone_number)
-    TextView tv_change_mobile_phone_number;
     //    更换手机 输入新的手机号码
     //    绑定手机设置密码
     @BindView(R.id.ll_bind_mobile_set_password)
@@ -97,9 +91,8 @@ public class BindingMobileActivity extends BaseActivity {
 
     private String phoneNumber;
     private OtherAccountBindInfo otherAccountBindInfo;
-    private boolean isBindMobile;
-    private int uid;
-    private String newPassword;
+    private int userId;
+    private String password;
     private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
 
@@ -119,20 +112,7 @@ public class BindingMobileActivity extends BaseActivity {
         }
         otherAccountBindInfo = bundle.getParcelable("info");
         if (otherAccountBindInfo != null) {
-            isBindMobile = otherAccountBindInfo.isMobile_verification();
-            uid = otherAccountBindInfo.getUid();
-        }
-        //是否绑定手机
-        if (isBindMobile) {
-            ll_phone_change.setVisibility(View.VISIBLE);
-            tv_bind_mobile_num.setVisibility(View.VISIBLE);
-            tv_bind_mobile_num.setText(otherAccountBindInfo.getMobileNum());
-            ll_phone_unBind.setVisibility(View.GONE);
-            ll_bind_mobile_set_password.setVisibility(View.GONE);
-        } else {
-            ll_bind_mobile_set_password.setVisibility(View.VISIBLE);
-            ll_phone_change.setVisibility(View.GONE);
-            ll_phone_unBind.setVisibility(View.VISIBLE);
+            userId = otherAccountBindInfo.getUid();
         }
 
         //注册短信回调
@@ -161,12 +141,8 @@ public class BindingMobileActivity extends BaseActivity {
                 //回调完成
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) { //提交验证码成功
                     //请求服务器
-                    if (!isBindMobile) {
-                        if (otherAccountBindInfo != null) {
-                            setBindMobile();
-                        }
-                    } else {
-                        changeMobileNumber();
+                    if (otherAccountBindInfo != null) {
+                        setBindMobile();
                     }
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码成功
                     //请求验证码成功，进入倒计时
@@ -204,11 +180,11 @@ public class BindingMobileActivity extends BaseActivity {
 
     //  绑定手机
     private void setBindMobile() {
-        if (!TextUtils.isEmpty(newPassword)) {
-            String encryptedPassword = PasswordEncrypt.getEncryptedPassword(newPassword);
+        if (!TextUtils.isEmpty(password)) {
+            String encryptedPassword = PasswordEncrypt.getEncryptedPassword(password);
             Map<String, Object> params = new HashMap<>();
-            if (uid != 0) {
-                params.put("uid", uid);
+            if (userId != 0) {
+                params.put("uid", userId);
             }
             params.put("openid", otherAccountBindInfo.getOpenid());
             if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
@@ -249,8 +225,7 @@ public class BindingMobileActivity extends BaseActivity {
                             EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                             savePersonalInfoCache(BindingMobileActivity.this, savePersonalInfoBean);
                             showToast(BindingMobileActivity.this, "绑定成功");
-                            Intent intent = new Intent(BindingMobileActivity.this, RegisterSelSexActivity.class);
-                            startActivity(intent);
+                            EventBus.getDefault().post(new EventMessage(R_LOGIN_BACK_CODE,communalUserInfoEntity));
                             finish();
                         } else {
                             showException(communalUserInfoEntity.getMsg());
@@ -306,41 +281,7 @@ public class BindingMobileActivity extends BaseActivity {
 
     @OnClick({R.id.tv_bind_mobile_click})
     void addCode(View view) {
-        if (!isBindMobile) {
-            String newPassword = edit_bind_set_password_new.getText().toString().trim();
-            if (TextUtils.isEmpty(newPassword)) {
-                showToast(this, "请输入新密码");
-                return;
-            }
-            if (newPassword.length() < 5) {
-                showToast(this, R.string.PasswordLessSix);
-                return;
-            }
-            if (!PasswordEncrypt.isPwEligibility(newPassword)) {
-                showToast(this, R.string.PasswordInconformity);
-                return;
-            }
-            this.newPassword = newPassword;
-        }
-        final String smsCode = edit_get_code.getText().toString().trim();
-        phoneNumber = edit_binding_mobile.getText().toString().trim();
-        if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() != 11) {
-            showToast(this, R.string.MobileError);
-            return;
-        }
-        if (TextUtils.isEmpty(smsCode)) {
-            showToast(this, R.string.SmsCodeNull);
-            return;
-        }
-        if (NetWorkUtils.isConnectedByState(BindingMobileActivity.this)) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
-        } else {
-            showToast(this, R.string.unConnectedNetwork);
-        }
-
+        isPhoneReg();
     }
 
     @OnClick(R.id.tv_bind_send_code)
@@ -362,60 +303,6 @@ public class BindingMobileActivity extends BaseActivity {
         }
     }
 
-    //点击更换手机号码
-    @OnClick(R.id.tv_change_mobile_phone_number)
-    void changePhone(View view) {
-        ll_phone_change.setVisibility(View.GONE);
-        ll_phone_unBind.setVisibility(View.VISIBLE);
-        ll_bind_mobile_set_password.setVisibility(View.GONE);
-        tv_bind_mobile_click.setText("确 认");
-        tv_blue_title.setText("更换手机");
-    }
-
-    private void changeMobileNumber() {
-        String newPhoneNumber = edit_binding_mobile.getText().toString().trim();
-        String url = Url.BASE_URL + Url.MINE_CHANGE_MOBILE;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", uid);
-        params.put("oldMobile", otherAccountBindInfo.getMobileNum());
-        params.put("newMobile", newPhoneNumber);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(BindingMobileActivity.this, "更换手机成功");
-                        finish();
-                    } else {
-                        showException(requestStatus.getResult()!=null?requestStatus.getResult().getMsg():requestStatus.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showException(getResources().getString(R.string.do_failed));
-            }
-
-            @Override
-            public void netClose() {
-                showException(getResources().getString(R.string.unConnectedNetwork));
-            }
-        });
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -434,5 +321,86 @@ public class BindingMobileActivity extends BaseActivity {
             countDownHelper = CountDownHelper.getTimerInstance();
         }
         countDownHelper.setSmsCountDown(tv_bind_send_code);
+    }
+
+    /**
+     * 判断手机号码是否已注册
+     * 3.1.9.1 未注册加入密码强校验规则
+     *         已注册无密码规则校验
+     */
+    private void isPhoneReg() {
+        final String smsCode = edit_get_code.getText().toString().trim();
+        phoneNumber = edit_binding_mobile.getText().toString().trim();
+        password = edit_bind_set_password_new.getText().toString().trim();
+        if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() != 11) {
+            showToast(this, R.string.MobileError);
+            return;
+        }
+        if (TextUtils.isEmpty(smsCode)) {
+            showToast(this, R.string.SmsCodeNull);
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            showToast(this, "请输入密码");
+            return;
+        }
+        if (password.length() < 5) {
+            showToast(this, R.string.PasswordLessSix);
+            return;
+        }
+        if(loadHud!=null){
+            loadHud.show();
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("mobile", phoneNumber);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, CHECK_PHONE_IS_REG, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                String code = "";
+                String msg = "";
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    code = (String) jsonObject.get("code");
+                    msg = (String) jsonObject.get("msg");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (code.equals(SUCCESS_CODE)) {
+                    Gson gson = new Gson();
+                    RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
+                    if(status!=null){
+                        /**
+                         * 未注册校验密码规则 3.1.9以上版本 加入数字+字母组合密码
+                         */
+                        if (status.getRegisterFlag() == 0) {
+                            if (!PasswordEncrypt.isPwEligibility(password)) {
+                                showToast(BindingMobileActivity.this, R.string.PasswordInconformity);
+                                return;
+                            }
+                        }
+                        if (NetWorkUtils.isConnectedByState(BindingMobileActivity.this)) {
+                            if (loadHud != null) {
+                                loadHud.show();
+                            }
+                            SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
+                        } else {
+                            showToast(BindingMobileActivity.this, R.string.unConnectedNetwork);
+                        }
+                    }
+                } else {
+                    showToast(BindingMobileActivity.this, msg);
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+        });
     }
 }

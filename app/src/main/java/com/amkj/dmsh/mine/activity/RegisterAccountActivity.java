@@ -56,7 +56,12 @@ import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.USER_REGISTER_ACCOUNT;
 
 ;
-
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2017/3/6
+ * class description:注册账号
+ */
 public class RegisterAccountActivity extends BaseActivity {
     @BindView(R.id.ll_layout_reg)
     public LinearLayout ll_layout_reg;

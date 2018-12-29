@@ -147,6 +147,9 @@ public class AccountSafeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 获取第三方账号列表
+     */
     private void getOtherAccountData() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
@@ -424,7 +427,7 @@ public class AccountSafeActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            if(requestCode==IS_LOGIN_CODE){
+            if (requestCode == IS_LOGIN_CODE) {
                 finish();
             }
             return;
@@ -435,34 +438,41 @@ public class AccountSafeActivity extends BaseActivity {
                 loadData();
                 break;
         }
-        if(mShareAPI!=null){
+        if (mShareAPI != null) {
             mShareAPI.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void bindOtherAccount(OtherAccountBindInfo accountInfo) {
+    /**
+     * 绑定第三方账号
+     * @param otherAccountBindInfo
+     */
+    private void bindOtherAccount(OtherAccountBindInfo otherAccountBindInfo) {
         Map<String, Object> params = new HashMap<>();
-        params.put("openid", accountInfo.getOpenid());
-        params.put("type", accountInfo.getType());
-        if (OTHER_WECHAT.equals(accountInfo.getType())) {
-            params.put("unionid", accountInfo.getUnionId());
+        params.put("openid", otherAccountBindInfo.getOpenid());
+        params.put("type", otherAccountBindInfo.getType());
+        if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
+            params.put("unionid", otherAccountBindInfo.getUnionId());
         }
-        params.put("nickname", accountInfo.getNickname());
-        params.put("avatar", accountInfo.getAvatar());
+        params.put("nickname", otherAccountBindInfo.getNickname());
+        params.put("avatar", otherAccountBindInfo.getAvatar());
         params.put("id", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_BIND_ACCOUNT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_BIND_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                AuthorizeSuccessOtherData accountInfo = gson.fromJson(result, AuthorizeSuccessOtherData.class);
-                if (accountInfo != null) {
-                    if (accountInfo.getCode().equals(SUCCESS_CODE)) {
+                AuthorizeSuccessOtherData successOtherData = gson.fromJson(result, AuthorizeSuccessOtherData.class);
+                if (successOtherData != null) {
+                    if (successOtherData.getCode().equals(SUCCESS_CODE)) {
 //                            第三方账号登录统计
-                        showToast(AccountSafeActivity.this, accountInfo.getMsg());
-                        MobclickAgent.onProfileSignIn(accountInfo.getOtherAccountBean().getType(), accountInfo.getOtherAccountBean().getUid() + "");
+                        showToast(AccountSafeActivity.this, successOtherData.getMsg());
+                        /**
+                         * 3.2.0 修改为统计自己传入的参数 以前版本根据后台返回的数据类型进行跟uid进行统计
+                         */
+                        MobclickAgent.onProfileSignIn(getStrings(otherAccountBindInfo.getType()), String.valueOf(userId));
                         loadData();
                     } else {
-                        showToast(AccountSafeActivity.this, accountInfo.getMsg());
+                        showToast(AccountSafeActivity.this, successOtherData.getMsg());
                     }
                 }
             }
@@ -473,7 +483,7 @@ public class AccountSafeActivity extends BaseActivity {
         loadHud.show();
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,ACCOUNT_UNBIND_WECHAT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ACCOUNT_UNBIND_WECHAT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();

@@ -16,7 +16,7 @@ public class Url {
             } else if (position == 1) {
                 BASE_URL = "http://ts.domolife.cn/";
             } else if (position == 2) {
-                BASE_URL = "http://192.168.1.186:8080/";
+                BASE_URL = "http://192.168.1.98:8080/";
             } else if (position == 3) {
                 BASE_URL = "http://192.168.1.180:8080/";
             } else if (position == 4) {

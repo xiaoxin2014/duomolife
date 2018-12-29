@@ -2,7 +2,7 @@
 apply from: 'buildsystem/projectconfiguration.gradle'
 buildscript {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
         google()
     }
@@ -12,7 +12,7 @@ buildscript {
         // tinkersupport插件, 其中lastest.release指拉取最新版本，也可以指定明确版本号，例如1.0.4
         classpath "com.tencent.bugly:tinker-support:1.1.5"
 //        多渠道包
-        classpath 'com.leon.channel:plugin:+'
+        classpath 'com.leon.channel:plugin:2.0.1'
         classpath 'com.mob.sdk:MobSDK:+'
     }
 
@@ -22,7 +22,7 @@ buildscript {
 }
 allprojects {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
         google()
         mavenCentral()

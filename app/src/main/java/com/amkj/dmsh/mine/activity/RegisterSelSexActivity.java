@@ -10,7 +10,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
@@ -39,7 +38,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
+import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
@@ -145,6 +144,9 @@ public class RegisterSelSexActivity extends BaseActivity {
             params.put("uid", userId);
             params.put("sex", sexSelector);
             params.put("nickname", nickName);
+            if (loadHud != null) {
+                loadHud.show();
+            }
             NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
@@ -167,9 +169,7 @@ public class RegisterSelSexActivity extends BaseActivity {
                                 EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                                 savePersonalInfoCache(RegisterSelSexActivity.this, savePersonalInfoBean);
                             }
-                            Intent intent = new Intent(RegisterSelSexActivity.this, MainActivity.class);
-                            intent.putExtra("type", MAIN_MINE);
-                            startActivity(intent);
+                            EventBus.getDefault().post(new EventMessage(R_LOGIN_BACK_CODE,communalUserInfoEntity));
                             finish();
                         } else {
                             showToast(RegisterSelSexActivity.this, communalUserInfoEntity.getMsg());

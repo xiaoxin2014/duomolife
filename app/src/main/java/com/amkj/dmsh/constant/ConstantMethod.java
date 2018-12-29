@@ -1712,18 +1712,19 @@ public class ConstantMethod {
      * @param savePersonalInfo
      */
     public static void savePersonalInfoCache(Context context, SavePersonalInfoBean savePersonalInfo) {
+        Context applicationContext = context.getApplicationContext();
         if (savePersonalInfo != null && savePersonalInfo.isLogin()) {
             userId = savePersonalInfo.getUid();
 //            登录成功 三方账号登录
-            StatConfig.setCustomUserId(context, String.valueOf(savePersonalInfo.getUid()));
+            StatConfig.setCustomUserId(applicationContext, String.valueOf(savePersonalInfo.getUid()));
             //        友盟统计
             MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
             //        绑定JPush
             bindJPush(savePersonalInfo.getUid());
-            QyServiceUtils.getQyInstance().loginQyUserInfo(context, savePersonalInfo.getUid()
+            QyServiceUtils.getQyInstance().loginQyUserInfo(applicationContext, savePersonalInfo.getUid()
                     , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
 
-            SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+            SharedPreferences loginStatus = applicationContext.getSharedPreferences("LoginStatus", MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
             edit.putBoolean("isLogin", true);
             edit.putInt("uid", savePersonalInfo.getUid());
@@ -1743,18 +1744,17 @@ public class ConstantMethod {
         } else {
             userId = 0;
 //            七鱼注销
-            QyServiceUtils.getQyInstance().logoutQyUser(context);
+            QyServiceUtils.getQyInstance().logoutQyUser(applicationContext);
             //            注销账号 关闭账号统计
             MobclickAgent.onProfileSignOff();
 //            解绑JPush
             unBindJPush();
-            SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+            SharedPreferences loginStatus = applicationContext.getSharedPreferences("LoginStatus", MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
             edit.clear();
             edit.commit();
         }
     }
-
     /**
      * 获取个人信息
      *

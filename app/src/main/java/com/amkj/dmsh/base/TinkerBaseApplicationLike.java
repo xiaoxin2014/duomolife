@@ -116,7 +116,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     private LinkedList<Activity> activityLinkedList;
     //    全局上下文
     public static Context mAppContext;
-//    是否已初始化TuSdk
+    //    是否已初始化TuSdk
     private boolean isInitTuSdk;
     private Map<String, Object> ossMap;
 
@@ -486,9 +486,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         OSS oss = new OSSClient(mAppContext, endpoint, credentialProvider, conf);
-        ossMap.put(OSS_BUCKET_NAME,bucketName);
-        ossMap.put(OSS_URL,ossUrl);
-        ossMap.put(OSS_OBJECT,oss);
+        ossMap.put(OSS_BUCKET_NAME, bucketName);
+        ossMap.put(OSS_URL, ossUrl);
+        ossMap.put(OSS_OBJECT, oss);
     }
 
     /**
@@ -662,14 +662,14 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     public Map<String, Object> getOSSDataMap() {
-        if(ossMap==null){
+        if (ossMap == null) {
             initOSS();
         }
         return ossMap;
     }
 
     public String getOSSDataUrl() {
-        if(ossMap==null||ossMap.get(OSS_URL)==null){
+        if (ossMap == null || ossMap.get(OSS_URL) == null) {
             initOSS();
         }
         return (String) ossMap.get(OSS_URL);
@@ -702,6 +702,32 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         // 逐个退出Activity
         for (Activity activity : activityLinkedList) {
             activity.finish();
+        }
+    }
+
+    /**
+     * 关闭界面 到当前界面
+     * 先判断是否存在当前activity
+     * 存在找出位置 finish掉之后打开的activity
+     */
+    public void finishToCurrentPage(String currentActivityName) {
+        int currentActivityPage = 0;
+        for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
+            Activity activity = activityLinkedList.get(i);
+            if (activity.getClass().getName().equals(currentActivityName)) {
+                currentActivityPage = i;
+                break;
+            }
+        }
+        if (currentActivityPage > 0) {
+            for (int i = activityLinkedList.size() - 1; i >= currentActivityPage; i--) {
+                Activity activity = activityLinkedList.get(i);
+                if (activity.getClass().getName().equals(currentActivityName)) {
+                    break;
+                } else {
+                    activity.finish();
+                }
+            }
         }
     }
 
@@ -750,8 +776,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         return webUrlParameterTransform;
     }
 
-    public void initTuSdk(){
-        if(!isInitTuSdk){
+    public void initTuSdk() {
+        if (!isInitTuSdk) {
             try {
 //                不能放到子线程初始化
                 TuSdk.enableDebugLog(isDebugTag);

@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -32,6 +34,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
@@ -55,6 +58,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
+import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.LOGIN_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.LOGIN_CHECK_SMS_CODE;
@@ -65,7 +69,12 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 ;
-
+/**
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2017/3/6
+ * class description:登录
+ */
 public class MineLoginActivity extends BaseActivity {
     @BindView(R.id.tv_blue_title)
     TextView tv_blue_title;
@@ -204,13 +213,23 @@ public class MineLoginActivity extends BaseActivity {
                 , communalUserInfoBean.getDevice_model()
                 , communalUserInfoBean.getDevice_sys_version()
                 , communalUserInfoBean.getSysNotice());
-        Intent data = new Intent();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("AccountInf", communalUserInfoEntity);
-        data.putExtras(bundle);
-        setResult(RESULT_OK, data);
-        finish();
-        overridePendingTransition(0, 0);
+        resultForBackData(communalUserInfoEntity);
+    }
+
+    /**
+     * 登录信息回调信息
+     * @param communalUserInfoEntity
+     */
+    private void resultForBackData(CommunalUserInfoEntity communalUserInfoEntity) {
+        if(communalUserInfoEntity!=null&&communalUserInfoEntity.getCommunalUserInfoBean()!=null){
+            Intent data = new Intent();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("AccountInf", communalUserInfoEntity);
+            data.putExtras(bundle);
+            setResult(RESULT_OK, data);
+            finish();
+            overridePendingTransition(0, 0);
+        }
     }
 
     /**
@@ -539,18 +558,6 @@ public class MineLoginActivity extends BaseActivity {
                 });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (loadHud != null) {
-            loadHud.dismiss();
-        }
-        if (countDownHelper == null) {
-            countDownHelper = CountDownHelper.getTimerInstance();
-        }
-        countDownHelper.setSmsCountDown(tv_login_send_code);
-    }
-
     //  切换登录方式
     @OnClick(R.id.tv_tv_mine_change_login_way)
     void changLoginWay(View view) {
@@ -729,6 +736,18 @@ public class MineLoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (loadHud != null) {
+            loadHud.dismiss();
+        }
+        if (countDownHelper == null) {
+            countDownHelper = CountDownHelper.getTimerInstance();
+        }
+        countDownHelper.setSmsCountDown(tv_login_send_code);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (qqDialogHelper != null && qqDialogHelper.isShowing()) {
@@ -742,6 +761,23 @@ public class MineLoginActivity extends BaseActivity {
         }
         if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
             alertDialogHelper.dismiss();
+        }
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        /**
+         * 接收注册 绑定手机 的信息并关闭当前界面之后的activity
+         */
+        if(message.type.equals(R_LOGIN_BACK_CODE)){
+            try {
+                CommunalUserInfoEntity communalUserInfoEntity = (CommunalUserInfoEntity) message.result;
+                TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                tinkerBaseApplicationLike.finishToCurrentPage(MineLoginActivity.class.getName());
+                resultForBackData(communalUserInfoEntity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
