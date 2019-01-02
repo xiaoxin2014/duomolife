@@ -45,15 +45,15 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
         mUnBinder = ButterKnife.bind(this);
+        // 注册当前Activity为订阅者
+        EventBus eventBus = EventBus.getDefault();
+        eventBus.register(this);
         loadHud = KProgressHUD.create(this)
                 .setCancellable(true)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setSize(AutoSizeUtils.mm2px(mAppContext,50), AutoSizeUtils.mm2px(mAppContext,50));
 //                .setDimAmount(0.5f)
         initViews();
-        // 注册当前Activity为订阅者
-        EventBus eventBus = EventBus.getDefault();
-        eventBus.register(this);
         loadData();
 //        设置状态栏
         setStatusBar();
@@ -83,9 +83,9 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
 
         // 是否为Event消息
         if (message instanceof EventMessage) {
-            BaseFragmentActivity.this.postEventResult((EventMessage) message);
+            this.postEventResult((EventMessage) message);
         } else {
-            BaseFragmentActivity.this.postOtherResult(message);
+            this.postOtherResult(message);
         }
     }
 
@@ -127,6 +127,9 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         saveTotalData();
     }
 
@@ -164,9 +167,6 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mUnBinder.unbind();
-        if (EventBus.getDefault().isRegistered(BaseFragmentActivity.this)) {
-            EventBus.getDefault().unregister(this);
-        }
         setStatusBar();
     }
 

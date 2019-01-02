@@ -3,7 +3,7 @@ package com.amkj.dmsh.network.downfile;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
-import retrofit2.http.POST;
+import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 
@@ -24,7 +24,7 @@ public interface NetDownLoadApiService {
      * @return
      */
     @Streaming
-    @POST("{url}")
+    @GET("{url}")
     Observable<Response<ResponseBody>> downLoadFile(@Path(value = "url",encoded = true) String url);
 
 }

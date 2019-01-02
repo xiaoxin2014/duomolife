@@ -1,9 +1,12 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -17,7 +20,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
@@ -39,9 +41,8 @@ import com.tencent.stat.StatConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +70,7 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 ;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -111,14 +113,14 @@ public class MineLoginActivity extends BaseActivity {
     public TextView tv_login_send_code;
     @BindView(R.id.reg_login_code_gif_view)
     public ProgressBar reg_login_code_gif_view;
-    //注册请求码
-    private UMShareAPI mShareAPI;
     private boolean isPhoneLogin;
     private CountDownHelper countDownHelper;
     private AlertDialogHelper weChatDialogHelper;
     private AlertDialogHelper sinaDialogHelper;
     private AlertDialogHelper qqDialogHelper;
     private AlertDialogHelper alertDialogHelper;
+    private LoginFinishReceiver loginFinishReceiver;
+    private IntentFilter intentFilter;
 
     @Override
     protected int getContentView() {
@@ -206,7 +208,6 @@ public class MineLoginActivity extends BaseActivity {
         savePersonalInfo.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
         savePersonalInfo.setUid(communalUserInfoBean.getUid());
         savePersonalInfo.setLogin(true);
-        EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no()
@@ -218,18 +219,19 @@ public class MineLoginActivity extends BaseActivity {
 
     /**
      * 登录信息回调信息
+     *
      * @param communalUserInfoEntity
      */
     private void resultForBackData(CommunalUserInfoEntity communalUserInfoEntity) {
-        if(communalUserInfoEntity!=null&&communalUserInfoEntity.getCommunalUserInfoBean()!=null){
+        if (communalUserInfoEntity != null && communalUserInfoEntity.getCommunalUserInfoBean() != null) {
             Intent data = new Intent();
             Bundle bundle = new Bundle();
             bundle.putParcelable("AccountInf", communalUserInfoEntity);
             data.putExtras(bundle);
             setResult(RESULT_OK, data);
-            finish();
-            overridePendingTransition(0, 0);
         }
+        finish();
+        overridePendingTransition(0, 0);
     }
 
     /**
@@ -238,24 +240,24 @@ public class MineLoginActivity extends BaseActivity {
      * @param authType
      */
     public void doAuthInfo(String authType) {
-        if (mShareAPI == null) {
-            mShareAPI = UMShareAPI.get(this);
-        }
+        UMShareConfig config = new UMShareConfig();
+        config.isNeedAuthOnGetUserInfo(true);
+        UMShareAPI.get(this).setShareConfig(config);
         switch (getStrings(authType)) {
             case OTHER_WECHAT:
                 // 打开微信授权
                 SHARE_MEDIA platform = WEIXIN;
-                mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+                UMShareAPI.get(this).getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
                 break;
             case OTHER_QQ:
                 //qq授权
                 platform = QQ;
-                mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+                UMShareAPI.get(this).getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
                 break;
             case OTHER_SINA:
                 //新浪授权
                 platform = SINA;
-                mShareAPI.getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
+                UMShareAPI.get(this).getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
                 break;
             default:
                 showToast(MineLoginActivity.this, "暂不支持该授权！");
@@ -328,13 +330,7 @@ public class MineLoginActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if(mShareAPI!=null){
-                mShareAPI.onActivityResult(requestCode, resultCode, data);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
     private void bindOtherAccount(final OtherAccountBindInfo otherAccountBindInfo) {
@@ -375,7 +371,6 @@ public class MineLoginActivity extends BaseActivity {
                             if (OTHER_WECHAT.equals(getStrings(otherAccountBindInfo.getType()))) {
                                 savePersonalInfo.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                             }
-                            EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                             savePersonalInfo.setLogin(true);
                             savePersonalInfo.setPhoneNum(getStrings(otherAccountBindInfo.getMobile()));
                             savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
@@ -470,7 +465,7 @@ public class MineLoginActivity extends BaseActivity {
                                     }
                                 }
                             } else {
-                                showException(requestStatus.getResult()!=null?requestStatus.getResult().getMsg():requestStatus.getMsg());
+                                showException(requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
                             }
                         }
                     }
@@ -748,8 +743,18 @@ public class MineLoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loginFinishReceiver = new LoginFinishReceiver();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(R_LOGIN_BACK_CODE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(loginFinishReceiver, intentFilter);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(loginFinishReceiver);
         if (qqDialogHelper != null && qqDialogHelper.isShowing()) {
             qqDialogHelper.dismiss();
         }
@@ -763,15 +768,12 @@ public class MineLoginActivity extends BaseActivity {
             alertDialogHelper.dismiss();
         }
     }
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        /**
-         * 接收注册 绑定手机 的信息并关闭当前界面之后的activity
-         */
-        if(message.type.equals(R_LOGIN_BACK_CODE)){
+    class LoginFinishReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
             try {
-                CommunalUserInfoEntity communalUserInfoEntity = (CommunalUserInfoEntity) message.result;
+                Bundle extras = arg1.getExtras();
+                CommunalUserInfoEntity communalUserInfoEntity = (CommunalUserInfoEntity) extras.getParcelable("AccountInf");
                 TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                 tinkerBaseApplicationLike.finishToCurrentPage(MineLoginActivity.class.getName());
                 resultForBackData(communalUserInfoEntity);

@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity;
 import com.amkj.dmsh.bean.RegisterUserInfoEntity.RegisterUserInfoBean;
 import com.amkj.dmsh.constant.PasswordEncrypt;
@@ -34,7 +33,6 @@ import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -188,7 +186,6 @@ public class RegisterAccountActivity extends BaseActivity {
                                 savePersonalInfoBean.setPhoneNum(getStrings(registerUserInfoBean.getMobile()));
                                 savePersonalInfoBean.setUid(registerUserInfoBean.getUid());
                                 savePersonalInfoBean.setLogin(true);
-                                EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                                 savePersonalInfoCache(RegisterAccountActivity.this, savePersonalInfoBean);
                                 Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                                 startActivity(intent);

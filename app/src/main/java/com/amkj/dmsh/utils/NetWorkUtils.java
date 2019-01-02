@@ -86,7 +86,8 @@ public class NetWorkUtils {
 
     public static boolean checkNet(Context context) {
         try {
-            ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            Context mContext = context.getApplicationContext();
+            ConnectivityManager connectivity = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivity != null) {
                 NetworkInfo info = connectivity.getActiveNetworkInfo();
                 if (info != null && info.isConnected()) {

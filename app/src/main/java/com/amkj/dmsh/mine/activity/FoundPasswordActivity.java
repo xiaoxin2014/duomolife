@@ -1,7 +1,5 @@
 package com.amkj.dmsh.mine.activity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -238,13 +236,7 @@ public class FoundPasswordActivity extends BaseActivity {
                 MinePassword minePassword = gson.fromJson(result, MinePassword.class);
                 if (minePassword != null) {
                     if (minePassword.getCode().equals(SUCCESS_CODE)) {
-                        SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor edit = loginStatus.edit();
-                        edit.putBoolean("isLogin", true);
-                        edit.putInt("uid", minePassword.getPasswordBackList().get(0).getId());
-                        edit.apply();
                         showToast(FoundPasswordActivity.this, "密码重置成功");
-                        //重置密码成功
                         finish();
                     } else {
                         showException(minePassword.getMsg());

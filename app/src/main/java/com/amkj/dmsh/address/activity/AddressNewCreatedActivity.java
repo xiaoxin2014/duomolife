@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
@@ -26,6 +27,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -82,6 +84,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     CheckBox cb_address_default;
     @BindView(R.id.rel_address_default)
     RelativeLayout rel_address_default;
+    @BindView(R.id.ll_address_create)
+    LinearLayout ll_address_create;
     boolean isSelected = true;
     Handler handler = new Handler();
     private ProvinceModel[] mProvinceData;
@@ -111,6 +115,19 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         //手机号匹配
         setUpListener();
         setUpData();
+        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if(height>0){
+                    if(ll_communal_multi_time.getVisibility() == View.VISIBLE){
+                        ll_communal_multi_time.setVisibility(View.GONE);
+                        isSelected = true;
+                    }
+                }else{
+                    ll_address_create.requestFocus();
+                }
+            }
+        });
     }
 
     private void initAddress() {
@@ -418,8 +435,17 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 
     @OnClick(R.id.tv_address_district)
     void selectedAddress() {
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        if(KeyboardUtils.isSoftInputVisible(this)){
+            KeyboardUtils.hideSoftInput(this);
+        }else{
+            setAddressDialog();
+        }
+    }
+
+    /**
+     * 设置地址选择隐藏显示
+     */
+    private void setAddressDialog() {
         if (isSelected) {
             ll_communal_multi_time.setVisibility(View.VISIBLE);
             isSelected = false;
@@ -453,5 +479,35 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS
+                );
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
     }
 }

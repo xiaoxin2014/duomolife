@@ -48,6 +48,7 @@ public class ConstantVariable {
     public static final int IS_LOGIN_CODE = 10;
 //    注册 登录回调
     public static final String R_LOGIN_BACK_CODE = "0x101";
+    public static final String R_LOGIN_BACK_DATA_CODE = "AccountInf";
     //    子评论默认加载条数
     public static final int DEFAULT_COMMENT_TOTAL_COUNT = 6;
     //    默认加载条目

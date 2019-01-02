@@ -49,6 +49,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
         ButterKnife.bind(this);
+        // 注册当前Activity为订阅者
+        EventBus eventBus = EventBus.getDefault();
+        eventBus.register(this);
         loadHud = KProgressHUD.create(this)
                 .setCancellable(true)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -110,10 +113,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
             });
         }
         initViews();
-
-        // 注册当前Activity为订阅者
-        EventBus eventBus = EventBus.getDefault();
-        eventBus.register(this);
         loadData();
         setStatusBar();
     }
@@ -156,6 +155,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
         saveTotalData();
     }
 
@@ -206,6 +206,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         BaseActivity.this.postEventResult(message);
 
     }
+
 
     // 传递EventBus事件类型结果，子类实现逻辑
     protected void postEventResult(@NonNull EventMessage message) {
@@ -278,10 +279,10 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     }
     @Override
     protected void onDestroy() {
-        if (EventBus.getDefault().isRegistered(BaseActivity.this)) {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-        super.onDestroy();
         // 必须调用该方法，防止内存泄漏
         ImmersionBar.with(this).destroy();
     }

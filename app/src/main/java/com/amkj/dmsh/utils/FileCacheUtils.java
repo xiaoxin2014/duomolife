@@ -119,7 +119,7 @@ public class FileCacheUtils {
         long size = 0;
         try {
             File[] fileList = file.listFiles();
-            if(fileList!=null){
+            if (fileList != null) {
                 for (int i = 0; i < fileList.length; i++) {
                     // 如果下面还有文件
                     if (fileList[i].isDirectory()) {
@@ -167,6 +167,7 @@ public class FileCacheUtils {
             }
         }
     }
+
     public static void deleteFile(String filePath) {
         if (!TextUtils.isEmpty(filePath)) {
             try {
@@ -176,7 +177,7 @@ public class FileCacheUtils {
                     for (int i = 0; i < files.length; i++) {
                         deleteFolderFile(files[i].getAbsolutePath(), true);
                     }
-                }else if(file.exists()){
+                } else if (file.exists()) {
                     file.delete();
                 }
             } catch (Exception e) {
@@ -184,6 +185,7 @@ public class FileCacheUtils {
             }
         }
     }
+
     /**
      * 格式化单位
      *
@@ -193,7 +195,7 @@ public class FileCacheUtils {
     public static String getFormatSize(double size) {
         double kiloByte = size / 1024;
         if (kiloByte < 1) {
-            return size / 1024.00 + "kb";
+            return ((size / 1024.00 < 0.01) ? 0 : size / 1024.00) + "kb";
         }
 
         double megaByte = kiloByte / 1024;

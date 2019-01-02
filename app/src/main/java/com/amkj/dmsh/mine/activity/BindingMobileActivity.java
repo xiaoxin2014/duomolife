@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.constant.PasswordEncrypt;
@@ -29,7 +29,6 @@ import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,11 +46,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_DATA_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT_MOBILE;
 
 ;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -222,11 +223,14 @@ public class BindingMobileActivity extends BaseActivity {
                                     savePersonalInfoBean.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                                 }
                             }
-                            EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                             savePersonalInfoCache(BindingMobileActivity.this, savePersonalInfoBean);
                             showToast(BindingMobileActivity.this, "绑定成功");
-                            EventBus.getDefault().post(new EventMessage(R_LOGIN_BACK_CODE,communalUserInfoEntity));
-                            finish();
+                            Intent intent = new Intent();
+                            intent.setAction(R_LOGIN_BACK_CODE);
+                            Bundle bundle  = new Bundle();
+                            bundle.putParcelable(R_LOGIN_BACK_DATA_CODE,communalUserInfoEntity);
+                            intent.putExtras(bundle);
+                            LocalBroadcastManager.getInstance(BindingMobileActivity.this).sendBroadcast(intent);
                         } else {
                             showException(communalUserInfoEntity.getMsg());
                         }
@@ -326,7 +330,7 @@ public class BindingMobileActivity extends BaseActivity {
     /**
      * 判断手机号码是否已注册
      * 3.1.9.1 未注册加入密码强校验规则
-     *         已注册无密码规则校验
+     * 已注册无密码规则校验
      */
     private void isPhoneReg() {
         final String smsCode = edit_get_code.getText().toString().trim();
@@ -348,7 +352,7 @@ public class BindingMobileActivity extends BaseActivity {
             showToast(this, R.string.PasswordLessSix);
             return;
         }
-        if(loadHud!=null){
+        if (loadHud != null) {
             loadHud.show();
         }
         Map<String, Object> params = new HashMap<>();
@@ -371,7 +375,7 @@ public class BindingMobileActivity extends BaseActivity {
                 if (code.equals(SUCCESS_CODE)) {
                     Gson gson = new Gson();
                     RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
-                    if(status!=null){
+                    if (status != null) {
                         /**
                          * 未注册校验密码规则 3.1.9以上版本 加入数字+字母组合密码
                          */

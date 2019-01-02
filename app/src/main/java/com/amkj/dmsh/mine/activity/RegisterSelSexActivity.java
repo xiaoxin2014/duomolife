@@ -2,6 +2,8 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -12,7 +14,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
@@ -23,8 +24,6 @@ import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +38,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_DATA_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
@@ -166,11 +166,14 @@ public class RegisterSelSexActivity extends BaseActivity {
                                 savePersonalInfoBean.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
                                 savePersonalInfoBean.setUid(communalUserInfoBean.getUid());
                                 savePersonalInfoBean.setLogin(true);
-                                EventBus.getDefault().post(new EventMessage("loginShowDialog", ""));
                                 savePersonalInfoCache(RegisterSelSexActivity.this, savePersonalInfoBean);
                             }
-                            EventBus.getDefault().post(new EventMessage(R_LOGIN_BACK_CODE,communalUserInfoEntity));
-                            finish();
+                            Intent intent = new Intent();
+                            intent.setAction(R_LOGIN_BACK_CODE);
+                            Bundle bundle  = new Bundle();
+                            bundle.putParcelable(R_LOGIN_BACK_DATA_CODE,communalUserInfoEntity);
+                            intent.putExtras(bundle);
+                            LocalBroadcastManager.getInstance(RegisterSelSexActivity.this).sendBroadcast(intent);
                         } else {
                             showToast(RegisterSelSexActivity.this, communalUserInfoEntity.getMsg());
                         }

@@ -1927,7 +1927,7 @@ public class ConstantMethod {
     }
 
     public void getNewUserCouponDialog(Context context) {
-        if (NEW_USER_DIALOG) {
+        if (NEW_USER_DIALOG&&isContextExisted(context)) {
             NEW_USER_DIALOG = false;
             String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
             Map<String, Object> params = new HashMap<>();

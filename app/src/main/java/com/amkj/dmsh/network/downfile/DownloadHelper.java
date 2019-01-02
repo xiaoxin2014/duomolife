@@ -124,12 +124,12 @@ public class DownloadHelper {
                         List<String> fileNameList = stringListMap.get("content-disposition");
                         if (fileNameList != null && fileNameList.size() > 0
                                 && fileNameList.toString().contains("filename=")) {
-                            for (String typeParameter :fileNameList) {
+                            for (String typeParameter : fileNameList) {
                                 String[] split = typeParameter.split(";");
                                 for (String name : split) {
-                                    if(name.contains("filename=")){
+                                    if (name.contains("filename=")) {
                                         String[] names = name.split("filename=");
-                                        if(names.length>1){
+                                        if (names.length > 1) {
                                             fileName = names[1];
                                         }
                                     }
@@ -157,6 +157,9 @@ public class DownloadHelper {
                     @Override
                     protected void onDownloadError(Throwable e) {
                         mDownloadListener.onFail(e);
+                        if (downFileMap.get(url) != null) {
+                            downFileMap.remove(url);
+                        }
                     }
                 });
     }

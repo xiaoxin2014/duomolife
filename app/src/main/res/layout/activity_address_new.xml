@@ -5,6 +5,7 @@
     android:background="@color/light_gray_f"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:id="@+id/ll_address_create"
     android:orientation="vertical">
 
     <include layout="@layout/activity_domolife_header" />
