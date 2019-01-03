@@ -34,6 +34,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_LAST_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_DESCRIPTION;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_LOW;
@@ -77,13 +78,14 @@ public class AppUpdateDialogActivity extends BaseActivity {
         Window window = getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams params = window.getAttributes();
-        params.width = AutoSizeUtils.mm2px(mAppContext,500);
+        params.width = AutoSizeUtils.mm2px(mAppContext, 500);
         window.setAttributes(params);
         Intent intent = getIntent();
         downLink = intent.getStringExtra(VERSION_DOWN_LINK);
         String versionDescription = intent.getStringExtra(VERSION_UPDATE_DESCRIPTION);
         String versionLow = intent.getStringExtra(VERSION_UPDATE_LOW);
         String appCurrentVersion = intent.getStringExtra(APP_CURRENT_UPDATE_VERSION);
+        String appLastVersion = intent.getStringExtra(MANDATORY_UPDATE_LAST_VERSION);
 //        强制更新此版本详情
         String mandatoryDescription = intent.getStringExtra(MANDATORY_UPDATE_DESCRIPTION);
 //        是否强制更新此版本
@@ -96,7 +98,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
         tvAppVersionDescription.setText(isMandatoryUpdate ? (!TextUtils.isEmpty(mandatoryDescription) ?
                 getStrings(mandatoryDescription) : getStrings(versionDescription)) : getStrings(versionDescription));
         tvAppVersionUpdate.setText("更新");
-        tvAppVersionInfo.setText(("多么生活 " + getStrings(appCurrentVersion)));
+        tvAppVersionInfo.setText(("多么生活 " + getHeightVersionNumber(appCurrentVersion, appLastVersion)));
 //        是否强制更新的版本
         if (isMandatoryUpdate) {
             constraintUpdate = true;
@@ -178,9 +180,9 @@ public class AppUpdateDialogActivity extends BaseActivity {
             tvAppVersionTotalNumber.setText(((total > 100 ? 100 : total) + "%"));
         } else if (message.type.equals("finishUpdateDialog")) {
             finish();
-        }else if(message.type.equals("downSuccess")){
+        } else if (message.type.equals("downSuccess")) {
             filePath = (String) message.result;
-            if(!TextUtils.isEmpty(filePath)){
+            if (!TextUtils.isEmpty(filePath)) {
                 rel_layout_update_version.setClickable(true);
             }
         }
@@ -202,10 +204,36 @@ public class AppUpdateDialogActivity extends BaseActivity {
      * 点击安装
      */
     @OnClick(value = R.id.rel_layout_update_version)
-    void updateVersion(){
-        if(!TextUtils.isEmpty(filePath)){
+    void updateVersion() {
+        if (!TextUtils.isEmpty(filePath)) {
             rel_layout_update_version.setClickable(false);
-            installApps(this,new File(filePath));
+            installApps(this, new File(filePath));
         }
+    }
+
+    /**
+     * 两版本比较
+     *
+     * @param targetVersion
+     * @param lastVersion
+     * @return
+     */
+    private String getHeightVersionNumber(String targetVersion, String lastVersion) {
+        if (TextUtils.isEmpty(targetVersion) || TextUtils.isEmpty(lastVersion)) {
+            return getStrings(targetVersion);
+        }
+        String constraintVersion = getAppendNumber(targetVersion);
+        String currentVersion = getAppendNumber(lastVersion);
+        int constraintLength = constraintVersion.length();
+        int currentLength = currentVersion.length();
+        int absNumber = Math.abs(constraintLength - currentLength);
+        if (absNumber > 0) {
+            if (constraintLength > currentLength) {
+                currentVersion += String.format("%1$0" + absNumber + "d", 0);
+            } else {
+                constraintVersion += String.format("%1$0" + absNumber + "d", 0);
+            }
+        }
+        return Long.parseLong(constraintVersion) > Long.parseLong(currentVersion) ? targetVersion : lastVersion;
     }
 }

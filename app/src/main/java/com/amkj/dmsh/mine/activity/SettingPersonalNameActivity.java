@@ -1,9 +1,14 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -12,6 +17,7 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ByteLimitWatcher;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.google.gson.Gson;
 
@@ -70,6 +76,14 @@ public class SettingPersonalNameActivity extends BaseActivity {
             tv_personal_name_length.setText(String.valueOf(textRemainLength < 0 ? 0 : textRemainLength));
         }
         setEtFilter(edit_personal_name);
+        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if (height == 0) {
+                    ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
+                }
+            }
+        });
     }
 
     @Override
@@ -165,6 +179,35 @@ public class SettingPersonalNameActivity extends BaseActivity {
     void goBack(View view) {
         finish();
     }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(imm!=null){
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
 
 }

@@ -72,6 +72,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDataFormatWeek;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEmptyStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -826,6 +827,19 @@ public class AttendanceActivity extends BaseActivity {
             rvp_integral_lottery.setLayoutManager(new LinearLayoutManager(AttendanceActivity.this, LinearLayoutManager.HORIZONTAL, false));
             integralLotteryAdapter = new IntegralLotteryAdapter(AttendanceActivity.this, integralLotteryList);
             rvp_integral_lottery.setAdapter(integralLotteryAdapter);
+            integralLotteryAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    if(view.getId() == R.id.rel_integral_lottery_product){
+                        PreviousInfoBean previousInfoBean = (PreviousInfoBean) view.getTag();
+                        if(previousInfoBean!=null&& !isEmptyStrings(previousInfoBean.getProductId())){
+                            Intent intent = new Intent(AttendanceActivity.this,ShopScrollDetailsActivity.class);
+                            intent.putExtra("productId",previousInfoBean.getProductId());
+                            startActivity(intent);
+                        }
+                    }
+                }
+            });
             rvp_integral_lottery.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
                 public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {

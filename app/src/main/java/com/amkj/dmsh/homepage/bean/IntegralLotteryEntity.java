@@ -76,6 +76,7 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
         private int mSeconds;
         private String mCurrentTime;
         private Object timeObject;
+        private String productId;
 
         public Object getTimeObject() {
             return timeObject;
@@ -83,6 +84,14 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
 
         public void setTimeObject(Object timeObject) {
             this.timeObject = timeObject;
+        }
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
         }
 
         public String getmCurrentTime() {

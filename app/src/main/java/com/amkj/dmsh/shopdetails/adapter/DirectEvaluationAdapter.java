@@ -67,12 +67,12 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                 helper.setTag(R.id.img_direct_avatar, R.id.iv_avatar_tag, goodsCommentBean)
                         .addOnClickListener(R.id.img_direct_avatar)
                         .setTag(R.id.tv_eva_count, goodsCommentBean)
-                        .setGone(R.id.ratingBar_direct_count, goodsCommentBean.getStar() < 1)
                         .setText(R.id.tv_eva_count, goodsCommentBean.getLikeNum() > 0
                                 ? goodsCommentBean.getLikeNum() + "" : "赞")
                         .addOnClickListener(R.id.tv_eva_count)
                         .setTag(R.id.tv_eva_count, goodsCommentBean)
                         .setText(R.id.tv_eva_user_name, getStrings(goodsCommentBean.getNickname()));
+                ratingBar.setVisibility(goodsCommentBean.getStar() < 1 ? View.GONE : View.VISIBLE);
                 ratingBar.setNumStars(goodsCommentBean.getStar());
                 ratingBar.setMax(goodsCommentBean.getStar());
                 if (!TextUtils.isEmpty(goodsCommentBean.getContent())) {
@@ -134,12 +134,12 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                     if (pictureBean != null) {
                         ImageBean imageBean = null;
                         List<ImageBean> imageBeanList = new ArrayList<>();
-                        for (String picUrl:pictureBean.getOriginalList()) {
+                        for (String picUrl : pictureBean.getOriginalList()) {
                             imageBean = new ImageBean();
                             imageBean.setPicUrl(picUrl);
                             imageBeanList.add(imageBean);
                         }
-                        ImagePagerActivity.startImagePagerActivity(context,IMAGE_DEF, imageBeanList
+                        ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList
                                 , pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0, null);
                     }
                 }
@@ -156,7 +156,7 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
         public ProductEvaViewHolder(View view) {
             super(view);
             rv_pro_eva = view.findViewById(R.id.rv_pro_eva);
-            if(rv_pro_eva!=null){
+            if (rv_pro_eva != null) {
                 rv_pro_eva.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             }
         }

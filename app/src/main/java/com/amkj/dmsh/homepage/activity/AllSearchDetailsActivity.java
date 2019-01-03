@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -15,6 +16,7 @@ import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.SearchTabPageAdapter;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 
@@ -68,7 +70,7 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
         params.put("data", data);
 //        插入历史记录
         insertHistoryData(data);
-        sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext,26));
+        sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext, 26));
         sliding_search_bar.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 2));
         searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
         vp_search_details_container.setAdapter(searchTabPageAdapter);
@@ -81,8 +83,7 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
                 if (keyCode == KeyEvent.KEYCODE_ENTER
                         && event.getAction() == KeyEvent.ACTION_DOWN) {// 修改回车键功能
                     // 先隐藏键盘
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                            getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    KeyboardUtils.hideSoftInput(AllSearchDetailsActivity.this);
                     //跳转页面，模糊搜索
                     if (!TextUtils.isEmpty(searchText)) {
                         int currentTab = sliding_search_bar.getCurrentTab();
@@ -104,6 +105,14 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
             @Override
             public void onTabReselect(int position) {
 
+            }
+        });
+        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if (height == 0) {
+                    ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
+                }
             }
         });
     }
@@ -148,6 +157,7 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
 
     /**
      * 点击编辑器外区域隐藏键盘 避免点击搜索完没有隐藏键盘
+     *
      * @param ev
      * @return
      */
@@ -158,9 +168,10 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS
-                );
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         }
         return super.dispatchTouchEvent(ev);

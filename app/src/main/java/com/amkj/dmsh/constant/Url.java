@@ -105,10 +105,8 @@ public class Url {
     public static final String H_HOT_SEARCH_TOPIC = "api/search/searchTopiclist";
     //  搜索留言
     public static final String SEARCH_LEAVE_MES = "api/search/saveAdvise";
-    //    web分享
-    public static final String BASE_SHARE_PAGE_ONE = "http://image.domolife.cn/html/";
     //  新版分享
-    public static final String BASE_SHARE_PAGE_TWO = "http://www.domolife.cn/";
+    public static final String BASE_SHARE_PAGE_TWO = "https://www.domolife.cn/";
     //    文章详情公共分享
     public static final String SHARE_COMMUNAL_ARTICLE = "api/reminder/getSharePrompt";
     //签到详情

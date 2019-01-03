@@ -1147,9 +1147,4 @@ public class AliBCFragment extends BaseFragment {
             setWebFragmentStatusBar(1, "#ffffff", 0);
         }
     }
-
-    @Override
-    public boolean immersionBarEnabled() {
-        return isCanEditStatusBar;
-    }
 }

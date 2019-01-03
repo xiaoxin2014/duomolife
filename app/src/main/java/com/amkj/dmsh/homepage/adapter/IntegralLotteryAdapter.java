@@ -59,6 +59,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isEmptyStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -125,9 +126,13 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             helper.ct_integral_lottery_time.setTag(previousInfoBean.getPrizeName());
             helper.ct_integral_lottery_time.setVisibility(View.VISIBLE);
             previousInfoBean.setTimeObject(helper.ct_integral_lottery_time);
-            setCountDownLotteryData(helper.ct_integral_lottery_time,previousInfoBean);
-        }else{
+            setCountDownLotteryData(helper.ct_integral_lottery_time, previousInfoBean);
+        } else {
             helper.ct_integral_lottery_time.setVisibility(View.GONE);
+        }
+        if (!isEmptyStrings(previousInfoBean.getProductId())) {
+            helper.setTag(R.id.rel_integral_lottery_product, previousInfoBean)
+                    .addOnClickListener(R.id.rel_integral_lottery_product);
         }
     }
 
@@ -151,21 +156,21 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             helper.rel_integral_lottery_prize.removeAllViews();
             if (eTime.getTime() < cTime.getTime()) { //已结束
                 if (!previousInfoBean.isWinning()) {
-                    if(previousInfoBean.getLotteryCode()==null
-                            ||previousInfoBean.getLotteryCode().size()<1){
+                    if (previousInfoBean.getLotteryCode() == null
+                            || previousInfoBean.getLotteryCode().size() < 1) {
                         prizeText = "未参与";
-                    }else{
+                    } else {
                         prizeText = "抱歉，本期您未中奖";
                     }
                     helper.rel_integral_lottery_prize.addView(helper.endLose);
-                    if(previousInfoBean.getWinList()!=null){
+                    if (previousInfoBean.getWinList() != null) {
                         helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.setVisibility(View.VISIBLE);
 //                        清理子控件无效
                         helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.removeAllViews();
                         for (WinListBean winListBean : previousInfoBean.getWinList()) {
                             helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
                         }
-                    }else{
+                    } else {
                         helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.setVisibility(View.GONE);
                     }
                     if (previousInfoBean.getLotteryCode() == null || previousInfoBean.getLotteryCode().size() < 1) {
@@ -242,7 +247,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             PreviousInfoBean previousInfoBean = entry.getValue();
             previousInfoBean.setmSeconds(previousInfoBean.getmSeconds() + 1);
             beanMap.put(entry.getKey(), previousInfoBean);
-            if(previousInfoBean.getTimeObject()!=null){
+            if (previousInfoBean.getTimeObject() != null) {
                 setCountDownLotteryData((CountdownView) previousInfoBean.getTimeObject(), previousInfoBean);
             }
         }
@@ -400,12 +405,12 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             wait = inflater.inflate(R.layout.layout_integral_lottery_wait, (ViewGroup) view, false);
             if (ct_integral_lottery_time != null) {
                 DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
-                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+                dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
+                dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
                 dynamic.setSuffixGravity(Gravity.CENTER);
                 DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
                 backgroundInfo.setColor(context.getResources().getColor(R.color.gray_d))
-                        .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext,8))
+                        .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext, 8))
                         .setBorderColor(context.getResources().getColor(R.color.gray_d))
                         .setShowTimeBgBorder(true);
                 dynamic.setBackgroundInfo(backgroundInfo);
@@ -417,9 +422,9 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
     private ImageView createImageView(WinListBean winListBean) {
         CircleImageView imageView = new CircleImageView(context);
-        int size = AutoSizeUtils.mm2px(mAppContext,60);
+        int size = AutoSizeUtils.mm2px(mAppContext, 60);
         ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(size, size);
-        layoutParams.rightMargin = AutoSizeUtils.mm2px(mAppContext,24);
+        layoutParams.rightMargin = AutoSizeUtils.mm2px(mAppContext, 24);
         imageView.setLayoutParams(layoutParams);
         GlideImageLoaderUtil.loadHeaderImg(context, imageView, getStrings(winListBean.getAvatar()));
         return imageView;
@@ -508,7 +513,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                 Map<String, Object> params = new HashMap<>();
                 params.put("uid", userId);
                 params.put("activityId", activityId);
-                NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params,new NetLoadListenerHelper(){
+                NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         textView.setEnabled(true);
@@ -539,7 +544,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                         showToast(context, R.string.unConnectedNetwork);
                     }
                 });
-            }else{
+            } else {
                 getLoginStatus((Activity) context);
                 textView.setEnabled(true);
             }
@@ -587,7 +592,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
          */
         @OnClick(R.id.tv_integral_lottery_invite)
         void integralLotteryAwardInvite(TextView textView) {
-            EventBus.getDefault().post(new EventMessage("invitePartner",""));
+            EventBus.getDefault().post(new EventMessage("invitePartner", ""));
             attendanceLotteryCodePopWindow.dismiss();
         }
     }

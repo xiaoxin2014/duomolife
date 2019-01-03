@@ -252,6 +252,8 @@ public class ConstantVariable {
     public static final String APP_MANDATORY_UPDATE_VERSION = "A_M_U_V";
     //    强制更新详情
     public static final String MANDATORY_UPDATE_DESCRIPTION = "M_U_D";
+//    手动更新-最新版本
+    public static final String MANDATORY_UPDATE_LAST_VERSION = "M_U_L_V";
     //    图片存储类型
     public static final String FILE_IMAGE = "fileImage";
     //    我-底部宫格

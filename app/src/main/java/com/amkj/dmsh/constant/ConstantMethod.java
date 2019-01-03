@@ -180,6 +180,16 @@ public class ConstantMethod {
     }
 
     /**
+     * 判断该字符串是否为空
+     *
+     * @param text
+     * @return
+     */
+    public static boolean isEmptyStrings(String text) {
+        return TextUtils.isEmpty(text) || text.equals("null");
+    }
+
+    /**
      * 判断是否为空 去掉特殊空格\r\n字符
      *
      * @param text
@@ -1755,6 +1765,7 @@ public class ConstantMethod {
             edit.commit();
         }
     }
+
     /**
      * 获取个人信息
      *
@@ -1927,7 +1938,7 @@ public class ConstantMethod {
     }
 
     public void getNewUserCouponDialog(Context context) {
-        if (NEW_USER_DIALOG&&isContextExisted(context)) {
+        if (NEW_USER_DIALOG && isContextExisted(context)) {
             NEW_USER_DIALOG = false;
             String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
             Map<String, Object> params = new HashMap<>();

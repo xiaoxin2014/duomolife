@@ -86,8 +86,13 @@ public class AppVersionEntity {
         private int id;
         private String version;
         private int status;
+//        最低版本
         private String lowestVersion;
+//        最新版本
+        private String latestVersion;
+//        强制更新版本
         private String compel_version;
+//        更新版本描述
         private String compel_up_desc;
 
         public static AppVersionBean objectFromData(String str) {
@@ -109,6 +114,14 @@ public class AppVersionEntity {
 
         public void setCompel_up_desc(String compel_up_desc) {
             this.compel_up_desc = compel_up_desc;
+        }
+
+        public String getLatestVersion() {
+            return latestVersion;
+        }
+
+        public void setLatestVersion(String latestVersion) {
+            this.latestVersion = latestVersion;
         }
 
         public int getShowPop() {

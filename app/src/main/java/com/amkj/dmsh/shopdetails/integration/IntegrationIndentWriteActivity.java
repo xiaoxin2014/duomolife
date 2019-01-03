@@ -1,12 +1,16 @@
 package com.amkj.dmsh.shopdetails.integration;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +38,7 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity.IntegralSettlementBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity.IntegralSettlementBean.ProductInfoBean;
 import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
@@ -170,14 +175,22 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         rvIntegralWriteInfo.setLayoutManager(new LinearLayoutManager(this));
         indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
         rvIntegralWriteInfo.setAdapter(indentDiscountAdapter);
+        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if (height == 0) {
+                    ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
+                }
+            }
+        });
     }
 
     @Override
     protected void loadData() {
-        if(shopCarGoodsSku.getIntegralProductType()==1){
+        if (shopCarGoodsSku.getIntegralProductType() == 1) {
             ll_indent_address_empty_default.setVisibility(View.GONE);
             getProductSettlementInfo();
-        }else{
+        } else {
             if (isFirst) {
                 getDefaultAddress();
             } else {
@@ -246,7 +259,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -306,11 +319,11 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             tvIntegralSkuValue.setText(getStringFilter(shopCarGoodsSku.getValuesName()));
             tv_integral_product_count.setText(String.format(getResources().getString(R.string.integral_lottery_award_count), shopCarGoodsSku.getCount()));
             String priceName;
-            if(shopCarGoodsSku.getIntegralType() ==0){
-                priceName = String.format(getResources().getString(R.string.integral_indent_product_price),(int)shopCarGoodsSku.getPrice());
-            }else{
+            if (shopCarGoodsSku.getIntegralType() == 0) {
+                priceName = String.format(getResources().getString(R.string.integral_indent_product_price), (int) shopCarGoodsSku.getPrice());
+            } else {
                 priceName = String.format(getResources().getString(R.string.integral_product_and_price)
-                        ,(int)shopCarGoodsSku.getPrice(),getStrings(shopCarGoodsSku.getMoneyPrice()));
+                        , (int) shopCarGoodsSku.getPrice(), getStrings(shopCarGoodsSku.getMoneyPrice()));
             }
             tvIntegralProductPrice.setText(priceName);
             Pattern p = Pattern.compile(REGEX_NUM);
@@ -318,7 +331,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             //        @用户昵称
             redNum.setTextColor(getResources().getColor(R.color.text_normal_red));
             redNum.setUnderlined(false);
-            redNum.setTextSize(AutoSizeUtils.mm2px(mAppContext,32));
+            redNum.setTextSize(AutoSizeUtils.mm2px(mAppContext, 32));
             redNum.setHighlightAlpha(0f);
             LinkBuilder.on(tvIntegralProductPrice)
                     .addLink(redNum)
@@ -336,9 +349,9 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     @OnClick({R.id.tv_integral_details_create_int})
     void confirmExchange() {
         if (integralSettlementBean != null) {
-            if(shopCarGoodsSku.getIntegralProductType()==1){
+            if (shopCarGoodsSku.getIntegralProductType() == 1) {
                 createSettlementIndent();
-            }else{
+            } else {
                 if (addressId != 0) {
                     createSettlementIndent();
                 } else {
@@ -360,7 +373,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.INTEGRAL_CREATE_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        if(addressId>0){
+        if (addressId > 0) {
             params.put("userAddressId", addressId);
         }
         try {
@@ -390,35 +403,35 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 //                默认实物
         params.put("integralProductType", shopCarGoodsSku.getIntegralProductType());
         params.put("source", 0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 tvIntegralDetailsCreateInt.setEnabled(true);
                 Gson gson = new Gson();
-                if(!TextUtils.isEmpty(payType)){
+                if (!TextUtils.isEmpty(payType)) {
                     if (payType.equals(PAY_WX_PAY)) {
                         QualityCreateWeChatPayIndentBean qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                         if (qualityWeChatIndent != null) {
                             if (SUCCESS_CODE.equals(qualityWeChatIndent.getCode())) {
-                                if(qualityWeChatIndent.getResult() == null){
-                                    showToast(IntegrationIndentWriteActivity.this,"创建订单失败，请重新提交订单");
+                                if (qualityWeChatIndent.getResult() == null) {
+                                    showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
                                     return;
                                 }
                                 QualityCreateWeChatPayIndentBean.ResultBean weChatIndentResult = qualityWeChatIndent.getResult();
                                 if (weChatIndentResult.getCode().equals(SUCCESS_CODE)) {
                                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
-                                    if (weChatIndentResult.getPayKey()!=null){
+                                    if (weChatIndentResult.getPayKey() != null) {
                                         //返回成功，调起微信支付接口
                                         doWXPay(qualityWeChatIndent.getResult().getPayKey());
-                                    }else{
+                                    } else {
                                         skipDirectIndent();
                                     }
                                 } else {
                                     showToast(IntegrationIndentWriteActivity.this, qualityWeChatIndent.getResult().getMsg());
                                 }
-                            }else {
-                                showToast(IntegrationIndentWriteActivity.this, qualityWeChatIndent.getResult()==null?
-                                        qualityWeChatIndent.getMsg():qualityWeChatIndent.getResult().getMsg());
+                            } else {
+                                showToast(IntegrationIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ?
+                                        qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                             }
                         }
                     } else {
@@ -426,15 +439,15 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                         if (qualityAliPayIndent != null) {
                             if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                                 QualityCreateAliPayIndentBean.ResultBean aliPayIndentResult = qualityAliPayIndent.getResult();
-                                if(aliPayIndentResult == null){
-                                    showToast(IntegrationIndentWriteActivity.this,"创建订单失败，请重新提交订单");
+                                if (aliPayIndentResult == null) {
+                                    showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
                                     return;
                                 }
                                 orderCreateNo = aliPayIndentResult.getNo();
-                                if(!TextUtils.isEmpty(aliPayIndentResult.getPayKey())){
+                                if (!TextUtils.isEmpty(aliPayIndentResult.getPayKey())) {
                                     //返回成功，调起支付宝支付接口
                                     doAliPay(qualityAliPayIndent.getResult().getPayKey());
-                                }else{
+                                } else {
                                     skipDirectIndent();
                                 }
                             } else {
@@ -443,20 +456,20 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             }
                         }
                     }
-                }else{
+                } else {
                     CreateIntegralIndentInfo createIntegralIndentInfo = gson.fromJson(result, CreateIntegralIndentInfo.class);
-                    if(createIntegralIndentInfo!=null){
-                        if(SUCCESS_CODE.equals(createIntegralIndentInfo.getCode())&&createIntegralIndentInfo.getIntegrationIndentBean()!=null){
+                    if (createIntegralIndentInfo != null) {
+                        if (SUCCESS_CODE.equals(createIntegralIndentInfo.getCode()) && createIntegralIndentInfo.getIntegrationIndentBean() != null) {
                             IntegrationIndentBean integrationIndentBean = createIntegralIndentInfo.getIntegrationIndentBean();
-                            if(!TextUtils.isEmpty(integrationIndentBean.getNo())){
+                            if (!TextUtils.isEmpty(integrationIndentBean.getNo())) {
                                 orderCreateNo = integrationIndentBean.getNo();
                                 skipDirectIndent();
-                            }else{
-                                showToast(IntegrationIndentWriteActivity.this,"创建订单失败，请重新提交订单");
+                            } else {
+                                showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
                             }
-                        }else{
-                            showToast(IntegrationIndentWriteActivity.this, createIntegralIndentInfo.getIntegrationIndentBean()==null?
-                                    createIntegralIndentInfo.getMsg():createIntegralIndentInfo.getIntegrationIndentBean().getMsg());
+                        } else {
+                            showToast(IntegrationIndentWriteActivity.this, createIntegralIndentInfo.getIntegrationIndentBean() == null ?
+                                    createIntegralIndentInfo.getMsg() : createIntegralIndentInfo.getIntegrationIndentBean().getMsg());
                         }
                     }
                 }
@@ -469,7 +482,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IntegrationIndentWriteActivity.this,R.string.do_failed);
+                showToast(IntegrationIndentWriteActivity.this, R.string.do_failed);
             }
 
             @Override
@@ -564,7 +577,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderCreateNo);
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
     }
 
     /**
@@ -577,6 +590,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         startActivity(intent);
         finish();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -639,5 +653,36 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         Intent intent = new Intent(IntegrationIndentWriteActivity.this, SelectedAddressActivity.class);
         intent.putExtra("addressId", String.valueOf(addressId));
         startActivityForResult(intent, SEL_ADDRESS_REQ);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
     }
 }

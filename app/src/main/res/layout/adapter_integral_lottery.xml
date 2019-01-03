@@ -32,6 +32,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:gravity="center_vertical"
+        android:id="@+id/rel_integral_lottery_product"
         android:layout_marginLeft="@dimen/sc_mm_38"
         android:layout_marginRight="@dimen/sc_mm_44"
         android:layout_height="wrap_content">

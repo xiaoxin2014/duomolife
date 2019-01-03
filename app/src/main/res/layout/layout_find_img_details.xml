@@ -24,17 +24,14 @@
         android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/gap_right">
 
-        <emojicon.EmojiconTextView
+        <android.support.text.emoji.widget.EmojiTextView
             android:id="@+id/tv_find_img_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:lineSpacingExtra="@dimen/dimen_5_dp"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_30"
-            app:emojiconAlignment="baseline"
-            app:emojiconSize="17sp"
-            app:trimLines="5" />
+            android:textSize="@dimen/sc_mm_30"/>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

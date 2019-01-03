@@ -13,6 +13,8 @@ import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
+import android.support.text.emoji.EmojiCompat;
+import android.support.text.emoji.bundled.BundledEmojiCompatConfig;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -282,7 +284,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                     }
                     //shareSDK
                     MobSDK.init(mAppContext, MobAPPKEY, MobAPPSECRET);
-
+                    //  emoji 初始化
+                    EmojiCompat.init(new BundledEmojiCompatConfig(getApplication()));
                     //      友盟初始化
                     youMengInit();
                     //        oss初始化

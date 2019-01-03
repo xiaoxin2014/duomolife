@@ -14,7 +14,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -70,7 +72,7 @@ import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_ADD_LOTTERY;
  * class description:抽奖页面
  */
 public class DoMoLifeLotteryActivity extends BaseActivity {
-    public static final String LOTTERY_URL = "http://www.domolife.cn/m/template/home/lottery.html";
+    public static final String LOTTERY_URL = "https://www.domolife.cn/m/template/home/lottery.html";
     @BindView(R.id.web_communal)
     HtmlWebView web_communal;
     @BindView(R.id.tv_web_title)
@@ -534,5 +536,36 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         }else{
             web_communal.loadUrl(LOTTERY_URL);
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
     }
 }

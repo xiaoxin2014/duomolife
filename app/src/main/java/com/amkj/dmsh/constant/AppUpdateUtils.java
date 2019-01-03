@@ -31,6 +31,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.APP_VERSION_INFO;
 import static com.amkj.dmsh.constant.ConstantVariable.INTERVAL_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.LAST_UPDATE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_LAST_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
@@ -90,9 +91,11 @@ public class AppUpdateUtils {
                          */
                         if (isMandatoryUpdateVersion(appVersionBean.getCompel_version())) { // 是否是强制版本
                             openDialog(appVersionBean,true);
-                        } else if (isManual) {
+                        } else if (isManual) { //是否手动更新
                             setAppUpdateData(appVersionEntity, sharedPreferences);
-                            if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
+                            if (isHaveHeightUpdate(getStrings(appVersionBean.getVersion()))
+//                                    手动更新 新增版本
+                                    || isHaveHeightUpdate(getStrings(appVersionBean.getLatestVersion()))) {
                                 openDialog(appVersionBean,false);
                             } else {
                                 /**
@@ -105,7 +108,7 @@ public class AppUpdateUtils {
                                     Beta.checkUpgrade();
                                 }
                             }
-                        } else if (isHeightUpdate(getStrings(appVersionBean.getVersion()))) {
+                        } else if (isHaveHeightUpdate(getStrings(appVersionBean.getVersion()))) {
                             if (!appVersionBean.getUpdateTime().equals(updateTime)) {
                                 setAppUpdateData(appVersionEntity, sharedPreferences);
                                 if (appVersionBean.getShowPop() == 1) {
@@ -177,6 +180,7 @@ public class AppUpdateUtils {
             intent.putExtra(VERSION_UPDATE_DESCRIPTION, getStrings(appVersionBean.getDescription()));
             intent.putExtra(VERSION_UPDATE_LOW, getStrings(appVersionBean.getLowestVersion()));
             intent.putExtra(APP_CURRENT_UPDATE_VERSION, getStrings(appVersionBean.getVersion()));
+            intent.putExtra(MANDATORY_UPDATE_LAST_VERSION, getStrings(appVersionBean.getLatestVersion()));
             if(isMandatoryUpdate){
                 intent.putExtra(APP_MANDATORY_UPDATE_VERSION, "1");
                 intent.putExtra(MANDATORY_UPDATE_DESCRIPTION, getStrings(appVersionBean.getCompel_up_desc()));
@@ -192,7 +196,8 @@ public class AppUpdateUtils {
      * @param targetVersion
      * @return
      */
-    private boolean isHeightUpdate(String targetVersion) {
+    private boolean isHaveHeightUpdate(String targetVersion) {
+//        后台数据版本
         String constraintVersion = getAppendNumber(targetVersion);
         String currentVersion = getAppendNumber(getVersionName(context));
         int constraintLength = constraintVersion.length();

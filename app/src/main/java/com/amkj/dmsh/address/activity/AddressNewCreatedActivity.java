@@ -386,7 +386,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         }
         id_district.setViewAdapter(new ArrayWheelAdapter<>(this, districtName));
         id_district.setCurrentItem(0);
-        if (districtModels != null && districtModels.length > 0) {
+        if (districtModels.length > 0) {
             DistrictModel districtModel = districtModels[id_district.getCurrentItem()];
             if (districtModel != null) {
                 mCurrentDistrictId = districtModel.getId();
@@ -488,9 +488,10 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS
-                );
+                if(imm!=null){
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         }
         return super.dispatchTouchEvent(ev);

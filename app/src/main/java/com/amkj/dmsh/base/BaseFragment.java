@@ -180,7 +180,10 @@ public abstract class BaseFragment extends ImmersionFragment {
         }
         initViews();
         // 注册当前Fragment为订阅者
-        EventBus.getDefault().register(this);
+        EventBus eventBus = EventBus.getDefault();
+        if(eventBus.isRegistered(this)){
+            eventBus.register(this);
+        }
         isInitView = true;
         isCanLoadData();
         AutoSize.autoConvertDensityOfGlobal(getActivity());
