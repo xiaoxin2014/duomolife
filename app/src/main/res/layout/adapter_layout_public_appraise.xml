@@ -54,7 +54,7 @@
                 app:mrb_secondaryProgressTint="@color/text_gray_c" />
         </RelativeLayout>
     </RelativeLayout>
-    <emojicon.EmojiconEditText
+    <android.support.text.emoji.widget.EmojiEditText
         android:padding="@dimen/sc_mm_20"
         android:id="@+id/et_indent_appraise_input"
         android:layout_width="match_parent"

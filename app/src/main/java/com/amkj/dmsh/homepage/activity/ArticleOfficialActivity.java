@@ -74,7 +74,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
-import emojicon.EmojiconEditText;
+import android.support.text.emoji.widget.EmojiEditText;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
@@ -139,7 +139,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     @BindView(R.id.ll_input_comment)
     LinearLayout ll_input_comment;
     @BindView(R.id.emoji_edit_comment)
-    EmojiconEditText emoji_edit_comment;
+    EmojiEditText emoji_edit_comment;
     @BindView(R.id.tv_publish_comment)
     TextView tv_publish_comment;
     @BindView(R.id.tv_send_comment)

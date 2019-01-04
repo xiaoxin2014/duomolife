@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +27,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.adapter.FindImageListAdapter;
-import com.amkj.dmsh.homepage.activity.HomeCouponGetActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
@@ -77,7 +77,6 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import emojicon.EmojiconTextView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
@@ -136,17 +135,17 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.img_direct_avatar)
     CircleImageView imgDirectAvatar;
     @BindView(R.id.tv_eva_user_name)
-    EmojiconTextView tvEvaUserName;
+    EmojiTextView tvEvaUserName;
     @BindView(R.id.ratingBar_direct_count)
     MaterialRatingBar ratingBarDirectCount;
     @BindView(R.id.tv_eva_count)
     TextView tvEvaCount;
     @BindView(R.id.tv_direct_evaluation)
-    EmojiconTextView tvDirectEvaluation;
+    EmojiTextView tvDirectEvaluation;
     @BindView(R.id.rv_pro_eva)
     RecyclerView rvProEva;
     @BindView(R.id.emo_direct_eva_reply)
-    EmojiconTextView emoDirectEvaReply;
+    EmojiTextView emoDirectEvaReply;
     @BindView(R.id.ll_eva_comment_reply)
     LinearLayout llEvaCommentReply;
     @BindView(R.id.flex_communal_tag)

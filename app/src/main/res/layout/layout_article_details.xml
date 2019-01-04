@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
-    <emojicon.EmojiconTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.text.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/tv_content_type"
         android:layout_marginLeft="@dimen/gap_left"
         android:paddingRight="@dimen/gap_right"

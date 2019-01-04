@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
         <include layout="@layout/activity_domolife_header"/>
     </RelativeLayout>
-    <emojicon.EmojiconEditTextClean
+    <android.support.text.emoji.widget.EmojiEditText
         android:paddingLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/gap_right"
         android:layout_marginTop="@dimen/sc_mm_10"

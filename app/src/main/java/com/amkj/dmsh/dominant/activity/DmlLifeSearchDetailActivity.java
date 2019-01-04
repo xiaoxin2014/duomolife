@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
+import android.support.text.emoji.widget.EmojiEditText;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -74,7 +75,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
-import emojicon.EmojiconEditText;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
@@ -143,7 +143,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     @BindView(R.id.ll_input_comment)
     LinearLayout ll_input_comment;
     @BindView(R.id.emoji_edit_comment)
-    EmojiconEditText emoji_edit_comment;
+    EmojiEditText emoji_edit_comment;
     @BindView(R.id.tv_send_comment)
     TextView tv_send_comment;
     //    点赞底栏

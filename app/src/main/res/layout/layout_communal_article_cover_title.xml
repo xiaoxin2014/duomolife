@@ -19,7 +19,7 @@
         android:layout_marginRight="@dimen/sc_mm_24"
         android:orientation="vertical">
 
-        <emojicon.EmojiconTextView
+        <android.support.text.emoji.widget.EmojiTextView
             android:id="@+id/tv_article_details_title"
             app:emojiconSize="18sp"
             android:layout_width="match_parent"

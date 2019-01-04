@@ -31,7 +31,7 @@
             android:layout_marginLeft="@dimen/sc_mm_20"
             android:layout_weight="1">
 
-            <emojicon.EmojiconTextView
+            <android.support.text.emoji.widget.EmojiTextView
                 android:id="@+id/tv_eva_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             android:textSize="@dimen/sc_mm_24" />
     </LinearLayout>
 
-    <emojicon.EmojiconTextView
+    <android.support.text.emoji.widget.EmojiTextView
         android:layout_marginLeft="@dimen/sc_mm_90"
         android:id="@+id/tv_direct_evaluation"
         android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
         android:background="@drawable/border_circle_four_light_blue_e"
         android:visibility="visible">
 
-        <emojicon.EmojiconTextView xmlns:attr="http://schemas.android.com/apk/res-auto"
+        <android.support.text.emoji.widget.EmojiTextView xmlns:attr="http://schemas.android.com/apk/res-auto"
             android:id="@+id/emo_direct_eva_reply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -43,7 +43,7 @@
                 app:mrb_progressTint="@color/ratingBar_yellow"
                 app:mrb_secondaryProgressTint="@color/text_gray_c" />
         </RelativeLayout>
-        <emojicon.EmojiconTextView
+        <android.support.text.emoji.widget.EmojiTextView
             android:layout_width="match_parent"
             android:textSize="@dimen/sc_mm_24"
             android:lineSpacingExtra="@dimen/dimen_3_dp"

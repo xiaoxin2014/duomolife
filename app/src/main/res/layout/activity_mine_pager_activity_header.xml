@@ -38,7 +38,7 @@
             android:layout_marginLeft="@dimen/sc_mm_70"
             android:gravity="center_vertical"
             android:layout_height="wrap_content">
-            <emojicon.EmojiconTextView
+            <android.support.text.emoji.widget.EmojiTextView
                 android:layout_width="wrap_content"
                 android:layout_centerVertical="true"
                 android:textSize="@dimen/sc_mm_32"

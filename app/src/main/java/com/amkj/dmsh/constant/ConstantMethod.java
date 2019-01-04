@@ -76,6 +76,7 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
+import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -2713,13 +2714,13 @@ public class ConstantMethod {
     public static void showToast(Context context, String message) {
         if (isContextExisted(context)) {
             Context applicationContext = context.getApplicationContext();
-            if (toast == null) {
-                toast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT);
-            } else {
-                toast.setText(message);
+            if (ToastUtils.getToast() == null ||
+                    (!NotificationManagerCompat.from(applicationContext).areNotificationsEnabled() &&
+                    !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName()))) {
+                // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
+                ToastUtils.init(TinkerManager.getApplication());
             }
-            //设置新的消息提示
-            toast.show();
+            ToastUtils.show(message);
         }
     }
 

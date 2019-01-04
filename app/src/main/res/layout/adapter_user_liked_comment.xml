@@ -26,7 +26,7 @@
             android:scaleType="centerCrop"
             android:visibility="visible"
              />
-        <emojicon.EmojiconTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+        <android.support.text.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/tv_user_product_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

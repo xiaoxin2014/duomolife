@@ -141,6 +141,7 @@ dependencies {
     //noinspection GradleCompatible
     implementation "com.android.support:design:$versions.supportLibs"
     implementation "com.android.support:appcompat-v7:$versions.supportLibs"
+    implementation "com.android.support:support-emoji:$versions.supportLibs"
     implementation "com.android.support:support-emoji-bundled:$versions.supportLibs"
     implementation 'com.google.firebase:firebase-appindexing:17.1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -278,7 +279,8 @@ dependencies {
 
     //    加载dialog
     implementation 'com.kaopiz:kprogresshud:1.1.0'
-
+//    自定义Toast 避免关闭通知 不显示Toast
+    implementation 'com.hjq:toast:5.2'
     //    gif展示
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
@@ -288,7 +290,6 @@ dependencies {
     implementation project(':RecyclerViewPager')
     implementation project(':FlycoTabLayout_Lib')
     implementation project(':countdowntime')
-    implementation project(':Emoj')
     implementation project(':TuSDKUIDefault')
     implementation project(':TextView-LinkBuilder')
     implementation project(':Luban')

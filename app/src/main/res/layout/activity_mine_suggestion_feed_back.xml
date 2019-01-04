@@ -23,7 +23,7 @@
         android:textColor="@color/text_black_t"
         android:background="@drawable/border_rect_8_solid_gray_ff"
         android:layout_height="@dimen/sc_mm_80" />
-    <emojicon.EmojiconEditText
+    <android.support.text.emoji.widget.EmojiEditText
         android:layout_marginTop="@dimen/sc_mm_40"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"

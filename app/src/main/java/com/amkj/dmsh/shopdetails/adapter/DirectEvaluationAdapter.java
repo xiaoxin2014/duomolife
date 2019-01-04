@@ -2,6 +2,7 @@ package com.amkj.dmsh.shopdetails.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import emojicon.EmojiconTextView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -56,7 +56,7 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                 TextView tv_direct_evaluation = helper.getView(R.id.tv_direct_evaluation);
                 TextView tv_eva_count = helper.getView(R.id.tv_eva_count);
                 MaterialRatingBar ratingBar = helper.getView(R.id.ratingBar_direct_count);
-                EmojiconTextView emo_direct_eva_reply = helper.getView(R.id.emo_direct_eva_reply);
+                EmojiTextView emo_direct_eva_reply = helper.getView(R.id.emo_direct_eva_reply);
                 if (!TextUtils.isEmpty(goodsCommentBean.getImages())) {
                     helper.rv_pro_eva.setVisibility(View.VISIBLE);
                     setEvaImages(helper.rv_pro_eva, goodsCommentBean.getImages());

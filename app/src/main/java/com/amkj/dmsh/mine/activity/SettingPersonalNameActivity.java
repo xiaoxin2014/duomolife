@@ -2,6 +2,7 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.text.emoji.widget.EmojiEditText;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -26,7 +27,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import emojicon.EmojiconEditTextClean;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
@@ -43,7 +43,7 @@ import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
  */
 public class SettingPersonalNameActivity extends BaseActivity {
     @BindView(R.id.edit_personal_name)
-    EmojiconEditTextClean edit_personal_name;
+    EmojiEditText edit_personal_name;
     @BindView(R.id.tv_personal_name_length)
     TextView tv_personal_name_length;
     @BindView(R.id.tv_header_title)

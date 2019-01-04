@@ -46,7 +46,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <emojicon.EmojiconTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    <android.support.text.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/tv_user_proName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                     android:textColor="@color/text_gray_hint_n"
                     android:textSize="@dimen/sc_mm_26" />
             </LinearLayout>
-            <emojicon.EmojiconTextView
+            <android.support.text.emoji.widget.EmojiTextView
                 android:id="@+id/tv_receiver_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

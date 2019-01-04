@@ -37,7 +37,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <emojicon.EmojiconTextViewLink
+            <com.amkj.dmsh.views.EmojiTextViewLink
                 app:emojiconAlignment="baseline"
                 app:emojiconSize="17sp"
                 android:id="@+id/tv_inv_live_content"
@@ -74,7 +74,7 @@
                 android:id="@+id/iv_find_article_cover"
                 android:adjustViewBounds="true"
                 android:layout_height="wrap_content" />
-            <emojicon.EmojiconTextView
+            <android.support.text.emoji.widget.EmojiTextView
                 android:layout_width="match_parent"
                 android:layout_below="@id/iv_find_article_cover"
                 android:id="@+id/tv_find_article_digest"

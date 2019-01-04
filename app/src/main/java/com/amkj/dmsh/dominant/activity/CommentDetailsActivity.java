@@ -2,6 +2,7 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.text.emoji.widget.EmojiEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -52,7 +53,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import butterknife.OnTouch;
-import emojicon.EmojiconEditText;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.R.id.tv_comm_comment_like;
@@ -85,7 +85,7 @@ public class CommentDetailsActivity extends BaseActivity {
     @BindView(R.id.ll_input_comment)
     public LinearLayout ll_input_comment;
     @BindView(R.id.emoji_edit_comment)
-    EmojiconEditText emoji_edit_comment;
+    EmojiEditText emoji_edit_comment;
     @BindView(R.id.tv_send_comment)
     TextView tv_send_comment;
 

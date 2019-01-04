@@ -72,7 +72,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.jzvd.Jzvd;
-import emojicon.EmojiconTextView;
+import android.support.text.emoji.widget.EmojiTextView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -388,7 +388,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case NORTEXT:
                 String content = detailObjectBean.getContent();
-                final EmojiconTextView tv_content_type = holder.getView(R.id.tv_content_type);
+                final EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
                 tv_content_type.setPadding(0, 0, 0, 0);
                 final RelativeLayout rel_communal_image = holder.getView(R.id.rel_communal_image);
                 final ImageView iv_communal_image = holder.getView(R.id.iv_communal_image);
