@@ -36,7 +36,6 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
-import com.hjq.toast.ToastUtils;
 import com.kingja.loadsir.core.LoadSir;
 import com.leon.channel.helper.ChannelReaderUtil;
 import com.microquation.linkedme.android.LinkedME;
@@ -272,7 +271,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             JPushInterface.init(mAppContext);
 //            必须在主线程调用
             QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
-            ToastUtils.init(getApplication());
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {

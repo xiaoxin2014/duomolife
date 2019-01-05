@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,11 +16,13 @@ import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.gyf.barlibrary.ImmersionBar;
+import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.umeng.analytics.MobclickAgent;
@@ -135,6 +138,10 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         StatService.onResume(this);
         if (totalPersonalTrajectory == null) {
             totalPersonalTrajectory = new TotalPersonalTrajectory(this);
+        }
+        if (ToastUtils.getToast() == null) {
+            // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
+            ToastUtils.init(TinkerManager.getApplication());
         }
     }
 
@@ -285,5 +292,17 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         }
         // 必须调用该方法，防止内存泄漏
         ImmersionBar.with(this).destroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // 如果通知栏的权限被手动关闭了
+        if (!NotificationManagerCompat.from(this).areNotificationsEnabled() &&
+                !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName())) {
+            // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
+            ToastUtils.init(TinkerManager.getApplication());
+            recreate();
+        }
     }
 }

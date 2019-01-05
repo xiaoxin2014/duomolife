@@ -5,11 +5,14 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.gyf.barlibrary.ImmersionBar;
+import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
@@ -51,12 +54,16 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         loadHud = KProgressHUD.create(this)
                 .setCancellable(true)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setSize(AutoSizeUtils.mm2px(mAppContext,50), AutoSizeUtils.mm2px(mAppContext,50));
+                .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50));
 //                .setDimAmount(0.5f)
         initViews();
         loadData();
 //        设置状态栏
         setStatusBar();
+        if (ToastUtils.getToast() == null) {
+            // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
+            ToastUtils.init(TinkerManager.getApplication());
+        }
     }
 
     /**
@@ -120,7 +127,7 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
 
         Jzvd.releaseAllVideos();
         //        避免播放 置于后台，释放滚动
-        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
         saveTotalData();
     }
 
@@ -199,9 +206,22 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
         }
         return res;
     }
+
     protected abstract int getContentView();
 
     protected abstract void initViews();
 
     protected abstract void loadData();
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // 如果通知栏的权限被手动关闭了
+        if (ToastUtils.getToast() != null && !NotificationManagerCompat.from(this).areNotificationsEnabled() &&
+                !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName())) {
+            // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
+            ToastUtils.init(TinkerManager.getApplication());
+            recreate();
+        }
+    }
 }

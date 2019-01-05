@@ -9,7 +9,6 @@ import android.text.Selection;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.mine.bean.MinePassword;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.KeyboardUtils;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -63,14 +61,6 @@ public class ChangePasswordActivity extends BaseActivity{
         tv_header_titleAll.setText("修改密码");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("完成");
-        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
-            @Override
-            public void onSoftInputChanged(int height) {
-                if (height == 0) {
-                    ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
-                }
-            }
-        });
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

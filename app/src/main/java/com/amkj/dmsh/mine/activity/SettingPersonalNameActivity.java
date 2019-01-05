@@ -179,6 +179,7 @@ public class SettingPersonalNameActivity extends BaseActivity {
     void goBack(View view) {
         finish();
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {

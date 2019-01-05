@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,7 +28,6 @@ import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
@@ -130,14 +128,6 @@ public class BindingMobileActivity extends BaseActivity {
                 msg.arg2 = result;
                 msg.obj = data;
                 handler.sendMessage(msg);
-            }
-        });
-        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
-            @Override
-            public void onSoftInputChanged(int height) {
-                if (height == 0) {
-                    ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
-                }
             }
         });
     }
