@@ -87,6 +87,8 @@ public class FindTopicDetailsActivity extends BaseActivity {
     public AppBarLayout ab_find_topic_layout;
     @BindView(R.id.tv_header_shared)
     public TextView tv_header_shared;
+    @BindView(R.id.tv_header_title)
+    public TextView tvHeaderTitle;
     @BindView(R.id.tv_find_release_topic)
     public TextView tv_find_release_topic;
     private FindPagerAdapter findPagerAdapter;
@@ -239,6 +241,7 @@ public class FindTopicDetailsActivity extends BaseActivity {
                 jvp_find_video_play.setVisibility(View.GONE);
             }
         }
+        tvHeaderTitle.setText(findHotTopicBean.getTitle());
         tv_find_topic_title.setText(String.format(getResources().getString(R.string.topic_format)
                 , getStrings(findHotTopicBean.getTitle())));
         tv_find_topic_collect.setSelected(findHotTopicBean.isCollect());

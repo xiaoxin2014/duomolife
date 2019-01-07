@@ -49,6 +49,7 @@ import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -67,9 +68,11 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
+import com.zhouyou.http.cache.model.CacheResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +81,6 @@ import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -289,7 +291,7 @@ public class MineDataFragment extends BaseFragment {
             MineTypeBean mineTypeBean = mineTypeList.get(i);
             String androidLink = getStrings(mineTypeBean.getAndroidUrl());
             if (androidLink.contains("ManagerServiceChat")) {
-                if(serviceTotalCount!=mineTypeBean.getMesCount()){
+                if (serviceTotalCount != mineTypeBean.getMesCount()) {
                     mineTypeBean.setMesCount(serviceTotalCount);
                     typeMineAdapter.notifyDataSetChanged();
                 }
@@ -324,20 +326,25 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
-    private void setData(final CommunalUserInfoBean userData) {
-        tv_mine_name.setText(getStrings(userData.getNickname()));
-        tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count), userData.getFllow()));
-        tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count), userData.getFans()));
-        tv_mine_inv_count.setText(String.format(getResources().getString(R.string.mine_invitation_count), userData.getDocumentcount()));
-        tv_mine_score.setText(("积分：" + userData.getScore()));
-        GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(userData.getAvatar())
-                ? ImageConverterUtils.getFormatImg(userData.getAvatar()) : "");
-        GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(userData.getBgimg_url())
-                ? ImageConverterUtils.getFormatImg(userData.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
-        setBottomTypeCount(userData);
-        if (userData.getNoticeInfo() != null && !TextUtils.isEmpty(userData.getNoticeInfo().getContent())) {
+    /**
+     * 个人数据
+     *
+     * @param communalUserInfoBean 用户信息
+     */
+    private void setData(final CommunalUserInfoBean communalUserInfoBean) {
+        tv_mine_name.setText(getStrings(communalUserInfoBean.getNickname()));
+        tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count), String.valueOf(communalUserInfoBean.getFllow())));
+        tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count), String.valueOf(communalUserInfoBean.getFans())));
+        tv_mine_inv_count.setText(String.format(getResources().getString(R.string.mine_invitation_count), String.valueOf(communalUserInfoBean.getDocumentcount())));
+        tv_mine_score.setText(("积分：" + communalUserInfoBean.getScore()));
+        GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(communalUserInfoBean.getAvatar())
+                ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
+        GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
+                ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
+        setBottomTypeCount(communalUserInfoBean);
+        if (communalUserInfoBean.getNoticeInfo() != null && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getContent())) {
             rel_personal_data_sup.setVisibility(View.VISIBLE);
-            tv_personal_data_sup.setText(getStrings(userData.getNoticeInfo().getContent()));
+            tv_personal_data_sup.setText(getStrings(communalUserInfoBean.getNoticeInfo().getContent()));
         } else {
             rel_personal_data_sup.setVisibility(View.GONE);
         }
@@ -473,13 +480,32 @@ public class MineDataFragment extends BaseFragment {
      * 请求用户数据
      */
     private void getNetDataInfo() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
-                , params, new NetLoadListenerHelper() {
+        LinkedHashMap<String, String> params = new LinkedHashMap<>();
+        params.put("uid", String.valueOf(userId));
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(MINE_PAGE
+                , params, false, new NetCacheLoadListenerHelper() {
                     @Override
-                    public void onSuccess(String result) {
-                        getUserDataInfo(result);
+                    public void onSuccessCacheResult(CacheResult<String> cacheResult) {
+                        if (cacheResult == null || TextUtils.isEmpty(cacheResult.data)) {
+                            return;
+                        }
+                        Gson gson = new Gson();
+                        CommunalUserInfoEntity minePageData = gson.fromJson(cacheResult.data, CommunalUserInfoEntity.class);
+                        communalUserInfoBean = minePageData.getCommunalUserInfoBean();
+                        if (communalUserInfoBean != null) {
+                            if (minePageData.getCode().equals(SUCCESS_CODE)) {
+                                ll_mime_no_login.setVisibility(View.GONE);
+                                ll_mine_login.setVisibility(View.VISIBLE);
+                                setData(communalUserInfoBean);
+                                getDoMeIndentDataCount();
+                            } else {
+                                setErrorUserData();
+                                showToast(getActivity(), minePageData.getMsg());
+                            }
+                        } else {
+                            setErrorUserData();
+                            showToast(getActivity(), minePageData.getMsg());
+                        }
                     }
 
                     @Override
@@ -508,7 +534,7 @@ public class MineDataFragment extends BaseFragment {
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setMineAdData(adActivityEntity);
-                    }else {
+                    } else {
                         ad_mine.setVisibility(View.GONE);
                     }
                 }
@@ -558,31 +584,6 @@ public class MineDataFragment extends BaseFragment {
         ll_mime_no_login.setVisibility(View.VISIBLE);
         rel_personal_data_sup.setVisibility(View.GONE);
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
-    }
-
-    /**
-     * 处理个人信息数据
-     *
-     * @param result
-     */
-    private void getUserDataInfo(String result) {
-        Gson gson = new Gson();
-        CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
-        communalUserInfoBean = minePageData.getCommunalUserInfoBean();
-        if (communalUserInfoBean != null) {
-            if (minePageData.getCode().equals(SUCCESS_CODE)) {
-                ll_mime_no_login.setVisibility(View.GONE);
-                ll_mine_login.setVisibility(View.VISIBLE);
-                setData(communalUserInfoBean);
-                getDoMeIndentDataCount();
-            } else {
-                setErrorUserData();
-                showToast(getActivity(), minePageData.getMsg());
-            }
-        } else {
-            setErrorUserData();
-            showToast(getActivity(), minePageData.getMsg());
-        }
     }
 
     public void skipLoginPage() {

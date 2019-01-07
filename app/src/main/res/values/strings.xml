@@ -208,9 +208,9 @@
     <string name="time_product_clock_new">%1$s点上新</string>
     <string name="time_join_group_count">%1$s人喜欢</string>
     <!--我的-关注数-->
-    <string name="mine_follow_count">%1$d\n关注</string>
-    <string name="mine_fans_count">%1$d\n粉丝</string>
-    <string name="mine_invitation_count">%1$d\n帖子</string>
+    <string name="mine_follow_count">%1$s\n关注</string>
+    <string name="mine_fans_count">%1$s\n粉丝</string>
+    <string name="mine_invitation_count">%1$s\n帖子</string>
     <string name="communal_go_string"><![CDATA[%1$s >]]></string>
     <string name="skip_empty_page_hint">版本过低，请更新至最新版本。</string>
     <string name="inden_data_failed">订单类型异常，请稍后重试~</string>

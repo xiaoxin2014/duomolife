@@ -35,6 +35,7 @@ import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
+import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -347,7 +348,7 @@ public class HomePageFragment extends BaseFragment {
      * 获取活动列表
      */
     private void getHotActivityList() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_HOT_ACTIVITY_LIST,isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_HOT_ACTIVITY_LIST,isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -382,7 +383,7 @@ public class HomePageFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_AD_LIST, params,isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_AD_LIST, params,isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -428,7 +429,7 @@ public class HomePageFragment extends BaseFragment {
      * 专区活动广告
      */
     private void getRegionActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_REGION_ACTIVITY, isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_REGION_ACTIVITY, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

@@ -23,6 +23,7 @@ import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity;
 import com.amkj.dmsh.dominant.bean.QualityHomeTypeEntity.QualityHomeTypeBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -205,7 +206,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_AD_LOOP, params, isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_AD_LOOP, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 getADJsonData(result);
@@ -297,7 +298,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getCenterType() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CENTER_TYPE, isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CENTER_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -376,7 +377,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getHomeIndexType() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CLASS_TYPE,isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CLASS_TYPE,isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

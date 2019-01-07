@@ -36,7 +36,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
-import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.TOTAL_DATA_UP;
@@ -149,9 +148,10 @@ public class TotalPersonalTrajectory {
         if (stringStringMap == null) {
             return;
         }
-        if (!isUpTotalFile && !TextUtils.isEmpty(stringStringMap.get(TOTAL_NAME)) && !TextUtils.isEmpty(stringStringMap.get(TOTAL_ID))) {
+        if (!isUpTotalFile && !TextUtils.isEmpty(stringStringMap.get(TOTAL_NAME))
+                && !TextUtils.isEmpty(stringStringMap.get(TOTAL_ID))) {
             createExecutor().execute(() -> {
-                File trajectoryFile = createFiles(context.getDir("trajectory", Context.MODE_APPEND));
+                File trajectoryFile = createFiles(mAppContext.getDir("trajectory", Context.MODE_APPEND));
                 File file = new File(trajectoryFile.getAbsolutePath() + "/" + "trajectoryData" + ".txt");
                 Map<String, Object> totalDataMap = new HashMap<>();
                 totalDataMap.put("act", stringStringMap.get(TOTAL_NAME));
@@ -166,15 +166,11 @@ public class TotalPersonalTrajectory {
                 /**
                  * 3.1.5加入
                  */
-                totalDataMap.put("version", getVersionName(context));
+                totalDataMap.put("version", getVersionName(mAppContext));
                 totalDataMap.put("act_time", simpleDateFormat.format(System.currentTimeMillis()));
                 totalDataMap.put("uid", userId > 0 ? userId : null);
                 JSONObject jsonObject = new JSONObject(totalDataMap);
                 FileStreamUtils.writeFileFromString(file.getAbsolutePath(), jsonObject.toString() + ",", true);
-                if (isDebugTag) {
-                    String s = FileStreamUtils.readFile2String(file.getAbsolutePath());
-                    com.amkj.dmsh.utils.Log.longLogW("fileTotal:————》", s);
-                }
                 isUpTotalFile(trajectoryFile.getAbsolutePath());
             });
         }
@@ -196,7 +192,7 @@ public class TotalPersonalTrajectory {
      * 读取文件 获取统计数据上传
      */
     public void getFileTotalTrajectory() {
-        File trajectoryFile = context.getDir("trajectory", Context.MODE_APPEND);
+        File trajectoryFile = mAppContext.getDir("trajectory", Context.MODE_APPEND);
         if (trajectoryFile != null && trajectoryFile.isDirectory()) {
             for (File file : trajectoryFile.listFiles()) {
                 if (file.getName().contains("trajectoryData")) {
@@ -217,7 +213,7 @@ public class TotalPersonalTrajectory {
     }
 
     private void upTotalDataAndDel(@NonNull String trajectoryData, String filePath) {
-        if (NetWorkUtils.checkNet(context) && trajectoryData.length() > 1) {
+        if (NetWorkUtils.checkNet(mAppContext) && trajectoryData.length() > 1) {
             String jsonStr = "[" + trajectoryData.substring(0, trajectoryData.length() - 1) + "]";
             Gson gson = new Gson();
 //            原数据

@@ -31,6 +31,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
+import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
@@ -279,7 +280,7 @@ public class FindFragment extends BaseFragment {
     private void getFindAd() {
         LinkedHashMap<String, Object> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + FIND_AD, params, isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + FIND_AD, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -323,7 +324,7 @@ public class FindFragment extends BaseFragment {
      * 发现-活动图
      */
     private void getFindActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 findActivityList.clear();
@@ -349,7 +350,7 @@ public class FindFragment extends BaseFragment {
      * 获取热门主题
      */
     private void getHotTopic() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (topicPage == 1) {

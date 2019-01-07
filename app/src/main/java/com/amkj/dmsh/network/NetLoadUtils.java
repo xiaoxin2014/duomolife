@@ -18,6 +18,7 @@ import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
 import com.kingja.loadsir.core.LoadService;
 import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.cache.model.CacheResult;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhouyou.http.model.HttpParams;
@@ -171,8 +172,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
     }
 
-    public void loadNetDataGetCache(String url, boolean isForceNet, NetLoadListener netLoadListener) {
-        loadNetDataGetCache(url, null, isForceNet, netLoadListener);
+    public void loadNetDataGetCache(String url, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
+        loadNetDataGetCache(url, null, isForceNet, netCacheLoadListener);
     }
 
     /**
@@ -184,9 +185,9 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param url 必须是正常网址 区分正式测试库
      * @param params
      * @param isForceNet
-     * @param netLoadListener
+     * @param netCacheLoadListener
      */
-    public void loadNetDataGetCache(String url, LinkedHashMap<String, String> params, boolean isForceNet, NetLoadListener netLoadListener) {
+    public void loadNetDataGetCache(String url, LinkedHashMap<String, String> params, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
         if (!TextUtils.isEmpty(url)) {
             //            先进行框架初始化
             NetApiManager.getInstance().initNetInstance();
@@ -198,32 +199,41 @@ public class NetLoadUtils<T, E extends BaseEntity> {
 //                    缓存过期时间 访问有网络，有效5分钟
 //                    .cacheTime(NetWorkUtils.isConnectedByState(mAppContext) ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000)
                     .cacheMode(NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTEDISTINCT) : ONLYCACHE)
-                    .execute(new SimpleCallBack<String>() {
+                    .execute(new SimpleCallBack<CacheResult<String>>() {
                         @Override
                         public void onError(ApiException e) {
-                            if (netLoadListener != null) {
-                                netLoadListener.onError(e);
-                                netLoadListener.onNotNetOrException();
+                            if (netCacheLoadListener != null) {
+                                netCacheLoadListener.onError(e);
+                                netCacheLoadListener.onNotNetOrException();
                             }
                         }
 
                         @Override
-                        public void onSuccess(String result) {
+                        public void onSuccess(CacheResult<String> cacheResult) {
+                            if(cacheResult==null){
+                                if (netCacheLoadListener != null) {
+                                    netCacheLoadListener.onError(new Throwable("数据为空！"));
+                                    netCacheLoadListener.onNotNetOrException();
+                                }
+                                return;
+                            }
+                            String result = cacheResult.data;
                             if (!TextUtils.isEmpty(result)) {
-                                if (netLoadListener != null) {
-                                    netLoadListener.onSuccess(result);
+                                if (netCacheLoadListener != null) {
+                                    netCacheLoadListener.onSuccess(result);
+                                    netCacheLoadListener.onSuccessCacheResult(cacheResult);
                                 }
                             } else {
-                                if (netLoadListener != null) {
-                                    netLoadListener.onError(new Throwable("缓存为空！"));
-                                    netLoadListener.onNotNetOrException();
+                                if (netCacheLoadListener != null) {
+                                    netCacheLoadListener.onError(new Throwable("缓存为空！"));
+                                    netCacheLoadListener.onNotNetOrException();
                                 }
                             }
                         }
                     });
         } else {
-            if (netLoadListener != null) {
-                netLoadListener.onError(new Throwable("url为空"));
+            if (netCacheLoadListener != null) {
+                netCacheLoadListener.onError(new Throwable("url为空"));
             }
         }
     }
