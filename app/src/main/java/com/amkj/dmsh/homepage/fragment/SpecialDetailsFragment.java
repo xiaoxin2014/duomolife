@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_SPECIAL;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 
@@ -54,11 +56,11 @@ public class SpecialDetailsFragment extends BaseFragment {
 
     private List<TopicSpecialBean> specialSearList = new ArrayList<>();
     private int page = 1;
-    private String keyWord;
     private int scrollY = 0;
     private SpecialTopicAdapter specialTopicAdapter;
     private float screenHeight;
     private TopicSpecialEntity topicSpecialEntity;
+    private String searchData;
 
     @Override
     protected int getContentView() {
@@ -141,21 +143,28 @@ public class SpecialDetailsFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("search1")) {
+        if (message.type.equals(SEARCH_DATA)) {
             String resultText = (String) message.result;
-            if (!resultText.equals(keyWord)) {
-                keyWord = resultText;
+            if (!resultText.equals(searchData)) {
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
+                searchData = resultText;
                 loadData();
             }
         }
     }
 
+    @Override
+    protected void getReqParams(Bundle bundle) {
+        searchData = (String) bundle.get(SEARCH_DATA);
+    }
+
     private void getSpecialData() {
-        if (TextUtils.isEmpty(keyWord)) {
+        if (TextUtils.isEmpty(searchData)) {
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, specialSearList, topicSpecialEntity);
             return;
         }
         Map<String, Object> params = new HashMap<>();
-        params.put("keyword", keyWord);
+        params.put("keyword", searchData);
         params.put("currentPage", page);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_HOT_SEARCH_SPECIAL,
                 params, new NetLoadListenerHelper() {

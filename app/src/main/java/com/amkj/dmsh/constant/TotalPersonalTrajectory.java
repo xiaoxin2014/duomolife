@@ -50,30 +50,26 @@ import static com.amkj.dmsh.constant.Url.TOTAL_DATA_UP;
 public class TotalPersonalTrajectory {
 
     private ScheduledExecutorService schedule;
-    private final Context context;
     private long timeMilliseconds;
-    private String mFragmentName;
     private String orderNo;
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     private String relateId;
-    private String pushId;
+    private String currentPageName;
 
     public TotalPersonalTrajectory(Context mContext) {
         schedule = createSchedule();
-        context = mContext;
+        currentPageName = mContext.getClass().getSimpleName();
     }
 
     public TotalPersonalTrajectory(Context mContext, String fragmentName) {
         schedule = createSchedule();
-        context = mContext;
-        mFragmentName = fragmentName;
+        currentPageName = TextUtils.isEmpty(fragmentName) ? mContext.getClass().getSimpleName() : fragmentName;
     }
 
     public TotalPersonalTrajectory(Context mContext, String fragmentName, Map<String, String> totalMap) {
-        context = mContext;
-        mFragmentName = fragmentName;
+        currentPageName = TextUtils.isEmpty(fragmentName) ? mContext.getClass().getSimpleName() : fragmentName;
         if (totalMap != null) {
-            saveTotalDataToFile();
+            saveTotalDataToFile(currentPageName);
         }
     }
 
@@ -121,22 +117,16 @@ public class TotalPersonalTrajectory {
         if (!TextUtils.isEmpty(typeName)) {
             saveTotalDataToFile(typeName);
         } else {
-            saveTotalDataToFile();
+            saveTotalDataToFile(currentPageName);
         }
     }
 
     /**
-     * 记录轨迹路径 写入文件
+     * 保存访问信息
+     * @param name
      */
-    private void saveTotalDataToFile() {
-        if (context == null) {
-            return;
-        }
-        saveTotalDataToFile(TextUtils.isEmpty(mFragmentName) ? context.getClass().getSimpleName() : mFragmentName);
-    }
-
     private void saveTotalDataToFile(String name) {
-        if (context == null) {
+        if(TextUtils.isEmpty(name)){
             return;
         }
         TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();

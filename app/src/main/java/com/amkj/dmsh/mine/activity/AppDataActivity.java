@@ -112,9 +112,9 @@ public class AppDataActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,DELIVERY_ADDRESS,params,new NetLoadListenerHelper(){
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -142,11 +142,12 @@ public class AppDataActivity extends BaseActivity {
 
     //    统计缓存
     private void getCacheStatic() {
+        Context applicationContext = this.getApplicationContext();
         Img_PATH = getFilesDir().getAbsolutePath() + "/ImgArticle";
         files.add(new File(Img_PATH));
-        files.add(AppDataActivity.this.getCacheDir());
-        if (getGlideCacheFile(AppDataActivity.this) != null) {
-            files.add(getGlideCacheFile(AppDataActivity.this));
+        files.add(applicationContext.getCacheDir());
+        if (getGlideCacheFile(applicationContext) != null) {
+            files.add(getGlideCacheFile(applicationContext));
         }
 //        查看文件夹的缓存大小
         try {
@@ -280,8 +281,10 @@ public class AppDataActivity extends BaseActivity {
     //    清理缓存
     @OnClick({R.id.rel_mine_cache})
     void clearAppCache(View view) {
+        Context applicationContext = this.getApplicationContext();
         try {
-            if (getFolderSize(new File(Img_PATH)) > 0 || getFolderSize(AppDataActivity.this.getCacheDir()) > 0) {
+            if (getFolderSize(new File(Img_PATH)) > 0
+                    || getFolderSize(AppDataActivity.this.getCacheDir()) > 0) {
 //                点击清除-》子线程清除数据 禁用点击 手动改为已清除
                 tv_set_clear_cache.setText("0.0kb");
                 view.setEnabled(false);
@@ -291,14 +294,14 @@ public class AppDataActivity extends BaseActivity {
                             FileCacheUtils.deleteFolderFile(Img_PATH, false);
                         }
                         if (getFolderSize(AppDataActivity.this.getCacheDir()) > 0) {
-                            FileCacheUtils.cleanInternalCache(AppDataActivity.this);
+                            FileCacheUtils.cleanInternalCache(applicationContext);
                         }
 //                       七鱼客服清除缓存
                         QyServiceUtils.getQyInstance().clearQyCache();
 //                        网络缓存
                         EasyHttp.clearCache();
-                        PictureFileUtils.deleteCacheDirFile(AppDataActivity.this);
-                        GlideImageLoaderUtil.clearMemoryByActivity(AppDataActivity.this);
+                        PictureFileUtils.deleteCacheDirFile(applicationContext);
+                        GlideImageLoaderUtil.clearMemoryByContext(applicationContext);
                         SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
                         SharedPreferences.Editor edit = sharedPreferences.edit();
                         edit.clear().apply();

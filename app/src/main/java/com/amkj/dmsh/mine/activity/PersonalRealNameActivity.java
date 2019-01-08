@@ -235,4 +235,10 @@ public class PersonalRealNameActivity extends BaseActivity {
         }
         return false;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
 }

@@ -1118,5 +1118,6 @@ public class DirectApplyRefundActivity extends BaseActivity{
         if(commitDialogHelper!=null&&commitDialogHelper.isShowing()){
             commitDialogHelper.dismiss();
         }
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 }

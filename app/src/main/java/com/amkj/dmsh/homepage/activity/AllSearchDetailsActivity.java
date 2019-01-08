@@ -18,7 +18,6 @@ import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.SearchTabPageAdapter;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,6 +33,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 
@@ -44,9 +44,8 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
     SlidingTabLayout sliding_search_bar;
     @BindView(R.id.vp_search_details_container)
     ViewPager vp_search_details_container;
-    private String data;
+    private String searchDate;
     private SearchTabPageAdapter searchTabPageAdapter;
-    private String searchText = "";
     private LinkedList<String> dataHistoryList = new LinkedList<>();
     private String SAVE_TYPE = "allSearch";
     private String SAVE_NAME = "SearchHistory";
@@ -61,15 +60,14 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
     protected void initViews() {
         et_search_input.setFocusableInTouchMode(true);
         Intent intent = getIntent();
-        data = intent.getStringExtra("data");
-        String keyWord = getStrings(data);
+        searchDate = intent.getStringExtra(SEARCH_DATA);
+        String keyWord = getStrings(searchDate);
         et_search_input.setText(keyWord);
         et_search_input.setSelection(keyWord.length());
-        searchText = data;
         params = new HashMap<>();
-        params.put("data", data);
+        params.put(SEARCH_DATA, searchDate);
 //        插入历史记录
-        insertHistoryData(data);
+        insertHistoryData(searchDate);
         sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext, 26));
         sliding_search_bar.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 2));
         searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
@@ -79,32 +77,21 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
         et_search_input.setOnKeyListener(new View.OnKeyListener() {// 输入完后按键盘上的搜索键
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 EditText view = (EditText) v;
-                searchText = view.getText().toString().trim();
+                searchDate = view.getText().toString().trim();
                 if (keyCode == KeyEvent.KEYCODE_ENTER
                         && event.getAction() == KeyEvent.ACTION_DOWN) {// 修改回车键功能
                     // 先隐藏键盘
                     KeyboardUtils.hideSoftInput(AllSearchDetailsActivity.this);
                     //跳转页面，模糊搜索
-                    if (!TextUtils.isEmpty(searchText)) {
-                        int currentTab = sliding_search_bar.getCurrentTab();
-                        EventBus.getDefault().post(new EventMessage("search" + currentTab, searchText));
-                        insertHistoryData(searchText);
+                    if (!TextUtils.isEmpty(searchDate)) {
+                        params.put(SEARCH_DATA, searchDate);
+                        EventBus.getDefault().post(new EventMessage(SEARCH_DATA, searchDate));
+                        insertHistoryData(searchDate);
                     } else {
                         showToast(AllSearchDetailsActivity.this, "你输入为空，请重新输入！");
                     }
                 }
                 return false;
-            }
-        });
-        sliding_search_bar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelect(int position) {
-                EventBus.getDefault().post(new EventMessage("search" + position, searchText));
-            }
-
-            @Override
-            public void onTabReselect(int position) {
-
             }
         });
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
@@ -190,5 +177,11 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 }

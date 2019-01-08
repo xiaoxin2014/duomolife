@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
+import android.support.text.emoji.widget.EmojiEditText;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,7 +70,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
-import android.support.text.emoji.widget.EmojiEditText;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
@@ -797,5 +797,11 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 }

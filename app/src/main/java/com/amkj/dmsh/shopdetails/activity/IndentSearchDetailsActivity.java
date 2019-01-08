@@ -71,6 +71,7 @@ import static com.amkj.dmsh.constant.Url.INDENT_SEARCH;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CANCEL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CONFIRM;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_DEL;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 ;
@@ -122,7 +123,7 @@ public class IndentSearchDetailsActivity extends BaseActivity {
         iv_indent_search.setVisibility(View.GONE);
         tv_indent_title.setText("订单");
         Intent intent = getIntent();
-        searchKey = intent.getStringExtra("data");
+        searchKey = intent.getStringExtra(SEARCH_DATA);
         communal_recycler.setLayoutManager(new LinearLayoutManager(IndentSearchDetailsActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID

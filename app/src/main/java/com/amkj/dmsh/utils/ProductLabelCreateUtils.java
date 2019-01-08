@@ -21,6 +21,8 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
+import java.lang.ref.WeakReference;
+
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -36,7 +38,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
  */
 public class ProductLabelCreateUtils implements View.OnClickListener {
     private static volatile ProductLabelCreateUtils productLabelCreateUtils;
-    private Context context;
+    private WeakReference<Context> contextWeakReference;
 
     private ProductLabelCreateUtils() {
     }
@@ -61,7 +63,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
      * @return
      */
     public TextView createLabelText(Context context, String labelText, int labelCode) {
-        this.context = context;
+        contextWeakReference = new WeakReference<>(context);
         TextView textView = new TextView(context);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         textView.setLayoutParams(layoutParams);
@@ -90,7 +92,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
      * @return
      */
     public TextView createLabelClickText(Context context, MarketLabelBean marketLabelBean) {
-        this.context = context;
+        contextWeakReference = new WeakReference<>(context);;
         TextView textView = new TextView(context);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         textView.setLayoutParams(layoutParams);
@@ -119,7 +121,8 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         MarketLabelBean marketLabelBean = (MarketLabelBean) view.getTag();
-        if (marketLabelBean != null) {
+        Context context = contextWeakReference.get();
+        if (marketLabelBean != null&&context!=null) {
             Intent intent = new Intent();
             if (marketLabelBean.getId() > 0) {
                 intent.setClass(context, ProductLabelDetailActivity.class);

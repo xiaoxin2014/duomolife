@@ -1016,4 +1016,9 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         isScrollToComment = false;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
 }

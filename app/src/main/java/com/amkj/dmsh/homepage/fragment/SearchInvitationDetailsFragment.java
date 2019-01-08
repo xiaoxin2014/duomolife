@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +47,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_INVITATION;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 
@@ -65,9 +67,9 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     private int scrollY = 0;
     private List<InvitationDetailBean> invitationSearchList = new ArrayList();
     private int page = 1;
-    private String data;
     private float screenHeight;
     private InvitationDetailEntity invitationDetailEntity;
+    private String searchData;
 
     @Override
     protected int getContentView() {
@@ -230,15 +232,20 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("search2")) {
+        if (message.type.equals(SEARCH_DATA)) {
             String resultText = (String) message.result;
-            if (!resultText.equals(data)) {
-                data = resultText;
+            if (!resultText.equals(searchData)) {
+                searchData = resultText;
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
                 loadData();
             }
         }
     }
 
+    @Override
+    protected void getReqParams(Bundle bundle) {
+        searchData = (String) bundle.get(SEARCH_DATA);
+    }
     @Override
     protected void loadData() {
         page = 1;
@@ -251,14 +258,15 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     }
 
     private void getInvitationDetails() {
-        if (TextUtils.isEmpty(data)) {
+        if (TextUtils.isEmpty(searchData)) {
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationSearchList, invitationDetailEntity);
             return;
         }
         Map<String, Object> params = new HashMap();
         if (userId != 0) {
             params.put("fuid", userId);
         }
-        params.put("keyword", data);
+        params.put("keyword", searchData);
         params.put("searchType", 1);
         params.put("currentPage", page);
         params.put("version", 1);

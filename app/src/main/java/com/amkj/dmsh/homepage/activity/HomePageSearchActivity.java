@@ -72,6 +72,8 @@ public class HomePageSearchActivity extends BaseActivity {
     private String searchType = "allSearch";
     private String SAVE_NAME = "SearchHistory";
     private HotSearchAdapter hotSearchAdapter;
+//    搜索 获取传递信息参数
+    public static final String SEARCH_DATA = "searchData";
 
     @Override
     protected int getContentView() {
@@ -138,11 +140,11 @@ public class HomePageSearchActivity extends BaseActivity {
             Intent intent = new Intent();
             if (SEARCH_INDENT.equals(searchType)) {
                 intent.setClass(HomePageSearchActivity.this, IndentSearchDetailsActivity.class);
-                intent.putExtra("data", cate);
+                intent.putExtra(SEARCH_DATA, cate);
                 startActivity(intent);
             } else {
                 intent.setClass(HomePageSearchActivity.this, AllSearchDetailsActivity.class);
-                intent.putExtra("data", cate);
+                intent.putExtra(SEARCH_DATA, cate);
                 startActivity(intent);
             }
             finish();
@@ -309,5 +311,11 @@ public class HomePageSearchActivity extends BaseActivity {
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 }

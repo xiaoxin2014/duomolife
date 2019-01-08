@@ -55,6 +55,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_PRODUCT;
 import static com.amkj.dmsh.constant.Url.H_SEARCH_PRODUCT_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_TYPE;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 
@@ -77,13 +78,13 @@ public class SearchDetailsProductFragment extends BaseFragment {
     //    商品推荐
     private List<LikedProductBean> proRecommendList = new ArrayList<>();
     int page = 1;
-    private String data;
     private int scrollY = 0;
     private ProNoShopCarAdapter adapterProduct;
     private float screenHeight;
     private QualityTypeEntity.QualityTypeBean qualityTypeBean;
-    private UserLikedProductEntity likedProduct;
+    private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils removeExistUtils;
+    private String searchDate;
 
     @Override
     protected int getContentView() {
@@ -115,8 +116,8 @@ public class SearchDetailsProductFragment extends BaseFragment {
                         intent.setClass(getActivity(), IntegralScrollDetailsActivity.class);
                         break;
                 }
-                if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getRecommendFlag())) {
-                    intent.putExtra("recommendFlag", likedProduct.getRecommendFlag());
+                if (likedProductEntity != null && !TextUtils.isEmpty(likedProductEntity.getRecommendFlag())) {
+                    intent.putExtra("recommendFlag", likedProductEntity.getRecommendFlag());
                 }
                 intent.putExtra(RECOMMEND_TYPE, RECOMMEND_SEARCH);
                 intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
@@ -208,11 +209,12 @@ public class SearchDetailsProductFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("search0")) {
+        if (message.type.equals(SEARCH_DATA)) {
             String resultText = (String) message.result;
-            if (!resultText.equals(data)) {
+            if (!resultText.equals(searchDate)) {
                 page = 1;
-                data = resultText;
+                searchDate = resultText;
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
                 getDetailsProduct();
             }
         }
@@ -220,18 +222,16 @@ public class SearchDetailsProductFragment extends BaseFragment {
 
     @Override
     protected void getReqParams(Bundle bundle) {
-        String keyWord = (String) bundle.get("data");
-        if (!TextUtils.isEmpty(keyWord)) {
-            data = keyWord;
-        }
+        searchDate = (String) bundle.get(SEARCH_DATA);
     }
 
     private void getDetailsProduct() {
-        if (TextUtils.isEmpty(data)) {
+        if (TextUtils.isEmpty(searchDate)) {
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, likedProductEntity);
             return;
         }
         Map<String, Object> params = new HashMap<>();
-        params.put("keyword", data);
+        params.put("keyword", searchDate);
         params.put("currentPage", page);
         params.put("searchType", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_HOT_SEARCH_PRODUCT,
@@ -246,12 +246,12 @@ public class SearchDetailsProductFragment extends BaseFragment {
                             removeExistUtils.clearData();
                         }
                         Gson gson = new Gson();
-                        likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                        if (likedProduct != null) {
-                            if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                                productSearList.addAll(removeExistUtils.removeExistList(likedProduct.getLikedProductBeanList()));
-                            } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                                showToast(getActivity(), likedProduct.getMsg());
+                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProductEntity != null) {
+                            if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                                productSearList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                            } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(getActivity(), likedProductEntity.getMsg());
                             }
                             setEmptyUI();
                             adapterProduct.notifyDataSetChanged();
@@ -272,7 +272,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
         if (productSearList.size() < 1) {
             LikedProductBean likedProductBean = new LikedProductBean();
             likedProductBean.setItemType(TYPE_2);
-            likedProductBean.setTitle(data);
+            likedProductBean.setTitle(searchDate);
             productSearList.add(likedProductBean);
             getProductType();
         }
@@ -299,28 +299,28 @@ public class SearchDetailsProductFragment extends BaseFragment {
      * 获取相同类目商品
      */
     private void getSameTypeProData() {
-        if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getNoIds())
-                && !TextUtils.isEmpty(likedProduct.getCategory_id())) {
+        if (likedProductEntity != null && !TextUtils.isEmpty(likedProductEntity.getNoIds())
+                && !TextUtils.isEmpty(likedProductEntity.getCategory_id())) {
             Map<String, Object> params = new HashMap<>();
-            params.put("id", getStrings(likedProduct.getCategory_id()));
-            params.put("noIds", getStrings(likedProduct.getNoIds()));
+            params.put("id", getStrings(likedProductEntity.getCategory_id()));
+            params.put("noIds", getStrings(likedProductEntity.getNoIds()));
             NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_SEARCH_PRODUCT_RECOMMEND,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
                     proRecommendList.clear();
                     Gson gson = new Gson();
-                    likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
-                    if (likedProduct != null) {
-                        if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                            if (likedProduct.getLikedProductBeanList().size() > 0) {
+                    likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                    if (likedProductEntity != null) {
+                        if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                            if (likedProductEntity.getLikedProductBeanList().size() > 0) {
                                 LikedProductBean likedProductBean = new LikedProductBean();
                                 likedProductBean.setItemType(TYPE_1);
                                 proRecommendList.add(likedProductBean);
                             }
-                            proRecommendList.addAll(likedProduct.getLikedProductBeanList());
+                            proRecommendList.addAll(likedProductEntity.getLikedProductBeanList());
                             productSearList.addAll(removeExistUtils.removeExistList(proRecommendList));
-                        } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), likedProduct.getMsg());
+                        } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
+                            showToast(getActivity(), likedProductEntity.getMsg());
                         }
                         adapterProduct.notifyDataSetChanged();
                     }

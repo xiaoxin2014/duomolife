@@ -20,7 +20,7 @@ import java.util.Map;
  */
 
 public class UserPageAdapter extends FragmentPagerAdapter {
-    String[] titles = {"帖子", "关注", "粉丝"};
+    private String[] titles = {"帖子", "关注", "粉丝"};
     private final Map<String, String> params;
 
     public UserPageAdapter(FragmentManager fm, String userId) {

@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_TOPIC;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 
@@ -56,10 +58,10 @@ public class SearchTopicDetailsFragment extends BaseFragment {
     private int scrollY = 0;
     private int page = 1;
     private float screenHeight;
-    private String topicTitle;
     private FindTopicListAdapter findTopicListAdapter;
     private List<FindHotTopicBean> findTopicBeanList = new ArrayList<>();
     private FindHotTopicEntity findHotTopicEntity;
+    private String searchData;
 
     @Override
     protected int getContentView() {
@@ -138,13 +140,14 @@ public class SearchTopicDetailsFragment extends BaseFragment {
     }
 
     private void getTopicList() {
-        if (TextUtils.isEmpty(topicTitle)) {
+        if (TextUtils.isEmpty(searchData)) {
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, findTopicBeanList, findHotTopicEntity);
             return;
         }
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("count", TOTAL_COUNT_TWENTY);
-        params.put("keyword", topicTitle);
+        params.put("keyword", searchData);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_HOT_SEARCH_TOPIC
                 , params, new NetLoadListenerHelper() {
                     @Override
@@ -181,12 +184,18 @@ public class SearchTopicDetailsFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("search3")) {
+        if (message.type.equals(SEARCH_DATA)) {
             String resultText = (String) message.result;
-            if (!resultText.equals(topicTitle)) {
-                topicTitle = resultText;
+            if (!resultText.equals(searchData)) {
+                searchData = resultText;
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
                 loadData();
             }
         }
+    }
+
+    @Override
+    protected void getReqParams(Bundle bundle) {
+        searchData = (String) bundle.get(SEARCH_DATA);
     }
 }

@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,7 +78,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     private final List<PreviousInfoBean> integralLotteryList;
     private final LayoutInflater inflater;
     private ConstantMethod constantMethod;
-    private SparseArray<Object> sparseArray = new SparseArray<>();
     private Map<Integer, PreviousInfoBean> beanMap = new HashMap<>();
     public String messageType = "refreshData";
     private AttendanceLotteryCodePopWindow attendanceLotteryCodePopWindow;
@@ -87,11 +85,12 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     private LotteryAwardAdapter lotteryAwardAdapter;
     private List<String> lotteryCodeList = new ArrayList<>();
 
-    public IntegralLotteryAdapter(Context context, List<PreviousInfoBean> integralLotteryList) {
+    public IntegralLotteryAdapter(Context context, ConstantMethod constantMethod, List<PreviousInfoBean> integralLotteryList) {
         super(R.layout.adapter_integral_lottery, integralLotteryList);
         this.integralLotteryList = integralLotteryList;
         this.context = context;
         inflater = LayoutInflater.from(context);
+        this.constantMethod = constantMethod;
         getConstant();
         setLotteryCodePopWindows();
     }
@@ -212,22 +211,21 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     }
 
     private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-        constantMethod.createSchedule();
-        if (constantMethod != null) {
-            constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                @Override
-                public void refreshTime() {
-                    if (integralLotteryList != null && integralLotteryList.size() > 0) {
+        if(constantMethod!=null){
+            constantMethod.createSchedule();
+            if (constantMethod != null) {
+                constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
+                    @Override
+                    public void refreshTime() {
+                        if (integralLotteryList != null && integralLotteryList.size() > 0) {
 //                刷新数据
-                        refreshData();
+                            refreshData();
 //                刷新倒计时
 //                        refreshSchedule();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -316,13 +314,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                 }
             });
         }
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        constantMethod.releaseHandlers();
-        constantMethod.stopSchedule();
-        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     private boolean isTimeStarting(String startTime, String currentTime, String endTime) {

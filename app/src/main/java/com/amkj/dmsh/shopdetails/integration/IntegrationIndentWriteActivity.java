@@ -685,4 +685,10 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         }
         return false;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
 }

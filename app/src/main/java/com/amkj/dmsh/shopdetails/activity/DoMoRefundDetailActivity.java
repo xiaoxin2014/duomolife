@@ -1072,6 +1072,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         if(cancelApplyDialogHelper!=null&&cancelApplyDialogHelper.isShowing()){
             cancelApplyDialogHelper.dismiss();
         }
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 
     @OnClick(R.id.iv_indent_service)

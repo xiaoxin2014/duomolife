@@ -474,6 +474,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 
     @OnClick(R.id.tv_life_back)
@@ -511,4 +512,5 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         }
         return false;
     }
+
 }

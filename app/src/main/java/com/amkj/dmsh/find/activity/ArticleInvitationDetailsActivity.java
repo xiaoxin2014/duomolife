@@ -3,6 +3,7 @@ package com.amkj.dmsh.find.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.text.emoji.widget.EmojiEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -68,7 +69,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
-import android.support.text.emoji.widget.EmojiEditText;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -952,5 +952,11 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 linearLayoutManager.setStackFromEnd(true);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 }

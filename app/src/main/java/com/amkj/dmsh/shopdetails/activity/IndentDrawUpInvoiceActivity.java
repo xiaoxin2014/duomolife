@@ -351,4 +351,10 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
         }
         return false;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
 }

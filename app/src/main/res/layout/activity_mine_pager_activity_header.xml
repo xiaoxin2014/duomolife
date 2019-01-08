@@ -40,7 +40,6 @@
             android:layout_height="wrap_content">
             <android.support.text.emoji.widget.EmojiTextView
                 android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
                 android:textSize="@dimen/sc_mm_32"
                 android:maxLines="2"
                 android:ellipsize="end"
@@ -50,6 +49,7 @@
             <ImageView
                 android:layout_width="@dimen/sc_mm_32"
                 android:layout_height="@dimen/sc_mm_32"
+                android:layout_marginLeft="@dimen/sc_mm_10"
                 android:id="@+id/iv_user_sex"
                 android:src="@drawable/sel_user_sex"
                 />

@@ -271,6 +271,7 @@ public class ChangeMobileActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 
     @Override
@@ -320,4 +321,5 @@ public class ChangeMobileActivity extends BaseActivity {
         }
         return false;
     }
+
 }

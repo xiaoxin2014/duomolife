@@ -2,7 +2,6 @@ package com.amkj.dmsh.user.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +23,6 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.adapter.UserPageAdapter;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity.UserInfoBean;
-import com.amkj.dmsh.utils.AppBarStateChangeListener;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.flyco.tablayout.SlidingTabLayout;
@@ -109,23 +107,6 @@ public class UserPagerActivity extends BaseActivity {
         smart_refresh_mine.setOnRefreshListener(refreshLayout -> {
             loadData();
             EventBus.getDefault().post(new EventMessage("refreshMineData", 1));
-        });
-        user_appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
-            @Override
-            public void onStateChanged(AppBarLayout appBarLayout, State state, int scrollY) {
-                if (state == State.EXPANDED) {
-                    iv_user_back.setSelected(false);
-                    tv_user_report.setSelected(false);
-                    tl_user_header.setBackgroundColor(Color.argb(0, 255, 255, 255));
-                } else if (state == State.COLLAPSED) {
-                    iv_user_back.setSelected(true);
-                    tv_user_report.setSelected(true);
-                    tl_user_header.setBackgroundColor(Color.argb(255, 255, 255, 255));
-                } else {
-                    float alpha = scrollY / (appBarLayout.getTotalScrollRange() * 1f) * 255;
-                    tl_user_header.setBackgroundColor(Color.argb((int) alpha, 255, 255, 255));
-                }
-            }
         });
     }
 

@@ -211,4 +211,9 @@ public class SettingPersonalNameActivity extends BaseActivity {
         return false;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
 }

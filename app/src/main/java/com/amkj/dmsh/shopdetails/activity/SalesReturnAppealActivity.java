@@ -429,6 +429,7 @@ public class SalesReturnAppealActivity extends BaseActivity {
         if (confirmDialogHelper != null && confirmDialogHelper.isShowing()) {
             confirmDialogHelper.dismiss();
         }
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -460,4 +461,5 @@ public class SalesReturnAppealActivity extends BaseActivity {
         }
         return false;
     }
+
 }

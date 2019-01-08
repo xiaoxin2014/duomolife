@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 
@@ -56,12 +58,12 @@ public class SearchDetailsUserFragment extends BaseFragment {
     List<UserAttentionFansBean> userAttentionFansList = new ArrayList();
     private int page = 1;
     //当前用户ID
-    private String data;
     private String type = "search";
     private SearchDetailsUserAdapter userRecyclerAdapter;
     private int scrollY = 0;
     private float screenHeight;
     private UserSearchEntity userSearchEntity;
+    private String searchData;
 
     @Override
     protected int getContentView() {
@@ -150,13 +152,19 @@ public class SearchDetailsUserFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("search4")) {
+        if (message.type.equals(SEARCH_DATA)) {
             String resultText = (String) message.result;
-            if (!resultText.equals(data)) {
-                data = resultText;
+            if (!resultText.equals(searchData)) {
+                searchData = resultText;
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
                 loadData();
             }
         }
+    }
+
+    @Override
+    protected void getReqParams(Bundle bundle) {
+        searchData = (String) bundle.get(SEARCH_DATA);
     }
 
     @Override
@@ -171,7 +179,8 @@ public class SearchDetailsUserFragment extends BaseFragment {
     }
 
     private void getUserDetails() {
-        if (TextUtils.isEmpty(data)) {
+        if (TextUtils.isEmpty(searchData)) {
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
             return;
         }
         String url = Url.BASE_URL + Url.H_HOT_SEARCH_USER;
@@ -180,7 +189,7 @@ public class SearchDetailsUserFragment extends BaseFragment {
             //当前用户ID
             params.put("uid", userId);
         }
-        params.put("keyword", data);
+        params.put("keyword", searchData);
         params.put("currentPage", page);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url
                 , params, new NetLoadListenerHelper() {
