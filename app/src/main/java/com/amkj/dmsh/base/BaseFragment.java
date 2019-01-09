@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -127,7 +128,7 @@ public abstract class BaseFragment extends ImmersionFragment {
         mUnBinder = ButterKnife.bind(this, view);
         loadHud = KProgressHUD.create(getActivity())
                 .setCancellable(false)
-                .setSize(AutoSizeUtils.mm2px(mAppContext,50), AutoSizeUtils.mm2px(mAppContext,50))
+                .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50))
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE);
         if (isAddLoad()) {
             // 重新加载逻辑
@@ -181,7 +182,7 @@ public abstract class BaseFragment extends ImmersionFragment {
         initViews();
         // 注册当前Fragment为订阅者
         EventBus eventBus = EventBus.getDefault();
-        if(!eventBus.isRegistered(this)){
+        if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
         isInitView = true;
@@ -196,6 +197,7 @@ public abstract class BaseFragment extends ImmersionFragment {
         // 获取参数，子类实现
         getReqParams(getArguments());
     }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -249,6 +251,27 @@ public abstract class BaseFragment extends ImmersionFragment {
         isLoadData = false;
         if (EventBus.getDefault().isRegistered(getActivity())) {
             EventBus.getDefault().unregister(this);
+        }
+        if (mUnBinder != null) {
+            mUnBinder.unbind();
+        }
+        if(getView()!=null){
+            unbindDrawables(getView());
+        }
+    }
+
+    private void unbindDrawables(View view) {
+        if(view==null){
+            return;
+        }
+        if (view.getBackground() != null) {
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup && !(view instanceof AdapterView)) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+            ((ViewGroup) view).removeAllViews();
         }
     }
 
@@ -312,8 +335,8 @@ public abstract class BaseFragment extends ImmersionFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(loadService != null&&
-                loadService.getCurrentCallback().getName().equals(NetLoadCallback.class.getName())){
+        if (loadService != null &&
+                loadService.getCurrentCallback().getName().equals(NetLoadCallback.class.getName())) {
             loadService.showSuccess();
         }
     }
@@ -327,6 +350,7 @@ public abstract class BaseFragment extends ImmersionFragment {
     public boolean immersionBarEnabled() {
         return false;
     }
+
     /**
      * 当视图已经对用户不可见并且加载过数据，如果需要在切换到其他页面时停止加载数据，可以覆写此方法
      */
@@ -343,7 +367,7 @@ public abstract class BaseFragment extends ImmersionFragment {
     public void onInvisible() {
         JzvdStd.releaseAllVideos();
         //        避免播放 置于后台，释放滚动
-        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
         if (totalPersonalTrajectory != null) {
             totalPersonalTrajectory.stopTotal();
         }

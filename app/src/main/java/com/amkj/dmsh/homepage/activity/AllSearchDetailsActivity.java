@@ -45,7 +45,6 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
     @BindView(R.id.vp_search_details_container)
     ViewPager vp_search_details_container;
     private String searchDate;
-    private SearchTabPageAdapter searchTabPageAdapter;
     private LinkedList<String> dataHistoryList = new LinkedList<>();
     private String SAVE_TYPE = "allSearch";
     private String SAVE_NAME = "SearchHistory";
@@ -70,7 +69,7 @@ public class AllSearchDetailsActivity extends BaseFragmentActivity {
         insertHistoryData(searchDate);
         sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext, 26));
         sliding_search_bar.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 2));
-        searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
+        SearchTabPageAdapter searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
         vp_search_details_container.setAdapter(searchTabPageAdapter);
         sliding_search_bar.setViewPager(vp_search_details_container);
         // 搜索框的键盘搜索键点击回调

@@ -30,6 +30,7 @@ import cn.jzvd.Jzvd;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import me.jessyan.autosize.AutoSize;
+import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -196,17 +197,6 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
                 .subscribe();
     }
 
-    @Override
-    public Resources getResources() {
-        Resources res = super.getResources();
-        if (res.getConfiguration().fontScale != 1) {//非默认值
-            Configuration newConfig = new Configuration();
-            newConfig.setToDefaults();//设置默认
-            res.updateConfiguration(newConfig, res.getDisplayMetrics());
-        }
-        return res;
-    }
-
     protected abstract int getContentView();
 
     protected abstract void initViews();
@@ -223,5 +213,10 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
             ToastUtils.init(TinkerManager.getApplication());
             recreate();
         }
+    }
+    @Override
+    public Resources getResources() {
+        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
+        return super.getResources();
     }
 }

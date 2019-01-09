@@ -34,6 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.ButterKnife;
 import cn.jzvd.JzvdStd;
 import me.jessyan.autosize.AutoSize;
+import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -233,20 +234,10 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         setStatusBar();
     }
 
-    /**
-     * 设置系统字体不会导致app布局改变
-     *
-     * @return
-     */
     @Override
     public Resources getResources() {
-        Resources res = super.getResources();
-        if (res.getConfiguration().fontScale != 1) {//非默认值
-            Configuration newConfig = new Configuration();
-            newConfig.setToDefaults();//设置默认
-            res.updateConfiguration(newConfig, res.getDisplayMetrics());
-        }
-        return res;
+        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
+        return super.getResources();
     }
 
     protected abstract int getContentView();

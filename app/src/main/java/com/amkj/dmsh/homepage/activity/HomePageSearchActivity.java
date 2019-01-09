@@ -92,8 +92,7 @@ public class HomePageSearchActivity extends BaseActivity {
                 EditText view = (EditText) v;
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {// 修改回车键功能
                     // 先隐藏键盘
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                            getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    KeyboardUtils.hideSoftInput(HomePageSearchActivity.this);
                     //跳转页面，模糊搜索
                     skipDetailsPage(view);
                 }
