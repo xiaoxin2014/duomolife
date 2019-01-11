@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+    <CheckedTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cTv_browse_history_header"
+        android:drawableLeft="@drawable/sel_brows_history_enable_check"
+        android:drawableStart="@drawable/sel_brows_history_enable_check"/>
+</android.support.constraint.ConstraintLayout>

@@ -192,15 +192,13 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
-                if (qualityGroupMineBean != null && (qualityGroupMineBean.getGpStatus() == 1 || qualityGroupMineBean.getGpStatus() == 2)) {
+                if (qualityGroupMineBean != null) {
                     Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
                     intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
                     intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
                     intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
                     intent.putExtra("invitePartnerJoinCode", "1");
                     startActivity(intent);
-                } else {
-                    showToast(QualityGroupShopMineActivity.this, "已结束拼团");
                 }
             }
         });

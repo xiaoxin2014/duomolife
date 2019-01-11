@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray_f"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+    <include layout="@layout/activity_domolife_header"/>
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        layout="@layout/layout_communal_smart_refresh_recycler_float_loading"/>
+    <include layout="@layout/layout_shopcar_del" />
+</LinearLayout>

@@ -85,7 +85,16 @@ public class GroupShopJoinEntity {
 //        记录序号
         private int numOrder;
         private long second;
+        private String gpStatusTag;
         private List<MemberListBean> memberListBeans;
+
+        public String getGpStatusTag() {
+            return gpStatusTag;
+        }
+
+        public void setGpStatusTag(String gpStatusTag) {
+            this.gpStatusTag = gpStatusTag;
+        }
 
         public long getSecond() {
             return second;

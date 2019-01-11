@@ -207,6 +207,8 @@ public class Url {
     public static final String COLLECT_PRO = "api/my/getMyCollectGoodList";
     //    取消收藏 多个
     public static final String CANCEL_MULTI_COLLECT_PRO = "api/home/cancelGoodsCollect";
+//    我的浏览记录
+    public static final String MINE_BROWSING_HISTORY = "api/my/getMyFootmark";
     //修改信息
     public static final String MINE_CHANGE_DATA = "api/my/updatePersonalData";
     //会员宝宝

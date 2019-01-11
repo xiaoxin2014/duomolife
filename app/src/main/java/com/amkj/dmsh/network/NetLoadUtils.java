@@ -74,10 +74,10 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         loadNetDataPost(context, url, null, netLoadListener);
     }
 
-    /**
+    /**post 请求
      * @param context
      * @param url
-     * @param params
+     * @param params 兼容以前map<></>
      * @param netLoadListener
      */
     public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {

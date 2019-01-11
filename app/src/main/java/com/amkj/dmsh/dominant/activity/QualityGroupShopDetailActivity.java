@@ -76,8 +76,6 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
@@ -107,6 +105,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -264,12 +263,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 download_btn_communal.setLayoutParams(marginLayoutParams);
             }
         });
-        smart_refresh_ql_sp_details.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_refresh_ql_sp_details.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -501,6 +495,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 获取开团信息
+     */
     private void getGroupShopPerson() {
         if (!TextUtils.isEmpty(gpRecordId)) {
             Map<String, Object> params = new HashMap<>();
@@ -528,7 +525,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 groupShopJoinBean.setItemType(TYPE_2);
                                 groupShopJoinBean.setMemberListBeans(memberListBeans);
                                 tv_sp_details_join_buy_price.setVisibility(GONE);
-                                if (leftParticipant < 1) {
+                                if (leftParticipant < 1||isEndOrStartTime(qualityGroupShareEntity.getCurrentTime(),qualityGroupShareBean.getGpEndTime())) {
                                     ll_group_buy.setEnabled(false);
                                     groupShopJoinBean.setGpEndTime(qualityGroupShareEntity.getCurrentTime());
                                 } else {
@@ -543,6 +540,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 groupShopJoinBean.setItemType(ConstantVariable.TYPE_1);
                                 setGpDataInfo(qualityGroupShareBean);
                             }
+                            groupShopJoinBean.setGpStatusTag(qualityGroupShareBean.getGpStatusTag());
                             groupShopJoinBean.setGpInfoId(qualityGroupShareBean.getGpInfoId());
                             groupShopJoinBean.setGpRecordId(Integer.parseInt(qualityGroupShareBean.getGpRecordId()));
                             groupShopJoinList.add(groupShopJoinBean);
@@ -755,9 +753,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             }
         });
         tv_open_pro_label.setText(getStrings(groupShopDetailsBean.getGoodsAreaLabel()));
-        setCountTime(groupShopDetailsEntity);
         if (!ConstantMethod.isEndOrStartTime(groupShopDetailsEntity.getCurrentTime()
                 , groupShopDetailsBean.getGpEndTime())) {
+            setCountTime(groupShopDetailsEntity);
             getConstant();
             constantMethod.createSchedule();
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
@@ -768,6 +766,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 }
             });
         } else {
+            ct_pro_show_time_detail.setVisibility(GONE);
+            tv_pro_time_detail_status.setText("已结束");
             if (constantMethod != null) {
                 constantMethod.stopSchedule();
             }
@@ -804,6 +804,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     }
 
     private void setCountTime(GroupShopDetailsEntity groupShopDetailsEntity) {
+        ct_pro_show_time_detail.setVisibility(VISIBLE);
         GroupShopDetailsBean groupShopDetailsBean = groupShopDetailsEntity.getGroupShopDetailsBean();
         if (isTimeStart(groupShopDetailsEntity, groupShopDetailsBean)) {
             try {

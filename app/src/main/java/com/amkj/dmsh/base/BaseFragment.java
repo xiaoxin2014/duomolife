@@ -16,6 +16,7 @@ import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.gyf.barlibrary.ImmersionBar;
 import com.gyf.barlibrary.ImmersionFragment;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.kingja.loadsir.callback.Callback;
@@ -258,6 +259,7 @@ public abstract class BaseFragment extends ImmersionFragment {
         if(getView()!=null){
             unbindDrawables(getView());
         }
+        ImmersionBar.with(this).destroy();
     }
 
     private void unbindDrawables(View view) {

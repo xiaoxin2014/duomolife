@@ -164,9 +164,9 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 helper.itemView.setTag(groupShopJoinBean);
                 break;
             case TYPE_1:
-                helper.setText(R.id.tv_show_communal_time_status, isJoinGroupEnd(groupShopJoinBean) ? "距结束：" : "已结束")
+                helper.setText(R.id.tv_show_communal_time_status, !isJoinGroupEnd(groupShopJoinBean) ? "距结束：" : "已结束")
                         .setTag(R.id.ct_time_communal_show_bg, groupShopJoinBean)
-                        .setGone(R.id.ct_time_communal_show_bg, isJoinGroupEnd(groupShopJoinBean));
+                        .setGone(R.id.ct_time_communal_show_bg, !isJoinGroupEnd(groupShopJoinBean));
                 CountdownView ct_time_communal_show_bg = helper.getView(R.id.ct_time_communal_show_bg);
                 dynamic.setTimeTextColor(0xffffffff);
                 dynamic.setSuffixTextColor(0xff333333);
@@ -196,12 +196,14 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 cv_countdownTime_red_hours.dynamicShow(dynamic.build());
                 TextView tv_count_time_before_hours = helper.getView(R.id.tv_count_time_before_hours);
                 tv_count_time_before_hours.setTextColor(context.getResources().getColor(R.color.text_red_color));
-                helper.setText(R.id.tv_count_time_before_hours, "剩余")
+                helper.setText(R.id.tv_count_time_before_hours, isJoinGroupEnd(groupShopJoinBean) ? getStrings(groupShopJoinBean.getGpStatusTag()) : "剩余")
                         .setTag(R.id.cv_countdownTime_red_hours, groupShopJoinBean)
-                        .setGone(R.id.cv_countdownTime_red_hours, isJoinGroupEnd(groupShopJoinBean))
-                        .setGone(R.id.ll_communal_count_time, isJoinGroupEnd(groupShopJoinBean));
-                setJoinGroupCountTime(cv_countdownTime_red_hours, groupShopJoinBean);
-                setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_red_hours);
+                        .setGone(R.id.cv_countdownTime_red_hours, !isJoinGroupEnd(groupShopJoinBean))
+                        .setGone(R.id.ll_communal_count_time, !(TextUtils.isEmpty(groupShopJoinBean.getGpStatusTag()) && isJoinGroupEnd(groupShopJoinBean)));
+                if (!isJoinGroupEnd(groupShopJoinBean)) {
+                    setJoinGroupCountTime(cv_countdownTime_red_hours, groupShopJoinBean);
+                    setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_red_hours);
+                }
                 break;
         }
     }
@@ -210,7 +212,11 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
         sparseArray.put(i, countdownView);
     }
 
-
+    /**
+     * 拼团是否已结束
+     * @param groupShopJoinBean
+     * @return
+     */
     public boolean isJoinGroupEnd(GroupShopJoinBean groupShopJoinBean) {
         //格式化结束时间
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -224,14 +230,14 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             }
             endTime = formatter.parse(groupShopJoinBean.getGpEndTime());
             if (startTime != null && endTime != null && endTime.getTime() > startTime.getTime()) {
-                return true;
-            } else {
                 return false;
+            } else {
+                return true;
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return false;
+        return true;
     }
 
     /**

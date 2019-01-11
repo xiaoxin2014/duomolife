@@ -175,7 +175,7 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mUnBinder.unbind();
-        setStatusBar();
+        ImmersionBar.with(this).destroy();
     }
 
     @Override
