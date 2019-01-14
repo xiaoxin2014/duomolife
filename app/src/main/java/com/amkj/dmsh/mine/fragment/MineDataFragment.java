@@ -265,6 +265,7 @@ public class MineDataFragment extends BaseFragment {
         });
         setStatusColor();
         setQyService();
+        ad_mine.setVisibility(View.GONE);
     }
 
     /**

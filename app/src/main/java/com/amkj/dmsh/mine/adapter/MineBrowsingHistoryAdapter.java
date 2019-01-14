@@ -1,7 +1,8 @@
 package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
-import android.widget.CheckedTextView;
+import android.view.View;
+import android.widget.CheckBox;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.mine.bean.MineBrowsHistoryEntity.MineBrowsHistoryBean;
@@ -38,17 +39,21 @@ public class MineBrowsingHistoryAdapter extends BaseMultiItemQuickAdapter<MultiI
         switch (helper.getItemViewType()) {
             case TYPE_1:
                 MineBrowsHistoryBean mineBrowsHistoryBean = (MineBrowsHistoryBean) multiItemEntity;
-                CheckedTextView checkedTextView = helper.getView(R.id.cTv_browse_history_header);
-                checkedTextView.setCompoundDrawables(mineBrowsHistoryBean.isEditStatus()?context.getResources().getDrawable(R.drawable.sel_brows_history_enable_check):null,null,null,null);
-                checkedTextView.setChecked(mineBrowsHistoryBean.isSelectStatus());
-                checkedTextView.setText(getStrings(mineBrowsHistoryBean.getTime()));
+                CheckBox cb_browse_history_header = helper.getView(R.id.cb_browse_history_header);
+                cb_browse_history_header.setVisibility(mineBrowsHistoryBean.isEditStatus()? View.VISIBLE:View.GONE);
+                cb_browse_history_header.setChecked(mineBrowsHistoryBean.isSelectStatus());
+                helper.setText(R.id.tv_browse_history_header,getStrings(mineBrowsHistoryBean.getTime()))
+                        .setTag(R.id.cb_browse_history_header,mineBrowsHistoryBean)
+                .addOnClickListener(R.id.cb_browse_history_header);
                 break;
             default:
                 GoodsInfoListBean goodsInfoListBean = (GoodsInfoListBean)multiItemEntity;
-                CheckedTextView cTv_browse_history_product = helper.getView(R.id.cTv_browse_history_product_check);
-                cTv_browse_history_product.setCompoundDrawables(goodsInfoListBean.isEditStatus()?context.getResources().getDrawable(R.drawable.sel_brows_history_enable_check):null,null,null,null);;
-                cTv_browse_history_product.setChecked(goodsInfoListBean.isSelectStatus());
-                cTv_browse_history_product.setText(getStrings(goodsInfoListBean.getTitle()));
+                CheckBox cb_browse_history_product = helper.getView(R.id.cb_browse_history_product);
+                cb_browse_history_product.setVisibility(goodsInfoListBean.isEditStatus()? View.VISIBLE:View.GONE);;
+                cb_browse_history_product.setChecked(goodsInfoListBean.isSelectStatus());
+                helper.setText(R.id.tv_browse_history_product,getStrings(goodsInfoListBean.getTitle()))
+                        .setTag(R.id.cb_browse_history_product,goodsInfoListBean)
+                        .addOnClickListener(R.id.cb_browse_history_product);
                 break;
         }
     }
