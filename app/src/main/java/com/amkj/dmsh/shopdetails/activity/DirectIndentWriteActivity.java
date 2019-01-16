@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,7 +41,6 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
-import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
 import com.amkj.dmsh.shopdetails.bean.DirectReBuyGoods;
@@ -53,10 +53,13 @@ import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.
 import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean.ActivityProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
+import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
-import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.shopdetails.payutils.AliPay;
+import com.amkj.dmsh.shopdetails.payutils.UnionPay;
+import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -97,9 +100,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PROPRIETOR_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
@@ -109,7 +114,6 @@ import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_RE_BUY_INDENT;
-import static com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity.INDENT_DETAILS_TYPE;
 
 ;
 ;
@@ -179,6 +183,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private IndentDiscountsBean indentDiscountsBean;
     private AlertDialogHelper payErrorDialogHelper;
     private AlertDialogHelper payCancelDialogHelper;
+    private QualityCreateUnionPayIndentEntity qualityUnionIndent;
+    private UnionPay unionPay;
 
     @Override
     protected int getContentView() {
@@ -292,10 +298,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     //  再次购买，获取商品信息
     private void getOrderData() {
         passGoods = new ArrayList<>();
-        String url = Url.BASE_URL + Q_RE_BUY_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_RE_BUY_INDENT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_RE_BUY_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (productInfoList != null) {
@@ -332,39 +337,29 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void netClose() {
-                showToast(DirectIndentWriteActivity.this,R.string.unConnectedNetwork);
+                showToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     @OnClick(R.id.tv_indent_write_commit)
-    void goExchange(View view) {
-        if (type.equals(INDENT_DETAILS_TYPE)) {
-            tv_indent_write_commit.setEnabled(false);
-            if (pullFootView.rb_checked_aliPay.isChecked()) {
-//                调起支付宝支付
-                payWay = PAY_ALI_PAY;
-                paymentIndent();
-            } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
-                payWay = PAY_WX_PAY;
-//                调起微信支付
-                paymentIndent();
-            }
-        } else if (type.equals(INDENT_W_TYPE)) {
+    void goExchange() {
+        if (type.equals(INDENT_W_TYPE)) {
             if (addressId != 0 && productInfoList.size() > 0) {
                 tv_indent_write_commit.setEnabled(false);
-                if (pullFootView.rb_checked_aliPay.isChecked()) {
-//                调起支付宝支付
-                    payWay = PAY_ALI_PAY;
-                    if (!TextUtils.isEmpty(orderCreateNo)) {
-                        paymentIndent();
+                if (pullFootView.rb_checked_aliPay.isChecked() ||
+                        pullFootView.rb_checked_weChat_pay.isChecked() ||
+                        pullFootView.rb_checked_union_pay.isChecked()) {
+                    if (pullFootView.rb_checked_aliPay.isChecked()) {
+                        //  调起支付宝支付
+                        payWay = PAY_ALI_PAY;
+                    } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
+                        //  调起微信支付
+                        payWay = PAY_WX_PAY;
                     } else {
-                        setCreateIndent();
+                        //  调起银联支付
+                        payWay = PAY_UNION_PAY;
                     }
-                } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
-                    //创建订单
-                    payWay = PAY_WX_PAY;
-//                调起微信支付
                     if (!TextUtils.isEmpty(orderCreateNo)) {
                         paymentIndent();
                     } else {
@@ -380,24 +375,26 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (userId > 0) {
                 if (addressId != 0) {
                     tv_indent_write_commit.setEnabled(false);
-                    if (pullFootView.rb_checked_aliPay.isChecked()) {
-//                调起支付宝支付
-                        payWay = PAY_ALI_PAY;
-                        if (!TextUtils.isEmpty(orderCreateNo)) {
-                            paymentIndent();
+                    if (pullFootView.rb_checked_aliPay.isChecked() ||
+                            pullFootView.rb_checked_weChat_pay.isChecked() ||
+                            pullFootView.rb_checked_union_pay.isChecked()) {
+                        if (pullFootView.rb_checked_aliPay.isChecked()) {
+                            //  调起支付宝支付
+                            payWay = PAY_ALI_PAY;
+                        } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
+                            //  调起微信支付
+                            payWay = PAY_WX_PAY;
                         } else {
-                            createGroupIndent(payWay, groupShopDetailsBean);
+                            //  调起银联支付
+                            payWay = PAY_UNION_PAY;
                         }
-                    } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
-                        //创建订单
-                        payWay = PAY_WX_PAY;
-//                调起微信支付
                         if (!TextUtils.isEmpty(orderCreateNo)) {
                             paymentIndent();
                         } else {
                             createGroupIndent(payWay, groupShopDetailsBean);
                         }
                     }
+
                 } else {
                     constantMethod.showImportantToast(this, "收货地址为空");
                 }
@@ -421,9 +418,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 创建拼团订单
+     *
+     * @param payWay
+     * @param groupShopDetailsBean
+     */
     private void createGroupIndent(final String payWay, GroupShopDetailsBean groupShopDetailsBean) {
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
-        String url = Url.BASE_URL + Q_CREATE_GROUP_INDENT;
         Map<String, Object> params = new HashMap<>();
         //用户ID
         params.put("userId", userId);
@@ -456,39 +458,18 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         }
 //        付款方式
-//        微信 wechatPay 支付宝 aliPay
+//        2019.1.16 新增银联支付
         params.put("buyType", payWay);
+        if (payWay.equals(PAY_UNION_PAY)) {
+            params.put("paymentLinkType", 2);
+            params.put("isApp", true);
+        }
         params.put("source", 0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CREATE_GROUP_INDENT,params,new NetLoadListenerHelper(){
+
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_GROUP_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                if (payWay.equals(PAY_WX_PAY)) {
-                    qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
-                    if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
-                            //返回成功，调起微信支付接口
-                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
-                            orderCreateNo = qualityWeChatIndent.getResult().getNo();
-                            recordIndentTrack(orderCreateNo);
-                        } else {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
-                        }
-                    }
-                } else {
-                    qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
-                    if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
-                            //返回成功，调起支付宝支付接口
-                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
-                            orderCreateNo = qualityAliPayIndent.getResult().getNo();
-                            recordIndentTrack(orderCreateNo);
-                        } else {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
-                        }
-                    }
-                }
-                tv_indent_write_commit.setEnabled(true);
+                dealingIndentPayResult(result);
             }
 
             @Override
@@ -508,46 +489,30 @@ public class DirectIndentWriteActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 再次支付
+     */
     private void paymentIndent() {
-        String url = Url.BASE_URL + Q_PAYMENT_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", !TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo);
         params.put("userId", userId);
+        //        2019.1.16 新增银联支付
         params.put("buyType", payWay);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_PAYMENT_INDENT,params,new NetLoadListenerHelper(){
+        if (payWay.equals(PAY_UNION_PAY)) {
+            params.put("paymentLinkType", 2);
+            params.put("isApp", true);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                if (payWay.equals(PAY_WX_PAY)) {
-                    qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
-                    if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
-                            //返回成功，调起微信支付接口
-                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
-                        } else {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null
-                                    ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
-                        }
-                    }
-                } else if (payWay.equals(PAY_ALI_PAY)) {
-                    qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
-                    if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
-                            //返回成功，调起支付宝支付接口
-                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
-                        } else {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null
-                                    ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
-                        }
-                    }
-                }
-                tv_indent_write_commit.setEnabled(true);
+                dealingIndentPayResult(result);
             }
 
             @Override
             public void onNotNetOrException() {
                 tv_indent_write_commit.setEnabled(true);
             }
+
             @Override
             public void onError(Throwable throwable) {
                 constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
@@ -560,12 +525,17 @@ public class DirectIndentWriteActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 创建订单
+     *
+     * @param payType         支付方式
+     * @param productInfoList 购买商品信息
+     */
     private void createIndent(final String payType, final List<ActivityProductInfoBean> productInfoList) {
         if (loadHud != null) {
             loadHud.show();
         }
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
-        String url = Url.BASE_URL + Q_CREATE_INDENT;
         Map<String, Object> params = new HashMap<>();
         //用户ID
         params.put("userId", userId);
@@ -619,7 +589,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 //        付款方式
 //        微信 wechatPay 支付宝 aliPay
+//        2019.1.16 新增银联支付
         params.put("buyType", payType);
+        if (payType.equals(PAY_UNION_PAY)) {
+            params.put("paymentLinkType", 2);
+            params.put("isApp", true);
+        }
         params.put("isWeb", false);
         if (isOversea) {
             params.put("isOverseasGo", true);
@@ -637,47 +612,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 //        订单来源
         params.put("source", 0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CREATE_INDENT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                if (payType.equals(PAY_WX_PAY)) {
-                    qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
-                    if (qualityWeChatIndent != null) {
-                        if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
-                            //返回成功，调起微信支付接口
-                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
-                            orderCreateNo = qualityWeChatIndent.getResult().getNo();
-                            recordIndentTrack(orderCreateNo);
-                        } else {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
-//                            赠品送完刷新数据
-                            if (qualityWeChatIndent.getResult() != null) {
-                                presentStatusUpdate(qualityWeChatIndent.getResult().getCode());
-                            }
-                        }
-                    }
-                } else {
-                    qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
-                    if (qualityAliPayIndent != null) {
-                        if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
-                            //返回成功，调起支付宝支付接口
-                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
-                            orderCreateNo = qualityAliPayIndent.getResult().getNo();
-                            recordIndentTrack(orderCreateNo);
-                        } else {
-                            //                            赠品送完刷新数据
-                            if (qualityAliPayIndent.getResult() != null) {
-                                presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
-                            }
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
-                        }
-                    }
-                }
-                tv_indent_write_commit.setEnabled(true);
+                dealingIndentPayResult(result);
             }
 
             @Override
@@ -687,6 +625,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
                 tv_indent_write_commit.setEnabled(true);
             }
+
             @Override
             public void onError(Throwable throwable) {
                 constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
@@ -697,6 +636,72 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
+    }
+
+    /**
+     * 处理订单支付数据
+     *
+     * @param result 处理订单返回数据
+     */
+    private void dealingIndentPayResult(String result) {
+        if (loadHud != null) {
+            loadHud.dismiss();
+        }
+        Gson gson = new Gson();
+        if (payWay.equals(PAY_WX_PAY)) {
+            qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
+            if (qualityWeChatIndent != null) {
+                if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
+                    //返回成功，调起微信支付接口
+                    doWXPay(qualityWeChatIndent.getResult().getPayKey());
+                    orderCreateNo = qualityWeChatIndent.getResult().getNo();
+                    recordIndentTrack(orderCreateNo);
+                } else {
+                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
+//                            赠品送完刷新数据
+                    if (qualityWeChatIndent.getResult() != null) {
+                        presentStatusUpdate(qualityWeChatIndent.getResult().getCode());
+                    }
+                }
+            }
+        } else if (payWay.equals(PAY_ALI_PAY)) {
+            qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
+            if (qualityAliPayIndent != null) {
+                if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
+                    //返回成功，调起支付宝支付接口
+                    doAliPay(qualityAliPayIndent.getResult().getPayKey());
+                    orderCreateNo = qualityAliPayIndent.getResult().getNo();
+                    recordIndentTrack(orderCreateNo);
+                } else {
+                    //                            赠品送完刷新数据
+                    if (qualityAliPayIndent.getResult() != null) {
+                        presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
+                    }
+                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                }
+            }
+        } else if (payWay.equals(PAY_UNION_PAY)) {
+            qualityUnionIndent = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
+            if (qualityUnionIndent != null) {
+                if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
+                    //返回成功，调起微信支付接口
+                    orderCreateNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
+                    recordIndentTrack(orderCreateNo);
+                    unionPay(qualityUnionIndent);
+                } else {
+                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                            qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                            !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
+                            getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
+                            getStrings(qualityUnionIndent.getMsg()));
+//                            赠品送完刷新数据
+                    if (qualityUnionIndent.getQualityCreateUnionPayIndent() != null) {
+                        presentStatusUpdate(qualityUnionIndent.getQualityCreateUnionPayIndent().getCode());
+                    }
+                }
+            }
+        }
+        tv_indent_write_commit.setEnabled(true);
     }
 
     /**
@@ -787,7 +792,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             current = calendar.getTime();
         }
         if (payErrorDialogHelper == null) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,PAY_ERROR,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, PAY_ERROR, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -883,7 +888,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      */
     private void payCancel() {
         if (payCancelDialogHelper == null) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,PAY_CANCEL,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, PAY_CANCEL, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -995,7 +1000,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 payCancel();
                 showToast(DirectIndentWriteActivity.this, "支付取消");
             }
-        }).doPay();
+    }).doPay();
     }
 
     private void skipDirectIndent() {
@@ -1004,15 +1009,75 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (payWay.equals(PAY_WX_PAY)) {
             if (qualityWeChatIndent.getResult() != null && !TextUtils.isEmpty(qualityWeChatIndent.getResult().getNo())) {
                 intent.putExtra("indentNo", qualityWeChatIndent.getResult().getNo());
-                startActivity(intent);
             }
         } else if (payWay.equals(PAY_ALI_PAY)) {
             if (qualityAliPayIndent.getResult() != null && !TextUtils.isEmpty(qualityAliPayIndent.getResult().getNo())) {
                 intent.putExtra("indentNo", qualityAliPayIndent.getResult().getNo());
-                startActivity(intent);
+            }
+        } else if (payWay.equals(PAY_UNION_PAY)) {
+            if (qualityUnionIndent.getQualityCreateUnionPayIndent() != null && !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getNo())) {
+                intent.putExtra("indentNo", qualityUnionIndent.getQualityCreateUnionPayIndent().getNo());
             }
         }
+        startActivity(intent);
         finish();
+    }
+
+    /**
+     * 银联支付
+     *
+     * @param qualityUnionIndent
+     */
+    private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
+        if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
+            if(loadHud!=null){
+                loadHud.show();
+            }
+            unionPay = new UnionPay(DirectIndentWriteActivity.this,
+                        qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
+                        new UnionPay.UnionPayResultCallBack() {
+                            @Override
+                            public void onUnionPaySuccess() {
+                                if(loadHud!=null){
+                                    loadHud.dismiss();
+                                }
+                                //                跳转订单完成页
+                                if (type.equals(INDENT_GROUP_SHOP)) {
+                                    switch (groupShopDetailsBean.getGpStatus()) {
+                                        case 1:
+//                            开团
+                                            skipGpShareIndent();
+                                            break;
+                                        case 2:
+//                            拼团
+                                            skipMineGroupIndent();
+                                            break;
+                                    }
+                                } else {
+                                    skipDirectIndent();
+                                }
+                                if (totalPersonalTrajectory != null) {
+                                    isUpTotalFile = true;
+                                    createExecutor().execute(() -> {
+                                        totalPersonalTrajectory.getFileTotalTrajectory();
+                                    });
+                                    isUpTotalFile = false;
+                                }
+                            }
+
+                            @Override
+                            public void onUnionPayError(String errorMes) {
+                                if(loadHud!=null){
+                                    loadHud.dismiss();
+                                }
+                                showToast(DirectIndentWriteActivity.this,errorMes);
+                                payError();
+                            }
+                        });
+        } else {
+            constantMethod.showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+        }
     }
 
     @Override
@@ -1311,6 +1376,13 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         pullFootView.tv_direct_product_invoice.setText("不开发票");
                     }
                     break;
+                case UNION_RESULT_CODE:
+                    if(unionPay!=null){
+                        unionPay.unionPayResult(!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo);
+                    }else{
+                        payError();
+                    }
+                    break;
             }
         }
     }
@@ -1462,6 +1534,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         //微信支付
         @BindView(R.id.rb_checked_wechat_pay)
         RadioButton rb_checked_weChat_pay;
+        //银联支付
+        @BindView(R.id.rb_checked_union_pay)
+        RadioButton rb_checked_union_pay;
         //        发票展示
         @BindView(R.id.tv_direct_product_invoice)
         TextView tv_direct_product_invoice;
@@ -1476,16 +1551,26 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
         //支付宝方式
         @OnClick(value = {R.id.ll_aliPay, R.id.rb_checked_alipay})
-        void aliPay(View view) {
+        void aliPay() {
             rb_checked_aliPay.setChecked(true);
             rb_checked_weChat_pay.setChecked(false);
+            rb_checked_union_pay.setChecked(false);
         }
 
         //微信支付方式
         @OnClick(value = {R.id.ll_Layout_weChat, R.id.rb_checked_wechat_pay})
-        void weChat(View view) {
-            rb_checked_aliPay.setChecked(false);
+        void weChat() {
             rb_checked_weChat_pay.setChecked(true);
+            rb_checked_aliPay.setChecked(false);
+            rb_checked_union_pay.setChecked(false);
+        }
+
+        //        银联支付
+        @OnClick(value = {R.id.ll_Layout_union_pay, R.id.rb_checked_union_pay})
+        void unionPay() {
+            rb_checked_union_pay.setChecked(true);
+            rb_checked_aliPay.setChecked(false);
+            rb_checked_weChat_pay.setChecked(false);
         }
 
         //        优惠券选择
@@ -1496,16 +1581,11 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     constantMethod.showImportantToast(DirectIndentWriteActivity.this, "该商品不支持使用优惠券！");
                 } else if (indentDiscountsBean.getProductIsUsable() == 1) {
                     if (TextUtils.isEmpty(orderCreateNo)) {
-                        if (!type.equals(INDENT_DETAILS_TYPE)) {
-                            Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelableArrayList("couponGoods", (ArrayList<? extends Parcelable>) productInfoList);
-                            intent.putExtras(bundle);
-                            startActivityForResult(intent, DIRECT_COUPON_REQ);
-                        } else {
-                            tv_direct_product_favorable.setCompoundDrawables(null, null, null, null);
-                            return;
-                        }
+                        Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList("couponGoods", (ArrayList<? extends Parcelable>) productInfoList);
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, DIRECT_COUPON_REQ);
                     }
                 }
             }

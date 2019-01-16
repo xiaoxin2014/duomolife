@@ -29,7 +29,7 @@ import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
-import com.amkj.dmsh.shopdetails.alipay.AliPay;
+import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
@@ -42,7 +42,7 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.Inte
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity.IntegralOrderDetailBean;
-import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -81,6 +81,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_APPLY;
@@ -757,25 +758,27 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     class PopupWindowView {
-        @OnClick({R.id.ll_pay_ali, R.id.iv_pay_icon_ali, R.id.tv_pay_text_ali
-                , R.id.ll_pay_we_chat, R.id.iv_pay_icon_we_chat, R.id.tv_pay_text_we_chat
+        @OnClick({R.id.ll_pay_ali
+                , R.id.ll_pay_we_chat
+                , R.id.ll_pay_union
                 , R.id.tv_pay_cancel})
         void clickPayView(View view) {
             mCustomPopWindow.dissmiss();
             switch (view.getId()) {
 //                            支付宝
                 case R.id.ll_pay_ali:
-                case R.id.iv_pay_icon_ali:
-                case R.id.tv_pay_text_ali:
                     //                调起支付宝支付
                     payWay = PAY_ALI_PAY;
                     paymentIndent();
                     break;
 //                            微信
                 case R.id.ll_pay_we_chat:
-                case R.id.iv_pay_icon_we_chat:
-                case R.id.tv_pay_text_we_chat:
                     payWay = PAY_WX_PAY;
+//                调起微信支付
+                    paymentIndent();
+                    break;
+                case R.id.ll_pay_union:
+                    payWay = PAY_UNION_PAY;
 //                调起微信支付
                     paymentIndent();
                     break;
@@ -792,7 +795,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());
         params.put("buyType", payWay);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

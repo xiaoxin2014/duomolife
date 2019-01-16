@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
@@ -29,6 +30,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,7 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.isSameTimeDay;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -83,6 +86,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     //    为空 代表未手动点击全选 注!!!不要默认赋值(涉及到多处判空选择)
     private SelectionStatusTypeEnum selectionStatusTypeEnum;
     private MineBrowsHistoryEntity mineBrowsHistoryEntity;
+    //    删除选择
+    private String deleteSelectionId = "";
 
     @Override
     protected int getContentView() {
@@ -116,6 +121,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             mineBrowsHistoryBean.setSelectStatus(!mineBrowsHistoryBean.isSelectStatus());
                             for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
                                 goodsInfoListBean.setSelectStatus(mineBrowsHistoryBean.isSelectStatus());
+                                setSelectionId(mineBrowsHistoryBean.isSelectStatus(), goodsInfoListBean);
                             }
                             setSelectionType(mineBrowsHistoryBean.isSelectStatus());
                             adapter.notifyDataSetChanged();
@@ -125,6 +131,11 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             int parentPosition = adapter.getParentPosition(goodsInfoListBean);
                             boolean currentChildStatus = !goodsInfoListBean.isSelectStatus();
                             goodsInfoListBean.setSelectStatus(currentChildStatus);
+                            if (currentChildStatus) {
+                                deleteSelectionId += getDeleteSelectionId(goodsInfoListBean.getId());
+                            } else {
+                                deleteSelectionId = deleteSelectionId.replace(getDeleteSelectionId(goodsInfoListBean.getId()), "");
+                            }
                             if (parentPosition != -1) {
                                 /**
                                  * 更改父类状态
@@ -194,6 +205,32 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     }
 
     /**
+     * 设置删除id
+     * 赋值修改 已选择 未选择
+     *
+     * @param mineBrowsHistoryBean
+     * @param goodsInfoListBean
+     */
+    private void setSelectionId(boolean mineBrowsHistoryBean, GoodsInfoListBean goodsInfoListBean) {
+        String selectionId = getDeleteSelectionId(goodsInfoListBean.getId());
+        if (mineBrowsHistoryBean) {
+            deleteSelectionId += selectionId;
+        } else {
+            deleteSelectionId = deleteSelectionId.replace(selectionId, "");
+        }
+    }
+
+    /**
+     * String + ","
+     *
+     * @param deleteSelectionId
+     * @return
+     */
+    private String getDeleteSelectionId(String deleteSelectionId) {
+        return TextUtils.isEmpty(deleteSelectionId) ? "" : deleteSelectionId + ",";
+    }
+
+    /**
      * 是否编辑状态
      *
      * @param isEditStatus
@@ -205,6 +242,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         rel_del_shop_car.setVisibility(isEditStatus ? VISIBLE : GONE);
         check_box_all_del.setChecked(false);
         setProductSelectStatus(check_box_all_del.isChecked());
+        smart_communal_refresh.setEnableRefresh(!isEditStatus);
+        setDefaultSetting();
     }
 
     /**
@@ -254,6 +293,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        setDefaultSetting();
+        mineBrowsingHistoryAdapter.setEnableLoadMore(true);
         page = 1;
         getMineBrowsingHistory();
     }
@@ -285,13 +326,19 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mineBrowsingHistoryAdapter.loadMoreComplete();
+                smart_communal_refresh.finishRefresh();
                 if (page == 1) {
-                    smart_communal_refresh.finishRefresh();
                     mineBrowsHistoryBeanList.clear();
                     parentBrowsHistoryBeanList.clear();
                 }
                 Gson gson = new Gson();
                 mineBrowsHistoryEntity = gson.fromJson(result, MineBrowsHistoryEntity.class);
+                if (mineBrowsHistoryEntity == null ||
+                        mineBrowsHistoryEntity.getMineBrowsHistoryList() == null ||
+                        mineBrowsHistoryEntity.getMineBrowsHistoryList().size() < 1) {
+                    mineBrowsingHistoryAdapter.loadMoreEnd();
+                    mineBrowsingHistoryAdapter.setEnableLoadMore(false);
+                }
                 if (mineBrowsHistoryEntity != null) {
                     if (mineBrowsHistoryEntity.getCode().equals(SUCCESS_CODE)) {
                         for (MineBrowsHistoryBean mineBrowsHistoryBean : mineBrowsHistoryEntity.getMineBrowsHistoryList()) {
@@ -301,7 +348,10 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                              * 是否为编辑状态
                              */
                             if (isEditStatus) {
-                                mineBrowsHistoryBean.setSelectStatus(isEditStatus);
+                                mineBrowsHistoryBean.setEditStatus(isEditStatus);
+                                if (selectionStatusTypeEnum != null) {
+                                    mineBrowsHistoryBean.setSelectStatus(isEditStatus);
+                                }
                                 for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getGoodsInfoList()) {
                                     /**
                                      * 如果已手动点击为全选状态，上拉加载的数据也应该为选中状态
@@ -309,25 +359,44 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                                     if (selectionStatusTypeEnum != null) {
                                         goodsInfoListBean.setSelectStatus(true);
                                     }
-                                    goodsInfoListBean.setSelectStatus(isEditStatus);
+                                    goodsInfoListBean.setEditStatus(isEditStatus);
                                 }
                             }
                         }
-                        if (mineBrowsHistoryBeanList.size() > 0) {
-
+                        /**
+                         * 下一页的第一条数据跟上一页的最后一条数据比对，是否是同一天
+                         * 实现逻辑，通过存储的父类时间跟新请求的父类时间比对
+                         * @是 新数据合并到父类，父类直接替换adapter数据，必须确保存储父类跟adapter的数据对象是同一个，涉及到数据统一
+                         * @否 直接添加
+                         */
+                        if (parentBrowsHistoryBeanList.size() > 0 &&
+                                mineBrowsHistoryEntity.getMineBrowsHistoryList() != null &&
+                                mineBrowsHistoryEntity.getMineBrowsHistoryList().size() > 0) {
+                            MineBrowsHistoryBean mineOldBrowsHistoryBean = parentBrowsHistoryBeanList.get(parentBrowsHistoryBeanList.size() - 1);
+                            MineBrowsHistoryBean mineNewBrowsHistoryBean = mineBrowsHistoryEntity.getMineBrowsHistoryList().get(0);
+                            if (isSameTimeDay("yyyy-MM-dd", mineOldBrowsHistoryBean.getTime(), mineNewBrowsHistoryBean.getTime())) {
+                                List<GoodsInfoListBean> subItems = mineOldBrowsHistoryBean.getSubItems();
+                                List<GoodsInfoListBean> goodsInfoList = mineNewBrowsHistoryBean.getGoodsInfoList();
+                                subItems.addAll(goodsInfoList);
+                                mineBrowsHistoryEntity.getMineBrowsHistoryList().remove(0);
+                                int parentPosition = mineBrowsingHistoryAdapter.getParentPosition(mineBrowsHistoryBeanList.get(mineBrowsHistoryBeanList.size() - 1));
+                                // 移除数据必须要新建集合接收 避免ConcurrentModificationException
+                                List<MultiItemEntity> multiItemEntities = new ArrayList<>(mineBrowsHistoryBeanList.subList(0, parentPosition));
+                                mineBrowsHistoryBeanList.clear();
+                                mineBrowsHistoryBeanList.addAll(multiItemEntities);
+                                mineOldBrowsHistoryBean.setExpanded(false);
+                                mineBrowsHistoryBeanList.add(mineOldBrowsHistoryBean);
+                            }
                         }
-                        mineBrowsHistoryBeanList.addAll(mineBrowsHistoryEntity.getMineBrowsHistoryList());
-                        parentBrowsHistoryBeanList.addAll(mineBrowsHistoryEntity.getMineBrowsHistoryList());
+                        if (mineBrowsHistoryEntity.getMineBrowsHistoryList().size() > 0) {
+                            mineBrowsHistoryBeanList.addAll(mineBrowsHistoryEntity.getMineBrowsHistoryList());
+                            parentBrowsHistoryBeanList.addAll(mineBrowsHistoryEntity.getMineBrowsHistoryList());
+                        }
                     } else if (!mineBrowsHistoryEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(MineProductBrowsingHistoryActivity.this, mineBrowsHistoryEntity.getMsg());
                     }
                     mineBrowsingHistoryAdapter.expandAll();
                     mineBrowsingHistoryAdapter.notifyDataSetChanged();
-                }
-                if (mineBrowsHistoryEntity == null ||
-                        mineBrowsHistoryEntity.getMineBrowsHistoryList() == null ||
-                        mineBrowsHistoryEntity.getMineBrowsHistoryList().size() < 1) {
-                    mineBrowsingHistoryAdapter.loadMoreEnd();
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mineBrowsHistoryBeanList, mineBrowsHistoryEntity);
             }
@@ -335,6 +404,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 mineBrowsingHistoryAdapter.loadMoreEnd(true);
+                mineBrowsingHistoryAdapter.setEnableLoadMore(false);
                 smart_communal_refresh.finishRefresh();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mineBrowsHistoryBeanList, mineBrowsHistoryEntity);
             }
@@ -368,6 +438,98 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 删除足迹记录
+     */
+    private void setDeleteBrowsHistory() {
+        deleteSelectionId = deleteSelectionId.replaceAll(" ","");
+        String deleteProductId = deleteSelectionId.lastIndexOf(",") == deleteSelectionId.length() - 1 ?
+                deleteSelectionId.substring(0, deleteSelectionId.length() - 1) : deleteSelectionId;
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("uid", userId);
+//        params.put("recordIds", deleteProductId);
+//        NetLoadUtils.getNetInstance().loadNetDataPost(this, DEL_MINE_BROWSING_HISTORY, params, new NetLoadListenerHelper());
+        deleteSelectionId = "";
+        String rawSelectionId = Arrays.toString(mineBrowsHistoryEntity.getIdList());
+        rawSelectionId = rawSelectionId.replaceAll(" ","");
+        String selectionId = getDeleteSelectionId(rawSelectionId.substring(1, rawSelectionId.length() - 1));
+        String[] deleteId = deleteProductId.split(",");
+        for (String id:deleteId) {
+            selectionId = selectionId.replace(getDeleteSelectionId(id),"");
+        }
+        if(!TextUtils.isEmpty(selectionId)){
+            selectionId = selectionId.lastIndexOf(",") == selectionId.length() - 1 ?
+                    selectionId.substring(0, selectionId.length() - 1) : selectionId;
+            mineBrowsHistoryEntity.setIdList(selectionId.split(","));
+        }else{
+            mineBrowsHistoryEntity.setIdList(new String[]{});
+        }
+        /**
+         * 移除选择项
+         * @全选删除 自动恢复初始状态，禁用编辑
+         * @全选余部分 留存未选择部分，保持编辑状态
+         * @未点击全选 移除已选项，保持编辑状态
+         */
+        if (check_box_all_del.isChecked()) {
+            mineBrowsingHistoryAdapter.loadMoreEnd();
+            mineBrowsingHistoryAdapter.setEnableLoadMore(false);
+            mineBrowsingHistoryAdapter.notifyItemRangeRemoved(0, mineBrowsingHistoryAdapter.getItemCount());
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
+            setEditStatus(false);
+            tv_header_shared.setEnabled(false);
+        } else {
+            if (selectionStatusTypeEnum != null) {
+                mineBrowsingHistoryAdapter.loadMoreEnd();
+                mineBrowsingHistoryAdapter.setEnableLoadMore(false);
+                selectionStatusTypeEnum = null;
+            }
+            tv_header_shared.setEnabled(true);
+            List<MineBrowsHistoryBean> newBrowsHistoryBeanList = new ArrayList<>();
+            for (MineBrowsHistoryBean mineBrowsHistoryBean : parentBrowsHistoryBeanList) {
+                if (!mineBrowsHistoryBean.isSelectStatus()) {
+                    List<GoodsInfoListBean> newGoodsInfoListBeanList = new ArrayList<>();
+                    for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
+                        if (!goodsInfoListBean.isSelectStatus()) {
+                            newGoodsInfoListBeanList.add(goodsInfoListBean);
+                        }
+                    }
+                    mineBrowsHistoryBean.setExpanded(false);
+                    mineBrowsHistoryBean.setGoodsInfoList(newGoodsInfoListBeanList);
+                    mineBrowsHistoryBean.setSubItems(newGoodsInfoListBeanList);
+                    newBrowsHistoryBeanList.add(mineBrowsHistoryBean);
+                }
+            }
+            mineBrowsHistoryBeanList.clear();
+            parentBrowsHistoryBeanList.clear();
+            if (newBrowsHistoryBeanList.size() > 0) {
+                mineBrowsHistoryBeanList.addAll(newBrowsHistoryBeanList);
+                parentBrowsHistoryBeanList.addAll(newBrowsHistoryBeanList);
+                mineBrowsingHistoryAdapter.expandAll();
+            }else{
+                if(mineBrowsingHistoryAdapter.isLoadMoreEnable()){
+                    page++;
+                    getMineBrowsingHistory();
+                }else{
+                    setEditStatus(false);
+                    mineBrowsingHistoryAdapter.loadMoreEnd();
+                    mineBrowsingHistoryAdapter.setEnableLoadMore(false);
+                    NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
+                    setEditStatus(false);
+                    tv_header_shared.setEnabled(false);
+                }
+            }
+            mineBrowsingHistoryAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 配置设置默认值
+     */
+    private void setDefaultSetting() {
+        selectionStatusTypeEnum = null;
+        deleteSelectionId = "";
+    }
+
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
@@ -381,7 +543,11 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     //    删除
     @OnClick(R.id.tv_shop_car_del)
     void delGoods() {
-
+        if (TextUtils.isEmpty(deleteSelectionId)) {
+            showToast(this, "请选择删除项");
+            return;
+        }
+        setDeleteBrowsHistory();
     }
 
     //    全选 /全不选
@@ -393,8 +559,13 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             setProductSelectStatus(checked);
             if (checked) {
                 selectionStatusTypeEnum = MANUAL_SELECTION;
+                deleteSelectionId = mineBrowsHistoryEntity != null &&
+                        mineBrowsHistoryEntity.getIdList() != null &&
+                        mineBrowsHistoryEntity.getIdList().length > 0 ?
+                        getDeleteSelectionId(Arrays.toString(mineBrowsHistoryEntity.getIdList()).
+                                substring(1, Arrays.toString(mineBrowsHistoryEntity.getIdList()).length() - 1)) : "";
             } else {
-                selectionStatusTypeEnum = null;
+                setDefaultSetting();
             }
         }
     }

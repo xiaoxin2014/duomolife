@@ -19,7 +19,7 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
 
     @SerializedName("result")
     private List<MineBrowsHistoryBean> mineBrowsHistoryList;
-    private List<String> idList;
+    private String[] idList;
 
     public List<MineBrowsHistoryBean> getMineBrowsHistoryList() {
         return mineBrowsHistoryList;
@@ -29,11 +29,11 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
         this.mineBrowsHistoryList = mineBrowsHistoryList;
     }
 
-    public List<String> getIdList() {
+    public String[] getIdList() {
         return idList;
     }
 
-    public void setIdList(List<String> idList) {
+    public void setIdList(String[] idList) {
         this.idList = idList;
     }
 

@@ -2486,9 +2486,20 @@ public class ConstantMethod {
      * @return
      */
     public static boolean isSameTimeDay(String t1, String t2) {
+        return isSameTimeDay("yyyy-MM-dd HH:mm:ss",t1,t2);
+    }
+
+    /**
+     *
+     * @param formatType 数据格式类型
+     * @param t1
+     * @param t2
+     * @return
+     */
+    public static boolean isSameTimeDay(String formatType,String t1, String t2) {
         if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
             try {
-                SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                SimpleDateFormat timeFormat = new SimpleDateFormat(TextUtils.isEmpty(formatType)?"yyyy-MM-dd HH:mm:ss":formatType, Locale.CHINA);
                 Date d1 = timeFormat.parse(t1);
                 Date d2 = timeFormat.parse(t2);
                 Calendar calendar = Calendar.getInstance();
@@ -2505,7 +2516,6 @@ public class ConstantMethod {
             return false;
         }
     }
-
     /**
      * @param t1          起始时间
      * @param t2          当前时间
@@ -2722,6 +2732,9 @@ public class ConstantMethod {
             }
             ToastUtils.show(message);
         }
+    }
+    public static void showToast(String message) {
+        ToastUtils.show(message);
     }
 
     /**

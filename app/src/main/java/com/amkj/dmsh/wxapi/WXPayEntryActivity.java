@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;

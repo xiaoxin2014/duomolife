@@ -140,6 +140,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private String refreshStatus;
     private AlertDialogHelper alertDialogHelper;
     private String errorUrl;
+    private String backResult;
 
 
     @Override
@@ -154,6 +155,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         tv_web_title.setText("");
         Intent intent = getIntent();
         loadUrl = intent.getStringExtra("loadUrl");
+        backResult = intent.getStringExtra("backResult");
         WebSettings webSettings = web_communal.getSettings();
 //        自适应屏幕大小
         webSettings.setUseWideViewPort(true);
@@ -1094,7 +1096,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 WebBackForwardList webBackForwardList = web_communal.copyBackForwardList();
 //        当前页面index
                 int currentIndex = webBackForwardList.getCurrentIndex();
-                if (web_communal.canGoBack()) {
+                if("1".equals(backResult)){
+                    setResult(RESULT_OK);
+                    finish();
+                }else if (web_communal.canGoBack()) {
                     if (currentIndex - finalFinishCount < 0) {
                         finish();
                     } else {

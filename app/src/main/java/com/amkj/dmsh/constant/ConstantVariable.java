@@ -46,7 +46,7 @@ public class ConstantVariable {
     public static final String MAIN_TIME = "time";
     //    关注回调请求码 请求登录
     public static final int IS_LOGIN_CODE = 10;
-//    注册 登录回调
+    //    注册 登录回调
     public static final String R_LOGIN_BACK_CODE = "0x101";
     public static final String R_LOGIN_BACK_DATA_CODE = "AccountInf";
     //    子评论默认加载条数
@@ -171,6 +171,10 @@ public class ConstantVariable {
     public static final String PAY_ALI_PAY = "aliPay";
     //    微信支付
     public static final String PAY_WX_PAY = "wechatPay";
+    //    银联支付
+    public static final String PAY_UNION_PAY = "abcPay";
+    //    银联支付返回码
+    public static final int UNION_RESULT_CODE = 0x8006;
 
     /**
      * EventBus type类型
@@ -252,7 +256,7 @@ public class ConstantVariable {
     public static final String APP_MANDATORY_UPDATE_VERSION = "A_M_U_V";
     //    强制更新详情
     public static final String MANDATORY_UPDATE_DESCRIPTION = "M_U_D";
-//    手动更新-最新版本
+    //    手动更新-最新版本
     public static final String MANDATORY_UPDATE_LAST_VERSION = "M_U_L_V";
     //    图片存储类型
     public static final String FILE_IMAGE = "fileImage";

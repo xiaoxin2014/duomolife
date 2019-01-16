@@ -1,4 +1,4 @@
-package com.amkj.dmsh.shopdetails.weixin;
+package com.amkj.dmsh.shopdetails.payutils;
 
 import android.content.Context;
 
@@ -33,7 +33,7 @@ public class WXPay {
         void onCancel();    //支付取消
     }
 
-    public WXPay(Context context) {
+    private WXPay(Context context) {
         TinkerBaseApplicationLike app =(TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         mWXApi = app.getApi();
     }

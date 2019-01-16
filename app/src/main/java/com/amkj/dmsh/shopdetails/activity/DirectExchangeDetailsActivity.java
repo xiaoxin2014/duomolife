@@ -42,7 +42,6 @@ import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
-import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
@@ -57,11 +56,14 @@ import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBea
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean.ActivityInfoDetailBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean.OrderProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
+import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundPayInfoBean;
-import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.shopdetails.payutils.AliPay;
+import com.amkj.dmsh.shopdetails.payutils.UnionPay;
+import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -120,6 +122,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_INVOICE;
@@ -128,6 +131,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_APPLY_REFUND_CHECK;
@@ -189,6 +193,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     private AlertDialogHelper confirmOrderDialogHelper;
     private AlertDialogHelper delOrderDialogHelper;
     private AlertDialogHelper refundOrderDialogHelper;
+    private UnionPay unionPay;
 
     @Override
     protected int getContentView() {
@@ -417,9 +422,22 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            finish();
+            if (requestCode == UNION_RESULT_CODE) {
+                return;
+            }else{
+                finish();
+                return;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UNION_RESULT_CODE) {
+            if (unionPay != null) {
+                unionPay.unionPayResult(orderNo);
+            } else {
+                showToast("支付取消！");
+            }
+        }
+
     }
 
     @Override
@@ -1160,7 +1178,12 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderDetailBean.getNo());
         params.put("userId", orderDetailBean.getUserId());
+        //        2019.1.16 新增银联支付
         params.put("buyType", payWay);
+        if (payWay.equals(PAY_UNION_PAY)) {
+            params.put("paymentLinkType", 2);
+            params.put("isApp", true);
+        }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -1185,6 +1208,20 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                         } else {
                             showToast(DirectExchangeDetailsActivity.this, qualityAliPayIndent.getResult() == null
                                     ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                        }
+                    }
+                } else if (payWay.equals(PAY_UNION_PAY)) {
+                    QualityCreateUnionPayIndentEntity qualityUnionIndent = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
+                    if (qualityUnionIndent != null) {
+                        if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
+                            //返回成功，调起银联支付接口
+                            unionPay(qualityUnionIndent);
+                        } else {
+                            showToast(DirectExchangeDetailsActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                                    !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
+                                    getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
+                                    getStrings(qualityUnionIndent.getMsg()));
                         }
                     }
                 }
@@ -1289,6 +1326,42 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 showToast(getApplication(), "支付取消");
             }
         }).doPay();
+    }
+
+    /**
+     * 银联支付
+     *
+     * @param qualityUnionIndent
+     */
+    private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
+        if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
+            if (loadHud != null) {
+                loadHud.show();
+            }
+            unionPay = new UnionPay(DirectExchangeDetailsActivity.this,
+                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
+                    new UnionPay.UnionPayResultCallBack() {
+                        @Override
+                        public void onUnionPaySuccess() {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            showToast(DirectExchangeDetailsActivity.this, "支付成功");
+                            skipDirectIndent();
+                        }
+
+                        @Override
+                        public void onUnionPayError(String errorMes) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            showToast(getApplication(), "支付取消");
+                        }
+                    });
+        } else {
+            showToast(DirectExchangeDetailsActivity.this, "缺少重要参数，请选择其它支付渠道！");
+        }
     }
 
     private void confirmOrder() {
@@ -1466,26 +1539,27 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     class PopupWindowView {
-        @OnClick({R.id.ll_pay_ali, R.id.iv_pay_icon_ali, R.id.tv_pay_text_ali
-                , R.id.ll_pay_we_chat, R.id.iv_pay_icon_we_chat, R.id.tv_pay_text_we_chat
+        @OnClick({R.id.ll_pay_ali
+                , R.id.ll_pay_we_chat
+                , R.id.ll_pay_union
                 , R.id.tv_pay_cancel})
         void clickPayView(View view) {
             mCustomPopWindow.dissmiss();
             switch (view.getId()) {
 //                            支付宝
                 case R.id.ll_pay_ali:
-                case R.id.iv_pay_icon_ali:
-                case R.id.tv_pay_text_ali:
                     //                调起支付宝支付
                     payWay = PAY_ALI_PAY;
                     paymentIndent();
                     break;
 //                            微信
                 case R.id.ll_pay_we_chat:
-                case R.id.iv_pay_icon_we_chat:
-                case R.id.tv_pay_text_we_chat:
                     payWay = PAY_WX_PAY;
-//                调起微信支付
+                    paymentIndent();
+                    break;
+                case R.id.ll_pay_union:
+//                    银联支付
+                    payWay = PAY_UNION_PAY;
                     paymentIndent();
                     break;
 //                            取消
@@ -1626,5 +1700,4 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
             }
         });
     }
-
 }

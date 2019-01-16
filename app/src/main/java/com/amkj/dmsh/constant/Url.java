@@ -47,7 +47,7 @@ public class Url {
     public static final String DEVICE_INFO = "api/my/updateUserDeviceInfo";
     //    版本信息
     public static final String APP_VERSION_INFO = "api/my/getVersions";
-//    开启通知接口
+    //    开启通知接口
     public static final String APP_SYS_NOTIFICATION = "api/my/remind/getSysNoticeInfo";
     //    用户关注
     public static final String UPDATE_ATTENTION = "api/find/followsaveOrupdate";
@@ -160,7 +160,7 @@ public class Url {
     public static final String TOTAL_OFFICIAL_PRO_NUM = "api/goods/addCommProductNum";
     //    统计广告点击
     public static final String TOTAL_AD_COUNT = "api/home/addAdClickCount";
-//    弹窗广告
+    //    弹窗广告
     public static final String TOTAL_AD_DIALOG_COUNT = "api/home/addMarketingAdClickCount";
     //    统计极光消息打开数目
     public static final String TOTAL_JPUSH_COUNT = "api/home/addPushClickNum";
@@ -207,8 +207,10 @@ public class Url {
     public static final String COLLECT_PRO = "api/my/getMyCollectGoodList";
     //    取消收藏 多个
     public static final String CANCEL_MULTI_COLLECT_PRO = "api/home/cancelGoodsCollect";
-//    我的浏览记录
+    //    我的浏览记录
     public static final String MINE_BROWSING_HISTORY = "api/my/getMyFootmark";
+    //    删除浏览记录
+    public static final String DEL_MINE_BROWSING_HISTORY = "api/my/deleteMyFootmark";
     //修改信息
     public static final String MINE_CHANGE_DATA = "api/my/updatePersonalData";
     //会员宝宝

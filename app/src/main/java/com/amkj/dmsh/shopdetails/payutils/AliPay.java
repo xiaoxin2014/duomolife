@@ -1,4 +1,4 @@
-package com.amkj.dmsh.shopdetails.alipay;
+package com.amkj.dmsh.shopdetails.payutils;
 
 import android.app.Activity;
 import android.content.Context;

@@ -110,9 +110,7 @@ public class QualityGroupShareEntity extends BaseEntity{
         private String subtitle;
         private String name;
         private String gpPrice;
-//        gpStatusTag 拼团成功/拼团失败
-//        infoStatusTag  已结束/已过期
-        private String gpStatusTag;
+//        infoStatusTag  拼团成功/已结束/已过期
         private String infoStatusTag;
         private List<String> avatar;
         private List<MemberListBean> memberList;
@@ -131,14 +129,6 @@ public class QualityGroupShareEntity extends BaseEntity{
 
         public void setGpCount(int gpCount) {
             this.gpCount = gpCount;
-        }
-
-        public String getGpStatusTag() {
-            return gpStatusTag;
-        }
-
-        public void setGpStatusTag(String gpStatusTag) {
-            this.gpStatusTag = gpStatusTag;
         }
 
         public String getInfoStatusTag() {

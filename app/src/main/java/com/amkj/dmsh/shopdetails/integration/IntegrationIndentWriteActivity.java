@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,9 +27,10 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectPaySuccessActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
-import com.amkj.dmsh.shopdetails.alipay.AliPay;
 import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
+import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
+import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity.QualityCreateUnionPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
@@ -37,7 +39,9 @@ import com.amkj.dmsh.shopdetails.integration.bean.CreateIntegralIndentInfo.Integ
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity.IntegralSettlementBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity.IntegralSettlementBean.ProductInfoBean;
-import com.amkj.dmsh.shopdetails.weixin.WXPay;
+import com.amkj.dmsh.shopdetails.payutils.AliPay;
+import com.amkj.dmsh.shopdetails.payutils.UnionPay;
+import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.google.gson.Gson;
@@ -70,9 +74,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_INTEGRAL_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 
@@ -129,6 +135,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     RadioButton rbCheckedAlipay;
     @BindView(R.id.rb_checked_wechat_pay)
     RadioButton rbCheckedWechatPay;
+    @BindView(R.id.rb_checked_union_pay)
+    RadioButton rbCheckedUnionPay;
 
     @BindView(R.id.tv_integral_details_price)
     TextView tvIntegralDetailsPrice;
@@ -145,6 +153,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     private IntegralSettlementBean integralSettlementBean;
     private String payType;
     private String orderCreateNo;
+    private UnionPay unionPay;
 
     @Override
     protected int getContentView() {
@@ -393,12 +402,24 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 //                结算金额 1 积分+金额 0 纯积分
         params.put("integralType", integralSettlementBean.getTotalPrice() > 0 ? 1 : 0);
         if (integralSettlementBean.getTotalPrice() > 0) {
-            if (rbCheckedWechatPay.isChecked() && !rbCheckedAlipay.isChecked()) {
-                payType = PAY_WX_PAY;
-            } else {
-                payType = PAY_ALI_PAY;
+            if (rbCheckedAlipay.isChecked() ||
+                    rbCheckedWechatPay.isChecked() ||
+                    rbCheckedUnionPay.isChecked()) {
+                if (rbCheckedAlipay.isChecked()) {
+                    //  调起支付宝支付
+                    payType = PAY_ALI_PAY;
+                } else if (rbCheckedWechatPay.isChecked()) {
+                    //  调起微信支付
+                    payType = PAY_WX_PAY;
+                } else {
+                    //  调起银联支付
+                    payType = PAY_UNION_PAY;
+                }
+                params.put("buyType", payType);
+            }else{
+                showToast(this,"请选择支付方式");
+                return;
             }
-            params.put("buyType", payType);
         }
 //                默认实物
         params.put("integralProductType", shopCarGoodsSku.getIntegralProductType());
@@ -434,7 +455,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                         qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                             }
                         }
-                    } else {
+                    } else if(payType.equals(PAY_ALI_PAY)){
                         QualityCreateAliPayIndentBean qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                         if (qualityAliPayIndent != null) {
                             if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
@@ -453,6 +474,28 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             } else {
                                 showToast(IntegrationIndentWriteActivity.this, qualityAliPayIndent.getResult() == null
                                         ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                            }
+                        }
+                    }else{
+                        QualityCreateUnionPayIndentEntity qualityCreateUnionPayIndentEntity = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
+                        if (qualityCreateUnionPayIndentEntity != null) {
+                            if (qualityCreateUnionPayIndentEntity.getCode().equals(SUCCESS_CODE)) {
+                                QualityCreateUnionPayIndentBean qualityCreateUnionPayIndent = qualityCreateUnionPayIndentEntity.getQualityCreateUnionPayIndent();
+                                if (qualityCreateUnionPayIndent == null) {
+                                    showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
+                                    return;
+                                }
+                                orderCreateNo = qualityCreateUnionPayIndent.getNo();
+                                if (!TextUtils.isEmpty(qualityCreateUnionPayIndent.getPayKeyBean().getPaymentUrl())) {
+                                    //返回成功，调起支付宝支付接口
+//                                    (qualityCreateUnionPayIndentEntity.getResult().getPayKey());
+                                    unionPay(qualityCreateUnionPayIndentEntity);
+                                } else {
+                                    skipDirectIndent();
+                                }
+                            } else {
+                                showToast(IntegrationIndentWriteActivity.this, qualityCreateUnionPayIndentEntity.getQualityCreateUnionPayIndent() == null
+                                        ? qualityCreateUnionPayIndentEntity.getMsg() : qualityCreateUnionPayIndentEntity.getQualityCreateUnionPayIndent().getMsg());
                             }
                         }
                     }
@@ -568,7 +611,41 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             }
         });
     }
+    /**
+     * 银联支付
+     *
+     * @param qualityUnionIndent
+     */
+    private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
+        if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
+            if(loadHud!=null){
+                loadHud.show();
+            }
+            unionPay = new UnionPay(IntegrationIndentWriteActivity.this,
+                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
+                    new UnionPay.UnionPayResultCallBack() {
+                        @Override
+                        public void onUnionPaySuccess() {
+                            if(loadHud!=null){
+                                loadHud.dismiss();
+                            }
+                            showToast(getApplication(), "支付成功");
+                            skipDirectIndent();
+                        }
 
+                        @Override
+                        public void onUnionPayError(String errorMes) {
+                            if(loadHud!=null){
+                                loadHud.dismiss();
+                            }
+                            cancelIntegralIndent();
+                        }
+                    });
+        } else {
+           showToast(IntegrationIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+        }
+    }
     /**
      * 订单取消
      */
@@ -604,6 +681,12 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             getAddressDetails();
         } else if (requestCode == IS_LOGIN_CODE) {
             loadData();
+        }else if(requestCode == UNION_RESULT_CODE){
+            if(unionPay!=null){
+                unionPay.unionPayResult(orderCreateNo);
+            }else{
+                cancelIntegralIndent();
+            }
         }
     }
 
@@ -627,17 +710,27 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     }
 
     //支付宝方式
-    @OnClick(R.id.ll_aliPay)
+    @OnClick(value = {R.id.ll_aliPay, R.id.rb_checked_alipay})
     void aliPay() {
         rbCheckedAlipay.setChecked(true);
         rbCheckedWechatPay.setChecked(false);
+        rbCheckedUnionPay.setChecked(false);
     }
 
     //微信支付方式
-    @OnClick(R.id.ll_Layout_weChat)
+    @OnClick(value = {R.id.ll_Layout_weChat, R.id.rb_checked_wechat_pay})
     void weChat() {
-        rbCheckedAlipay.setChecked(false);
         rbCheckedWechatPay.setChecked(true);
+        rbCheckedAlipay.setChecked(false);
+        rbCheckedUnionPay.setChecked(false);
+    }
+
+    //        银联支付
+    @OnClick(value = {R.id.ll_Layout_union_pay, R.id.rb_checked_union_pay})
+    void unionPay() {
+        rbCheckedUnionPay.setChecked(true);
+        rbCheckedAlipay.setChecked(false);
+        rbCheckedWechatPay.setChecked(false);
     }
 
     //    地址列表为空 跳转新建地址

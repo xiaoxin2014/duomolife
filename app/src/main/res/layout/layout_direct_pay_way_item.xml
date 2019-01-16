@@ -79,4 +79,38 @@
             android:textColor="@color/home_text_color"
             android:textSize="@dimen/sc_mm_28" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_Layout_union_pay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_100"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_checked_union_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_pay_way"
+            android:button="@null" />
+
+        <ImageView
+            android:id="@+id/img_union_way"
+            android:layout_width="@dimen/sc_mm_60"
+            android:layout_height="@dimen/sc_mm_60"
+            android:layout_marginLeft="@dimen/sc_mm_40"
+            android:background="@drawable/border_circle_two_white"
+            android:src="@drawable/union_pay"
+            />
+
+        <TextView
+            android:id="@+id/tv_item_union_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_16"
+            android:text="银联支付"
+            android:textColor="@color/home_text_color"
+            android:textSize="@dimen/sc_mm_28" />
+    </LinearLayout>
 </LinearLayout>

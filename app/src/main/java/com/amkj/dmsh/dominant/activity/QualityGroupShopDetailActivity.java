@@ -540,7 +540,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 groupShopJoinBean.setItemType(ConstantVariable.TYPE_1);
                                 setGpDataInfo(qualityGroupShareBean);
                             }
-                            groupShopJoinBean.setGpStatusTag(qualityGroupShareBean.getGpStatusTag());
+                            groupShopJoinBean.setGpStatusTag(qualityGroupShareBean.getInfoStatusTag());
                             groupShopJoinBean.setGpInfoId(qualityGroupShareBean.getGpInfoId());
                             groupShopJoinBean.setGpRecordId(Integer.parseInt(qualityGroupShareBean.getGpRecordId()));
                             groupShopJoinList.add(groupShopJoinBean);
