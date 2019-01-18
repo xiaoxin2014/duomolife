@@ -690,7 +690,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     unionPay(qualityUnionIndent);
                 } else {
                     constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
-                            qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                            qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                             !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                             getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
                             getStrings(qualityUnionIndent.getMsg()));

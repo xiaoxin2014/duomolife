@@ -2,19 +2,26 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
-    android:layout_height="@dimen/sc_mm_200">
+    android:background="@drawable/border_bottom_line"
+    android:layout_height="@dimen/sc_mm_68">
     <CheckBox
-        android:layout_width="@dimen/sc_mm_30"
+        android:layout_width="@dimen/sc_mm_38"
         android:id="@+id/cb_browse_history_header"
+       android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_marginStart="@dimen/sc_mm_20"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:button="@drawable/sel_brows_history_check"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="@dimen/sc_mm_30" />
+        android:layout_height="@dimen/sc_mm_38" />
     <TextView
         android:layout_width="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:layout_marginStart="@dimen/sc_mm_24"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="@dimen/sc_mm_26"
+        android:textColor="@color/text_login_gray_s"
         app:layout_constraintLeft_toRightOf="@id/cb_browse_history_header"
         android:layout_height="wrap_content"
         android:id="@+id/tv_browse_history_header"/>

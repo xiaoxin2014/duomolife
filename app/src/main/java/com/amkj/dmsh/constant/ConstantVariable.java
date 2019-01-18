@@ -164,6 +164,7 @@ public class ConstantVariable {
     public static final String OTHER_WECHAT = "wechat";
     public static final String OTHER_QQ = "qq";
     public static final String OTHER_SINA = "sina";
+    public static final String OTHER_MOBILE = "mobile";
     /**
      * 支付类型
      */

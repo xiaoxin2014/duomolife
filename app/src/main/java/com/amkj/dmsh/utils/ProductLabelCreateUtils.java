@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +81,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
         textView.setTextColor(context.getResources().getColor(R.color.white));
         textView.setBackground(gradientDrawable);
         textView.setText(labelText);
+        textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 22));
         return textView;
     }
@@ -110,6 +112,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
         gradientDrawable.setStroke(1, colorValue);
         gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(context, 4));
         textView.setTextColor(colorValue);
+        textView.setGravity(Gravity.CENTER);
         textView.setBackground(gradientDrawable);
         textView.setText(getStringsFormat(context, R.string.communal_go_string, getStrings(marketLabelBean.getTitle())));
         textView.setTag(marketLabelBean);

@@ -66,7 +66,7 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/rel_weiBo_account"
+        android:id="@+id/rel_weibo_account"
         android:layout_height="@dimen/sc_mm_104">
         <TextView
             android:layout_marginLeft="@dimen/gap_left"

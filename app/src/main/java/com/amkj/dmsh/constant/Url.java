@@ -207,6 +207,8 @@ public class Url {
     public static final String COLLECT_PRO = "api/my/getMyCollectGoodList";
     //    取消收藏 多个
     public static final String CANCEL_MULTI_COLLECT_PRO = "api/home/cancelGoodsCollect";
+    //    获取足迹时间轴
+    public static final String MINE_BROWSING_HISTORY_TIME_SHAFT = "api/my/getFootmarkTime";
     //    我的浏览记录
     public static final String MINE_BROWSING_HISTORY = "api/my/getMyFootmark";
     //    删除浏览记录
@@ -265,6 +267,8 @@ public class Url {
     public static final String CHANGE_USER_HABIT = "api/my/deitMemberInterest";
     //    微信解除绑定
     public static final String ACCOUNT_UNBIND_WECHAT = "api/my/wxUnbind";
+    //    微博QQ解除绑定
+    public static final String ACCOUNT_UNBIND_SINA_QQ = "api/my/sinaAndqqUnbind";
     /**
      * 我的赞列表
      */

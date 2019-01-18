@@ -270,7 +270,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                             unionPay(qualityUnionIndent);
                         } else {
                             showToast(QualityGroupShopMineActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
-                                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                                    qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                                     !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                                     getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
                                     getStrings(qualityUnionIndent.getMsg()));

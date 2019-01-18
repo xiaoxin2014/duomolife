@@ -1016,7 +1016,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 rv_shop_details_text_communal.setVisibility(View.GONE);
             }
         }
-        if (!TextUtils.isEmpty(shopProperty.getActivityTag()) || (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0)) {
+        if (!TextUtils.isEmpty(shopProperty.getActivityTag()) ||
+                (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0)) {
             fbl_details_market_label.setVisibility(VISIBLE);
             fbl_details_market_label.removeAllViews();
             if (!TextUtils.isEmpty(shopProperty.getActivityTag())) {

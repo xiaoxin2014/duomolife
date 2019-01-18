@@ -1,6 +1,8 @@
 package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
+import com.amkj.dmsh.mine.enumutils.SelectionStatusTypeEnum;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.chad.library.adapter.base.entity.AbstractExpandableItem;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
@@ -19,7 +21,7 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
 
     @SerializedName("result")
     private List<MineBrowsHistoryBean> mineBrowsHistoryList;
-    private String[] idList;
+    private int totalPage;
 
     public List<MineBrowsHistoryBean> getMineBrowsHistoryList() {
         return mineBrowsHistoryList;
@@ -29,12 +31,12 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
         this.mineBrowsHistoryList = mineBrowsHistoryList;
     }
 
-    public String[] getIdList() {
-        return idList;
+    public int getTotalPage() {
+        return totalPage;
     }
 
-    public void setIdList(String[] idList) {
-        this.idList = idList;
+    public void setTotalPage(int totalPage) {
+        this.totalPage = totalPage;
     }
 
     public static class MineBrowsHistoryBean extends AbstractExpandableItem<MineBrowsHistoryBean.GoodsInfoListBean> implements MultiItemEntity {
@@ -52,6 +54,7 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
         private int itemType;
         private boolean editStatus;
         private boolean selectStatus;
+        private SelectionStatusTypeEnum statusTypeEnum;
 
         public String getTime() {
             return time;
@@ -90,17 +93,25 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
             return level;
         }
 
+        public void setLevel(int level) {
+            this.level = level;
+        }
+
         @Override
         public int getItemType() {
             return itemType;
         }
 
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
         public void setItemType(int itemType) {
             this.itemType = itemType;
+        }
+
+        public SelectionStatusTypeEnum getStatusTypeEnum() {
+            return statusTypeEnum;
+        }
+
+        public void setStatusTypeEnum(SelectionStatusTypeEnum statusTypeEnum) {
+            this.statusTypeEnum = statusTypeEnum;
         }
 
         public static class GoodsInfoListBean implements MultiItemEntity{
@@ -128,6 +139,7 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
             private int quantity;
             private String activityTag;
             private String activityPriceDesc;
+            private List<MarketLabelBean> goodsTags;
             private int itemType;
             private boolean editStatus;
             private boolean selectStatus;
@@ -170,6 +182,14 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
 
             public void setPrice(String price) {
                 this.price = price;
+            }
+
+            public List<MarketLabelBean> getGoodsTags() {
+                return goodsTags;
+            }
+
+            public void setGoodsTags(List<MarketLabelBean> goodsTags) {
+                this.goodsTags = goodsTags;
             }
 
             public String getMarketPrice() {
