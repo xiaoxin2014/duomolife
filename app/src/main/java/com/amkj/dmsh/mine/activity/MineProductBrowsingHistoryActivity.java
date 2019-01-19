@@ -49,6 +49,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.Url.MINE_BROWSING_HISTORY;
 import static com.amkj.dmsh.constant.Url.MINE_BROWSING_HISTORY_TIME_SHAFT;
@@ -135,7 +136,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
                                 goodsInfoListBean.setSelectStatus(mineBrowsHistoryBean.isSelectStatus());
                             }
-                            setSelectionType(mineBrowsHistoryBean.isSelectStatus());
+                            setSelectionType(currentStatus);
                             adapter.notifyDataSetChanged();
                             break;
                         case R.id.cb_browse_history_product:
@@ -146,23 +147,39 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             if (parentPosition != -1) {
                                 /**
                                  * 更改父类状态
-                                 * @子类为true 如果子类全部为true, 更改父类为选中状态
+                                 * @是否已加载完 @子类为true 如果子类全部为true, 更改父类为选中状态，否则为false
+                                 *
                                  * @子类为false 父类如是选中状态，取消选中状态
                                  */
                                 MineBrowsHistoryBean parentMineBrowsHistoryBean = (MineBrowsHistoryBean) mineBrowsHistoryBeanList.get(parentPosition);
                                 if (currentChildStatus) {
-                                    boolean parentStatus = true;
-                                    for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
-                                        if (!goodsChildInfoListBean.isSelectStatus()) {
-                                            parentStatus = false;
-                                            break;
+//                                    数据是否已加载完
+                                    if (parentMineBrowsHistoryBean.isDataLoaded()) {
+                                        boolean parentStatus = true;
+                                        for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
+                                            if (!goodsChildInfoListBean.isSelectStatus()) {
+                                                parentStatus = false;
+                                                break;
+                                            }
                                         }
+                                        parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
+                                    } else {
+                                        parentMineBrowsHistoryBean.setSelectStatus(false);
                                     }
-                                    parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
                                 } else {
+//                                    如为取消，判断当前父类状态类型是否为选中类型，@是，判断是否有子类为选中状态，@否选中状态取消
                                     if (parentMineBrowsHistoryBean.isSelectStatus()) {
                                         parentMineBrowsHistoryBean.setSelectStatus(false);
-                                        parentMineBrowsHistoryBean.setStatusTypeEnum(AUTO_SELECTION);
+                                    }
+                                    if (parentMineBrowsHistoryBean.getStatusTypeEnum() != null) {
+                                        boolean parentStatus = false;
+                                        for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
+                                            if (goodsChildInfoListBean.isSelectStatus()) {
+                                                parentStatus = true;
+                                                break;
+                                            }
+                                        }
+                                        parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? AUTO_SELECTION : null);
                                     }
                                 }
                             }
@@ -251,24 +268,71 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
 
     /**
      * 设置底栏全选按钮--选择类型
-     *
-     * @param selectionStatus true 为选中 false 为取消选择
      */
     private void setSelectionType(boolean selectionStatus) {
         if (selectionStatusTypeEnum != null) {
-            selectionStatusTypeEnum = AUTO_SELECTION;
-            if (check_box_all_del.isChecked() && !selectionStatus) {
-                check_box_all_del.setChecked(false);
-            } else if (!check_box_all_del.isChecked() && selectionStatus) {
-                boolean isAllSelection = true;
-                for (MineBrowsHistoryBean mineBrowsHistoryBean : parentBrowsHistoryBeanList) {
-                    if (!mineBrowsHistoryBean.isSelectStatus()) {
-                        isAllSelection = false;
-                        break;
-                    }
+            if (selectionStatus) {
+                setAllChecked();
+            } else {
+                if (check_box_all_del.isChecked()) {
+                    check_box_all_del.setChecked(false);
+                    selectionStatusTypeEnum = AUTO_SELECTION;
+                } else {
+                    //            取消选中
+                    cancelSelectionStatus();
                 }
-                check_box_all_del.setChecked(isAllSelection);
             }
+        } else if (selectionStatus && !hasNextDay) {
+//            设置全选
+            setAllChecked();
+        }
+    }
+
+    /**
+     * 设置全选按钮为true
+     */
+    private void setAllChecked() {
+        //是否勾选全选
+        boolean isAllSelection = true;
+        for (MineBrowsHistoryBean mineBrowsHistoryBean : parentBrowsHistoryBeanList) {
+            if (!mineBrowsHistoryBean.isSelectStatus() || mineBrowsHistoryBean.getStatusTypeEnum() == null) {
+                isAllSelection = false;
+                break;
+            }
+            for (GoodsInfoListBean goodsChildInfoListBean : mineBrowsHistoryBean.getSubItems()) {
+                if (!goodsChildInfoListBean.isSelectStatus()) {
+                    isAllSelection = false;
+                    break;
+                }
+            }
+        }
+        if (isAllSelection) {
+            selectionStatusTypeEnum = MANUAL_SELECTION;
+            check_box_all_del.setChecked(true);
+        }
+    }
+
+    /**
+     * 取消选中状态
+     */
+    private void cancelSelectionStatus() {
+        //是否勾选全选
+        boolean isCancelSelection = true;
+        for (MineBrowsHistoryBean mineBrowsHistoryBean : parentBrowsHistoryBeanList) {
+            if (mineBrowsHistoryBean.isSelectStatus() || mineBrowsHistoryBean.getStatusTypeEnum() != null) {
+                isCancelSelection = false;
+                break;
+            }
+            for (GoodsInfoListBean goodsChildInfoListBean : mineBrowsHistoryBean.getSubItems()) {
+                if (goodsChildInfoListBean.isSelectStatus()) {
+                    isCancelSelection = false;
+                    break;
+                }
+            }
+        }
+        if (isCancelSelection) {
+            selectionStatusTypeEnum = null;
+            check_box_all_del.setChecked(false);
         }
     }
 
@@ -342,8 +406,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", page);
-//        params.put("showCount", TOTAL_COUNT_TWENTY);
-        params.put("showCount", 2);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("date", currentDay);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_BROWSING_HISTORY, params, new NetLoadListenerHelper() {
             @Override
@@ -407,7 +470,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                                 List<GoodsInfoListBean> subItems = mineBrowsHistoryBean.getSubItems();
                                 for (MineBrowsHistoryBean mineNewBrowsHistory : mineBrowsHistoryEntity.getMineBrowsHistoryList()) {
                                     for (GoodsInfoListBean goodsInfoListBean : mineNewBrowsHistory.getGoodsInfoList()) {
-                                        if (mineBrowsHistoryBean.isSelectStatus() || mineBrowsHistoryBean.getStatusTypeEnum() != null) {
+                                        if (mineBrowsHistoryBean.isSelectStatus()
+                                                || mineBrowsHistoryBean.getStatusTypeEnum() != null) {
                                             goodsInfoListBean.setSelectStatus(true);
                                         }
                                     }
@@ -465,19 +529,34 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     private void changeNextDay(boolean isForceChangeNextDay) {
         int currentPosition = historyTimeShaftList.indexOf(currentDay);
 //数据已加载完毕判断   @未找到当天日期 @当天是最后一天并且（已加载完或者强行更换下一天）
-        if (currentPosition == -1 ||
+        if (hasNextDay || currentPosition == -1 ||
                 (currentPosition == historyTimeShaftList.size() - 1 &&
                         (page >= totalCurrentDayPage || isForceChangeNextDay))) {
+            //            上一页已加载完
+            if (parentBrowsHistoryBeanList.size() > 0) {
+                for (int i = 0; i < parentBrowsHistoryBeanList.size(); i++) {
+                    MineBrowsHistoryBean mineBrowsHistoryBean = parentBrowsHistoryBeanList.get(i);
+                    mineBrowsHistoryBean.setDataLoaded(true);
+                }
+            }
             mineBrowsingHistoryAdapter.loadMoreEnd();
             hasNextDay = false;
             return;
         }
         if (page >= totalCurrentDayPage || isForceChangeNextDay) {
+//            上一页已加载完
+            if (parentBrowsHistoryBeanList.size() > 0) {
+                for (int i = 0; i < parentBrowsHistoryBeanList.size(); i++) {
+                    MineBrowsHistoryBean mineBrowsHistoryBean = parentBrowsHistoryBeanList.get(i);
+                    mineBrowsHistoryBean.setDataLoaded(true);
+                }
+            }
             currentDay = historyTimeShaftList.get(currentPosition + 1);
             page = 0;
             isCleanData = false;
         }
     }
+
     /**
      * 更换页面并且加载数据
      *
@@ -529,7 +608,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                         for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
                             if (!goodsInfoListBean.isSelectStatus()) {
                                 retainIds += (!TextUtils.isEmpty(retainIds) ? "," + goodsInfoListBean.getId() : goodsInfoListBean.getId());
-                            }else{
+                            } else {
                                 mineBrowsHistoryBean.getGoodsInfoList().remove(goodsInfoListBean);
                             }
                         }
@@ -539,13 +618,13 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                         if (TextUtils.isEmpty(retainIds)) {
                             retainDate += (!TextUtils.isEmpty(retainDate) ? "," + mineBrowsHistoryBean.getTime() : mineBrowsHistoryBean.getTime());
                         }
-                        if(mineBrowsHistoryBean.getStatusTypeEnum()!=null){
-                            if(currentDay.equals(mineBrowsHistoryBean.getTime())){
+                        if (mineBrowsHistoryBean.getStatusTypeEnum() != null) {
+                            if (currentDay.equals(mineBrowsHistoryBean.getTime())) {
                                 changeNextDay(true);
                             }
                         }
-                    }else{
-                        if(currentDay.equals(mineBrowsHistoryBean.getTime())){
+                    } else {
+                        if (currentDay.equals(mineBrowsHistoryBean.getTime())) {
                             changeNextDay(true);
                         }
                     }
@@ -585,7 +664,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             }
                         }
                         deleteDate += (!TextUtils.isEmpty(deleteDate) ? "," + mineBrowsHistoryBean.getTime() : mineBrowsHistoryBean.getTime());
-                        if(currentDay.equals(mineBrowsHistoryBean.getTime())){
+                        if (currentDay.equals(mineBrowsHistoryBean.getTime())) {
                             changeNextDay(true);
                         }
                     } else {
@@ -601,7 +680,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                     mineBrowsHistoryBean.setExpanded(false);
                 } else {
                     deleteDate += (!TextUtils.isEmpty(deleteDate) ? "," + mineBrowsHistoryBean.getTime() : mineBrowsHistoryBean.getTime());
-                    if(currentDay.equals(mineBrowsHistoryBean.getTime())){
+                    if (currentDay.equals(mineBrowsHistoryBean.getTime())) {
                         changeNextDay(true);
                     }
                 }
@@ -635,68 +714,11 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             mineBrowsingHistoryAdapter.expandAll();
             mineBrowsingHistoryAdapter.notifyDataSetChanged();
         } else if (hasNextDay) {
-            mineBrowsingHistoryAdapter.notifyLoadMoreToLoading();
+            page++;
+            getMineBrowsingHistory();
         } else {
             setDefaultEmptyUI();
         }
-//
-//        /**
-//         * 移除选择项
-//         * @全选删除 自动恢复初始状态，禁用编辑
-//         * @全选余部分 禁用加载，留存未选择部分，保持编辑状态
-//         * @未点击全选 移除已选项，保持编辑状态
-//         */
-//        if (check_box_all_del.isChecked()) {
-//            setDefaultEmptyUI();
-//        } else {
-//            tv_header_shared.setEnabled(true);
-//            if (selectionStatusTypeEnum != null) {
-//                mineBrowsingHistoryAdapter.loadMoreEnd();
-//                mineBrowsingHistoryAdapter.setEnableLoadMore(false);
-//                selectionStatusTypeEnum = null;
-//            }
-////            先找出保留数据
-//            for (MineBrowsHistoryBean mineBrowsHistoryBean : parentBrowsHistoryBeanList) {
-//                List<MineBrowsHistoryBean> newBrowsHistoryBeanList = new ArrayList<>();
-//                if (!mineBrowsHistoryBean.isSelectStatus()) {
-//                    List<GoodsInfoListBean> newGoodsInfoListBeanList = new ArrayList<>();
-//                    for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
-//                        if (!goodsInfoListBean.isSelectStatus()) {
-//                            newGoodsInfoListBeanList.add(goodsInfoListBean);
-//                        }
-//                    }
-//                    mineBrowsHistoryBean.setExpanded(false);
-//                    mineBrowsHistoryBean.setGoodsInfoList(newGoodsInfoListBeanList);
-//                    mineBrowsHistoryBean.setSubItems(newGoodsInfoListBeanList);
-//                    newBrowsHistoryBeanList.add(mineBrowsHistoryBean);
-//                    mineBrowsHistoryBeanList.clear();
-//                    parentBrowsHistoryBeanList.clear();
-//                    if (newBrowsHistoryBeanList.size() > 0) {
-//                        mineBrowsHistoryBeanList.addAll(newBrowsHistoryBeanList);
-//                        parentBrowsHistoryBeanList.addAll(newBrowsHistoryBeanList);
-//                        mineBrowsingHistoryAdapter.expandAll();
-//                    }
-//                    /*else {
-//                        if (mineBrowsingHistoryAdapter.isLoadMoreEnable()) {
-//                            page++;
-//                            getMineBrowsingHistory();
-//                        } else {
-//                            setEditStatus(false);
-//                            mineBrowsingHistoryAdapter.loadMoreEnd();
-//                            mineBrowsingHistoryAdapter.setEnableLoadMore(false);
-//                            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
-//                            setEditStatus(false);
-//                            tv_header_shared.setEnabled(false);
-//                        }
-//                    }*/
-//                }else{
-//                    if(page!=0&&currentDay.equals(mineBrowsHistoryBean.getTime())){
-//
-//                    }
-//                }
-//            }
-//            mineBrowsingHistoryAdapter.notifyDataSetChanged();
-//        }
     }
 
     /**

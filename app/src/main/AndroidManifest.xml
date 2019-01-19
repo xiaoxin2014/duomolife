@@ -1116,6 +1116,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".mine.activity.WebRuleCommunalActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="WebRuleCommunalActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".find.activity.ImagePagerActivity"
             android:screenOrientation="portrait"
@@ -1268,6 +1276,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:noHistory="true" />
+
 
     </application>
 </manifest>

@@ -77,7 +77,7 @@ import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
  * class description:多么优选-多么定制详情
  */
 public class DmlOptimizedSelDetailActivity extends BaseActivity {
-    @BindView(R.id.smart_refresh_ql_welfare_details)
+    @BindView(R.id.smart_refresh_communal_details)
     SmartRefreshLayout smart_refresh_ql_welfare_details;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;

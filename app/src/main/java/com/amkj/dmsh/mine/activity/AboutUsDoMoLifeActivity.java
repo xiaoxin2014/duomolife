@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,10 @@ import com.amkj.dmsh.constant.AppUpdateUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
 
 /**
  * @author LGuiPeng
@@ -29,10 +34,12 @@ public class AboutUsDoMoLifeActivity extends BaseActivity {
     TextView header_shared;
     @BindView(R.id.tl_normal_bar)
     Toolbar tl_normal_bar;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_mine_more_about_us;
     }
+
     @Override
     protected void initViews() {
         tv_header_titleAll.setText("关于多么生活");
@@ -66,8 +73,16 @@ public class AboutUsDoMoLifeActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_check_update)
-    public void updateApp(){
+    public void updateApp() {
         /***** 检查更新 *****/
-        AppUpdateUtils.getInstance().getAppUpdate(AboutUsDoMoLifeActivity.this,true);
+        AppUpdateUtils.getInstance().getAppUpdate(AboutUsDoMoLifeActivity.this, true);
+    }
+
+    @OnClick({R.id.tv_user_register_agreement, R.id.tv_user_privacy_policy})
+    public void agreementPolicy(View view) {
+        Intent intent = new Intent(this, WebRuleCommunalActivity.class);
+        intent.putExtra(WEB_VALUE_TYPE, view.getId() == R.id.tv_user_register_agreement ?
+                WEB_TYPE_REG_AGREEMENT : WEB_TYPE_PRIVACY_POLICY);
+        startActivity(intent);
     }
 }

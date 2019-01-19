@@ -49,6 +49,28 @@
             android:text="检查更新"
             android:textColor="@color/text_gray_hint_n"
             android:textSize="@dimen/sc_mm_26" />
+        <TextView
+            android:id="@+id/tv_user_register_agreement"
+            android:layout_width="@dimen/sc_mm_172"
+            android:layout_height="@dimen/sc_mm_70"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/sc_mm_80"
+            android:background="@drawable/border_civ_4dp_gray_white_bg"
+            android:gravity="center"
+            android:text="用户协议"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_26" />
+        <TextView
+            android:id="@+id/tv_user_privacy_policy"
+            android:layout_width="@dimen/sc_mm_172"
+            android:layout_height="@dimen/sc_mm_70"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:background="@drawable/border_civ_4dp_gray_white_bg"
+            android:gravity="center"
+            android:text="隐私政策"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_26" />
     </LinearLayout>
 
     <TextView

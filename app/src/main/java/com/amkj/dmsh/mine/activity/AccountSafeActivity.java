@@ -61,7 +61,7 @@ public class AccountSafeActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tv_share;
     @BindView(R.id.tv_header_title)
-    TextView tv_header_titleAll;
+    TextView tv_header_title;
     //    绑定手机
     @BindView(R.id.tv_account_safe_mobile)
     TextView tv_account_safe_mobile;
@@ -104,7 +104,7 @@ public class AccountSafeActivity extends BaseActivity {
     protected void initViews() {
         getLoginStatus(this);
         tv_share.setVisibility(View.INVISIBLE);
-        tv_header_titleAll.setText("账户安全");
+        tv_header_title.setText("账户安全");
         for (String bindType : bindTypeArray) {
             bindAccountType.put(bindType, 0);
         }
@@ -307,7 +307,6 @@ public class AccountSafeActivity extends BaseActivity {
             confirmText = "打开";
             msg = "“多么生活”想要打开" + getStrings(accountMsg);
         }
-
         if (accountDialogHelper == null) {
             accountDialogHelper = new AlertDialogHelper(AccountSafeActivity.this);
             accountDialogHelper.setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
@@ -537,7 +536,7 @@ public class AccountSafeActivity extends BaseActivity {
                 break;
             case OTHER_SINA:
                 bindAccountType.put(OTHER_SINA, 0);
-                tv_account_safe_real_info.setText("未绑定");
+                tv_account_safe_weiBo.setText("未绑定");
                 break;
             default:
                 break;

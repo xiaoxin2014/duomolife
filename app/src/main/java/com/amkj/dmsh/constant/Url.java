@@ -235,6 +235,11 @@ public class Url {
     public static final String MINE_MES_PUSH_SWITCH = "api/my/deitMyMessagepushtype";
     //    用户注册
     public static final String USER_REGISTER_ACCOUNT = "api/my/appRegisterV2";
+//    注册协议
+    public static final String USER_REGISTER_AGREEMENT = "api/reminder/getUserRegisterAgreement";
+//    用户隐私政策
+    public static final String USER_PRIVACY_POLICY = "api/reminder/getUserPolicySecret";
+//    隐私政策
     //账号安全，获取第三方账号列表
     public static final String MINE_SYNC_LOGIN = "api/my/getSyncLoginList";
     //账号安全，修改密码

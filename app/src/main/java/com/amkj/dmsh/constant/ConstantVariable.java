@@ -235,6 +235,15 @@ public class ConstantVariable {
     public static final String CATEGORY_NAME = "categoryName";
     public static final String CATEGORY_CHILD = "childCategory";
     /**
+     * 公用web数据类型
+     */
+//    注册协议
+    public static final String WEB_TYPE_REG_AGREEMENT = "register_agreement";
+    //    隐私政策
+    public static final String WEB_TYPE_PRIVACY_POLICY = "privacy_policy";
+    //    web数据类型
+    public static final String WEB_VALUE_TYPE = "webRuleType";
+    /**
      * 存储类型引用
      */
 //    app版本

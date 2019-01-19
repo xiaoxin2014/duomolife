@@ -52,8 +52,14 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
          */
         private int level;
         private int itemType;
+//        编辑状态
         private boolean editStatus;
+//        选中状态
         private boolean selectStatus;
+//        数据加载状态 是否已加载完
+        private boolean dataLoaded;
+//        已选择条数
+        private int selectionCount;
         private SelectionStatusTypeEnum statusTypeEnum;
 
         public String getTime() {
@@ -104,6 +110,22 @@ public class MineBrowsHistoryEntity extends BaseTimeEntity {
 
         public void setItemType(int itemType) {
             this.itemType = itemType;
+        }
+
+        public boolean isDataLoaded() {
+            return dataLoaded;
+        }
+
+        public void setDataLoaded(boolean dataLoaded) {
+            this.dataLoaded = dataLoaded;
+        }
+
+        public int getSelectionCount() {
+            return selectionCount;
+        }
+
+        public void setSelectionCount(int selectionCount) {
+            this.selectionCount = selectionCount;
         }
 
         public SelectionStatusTypeEnum getStatusTypeEnum() {
