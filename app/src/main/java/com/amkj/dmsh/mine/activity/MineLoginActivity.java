@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,6 +37,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatConfig;
 import com.umeng.analytics.MobclickAgent;
@@ -61,6 +64,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
 import static com.amkj.dmsh.constant.Url.LOGIN_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.LOGIN_CHECK_SMS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_OTHER_ACCOUNT;
@@ -113,6 +119,8 @@ public class MineLoginActivity extends BaseActivity {
     public TextView tv_login_send_code;
     @BindView(R.id.reg_login_code_gif_view)
     public ProgressBar reg_login_code_gif_view;
+    @BindView(R.id.tv_agreement_privacy)
+    public TextView tv_agreement_privacy;
     private boolean isPhoneLogin;
     private CountDownHelper countDownHelper;
     private AlertDialogHelper weChatDialogHelper;
@@ -132,6 +140,39 @@ public class MineLoginActivity extends BaseActivity {
         tv_blue_title.setVisibility(View.INVISIBLE);
         iv_blue_back.setVisibility(View.INVISIBLE);
         loadHud.setCancellable(true);
+        String s1 = "《多么生活用户注册协议》";
+        String s2 = "《多么生活用户隐私协议》";
+        String text = "注册或登录即表示同意" + s1 +"和" +s2;
+        Link link1 = new Link(s1);
+        Link link2 = new Link(s2);
+        //        @用户昵称
+        link1.setTextColor(Color.parseColor("#5faeff"));
+        link1.setUnderlined(false);
+        link1.setHighlightAlpha(0f);
+        link2.setTextColor(Color.parseColor("#5faeff"));
+        link2.setUnderlined(false);
+        link2.setHighlightAlpha(0f);
+        LinkBuilder.on(tv_agreement_privacy)
+                .setText(text)
+                .addLink(link1)
+                .addLink(link2)
+                .build();
+        link1.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Intent intent = new Intent(MineLoginActivity.this, WebRuleCommunalActivity.class);
+                intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_REG_AGREEMENT);
+                startActivity(intent);
+            }
+        });
+        link2.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Intent intent = new Intent(MineLoginActivity.this, WebRuleCommunalActivity.class);
+                intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_PRIVACY_POLICY);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -366,13 +407,13 @@ public class MineLoginActivity extends BaseActivity {
                             savePersonalInfo.setAvatar(getStrings(otherAccountBean.getAvatar()));
                             savePersonalInfo.setNickName(getStrings(otherAccountBean.getNickname()));
                             savePersonalInfo.setUid(otherAccountBean.getUid());
+                            savePersonalInfo.setPhoneNum(getStrings(otherAccountBean.getMobile()));
                             savePersonalInfo.setOpenId(getStrings(otherAccountBindInfo.getOpenid()));
                             savePersonalInfo.setLoginType(getStrings(otherAccountBindInfo.getType()));
                             if (OTHER_WECHAT.equals(getStrings(otherAccountBindInfo.getType()))) {
                                 savePersonalInfo.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                             }
                             savePersonalInfo.setLogin(true);
-                            savePersonalInfo.setPhoneNum(getStrings(otherAccountBindInfo.getMobile()));
                             savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 //                            跳转传递信息
                             Intent data = new Intent();

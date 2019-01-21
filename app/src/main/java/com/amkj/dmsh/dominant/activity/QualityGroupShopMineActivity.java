@@ -378,7 +378,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
-                        public void onUnionPaySuccess() {
+                        public void onUnionPaySuccess(String webResultValue) {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
@@ -426,7 +426,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             loadData();
         } else if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null && qualityUnionIndent.getQualityCreateUnionPayIndent() != null) {
-                unionPay.unionPayResult(qualityUnionIndent.getQualityCreateUnionPayIndent().getNo());
+                String webManualFinish = data.getStringExtra("webManualFinish");
+                unionPay.unionPayResult(qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),webManualFinish);
             } else {
                 showToast("支付取消！");
             }

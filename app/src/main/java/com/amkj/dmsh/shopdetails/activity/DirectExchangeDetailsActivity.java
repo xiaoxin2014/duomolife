@@ -203,6 +203,9 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     @Override
     protected void initViews() {
         getLoginStatus(this);
+        if(loadHud!=null){
+            loadHud.setCancellable(false);
+        }
         iv_indent_search.setVisibility(GONE);
         tb_indent_bar.setSelected(true);
         tv_indent_title.setText("订单详情");
@@ -432,7 +435,8 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null) {
-                unionPay.unionPayResult(orderNo);
+                String webManualFinish = data.getStringExtra("webManualFinish");
+                unionPay.unionPayResult(orderNo,webManualFinish);
             } else {
                 showToast("支付取消！");
             }
@@ -1343,12 +1347,23 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
-                        public void onUnionPaySuccess() {
+                        public void onUnionPaySuccess(String webResultValue) {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
                             showToast(DirectExchangeDetailsActivity.this, "支付成功");
-                            skipDirectIndent();
+                            if (!TextUtils.isEmpty(webResultValue) && "1".equals(webResultValue)) {
+                                if (totalPersonalTrajectory != null) {
+                                    isUpTotalFile = true;
+                                    createExecutor().execute(() -> {
+                                        totalPersonalTrajectory.getFileTotalTrajectory();
+                                    });
+                                    isUpTotalFile = false;
+                                }
+                                loadData();
+                            } else {
+                                skipDirectIndent();
+                            }
                         }
 
                         @Override

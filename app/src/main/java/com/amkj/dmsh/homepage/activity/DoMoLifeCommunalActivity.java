@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.activity;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -129,18 +127,13 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     LinearLayout ll_communal_net_error;
     @BindView(R.id.smart_web_refresh)
     SmartRefreshLayout smart_web_refresh;
-
     private String loadUrl;
-    private ConstantMethod constantMethod;
-    private NotificationManager mNotifyManager;
-    private String channelId = "DOWN_NOTIFY_CHANNEL_ID";
-    private int notifyId = 0xfff;
-    private NotificationCompat.Builder mBuilder;
     private String jsIdentifying;
     private String refreshStatus;
     private AlertDialogHelper alertDialogHelper;
     private String errorUrl;
     private String backResult;
+    private boolean isWebManualFinish;
 
 
     @Override
@@ -334,6 +327,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            isWebManualFinish = false;
             finishWebPage(1);
             return true;
         } else {
@@ -411,6 +405,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     @OnClick(R.id.tv_web_back)
     void finish(View view) {
+        isWebManualFinish = false;
         finishWebPage(1);
     }
 
@@ -775,6 +770,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      */
     private void jsAutoFinishPage(JsInteractiveBean jsInteractiveBean) {
         Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        isWebManualFinish = true;
         if (otherData != null && otherData.get("pageCount") != null) {
             int pageCount = (int) getMapValue(otherData.get("pageCount"), 1);
             finishWebPage(pageCount);
@@ -1097,7 +1093,12 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 //        当前页面index
                 int currentIndex = webBackForwardList.getCurrentIndex();
                 if("1".equals(backResult)){
-                    setResult(RESULT_OK);
+//                    判断是web关闭，还是用户手动触发@是 传递值不回调跳转
+                    Intent intent = new Intent();
+                    if(isWebManualFinish){
+                        intent.putExtra("webManualFinish","1");
+                    }
+                    setResult(RESULT_OK,intent);
                     finish();
                 }else if (web_communal.canGoBack()) {
                     if (currentIndex - finalFinishCount < 0) {

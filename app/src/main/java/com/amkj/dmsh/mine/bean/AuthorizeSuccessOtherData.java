@@ -85,6 +85,15 @@ public class AuthorizeSuccessOtherData implements Parcelable {
         private String rtime;
         private String openid;
         private int login;
+        private String mobile;
+
+        public String getMobile() {
+            return mobile;
+        }
+
+        public void setMobile(String mobile) {
+            this.mobile = mobile;
+        }
 
         public int getFllow() {
             return fllow;
@@ -230,6 +239,9 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.login = login;
         }
 
+        public OtherAccountBean() {
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -255,9 +267,7 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             dest.writeString(this.rtime);
             dest.writeString(this.openid);
             dest.writeInt(this.login);
-        }
-
-        public OtherAccountBean() {
+            dest.writeString(this.mobile);
         }
 
         protected OtherAccountBean(Parcel in) {
@@ -279,6 +289,7 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.rtime = in.readString();
             this.openid = in.readString();
             this.login = in.readInt();
+            this.mobile = in.readString();
         }
 
         public static final Creator<OtherAccountBean> CREATOR = new Creator<OtherAccountBean>() {

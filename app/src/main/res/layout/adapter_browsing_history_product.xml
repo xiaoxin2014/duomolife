@@ -8,12 +8,15 @@
         android:id="@+id/cb_browse_history_product"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/sc_mm_24"
+        android:visibility="gone"
         android:button="@drawable/sel_brows_history_check"
         android:layout_height="@dimen/sc_mm_38" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:id="@+id/ll_browsing_history_product"
+        android:background="@drawable/sel_border_browsing_history_product"
         android:layout_toRightOf="@id/cb_browse_history_product"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/sc_mm_30"
@@ -55,7 +58,7 @@
                     android:layout_centerVertical="true"
                     android:ellipsize="end"
                     android:lines="1"
-                    android:textColor="@color/sel_font_b_gray_un_red"
+                    android:textColor="@color/text_b_red_color"
                     android:textSize="@dimen/sc_mm_30" />
                 <TextView
                     android:layout_marginLeft="@dimen/sc_mm_36"

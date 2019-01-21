@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -23,6 +24,7 @@ import com.amkj.dmsh.mine.enumutils.SelectionStatusTypeEnum;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
@@ -51,6 +53,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.Url.DEL_MINE_BROWSING_HISTORY;
 import static com.amkj.dmsh.constant.Url.MINE_BROWSING_HISTORY;
 import static com.amkj.dmsh.constant.Url.MINE_BROWSING_HISTORY_TIME_SHAFT;
 import static com.amkj.dmsh.mine.enumutils.SelectionStatusTypeEnum.AUTO_SELECTION;
@@ -73,9 +76,11 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
     @BindView(R.id.tv_header_title)
-    TextView tv_header_titleAll;
+    TextView tv_header_title;
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
+    @BindView(R.id.tl_normal_bar)
+    Toolbar tl_normal_bar;
     @BindView(R.id.rel_del_shop_car)
     RelativeLayout rel_del_shop_car;
     // 全选 全不选
@@ -105,6 +110,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
+        tv_header_title.setText("我的足迹");
+        tl_normal_bar.setSelected(true);
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         setEditStatus(isEditStatus);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
@@ -115,77 +122,20 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         mineBrowsingHistoryAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-            }
-        });
-        mineBrowsingHistoryAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 MultiItemEntity multiItemEntity = (MultiItemEntity) view.getTag();
-                if (multiItemEntity != null) {
-                    switch (view.getId()) {
-                        case R.id.cb_browse_history_header:
-                            MineBrowsHistoryBean mineBrowsHistoryBean = (MineBrowsHistoryBean) multiItemEntity;
-                            boolean currentStatus = !mineBrowsHistoryBean.isSelectStatus();
-                            mineBrowsHistoryBean.setSelectStatus(currentStatus);
-                            if (currentStatus) {
-                                mineBrowsHistoryBean.setStatusTypeEnum(MANUAL_SELECTION);
-                            } else {
-                                mineBrowsHistoryBean.setStatusTypeEnum(null);
-                            }
-                            for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
-                                goodsInfoListBean.setSelectStatus(mineBrowsHistoryBean.isSelectStatus());
-                            }
-                            setSelectionType(currentStatus);
-                            adapter.notifyDataSetChanged();
-                            break;
-                        case R.id.cb_browse_history_product:
-                            GoodsInfoListBean goodsInfoListBean = (GoodsInfoListBean) multiItemEntity;
-                            int parentPosition = adapter.getParentPosition(goodsInfoListBean);
-                            boolean currentChildStatus = !goodsInfoListBean.isSelectStatus();
-                            goodsInfoListBean.setSelectStatus(currentChildStatus);
-                            if (parentPosition != -1) {
-                                /**
-                                 * 更改父类状态
-                                 * @是否已加载完 @子类为true 如果子类全部为true, 更改父类为选中状态，否则为false
-                                 *
-                                 * @子类为false 父类如是选中状态，取消选中状态
-                                 */
-                                MineBrowsHistoryBean parentMineBrowsHistoryBean = (MineBrowsHistoryBean) mineBrowsHistoryBeanList.get(parentPosition);
-                                if (currentChildStatus) {
-//                                    数据是否已加载完
-                                    if (parentMineBrowsHistoryBean.isDataLoaded()) {
-                                        boolean parentStatus = true;
-                                        for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
-                                            if (!goodsChildInfoListBean.isSelectStatus()) {
-                                                parentStatus = false;
-                                                break;
-                                            }
-                                        }
-                                        parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
-                                    } else {
-                                        parentMineBrowsHistoryBean.setSelectStatus(false);
-                                    }
-                                } else {
-//                                    如为取消，判断当前父类状态类型是否为选中类型，@是，判断是否有子类为选中状态，@否选中状态取消
-                                    if (parentMineBrowsHistoryBean.isSelectStatus()) {
-                                        parentMineBrowsHistoryBean.setSelectStatus(false);
-                                    }
-                                    if (parentMineBrowsHistoryBean.getStatusTypeEnum() != null) {
-                                        boolean parentStatus = false;
-                                        for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
-                                            if (goodsChildInfoListBean.isSelectStatus()) {
-                                                parentStatus = true;
-                                                break;
-                                            }
-                                        }
-                                        parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? AUTO_SELECTION : null);
-                                    }
-                                }
-                            }
-                            setSelectionType(currentChildStatus);
-                            adapter.notifyDataSetChanged();
-                            break;
+                if(multiItemEntity!=null){
+                    if(multiItemEntity instanceof GoodsInfoListBean){
+                        GoodsInfoListBean goodsInfoListBean = (GoodsInfoListBean) multiItemEntity;
+//                        非编辑状态跳转商品详情
+                        if(!goodsInfoListBean.isEditStatus()){
+                            Intent intent = new Intent(MineProductBrowsingHistoryActivity.this, ShopScrollDetailsActivity.class);
+                            intent.putExtra("productId",String.valueOf(goodsInfoListBean.getProductId()));
+                            startActivity(intent);
+                        }else{//编辑状态为选中商品
+                            setChildSelectionStatud(adapter, goodsInfoListBean);
+                        }
+                    }else if(multiItemEntity instanceof MineBrowsHistoryBean){
+                        setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
                     }
                 }
             }
@@ -196,6 +146,22 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                 loadNextDayData();
             }
         }, communal_recycler);
+        mineBrowsingHistoryAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                MultiItemEntity multiItemEntity = (MultiItemEntity) view.getTag();
+                if (multiItemEntity != null) {
+                    switch (view.getId()) {
+                        case R.id.cb_browse_history_header:
+                            setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
+                            break;
+                        case R.id.cb_browse_history_product:
+                            setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
+                            break;
+                    }
+                }
+            }
+        });
         TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         int screenHeight = tinkerBaseApplicationLike.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -226,6 +192,72 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                 linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
+    }
+
+    private void setParentSelectionStatus(BaseQuickAdapter adapter, MineBrowsHistoryBean multiItemEntity) {
+        MineBrowsHistoryBean mineBrowsHistoryBean = multiItemEntity;
+        if(mineBrowsHistoryBean.isEditStatus()){
+            boolean currentStatus = !mineBrowsHistoryBean.isSelectStatus();
+            mineBrowsHistoryBean.setSelectStatus(currentStatus);
+            if (currentStatus) {
+                mineBrowsHistoryBean.setStatusTypeEnum(MANUAL_SELECTION);
+            } else {
+                mineBrowsHistoryBean.setStatusTypeEnum(null);
+            }
+            for (GoodsInfoListBean goodsInfoListBean : mineBrowsHistoryBean.getSubItems()) {
+                goodsInfoListBean.setSelectStatus(mineBrowsHistoryBean.isSelectStatus());
+            }
+            setSelectionType(currentStatus);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void setChildSelectionStatud(BaseQuickAdapter adapter, GoodsInfoListBean goodsInfoListBean) {
+        int parentPosition = adapter.getParentPosition(goodsInfoListBean);
+        boolean currentChildStatus = !goodsInfoListBean.isSelectStatus();
+        goodsInfoListBean.setSelectStatus(currentChildStatus);
+        if (parentPosition != -1) {
+            /**
+             * 更改父类状态
+             * @是否已加载完 @子类为true 如果子类全部为true, 更改父类为选中状态，否则为false
+             *
+             * @子类为false 父类如是选中状态，取消选中状态
+             */
+            MineBrowsHistoryBean parentMineBrowsHistoryBean = (MineBrowsHistoryBean) mineBrowsHistoryBeanList.get(parentPosition);
+            if (currentChildStatus) {
+//                                    数据是否已加载完
+                if (parentMineBrowsHistoryBean.isDataLoaded()) {
+                    boolean parentStatus = true;
+                    for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
+                        if (!goodsChildInfoListBean.isSelectStatus()) {
+                            parentStatus = false;
+                            break;
+                        }
+                    }
+                    parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
+                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus?null:MANUAL_SELECTION);
+                } else {
+                    parentMineBrowsHistoryBean.setSelectStatus(false);
+                }
+            } else {
+//                                    如为取消，判断当前父类状态类型是否为选中类型，@是，判断是否有子类为选中状态，@否选中状态取消
+                if (parentMineBrowsHistoryBean.isSelectStatus()) {
+                    parentMineBrowsHistoryBean.setSelectStatus(false);
+                }
+                if (parentMineBrowsHistoryBean.getStatusTypeEnum() != null) {
+                    boolean parentStatus = false;
+                    for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
+                        if (goodsChildInfoListBean.isSelectStatus()) {
+                            parentStatus = true;
+                            break;
+                        }
+                    }
+                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? AUTO_SELECTION : null);
+                }
+            }
+        }
+        setSelectionType(currentChildStatus);
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -526,10 +558,10 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
      * @是 切换下一页
      * @否 不处理
      */
-    private void changeNextDay(boolean isForceChangeNextDay) {
+    private boolean changeNextDay(boolean isForceChangeNextDay) {
         int currentPosition = historyTimeShaftList.indexOf(currentDay);
 //数据已加载完毕判断   @未找到当天日期 @当天是最后一天并且（已加载完或者强行更换下一天）
-        if (hasNextDay || currentPosition == -1 ||
+        if (!hasNextDay || currentPosition == -1 ||
                 (currentPosition == historyTimeShaftList.size() - 1 &&
                         (page >= totalCurrentDayPage || isForceChangeNextDay))) {
             //            上一页已加载完
@@ -541,9 +573,10 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             }
             mineBrowsingHistoryAdapter.loadMoreEnd();
             hasNextDay = false;
-            return;
+            return false;
         }
         if (page >= totalCurrentDayPage || isForceChangeNextDay) {
+            hasNextDay = true;
 //            上一页已加载完
             if (parentBrowsHistoryBeanList.size() > 0) {
                 for (int i = 0; i < parentBrowsHistoryBeanList.size(); i++) {
@@ -555,6 +588,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             page = 0;
             isCleanData = false;
         }
+        return true;
     }
 
     /**
@@ -564,9 +598,10 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
      * @否 不处理
      */
     private void loadNextDayData() {
-        changeNextDay(false);
-        page++;
-        getMineBrowsingHistory();
+        if(changeNextDay(false)){
+            page++;
+            getMineBrowsingHistory();
+        }
     }
 
     @Override
@@ -701,8 +736,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                 return;
             }
         }
-//        params.put("uid", userId);
-//        NetLoadUtils.getNetInstance().loadNetDataPost(this, DEL_MINE_BROWSING_HISTORY, params, new NetLoadListenerHelper());
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DEL_MINE_BROWSING_HISTORY, params, new NetLoadListenerHelper());
         /**
          * 处理界面更新
          */

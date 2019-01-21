@@ -1,9 +1,11 @@
 package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.mine.bean.MineBrowsHistoryEntity.MineBrowsHistoryBean;
@@ -32,6 +34,8 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
  */
 public class MineBrowsingHistoryAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseViewHolder> {
     private final Context context;
+    //    是否是当前日期第一次加载 控制top line是否展示
+    private boolean isFirstLoad = false;
 
     public MineBrowsingHistoryAdapter(Context context, List<MultiItemEntity> browsHistoryBeanList) {
         super(browsHistoryBeanList);
@@ -44,15 +48,20 @@ public class MineBrowsingHistoryAdapter extends BaseMultiItemQuickAdapter<MultiI
     protected void convert(BaseViewHolder helper, MultiItemEntity multiItemEntity) {
         switch (helper.getItemViewType()) {
             case TYPE_1:
+                isFirstLoad = true;
+                helper.itemView.setSelected(helper.getAdapterPosition() != 0);
                 MineBrowsHistoryBean mineBrowsHistoryBean = (MineBrowsHistoryBean) multiItemEntity;
                 CheckBox cb_browse_history_header = helper.getView(R.id.cb_browse_history_header);
                 cb_browse_history_header.setVisibility(mineBrowsHistoryBean.isEditStatus() ? View.VISIBLE : View.GONE);
                 cb_browse_history_header.setChecked(mineBrowsHistoryBean.isSelectStatus());
                 helper.setText(R.id.tv_browse_history_header, getStrings(mineBrowsHistoryBean.getTime()))
                         .setTag(R.id.cb_browse_history_header, mineBrowsHistoryBean)
-                        .addOnClickListener(R.id.cb_browse_history_header);
+                        .addOnClickListener(R.id.cb_browse_history_header)
+                        .itemView.setTag(mineBrowsHistoryBean);
                 break;
             default:
+                helper.getView(R.id.ll_browsing_history_product).setSelected(isFirstLoad);
+                isFirstLoad = false;
                 GoodsInfoListBean goodsInfoListBean = (GoodsInfoListBean) multiItemEntity;
                 CheckBox cb_browse_history_product = helper.getView(R.id.cb_browse_history_product);
                 cb_browse_history_product.setVisibility(goodsInfoListBean.isEditStatus() ? View.VISIBLE : View.GONE);
@@ -63,16 +72,18 @@ public class MineBrowsingHistoryAdapter extends BaseMultiItemQuickAdapter<MultiI
                         .setText(R.id.tv_browse_history_product_market_price, getStringsChNPrice(context, goodsInfoListBean.getMarketPrice()))
                         .setTag(R.id.cb_browse_history_product, goodsInfoListBean)
                         .addOnClickListener(R.id.cb_browse_history_product);
+                TextView textView = helper.getView(R.id.tv_browse_history_product_market_price);
+                textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
                 if ((goodsInfoListBean.getGoodsTags() != null
                         && goodsInfoListBean.getGoodsTags().size() > 0)
-                        ||!TextUtils.isEmpty(goodsInfoListBean.getActivityTag())) {
+                        || !TextUtils.isEmpty(goodsInfoListBean.getActivityTag())) {
                     fbl_market_label.setVisibility(View.VISIBLE);
                     fbl_market_label.removeAllViews();
                     if (!TextUtils.isEmpty(goodsInfoListBean.getActivityTag())) {
                         MarketLabelBean marketLabelBean = new MarketLabelBean();
                         marketLabelBean.setTitle(goodsInfoListBean.getActivityTag());
-                        fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(),1));
+                        fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 1));
                     }
                     for (MarketLabelBean marketLabelBean : goodsInfoListBean.getGoodsTags()) {
                         if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {

@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/border_bottom_line"
+    android:background="@drawable/sel_browsing_history_header"
     android:layout_height="@dimen/sc_mm_68">
     <CheckBox
         android:layout_width="@dimen/sc_mm_38"

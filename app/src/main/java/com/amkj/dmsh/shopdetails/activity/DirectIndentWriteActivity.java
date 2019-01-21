@@ -194,6 +194,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
+        if(loadHud!=null){
+            loadHud.setCancellable(false);
+        }
         isOversea = false;
         constantMethod = new ConstantMethod();
         tv_header_titleAll.setText("订单填写");
@@ -1038,24 +1041,28 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                         new UnionPay.UnionPayResultCallBack() {
                             @Override
-                            public void onUnionPaySuccess() {
+                            public void onUnionPaySuccess(String webResultValue) {
                                 if(loadHud!=null){
                                     loadHud.dismiss();
                                 }
-                                //                跳转订单完成页
-                                if (type.equals(INDENT_GROUP_SHOP)) {
-                                    switch (groupShopDetailsBean.getGpStatus()) {
-                                        case 1:
+                                if(!TextUtils.isEmpty(webResultValue)&&"1".equals(webResultValue)){
+                                    finish();
+                                }else{
+                                    //                跳转订单完成页
+                                    if (type.equals(INDENT_GROUP_SHOP)) {
+                                        switch (groupShopDetailsBean.getGpStatus()) {
+                                            case 1:
 //                            开团
-                                            skipGpShareIndent();
-                                            break;
-                                        case 2:
+                                                skipGpShareIndent();
+                                                break;
+                                            case 2:
 //                            拼团
-                                            skipMineGroupIndent();
-                                            break;
+                                                skipMineGroupIndent();
+                                                break;
+                                        }
+                                    } else {
+                                        skipDirectIndent();
                                     }
-                                } else {
-                                    skipDirectIndent();
                                 }
                                 if (totalPersonalTrajectory != null) {
                                     isUpTotalFile = true;
@@ -1377,8 +1384,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     }
                     break;
                 case UNION_RESULT_CODE:
+                    String webManualFinish = data.getStringExtra("webManualFinish");
                     if(unionPay!=null){
-                        unionPay.unionPayResult(!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo);
+                        unionPay.unionPayResult(!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo,webManualFinish);
                     }else{
                         payError();
                     }

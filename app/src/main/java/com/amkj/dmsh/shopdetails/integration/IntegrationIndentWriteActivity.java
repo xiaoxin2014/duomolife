@@ -416,8 +416,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                     payType = PAY_UNION_PAY;
                 }
                 params.put("buyType", payType);
-            }else{
-                showToast(this,"请选择支付方式");
+            } else {
+                showToast(this, "请选择支付方式");
                 return;
             }
         }
@@ -455,7 +455,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                         qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                             }
                         }
-                    } else if(payType.equals(PAY_ALI_PAY)){
+                    } else if (payType.equals(PAY_ALI_PAY)) {
                         QualityCreateAliPayIndentBean qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
                         if (qualityAliPayIndent != null) {
                             if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
@@ -476,7 +476,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                         ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                             }
                         }
-                    }else{
+                    } else {
                         QualityCreateUnionPayIndentEntity qualityCreateUnionPayIndentEntity = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
                         if (qualityCreateUnionPayIndentEntity != null) {
                             if (qualityCreateUnionPayIndentEntity.getCode().equals(SUCCESS_CODE)) {
@@ -611,6 +611,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             }
         });
     }
+
     /**
      * 银联支付
      *
@@ -619,15 +620,15 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
         if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
                 !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
-            if(loadHud!=null){
+            if (loadHud != null) {
                 loadHud.show();
             }
             unionPay = new UnionPay(IntegrationIndentWriteActivity.this,
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
-                        public void onUnionPaySuccess() {
-                            if(loadHud!=null){
+                        public void onUnionPaySuccess(String webResultValue) {
+                            if (loadHud != null) {
                                 loadHud.dismiss();
                             }
                             showToast(getApplication(), "支付成功");
@@ -636,16 +637,17 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 
                         @Override
                         public void onUnionPayError(String errorMes) {
-                            if(loadHud!=null){
+                            if (loadHud != null) {
                                 loadHud.dismiss();
                             }
                             cancelIntegralIndent();
                         }
                     });
         } else {
-           showToast(IntegrationIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+            showToast(IntegrationIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
         }
     }
+
     /**
      * 订单取消
      */
@@ -681,10 +683,11 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             getAddressDetails();
         } else if (requestCode == IS_LOGIN_CODE) {
             loadData();
-        }else if(requestCode == UNION_RESULT_CODE){
-            if(unionPay!=null){
-                unionPay.unionPayResult(orderCreateNo);
-            }else{
+        } else if (requestCode == UNION_RESULT_CODE) {
+            if (unionPay != null) {
+                String webManualFinish = data.getStringExtra("webManualFinish");
+                unionPay.unionPayResult(orderCreateNo, webManualFinish);
+            } else {
                 cancelIntegralIndent();
             }
         }
