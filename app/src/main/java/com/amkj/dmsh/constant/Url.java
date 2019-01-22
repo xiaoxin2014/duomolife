@@ -235,17 +235,23 @@ public class Url {
     public static final String MINE_MES_PUSH_SWITCH = "api/my/deitMyMessagepushtype";
     //    用户注册
     public static final String USER_REGISTER_ACCOUNT = "api/my/appRegisterV2";
-//    注册协议
+    //    注册协议
     public static final String USER_REGISTER_AGREEMENT = "api/reminder/getUserRegisterAgreement";
-//    用户隐私政策
+    //    用户隐私政策
     public static final String USER_PRIVACY_POLICY = "api/reminder/getUserPolicySecret";
-//    隐私政策
+    //    隐私政策
     //账号安全，获取第三方账号列表
     public static final String MINE_SYNC_LOGIN = "api/my/getSyncLoginList";
     //账号安全，修改密码
     public static final String MINE_CHANGE_PASSWORD = "api/my/updatePassword";
     //账号安全，重置密码
     public static final String MINE_RESET_PASSWORD = "api/my/resetPassword";
+    //    注销文案
+    public static final String ACCOUNT_LOGOUT_TIP = "api/destroy/getDestroyTip";
+    //    注销原因
+    public static final String ACCOUNT_LOGOUT_REASON = "api/destroy/getDestroyCause";
+    //    注销请求
+    public static final String ACCOUNT_LOGOUT_REQUEST = "api/destroy/sureDestroyAccount";
     //    修改实名信息
     public static final String MINE_RESET_REAL_NAME = "api/my/updateIdcardAndRealName";
     //账号安全，更换手机
@@ -340,6 +346,8 @@ public class Url {
     public static final String Q_RE_BUY_INDENT = "api/goods/order/againBuy";
     //订单付款
     public static final String Q_PAYMENT_INDENT = "api/goods/order/buy";
+    //    银联支付手动回调
+    public static final String Q_UNIONPAY_PAYMENT_INDENT = "api/goods/order/abcOrderQuery";
     //订单支付失败提示
     public static final String PAY_ERROR = "api/reminder/getPayErorr";
     //    订单支付取消提示

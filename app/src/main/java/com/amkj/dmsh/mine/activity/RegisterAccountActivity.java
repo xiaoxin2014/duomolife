@@ -2,6 +2,7 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
@@ -32,6 +33,8 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +53,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
 import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.USER_REGISTER_ACCOUNT;
 
@@ -74,6 +80,8 @@ public class RegisterAccountActivity extends BaseActivity {
     public TextView tv_sms_code;
     @BindView(R.id.bt_mine_reg)
     public Button bt_mine_reg;
+    @BindView(R.id.tv_register_agreement_privacy)
+    public TextView tv_register_agreement_privacy;
     @BindView(R.id.reg_req_code_gif_view)
     public ProgressBar reg_req_code_gif_view;
     private boolean flag;
@@ -97,6 +105,39 @@ public class RegisterAccountActivity extends BaseActivity {
                 msg.arg2 = result;
                 msg.obj = data;
                 handler.sendMessage(msg);
+            }
+        });
+        String s1 = "《多么生活用户注册协议》";
+        String s2 = "《多么生活用户隐私政策》";
+        String text = "注册或登录即表示同意" + s1 +"和" +s2;
+        Link link1 = new Link(s1);
+        Link link2 = new Link(s2);
+        //        @用户昵称
+        link1.setTextColor(Color.parseColor("#5faeff"));
+        link1.setUnderlined(false);
+        link1.setHighlightAlpha(0f);
+        link2.setTextColor(Color.parseColor("#5faeff"));
+        link2.setUnderlined(false);
+        link2.setHighlightAlpha(0f);
+        LinkBuilder.on(tv_register_agreement_privacy)
+                .setText(text)
+                .addLink(link1)
+                .addLink(link2)
+                .build();
+        link1.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Intent intent = new Intent(RegisterAccountActivity.this, WebRuleCommunalActivity.class);
+                intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_REG_AGREEMENT);
+                startActivity(intent);
+            }
+        });
+        link2.setOnClickListener(new Link.OnClickListener() {
+            @Override
+            public void onClick(String clickedText) {
+                Intent intent = new Intent(RegisterAccountActivity.this, WebRuleCommunalActivity.class);
+                intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_PRIVACY_POLICY);
+                startActivity(intent);
             }
         });
     }

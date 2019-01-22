@@ -159,7 +159,7 @@
                     android:layout_marginTop="@dimen/sc_mm_28"
                     android:textSize="@dimen/sc_mm_24"
                     android:textColor="@color/text_login_gray_s"
-                    android:lineSpacingExtra="@dimen/sc_mm_4"
+                    android:lineSpacingExtra="@dimen/sc_mm_7"
                     android:layout_height="wrap_content" />
                 <RelativeLayout
                     android:layout_width="match_parent"

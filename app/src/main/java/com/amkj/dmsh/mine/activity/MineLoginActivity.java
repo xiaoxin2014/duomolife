@@ -141,7 +141,7 @@ public class MineLoginActivity extends BaseActivity {
         iv_blue_back.setVisibility(View.INVISIBLE);
         loadHud.setCancellable(true);
         String s1 = "《多么生活用户注册协议》";
-        String s2 = "《多么生活用户隐私协议》";
+        String s2 = "《多么生活用户隐私政策》";
         String text = "注册或登录即表示同意" + s1 +"和" +s2;
         Link link1 = new Link(s1);
         Link link2 = new Link(s2);
@@ -374,6 +374,10 @@ public class MineLoginActivity extends BaseActivity {
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * 绑定第三方账号
+     * @param otherAccountBindInfo
+     */
     private void bindOtherAccount(final OtherAccountBindInfo otherAccountBindInfo) {
         Map<String, Object> params = new HashMap<>();
         params.put("openid", otherAccountBindInfo.getOpenid());

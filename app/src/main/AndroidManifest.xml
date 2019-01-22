@@ -1019,6 +1019,9 @@
         <activity
             android:name=".user.activity.UserFansAttentionActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".mine.activity.AccountLogoutActivity"
+            android:screenOrientation="portrait" />
         <!--订单列表-->
         <activity
             android:name=".shopdetails.activity.DoMoIndentAllActivity"
@@ -1116,7 +1119,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".mine.activity.WebRuleCommunalActivity"
+        <activity
+            android:name=".mine.activity.WebRuleCommunalActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -1276,7 +1280,5 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:noHistory="true" />
-
-
     </application>
 </manifest>

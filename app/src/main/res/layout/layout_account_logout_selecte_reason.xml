@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:orientation="vertical">
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_30"
+                android:id="@+id/tv_check_logout_reason"
+                android:gravity="center_vertical"
+                android:text="请选择注销原因："
+                android:layout_height="@dimen/sc_mm_90" />
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:id="@+id/rp_account_logout"
+                android:layout_below="@id/tv_check_logout_reason"
+                android:layout_height="wrap_content"/>
+            <android.support.text.emoji.widget.EmojiEditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_200"
+                android:layout_below="@id/rp_account_logout"
+                android:padding="@dimen/sc_mm_20"
+                android:textSize="@dimen/sc_mm_30"
+                android:gravity="top"
+                android:textColor="@color/text_black_t"
+                android:textColorHint="@color/text_gray_c"
+                android:hint="请填写您注销的原因"
+                android:background="@drawable/border_rect_four_gray_bg_white"
+                android:id="@+id/ev_account_logout_reason"/>
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_account_logout_selected"
+        android:background="@drawable/border_top_line"
+        android:textSize="@dimen/sc_mm_34"
+        android:text="确认注销"
+        android:gravity="center"
+        android:textColor="@color/text_login_blue_z"
+        android:layout_height="@dimen/sc_mm_110" />
+</LinearLayout>

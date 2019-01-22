@@ -103,6 +103,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 case "MessageLikedActivity":
                     hintText = "最近20天没有赞消息哦";
                     break;
+                case "MineProductBrowsingHistoryActivity":
+                    hintText = "最近暂无浏览记录哦";
+                    break;
                 default:
                     hintText = "暂无数据，稍后重试";
                     break;
@@ -156,7 +159,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
         JzvdStd.releaseAllVideos();
 //        避免播放 置于后台，释放滚动
-        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
         saveTotalData();
     }
 
@@ -267,14 +270,16 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     //    获取数据
     protected void getData() {
     }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(loadService != null&&
-                loadService.getCurrentCallback().getName().equals(NetLoadCallback.class.getName())){
+        if (loadService != null &&
+                loadService.getCurrentCallback().getName().equals(NetLoadCallback.class.getName())) {
             loadService.showSuccess();
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

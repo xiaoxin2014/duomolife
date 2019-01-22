@@ -118,7 +118,14 @@
                         android:src="@drawable/register_icon_eye_nor"
                          />
                 </LinearLayout>
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/tv_register_agreement_privacy"
+                    android:layout_marginTop="@dimen/sc_mm_28"
+                    android:textSize="@dimen/sc_mm_24"
+                    android:textColor="@color/text_login_gray_s"
+                    android:lineSpacingExtra="@dimen/sc_mm_4"
+                    android:layout_height="wrap_content" />
                 <Button
                     android:id="@+id/bt_mine_reg"
                     android:layout_width="match_parent"

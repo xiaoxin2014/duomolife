@@ -132,7 +132,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             intent.putExtra("productId",String.valueOf(goodsInfoListBean.getProductId()));
                             startActivity(intent);
                         }else{//编辑状态为选中商品
-                            setChildSelectionStatud(adapter, goodsInfoListBean);
+                            setChildSelectionStatus(adapter, goodsInfoListBean);
                         }
                     }else if(multiItemEntity instanceof MineBrowsHistoryBean){
                         setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
@@ -156,7 +156,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
                             break;
                         case R.id.cb_browse_history_product:
-                            setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
+                            setChildSelectionStatus(adapter, (GoodsInfoListBean) multiItemEntity);
                             break;
                     }
                 }
@@ -212,7 +212,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         }
     }
 
-    private void setChildSelectionStatud(BaseQuickAdapter adapter, GoodsInfoListBean goodsInfoListBean) {
+    private void setChildSelectionStatus(BaseQuickAdapter adapter, GoodsInfoListBean goodsInfoListBean) {
         int parentPosition = adapter.getParentPosition(goodsInfoListBean);
         boolean currentChildStatus = !goodsInfoListBean.isSelectStatus();
         goodsInfoListBean.setSelectStatus(currentChildStatus);

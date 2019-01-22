@@ -319,7 +319,22 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             }
         }
     }
-
+    /**
+     * 集合数据
+     *
+     * @param loadService
+     * @param list
+     */
+    @SuppressWarnings("unchecked")
+    public void showLoadSir(LoadService loadService, List<T> list) {
+        if (loadService != null) {
+            if (list != null && list.size() > 0) {
+                loadService.showWithConvertor(SUCCESS_CODE);
+            }else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
+        }
+    }
     /**
      * 集合数据
      *

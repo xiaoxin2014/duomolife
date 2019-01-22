@@ -9,7 +9,9 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/sc_mm_24"
         android:visibility="gone"
-        android:button="@drawable/sel_brows_history_check"
+        android:drawableLeft="@drawable/sel_brows_history_check"
+        android:drawableStart="@drawable/sel_brows_history_check"
+        android:button="@null"
         android:layout_height="@dimen/sc_mm_38" />
     <LinearLayout
         android:layout_width="match_parent"

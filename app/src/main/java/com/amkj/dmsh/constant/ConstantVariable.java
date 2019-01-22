@@ -190,10 +190,10 @@ public class ConstantVariable {
     /**
      * 访问网络回调
      */
-    //    请求成功
-    public static final String SUCCESS_CODE = "01";
     //    请求失败
     public static final String ERROR_CODE = "00";
+    //    请求成功
+    public static final String SUCCESS_CODE = "01";
     //    数据为空
     public static final String EMPTY_CODE = "02";
     /**
