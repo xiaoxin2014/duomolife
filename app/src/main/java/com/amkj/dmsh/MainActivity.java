@@ -411,7 +411,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         iconDataList.clear();
         SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
         String result = sharedPreferences.getString("NavDate", "");
-        if(!TextUtils.isEmpty(result)){
+        if (!TextUtils.isEmpty(result)) {
             Gson gson = new Gson();
             MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
             if (mainNavEntity != null && mainNavEntity.getMainNavBeanList().size() == 5
@@ -420,7 +420,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             } else {
                 setNorMal();
             }
-        }else{
+        } else {
             setNorMal();
         }
     }
@@ -556,7 +556,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         StateListDrawable drawable = new StateListDrawable();
         drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(null, secBitmap));
         drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(null, bitmap));
-        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48f/drawable.getMinimumHeight()*drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48)); //设置边界
+        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48)); //设置边界
         rb.setCompoundDrawables(null, drawable, null, null);
     }
 
@@ -582,31 +582,31 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case 0:
                 setDefaultButtonData(i, rb, MAIN_HOME);
                 Drawable drawable = getResources().getDrawable(R.drawable.selector_bottom_home_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48f/drawable.getMinimumHeight()*drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 1:
                 setDefaultButtonData(i, rb, MAIN_QUALITY);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_quality_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48f/drawable.getMinimumHeight()*drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 2:
                 setDefaultButtonData(i, rb, MAIN_TIME);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_time_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48f/drawable.getMinimumHeight()*drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 3:
                 setDefaultButtonData(i, rb, MAIN_FIND);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_find_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48f/drawable.getMinimumHeight()*drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 4:
                 setDefaultButtonData(i, rb, MAIN_MINE);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_mine_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext,48f/drawable.getMinimumHeight()*drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
         }
@@ -847,61 +847,64 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
      */
     private void getLaunchBanner() {
         String url = Url.BASE_URL + Url.H_LAUNCH_AD_DIALOG;
-        adActivityList.clear();
+        SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor edit = sharedPreferences.edit();
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 CommunalADActivityEntity categoryAD = gson.fromJson(result, CommunalADActivityEntity.class);
-                if (categoryAD != null) {
-                    if (categoryAD.getCode().equals(SUCCESS_CODE)) {
-                        adActivityList.addAll(categoryAD.getCommunalADActivityBeanList());
-                        if (adActivityList.size() > 0) {
-                            SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
-                            final SharedPreferences.Editor edit = sharedPreferences.edit();
-                            CommunalADActivityBean communalADActivityBean = adActivityList.get(adActivityList.size() - 1);
-                            if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
-                                String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
-                                if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
-                                    setLaunchAdData(adActivityList, edit);
-                                }
-                            } else {
-                                edit.clear().apply();
-                            }
-                        }
-                    }
+                if (categoryAD == null ||
+                        !categoryAD.getCode().equals(SUCCESS_CODE) ||
+                        categoryAD.getCommunalADActivityBeanList() == null ||
+                        categoryAD.getCommunalADActivityBeanList().size() < 1) {
+                    edit.clear().apply();
+                    return;
                 }
+                List<CommunalADActivityBean> communalADActivityBeanList = categoryAD.getCommunalADActivityBeanList();
+                CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
+                if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
+                    String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
+                    if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
+                        setLaunchAdData(communalADActivityBean, edit);
+                    }
+                } else {
+                    edit.clear().apply();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                edit.clear().apply();
             }
         });
     }
 
-    private void setLaunchAdData(List<CommunalADActivityBean> adActivityList, SharedPreferences.Editor edit) {
-        if (adActivityList.size() > 0) {
-            final CommunalADActivityBean communalADActivityBean = adActivityList.get(adActivityList.size() - 1);
-            final String pic_url = communalADActivityBean.getPicUrl();
-            GlideImageLoaderUtil.saveImageToFile(MainActivity.this, pic_url, "launch_ad", new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
-                @Override
-                public void onSuccess(File file) {
-                    if (edit != null && file != null) {
-                        edit.putString(ImgKey, file.getAbsolutePath());
-                        edit.putString(OriginalImgUrl, communalADActivityBean.getPicUrl());
-                        edit.putInt(LauncherAdIdKey, communalADActivityBean.getId());
-                        edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
-                        edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
-                                ? communalADActivityBean.getAndroidLink() : "app://");
-                        edit.apply();
-                    }
-                }
-
-                @Override
-                public void onError() {
-                    edit.clear().apply();
-                }
-            });
-
-        } else {
+    private void setLaunchAdData(CommunalADActivityBean communalADActivityBean, SharedPreferences.Editor edit) {
+        if (communalADActivityBean == null) {
             edit.clear().apply();
+            return;
         }
+        final String pic_url = communalADActivityBean.getPicUrl();
+        GlideImageLoaderUtil.saveImageToFile(MainActivity.this, pic_url, "launch_ad", new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
+            @Override
+            public void onSuccess(File file) {
+                if (edit != null && file != null) {
+                    edit.putString(ImgKey, file.getAbsolutePath());
+                    edit.putString(OriginalImgUrl, communalADActivityBean.getPicUrl());
+                    edit.putInt(LauncherAdIdKey, communalADActivityBean.getId());
+                    edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
+                    edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
+                            ? communalADActivityBean.getAndroidLink() : "app://");
+                    edit.apply();
+                }
+            }
+
+            @Override
+            public void onError() {
+                edit.clear().apply();
+            }
+        });
     }
 
     private void getSelectedDialog() {
@@ -993,6 +996,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                             edit.putString("createTime", newTime);
                         }
                         edit.apply();
+                    }else{
+                        edit.clear().apply();
                     }
                 } else {
                     edit.clear().apply();
@@ -1301,6 +1306,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             super.onBackPressed();
         }
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -1308,7 +1314,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(imm!=null){
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }

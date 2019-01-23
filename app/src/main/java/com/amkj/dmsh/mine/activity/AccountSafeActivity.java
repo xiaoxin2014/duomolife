@@ -206,6 +206,7 @@ public class AccountSafeActivity extends BaseActivity {
 
     /**
      * 设置账号信息
+     *
      * @param otherAccountBindInfos
      */
     private void setAccountData(List<OtherAccountBindInfo> otherAccountBindInfos) {
@@ -324,13 +325,20 @@ public class AccountSafeActivity extends BaseActivity {
         accountDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER_VERTICAL)
                 .setMsg(msg).setCancelText(cancelText).setConfirmText(confirmText);
         accountDialogHelper.show();
-
     }
 
     @OnClick(R.id.rel_real_info)
     public void setRealName() {
         Intent intent = new Intent();
         intent.setClass(AccountSafeActivity.this, PersonalRealNameActivity.class);
+        startActivity(intent);
+    }
+
+    //    注销账户
+    @OnClick(R.id.tv_account_safe_logout)
+    public void logoutAccount() {
+        Intent intent = new Intent();
+        intent.setClass(AccountSafeActivity.this, AccountLogoutActivity.class);
         startActivity(intent);
     }
 

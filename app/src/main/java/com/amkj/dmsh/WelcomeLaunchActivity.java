@@ -69,6 +69,9 @@ public class WelcomeLaunchActivity extends BaseActivity {
     protected void initViews() {
         hideNavStatus();
         sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
+        if (sharedPreferences == null) {
+            return;
+        }
         imgPath = sharedPreferences.getString(ImgKey, "");
         skipUrlPath = sharedPreferences.getString(SkipUrlKey, "");
         launcherAdId = sharedPreferences.getInt(LauncherAdIdKey, 0);
@@ -181,7 +184,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
      * 设置启动图片
      */
     private void setLaunchImage() {
-        if (!TextUtils.isEmpty(imgPath)) {
+        if (!TextUtils.isEmpty(imgPath)&&sharedPreferences!=null) {
             showSeconds = sharedPreferences.getString(TimeKey, "5");
             GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page
                     , "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {

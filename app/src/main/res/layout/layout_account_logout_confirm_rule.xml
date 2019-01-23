@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:id="@+id/tv_account_logout_confirm"
             android:textSize="@dimen/sc_mm_34"
-            android:text="暂不注销"
+            android:text="确认注销"
             android:gravity="center"
             android:textColor="@color/text_login_gray_s"
             android:layout_height="match_parent" />
