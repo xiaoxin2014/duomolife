@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -714,18 +715,56 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * 存在找出位置 finish掉之后打开的activity
      */
     public void finishToCurrentPage(String currentActivityName) {
+        List<Activity> activities = new ArrayList<>(activityLinkedList);
         int currentActivityPage = 0;
-        for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
-            Activity activity = activityLinkedList.get(i);
+        for (int i = activities.size() - 1; i >= 0; i--) {
+            Activity activity = activities.get(i);
             if (activity.getClass().getName().equals(currentActivityName)) {
                 currentActivityPage = i;
                 break;
             }
         }
         if (currentActivityPage > 0) {
-            for (int i = activityLinkedList.size() - 1; i >= currentActivityPage; i--) {
-                Activity activity = activityLinkedList.get(i);
+            for (int i = activities.size() - 1; i >= currentActivityPage; i--) {
+                Activity activity = activities.get(i);
                 if (activity.getClass().getName().equals(currentActivityName)) {
+                    break;
+                } else {
+                    activity.finish();
+                }
+            }
+        }
+    }
+
+    /**
+     * 关闭界面 到当前界面
+     * 先判断是否存在当前activity
+     * 存在找出位置 finish (keepActivityName - currentActivityName)
+     */
+    public void finishToKeepPage(String keepActivityName) {
+        List<Activity> activities = new ArrayList<>(activityLinkedList);
+        if (activities.size() < 2) {
+            return;
+        }
+        if (TextUtils.isEmpty(keepActivityName) || activities.size() < 3) {
+            activities.get(activities.size() - 1).finish();
+        }
+        int keepActivityIndex = -1;
+        for (int i = activities.size() - 1; i >= 0; i--) {
+            Activity activity = activities.get(i);
+            if (activity.getClass().getName().equals(keepActivityName)) {
+                keepActivityIndex = i;
+            }
+        }
+        if (keepActivityIndex == -1) {
+            activities.get(activities.size() - 1).finish();
+            return;
+        }
+        if (activities.size() > 1) {
+            for (int i = activities.size() - 2; i >= keepActivityIndex; i--) {
+                Activity activity = activities.get(i);
+                if (activity.getClass().getName().equals(keepActivityName)) {
+                    activities.get(activities.size() - 1).finish();
                     break;
                 } else {
                     activity.finish();

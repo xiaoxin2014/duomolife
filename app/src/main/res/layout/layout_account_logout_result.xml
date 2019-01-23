@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:gravity="center"
+    android:background="@color/white"
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/tv_account_logout_result"
         android:textColor="@color/text_black_t"
+        android:layout_marginTop="@dimen/sc_mm_270"
         android:textSize="@dimen/sc_mm_40"
         android:layout_centerHorizontal="true"
         android:drawablePadding="@dimen/sc_mm_24"
         android:text="注销失败"
-        android:drawableStart="@drawable/sel_account_logout_result_status"
-        android:drawableLeft="@drawable/border_rect_four_gray_bg_white"
+        android:drawableLeft="@drawable/sel_account_logout_result_status"
         android:layout_height="wrap_content" />
     <TextView
         android:layout_width="match_parent"

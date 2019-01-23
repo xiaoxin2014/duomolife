@@ -270,6 +270,8 @@ public class Url {
     public static final String CHECK_PHONE_IS_REG = "api/my/checkRegMobile";
     //    是否是第一次登录App
     public static final String FIRST_LOGIN_APP = "api/my/coupon/firstAppLoginCouponConfig";
+    //    更新清除数据
+    public static final String CHECK_CLEAR_USER_DATA = "api/my/checkUserCleanLogin";
     //    请求验证码
     public static final String REQ_SEND_SMS_CODE = "api/SMS/appSendSMSV2";
     //    手机号验证码登录

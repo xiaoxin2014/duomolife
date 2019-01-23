@@ -82,6 +82,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String idcard;
         private String real_name;
         private String interests;
+        private int approve;
         private List<BabyBean> babys;
 
         /**
@@ -115,6 +116,14 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         public static CommunalUserInfoBean objectFromData(String str) {
 
             return new Gson().fromJson(str, CommunalUserInfoBean.class);
+        }
+
+        public int getApprove() {
+            return approve;
+        }
+
+        public void setApprove(int approve) {
+            this.approve = approve;
         }
 
         public int getSysNotice() {

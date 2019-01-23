@@ -1,6 +1,8 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.text.emoji.widget.EmojiEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +16,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
+import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
+import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.AccountLogoutReasonEntity;
 import com.amkj.dmsh.mine.bean.AccountLogoutReasonEntity.AccountLogoutReasonBean;
@@ -28,6 +34,7 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,11 +47,15 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_REASON;
+import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_REQUEST;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_TIP;
 
 
@@ -81,6 +92,7 @@ public class AccountLogoutActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        getLoginStatus(this);
         tv_header_shared.setVisibility(View.GONE);
         tv_header_title.setText("注销账户");
         View firstView = LayoutInflater.from(this).inflate(R.layout.layout_account_logout_confirm_rule, null, false);
@@ -201,46 +213,36 @@ public class AccountLogoutActivity extends BaseActivity {
 
     /**
      * 确认注销账号
+     *
      * @param accountLogoutReasonBean
      */
     private void setLogoutAccount(AccountLogoutReasonBean accountLogoutReasonBean) {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("causeId", accountLogoutReasonBean.getId());
-        String otherReason = selectionReasonHelper.evAccountLogoutReason.getText().toString().trim();
-        if (!TextUtils.isEmpty(otherReason)) {
-            params.put("content", otherReason);
-        }
-        LogoutAccountResultEntity logoutAccountResultEntity = new LogoutAccountResultEntity();
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add("大家好");
-        strings.add("好的");
-        strings.add("解决的大家都觉得基督教的基督教大家都觉得风口浪尖的客服京东数科叫访客但房价看到积分考虑到积分");
-        logoutAccountResultEntity.setCode("00");
-        logoutAccountResultEntity.setAccountResultList(strings);
-        setLogoutResult(logoutAccountResultEntity);
-//        NetLoadUtils.getNetInstance().loadNetDataPost(this, ACCOUNT_LOGOUT_REQUEST, params, new NetLoadListenerHelper() {
-//            @Override
-//            public void onSuccess(String result) {
-//                if (loadHud != null) {
-//                    loadHud.dismiss();
-//                }
-//                LogoutAccountResultEntity logoutAccountResultEntity = new Gson().fromJson(result, LogoutAccountResultEntity.class);
-//                if (logoutAccountResultEntity != null) {
-//                    setLogoutResult(logoutAccountResultEntity);
-//                } else {
-//                    showToast(AccountLogoutActivity.this, "注销失败,请重试！");
-//                }
-//            }
-//
-//            @Override
-//            public void onNotNetOrException() {
-//                if (loadHud != null) {
-//                    loadHud.dismiss();
-//                }
-//                showToast(AccountLogoutActivity.this, "注销失败,请重试！");
-//            }
-//        });
+        params.put("content", getStrings(accountLogoutReasonBean.getContent()));
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ACCOUNT_LOGOUT_REQUEST, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                LogoutAccountResultEntity logoutAccountResultEntity = new Gson().fromJson(result, LogoutAccountResultEntity.class);
+                if (logoutAccountResultEntity != null) {
+                    setLogoutResult(logoutAccountResultEntity);
+                } else {
+                    showToast(AccountLogoutActivity.this, "注销失败,请重试！");
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                showToast(AccountLogoutActivity.this, "注销失败,请重试！");
+            }
+        });
     }
 
     /**
@@ -249,11 +251,23 @@ public class AccountLogoutActivity extends BaseActivity {
      * @param logoutAccountResultEntity
      */
     private void setLogoutResult(LogoutAccountResultEntity logoutAccountResultEntity) {
+        savePersonalInfoCache(AccountLogoutActivity.this, null);
+        AlibcLogin alibcLogin = AlibcLogin.getInstance();
+        alibcLogin.logout(new AlibcLoginCallback() {
+            @Override
+            public void onSuccess(int i) {
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+
+            }
+        });
         logoutResultHelper.tvAccountLogoutResult.setSelected(SUCCESS_CODE.equals(logoutAccountResultEntity.getCode()));
         logoutResultHelper.tvAccountLogoutResult.setText(SUCCESS_CODE.equals(logoutAccountResultEntity.getCode()) ? "注销成功" : "注销失败");
         String logoutReason = "";
         for (String reasonText : logoutAccountResultEntity.getAccountResultList()) {
-            logoutReason += (!TextUtils.isEmpty(logoutReason) ? "\n" : "") + "." + reasonText;
+            logoutReason += (!TextUtils.isEmpty(logoutReason) ? "\n" : "") + "· " + reasonText;
         }
         logoutResultHelper.tvAccountLogoutResultReason.setText(logoutReason);
         changeView(1);
@@ -305,8 +319,13 @@ public class AccountLogoutActivity extends BaseActivity {
             fl_account_logout_container.addView(currentView);
             requestData();
         } else if (changCode == 0 && currentPosition > 0) {
-            currentView = viewList.get(--currentPosition);
-            fl_account_logout_container.addView(currentView);
+            if(currentPosition == viewList.size()-1){
+                TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                tinkerBaseApplicationLike.finishToKeepPage(MainActivity.class.getName());
+            }else{
+                currentView = viewList.get(--currentPosition);
+                fl_account_logout_container.addView(currentView);
+            }
         } else {
             finish();
         }
@@ -326,23 +345,30 @@ public class AccountLogoutActivity extends BaseActivity {
          */
         @OnClick(R.id.tv_account_logout_selected)
         void confirmLogoutAccount() {
-            if (rpAccountLogout.getChildCount() < 1) {
+            if (rpAccountLogout.getChildCount() < 1 || rpAccountLogout.getCheckedRadioButtonId() == -1) {
                 showToast(AccountLogoutActivity.this, "请选择注销原因");
                 return;
             }
             RadioButton radioButton = rpAccountLogout.findViewById(rpAccountLogout.getCheckedRadioButtonId());
             AccountLogoutReasonBean accountLogoutReasonBean = (AccountLogoutReasonBean) radioButton.getTag();
+            if (accountLogoutReasonBean == null) {
+                showToast(AccountLogoutActivity.this, "数据异常，请退出重试!");
+                return;
+            }
             if (logoutReasonList != null &&
                     logoutReasonList.indexOf(accountLogoutReasonBean) != -1 &&
                     logoutReasonList.indexOf(accountLogoutReasonBean) == logoutReasonList.size() - 1) {
-                if(TextUtils.isEmpty(evAccountLogoutReason.getText().toString().trim())){
+                String otherReason = selectionReasonHelper.evAccountLogoutReason.getText().toString().trim();
+                if (TextUtils.isEmpty(otherReason)) {
                     showToast(AccountLogoutActivity.this, "请输入注销原因，方便以后更好的为你服务!");
                     return;
                 }
+                accountLogoutReasonBean.setContent(otherReason);
             }
             if (accountLogoutDialogHelper == null) {
                 accountLogoutDialogHelper = new AlertDialogHelper(AccountLogoutActivity.this);
                 accountLogoutDialogHelper.setConfirmTextColor(getResources().getColor(R.color.text_login_gray_s))
+                        .setCancelTextColor(getResources().getColor(R.color.blue_nor_ff))
                         .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                             @Override
                             public void confirm() {
@@ -373,13 +399,25 @@ public class AccountLogoutActivity extends BaseActivity {
         public void initViews() {
             Drawable drawable = getResources().getDrawable(R.drawable.sel_account_logout_result_status);
             drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 40f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 40));//设置边界
-            tvAccountLogoutResult.setCompoundDrawables(null, drawable, null, null);
+            tvAccountLogoutResult.setCompoundDrawables(drawable, null, null, null);
             tvAccountLogoutResultReason.setMovementMethod(ScrollingMovementMethod.getInstance());
         }
 
         @OnClick(R.id.tv_account_logout_result_confirm)
         void logoutResult() {
-            finish();
+            changeView(0);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode!=RESULT_OK){
+            if(requestCode == IS_LOGIN_CODE){
+                finish();
+                return;
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

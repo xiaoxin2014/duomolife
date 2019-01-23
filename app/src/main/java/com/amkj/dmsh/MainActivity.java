@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -30,6 +32,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.ali.auth.third.ui.context.CallbackContext;
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.address.AddressUtils;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.BaseFragmentActivity;
@@ -93,6 +96,8 @@ import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIMES;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
 import static com.amkj.dmsh.constant.ConstantMethod.adDialogClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
@@ -121,6 +126,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.constant.Url.APP_SYS_NOTIFICATION;
+import static com.amkj.dmsh.constant.Url.CHECK_CLEAR_USER_DATA;
 import static com.amkj.dmsh.constant.Url.H_AD_DIALOG;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
@@ -662,6 +668,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     /**
      * 获取最新账号信息 避免黑名单、异常账户登录
+     *
+     * @v3.2.0
      */
     private void getNetDataInfo() {
         final SavePersonalInfoBean personalInfo = getPersonalInfo(this);
@@ -701,6 +709,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                             savePersonalInfo.setUid(communalUserInfoBean.getUid());
                             savePersonalInfo.setLogin(true);
                             savePersonalInfoCache(MainActivity.this, savePersonalInfo);
+                            doExitAccount(communalUserInfoBean);
                         } else {
                             personalInfo.setLogin(false);
                             savePersonalInfoCache(MainActivity.this, personalInfo);
@@ -718,6 +727,52 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             userId = 0;
             QyServiceUtils.getQyInstance().logoutQyUser(MainActivity.this);
         }
+    }
+
+    private void doExitAccount(CommunalUserInfoBean communalUserInfoBean) {
+        if (communalUserInfoBean.getApprove() == 1) {
+            SharedPreferences sharedPreferences = getSharedPreferences(APP_FIRST_TIMES, MODE_PRIVATE);
+            int versionCode = sharedPreferences.getInt(APP_SAVE_VERSION, 0);
+            int currentVersionCode = getCurrentVersionCode();
+            if (versionCode < currentVersionCode) {
+                Map<String,Object> params = new HashMap<>();
+                params.put("uid",userId);
+                NetLoadUtils.getNetInstance().loadNetDataPost(MainActivity.this, CHECK_CLEAR_USER_DATA,params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        sharedPreferences.edit().putInt(APP_SAVE_VERSION, currentVersionCode).apply();
+                        if (TextUtils.isEmpty(result)) {
+                            return;
+                        }
+                        com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(result);
+                        Boolean clean = jsonObject.getBoolean("clean");
+                        if (clean) {
+                            savePersonalInfoCache(MainActivity.this, null);
+                        }
+                    }
+                });
+            }
+        }else{
+            savePersonalInfoCache(MainActivity.this, null);
+        }
+    }
+
+    /**
+     * 获取当前版本code
+     *
+     * @return
+     */
+    private int getCurrentVersionCode() {
+        try {
+            // 获取packagemanager的实例
+            PackageManager packageManager = getPackageManager();
+            // getPackageName()是你当前类的包名，0代表是获取版本信息
+            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            return packInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -996,7 +1051,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                             edit.putString("createTime", newTime);
                         }
                         edit.apply();
-                    }else{
+                    } else {
                         edit.clear().apply();
                     }
                 } else {

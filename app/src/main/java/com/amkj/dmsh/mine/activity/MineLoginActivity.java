@@ -195,6 +195,8 @@ public class MineLoginActivity extends BaseActivity {
         String password = edit_login_password.getText().toString().trim();
         //手机号
         params.put("mobile", phoneNumber);
+//        v3.2.0 加入参数 1  同意协议政策
+        params.put("approve", 1);
         //密码
         params.put("password", PasswordEncrypt.getEncryptedPassword(password));
         NetLoadUtils.getNetInstance().loadNetDataPost(this, LOGIN_ACCOUNT, params, new NetLoadListenerHelper() {
@@ -384,6 +386,8 @@ public class MineLoginActivity extends BaseActivity {
         params.put("type", otherAccountBindInfo.getType());
         params.put("nickname", otherAccountBindInfo.getNickname());
         params.put("avatar", otherAccountBindInfo.getAvatar());
+        //        v3.2.0 加入参数 1  同意协议政策
+        params.put("approve", 1);
         if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
             params.put("unionid", otherAccountBindInfo.getUnionId());
         }
@@ -556,6 +560,8 @@ public class MineLoginActivity extends BaseActivity {
         params.put("mobile", phoneNumber);
         params.put("checkcode", smsCode);
         params.put("smsType", "login");
+        //        v3.2.0 加入参数 1  同意协议政策
+        params.put("approve", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(MineLoginActivity.this, LOGIN_CHECK_SMS_CODE,
                 params, new NetLoadListenerHelper() {
                     @Override

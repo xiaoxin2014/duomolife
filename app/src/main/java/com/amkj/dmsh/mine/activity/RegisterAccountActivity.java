@@ -206,6 +206,8 @@ public class RegisterAccountActivity extends BaseActivity {
         params.put("unixtime", currentTimeMillis);
 //        设备号
         params.put("device_number", uniqueId);
+        //        v3.2.0 加入参数 1  同意协议政策
+        params.put("approve", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(RegisterAccountActivity.this, USER_REGISTER_ACCOUNT,
                 params, new NetLoadListenerHelper() {
                     @Override
