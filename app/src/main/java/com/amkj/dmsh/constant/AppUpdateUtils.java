@@ -25,18 +25,18 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
-import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
-import static com.amkj.dmsh.constant.ConstantVariable.APP_VERSION_INFO;
-import static com.amkj.dmsh.constant.ConstantVariable.INTERVAL_TIME;
-import static com.amkj.dmsh.constant.ConstantVariable.LAST_UPDATE_TIME;
-import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_DESCRIPTION;
-import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_LAST_VERSION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_CURRENT_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_MANDATORY_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_VERSION_INFO;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.INTERVAL_TIME;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.LAST_UPDATE_TIME;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MANDATORY_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MANDATORY_UPDATE_LAST_VERSION;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_TIME;
-import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
-import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_DESCRIPTION;
-import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_LOW;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.UPDATE_TIME;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_DOWN_LINK;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_UPDATE_LOW;
 
 /**
  * @author LGuiPeng

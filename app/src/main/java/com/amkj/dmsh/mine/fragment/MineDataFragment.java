@@ -89,7 +89,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.MINE_BOTTOM_TYPE;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -263,7 +263,6 @@ public class MineDataFragment extends BaseFragment {
                 }
             }
         });
-        setStatusColor();
         setQyService();
         ad_mine.setVisibility(View.GONE);
     }
@@ -299,12 +298,6 @@ public class MineDataFragment extends BaseFragment {
                 break;
             }
         }
-    }
-
-    private void setStatusColor() {
-//        SystemBarHelper.setStatusBarDarkMode(getActivity());
-//        SystemBarHelper.setPadding(getActivity(), rel_header_mine);
-//        SystemBarHelper.immersiveStatusBar(getActivity());
     }
 
     @Override

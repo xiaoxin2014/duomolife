@@ -251,24 +251,28 @@ public class AccountLogoutActivity extends BaseActivity {
      * @param logoutAccountResultEntity
      */
     private void setLogoutResult(LogoutAccountResultEntity logoutAccountResultEntity) {
-        savePersonalInfoCache(AccountLogoutActivity.this, null);
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.logout(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-            }
+        String logoutReason = "";
+        if(SUCCESS_CODE.equals(logoutAccountResultEntity.getCode())){
+            savePersonalInfoCache(AccountLogoutActivity.this, null);
+            AlibcLogin alibcLogin = AlibcLogin.getInstance();
+            alibcLogin.logout(new AlibcLoginCallback() {
+                @Override
+                public void onSuccess(int i) {
+                }
 
-            @Override
-            public void onFailure(int code, String msg) {
+                @Override
+                public void onFailure(int code, String msg) {
 
+                }
+            });
+            logoutReason = getStrings(logoutAccountResultEntity.getMsg());
+        }else{
+            for (String reasonText : logoutAccountResultEntity.getAccountResultList()) {
+                logoutReason += (!TextUtils.isEmpty(logoutReason) ? "\n" : "") + "· " + reasonText;
             }
-        });
+        }
         logoutResultHelper.tvAccountLogoutResult.setSelected(SUCCESS_CODE.equals(logoutAccountResultEntity.getCode()));
         logoutResultHelper.tvAccountLogoutResult.setText(SUCCESS_CODE.equals(logoutAccountResultEntity.getCode()) ? "注销成功" : "注销失败");
-        String logoutReason = "";
-        for (String reasonText : logoutAccountResultEntity.getAccountResultList()) {
-            logoutReason += (!TextUtils.isEmpty(logoutReason) ? "\n" : "") + "· " + reasonText;
-        }
         logoutResultHelper.tvAccountLogoutResultReason.setText(logoutReason);
         changeView(1);
     }
@@ -419,5 +423,15 @@ public class AccountLogoutActivity extends BaseActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return fl_account_logout_container;
     }
 }

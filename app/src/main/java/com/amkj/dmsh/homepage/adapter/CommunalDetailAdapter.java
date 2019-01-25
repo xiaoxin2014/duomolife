@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +48,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
-import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
+import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatus;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -72,7 +73,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.jzvd.Jzvd;
-import android.support.text.emoji.widget.EmojiTextView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -377,7 +377,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 }
                 break;
             case TYPE_VIDEO:
-                JzVideoPlayerStatusDialog jvp_video_play = holder.getView(R.id.jvp_video_play);
+                JzVideoPlayerStatus jvp_video_play = holder.getView(R.id.jvp_video_play);
                 if (!TextUtils.isEmpty(detailObjectBean.getUrl())) {
                     jvp_video_play.setVisibility(View.VISIBLE);
                     jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);

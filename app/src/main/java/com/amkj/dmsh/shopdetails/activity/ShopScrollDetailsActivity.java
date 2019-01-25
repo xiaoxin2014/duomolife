@@ -116,6 +116,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getDistinctString;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -1394,10 +1395,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             rv_shop_details_text_communal.setVisibility(VISIBLE);
             String[] preIds = presentProData.split(",");
             if (preIds.length > 0) {
+                preIds = getDistinctString(preIds);
                 presentProductInfoBeans.clear();
-                for (String preId : preIds) {
-                    for (int i = 0; i < shopPropertyBean.getPresentProductInfoList().size(); i++) {
-                        PresentProductInfoBean presentProductInfoBean = shopPropertyBean.getPresentProductInfoList().get(i);
+                for (int i = 0; i < preIds.length; i++) {
+                    String preId = preIds[i];
+                    for (PresentProductInfoBean presentProductInfoBean:shopPropertyBean.getPresentProductInfoList()) {
                         if (preId.equals(presentProductInfoBean.getPresentSkuId())) {
                             if (presentProductInfoBean.getPresentQuantity() > 0) {
                                 if (i == 0) {
@@ -1405,7 +1407,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                                 }
                                 presentProductInfoBeans.add(presentProductInfoBean);
                             }
-                            break;
                         }
                     }
                 }

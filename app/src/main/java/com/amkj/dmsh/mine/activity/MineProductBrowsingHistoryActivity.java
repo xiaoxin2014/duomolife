@@ -112,6 +112,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         getLoginStatus(this);
         tv_header_title.setText("我的足迹");
         tl_normal_bar.setSelected(true);
+        tv_header_shared.setVisibility(GONE);
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         setEditStatus(isEditStatus);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
@@ -123,18 +124,18 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 MultiItemEntity multiItemEntity = (MultiItemEntity) view.getTag();
-                if(multiItemEntity!=null){
-                    if(multiItemEntity instanceof GoodsInfoListBean){
+                if (multiItemEntity != null) {
+                    if (multiItemEntity instanceof GoodsInfoListBean) {
                         GoodsInfoListBean goodsInfoListBean = (GoodsInfoListBean) multiItemEntity;
 //                        非编辑状态跳转商品详情
-                        if(!goodsInfoListBean.isEditStatus()){
+                        if (!goodsInfoListBean.isEditStatus()) {
                             Intent intent = new Intent(MineProductBrowsingHistoryActivity.this, ShopScrollDetailsActivity.class);
-                            intent.putExtra("productId",String.valueOf(goodsInfoListBean.getProductId()));
+                            intent.putExtra("productId", String.valueOf(goodsInfoListBean.getProductId()));
                             startActivity(intent);
-                        }else{//编辑状态为选中商品
+                        } else {//编辑状态为选中商品
                             setChildSelectionStatus(adapter, goodsInfoListBean);
                         }
-                    }else if(multiItemEntity instanceof MineBrowsHistoryBean){
+                    } else if (multiItemEntity instanceof MineBrowsHistoryBean) {
                         setParentSelectionStatus(adapter, (MineBrowsHistoryBean) multiItemEntity);
                     }
                 }
@@ -194,9 +195,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         });
     }
 
-    private void setParentSelectionStatus(BaseQuickAdapter adapter, MineBrowsHistoryBean multiItemEntity) {
-        MineBrowsHistoryBean mineBrowsHistoryBean = multiItemEntity;
-        if(mineBrowsHistoryBean.isEditStatus()){
+    private void setParentSelectionStatus(BaseQuickAdapter adapter, MineBrowsHistoryBean mineBrowsHistoryBean) {
+        if (mineBrowsHistoryBean.isEditStatus()) {
             boolean currentStatus = !mineBrowsHistoryBean.isSelectStatus();
             mineBrowsHistoryBean.setSelectStatus(currentStatus);
             if (currentStatus) {
@@ -235,7 +235,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                         }
                     }
                     parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
-                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus?null:MANUAL_SELECTION);
+                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? null : MANUAL_SELECTION);
                 } else {
                     parentMineBrowsHistoryBean.setSelectStatus(false);
                 }
@@ -314,9 +314,12 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                     cancelSelectionStatus();
                 }
             }
-        } else if (selectionStatus && !hasNextDay) {
+        } else if (selectionStatus) {
+//            加载完，或者日期已全部加载
+            if (!hasNextDay || parentBrowsHistoryBeanList.size() == historyTimeShaftList.size()) {
 //            设置全选
-            setAllChecked();
+                setAllChecked();
+            }
         }
     }
 
@@ -459,6 +462,9 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                 }
                 if (mineBrowsHistoryEntity != null) {
                     if (mineBrowsHistoryEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (tv_header_shared.getVisibility() == View.GONE) {
+                            tv_header_shared.setVisibility(VISIBLE);
+                        }
                         /**
                          * 当前日期总页码
                          */
@@ -598,7 +604,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
      * @否 不处理
      */
     private void loadNextDayData() {
-        if(changeNextDay(false)){
+        if (changeNextDay(false)) {
             page++;
             getMineBrowsingHistory();
         }

@@ -31,13 +31,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.APP_CURRENT_UPDATE_VERSION;
-import static com.amkj.dmsh.constant.ConstantVariable.APP_MANDATORY_UPDATE_VERSION;
-import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_DESCRIPTION;
-import static com.amkj.dmsh.constant.ConstantVariable.MANDATORY_UPDATE_LAST_VERSION;
-import static com.amkj.dmsh.constant.ConstantVariable.VERSION_DOWN_LINK;
-import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_DESCRIPTION;
-import static com.amkj.dmsh.constant.ConstantVariable.VERSION_UPDATE_LOW;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_CURRENT_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_MANDATORY_UPDATE_VERSION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MANDATORY_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MANDATORY_UPDATE_LAST_VERSION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_DOWN_LINK;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_UPDATE_DESCRIPTION;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_UPDATE_LOW;
 
 
 /**

@@ -71,6 +71,7 @@ public class MineBrowsingHistoryAdapter extends BaseMultiItemQuickAdapter<MultiI
                         .setText(R.id.tv_browse_history_product_price, getStringsChNPrice(context, goodsInfoListBean.getPrice()))
                         .setText(R.id.tv_browse_history_product_market_price, getStringsChNPrice(context, goodsInfoListBean.getMarketPrice()))
                         .setTag(R.id.cb_browse_history_product, goodsInfoListBean)
+                        .setGone(R.id.iv_product_out_tag,goodsInfoListBean.getQuantity()<1)
                         .addOnClickListener(R.id.cb_browse_history_product);
                 TextView textView = helper.getView(R.id.tv_browse_history_product_market_price);
                 textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);

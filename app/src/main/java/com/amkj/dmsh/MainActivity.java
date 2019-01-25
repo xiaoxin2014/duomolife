@@ -1090,10 +1090,10 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     //登陆成功返回消息
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             return;
         }
-        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case MINE_REQ_CODE:
                 changeAdaptivePage(MAIN_MINE);

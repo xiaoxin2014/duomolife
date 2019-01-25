@@ -98,11 +98,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -345,6 +347,18 @@ public class ConstantMethod {
             return "";
         }
         return String.format(context.getResources().getString(resStringId), number);
+    }
+
+    /**
+     * 获取去重数组
+     *
+     * @param strings
+     * @return
+     */
+    public static String[] getDistinctString(String[] strings) {
+        Set<String> stringSet = new LinkedHashSet<>(Arrays.asList(strings));
+        List<String> strings1 = new ArrayList<>(stringSet);
+        return strings1.toArray(new String[strings1.size()]);
     }
 
     /**
@@ -2486,20 +2500,19 @@ public class ConstantMethod {
      * @return
      */
     public static boolean isSameTimeDay(String t1, String t2) {
-        return isSameTimeDay("yyyy-MM-dd HH:mm:ss",t1,t2);
+        return isSameTimeDay("yyyy-MM-dd HH:mm:ss", t1, t2);
     }
 
     /**
-     *
      * @param formatType 数据格式类型
      * @param t1
      * @param t2
      * @return
      */
-    public static boolean isSameTimeDay(String formatType,String t1, String t2) {
+    public static boolean isSameTimeDay(String formatType, String t1, String t2) {
         if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
             try {
-                SimpleDateFormat timeFormat = new SimpleDateFormat(TextUtils.isEmpty(formatType)?"yyyy-MM-dd HH:mm:ss":formatType, Locale.CHINA);
+                SimpleDateFormat timeFormat = new SimpleDateFormat(TextUtils.isEmpty(formatType) ? "yyyy-MM-dd HH:mm:ss" : formatType, Locale.CHINA);
                 Date d1 = timeFormat.parse(t1);
                 Date d2 = timeFormat.parse(t2);
                 Calendar calendar = Calendar.getInstance();
@@ -2516,6 +2529,7 @@ public class ConstantMethod {
             return false;
         }
     }
+
     /**
      * @param t1          起始时间
      * @param t2          当前时间
@@ -2726,13 +2740,14 @@ public class ConstantMethod {
             Context applicationContext = context.getApplicationContext();
             if (ToastUtils.getToast() == null ||
                     (!NotificationManagerCompat.from(applicationContext).areNotificationsEnabled() &&
-                    !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName()))) {
+                            !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName()))) {
                 // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
                 ToastUtils.init(TinkerManager.getApplication());
             }
             ToastUtils.show(message);
         }
     }
+
     public static void showToast(String message) {
         ToastUtils.show(message);
     }

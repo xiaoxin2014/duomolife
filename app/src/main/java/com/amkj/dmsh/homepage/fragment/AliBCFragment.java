@@ -325,13 +325,13 @@ public class AliBCFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 transmitUid();
                 return;
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 transmitUid();
@@ -944,6 +944,9 @@ public class AliBCFragment extends BaseFragment {
         alertDialogHelper.show();
     }
 
+    /**
+     * 回调uid给web
+     */
     private void transmitUid() {
         webViewJs(String.format(getResources().getString(R.string.web_uid_method), userId));
     }

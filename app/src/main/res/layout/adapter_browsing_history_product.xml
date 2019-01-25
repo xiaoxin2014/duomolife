@@ -25,13 +25,22 @@
         android:layout_marginLeft="@dimen/sc_mm_24"
         android:paddingRight="@dimen/sc_mm_30"
         android:paddingTop="@dimen/sc_mm_30">
-
-        <ImageView
-            android:id="@+id/iv_browse_history_product_cover"
+        <RelativeLayout
             android:layout_width="@dimen/sc_mm_176"
-            android:layout_height="@dimen/sc_mm_176"
-            android:scaleType="centerCrop"/>
-
+            android:layout_height="@dimen/sc_mm_176">
+            <ImageView
+                android:id="@+id/iv_browse_history_product_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+            <ImageView
+                android:id="@+id/iv_product_out_tag"
+                android:layout_width="@dimen/sc_mm_120"
+                android:visibility="gone"
+                android:layout_centerInParent="true"
+                android:src="@drawable/goods_sold_out"
+                android:layout_height="@dimen/sc_mm_120" />
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:minHeight="@dimen/sc_mm_176"

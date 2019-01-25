@@ -43,7 +43,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
-import static com.amkj.dmsh.constant.ConstantVariable.FILE_IMAGE;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.FILE_IMAGE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 ;

@@ -18,6 +18,7 @@ import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
 import com.kingja.loadsir.core.LoadService;
 import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.cache.model.CacheMode;
 import com.zhouyou.http.cache.model.CacheResult;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
@@ -35,7 +36,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.zhouyou.http.cache.model.CacheMode.CACHEANDREMOTEDISTINCT;
+import static com.zhouyou.http.cache.model.CacheMode.CACHEANDREMOTE;
 import static com.zhouyou.http.cache.model.CacheMode.FIRSTREMOTE;
 import static com.zhouyou.http.cache.model.CacheMode.ONLYCACHE;
 
@@ -193,12 +194,13 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = new HttpParams();
             httpParams.put(params);
+            CacheMode cacheMode = NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTE) : ONLYCACHE;
             EasyHttp.get(url).params(httpParams)
 //                    cachekey 默认网址加参数
                     .cacheKey(getUrlNameKey(url, params))
 //                    缓存过期时间 访问有网络，有效5分钟
 //                    .cacheTime(NetWorkUtils.isConnectedByState(mAppContext) ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000)
-                    .cacheMode(NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTEDISTINCT) : ONLYCACHE)
+                    .cacheMode(cacheMode)
                     .execute(new SimpleCallBack<CacheResult<String>>() {
                         @Override
                         public void onError(ApiException e) {
