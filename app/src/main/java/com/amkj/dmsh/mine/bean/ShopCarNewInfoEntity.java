@@ -259,10 +259,10 @@ public class ShopCarNewInfoEntity {
             private int status;
             //            是否加间距
             private int showLine;
-//            第一级position
-            private int oldPosition;
 //            正确级
             private int currentPosition;
+//            上一级position
+            private int parentPosition;
             private int currentPage;
             private ActivityInfoBean activityInfoBean;
             //            存储活动内容
@@ -301,20 +301,20 @@ public class ShopCarNewInfoEntity {
                 this.currentPosition = currentPosition;
             }
 
+            public int getParentPosition() {
+                return parentPosition;
+            }
+
+            public void setParentPosition(int parentPosition) {
+                this.parentPosition = parentPosition;
+            }
+
             public int getCurrentPage() {
                 return currentPage;
             }
 
             public void setCurrentPage(int currentPage) {
                 this.currentPage = currentPage;
-            }
-
-            public int getOldPosition() {
-                return oldPosition;
-            }
-
-            public void setOldPosition(int oldPosition) {
-                this.oldPosition = oldPosition;
             }
 
             public String getActivityPriceDesc() {

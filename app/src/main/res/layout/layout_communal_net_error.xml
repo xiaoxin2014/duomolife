@@ -1,43 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/white"
-    android:orientation="vertical"
-    android:id="@+id/ll_communal_net_error"
-    android:gravity="center"
+    android:id="@+id/rel_communal_net_error"
     android:layout_height="match_parent">
-    <ImageView
-        android:layout_width="match_parent"
-        android:src="@drawable/net_page_bg"
-        android:layout_height="wrap_content" />
+
     <TextView
+        android:id="@+id/tv_net_load_error_back"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sc_mm_80"
+        android:layout_gravity="top"
+        android:visibility="gone"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/common_back_btn_nor"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:textColor="@color/home_text_color"
+        android:textSize="@dimen/sc_mm_32" />
+    <LinearLayout
         android:layout_width="match_parent"
-        android:id="@+id/tv_communal_net_tint"
-        android:textSize="@dimen/sc_mm_32"
-        android:layout_marginTop="@dimen/sc_mm_30"
-        android:text="抱歉，出错了"
-        android:textColor="@color/text_login_gray_s"
-        android:gravity="center"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/sc_mm_24"
-        android:textSize="@dimen/sc_mm_28"
-        android:gravity="center"
-        android:id="@+id/tv_communal_net_reason"
-        android:textColor="@color/text_gray_hint_n"
-        android:lineSpacingExtra="@dimen/dimen_8dp"
-        android:text="@string/load_data_failed"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:layout_width="@dimen/sc_mm_140"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/sc_mm_40"
-        android:textColor="@color/white"
-        android:text="刷新"
-        android:gravity="center"
-        android:id="@+id/tv_communal_net_refresh"
-        android:textSize="@dimen/sc_mm_32"
-        android:background="@drawable/border_cir_four_bg_blue"
-        android:layout_height="@dimen/sc_mm_55" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:src="@drawable/net_page_bg"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tv_communal_net_tint"
+            android:textSize="@dimen/sc_mm_32"
+            android:layout_marginTop="@dimen/sc_mm_30"
+            android:text="抱歉，出错了"
+            android:textColor="@color/text_login_gray_s"
+            android:gravity="center"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/sc_mm_24"
+            android:textSize="@dimen/sc_mm_28"
+            android:gravity="center"
+            android:id="@+id/tv_communal_net_reason"
+            android:textColor="@color/text_gray_hint_n"
+            android:lineSpacingExtra="@dimen/dimen_8dp"
+            android:text="@string/load_data_failed"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="@dimen/sc_mm_140"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/sc_mm_40"
+            android:textColor="@color/white"
+            android:text="刷新"
+            android:gravity="center"
+            android:id="@+id/tv_communal_net_refresh"
+            android:textSize="@dimen/sc_mm_32"
+            android:background="@drawable/border_cir_four_bg_blue"
+            android:layout_height="@dimen/sc_mm_55" />
+    </LinearLayout>
+
+</RelativeLayout>

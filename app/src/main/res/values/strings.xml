@@ -179,6 +179,7 @@
     <string name="comment_hint_invitation">你的走心评论是po主的最大动力</string>
     <string name="comment_hint_empty">你知道ta在等你评论吗</string>
     <string name="product_sell_out">此商品库存不足</string>
+    <string name="product_small_count">已是最小数量了哦~</string>
     <!--签到-->
     <string name="integral_score_marquee">获得%1$d积分</string>
     <string name="integral_lottery_number">数量：%1$d\n参与人数：%2$d</string>

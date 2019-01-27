@@ -4,18 +4,17 @@ package com.amkj.dmsh.mine.bean;
  * Created by atd48 on 2016/10/24.
  */
 public class EvenBusTransmitObject {
-    private int position;
 //    新的数量
     private int count;
     private int oldCount;
-    private boolean isSelected;
+    private Object carProductObject;
 
-    public int getPosition() {
-        return position;
+    public Object getCarProductObject() {
+        return carProductObject;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setCarProductObject(Object carProductObject) {
+        this.carProductObject = carProductObject;
     }
 
     public int getCount() {
@@ -32,13 +31,5 @@ public class EvenBusTransmitObject {
 
     public void setOldCount(int oldCount) {
         this.oldCount = oldCount;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
     }
 }

@@ -33,7 +33,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -123,8 +123,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     SeekBar bottom_seek_web_progress;
     @BindView(R.id.tl_web_normal_bar)
     Toolbar tl_web_normal_bar;
-    @BindView(R.id.ll_communal_net_error)
-    LinearLayout ll_communal_net_error;
+    @BindView(R.id.rel_communal_net_error)
+    RelativeLayout rel_communal_net_error;
     @BindView(R.id.smart_web_refresh)
     SmartRefreshLayout smart_web_refresh;
     private String loadUrl;
@@ -144,7 +144,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_web_shared.setVisibility(View.GONE);
-        ll_communal_net_error.setVisibility(View.GONE);
+        rel_communal_net_error.setVisibility(View.GONE);
         tv_web_title.setText("");
         Intent intent = getIntent();
         loadUrl = intent.getStringExtra("loadUrl");
@@ -292,11 +292,12 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         smart_web_refresh.setEnableNestedScroll(false);
         smart_web_refresh.setEnableOverScrollBounce(false);
         smart_web_refresh.setEnableOverScrollDrag(false);
+        smart_web_refresh.setEnableAutoLoadMore(false);
         smart_web_refresh.setOnRefreshListener(refreshLayout -> web_communal.reload());
     }
 
     private void setErrorException() {
-        ll_communal_net_error.setVisibility(View.VISIBLE);
+        rel_communal_net_error.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -341,13 +342,13 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 transmitUid();
                 return;
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
                 transmitUid();
@@ -1116,7 +1117,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     @OnClick(R.id.tv_communal_net_refresh)
     void clickError() {
-        ll_communal_net_error.setVisibility(View.GONE);
+        rel_communal_net_error.setVisibility(View.GONE);
         if (isWebLinkUrl(errorUrl)) {
             web_communal.loadUrl(errorUrl);
         } else {

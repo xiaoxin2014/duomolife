@@ -29,7 +29,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,8 +79,8 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     TextView tv_web_title;
     @BindView(R.id.tv_web_shared)
     TextView tv_web_shared;
-    @BindView(R.id.ll_communal_net_error)
-    LinearLayout ll_communal_net_error;
+    @BindView(R.id.rel_communal_net_error)
+    RelativeLayout rel_communal_net_error;
     @BindView(R.id.smart_web_refresh)
     SmartRefreshLayout smart_web_refresh;
     private String turnId;
@@ -98,7 +98,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             web_communal.loadUrl(LOTTERY_URL + "?uid=" + userId);
         }
         tv_web_shared.setVisibility(View.GONE);
-        ll_communal_net_error.setVisibility(View.GONE);
+        rel_communal_net_error.setVisibility(View.GONE);
         tv_web_title.setText("抽奖");
         WebSettings webSettings = web_communal.getSettings();
         //        自适应屏幕大小
@@ -123,7 +123,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         webSettings.setUserAgentString(web_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
-        web_communal.setWebChromeClient(new DoMoLifeLotteryActivity.MyWebChromeClient());
+        web_communal.setWebChromeClient(new MyWebChromeClient());
         //加载需要显示的网页
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 //        js交互
@@ -207,7 +207,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
 
     private void setErrorException(WebView view) {
         view.loadUrl(WEB_BLACK_PAGE);// 避免出现默认的错误界面
-        ll_communal_net_error.setVisibility(View.VISIBLE);
+        rel_communal_net_error.setVisibility(View.VISIBLE);
     }
 
     private String getRandomString(int length) { //length表示生成字符串的长度
@@ -530,7 +530,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
 
     @OnClick(R.id.tv_communal_net_refresh)
     void clickError(){
-        ll_communal_net_error.setVisibility(View.GONE);
+        rel_communal_net_error.setVisibility(View.GONE);
         if(isWebLinkUrl(errorUrl)){
             web_communal.loadUrl(errorUrl);
         }else{

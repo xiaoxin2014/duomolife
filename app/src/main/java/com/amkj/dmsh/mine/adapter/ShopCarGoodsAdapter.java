@@ -1,6 +1,5 @@
 package com.amkj.dmsh.mine.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,47 +12,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.EvenBusTransmitObject;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.SaleSkuBean;
-import com.amkj.dmsh.network.NetLoadListenerHelper;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.views.RectAddAndSubViewCommunal.TYPE_SUBTRACT;
 
 ;
 
@@ -62,8 +38,6 @@ import static com.amkj.dmsh.views.RectAddAndSubViewCommunal.TYPE_SUBTRACT;
  */
 public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarGoodsAdapter.ShopCarViewHolder> {
     private final Context context;
-    private int uid = 0;
-    private final String shopOverDue = "对不起，该产品已经卖光了";
     private List<CartProductInfoBean> presentProductInfoBeanList = new ArrayList<>();
 
     public ShopCarGoodsAdapter(Context context, List<CartInfoBean> shopGoodsList) {
@@ -127,7 +101,11 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
                 .setTag(R.id.communal_rect_add_sub, cartInfoBean)
 //                展示间距？
                 .setGone(R.id.tv_line_ten, cartInfoBean.getShowLine() == 1)
-                .setTag(R.id.communal_rect_add_sub, R.id.shop_car_position, helper.getAdapterPosition());
+                .setTag(R.id.communal_rect_add_sub, R.id.shop_car_position, helper.getAdapterPosition())
+                .addOnClickListener(R.id.img_integration_details_credits_add)
+                .setTag(R.id.img_integration_details_credits_add,cartInfoBean)
+                .addOnClickListener(R.id.img_integration_details_credits_minus)
+                .setTag(R.id.img_integration_details_credits_minus,cartInfoBean);
 //        商品状态
 //        tv_w_buy_tag 待售状态
         if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null) {
@@ -152,7 +130,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
         }
         if (cartInfoBean.getSaleSku() != null && cartInfoBean.getStatus() == 1) {
             helper.setText(R.id.tv_shop_car_product_sku, cartInfoBean.getSaleSku().getQuantity() > 0
-                    ? getStrings(cartInfoBean.getSaleSkuValue()) : (cartInfoBean.isMore() ? shopOverDue : getStrings(cartInfoBean.getSaleSkuValue())));
+                    ? getStrings(cartInfoBean.getSaleSkuValue()) : (cartInfoBean.isMore() ? "对不起，该产品已经卖光了" : getStrings(cartInfoBean.getSaleSkuValue())));
         }
         rect_shop_car_item.setNum(cartInfoBean.getCount());
         if (cartInfoBean.getSaleSku() != null) {
@@ -160,32 +138,6 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
             rect_shop_car_item.setMaxNum(saleSku.getQuantity());
         }
         rect_shop_car_item.setAutoChangeNumber(false);
-        rect_shop_car_item.setTag(cartInfoBean);
-//        数量增减监测
-        rect_shop_car_item.setOnNumChangeListener(new RectAddAndSubViewCommunal.OnNumChangeListener() {
-            @Override
-            public void onNumChange(View view, int type, int newNum, int oldNum) {
-                CartInfoBean cartInfoBean = (CartInfoBean) view.getTag();
-                if (newNum > 0 && cartInfoBean.getStatus() == 1
-                        && cartInfoBean.getSaleSku() != null
-                        && cartInfoBean.getSaleSku().getQuantity() > 0) {
-                    int quantity = cartInfoBean.getSaleSku().getQuantity();
-                    if (TYPE_SUBTRACT == type || newNum <= quantity) {
-                        EvenBusTransmitObject transmitObject = new EvenBusTransmitObject();
-                        transmitObject.setSelected(cartInfoBean.isSelected());
-                        transmitObject.setCount(newNum);
-                        transmitObject.setOldCount(oldNum);
-                        transmitObject.setPosition(cartInfoBean.getCurrentPosition());
-                        view.setTag(R.id.shop_car_parameter, transmitObject);
-                        isLoginStatus(view);
-                    } else {
-                        showToast(context, R.string.product_sell_out);
-                    }
-                } else {
-                    EventBus.getDefault().post(new EventMessage("delProduct", cartInfoBean));
-                }
-            }
-        });
         /**
          * 价格显示
          */
@@ -243,7 +195,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
         tv_shop_car_product_price.setSelected(true);
         Link link = new Link(cartInfoBean.getActivityPriceDesc());
         link.setTextColor(Color.parseColor("#ff5a6b"));
-        link.setTextSize(AutoSizeUtils.mm2px(mAppContext,22));
+        link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         link.setBgColor(Color.parseColor("#ffffff"));
         link.setUnderlined(false);
         link.setHighlightAlpha(0f);
@@ -255,85 +207,6 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
                 .addLink(link)
                 .build();
         tv_shop_car_product_price.setText(price);
-    }
-
-    private void isLoginStatus(View v) {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(context);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-            //登陆成功处理
-            addGoodsCount((RectAddAndSubViewCommunal) v);
-//                上传数据
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(context, MineLoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ((Activity) context).startActivityForResult(intent, IS_LOGIN_CODE);
-        }
-    }
-
-    private void addGoodsCount(final RectAddAndSubViewCommunal view) {
-        CartInfoBean cartInfoBean = (CartInfoBean) view.getTag();
-        final EvenBusTransmitObject transmitObject = (EvenBusTransmitObject) view.getTag(R.id.shop_car_parameter);
-        final int num = transmitObject.getCount();
-        view.setEnabled(false);
-        //商品数量修改
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_CHANGE_CAR;
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", uid);
-        params.put("count", num);
-        params.put("productId", cartInfoBean.getProductId());
-        params.put("saleSkuId", cartInfoBean.getSaleSku().getId());
-        params.put("price", cartInfoBean.getSaleSku().getPrice());
-        params.put("id", cartInfoBean.getId());
-        if (cartInfoBean.getActivityInfoData() != null) {
-            ActivityInfoBean activityInfoData = cartInfoBean.getActivityInfoData();
-            params.put("activityCode", activityInfoData.getActivityCode());
-            try {
-                JSONObject jsonObject = new JSONObject();
-                JSONArray jsonArray = new JSONArray();
-                jsonObject.put("productId", cartInfoBean.getProductId());
-                jsonObject.put("saleSkuId", cartInfoBean.getSaleSku().getId());
-                jsonObject.put("price", cartInfoBean.getSaleSku().getPrice());
-                jsonObject.put("count", num);
-                jsonArray.put(jsonObject);
-                params.put("activityProducts", jsonArray.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(context,url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
-                if (status != null) {
-                    if (status.getCode().equals(SUCCESS_CODE)) {
-                        EventBus.getDefault().post(new EventMessage("updateData", transmitObject));
-                    } else {
-                        view.setNum(transmitObject.getOldCount());
-                        showToastRequestMsg(context, status);
-                    }
-                    view.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                view.setNum(transmitObject.getOldCount());
-                view.setEnabled(true);
-            }
-
-            @Override
-            public void onError(Throwable ex) {
-                showToast(context, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(context, R.string.unConnectedNetwork);
-            }
-        });
     }
 
     public class ShopCarViewHolder extends BaseViewHolder {

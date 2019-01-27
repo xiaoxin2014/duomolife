@@ -34,6 +34,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.baichuan.android.trade.AlibcTrade;
@@ -121,8 +122,8 @@ public class AliBCFragment extends BaseFragment {
     Toolbar tl_normal_bar;
     @BindView(R.id.web_fragment_communal)
     HtmlWebView web_fragment_communal;
-    @BindView(R.id.ll_communal_net_error)
-    LinearLayout ll_communal_net_error;
+    @BindView(R.id.rel_communal_net_error)
+    RelativeLayout rel_communal_net_error;
     @BindView(R.id.smart_web_fragment_refresh)
     SmartRefreshLayout smart_web_fragment_refresh;
     private String webUrl;
@@ -143,7 +144,7 @@ public class AliBCFragment extends BaseFragment {
     protected void initViews() {
         tv_header_shared.setVisibility(View.GONE);
         tl_normal_bar.setVisibility(View.GONE);
-        ll_communal_net_error.setVisibility(View.GONE);
+        rel_communal_net_error.setVisibility(View.GONE);
         ll_web_ali.setBackgroundColor(getResources().getColor(R.color.transparent));
         if (TextUtils.isEmpty(webUrl)) {
             return;
@@ -287,6 +288,7 @@ public class AliBCFragment extends BaseFragment {
         smart_web_fragment_refresh.setEnableNestedScroll(false);
         smart_web_fragment_refresh.setEnableOverScrollBounce(false);
         smart_web_fragment_refresh.setEnableOverScrollDrag(false);
+        smart_web_fragment_refresh.setEnableAutoLoadMore(false);
         smart_web_fragment_refresh.setOnRefreshListener(refreshLayout -> web_fragment_communal.reload());
         if (paddingStatus.contains("true")) {
             isCanEditStatusBar = true;
@@ -294,7 +296,7 @@ public class AliBCFragment extends BaseFragment {
     }
 
     private void setErrorException(WebView view) {
-        ll_communal_net_error.setVisibility(View.VISIBLE);
+        rel_communal_net_error.setVisibility(View.VISIBLE);
     }
 
     private void setWebRefreshStatus(int refreshStatus) {
@@ -1090,6 +1092,7 @@ public class AliBCFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         if (handler != null) {
             handler.removeCallbacksAndMessages(this);
         }
@@ -1100,7 +1103,6 @@ public class AliBCFragment extends BaseFragment {
         if (alertDialogHelper != null) {
             alertDialogHelper.dismiss();
         }
-        super.onDestroy();
     }
 
     /**
@@ -1137,7 +1139,7 @@ public class AliBCFragment extends BaseFragment {
 
     @OnClick(R.id.tv_communal_net_refresh)
     void clickError() {
-        ll_communal_net_error.setVisibility(View.GONE);
+        rel_communal_net_error.setVisibility(View.GONE);
         web_fragment_communal.reload();
     }
 

@@ -31,6 +31,7 @@ import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.mine.adapter.SuggestionFeedBackTypeAdapter;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity;
 import com.amkj.dmsh.mine.bean.SuggestionTypeEntity.FeedBackTypeBean;
+import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.adapter.ImgGridRecyclerAdapter;
@@ -42,6 +43,7 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.kingja.loadsir.core.Transport;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
@@ -159,6 +161,21 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 }
             }
         });
+        if (loadService != null) {
+            loadService.setCallBack(NetErrorCallback.class, new Transport() {
+                @Override
+                public void order(Context context, View view) {
+                    TextView backView = view.findViewById(R.id.tv_net_load_error_back);
+                    backView.setVisibility(View.VISIBLE);
+                    backView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void pickImage(final int position) {
@@ -212,7 +229,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
      */
     @OnClick(R.id.tv_suggestion_type)
     void commitSuggestion(View view) {
-        if(KeyboardUtils.isSoftInputVisible(this)){
+        if (KeyboardUtils.isSoftInputVisible(this)) {
             KeyboardUtils.hideSoftInput(this);
         }
         if (feedBackTypeBeans.size() > 0) {
@@ -418,10 +435,10 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         }
     }
 
-
     @Override
     protected void loadData() {
         if (userId < 1) {
+            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -440,6 +457,12 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                         showToast(SuggestionFeedBackActivity.this, getStrings(suggestionTypeEntity.getMsg()));
                     }
                 }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService,suggestionTypeEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
             }
 
             @Override
@@ -488,6 +511,14 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (selectAlertView != null && selectAlertView.isShowing()) {
+            selectAlertView.dismiss();
+        }
         KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
     }
 }

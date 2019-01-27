@@ -20,7 +20,7 @@ public class RectAddAndSubViewCommunal extends LinearLayout {
 
     private ImageView subButton;//减按钮
 
-    private TextView editText;//数量显示
+    private TextView textViewCount;//数量显示
 
     int num;          //数量值
     /**
@@ -82,7 +82,7 @@ public class RectAddAndSubViewCommunal extends LinearLayout {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_add_sub_view_shop_car, RectAddAndSubViewCommunal.this, false);
         addButton = (ImageView) view.findViewById(R.id.img_integration_details_credits_add);
         subButton = (ImageView) view.findViewById(R.id.img_integration_details_credits_minus);
-        editText = (TextView) view.findViewById(R.id.tv_integration_details_credits_count);
+        textViewCount = (TextView) view.findViewById(R.id.tv_integration_details_credits_count);
         setNum(1);
         addView(view);
     }
@@ -93,7 +93,7 @@ public class RectAddAndSubViewCommunal extends LinearLayout {
      * @param distance
      */
     public void setMiddleDistance(int distance) {
-        editText.setPadding(distance, 0, distance, 0);
+        textViewCount.setPadding(distance, 0, distance, 0);
     }
 
     /**
@@ -103,7 +103,7 @@ public class RectAddAndSubViewCommunal extends LinearLayout {
      */
     public void setNum(int num) {
         this.num = num >= 0 ? num : 1;
-        editText.setText(String.valueOf(num));
+        textViewCount.setText(String.valueOf(num));
     }
 
     /**
@@ -112,8 +112,8 @@ public class RectAddAndSubViewCommunal extends LinearLayout {
      * @return
      */
     public int getNum() {
-        if (!TextUtils.isEmpty(editText.getText().toString().trim())) {
-            return Integer.parseInt(editText.getText().toString());
+        if (!TextUtils.isEmpty(textViewCount.getText().toString().trim())) {
+            return Integer.parseInt(textViewCount.getText().toString());
         } else {
             return 1;
         }
@@ -219,10 +219,10 @@ public class RectAddAndSubViewCommunal extends LinearLayout {
 
         @Override
         public void onClick(View v) {
-            String numString = editText.getText().toString();
+            String numString = textViewCount.getText().toString();
             if (TextUtils.isEmpty(numString)) {
                 num = 1;
-                editText.setText(String.valueOf(num));
+                textViewCount.setText(String.valueOf(num));
             } else {
                 if (v.getId() == R.id.img_integration_details_credits_add) {
                     if (num + 1 > maxNum) {

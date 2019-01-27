@@ -2,7 +2,6 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -28,7 +26,6 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
-import com.amkj.dmsh.mine.bean.EvenBusTransmitObject;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.ActivityInfoBean;
@@ -49,8 +46,6 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
@@ -116,14 +111,13 @@ public class ShopCarActivity extends BaseActivity {
 
     //    删除页面
     @BindView(R.id.rel_del_shop_car)
-    RelativeLayout ll_del_shop_car;
+    RelativeLayout rel_del_shop_car;
     // 全选 全不选
     @BindView(R.id.check_box_all_del)
     CheckBox check_box_all_del;
 
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
-
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
@@ -158,6 +152,8 @@ public class ShopCarActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
+        ll_settlement_shop_car.setVisibility(View.GONE);
+        rel_del_shop_car.setVisibility(View.GONE);
         tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("购物车");
         header_shared.setCompoundDrawables(null, null, null, null);
@@ -166,18 +162,12 @@ public class ShopCarActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         communal_recycler.setAdapter(shopCarGoodsAdapter);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                scrollY = 0;
-                loadData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            scrollY = 0;
+            loadData();
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
             page++;
@@ -214,6 +204,45 @@ public class ShopCarActivity extends BaseActivity {
                         Intent intent = new Intent(ShopCarActivity.this, QualityProductActActivity.class);
                         intent.putExtra("activityCode", cartInfoBean.getActivityInfoData().getActivityCode());
                         startActivity(intent);
+                        break;
+                    case R.id.img_integration_details_credits_add:
+                        int oldCount = cartInfoBean.getCount();
+                        int newNum = oldCount + 1;
+                        if (oldCount > 0 && cartInfoBean.getStatus() == 1
+                                && cartInfoBean.getSaleSku() != null
+                                && cartInfoBean.getSaleSku().getQuantity() > 0) {
+                            int quantity = cartInfoBean.getSaleSku().getQuantity();
+                            if (newNum <= quantity) {
+                                cartInfoBean.setCount(newNum);
+                                addGoodsCount(cartInfoBean);
+                            } else {
+                                showToast(ShopCarActivity.this, R.string.product_sell_out);
+                            }
+                        } else {
+                            if (cartInfoBean.getId() > 0) {
+                                carIds = new StringBuffer(String.valueOf(cartInfoBean.getId()));
+                                setDeleteGoodsDialog();
+                            }
+                        }
+                        break;
+                    case R.id.img_integration_details_credits_minus:
+                        oldCount = cartInfoBean.getCount();
+                        newNum = oldCount - 1;
+                        if (cartInfoBean.getStatus() == 1
+                                && cartInfoBean.getSaleSku() != null
+                                && cartInfoBean.getSaleSku().getQuantity() > 0) {
+                            if (newNum > 0) {
+                                cartInfoBean.setCount(newNum);
+                                addGoodsCount(cartInfoBean);
+                            } else {
+                                showToast(ShopCarActivity.this, R.string.product_small_count);
+                            }
+                        } else {
+                            if (cartInfoBean.getId() > 0) {
+                                carIds = new StringBuffer(String.valueOf(cartInfoBean.getId()));
+                                setDeleteGoodsDialog();
+                            }
+                        }
                         break;
                 }
             }
@@ -265,7 +294,7 @@ public class ShopCarActivity extends BaseActivity {
         if (isEditStatus) {
             check_box_all_del.setChecked(false);
             ll_settlement_shop_car.setVisibility(View.GONE);
-            ll_del_shop_car.setVisibility(View.VISIBLE);
+            rel_del_shop_car.setVisibility(View.VISIBLE);
             header_shared.setText("完成");
             header_shared.setSelected(isEditStatus);
             ShoppingCartBiz.isEditStatus(shopGoodsList, isEditStatus);
@@ -274,7 +303,7 @@ public class ShopCarActivity extends BaseActivity {
                 check_box_all_buy.setChecked(true);
             }
             ll_settlement_shop_car.setVisibility(View.VISIBLE);
-            ll_del_shop_car.setVisibility(View.GONE);
+            rel_del_shop_car.setVisibility(View.GONE);
             header_shared.setSelected(isEditStatus);
             ShoppingCartBiz.isEditStatus(shopGoodsList, isEditStatus);
             header_shared.setText("编辑");
@@ -283,62 +312,57 @@ public class ShopCarActivity extends BaseActivity {
         shopCarGoodsAdapter.setNewData(shopGoodsList);
     }
 
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("updateData")) {
-            EvenBusTransmitObject transmitObject = (EvenBusTransmitObject) message.result;
-//            更新购物车数据
-            updateCartData(transmitObject.getPosition());
-        } else if (message.type.equals("delProduct")) {
-            CartInfoBean cartInfoBean = (CartInfoBean) message.result;
-            if (!TextUtils.isEmpty(cartInfoBean.getId() + "")) {
-                carIds = new StringBuffer(String.valueOf(cartInfoBean.getId()));
-                setDeleteGoodsDialog();
-            }
-        }
-    }
-
     /**
      * 更新购物车数据
      *
-     * @param position
+     * @param cartInfoBean
      */
-    private void updateCartData(final int position) {
-        if (shopGoodsList.size() > position) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            final CartInfoBean oldCartInfoBean = shopGoodsList.get(position);
-            String url = Url.BASE_URL + MINE_SHOP_CAR_GOODS;
-            Map<String, Object> params = new HashMap<>();
-            params.put("showCount", TOTAL_COUNT_FORTY);
-            params.put("currentPage", oldCartInfoBean.getCurrentPage());
-            params.put("userId", userId);
-            params.put("version", "v3.1.5");
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
-                    if (shopCarNewInfoEntity != null) {
-                        if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (shopCarNewInfoEntity.getShopCarNewInfoList().size() > 0) {
-                                ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
-                                ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(oldCartInfoBean.getOldPosition());
-                                CartInfoBean newCartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(position);
+    private void updateCartData(CartInfoBean cartInfoBean) {
+        if (cartInfoBean == null) {
+            showToast(this, "数据异常，请刷新重试！");
+            return;
+        }
+        if (loadHud != null) {
+            loadHud.show();
+        }
+        String url = Url.BASE_URL + MINE_SHOP_CAR_GOODS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", TOTAL_COUNT_FORTY);
+        params.put("currentPage", cartInfoBean.getCurrentPage());
+        params.put("userId", userId);
+        params.put("version", "v3.1.5");
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                ShopCarNewInfoEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarNewInfoEntity.class);
+                if (shopCarNewInfoEntity != null) {
+                    if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (shopCarNewInfoEntity.getShopCarNewInfoList().size() > 0 &&
+                                cartInfoBean.getParentPosition() < shopCarNewInfoEntity.getShopCarNewInfoList().size()) {
+                            ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
+                            ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(cartInfoBean.getParentPosition());
+                            if (shopCarNewInfoBean.getCartInfoBeanList().size() > cartInfoBean.getCurrentPosition()) {
+                                CartInfoBean newCartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(cartInfoBean.getCurrentPosition());
 //                                id 是否相等
-                                if (oldCartInfoBean.getId() == newCartInfoBean.getId()) {
-                                    newCartInfoBean.setCurrentPosition(oldCartInfoBean.getCurrentPosition());
-                                    newCartInfoBean.setOldPosition(oldCartInfoBean.getOldPosition());
-                                    newCartInfoBean.setCurrentPage(oldCartInfoBean.getCurrentPage());
-                                    newCartInfoBean.setSelected(oldCartInfoBean.isSelected());
-                                    shopGoodsList.set(position, newCartInfoBean);
-                                    shopCarGoodsAdapter.notifyItemChanged(position);
-                                    setCartCount();
-                                    getSettlePrice();
+                                if (cartInfoBean.getId() == newCartInfoBean.getId()) {
+                                    newCartInfoBean.setCurrentPosition(cartInfoBean.getCurrentPosition());
+                                    newCartInfoBean.setCurrentPage(cartInfoBean.getCurrentPage());
+                                    newCartInfoBean.setSelected(cartInfoBean.isSelected());
+                                    newCartInfoBean.setActivityInfoData(cartInfoBean.getActivityInfoData());
+                                    int cartPosition = shopGoodsList.indexOf(cartInfoBean);
+                                    if (cartPosition == -1) {
+                                        page = 1;
+                                        loadData();
+                                    } else {
+                                        shopGoodsList.set(cartPosition, newCartInfoBean);
+                                        shopCarGoodsAdapter.notifyItemChanged(cartPosition);
+                                        setCartCount();
+                                        getSettlePrice();
+                                    }
                                 } else {
                                     page = 1;
                                     loadData();
@@ -347,28 +371,31 @@ public class ShopCarActivity extends BaseActivity {
                                 page = 1;
                                 loadData();
                             }
+                        } else {
+                            page = 1;
+                            loadData();
                         }
                     }
                 }
+            }
 
-                @Override
-                public void onNotNetOrException() {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
                 }
+            }
 
-                @Override
-                public void onError(Throwable ex) {
-                    showToast(ShopCarActivity.this, R.string.do_failed);
-                }
+            @Override
+            public void onError(Throwable ex) {
+                showToast(ShopCarActivity.this, R.string.do_failed);
+            }
 
-                @Override
-                public void netClose() {
-                    showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
-                }
-            });
-        }
+            @Override
+            public void netClose() {
+                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+            }
+        });
     }
 
     private void updatePrice(ShopCarNewInfoEntity shopCarNewInfoEntity) {
@@ -429,6 +456,9 @@ public class ShopCarActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
+                        if(ll_settlement_shop_car.getVisibility() == View.GONE){
+                            ll_settlement_shop_car.setVisibility(View.VISIBLE);
+                        }
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
@@ -446,7 +476,8 @@ public class ShopCarActivity extends BaseActivity {
                                     ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);
                                     for (int j = 0; j < shopCarNewInfoBean.getCartInfoBeanList().size(); j++) {
                                         CartInfoBean cartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(j);
-                                        cartInfoBean.setOldPosition(i);
+                                        cartInfoBean.setCurrentPosition(j);
+                                        cartInfoBean.setParentPosition(i);
                                         cartInfoBean.setCurrentPage(page);
                                         if (shopCarNewInfoBean.getActivityInfoBean() != null) {
                                             ActivityInfoBean activityInfoBean = shopCarNewInfoBean.getActivityInfoBean();
@@ -842,7 +873,7 @@ public class ShopCarActivity extends BaseActivity {
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        updateCartData(cartInfoBean.getCurrentPosition());
+                        updateCartData(cartInfoBean);
                         setEditStatus();
                     } else {
                         showToastRequestMsg(ShopCarActivity.this, status);
@@ -925,6 +956,76 @@ public class ShopCarActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 添加购物车
+     *
+     * @param cartInfoBean
+     */
+    private void addGoodsCount(CartInfoBean cartInfoBean) {
+        if (loadHud != null) {
+            loadHud.show();
+        }
+        //商品数量修改
+        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_CHANGE_CAR;
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("count", cartInfoBean.getCount());
+        params.put("productId", cartInfoBean.getProductId());
+        params.put("saleSkuId", cartInfoBean.getSaleSku().getId());
+        params.put("price", cartInfoBean.getSaleSku().getPrice());
+        params.put("id", cartInfoBean.getId());
+        if (cartInfoBean.getActivityInfoData() != null) {
+            ActivityInfoBean activityInfoData = cartInfoBean.getActivityInfoData();
+            params.put("activityCode", activityInfoData.getActivityCode());
+            try {
+                JSONObject jsonObject = new JSONObject();
+                JSONArray jsonArray = new JSONArray();
+                jsonObject.put("productId", cartInfoBean.getProductId());
+                jsonObject.put("saleSkuId", cartInfoBean.getSaleSku().getId());
+                jsonObject.put("price", cartInfoBean.getSaleSku().getPrice());
+                jsonObject.put("count", cartInfoBean.getCount());
+                jsonArray.put(jsonObject);
+                params.put("activityProducts", jsonArray.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+                Gson gson = new Gson();
+                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+                if (status != null) {
+                    if (status.getCode().equals(SUCCESS_CODE)) {
+                        updateCartData(cartInfoBean);
+                    } else {
+                        showToastRequestMsg(ShopCarActivity.this, status);
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex) {
+                showToast(ShopCarActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                showToast(ShopCarActivity.this, R.string.unConnectedNetwork);
+            }
+        });
+    }
+
     public class RecommendHeaderView {
         @BindView(R.id.tv_pro_title)
         TextView tv_pro_title;
@@ -935,10 +1036,7 @@ public class ShopCarActivity extends BaseActivity {
             communal_recycler_wrap.setLayoutManager(new GridLayoutManager(ShopCarActivity.this, 2));
             communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
-                    .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
-                    .create());
+                    .setDividerId(R.drawable.item_divider_five_gray_f).create());
             proNoShopCarAdapter = new ProNoShopCarAdapter(ShopCarActivity.this, cartProRecommendList);
             communal_recycler_wrap.setAdapter(proNoShopCarAdapter);
             proNoShopCarAdapter.setOnItemClickListener((adapter, view, position) -> {
