@@ -870,7 +870,7 @@ public class GlideImageLoaderUtil {
                 }
                 String filePath = context.getDir(saveFileName, MODE_PRIVATE).getAbsolutePath();
                 createFilePath(filePath);
-                String imageFilePath = filePath + "/" + picUrl.substring(picUrl.lastIndexOf("/"));
+                String imageFilePath = filePath + picUrl.substring(picUrl.lastIndexOf("/"));
                 if (!fileIsExist(imageFilePath)) {
                     try {
 //                必须为子线程调用，否则阻塞线程
@@ -896,6 +896,10 @@ public class GlideImageLoaderUtil {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+                }else{
+                    if (imageLoaderListener != null) {
+                        imageLoaderListener.onSuccess(new File(imageFilePath));
                     }
                 }
             }
