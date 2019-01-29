@@ -67,7 +67,6 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.utils.FileStreamUtils;
-import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.SelectorUtil;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
@@ -165,6 +164,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
     private AlertDialogHelper alertDialogHelper;
+    private float iconHeight = 32f;
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
@@ -563,7 +563,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         StateListDrawable drawable = new StateListDrawable();
         drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(null, secBitmap));
         drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(null, bitmap));
-        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48)); //设置边界
+        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight)); //设置边界
         rb.setCompoundDrawables(null, drawable, null, null);
     }
 
@@ -589,31 +589,31 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
             case 0:
                 setDefaultButtonData(i, rb, MAIN_HOME);
                 Drawable drawable = getResources().getDrawable(R.drawable.selector_bottom_home_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 1:
                 setDefaultButtonData(i, rb, MAIN_QUALITY);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_quality_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 2:
                 setDefaultButtonData(i, rb, MAIN_TIME);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_time_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 3:
                 setDefaultButtonData(i, rb, MAIN_FIND);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_find_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
             case 4:
                 setDefaultButtonData(i, rb, MAIN_MINE);
                 drawable = getResources().getDrawable(R.drawable.selector_bottom_mine_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, 48f / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, 48));//设置边界
+                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;
         }
