@@ -57,14 +57,17 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
     private Map<Integer, GroupShopJoinBean> beanMap = new HashMap<>();
     private ConstantMethod constantMethod;
 
-    public JoinGroupAdapter(Context context, List<GroupShopJoinBean> groupShopJoinList) {
+    public JoinGroupAdapter(Context context, ConstantMethod constantMethod, List<GroupShopJoinBean> groupShopJoinList) {
         super(groupShopJoinList);
         this.context = context;
         this.groupShopJoinList = groupShopJoinList;
         addItemType(TYPE_0, R.layout.adapter_layout_ql_group);
         addItemType(TYPE_1, R.layout.adapter_layout_ql_group_join);
         addItemType(TYPE_2, R.layout.adapter_layout_ql_group_share);
-        getConstant();
+        this.constantMethod = constantMethod;
+        if(constantMethod==null){
+            getConstant();
+        }
     }
 
     private void getConstant() {

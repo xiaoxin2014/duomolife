@@ -244,6 +244,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_header_titleAll.setVisibility(GONE);
+        getConstant();
         Intent intent = getIntent();
         gpInfoId = intent.getStringExtra("gpInfoId");
         gpRecordId = intent.getStringExtra("gpRecordId");
@@ -370,6 +371,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 nsv_gp_detail.scrollTo(0, 0);
+                nsv_gp_detail.fling(0);
                 download_btn_communal.hide(false);
             }
         });
@@ -525,7 +527,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 groupShopJoinBean.setItemType(TYPE_2);
                                 groupShopJoinBean.setMemberListBeans(memberListBeans);
                                 tv_sp_details_join_buy_price.setVisibility(GONE);
-                                if (leftParticipant < 1||isEndOrStartTime(qualityGroupShareEntity.getCurrentTime(),qualityGroupShareBean.getGpEndTime())) {
+                                if (leftParticipant < 1 || isEndOrStartTime(qualityGroupShareEntity.getCurrentTime(), qualityGroupShareBean.getGpEndTime())) {
                                     ll_group_buy.setEnabled(false);
                                     groupShopJoinBean.setGpEndTime(qualityGroupShareEntity.getCurrentTime());
                                 } else {
@@ -756,7 +758,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         if (!ConstantMethod.isEndOrStartTime(groupShopDetailsEntity.getCurrentTime()
                 , groupShopDetailsBean.getGpEndTime())) {
             setCountTime(groupShopDetailsEntity);
-            getConstant();
             constantMethod.createSchedule();
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
                 @Override
@@ -1051,11 +1052,11 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             return;
         }
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
     public void isCanJoinGroup(final GroupShopJoinBean groupShopjoinBean, final QualityGroupShareEntity qualityGroupShareEntity, final String joinType) {
@@ -1063,7 +1064,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         params.put("uid", userId);
         params.put("gpInfoId", groupShopjoinBean != null ?
                 groupShopjoinBean.getGpInfoId() : qualityGroupShareEntity.getQualityGroupShareBean().getGpInfoId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,GROUP_SHOP_JOIN_NRE_USER,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_JOIN_NRE_USER, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1119,7 +1120,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
         public void initView() {
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-            joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this, groupShopJoinList);
+            joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this,constantMethod, groupShopJoinList);
             headerView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_text, null);
             tv_partner_join = (TextView) headerView.findViewById(R.id.tv_partner_join);
             communal_recycler_wrap.setAdapter(joinGroupAdapter);
@@ -1194,9 +1195,10 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        getConstant();
-        constantMethod.stopSchedule();
-        constantMethod.releaseHandlers();
+        if (constantMethod != null) {
+            constantMethod.stopSchedule();
+            constantMethod.releaseHandlers();
+        }
         super.onDestroy();
     }
 }

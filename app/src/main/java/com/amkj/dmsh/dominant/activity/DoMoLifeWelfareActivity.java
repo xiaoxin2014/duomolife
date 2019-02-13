@@ -2,6 +2,7 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,6 +57,8 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -130,7 +133,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        iv_img_share.setVisibility(View.GONE);
+        iv_img_share.setVisibility(GONE);
         tv_header_titleAll.setText("多么福利社");
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new GridLayoutManager(DoMoLifeWelfareActivity.this, 2));
@@ -246,27 +249,30 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_gray_f).create());
         qualityWelfareHeaderAdapter = new QualityOsMailHeaderAdapter(DoMoLifeWelfareActivity.this, themeList, "welfare");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityWelfareHeaderAdapter);
-        download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
+        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 scrollY += dy;
                 if (!recyclerView.canScrollVertically(-1)) {
                     scrollY = 0;
                 }
-                if (screenHeight == 0) {
-                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                    screenHeight = app.getScreenHeight();
-                }
-                if (scrollY >= screenHeight) {
-                    download_btn_communal.setVisibility(View.VISIBLE);
+                if (scrollY > screenHeight * 1.5 && dy < 0) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.hide(false);
+                    }
+                    if (!download_btn_communal.isVisible()) {
+                        download_btn_communal.show();
+                    }
                 } else {
-                    download_btn_communal.setVisibility(View.GONE);
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide();
+                    }
                 }
             }
         });
@@ -280,6 +286,10 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 if (firstVisibleItemPosition > mVisibleCount) {
                     communal_recycler.scrollToPosition(mVisibleCount);
                 }
+                if (download_btn_communal.isVisible()) {
+                    download_btn_communal.hide();
+                }
+                scrollY = 0;
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
@@ -294,7 +304,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", productPage);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_DML_RECOMMEND,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_DML_RECOMMEND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityTypeProductAdapter.loadMoreComplete();
@@ -341,7 +351,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                             } else if (dmlTheme.getCode().equals(EMPTY_CODE)) {
                                 if (themePage == 1) {
                                     getWelfareProData();
-                                    overseasHeaderView.communal_recycler_wrap.setVisibility(View.GONE);
+                                    overseasHeaderView.communal_recycler_wrap.setVisibility(GONE);
                                 }
                             } else {
                                 showToast(DoMoLifeWelfareActivity.this, dmlTheme.getMsg());
@@ -380,7 +390,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -405,7 +415,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("currentPage", page);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_DML_PREVIOUS_THEME,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_DML_PREVIOUS_THEME, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityPreviousAdapter.loadMoreComplete();
@@ -418,7 +428,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
                         welfarePreviousList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());
                         setHistoryListData();
-                    }else if(qualityHistoryListEntity.getCode().equals(EMPTY_CODE)){
+                    } else if (qualityHistoryListEntity.getCode().equals(EMPTY_CODE)) {
                         qualityPreviousAdapter.loadMoreEnd();
                     }
                     qualityPreviousAdapter.notifyDataSetChanged();
@@ -433,8 +443,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     }
 
     private void setHistoryListData() {
-        tv_wel_pro_tag.setVisibility(View.VISIBLE);
-        ll_communal_pro_list.setVisibility(View.VISIBLE);
+        tv_wel_pro_tag.setVisibility(VISIBLE);
+        ll_communal_pro_list.setVisibility(VISIBLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
         int radius = AutoSizeUtils.mm2px(mAppContext, 50);

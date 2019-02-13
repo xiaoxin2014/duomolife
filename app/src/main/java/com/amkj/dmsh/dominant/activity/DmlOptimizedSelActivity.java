@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.DmlOptimizedSelAdapter;
@@ -27,6 +28,7 @@ import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/7/10
- * class description:多么定制列表
+ * class description:多么优选列表
  */
 public class DmlOptimizedSelActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
@@ -75,7 +77,6 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     @BindView(R.id.iv_img_share)
     ImageView iv_img_share;
     private int page = 1;
-    private int scrollY;
     private float screenHeight;
     private Badge badge;
     private List<DmlOptimizedSelBean> dmlOptimizedSelList = new ArrayList<>();
@@ -120,6 +121,8 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                 loadData();
             }
         });
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -145,6 +148,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
             public void onClick(View v) {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
                 download_btn_communal.hide();
+                communal_recycler.stopScroll();
                 linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });

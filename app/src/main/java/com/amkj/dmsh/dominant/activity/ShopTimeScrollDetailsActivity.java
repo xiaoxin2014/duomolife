@@ -282,6 +282,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         download_btn_communal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nsv_time_detail.fling(0);
                 nsv_time_detail.scrollTo(0, 0);
                 download_btn_communal.hide(false);
             }

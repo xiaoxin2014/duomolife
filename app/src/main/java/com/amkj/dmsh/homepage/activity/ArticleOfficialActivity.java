@@ -307,14 +307,13 @@ public class ArticleOfficialActivity extends BaseActivity {
             public void onClick(View v) {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
                 download_btn_communal.hide();
+                communal_recycler.stopScroll();
                 linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
         //          关闭手势滑动
         dl_art_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        totalPersonalTrajectory =
-
-                insertNewTotalData(ArticleOfficialActivity.this, artId);
+        totalPersonalTrajectory = insertNewTotalData(ArticleOfficialActivity.this, artId);
         tv_publish_comment.setText(R.string.comment_article_hint);
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override

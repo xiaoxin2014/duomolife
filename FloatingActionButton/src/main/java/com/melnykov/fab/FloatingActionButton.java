@@ -21,6 +21,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -307,6 +308,7 @@ public class FloatingActionButton extends ImageButton {
 
     public void show(boolean animate) {
         toggle(true, animate, false);
+        Log.d("滑动 按钮显示：", "onScrolled: 触发展示按钮");
     }
 
     public void hide(boolean animate) {

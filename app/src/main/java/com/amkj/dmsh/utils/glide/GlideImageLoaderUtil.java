@@ -491,12 +491,12 @@ public class GlideImageLoaderUtil {
                                     .into(imageViewX);
                         }
                     } catch (Exception e) {
-                        if (isContextExisted(context)&&imageView!=null) {
+                        if (isContextExisted(context)&&imageViewX!=null) {
                             Glide.with(context).asDrawable().load(imgUrl)
                                     .apply(new RequestOptions().dontAnimate()
                                             .error(R.drawable.load_loading_image)
                                             .override(imgWidth, imgHeight))
-                                    .into(imageView);
+                                    .into(imageViewX);
                             e.printStackTrace();
                         }
                     }
@@ -504,6 +504,9 @@ public class GlideImageLoaderUtil {
 
                 @Override
                 public void onError(Throwable e) {
+                    if(disposable!=null){
+                        disposable.dispose();
+                    }
                 }
 
                 @Override
@@ -575,14 +578,14 @@ public class GlideImageLoaderUtil {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        if (isContextExisted(context)&&imageView!=null) {
+                        if (isContextExisted(context)&&imageViewX!=null) {
                             Glide.with(context).load(imgUrlX)
                                     .apply(new RequestOptions()
                                             .error(R.drawable.load_loading_image)
                                             .skipMemoryCache(true)
                                             .diskCacheStrategy(DiskCacheStrategy.DATA)
                                             .override(imgWidth, imgHeight))
-                                    .into(imageView);
+                                    .into(imageViewX);
                         }
                     }
                 }

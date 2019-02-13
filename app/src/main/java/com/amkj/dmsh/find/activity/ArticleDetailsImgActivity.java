@@ -219,6 +219,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             public void onClick(View v) {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
                 download_btn_communal.hide();
+                communal_recycler.stopScroll();
                 linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });

@@ -547,6 +547,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         download_btn_communal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                scroll_pro.fling(0);
                 scroll_pro.scrollTo(0, 0);
                 download_btn_communal.hide(false);
             }

@@ -59,6 +59,8 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import razerdp.basepopup.BasePopupWindow;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -173,21 +175,27 @@ public class QualityTypeProductActivity extends BaseActivity {
                 loadData();
             }
         });
-        download_btn_communal.attachToRecyclerView(communal_recycler, null, new RecyclerView.OnScrollListener() {
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
+        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 scrollY += dy;
                 if (!recyclerView.canScrollVertically(-1)) {
                     scrollY = 0;
                 }
-                if (screenHeight == 0) {
-                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                    screenHeight = app.getScreenHeight();
-                }
-                if (scrollY >= screenHeight) {
-                    download_btn_communal.setVisibility(View.VISIBLE);
+                if (scrollY > screenHeight * 1.5 && dy < 0) {
+                    if (download_btn_communal.getVisibility() == GONE) {
+                        download_btn_communal.setVisibility(VISIBLE);
+                        download_btn_communal.hide(false);
+                    }
+                    if (!download_btn_communal.isVisible()) {
+                        download_btn_communal.show();
+                    }
                 } else {
-                    download_btn_communal.setVisibility(View.GONE);
+                    if (download_btn_communal.isVisible()) {
+                        download_btn_communal.hide();
+                    }
                 }
             }
         });

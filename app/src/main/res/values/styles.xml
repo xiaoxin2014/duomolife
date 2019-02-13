@@ -93,7 +93,7 @@
 
     <style name="RadioGroupStyleBottom">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/sc_mm_98</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center</item>
     </style>
@@ -104,14 +104,14 @@
         <item name="android:paddingTop">@dimen/sc_mm_10</item>
         <item name="android:paddingBottom">@dimen/sc_mm_10</item>
         <item name="android:textSize">@dimen/sc_mm_20</item>
-        <item name="android:drawablePadding">@dimen/sc_mm_5</item>
+        <item name="android:drawablePadding">@dimen/sc_mm_10</item>
         <item name="android:textColor">@color/sel_text_gray_light_blue</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
     </style>
 
-    <style name="RadioButtonStyleBottom.Checked">
+    <style name="RadioButtonStyleBottom.Checked" parent="RadioButtonStyleBottom">
         <item name="android:checked">true</item>
     </style>
 

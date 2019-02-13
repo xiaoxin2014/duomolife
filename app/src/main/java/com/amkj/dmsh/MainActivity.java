@@ -151,7 +151,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private AlertView mAlertViewExt;
     private EditText etName;
     private List<MainIconBean> iconDataList = new ArrayList<>();
-    private List<CommunalADActivityBean> adActivityList = new ArrayList<>();
     public static final String ImgKey = "ImgPath";
     public static final String TimeKey = "ShowSeconds";
     public static final String SkipUrlKey = "SkipUrl";
@@ -164,6 +163,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
     private AlertDialogHelper alertDialogHelper;
+//    底部限制98 padding top&bottom 10*2 drawablepadding 10 textsize 20
     private float iconHeight = 32f;
 
     @Override
