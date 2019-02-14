@@ -16,9 +16,20 @@
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/fbl_integral_lottery_avatar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         app:flexWrap="wrap"
-        app:maxLine="2"
+        app:maxLine="1"
+        app:dividerDrawable="@drawable/item_divider_five_white"
+        app:showDivider="middle"
         android:layout_marginLeft="@dimen/sc_mm_36" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/sc_mm_24"
+        android:textColor="@color/text_black_t"
+        android:text="更多"
+        android:id="@+id/tv_integral_lottery_prize_more"
+        android:layout_marginLeft="@dimen/sc_mm_10"
+        android:layout_height="wrap_content" />
 </LinearLayout>

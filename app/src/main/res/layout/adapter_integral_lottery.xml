@@ -110,7 +110,5 @@
         android:layout_marginRight="@dimen/sc_mm_52"
         android:gravity="center"
         android:id="@+id/rel_integral_lottery_prize"
-        android:layout_height="@dimen/sc_mm_192"
-        >
-    </RelativeLayout>
+        android:layout_height="@dimen/sc_mm_192"/>
 </LinearLayout>

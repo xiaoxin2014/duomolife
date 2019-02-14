@@ -166,8 +166,14 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                         helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.setVisibility(View.VISIBLE);
 //                        清理子控件无效
                         helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.removeAllViews();
-                        for (WinListBean winListBean : previousInfoBean.getWinList()) {
+                        for (int i = 0; i < (previousInfoBean.getWinList().size() > 5 ? 5 : previousInfoBean.getWinList().size()); i++) {
+                            WinListBean winListBean = previousInfoBean.getWinList().get(i);
                             helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
+                        }
+                        if(previousInfoBean.getWinList().size() > 5){
+                            helper.integralLotteryEndLoseHelper.tv_integral_lottery_prize_more.setVisibility(View.VISIBLE);
+                        }else{
+                            helper.integralLotteryEndLoseHelper.tv_integral_lottery_prize_more.setVisibility(View.GONE);
                         }
                     } else {
                         helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.setVisibility(View.GONE);
@@ -184,8 +190,16 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                     tvIntegralPrizeStatus.setSelected(true);
                     helper.rel_integral_lottery_prize.addView(helper.endPrize);
                     helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.removeAllViews();
-                    for (WinListBean winListBean : previousInfoBean.getWinList()) {
+                    for (int i = 0; i < (previousInfoBean.getWinList().size() > 5 ? 5 : previousInfoBean.getWinList().size()); i++) {
+                        WinListBean winListBean = previousInfoBean.getWinList().get(i);
                         helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
+                    }
+                    if(previousInfoBean.getWinList().size() > 5){
+                        if(previousInfoBean.getWinList().size() > 5){
+                            helper.integralLotteryEndPrizeHelper.tv_integral_lottery_prize_more.setVisibility(View.VISIBLE);
+                        }else{
+                            helper.integralLotteryEndPrizeHelper.tv_integral_lottery_prize_more.setVisibility(View.GONE);
+                        }
                     }
                     helper.integralLotteryEndPrizeHelper.ll_lottery_end_prize.setTag(previousInfoBean);
                 }
@@ -211,7 +225,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     }
 
     private void getConstant() {
-        if(constantMethod!=null){
+        if (constantMethod != null) {
             constantMethod.createSchedule();
             if (constantMethod != null) {
                 constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
@@ -413,10 +427,10 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
     private ImageView createImageView(WinListBean winListBean) {
         CircleImageView imageView = new CircleImageView(context);
+        imageView.setBorderWidth(1);
+        imageView.setBorderColor(context.getResources().getColor(R.color.text_gray_c));
         int size = AutoSizeUtils.mm2px(mAppContext, 60);
-        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(size, size);
-        layoutParams.rightMargin = AutoSizeUtils.mm2px(mAppContext, 24);
-        imageView.setLayoutParams(layoutParams);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(size, size));
         GlideImageLoaderUtil.loadHeaderImg(context, imageView, getStrings(winListBean.getAvatar()));
         return imageView;
     }
@@ -424,6 +438,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     public class IntegralLotteryEndLoseHelper {
         @BindView(R.id.fbl_integral_lottery_avatar)
         FlexboxLayout fbl_integral_lottery_avatar;
+        @BindView(R.id.tv_integral_lottery_prize_more)
+        TextView tv_integral_lottery_prize_more;
         @BindView(R.id.tv_integral_lottery_mine_code)
         TextView tv_integral_lottery_mine_code;
         @BindView(R.id.ll_integral_lottery_prize)
@@ -468,6 +484,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     public class IntegralLotteryEndPrizeHelper {
         @BindView(R.id.fbl_integral_lottery_avatar)
         FlexboxLayout fbl_integral_lottery_avatar;
+        @BindView(R.id.tv_integral_lottery_prize_more)
+        TextView tv_integral_lottery_prize_more;
         @BindView(R.id.ll_lottery_end_prize)
         LinearLayout ll_lottery_end_prize;
 
