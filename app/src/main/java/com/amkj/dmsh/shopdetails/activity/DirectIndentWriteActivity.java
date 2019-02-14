@@ -618,6 +618,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
+                if(pullFootView.rect_indent_number.getVisibility() == VISIBLE){
+                    pullFootView.rect_indent_number.setVisibility(GONE);
+                }
                 dealingIndentPayResult(result);
             }
 
@@ -1119,6 +1122,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * 结算金额 不带优惠券
      */
     private void getIndentDiscounts(boolean disuseCoupon) {
+        couponId = 0;
         if (discountBeanList.size() > 0) {
             //优惠详情信息
             String url = Url.BASE_URL + Url.INDENT_DISCOUNTS_INFO;
@@ -1536,6 +1540,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         //留言编辑
         @BindView(R.id.edt_direct_product_note)
         EditText edt_direct_product_note;
+        @BindView(R.id.ll_indent_product_note)
+        LinearLayout ll_indent_product_note;
         //支付宝支付
         @BindView(R.id.rb_checked_alipay)
         RadioButton rb_checked_aliPay;
@@ -1621,6 +1627,24 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         payCancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!TextUtils.isEmpty(orderCreateNo)){
+//            数量选择隐藏
+            if(pullFootView.rect_indent_number.getVisibility() == VISIBLE){
+                pullFootView.rect_indent_number.setVisibility(GONE);
+            }
+//            留言禁止编辑
+            if(pullFootView.edt_direct_product_note.getText().toString().trim().length()<1){
+                pullFootView.ll_indent_product_note.setVisibility(GONE);
+            }else{
+                pullFootView.ll_indent_product_note.setVisibility(VISIBLE);
+                pullFootView.edt_direct_product_note.setEnabled(false);
+            }
+        }
     }
 
     @Override

@@ -91,6 +91,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/gap_left"
             android:paddingRight="@dimen/gap_right"
+            android:id="@+id/ll_indent_product_note"
             android:background="@color/white"
             android:minHeight="@dimen/sc_mm_88">
 

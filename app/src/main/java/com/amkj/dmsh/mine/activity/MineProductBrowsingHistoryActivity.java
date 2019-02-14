@@ -226,8 +226,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
              */
             MineBrowsHistoryBean parentMineBrowsHistoryBean = (MineBrowsHistoryBean) mineBrowsHistoryBeanList.get(parentPosition);
             if (currentChildStatus) {
-//                                    数据是否已加载完
-                if (parentMineBrowsHistoryBean.isDataLoaded()) {
+//                                    数据是否已加载完 || 是否已选择过父类
+                if (parentMineBrowsHistoryBean.isDataLoaded() || parentMineBrowsHistoryBean.getStatusTypeEnum() != null) {
                     boolean parentStatus = true;
                     for (GoodsInfoListBean goodsChildInfoListBean : parentMineBrowsHistoryBean.getSubItems()) {
                         if (!goodsChildInfoListBean.isSelectStatus()) {
@@ -236,7 +236,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                         }
                     }
                     parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
-                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? null : MANUAL_SELECTION);
+                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? MANUAL_SELECTION:parentMineBrowsHistoryBean.getStatusTypeEnum());
                 } else {
                     parentMineBrowsHistoryBean.setSelectStatus(false);
                 }
