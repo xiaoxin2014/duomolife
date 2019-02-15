@@ -307,13 +307,14 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
             if (selectionStatus) {
                 setAllChecked();
             } else {
+                /**
+                 * 判断是否全部取消
+                 */
                 if (check_box_all_del.isChecked()) {
                     check_box_all_del.setChecked(false);
-                    selectionStatusTypeEnum = AUTO_SELECTION;
-                } else {
-                    //            取消选中
-                    cancelSelectionStatus();
                 }
+                //            取消选中
+                cancelSelectionStatus();
             }
         } else if (selectionStatus) {
 //            加载完，或者日期已全部加载
