@@ -408,9 +408,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (communalDetailObjectBean != null
                     && TYPE_PRODUCT_MORE == communalDetailObjectBean.getItemType()
                     && communalDetailObjectBean.getMoreDataList() != null) {
+                int serviceMorePosition = 0;
+                if (shopDetailBeanList.size() > 0) {
+                    serviceMorePosition = shopDetailBeanList.size() - 1;
+                }
                 shopDetailBeanList.removeAll(serviceDataList);
                 shopDetailBeanList.addAll(communalDetailObjectBean.getMoreDataList());
-                communalDetailAdapter.notifyDataSetChanged();
+                if (serviceMorePosition < shopDetailBeanList.size()) {
+                    communalDetailAdapter.notifyItemRangeChanged(serviceMorePosition,
+                            shopDetailBeanList.size());
+                } else {
+                    communalDetailAdapter.notifyDataSetChanged();
+                }
             }
         });
         communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
@@ -1400,7 +1409,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 presentProductInfoBeans.clear();
                 for (int i = 0; i < preIds.length; i++) {
                     String preId = preIds[i];
-                    for (PresentProductInfoBean presentProductInfoBean:shopPropertyBean.getPresentProductInfoList()) {
+                    for (PresentProductInfoBean presentProductInfoBean : shopPropertyBean.getPresentProductInfoList()) {
                         if (preId.equals(presentProductInfoBean.getPresentSkuId())) {
                             if (presentProductInfoBean.getPresentQuantity() > 0) {
                                 if (i == 0) {
