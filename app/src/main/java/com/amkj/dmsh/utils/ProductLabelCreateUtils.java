@@ -46,7 +46,7 @@ public class ProductLabelCreateUtils implements View.OnClickListener {
 
     public static ProductLabelCreateUtils getLabelInstance() {
         if (productLabelCreateUtils == null) {
-            synchronized (QyServiceUtils.class) {
+            synchronized (ProductLabelCreateUtils.class) {
                 if (productLabelCreateUtils == null) {
                     productLabelCreateUtils = new ProductLabelCreateUtils();
                 }

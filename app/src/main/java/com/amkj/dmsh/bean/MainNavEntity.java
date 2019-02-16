@@ -24,18 +24,9 @@ public class MainNavEntity {
     private String currentTime;
     private String msg;
     private String expireTime;
-    private String modifyTime;
     private String code;
     @SerializedName("result")
     private List<MainNavBean> mainNavBeanList;
-
-    public String getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(String modifyTime) {
-        this.modifyTime = modifyTime;
-    }
 
     public String getCurrentTime() {
         return currentTime;

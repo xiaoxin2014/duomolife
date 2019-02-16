@@ -36,6 +36,7 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
+import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.kingja.loadsir.core.LoadSir;
 import com.leon.channel.helper.ChannelReaderUtil;
 import com.microquation.linkedme.android.LinkedME;
@@ -122,6 +123,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     //    是否已初始化TuSdk
     private boolean isInitTuSdk;
     private Map<String, Object> ossMap;
+    private int activityCount = 0;
 
     public TinkerBaseApplicationLike(Application application, int tinkerFlags,
                                      boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime,
@@ -172,7 +174,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
             @Override
             public void onActivityStarted(Activity activity) {
-
+                activityCount++;
             }
 
             @Override
@@ -187,7 +189,11 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
             @Override
             public void onActivityStopped(Activity activity) {
-
+                activityCount--;
+//                处在后台，启动服务更新底部导航和启动广告
+                if(activityCount==0){
+                    saveUpdateDate(activity);
+                }
             }
 
             @Override
@@ -299,6 +305,15 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                 }
             });
         }
+    }
+
+    /**
+     * 保存或者更新数据
+     * @param activity
+     */
+    private void saveUpdateDate(Activity activity) {
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(activity);
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(activity);
     }
 
     /**

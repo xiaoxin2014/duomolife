@@ -67,6 +67,7 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.utils.FileStreamUtils;
+import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
@@ -100,7 +101,6 @@ import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIME
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
 import static com.amkj.dmsh.constant.ConstantMethod.adDialogClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
@@ -200,7 +200,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 //            弹窗广告
             getADDialog();
 //            启动广告
-            getLaunchBanner();
+            SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
 
             if (isDebugTag) {
                 getSelectedDialog();
@@ -211,7 +211,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 //            获取地址版本
             getAddressVersion();
 //            获取图标更新
-            getMainIconData();
+            SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this);
 //            获取push信息
             getFirstPushInfo();
 //            获取更新
@@ -626,48 +626,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     /**
-     * 获取底部导航栏数据
-     */
-    private void getMainIconData() {
-        String url = Url.BASE_URL + Url.H_BOTTOM_ICON;
-        Map<String, Object> params = new HashMap<>();
-        /**
-         * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
-         */
-        params.put("version", 2);
-        SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
-                if (mainNavEntity != null
-                        && mainNavEntity.getCode().equals(SUCCESS_CODE)
-                        && mainNavEntity.getMainNavBeanList().size() == 5
-                        && !isTimeExpress(mainNavEntity)) {
-                    /**
-                     * v3.1.9 修改判断 当前时间是否大于过期时间
-                     */
-                    SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.putString("NavDate", result);
-                    edit.apply();
-                    for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
-                        saveImageToFile(MainActivity.this, mainNavBean.getPicUrl());
-                        saveImageToFile(MainActivity.this, mainNavBean.getPicUrlSecond());
-                    }
-                } else {
-                    sharedPreferences.edit().clear().apply();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                sharedPreferences.edit().clear().apply();
-            }
-        });
-    }
-
-    /**
      * 获取最新账号信息 避免黑名单、异常账户登录
      *
      * @v3.2.0
@@ -894,71 +852,6 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                         edit.apply();
                     }
                 }
-            }
-        });
-    }
-
-    /**
-     * 启动广告
-     */
-    private void getLaunchBanner() {
-        String url = Url.BASE_URL + Url.H_LAUNCH_AD_DIALOG;
-        SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor edit = sharedPreferences.edit();
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalADActivityEntity categoryAD = gson.fromJson(result, CommunalADActivityEntity.class);
-                if (categoryAD == null ||
-                        !categoryAD.getCode().equals(SUCCESS_CODE) ||
-                        categoryAD.getCommunalADActivityBeanList() == null ||
-                        categoryAD.getCommunalADActivityBeanList().size() < 1) {
-                    edit.clear().apply();
-                    return;
-                }
-                List<CommunalADActivityBean> communalADActivityBeanList = categoryAD.getCommunalADActivityBeanList();
-                CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
-                if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
-                    String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
-                    if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
-                        setLaunchAdData(communalADActivityBean, edit);
-                    }
-                } else {
-                    edit.clear().apply();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                edit.clear().apply();
-            }
-        });
-    }
-
-    private void setLaunchAdData(CommunalADActivityBean communalADActivityBean, SharedPreferences.Editor edit) {
-        if (communalADActivityBean == null) {
-            edit.clear().apply();
-            return;
-        }
-        final String pic_url = communalADActivityBean.getPicUrl();
-        GlideImageLoaderUtil.saveImageToFile(MainActivity.this, pic_url, "launch_ad", new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
-            @Override
-            public void onSuccess(File file) {
-                if (edit != null && file != null) {
-                    edit.putString(ImgKey, file.getAbsolutePath());
-                    edit.putString(OriginalImgUrl, communalADActivityBean.getPicUrl());
-                    edit.putInt(LauncherAdIdKey, communalADActivityBean.getId());
-                    edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
-                    edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
-                            ? communalADActivityBean.getAndroidLink() : "app://");
-                    edit.apply();
-                }
-            }
-
-            @Override
-            public void onError() {
-                edit.clear().apply();
             }
         });
     }
@@ -1335,6 +1228,8 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     }
 
     private void goBack() {
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this);
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
         if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(MainActivity.this);
             alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
