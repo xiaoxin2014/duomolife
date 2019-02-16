@@ -70,7 +70,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
 import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
@@ -167,13 +166,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
 
                 .create());
         qualityPreviousAdapter = new QualityHistoryAdapter(welfarePreviousList);
-        qualityPreviousAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getPreviousTopic();
-            }
-        }, rv_communal_pro);
+        qualityPreviousAdapter.setEnableLoadMore(false);
         rv_communal_pro.setAdapter(qualityPreviousAdapter);
         qualityPreviousAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -413,8 +406,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
      */
     private void getPreviousTopic() {
         Map<String, Object> params = new HashMap<>();
-        params.put("showCount", TOTAL_COUNT_TWENTY);
-        params.put("currentPage", page);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_DML_PREVIOUS_THEME, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
