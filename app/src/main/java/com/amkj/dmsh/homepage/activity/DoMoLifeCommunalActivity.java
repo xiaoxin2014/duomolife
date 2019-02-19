@@ -100,7 +100,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
-;
 
 /**
  * @author LGuiPeng
@@ -541,7 +540,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     return true;
                 }
             });
-
             // 禁止响应按back键的事件
             builder.setCancelable(false);
             AlertDialog dialog = builder.create();
