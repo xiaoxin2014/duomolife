@@ -1495,9 +1495,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (shopPropertyBean != null) {
             qyProductIndentInfo = new QyProductIndentInfo();
             qyProductIndentInfo.setUrl(sharePageUrl + productId);
-            qyProductIndentInfo.setTitle(getStrings(shopPropertyBean.getName()));
+            qyProductIndentInfo.setTitle(getStrings(shopPropertyBean.getSubtitle()));
             qyProductIndentInfo.setPicUrl(shopPropertyBean.getPicUrl());
-            qyProductIndentInfo.setDesc(getStrings(shopPropertyBean.getActivityTag()));
+            qyProductIndentInfo.setDesc(getStrings(shopPropertyBean.getName()));
             qyProductIndentInfo.setNote("￥" + shopPropertyBean.getPrice());
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, "自营商品详情", sharePageUrl + productId, qyProductIndentInfo);

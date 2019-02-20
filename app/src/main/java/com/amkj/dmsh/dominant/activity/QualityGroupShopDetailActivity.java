@@ -1042,9 +1042,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             sourceUrl = sharePageUrl + groupShopDetailsBean.getGpInfoId();
             sourceTitle = "我的拼团：" + groupShopDetailsBean.getName();
             qyProductIndentInfo.setUrl(sourceUrl);
-            qyProductIndentInfo.setTitle(getStrings(groupShopDetailsBean.getName()));
+            qyProductIndentInfo.setTitle(getStrings(groupShopDetailsBean.getSubtitle()));
             qyProductIndentInfo.setPicUrl(groupShopDetailsBean.getGpPicUrl());
-            qyProductIndentInfo.setDesc(getStrings(groupShopDetailsBean.getGpType()));
+            qyProductIndentInfo.setDesc(getStrings(groupShopDetailsBean.getName()));
             qyProductIndentInfo.setNote("￥" + groupShopDetailsBean.getGpPrice());
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
