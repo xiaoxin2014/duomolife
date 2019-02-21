@@ -25,6 +25,7 @@ import com.zhouyou.http.exception.ApiException;
 import com.zhouyou.http.model.HttpParams;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -82,28 +83,40 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param netLoadListener
      */
     public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
+        WeakReference<Context> weakReference = new WeakReference<Context>(context);
         if (NetWorkUtils.checkNet(context)) {
 //            先进行框架初始化
             NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = getHttpParams(params);
+
             EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
-                    if (netLoadListener != null) {
-                        netLoadListener.onNotNetOrException();
-                        netLoadListener.onError(e);
+                    if (weakReference.get()!=null) {
+                        try {
+                            if (netLoadListener != null) {
+                                netLoadListener.onNotNetOrException();
+                                netLoadListener.onError(e);
+                            }
+                        } catch (Exception e1) {
+                        }
                     }
                 }
 
                 @Override
                 public void onSuccess(String result) {
-                    try {
-                        if (netLoadListener != null) {
-                            netLoadListener.onSuccess(result);
+                    if (weakReference.get()!=null) {
+                        try {
+                            if (netLoadListener != null) {
+                                netLoadListener.onSuccess(result);
+                            }
+                        } catch (Exception e) {
+                            try {
+                                netLoadListener.onNotNetOrException();
+                                netLoadListener.onError(e);
+                            } catch (Exception e1) {
+                            }
                         }
-                    } catch (Exception e) {
-                        netLoadListener.onNotNetOrException();
-                        netLoadListener.onError(e);
                     }
                 }
             });
@@ -204,32 +217,38 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                     .execute(new SimpleCallBack<CacheResult<String>>() {
                         @Override
                         public void onError(ApiException e) {
-                            if (netCacheLoadListener != null) {
-                                netCacheLoadListener.onError(e);
-                                netCacheLoadListener.onNotNetOrException();
+                            try {
+                                if (netCacheLoadListener != null) {
+                                    netCacheLoadListener.onError(e);
+                                    netCacheLoadListener.onNotNetOrException();
+                                }
+                            } catch (Exception e1) {
                             }
                         }
 
                         @Override
                         public void onSuccess(CacheResult<String> cacheResult) {
-                            if(cacheResult==null){
-                                if (netCacheLoadListener != null) {
-                                    netCacheLoadListener.onError(new Throwable("数据为空！"));
-                                    netCacheLoadListener.onNotNetOrException();
+                            try {
+                                if(cacheResult==null){
+                                    if (netCacheLoadListener != null) {
+                                        netCacheLoadListener.onError(new Throwable("数据为空！"));
+                                        netCacheLoadListener.onNotNetOrException();
+                                    }
+                                    return;
                                 }
-                                return;
-                            }
-                            String result = cacheResult.data;
-                            if (!TextUtils.isEmpty(result)) {
-                                if (netCacheLoadListener != null) {
-                                    netCacheLoadListener.onSuccess(result);
-                                    netCacheLoadListener.onSuccessCacheResult(cacheResult);
+                                String result = cacheResult.data;
+                                if (!TextUtils.isEmpty(result)) {
+                                    if (netCacheLoadListener != null) {
+                                        netCacheLoadListener.onSuccess(result);
+                                        netCacheLoadListener.onSuccessCacheResult(cacheResult);
+                                    }
+                                } else {
+                                    if (netCacheLoadListener != null) {
+                                        netCacheLoadListener.onError(new Throwable("缓存为空！"));
+                                        netCacheLoadListener.onNotNetOrException();
+                                    }
                                 }
-                            } else {
-                                if (netCacheLoadListener != null) {
-                                    netCacheLoadListener.onError(new Throwable("缓存为空！"));
-                                    netCacheLoadListener.onNotNetOrException();
-                                }
+                            } catch (Exception e) {
                             }
                         }
                     });
