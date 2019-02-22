@@ -44,7 +44,7 @@ public class TimeShowShaftEntity extends BaseTimeEntity{
         private String name;
         private int type;
         @SerializedName("hourList")
-        private String[] hourShaft;
+        private List<String> hourShaft;
 
         public String getDate() {
             return date;
@@ -70,12 +70,15 @@ public class TimeShowShaftEntity extends BaseTimeEntity{
             this.type = type;
         }
 
-        public String[] getHourShaft() {
+        public List<String> getHourShaft() {
             return hourShaft;
         }
 
-        public void setHourShaft(String[] hourShaft) {
+        public void setHourShaft(List<String> hourShaft) {
             this.hourShaft = hourShaft;
+        }
+
+        public TimeShowShaftBean() {
         }
 
         @Override
@@ -88,17 +91,14 @@ public class TimeShowShaftEntity extends BaseTimeEntity{
             dest.writeString(this.date);
             dest.writeString(this.name);
             dest.writeInt(this.type);
-            dest.writeStringArray(this.hourShaft);
-        }
-
-        public TimeShowShaftBean() {
+            dest.writeStringList(this.hourShaft);
         }
 
         protected TimeShowShaftBean(Parcel in) {
             this.date = in.readString();
             this.name = in.readString();
             this.type = in.readInt();
-            this.hourShaft = in.createStringArray();
+            this.hourShaft = in.createStringArrayList();
         }
 
         public static final Creator<TimeShowShaftBean> CREATOR = new Creator<TimeShowShaftBean>() {

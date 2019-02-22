@@ -252,7 +252,7 @@ public class SpringSaleFragment extends BaseFragment {
             isSameDayFirst = false;
             timeShowBean = showTimeList.get(0);
             searchDateDay = timeShowBean.getDate();
-            searchDateHour = timeShowBean.getHourShaft()[0];
+            searchDateHour = timeShowBean.getHourShaft().get(0);
             getProductData();
         } else {
             NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
@@ -327,36 +327,32 @@ public class SpringSaleFragment extends BaseFragment {
                             } else {
                                 springSaleRecyclerAdapter.setEnableLoadMore(false);
                                 if (timeForeShowEntity.getCode().equals(EMPTY_CODE)) {
-                                    for (int i = 0; i < timeShowBean.getHourShaft().length; i++) {
-                                        if (searchDateHour.equals(timeShowBean.getHourShaft()[i])) {
-                                            page = 1;
-                                            if (i == timeShowBean.getHourShaft().length - 1) {
+                                    int currentPosition = timeShowBean.getHourShaft().lastIndexOf(searchDateHour);
+                                    if(currentPosition!=-1){
+                                        page = 1;
+                                        if (currentPosition == timeShowBean.getHourShaft().size() - 1) {
 //                                                更换天数时间轴
 //                                                是否是最后一天
-                                                for (int j = 0; j < showTimeList.size(); j++) {
-                                                    if (timeShowBean.getDate().equals(showTimeList.get(j).getDate())) {
-                                                        if (j == showTimeList.size() - 1) {
+                                            int currentDayIndex = showTimeList.indexOf(timeShowBean);
+                                            if(currentDayIndex!=-1){
+                                                if (currentDayIndex == showTimeList.size() - 1) {
 //                                                            最后一天
-                                                            getTopRecommendData();
-                                                        } else {
-                                                            timeShowBean = showTimeList.get(++j);
-                                                            searchDateHour = timeShowBean.getHourShaft()[0];
-                                                            oldDateDay = searchDateDay;
-                                                            searchDateDay = timeShowBean.getDate();
+                                                    getTopRecommendData();
+                                                } else {
+                                                    timeShowBean = showTimeList.get(currentDayIndex+1);
+                                                    searchDateHour = timeShowBean.getHourShaft().get(0);
+                                                    oldDateDay = searchDateDay;
+                                                    searchDateDay = timeShowBean.getDate();
 //                                                            更换天数 重置同一天只展示一次week
-                                                            isSameDayFirst = false;
-                                                            getProductData();
-                                                        }
-                                                        break;
-                                                    }
+                                                    isSameDayFirst = false;
+                                                    getProductData();
                                                 }
-                                            } else {
-//                                                更换小时时间轴
-                                                searchDateHour = timeShowBean.getHourShaft()[++i];
-                                                oldDateDay = searchDateDay;
-                                                getProductData();
                                             }
-                                            break;
+                                        } else {
+//                                                更换小时时间轴
+                                            searchDateHour = timeShowBean.getHourShaft().get(currentPosition+1);
+                                            oldDateDay = searchDateDay;
+                                            getProductData();
                                         }
                                     }
                                 } else {

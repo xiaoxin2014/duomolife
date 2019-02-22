@@ -38,14 +38,14 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         for (TimeShowShaftBean timeShowBean : timeShowBeanList) {
             if (timeShowBean.getHourShaft() != null
-                    && timeShowBean.getHourShaft().length > 0) {
+                    && timeShowBean.getHourShaft().size() > 0) {
                 if (timeShowBean.getType() > 1) {
                     timeShowBeanWaitList.add(timeShowBean);
                 } else if (timeShowBean.getType() == 1) {
                     List<String> openString = new ArrayList<>();
                     List<String> waitString = new ArrayList<>();
-                    for (int i = 0; i < timeShowBean.getHourShaft().length; i++) {
-                        String shaftTime = timeShowBean.getHourShaft()[i];
+                    for (int i = 0; i < timeShowBean.getHourShaft().size(); i++) {
+                        String shaftTime = timeShowBean.getHourShaft().get(i);
                         if(Integer.parseInt(getNumber(shaftTime))>getTimeHour(systemTime)){
                             waitString.add(shaftTime);
                         }else{
@@ -57,7 +57,7 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
                         timeShowWaitBean.setType(timeShowBean.getType());
                         timeShowWaitBean.setDate(timeShowBean.getDate());
                         timeShowWaitBean.setName(timeShowBean.getName());
-                        timeShowWaitBean.setHourShaft(openString.toArray(new String[openString.size()]));
+                        timeShowWaitBean.setHourShaft(openString);
                         timeShowBeanOpeningList.add(timeShowWaitBean);
                     }
                     if(waitString.size()>0){
@@ -65,7 +65,7 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
                         timeShowWaitBean.setType(timeShowBean.getType());
                         timeShowWaitBean.setDate(timeShowBean.getDate());
                         timeShowWaitBean.setName(timeShowBean.getName());
-                        timeShowWaitBean.setHourShaft(waitString.toArray(new String[waitString.size()]));
+                        timeShowWaitBean.setHourShaft(waitString);
                         timeShowBeanWaitList.add(timeShowWaitBean);
                     }
                 } else {
