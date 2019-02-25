@@ -6,7 +6,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/5/17
- * class description:请输入类描述
+ * class description:log详情
  */
 
 public final class Log {

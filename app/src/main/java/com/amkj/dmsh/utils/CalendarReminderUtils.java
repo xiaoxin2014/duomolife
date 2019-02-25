@@ -36,9 +36,9 @@ public class CalendarReminderUtils {
      */
     private int checkAndAddCalendarAccount(Context context) {
         int oldId = checkCalendarAccount(context);
-        if( oldId >= 0 ){
+        if (oldId >= 0) {
             return oldId;
-        }else{
+        } else {
             long addId = addCalendarAccount(context);
             if (addId >= 0) {
                 return checkCalendarAccount(context);
@@ -104,13 +104,13 @@ public class CalendarReminderUtils {
      * 添加日历事件
      * previousDate
      */
-    public void addCalendarEvent(Context context, String title, String description, long reminderTime,long endTime,long priorMinutes) {
+    public int addCalendarEvent(Context context, String title, String description, long reminderTime, long endTime, long priorMinutes) {
         if (context == null) {
-            return;
+            return 0;
         }
         int calId = checkAndAddCalendarAccount(context); //获取日历账户的id
         if (calId < 0) { //获取账户id失败直接返回，添加日历事件失败
-            return;
+            return 0;
         }
 
         //添加日历事件
@@ -129,7 +129,7 @@ public class CalendarReminderUtils {
         event.put(CalendarContract.Events.EVENT_TIMEZONE, "Asia/Shanghai");//这个是时区，必须有
         Uri newEvent = context.getContentResolver().insert(Uri.parse(CALENDER_EVENT_URL), event); //添加事件
         if (newEvent == null) { //添加日历事件失败直接返回
-            return;
+            return 0;
         }
 
         //事件提醒的设定
@@ -139,15 +139,16 @@ public class CalendarReminderUtils {
         values.put(CalendarContract.Reminders.MINUTES, priorMinutes);// 提前1分钟提醒
         values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
         Uri uri = context.getContentResolver().insert(Uri.parse(CALENDER_REMINDER_URL), values);
-        if(uri == null) { //添加事件提醒失败直接返回
-            return;
+        if (uri == null) { //添加事件提醒失败直接返回
+            return 0;
         }
+        return 1;
     }
 
     /**
      * 删除日历事件
      */
-    public void deleteCalendarEvent(Context context,String title) {
+    public void deleteCalendarEvent(Context context, String title) {
         if (context == null) {
             return;
         }

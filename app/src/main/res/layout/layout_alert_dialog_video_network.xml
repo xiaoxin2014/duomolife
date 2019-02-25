@@ -13,6 +13,7 @@
         android:gravity="center"
         android:lineSpacingExtra="@dimen/dimen_5_dp"
         android:minHeight="@dimen/sc_mm_68"
+        android:text="提示"
         android:singleLine="true"
         android:ellipsize="end"
         android:paddingLeft="@dimen/sc_mm_30"
@@ -22,6 +23,7 @@
 
     <TextView
         android:id="@+id/tv_alert_message"
+        android:text="弹窗内容"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:layout_height="wrap_content"

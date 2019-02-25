@@ -1,8 +1,10 @@
 package com.amkj.dmsh.homepage.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -10,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
@@ -56,7 +59,10 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.utils.CalendarReminderUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.Log;
+import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
@@ -73,6 +79,7 @@ import com.yanzhenjie.permission.Permission;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +91,8 @@ import butterknife.OnClick;
 import me.jessyan.autosize.AutoSize;
 
 import static android.app.Activity.RESULT_OK;
+import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
+import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
@@ -134,6 +143,9 @@ public class AliBCFragment extends BaseFragment {
     private AlertDialogHelper alertDialogHelper;
     private boolean isCanEditStatusBar = false;
     private ImmersionBar immersionBar;
+    private WeakReference<Activity> activityWeakReference;
+    private AlertDialogHelper notificationAlertDialogHelper;
+    private AlertDialogHelper marketStoreGradeDialog;
 
     @Override
     protected int getContentView() {
@@ -293,6 +305,7 @@ public class AliBCFragment extends BaseFragment {
         if (paddingStatus.contains("true")) {
             isCanEditStatusBar = true;
         }
+        activityWeakReference = new WeakReference<Activity>(getActivity());
     }
 
     private void setErrorException(WebView view) {
@@ -697,6 +710,33 @@ public class AliBCFragment extends BaseFragment {
                                 });
                             }
                             break;
+                        //                            添加日程提醒
+                        case "calendarReminder":
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addCalendarReminder(jsInteractiveBean);
+                                }
+                            });
+                            break;
+//                            打开通知提醒
+                        case "openNotification":
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    openNotification(jsInteractiveBean);
+                                }
+                            });
+                            break;
+//                            app评分跳转app
+                        case "appMarketGrade":
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    skipAppMarketGrade(jsInteractiveBean);
+                                }
+                            });
+                            break;
                         default:
                             jsInteractiveEmpty(null);
                             break;
@@ -708,6 +748,139 @@ public class AliBCFragment extends BaseFragment {
                 jsInteractiveException(null);
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * 跳转应用商店评分
+     *
+     * @param jsInteractiveBean
+     */
+    private void skipAppMarketGrade(JsInteractiveBean jsInteractiveBean) {
+        if (activityWeakReference.get() == null) {
+            return;
+        }
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData == null || otherData.get("gradeTitle") == null) {
+            return;
+        }
+        //        获取已安装应用商店的包名列表
+        try {
+            List<PackageInfo> packageInfo = activityWeakReference.get().getPackageManager().getInstalledPackages(0);
+            List<String> marketPackages = MarketUtils.getMarketPackages();
+            String appMarketStore = "";
+            outLoop:
+            for (int i = 0; i < packageInfo.size(); i++) {
+                for (int j = 0; j < marketPackages.size(); j++) {
+                    if (packageInfo.get(i).packageName.equals(marketPackages.get(j))) {
+                        appMarketStore = marketPackages.get(j);
+                        break outLoop;
+                    }
+                }
+            }
+            if (!TextUtils.isEmpty(appMarketStore)) {
+                if (marketStoreGradeDialog == null) {
+                    marketStoreGradeDialog = new AlertDialogHelper(activityWeakReference.get());
+                    String finalAppMarketStore = appMarketStore;
+                    marketStoreGradeDialog.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            MarketUtils.launchAppDetail(activityWeakReference.get().getApplicationContext(), activityWeakReference.get().getPackageName(), finalAppMarketStore);
+                        }
+
+                        @Override
+                        public void cancel() {
+                            marketStoreGradeDialog.dismiss();
+                        }
+                    });
+                }
+                String dialogTitle = (String) getMapValue(otherData.get("gradeTitle"), "");
+                String dialogHint = (String) getMapValue(otherData.get("gradeHint"), "提示");
+                String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去评分");
+                marketStoreGradeDialog.setTitle(dialogHint)
+                        .setMsg(dialogTitle)
+                        .setSingleButton(true)
+                        .setConfirmText(confirmText);
+                marketStoreGradeDialog.show();
+            }
+        } catch (Exception e) {
+            Log.d(getClass().getSimpleName(), "应用商店未安装！");
+        }
+    }
+
+    /**
+     * 打开app通知
+     *
+     * @param jsInteractiveBean
+     */
+    private void openNotification(JsInteractiveBean jsInteractiveBean) {
+        if (activityWeakReference.get() == null) {
+            return;
+        }
+        if (jsInteractiveBean.getOtherData() != null && !getDeviceAppNotificationStatus(activityWeakReference.get())) {
+            if (notificationAlertDialogHelper == null) {
+                notificationAlertDialogHelper = new AlertDialogHelper(activityWeakReference.get());
+                notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                    @Override
+                    public void confirm() {
+                        // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", activityWeakReference.get().getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                        notificationAlertDialogHelper.dismiss();
+                    }
+
+                    @Override
+                    public void cancel() {
+                        notificationAlertDialogHelper.dismiss();
+                    }
+                });
+            }
+            Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+            String dialogTitle = (String) getMapValue(otherData.get("notificationTitle"), "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。");
+            String dialogHint = (String) getMapValue(otherData.get("notificationHint"), "通知提示");
+            String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去设置");
+            notificationAlertDialogHelper.setTitle(dialogHint)
+                    .setMsg(dialogTitle)
+                    .setSingleButton(true)
+                    .setConfirmText(confirmText);
+            notificationAlertDialogHelper.show();
+        }
+    }
+
+    /**
+     * 添加日程
+     */
+    private void addCalendarReminder(JsInteractiveBean jsInteractiveBean) {
+        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+        if (otherData != null) {
+            String goodsId = (String) getMapValue(otherData.get("goodsId"), "");
+            String title = (String) getMapValue(otherData.get("title"), "");
+            String description = (String) getMapValue(otherData.get("description"), "");
+            String startTime = (String) getMapValue(otherData.get("startTime"), "");
+            long startTimeMilliSecond = getDateMilliSecond(startTime);
+            String endTime = (String) getMapValue(otherData.get("endTime"), "");
+            long[] endTimeMilliSecond = {getDateMilliSecond(endTime)};
+            if (startTimeMilliSecond == 0) {
+                showToast("时间设置异常，请重新设置！");
+                return;
+            }
+            if (endTimeMilliSecond[0] == 0 || endTimeMilliSecond[0] <= startTimeMilliSecond) {
+                endTimeMilliSecond[0] += 10 * 60 * 1000;
+            }
+            Number number = (Number) getMapValue(otherData.get("priorMinutes"), 1);
+            long priorMinutes = number.longValue();
+            ConstantMethod constantMethod = new ConstantMethod();
+            constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+                @Override
+                public void getPermissionsSuccess() {
+                    CalendarReminderUtils calendarReminderUtils = new CalendarReminderUtils();
+                    addWebReminderCallback(goodsId, calendarReminderUtils.addCalendarEvent(activityWeakReference.get(), title, description, startTimeMilliSecond, endTimeMilliSecond[0], priorMinutes));
+                }
+            });
+            constantMethod.getPermissions(activityWeakReference.get(), Permission.Group.CALENDAR);
         }
     }
 
@@ -1068,6 +1241,15 @@ public class AliBCFragment extends BaseFragment {
     @OnClick(R.id.tv_header_shared)
     void shareData(View view) {
         webViewJs(getResources().getString(R.string.web_share_getData_method));
+    }
+
+    /**
+     * 回调添加日程返回值
+     *
+     * @param backCode
+     */
+    private void addWebReminderCallback(String productId, int backCode) {
+        webViewJs(String.format(getResources().getString(R.string.web_add_reminder), getStrings(productId), backCode));
     }
 
     /**
