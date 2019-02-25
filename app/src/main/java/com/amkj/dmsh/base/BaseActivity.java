@@ -47,6 +47,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     public KProgressHUD loadHud;
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
+    public String TAG = getClass().getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

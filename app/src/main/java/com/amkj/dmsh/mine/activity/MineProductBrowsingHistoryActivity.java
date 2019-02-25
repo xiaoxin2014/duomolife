@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.mine.adapter.MineBrowsingHistoryAdapter;
 import com.amkj.dmsh.mine.bean.MineBrowsHistoryEntity;
 import com.amkj.dmsh.mine.bean.MineBrowsHistoryEntity.MineBrowsHistoryBean;
@@ -32,7 +31,6 @@ import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,14 +161,13 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                 }
             }
         });
-        TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        int screenHeight = tinkerBaseApplicationLike.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 OffsetLinearLayoutManager layoutManager = (OffsetLinearLayoutManager) recyclerView.getLayoutManager();
-                int scrollY = layoutManager.computeVerticalScrollOffset();
-                if (scrollY > screenHeight * 1.5) {
+//                特殊布局 特殊处理
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition > 15) {
                     if (download_btn_communal.getVisibility() == GONE) {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.hide(false);
@@ -236,7 +233,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                         }
                     }
                     parentMineBrowsHistoryBean.setSelectStatus(parentStatus);
-                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? MANUAL_SELECTION:parentMineBrowsHistoryBean.getStatusTypeEnum());
+                    parentMineBrowsHistoryBean.setStatusTypeEnum(parentStatus ? MANUAL_SELECTION : parentMineBrowsHistoryBean.getStatusTypeEnum());
                 } else {
                     parentMineBrowsHistoryBean.setSelectStatus(false);
                 }

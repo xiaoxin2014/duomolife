@@ -1182,6 +1182,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private void addWebReminderCallback(String productId,int backCode) {
         webViewJs(String.format(getResources().getString(R.string.web_add_reminder), getStrings(productId),backCode));
     }
+
     /**
      * @param jsUrl
      */
