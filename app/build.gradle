@@ -12,7 +12,7 @@ android {
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
         versionCode 205
-        versionName '3.2.2'
+        versionName '3.3.0'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
@@ -100,7 +100,7 @@ rebuildChannel {
     channelFile = rootProject.file("channel.txt")
 //    baseDebugApk = 已有Debug APK
 //    baseReleaseApk = file("C:/jiagu/output/13751077044/domolife3.0.8.apk")
-    baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.2.2.apk")
+    baseReleaseApk = new File(project.buildDir, "outputs/apk/release/domolife3.3.0apk")
     //默认为new File(project.buildDir, "rebuildChannel/debug")
 //    debugOutputDir = Debug渠道包输出目录
     //默认为new File(project.buildDir, "rebuildChannel/release")
@@ -185,7 +185,7 @@ dependencies {
     implementation 'cn.jiguang.sdk:jcore:1.2.6'
 
     //状态栏设置
-    implementation 'com.gyf.immersionbar:immersionbar:2.3.3-beta15'
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.3'
 
     //阿里百川
 

@@ -186,16 +186,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     @Override
     protected void initViews() {
         fragmentManager = getSupportFragmentManager();
-        Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
-        String firstTimeCode = intent.getStringExtra("isFirstTime");
-        boolean isFirstTime = TextUtils.isEmpty(firstTimeCode) || getStringChangeBoolean(firstTimeCode);
-        setNavData();
-        if (!TextUtils.isEmpty(type)) {
-            changeAdaptivePage(type);
-        } else {
-            initMainPage();
-        }
+        boolean isFirstTime = setIntentBottomIconData();
         if (isFirstTime) {
 //            弹窗广告
             getADDialog();
@@ -243,6 +234,24 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
         });
         //        七鱼客服登录 获取用户信息 登进登出……
         getNetDataInfo();
+    }
+
+    /**
+     * 设置intent底部数据
+     * @return
+     */
+    private boolean setIntentBottomIconData() {
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("type");
+        String firstTimeCode = intent.getStringExtra("isFirstTime");
+        boolean isFirstTime = TextUtils.isEmpty(firstTimeCode) || getStringChangeBoolean(firstTimeCode);
+        setNavData();
+        if (!TextUtils.isEmpty(type)) {
+            changeAdaptivePage(type);
+        } else {
+            initMainPage();
+        }
+        return isFirstTime;
     }
 
     /**
@@ -1120,6 +1129,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 // 拦截Intent，保存Intent，在onResume中进行处理
         onHomeIntent = intent;
         setIntent(intent);
+        setIntentBottomIconData();
     }
 
     @Override

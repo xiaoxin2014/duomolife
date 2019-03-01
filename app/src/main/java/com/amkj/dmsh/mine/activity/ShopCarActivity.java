@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -47,7 +46,6 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -135,8 +133,6 @@ public class ShopCarActivity extends BaseActivity {
     private ShopCarGoodsAdapter shopCarGoodsAdapter;
     private StringBuffer carIds;
     private boolean isOnPause;
-    private int scrollY = 0;
-    private float screenHeight;
     private RecommendHeaderView recommendHeaderView;
     private View cartHeaderView;
     private ProNoShopCarAdapter proNoShopCarAdapter;
@@ -165,7 +161,6 @@ public class ShopCarActivity extends BaseActivity {
         communal_recycler.setAdapter(shopCarGoodsAdapter);
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
-            scrollY = 0;
             loadData();
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
@@ -246,22 +241,19 @@ public class ShopCarActivity extends BaseActivity {
                 }
             }
         });
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//                特殊布局 特殊处理
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition > 15) {
                     if (download_btn_communal.getVisibility() == GONE) {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.hide(false);
                     }
                     if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
+                        download_btn_communal.show(true);
                     }
                 } else {
                     if (download_btn_communal.isVisible()) {

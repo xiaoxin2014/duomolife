@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -97,9 +99,7 @@ import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
-
-;
-;
+import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -145,6 +145,9 @@ public class MineDataFragment extends BaseFragment {
     //    订单模块
     @BindView(R.id.rv_mine_indent_item)
     public RecyclerView rv_mine_indent;
+    //    个人信息布局
+    @BindView(R.id.rel_mine_info)
+    public RelativeLayout rel_mine_info;
     //    我的模块
     @BindView(R.id.communal_recycler_wrap)
     public RecyclerView communal_recycler_wrap;
@@ -265,6 +268,23 @@ public class MineDataFragment extends BaseFragment {
         });
         setQyService();
         ad_mine.setVisibility(View.GONE);
+        fl_mine_bg.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                fl_mine_bg.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int measuredHeight = fl_mine_bg.getMeasuredHeight();
+                int loginMeasuredHeight = rel_mine_info.getMeasuredHeight();
+                int statusHeaderHeight = rel_header_mine.getMeasuredHeight();
+                int statusBarHeight = getStatusBarHeight(getActivity());
+                int height = loginMeasuredHeight + statusHeaderHeight + statusBarHeight;
+                if (measuredHeight < height) {
+                    ViewGroup.LayoutParams layoutParams = fl_mine_bg.getLayoutParams();
+                    layoutParams.height = height;
+                    fl_mine_bg.setLayoutParams(layoutParams);
+                }
+//                获取
+            }
+        });
     }
 
     /**
@@ -662,7 +682,7 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //    登录点击背景
-    @OnClick({R.id.fl_mine_info, R.id.ll_mime_no_login})
+    @OnClick({R.id.rel_mine_info, R.id.ll_mime_no_login})
     void changeBg(View view) {
         if (userId > 0 && communalUserInfoBean != null) {
             Intent intent = new Intent(getActivity(), PersonalBgImgActivity.class);
