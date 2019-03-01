@@ -282,7 +282,7 @@ dependencies {
     //    加载dialog
     implementation 'com.kaopiz:kprogresshud:1.2.0'
 //    自定义Toast 避免关闭通知 不显示Toast
-    implementation 'com.hjq:toast:5.5'
+    implementation 'com.hjq:toast:5.6'
     //    gif展示
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'

@@ -129,10 +129,11 @@ public class ShoppingCartBiz {
         int selectedCount = 0;
         double totalPrice = 0;
         for (int i = 0; i < listGoods.size(); i++) {
-            boolean isSelected = listGoods.get(i).isSelected();
-            if (isSelected && listGoods.get(i).getSaleSku() != null && listGoods.get(i).getSaleSku().getQuantity() > 0) {
-                String price = listGoods.get(i).getSaleSku().getPrice();
-                int selectedCount1 = listGoods.get(i).getCount();
+            CartInfoBean cartInfoBean = listGoods.get(i);
+            boolean isSelected = cartInfoBean.isSelected();
+            if (isSelected && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null && cartInfoBean.getSaleSku().getQuantity() > 0) {
+                String price = cartInfoBean.getSaleSku().getPrice();
+                int selectedCount1 = cartInfoBean.getCount();
                 double totalPrice1 = GoodsPriceCalculate.getPrice(selectedCount1, Double.parseDouble(price));
                 totalPrice = totalPrice + totalPrice1;
                 selectedCount = selectedCount + selectedCount1;

@@ -101,6 +101,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
@@ -356,6 +357,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 transmitUid();
                 return;
             }
+        }
+        if (requestCode == REQUEST_NOTIFICATION_STATUS) {
+            notificationStatusCallback();
         }
         if (resultCode == RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
@@ -730,6 +734,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                                 }
                             });
                             break;
+//                            获取通知开关状态
+                        case "notificationStatus":
+                            notificationStatusCallback();
+                            break;
                         default:
                             jsInteractiveEmpty(null);
                             break;
@@ -752,7 +760,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      */
     private void skipAppMarketGrade(JsInteractiveBean jsInteractiveBean) {
         Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-        if (otherData == null || otherData.get("gradeTitle") == null) {
+        if (otherData == null || otherData.get("gradeContent") == null) {
             return;
         }
         //        获取已安装应用商店的包名列表
@@ -785,11 +793,11 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                         }
                     });
                 }
-                String dialogTitle = (String) getMapValue(otherData.get("gradeTitle"), "");
-                String dialogHint = (String) getMapValue(otherData.get("gradeHint"), "提示");
+                String dialogContent = (String) getMapValue(otherData.get("gradeContent"), "");
+                String dialogHint = (String) getMapValue(otherData.get("gradeTitle"), "提示");
                 String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去评分");
                 marketStoreGradeDialog.setTitle(dialogHint)
-                        .setMsg(dialogTitle)
+                        .setMsg(dialogContent)
                         .setSingleButton(true)
                         .setConfirmText(confirmText);
                 marketStoreGradeDialog.show();
@@ -805,36 +813,40 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      * @param jsInteractiveBean
      */
     private void openNotification(JsInteractiveBean jsInteractiveBean) {
-        if (jsInteractiveBean.getOtherData() != null&&!getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this)) {
-            if (notificationAlertDialogHelper == null) {
-                notificationAlertDialogHelper = new AlertDialogHelper(DoMoLifeCommunalActivity.this);
-                notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                    @Override
-                    public void confirm() {
-                        // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        notificationAlertDialogHelper.dismiss();
-                    }
+        if (jsInteractiveBean.getOtherData() != null) {
+            if (!getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this)) {
+                if (notificationAlertDialogHelper == null) {
+                    notificationAlertDialogHelper = new AlertDialogHelper(DoMoLifeCommunalActivity.this);
+                    notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivityForResult(intent, REQUEST_NOTIFICATION_STATUS);
+                            notificationAlertDialogHelper.dismiss();
+                        }
 
-                    @Override
-                    public void cancel() {
-                        notificationAlertDialogHelper.dismiss();
-                    }
-                });
+                        @Override
+                        public void cancel() {
+                            notificationAlertDialogHelper.dismiss();
+                        }
+                    });
+                }
+                Map<String, Object> otherData = jsInteractiveBean.getOtherData();
+                String dialogContent = (String) getMapValue(otherData.get("notificationContent"), "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。");
+                String dialogHint = (String) getMapValue(otherData.get("notificationTitle"), "通知提示");
+                String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去设置");
+                notificationAlertDialogHelper.setTitle(dialogHint)
+                        .setMsg(dialogContent)
+                        .setSingleButton(true)
+                        .setConfirmText(confirmText);
+                notificationAlertDialogHelper.show();
+            } else {
+                notificationStatusCallback();
             }
-            Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-            String dialogTitle = (String) getMapValue(otherData.get("notificationTitle"), "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。");
-            String dialogHint = (String) getMapValue(otherData.get("notificationHint"), "通知提示");
-            String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去设置");
-            notificationAlertDialogHelper.setTitle(dialogHint)
-                    .setMsg(dialogTitle)
-                    .setSingleButton(true)
-                    .setConfirmText(confirmText);
-            notificationAlertDialogHelper.show();
         }
     }
 
@@ -856,7 +868,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 return;
             }
             if (endTimeMilliSecond[0] == 0 || endTimeMilliSecond[0] <= startTimeMilliSecond) {
-                endTimeMilliSecond[0] += 10 * 60 * 1000;
+                endTimeMilliSecond[0] = startTimeMilliSecond + 10 * 60 * 1000;
             }
             Number number = (Number) getMapValue(otherData.get("priorMinutes"), 1);
             long priorMinutes = number.longValue();
@@ -865,7 +877,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 @Override
                 public void getPermissionsSuccess() {
                     CalendarReminderUtils calendarReminderUtils = new CalendarReminderUtils();
-                    addWebReminderCallback(goodsId,calendarReminderUtils.addCalendarEvent(DoMoLifeCommunalActivity.this, title, description, startTimeMilliSecond, endTimeMilliSecond[0], priorMinutes));
+                    addWebReminderCallback(goodsId, calendarReminderUtils.addCalendarEvent(DoMoLifeCommunalActivity.this, title, description, startTimeMilliSecond, endTimeMilliSecond[0], priorMinutes));
                 }
             });
             constantMethod.getPermissions(DoMoLifeCommunalActivity.this, Permission.Group.CALENDAR);
@@ -1177,10 +1189,18 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     /**
      * 回调添加日程返回值
+     *
      * @param backCode
      */
-    private void addWebReminderCallback(String productId,int backCode) {
-        webViewJs(String.format(getResources().getString(R.string.web_add_reminder), getStrings(productId),backCode));
+    private void addWebReminderCallback(String productId, int backCode) {
+        webViewJs(String.format(getResources().getString(R.string.web_add_reminder), getStrings(productId), backCode));
+    }
+
+    /**
+     * 回调通知开关
+     */
+    private void notificationStatusCallback() {
+        webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this) ? 1 : 0));
     }
 
     /**

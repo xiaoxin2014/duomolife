@@ -63,6 +63,8 @@ public class ConstantVariable {
     public static final int RELEVANCE_PRO_REQ = 201;
     //    背景图片请求码
     public static final int REQ_MINE_BG = 107;
+//    请求通知状态
+    public static final int REQUEST_NOTIFICATION_STATUS = 0x101;
     //    默认
     public static final int TYPE_0 = 0;
     //    为空||品牌团

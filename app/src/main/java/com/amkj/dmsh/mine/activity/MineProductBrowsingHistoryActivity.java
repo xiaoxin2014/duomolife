@@ -24,7 +24,6 @@ import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
@@ -114,8 +113,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         setEditStatus(isEditStatus);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
-        OffsetLinearLayoutManager offsetLinearLayoutManager = new OffsetLinearLayoutManager(MineProductBrowsingHistoryActivity.this);
-        communal_recycler.setLayoutManager(offsetLinearLayoutManager);
+        communal_recycler.setLayoutManager(new LinearLayoutManager(MineProductBrowsingHistoryActivity.this));
         mineBrowsingHistoryAdapter = new MineBrowsingHistoryAdapter(MineProductBrowsingHistoryActivity.this, mineBrowsHistoryBeanList);
         communal_recycler.setAdapter(mineBrowsingHistoryAdapter);
         mineBrowsingHistoryAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -164,7 +162,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                OffsetLinearLayoutManager layoutManager = (OffsetLinearLayoutManager) recyclerView.getLayoutManager();
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 //                特殊布局 特殊处理
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                 if (lastVisibleItemPosition > 15) {

@@ -639,6 +639,7 @@ public class MineDataFragment extends BaseFragment {
         Intent intent = new Intent(getActivity(), AppDataActivity.class);
         startActivity(intent);
     }
+
     //    跳转消息
     @OnClick(R.id.iv_mine_mes)
     void skipMes(View view) {

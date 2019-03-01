@@ -65,7 +65,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.R.id.ll_communal_settlement;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -85,9 +84,6 @@ import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
 import static com.amkj.dmsh.constant.Url.SHOP_CART_RECOMMEND_EMPTY_GOODS;
 
-;
-;
-
 /**
  * Created by atd48 on 2016/10/22.
  */
@@ -97,7 +93,7 @@ public class ShopCarActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
     //    结算页面
-    @BindView(ll_communal_settlement)
+    @BindView(R.id.ll_communal_settlement)
     LinearLayout ll_settlement_shop_car;
     // 全选 全不选
     @BindView(R.id.check_box_all_buy)
@@ -155,12 +151,12 @@ public class ShopCarActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        ll_settlement_shop_car.setVisibility(View.GONE);
-        rel_del_shop_car.setVisibility(View.GONE);
+        rel_shop_car_bottom.setVisibility(View.GONE);
         tl_normal_bar.setSelected(true);
         tv_header_titleAll.setText("购物车");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("编辑");
+        header_shared.setSelected(false);
         shopCarGoodsAdapter = new ShopCarGoodsAdapter(ShopCarActivity.this, shopGoodsList);
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
@@ -288,6 +284,7 @@ public class ShopCarActivity extends BaseActivity {
         recommendHeaderView = new RecommendHeaderView();
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
+        check_box_all_buy.setChecked(true);
     }
 
     private void skipProDetail(CartInfoBean cartInfoBean) {
@@ -300,22 +297,19 @@ public class ShopCarActivity extends BaseActivity {
 
     private void setEditStatus() {
         isEditStatus = !isEditStatus;
+        header_shared.setText(isEditStatus ? "完成" : "编辑");
+        header_shared.setSelected(isEditStatus);
+        ShoppingCartBiz.isEditStatus(shopGoodsList, isEditStatus);
         if (isEditStatus) {
             check_box_all_del.setChecked(false);
             ll_settlement_shop_car.setVisibility(View.GONE);
             rel_del_shop_car.setVisibility(View.VISIBLE);
-            header_shared.setText("完成");
-            header_shared.setSelected(isEditStatus);
-            ShoppingCartBiz.isEditStatus(shopGoodsList, isEditStatus);
         } else {
             if (!check_box_all_buy.isChecked()) {
                 check_box_all_buy.setChecked(true);
             }
             ll_settlement_shop_car.setVisibility(View.VISIBLE);
             rel_del_shop_car.setVisibility(View.GONE);
-            header_shared.setSelected(isEditStatus);
-            ShoppingCartBiz.isEditStatus(shopGoodsList, isEditStatus);
-            header_shared.setText("编辑");
             getSettlePrice();
         }
         shopCarGoodsAdapter.setNewData(shopGoodsList);
@@ -369,8 +363,10 @@ public class ShopCarActivity extends BaseActivity {
                                     } else {
                                         shopGoodsList.set(cartPosition, newCartInfoBean);
                                         shopCarGoodsAdapter.notifyItemChanged(cartPosition);
-                                        setCartCount();
-                                        getSettlePrice();
+                                        setCartCount(shopCarNewInfoEntity.getTotalCount());
+                                        if (!isEditStatus) {
+                                            getSettlePrice();
+                                        }
                                     }
                                 } else {
                                     page = 1;
@@ -456,6 +452,14 @@ public class ShopCarActivity extends BaseActivity {
     }
 
     private void getShopCarProInfo() {
+        if (page == 1) {
+            if (isEditStatus) {
+                check_box_all_del.setChecked(false);
+            } else {
+                check_box_all_buy.setChecked(true);
+            }
+        }
+        boolean allCheckedStatus = isEditStatus ? check_box_all_del.isChecked() : check_box_all_buy.isChecked();
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_FORTY);
         params.put("currentPage", page);
@@ -465,9 +469,6 @@ public class ShopCarActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        if(ll_settlement_shop_car.getVisibility() == View.GONE){
-                            ll_settlement_shop_car.setVisibility(View.VISIBLE);
-                        }
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
@@ -485,6 +486,7 @@ public class ShopCarActivity extends BaseActivity {
                                     ShopCarNewInfoBean shopCarNewInfoBean = shopCarNewInfoEntity.getShopCarNewInfoList().get(i);
                                     for (int j = 0; j < shopCarNewInfoBean.getCartInfoBeanList().size(); j++) {
                                         CartInfoBean cartInfoBean = shopCarNewInfoBean.getCartInfoBeanList().get(j);
+                                        cartInfoBean.setEditing(isEditStatus);
                                         cartInfoBean.setCurrentPosition(j);
                                         cartInfoBean.setParentPosition(i);
                                         cartInfoBean.setCurrentPage(page);
@@ -505,11 +507,10 @@ public class ShopCarActivity extends BaseActivity {
                                                 cartInfoBean.setActivityInfoData(activityInfoBean);
                                             }
                                         }
-                                        if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
-                                                && cartInfoBean.getSaleSku().getQuantity() > 0) {
-                                            cartInfoBean.setSelected(true);
-                                        } else {
-                                            cartInfoBean.setSelected(false);
+                                        cartInfoBean.setSelected(false);
+                                        if (!isEditStatus && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
+                                                && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale()) {
+                                            cartInfoBean.setSelected(allCheckedStatus);
                                         }
                                         if (shopGoodsList.size() > 0) {
                                             cartInfoBean.setCurrentPosition(shopGoodsList.size());
@@ -523,9 +524,6 @@ public class ShopCarActivity extends BaseActivity {
                                     }
                                 }
                                 ConstantVariable.CAR_PRO_STATUS = shopCarNewInfoEntity.getActivityTypeMap();
-                                updatePrice(shopCarNewInfoEntity);
-                                isEditStatus = true;
-                                setEditStatus();
                             } else if (!shopCarNewInfoEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(ShopCarActivity.this, shopCarNewInfoEntity.getMsg());
                             } else {
@@ -536,8 +534,15 @@ public class ShopCarActivity extends BaseActivity {
                             } else {
                                 rel_shop_car_bottom.setVisibility(View.VISIBLE);
                             }
+                            if (!isEditStatus) {
+                                if (page == 1) {
+                                    updatePrice(shopCarNewInfoEntity);
+                                } else if (allCheckedStatus) {
+                                    getSettlePrice();
+                                }
+                            }
                             shopCarGoodsAdapter.notifyDataSetChanged();
-                            setCartCount();
+                            setCartCount(shopCarNewInfoEntity.getTotalCount());
                         }
                         if (shopGoodsList.size() < 1) {
                             shopCarGoodsAdapter.setEmptyView(R.layout.adapter_car_pro_empty, communal_recycler);
@@ -637,10 +642,9 @@ public class ShopCarActivity extends BaseActivity {
         });
     }
 
-    private void setCartCount() {
-        int cartCount = ShoppingCartBiz.getCartCount(shopGoodsList);
-        tv_header_titleAll.setText(cartCount < 1
-                ? "购物车" : "购物车(" + cartCount + ")");
+    private void setCartCount(int totalCount) {
+        tv_header_titleAll.setText(totalCount < 1
+                ? "购物车" : "购物车(" + totalCount + ")");
     }
 
     @OnClick(R.id.tv_life_back)
@@ -883,7 +887,6 @@ public class ShopCarActivity extends BaseActivity {
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         updateCartData(cartInfoBean);
-                        setEditStatus();
                     } else {
                         showToastRequestMsg(ShopCarActivity.this, status);
                     }
@@ -907,6 +910,9 @@ public class ShopCarActivity extends BaseActivity {
      */
     private void getSettlePrice() {
         if (shopGoodsList.size() > 0) {
+            if (isEditStatus) {
+                return;
+            }
             loadHud.show();
             Map<String, Object> params = new HashMap<>();
             JSONArray jsonArray = new JSONArray();

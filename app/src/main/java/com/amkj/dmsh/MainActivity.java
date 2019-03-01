@@ -147,7 +147,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
     private AlertView selectServer;
-    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2"};
+    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2","鸿星"};
     private AlertView mAlertViewExt;
     private EditText etName;
     private List<MainIconBean> iconDataList = new ArrayList<>();

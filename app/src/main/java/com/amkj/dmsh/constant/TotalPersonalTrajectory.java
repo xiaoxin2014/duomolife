@@ -1,6 +1,7 @@
 package com.amkj.dmsh.constant;
 
 import android.content.Context;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -12,6 +13,7 @@ import com.amkj.dmsh.utils.FileSizeUtil;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -123,10 +125,11 @@ public class TotalPersonalTrajectory {
 
     /**
      * 保存访问信息
+     *
      * @param name
      */
     private void saveTotalDataToFile(String name) {
-        if(TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             return;
         }
         TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
@@ -160,7 +163,9 @@ public class TotalPersonalTrajectory {
                 totalDataMap.put("act_time", simpleDateFormat.format(System.currentTimeMillis()));
                 totalDataMap.put("uid", userId > 0 ? userId : null);
                 JSONObject jsonObject = new JSONObject(totalDataMap);
-                FileStreamUtils.writeFileFromString(file.getAbsolutePath(), jsonObject.toString() + ",", true);
+                synchronized (mAppContext) {
+                    FileStreamUtils.writeFileFromString(file.getAbsolutePath(), jsonObject.toString() + ",", true);
+                }
                 isUpTotalFile(trajectoryFile.getAbsolutePath());
             });
         }
@@ -172,8 +177,7 @@ public class TotalPersonalTrajectory {
      * @param upFilePath
      */
     private void isUpTotalFile(String upFilePath) {
-        if (FileSizeUtil.getFileOrFilesSize(upFilePath, FileSizeUtil.SIZE_TYPE_KB) >= UP_TOTAL_SIZE) {
-            isUpTotalFile = true;
+        if (!isUpTotalFile && FileSizeUtil.getFileOrFilesSize(upFilePath, FileSizeUtil.SIZE_TYPE_KB) >= UP_TOTAL_SIZE) {
             getFileTotalTrajectory();
         }
     }
@@ -182,37 +186,41 @@ public class TotalPersonalTrajectory {
      * 读取文件 获取统计数据上传
      */
     public void getFileTotalTrajectory() {
-        File trajectoryFile = mAppContext.getDir("trajectory", Context.MODE_APPEND);
-        if (trajectoryFile != null && trajectoryFile.isDirectory()) {
-            for (File file : trajectoryFile.listFiles()) {
-                if (file.getName().contains("trajectoryData")) {
-                    String trajectoryData = FileStreamUtils.readFile2String(file.getAbsolutePath());
-                    if (!TextUtils.isEmpty(trajectoryData)) {
-                        upTotalDataAndDel(trajectoryData, file.getAbsolutePath());
+        if (!isUpTotalFile) {
+//            判断当前线程是否是子线程
+            if(Thread.currentThread() == Looper.getMainLooper().getThread()){
+                createExecutor().execute(this::getFileTotalTrajectory);
+                return;
+            }
+            isUpTotalFile = true;
+            File trajectoryFile = mAppContext.getDir("trajectory", Context.MODE_APPEND);
+            if (trajectoryFile != null && trajectoryFile.isDirectory()) {
+                for (File file : trajectoryFile.listFiles()) {
+                    if (file.getName().contains("trajectoryData")) {
+                        String trajectoryData = FileStreamUtils.readFile2String(file.getAbsolutePath());
+                        if (!TextUtils.isEmpty(trajectoryData)) {
+                            upTotalDataAndDel(trajectoryData, file.getAbsolutePath());
+                        } else {
+                            FileCacheUtils.deleteFolderFile(file.getPath(), true);
+                        }
                     } else {
                         FileCacheUtils.deleteFolderFile(file.getPath(), true);
                     }
-                } else {
-                    FileCacheUtils.deleteFolderFile(file.getPath(), true);
                 }
+                isUpTotalFile = false;
+            } else {
+                isUpTotalFile = false;
             }
-            isUpTotalFile = false;
-        } else {
-            isUpTotalFile = false;
         }
     }
 
     private void upTotalDataAndDel(@NonNull String trajectoryData, String filePath) {
         if (NetWorkUtils.checkNet(mAppContext) && trajectoryData.length() > 1) {
-            String jsonStr = "[" + trajectoryData.substring(0, trajectoryData.length() - 1) + "]";
-            Gson gson = new Gson();
-//            原数据
-            List<Object> objectList = gson.fromJson(jsonStr, new TypeToken<List<Object>>() {
-            }.getType());
-//            存储数据
-            List<Object> saveObjects = new ArrayList<>(objectList);
-            List<Object> reserveList = new ArrayList<>();
+            List<Object> objectList = checkJsonDataCallback(filePath, trajectoryData);
             try {
+//            存储数据
+                List<Object> saveObjects = new ArrayList<>(objectList);
+                List<Object> reserveList = new ArrayList<>();
                 /**
                  * 数据量大 分步上传 延迟上传
                  */
@@ -222,7 +230,7 @@ public class TotalPersonalTrajectory {
                         //                        上传数据
                         boolean isUpSuccess = uploadingTotalData(reserveList);
 //                        避免用户中断网络或者数据异常导致上传失败
-                        if(!isUpSuccess){
+                        if (!isUpSuccess) {
                             break;
                         }
                         //                        清除上传数据
@@ -237,8 +245,30 @@ public class TotalPersonalTrajectory {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            isUpTotalFile = false;
         }
+    }
+
+    /**
+     * 检查数据是否正常，返回正常Json串
+     *
+     * @param filePath
+     * @param trajectoryData
+     * @return
+     */
+    private List<Object> checkJsonDataCallback(String filePath, String trajectoryData) {
+        String jsonStr = "[" + trajectoryData.substring(0, trajectoryData.length() - 1) + "]";
+        Gson gson = new Gson();
+//            原数据
+        List<Object> objectList = null;
+        try {
+            objectList = gson.fromJson(jsonStr, new TypeToken<List<Object>>() {
+            }.getType());
+        } catch (JsonSyntaxException e) {
+//            解析异常删除数据，避免后续数据导致异常
+            e.printStackTrace();
+            FileCacheUtils.deleteFile(filePath);
+        }
+        return objectList == null ? new ArrayList<>() : objectList;
     }
 
     /**

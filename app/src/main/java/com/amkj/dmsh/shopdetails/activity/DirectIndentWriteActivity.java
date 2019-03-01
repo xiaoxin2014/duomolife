@@ -88,7 +88,6 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -105,7 +104,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 import static com.amkj.dmsh.constant.Url.PAY_CANCEL;
@@ -194,7 +192,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        if(loadHud!=null){
+        if (loadHud != null) {
             loadHud.setCancellable(false);
         }
         isOversea = false;
@@ -618,7 +616,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if(pullFootView.rect_indent_number.getVisibility() == VISIBLE){
+                if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
                     pullFootView.rect_indent_number.setVisibility(GONE);
                 }
                 dealingIndentPayResult(result);
@@ -754,11 +752,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     skipDirectIndent();
                 }
                 if (totalPersonalTrajectory != null) {
-                    isUpTotalFile = true;
-                    createExecutor().execute(() -> {
-                        totalPersonalTrajectory.getFileTotalTrajectory();
-                    });
-                    isUpTotalFile = false;
+                    totalPersonalTrajectory.getFileTotalTrajectory();
                 }
             }
 
@@ -966,11 +960,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     skipDirectIndent();
                 }
                 if (totalPersonalTrajectory != null) {
-                    isUpTotalFile = true;
-                    createExecutor().execute(() -> {
-                        totalPersonalTrajectory.getFileTotalTrajectory();
-                    });
-                    isUpTotalFile = false;
+                    totalPersonalTrajectory.getFileTotalTrajectory();
                 }
             }
 
@@ -1006,7 +996,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 payCancel();
                 showToast(DirectIndentWriteActivity.this, "支付取消");
             }
-    }).doPay();
+        }).doPay();
     }
 
     private void skipDirectIndent() {
@@ -1037,54 +1027,50 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
         if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
                 !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
-            if(loadHud!=null){
+            if (loadHud != null) {
                 loadHud.show();
             }
             unionPay = new UnionPay(DirectIndentWriteActivity.this,
-                        qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
-                        new UnionPay.UnionPayResultCallBack() {
-                            @Override
-                            public void onUnionPaySuccess(String webResultValue) {
-                                if(loadHud!=null){
-                                    loadHud.dismiss();
-                                }
-                                if(!TextUtils.isEmpty(webResultValue)&&"1".equals(webResultValue)){
-                                    finish();
-                                }else{
-                                    //                跳转订单完成页
-                                    if (type.equals(INDENT_GROUP_SHOP)) {
-                                        switch (groupShopDetailsBean.getGpStatus()) {
-                                            case 1:
+                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
+                    new UnionPay.UnionPayResultCallBack() {
+                        @Override
+                        public void onUnionPaySuccess(String webResultValue) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            if (!TextUtils.isEmpty(webResultValue) && "1".equals(webResultValue)) {
+                                finish();
+                            } else {
+                                //                跳转订单完成页
+                                if (type.equals(INDENT_GROUP_SHOP)) {
+                                    switch (groupShopDetailsBean.getGpStatus()) {
+                                        case 1:
 //                            开团
-                                                skipGpShareIndent();
-                                                break;
-                                            case 2:
+                                            skipGpShareIndent();
+                                            break;
+                                        case 2:
 //                            拼团
-                                                skipMineGroupIndent();
-                                                break;
-                                        }
-                                    } else {
-                                        skipDirectIndent();
+                                            skipMineGroupIndent();
+                                            break;
                                     }
-                                }
-                                if (totalPersonalTrajectory != null) {
-                                    isUpTotalFile = true;
-                                    createExecutor().execute(() -> {
-                                        totalPersonalTrajectory.getFileTotalTrajectory();
-                                    });
-                                    isUpTotalFile = false;
+                                } else {
+                                    skipDirectIndent();
                                 }
                             }
+                            if (totalPersonalTrajectory != null) {
+                                totalPersonalTrajectory.getFileTotalTrajectory();
+                            }
+                        }
 
-                            @Override
-                            public void onUnionPayError(String errorMes) {
-                                if(loadHud!=null){
-                                    loadHud.dismiss();
-                                }
-                                showToast(DirectIndentWriteActivity.this,errorMes);
-                                payError();
+                        @Override
+                        public void onUnionPayError(String errorMes) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
                             }
-                        });
+                            showToast(DirectIndentWriteActivity.this, errorMes);
+                            payError();
+                        }
+                    });
         } else {
             constantMethod.showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
         }
@@ -1389,9 +1375,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     break;
                 case UNION_RESULT_CODE:
                     String webManualFinish = data.getStringExtra("webManualFinish");
-                    if(unionPay!=null){
-                        unionPay.unionPayResult(!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo,webManualFinish);
-                    }else{
+                    if (unionPay != null) {
+                        unionPay.unionPayResult(!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
+                    } else {
                         payError();
                     }
                     break;
@@ -1632,15 +1618,15 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!TextUtils.isEmpty(orderCreateNo)){
+        if (!TextUtils.isEmpty(orderCreateNo)) {
 //            数量选择隐藏
-            if(pullFootView.rect_indent_number.getVisibility() == VISIBLE){
+            if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
                 pullFootView.rect_indent_number.setVisibility(GONE);
             }
 //            留言禁止编辑
-            if(pullFootView.edt_direct_product_note.getText().toString().trim().length()<1){
+            if (pullFootView.edt_direct_product_note.getText().toString().trim().length() < 1) {
                 pullFootView.ll_indent_product_note.setVisibility(GONE);
-            }else{
+            } else {
                 pullFootView.ll_indent_product_note.setVisibility(VISIBLE);
                 pullFootView.edt_direct_product_note.setEnabled(false);
             }

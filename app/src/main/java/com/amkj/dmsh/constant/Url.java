@@ -25,6 +25,8 @@ public class Url {
                 BASE_URL = "http://dev.domolife.cn/";
             } else if (position == 7) {
                 BASE_URL = "http://192.168.1.87:8080/";
+            }else if (position == 8) {
+                BASE_URL = "http://192.168.1.128:8080/";
             }
         }
     }

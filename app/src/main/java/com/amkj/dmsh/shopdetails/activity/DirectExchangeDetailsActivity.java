@@ -101,7 +101,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
@@ -132,7 +131,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
 import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_APPLY_REFUND_CHECK;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CANCEL;
@@ -203,7 +201,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        if(loadHud!=null){
+        if (loadHud != null) {
             loadHud.setCancellable(false);
         }
         iv_indent_search.setVisibility(GONE);
@@ -427,7 +425,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         if (resultCode != RESULT_OK) {
             if (requestCode == UNION_RESULT_CODE) {
                 return;
-            }else{
+            } else {
                 finish();
                 return;
             }
@@ -436,7 +434,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(orderNo,webManualFinish);
+                unionPay.unionPayResult(orderNo, webManualFinish);
             } else {
                 showToast("支付取消！");
             }
@@ -1277,11 +1275,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
 
     private void skipDirectIndent() {
         if (totalPersonalTrajectory != null) {
-            isUpTotalFile = true;
-            createExecutor().execute(() -> {
-                totalPersonalTrajectory.getFileTotalTrajectory();
-            });
-            isUpTotalFile = false;
+            totalPersonalTrajectory.getFileTotalTrajectory();
         }
         Intent intent = new Intent(DirectExchangeDetailsActivity.this, DirectPaySuccessActivity.class);
         intent.putExtra("indentNo", orderNo);
@@ -1354,11 +1348,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                             showToast(DirectExchangeDetailsActivity.this, "支付成功");
                             if (!TextUtils.isEmpty(webResultValue) && "1".equals(webResultValue)) {
                                 if (totalPersonalTrajectory != null) {
-                                    isUpTotalFile = true;
-                                    createExecutor().execute(() -> {
-                                        totalPersonalTrajectory.getFileTotalTrajectory();
-                                    });
-                                    isUpTotalFile = false;
+                                    totalPersonalTrajectory.getFileTotalTrajectory();
                                 }
                                 loadData();
                             } else {

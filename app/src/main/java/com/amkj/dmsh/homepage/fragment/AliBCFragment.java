@@ -103,6 +103,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
@@ -346,6 +347,9 @@ public class AliBCFragment extends BaseFragment {
                 transmitUid();
                 return;
             }
+        }
+        if (requestCode == REQUEST_NOTIFICATION_STATUS) {
+            notificationStatusCallback();
         }
         if (resultCode == RESULT_OK) {
             if (requestCode == IS_LOGIN_CODE) {
@@ -737,6 +741,9 @@ public class AliBCFragment extends BaseFragment {
                                 }
                             });
                             break;
+                        //                            获取通知开关状态
+                        case "notificationStatus":
+                            notificationStatusCallback();
                         default:
                             jsInteractiveEmpty(null);
                             break;
@@ -761,7 +768,7 @@ public class AliBCFragment extends BaseFragment {
             return;
         }
         Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-        if (otherData == null || otherData.get("gradeTitle") == null) {
+        if (otherData == null || otherData.get("gradeContent") == null) {
             return;
         }
         //        获取已安装应用商店的包名列表
@@ -794,11 +801,11 @@ public class AliBCFragment extends BaseFragment {
                         }
                     });
                 }
-                String dialogTitle = (String) getMapValue(otherData.get("gradeTitle"), "");
-                String dialogHint = (String) getMapValue(otherData.get("gradeHint"), "提示");
+                String dialogContent = (String) getMapValue(otherData.get("gradeContent"), "");
+                String dialogHint = (String) getMapValue(otherData.get("gradeTitle"), "提示");
                 String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去评分");
                 marketStoreGradeDialog.setTitle(dialogHint)
-                        .setMsg(dialogTitle)
+                        .setMsg(dialogContent)
                         .setSingleButton(true)
                         .setConfirmText(confirmText);
                 marketStoreGradeDialog.show();
@@ -828,7 +835,7 @@ public class AliBCFragment extends BaseFragment {
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         Uri uri = Uri.fromParts("package", activityWeakReference.get().getPackageName(), null);
                         intent.setData(uri);
-                        startActivity(intent);
+                        startActivityForResult(intent, REQUEST_NOTIFICATION_STATUS);
                         notificationAlertDialogHelper.dismiss();
                     }
 
@@ -839,11 +846,11 @@ public class AliBCFragment extends BaseFragment {
                 });
             }
             Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-            String dialogTitle = (String) getMapValue(otherData.get("notificationTitle"), "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。");
-            String dialogHint = (String) getMapValue(otherData.get("notificationHint"), "通知提示");
+            String dialogContent = (String) getMapValue(otherData.get("notificationContent"), "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。");
+            String dialogHint = (String) getMapValue(otherData.get("notificationTitle"), "通知提示");
             String confirmText = (String) getMapValue(otherData.get("btnTitle"), "去设置");
             notificationAlertDialogHelper.setTitle(dialogHint)
-                    .setMsg(dialogTitle)
+                    .setMsg(dialogContent)
                     .setSingleButton(true)
                     .setConfirmText(confirmText);
             notificationAlertDialogHelper.show();
@@ -868,7 +875,7 @@ public class AliBCFragment extends BaseFragment {
                 return;
             }
             if (endTimeMilliSecond[0] == 0 || endTimeMilliSecond[0] <= startTimeMilliSecond) {
-                endTimeMilliSecond[0] += 10 * 60 * 1000;
+                endTimeMilliSecond[0] = startTimeMilliSecond + 10 * 60 * 1000;
             }
             Number number = (Number) getMapValue(otherData.get("priorMinutes"), 1);
             long priorMinutes = number.longValue();
@@ -1251,7 +1258,15 @@ public class AliBCFragment extends BaseFragment {
     private void addWebReminderCallback(String productId, int backCode) {
         webViewJs(String.format(getResources().getString(R.string.web_add_reminder), getStrings(productId), backCode));
     }
-
+    /**
+     * 回调通知开关
+     */
+    private void notificationStatusCallback() {
+        if(activityWeakReference.get()==null){
+            return;
+        }
+        webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(activityWeakReference.get()) ? 1 : 0));
+    }
     /**
      * @param jsUrl
      */

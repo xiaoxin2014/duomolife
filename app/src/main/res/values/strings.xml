@@ -84,6 +84,8 @@
     <string name="web_image_up_method">javascript:upBackImage(\'%1$s\',\'%2$s\')</string>
     <!--添加日程回调-->
     <string name="web_add_reminder">javascript:addReminderCallback(\'%1$s\',\'%2$d\')</string>
+    <!--通知开关状态回调-->
+    <string name="web_notification_status">javascript:getNotificationStatus(\'%1$d\')</string>
     <!--获取分享数据-->
     <string name="web_share_getData_method">javascript:shareBtnGo()</string>
     <string name="Submit_Success">提交成功，我们会尽快处理</string>
