@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_268"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <ImageView
+        android:layout_width="@dimen/sc_mm_220"
+        android:id="@+id/iv_point_spike_img"
+        android:layout_marginTop="@dimen/sc_mm_24"
+        android:layout_marginBottom="@dimen/sc_mm_24"
+        android:scaleType="centerCrop"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_height="@dimen/sc_mm_220" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/gap_right"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tv_point_spike_title"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_below="@id/tv_point_spike_title"
+            android:id="@+id/tv_point_spike_subtitle"
+            android:ellipsize="end"
+            android:layout_marginTop="@dimen/sc_mm_18"
+            android:lines="1"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_24"
+            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_40"
+            android:layout_below="@id/tv_point_spike_subtitle"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_point_spike_price"
+                    android:text="￥149"
+                    android:textColor="@color/text_normal_red"
+                    android:textSize="@dimen/sc_mm_34"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:layout_below="@id/tv_point_spike_price"
+                    android:id="@+id/tv_point_spike_market_price"
+                    android:textColor="@color/text_gray_hint_n"
+                    android:textSize="@dimen/sc_mm_24"
+                    android:text="￥199"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <CheckedTextView
+                android:id="@+id/tv_point_spike_done"
+                android:layout_width="@dimen/sc_mm_140"
+                android:layout_height="@dimen/sc_mm_56"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="去抢购"
+                android:textAlignment = "center"
+                android:background="@drawable/sel_point_spike_product_status"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_28" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -113,6 +113,9 @@ public class SlidingTabLayoutDouble extends HorizontalScrollView implements View
     private int mLastScrollX;
     private int mHeight;
     private boolean mSnapOnTabClick;
+    private int mSubTextSelectColor;
+    private int mSubTextUnselectColor;
+    private int mSubTextBold;
 
     public SlidingTabLayoutDouble(Context context) {
         this(context, null, 0);
@@ -173,11 +176,13 @@ public class SlidingTabLayoutDouble extends HorizontalScrollView implements View
         mDividerPadding = ta.getDimension(R.styleable.SlidingTabLayoutDouble_tl_divider_padding, dp2px(12));
 
         mTextsize = ta.getDimension(R.styleable.SlidingTabLayoutDouble_tl_textsize, sp2px(14));
-
-        mSubTextsize = ta.getDimension(R.styleable.SlidingTabLayoutDouble_tl_sub_textsize, sp2px(12));
         mTextSelectColor = ta.getColor(R.styleable.SlidingTabLayoutDouble_tl_textSelectColor, Color.parseColor("#ffffff"));
         mTextUnselectColor = ta.getColor(R.styleable.SlidingTabLayoutDouble_tl_textUnselectColor, Color.parseColor("#aaffffff"));
+        mSubTextsize = ta.getDimension(R.styleable.SlidingTabLayoutDouble_tl_sub_textsize, sp2px(12));
+        mSubTextSelectColor = ta.getColor(R.styleable.SlidingTabLayoutDouble_tl_sub_textSelectColor, Color.parseColor("#ffffff"));
+        mSubTextUnselectColor = ta.getColor(R.styleable.SlidingTabLayoutDouble_tl_sub_textUnselectColor, Color.parseColor("#aaffffff"));
         mTextBold = ta.getInt(R.styleable.SlidingTabLayoutDouble_tl_textBold, TEXT_BOLD_NONE);
+        mSubTextBold = ta.getInt(R.styleable.SlidingTabLayoutDouble_tl_sub_textBold, TEXT_BOLD_NONE);
         mTextAllCaps = ta.getBoolean(R.styleable.SlidingTabLayoutDouble_tl_textAllCaps, false);
 
         mTabSpaceEqual = ta.getBoolean(R.styleable.SlidingTabLayoutDouble_tl_tab_space_equal, false);
@@ -376,15 +381,15 @@ public class SlidingTabLayoutDouble extends HorizontalScrollView implements View
             }
             TextView tv_tab_subtitle = (TextView) v.findViewById(R.id.tv_tab_subtitle);
             if (tv_tab_subtitle != null) {
-                tv_tab_subtitle.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
+                tv_tab_subtitle.setTextColor(i == mCurrentTab ? mSubTextSelectColor : mSubTextUnselectColor);
                 tv_tab_subtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSubTextsize);
                 tv_tab_subtitle.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
                 if (mTextAllCaps) {
                     tv_tab_subtitle.setText(tv_tab_subtitle.getText().toString().toUpperCase());
                 }
-                if (mTextBold == TEXT_BOLD_BOTH) {
+                if (mSubTextBold == TEXT_BOLD_BOTH) {
                     tv_tab_subtitle.getPaint().setFakeBoldText(true);
-                } else if (mTextBold == TEXT_BOLD_NONE) {
+                } else if (mSubTextBold == TEXT_BOLD_NONE) {
                     tv_tab_subtitle.getPaint().setFakeBoldText(false);
                 }
             }
@@ -569,8 +574,6 @@ public class SlidingTabLayoutDouble extends HorizontalScrollView implements View
         } else if (mIndicatorStyle == STYLE_BLOCK) {
             if (mIndicatorHeight < 0) {
                 mIndicatorHeight = height - mIndicatorMarginTop - mIndicatorMarginBottom;
-            } else {
-
             }
 
             if (mIndicatorHeight > 0) {
@@ -732,8 +735,22 @@ public class SlidingTabLayoutDouble extends HorizontalScrollView implements View
         updateTabStyles();
     }
 
+    public void setmSubTextSelectColor(int mSubTextSelectColor) {
+        this.mSubTextSelectColor = mSubTextSelectColor;
+        updateTabStyles();
+    }
+
+    public void setmSubTextUnselectColor(int mSubTextUnselectColor) {
+        this.mSubTextUnselectColor = mSubTextUnselectColor;
+        updateTabStyles();
+    }
+
     public void setTextBold(int textBold) {
         this.mTextBold = textBold;
+        updateTabStyles();
+    }
+    public void setSubTextBold(int mSubTextBold) {
+        this.mSubTextBold = mSubTextBold;
         updateTabStyles();
     }
 

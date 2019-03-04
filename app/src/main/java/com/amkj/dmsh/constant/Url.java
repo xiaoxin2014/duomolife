@@ -25,7 +25,7 @@ public class Url {
                 BASE_URL = "http://dev.domolife.cn/";
             } else if (position == 7) {
                 BASE_URL = "http://192.168.1.87:8080/";
-            }else if (position == 8) {
+            } else if (position == 8) {
                 BASE_URL = "http://192.168.1.128:8080/";
             }
         }
@@ -580,6 +580,14 @@ public class Url {
     public static final String Q_PAY_SUCCESS_AD_DIALOG = "api/goods/order/getAdByOrderPayOver";
     //    支付完成商品推荐
     public static final String Q_PAY_SUCCESS_PRODUCT = "api/goods/paySuccessProductRecomment";
+    //    整点秒时间轴
+    public static final String Q_POINT_SPIKE_TIME_SHAFT = "api/goods/hoursActivity/getActivityTimeAxis";
+    //    整点秒杀轮播位
+    public static final String Q_POINT_SPIKE_AD = "api/goods/getBannerAd";
+    //    整点秒商品
+    public static final String Q_POINT_SPIKE_PRODUCT = "api/goods/activity/getActivityTimeAxisPorduct";
+//    设置整点秒商品状态
+    public static final String Q_POINT_SPIKE_PRODUCT_STATUS = "api/goods/addHoursActivityProductNotice";
     /**
      * 多么福利社
      */

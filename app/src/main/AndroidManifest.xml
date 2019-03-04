@@ -892,6 +892,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <!--整点秒杀-->
+        <activity
+            android:name=".dominant.activity.WholePointSpikeProductActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="WholePointSpikeProductActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <!--文章帖子 评论详情-->
         <activity
             android:name=".dominant.activity.CommentDetailsActivity"

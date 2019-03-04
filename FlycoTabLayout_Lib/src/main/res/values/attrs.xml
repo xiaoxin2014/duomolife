@@ -148,10 +148,13 @@
 
         <!-- name -->
         <attr name="tl_textsize"/>
-        <attr name="tl_sub_textsize"/>
         <attr name="tl_textSelectColor"/>
         <attr name="tl_textUnselectColor"/>
+        <attr name="tl_sub_textsize"/>
+        <attr name="tl_sub_textSelectColor"/>
+        <attr name="tl_sub_textUnselectColor"/>
         <attr name="tl_textBold"/>
+        <attr name="tl_sub_textBold"/>
         <attr name="tl_textAllCaps"/>
 
     </declare-styleable>
