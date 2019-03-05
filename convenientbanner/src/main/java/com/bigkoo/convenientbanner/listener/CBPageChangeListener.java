@@ -27,6 +27,8 @@ public class CBPageChangeListener implements OnPageChangeListener{
     }
 
     public void onPageSelected(int index) {
+//        避免index大于size
+        index = index>=pointViews.size()?pointViews.size()-1:index;
         for (int i = 0; i < pointViews.size(); i++) {
             pointViews.get(index).setImageResource(page_indicatorId[1]);
             if (index != i) {

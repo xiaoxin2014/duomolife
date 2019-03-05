@@ -130,6 +130,10 @@ public class WholePointSpikeProductActivity extends BaseActivity {
      */
     private void setTimeShaftData(List<TimeAxisInfoListBean> timeAxisInfoList) {
         if (timeAxisInfoList.size() > 0) {
+            if(stdPointSpikeType.getVisibility() == View.GONE){
+                stdPointSpikeType.setVisibility(View.VISIBLE);
+                vpPointSpikeContainer.setVisibility(View.VISIBLE);
+            }
             List<CustomTabDoubleEntity> customTabDoubleEntities = new ArrayList<>();
             for (TimeAxisInfoListBean timeAxisInfoListBean : timeAxisInfoList) {
                 customTabDoubleEntities.add(new CustomTabDoubleEntity() {
@@ -162,6 +166,11 @@ public class WholePointSpikeProductActivity extends BaseActivity {
                 vpPointSpikeContainer.setCurrentItem(defaultItemPosition);
             } else {
                 setDefaultCategoryType();
+            }
+        }else{
+            if(stdPointSpikeType.getVisibility() == View.VISIBLE){
+                stdPointSpikeType.setVisibility(View.GONE);
+                vpPointSpikeContainer.setVisibility(View.GONE);
             }
         }
     }
