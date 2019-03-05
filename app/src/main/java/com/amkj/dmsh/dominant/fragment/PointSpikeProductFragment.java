@@ -66,7 +66,7 @@ import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_STATUS;
  * version 3.3.0
  * class description:整点秒杀
  */
-public class PointSpikeFragment extends BaseFragment {
+public class PointSpikeProductFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
     RecyclerView communalRecycler;
     private PointSpikeProductAdapter pointSpikeProductAdapter;
@@ -162,7 +162,7 @@ public class PointSpikeFragment extends BaseFragment {
                                     }
                                     checkedTextView.setText(proStatus);
                                 } else {
-                                    getLoginStatus(PointSpikeFragment.this);
+                                    getLoginStatus(PointSpikeProductFragment.this);
                                 }
                             } else {
                                 Intent intent = new Intent(activityWeakReference.get(), ShopScrollDetailsActivity.class);

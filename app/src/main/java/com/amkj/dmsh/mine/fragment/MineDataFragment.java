@@ -38,11 +38,11 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.activity.WholePointSpikeProductActivity;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
+import com.amkj.dmsh.mine.activity.AppDataActivity;
 import com.amkj.dmsh.mine.activity.MineInvitationListActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
@@ -656,10 +656,7 @@ public class MineDataFragment extends BaseFragment {
     //  资料设置
     @OnClick({R.id.iv_user_back})
     void setUserData(View view) {
-//        Intent intent = new Intent(getActivity(), AppDataActivity.class);
-//        startActivity(intent);
-        // TODO: 2019/3/2  
-        Intent intent = new Intent(getActivity(), WholePointSpikeProductActivity.class);
+        Intent intent = new Intent(getActivity(), AppDataActivity.class);
         startActivity(intent);
     }
 

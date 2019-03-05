@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/6/5
- * class description:请输入类描述
+ * class description:良品导航栏分类
  */
 
 public class QualityPageAdapter extends FragmentPagerAdapter {

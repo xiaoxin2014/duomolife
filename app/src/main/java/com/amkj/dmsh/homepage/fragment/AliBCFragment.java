@@ -31,7 +31,6 @@ import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -227,15 +226,6 @@ public class AliBCFragment extends BaseFragment {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 int errorCode = error.getErrorCode();
-                if (404 == errorCode || 500 == errorCode || errorCode == -2) {
-                    setErrorException(view);
-                }
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-                int errorCode = errorResponse.getStatusCode();
                 if (404 == errorCode || 500 == errorCode || errorCode == -2) {
                     setErrorException(view);
                 }
@@ -744,6 +734,7 @@ public class AliBCFragment extends BaseFragment {
                         //                            获取通知开关状态
                         case "notificationStatus":
                             notificationStatusCallback();
+                            break;
                         default:
                             jsInteractiveEmpty(null);
                             break;
