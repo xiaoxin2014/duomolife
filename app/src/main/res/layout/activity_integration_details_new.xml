@@ -25,9 +25,7 @@
                 android:layout_height="0px"
                 android:layout_weight="1">
 
-                <com.scwang.smartrefresh.layout.header.ClassicsHeader
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <include layout="@layout/layout_refresh_header_gif"/>
 
                 <android.support.v4.widget.NestedScrollView
                     android:layout_width="match_parent"

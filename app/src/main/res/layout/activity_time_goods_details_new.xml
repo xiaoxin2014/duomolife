@@ -17,9 +17,7 @@
         android:layout_weight="1"
         android:baselineAligned="false">
 
-        <com.scwang.smartrefresh.layout.header.ClassicsHeader
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <include layout="@layout/layout_refresh_header_gif"/>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     cube_ptr:srlEnableOverScrollBounce="false">
 
-    <com.scwang.smartrefresh.layout.header.ClassicsHeader
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/layout_refresh_header_gif"/>
     <include layout="@layout/layout_communal_recycler" />
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
