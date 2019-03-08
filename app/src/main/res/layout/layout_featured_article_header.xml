@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/sc_mm_34"
+        android:textColor="@color/text_black_t"
+        android:id="@+id/tv_featured_article_header_title"
+        android:layout_alignBaseline="@id/tv_featured_article_header_subscribe"
+        android:text="#小编精选#"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="@dimen/sc_mm_150"
+        android:layout_marginTop="@dimen/sc_mm_27"
+        android:id="@+id/tv_featured_article_header_subscribe"
+        android:textSize="@dimen/sc_mm_28"
+        android:textColor="@color/selector_font_white_gray_s"
+        android:text="订阅"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/sc_mm_40"
+        android:background="@drawable/sel_featured_article_thirty_gray_s_blue_ffa"
+        android:layout_height="@dimen/sc_mm_60" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_below="@id/tv_featured_article_header_subscribe"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/sc_mm_40"
+        android:layout_marginTop="@dimen/sc_mm_14"
+        android:textSize="@dimen/sc_mm_22"
+        android:text="首次订阅可得50积分"
+        android:visibility="gone"
+        android:id="@+id/tv_first_featured_article_subscribe_hint"
+        android:textColor="@color/text_gray_hint_n"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/tv_featured_article_header_description"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_26"
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
+        android:text="小编每天会看到同事找回来的各种各样的宝贝，真想推荐给大家，特开此专栏，每日一更精选好物，欢迎订阅！"
+        android:layout_marginTop="@dimen/sc_mm_34"
+        android:layout_marginBottom="@dimen/sc_mm_34"
+        android:layout_below="@id/tv_first_featured_article_subscribe_hint"
+        android:lineSpacingExtra="@dimen/sc_mm_16"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

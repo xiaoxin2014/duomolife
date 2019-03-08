@@ -153,7 +153,7 @@ dependencies {
     implementation 'com.github.razerdp:BasePopup:2.1.6'
 
     //    下拉刷新
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-18'
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-20'
 
     //    leakcanary 内存
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'

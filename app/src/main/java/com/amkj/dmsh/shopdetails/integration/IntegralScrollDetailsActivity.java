@@ -9,7 +9,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -84,7 +83,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -582,13 +580,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 tv_integral_product_exchange.setText("立即兑换");
             }
         }
-    }
-
-    private View createTagView(String tagsName) {
-        View tagView = LayoutInflater.from(IntegralScrollDetailsActivity.this).inflate(R.layout.layout_product_tag, flex_communal_tag, false);
-        TextView tv_ql_gp_tag = tagView.findViewById(R.id.tv_ql_gp_tag);
-        tv_ql_gp_tag.setText(getStringFilter(tagsName));
-        return tagView;
     }
 
     /**

@@ -90,19 +90,19 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                     hintText = "你还没有收藏商品\n赶快去收藏";
                     break;
                 case "MessageSysMesActivity":
-                    hintText = "最近20天没有通知消息哦";
+                    hintText = "最近45天没有通知消息哦";
                     break;
                 case "MessageIndentActivity":
-                    hintText = "最近20天没有订单消息哦";
+                    hintText = "最近45天没有订单消息哦";
                     break;
                 case "MessageHotActivity":
-                    hintText = "最近20天没有活动消息哦";
+                    hintText = "最近30天没有活动消息哦";
                     break;
                 case "MessageCommentActivity":
-                    hintText = "最近20天没有评论消息哦";
+                    hintText = "暂时没有评论消息哦";
                     break;
                 case "MessageLikedActivity":
-                    hintText = "最近20天没有赞消息哦";
+                    hintText = "暂时没有赞消息哦";
                     break;
                 case "MineProductBrowsingHistoryActivity":
                     hintText = "最近暂无浏览记录哦";

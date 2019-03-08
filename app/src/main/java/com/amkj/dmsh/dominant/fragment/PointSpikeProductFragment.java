@@ -56,6 +56,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT;
+import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_STATUS;
 
 
@@ -98,6 +99,7 @@ public class PointSpikeProductFragment extends BaseFragment {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 TimeAxisProductListBean timeAxisProductListBean = (TimeAxisProductListBean) view.getTag();
                 if (timeAxisProductListBean != null) {
+                    addClickPointSpikeProductTotal(timeAxisProductListBean.getProductId());
                     Intent intent = new Intent(activityWeakReference.get(), ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(timeAxisProductListBean.getProductId()));
                     startActivity(intent);
@@ -165,6 +167,7 @@ public class PointSpikeProductFragment extends BaseFragment {
                                     getLoginStatus(PointSpikeProductFragment.this);
                                 }
                             } else {
+                                addClickPointSpikeProductTotal(timeAxisProductListBean.getProductId());
                                 Intent intent = new Intent(activityWeakReference.get(), ShopScrollDetailsActivity.class);
                                 intent.putExtra("productId", String.valueOf(timeAxisProductListBean.getProductId()));
                                 startActivity(intent);
@@ -313,6 +316,16 @@ public class PointSpikeProductFragment extends BaseFragment {
                 , params, null);
     }
 
+    /**
+     * 添加整点秒杀统计
+     * @param productId
+     */
+    private void addClickPointSpikeProductTotal(int productId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activityWeakReference.get(), Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL
+                , params, null);
+    }
     @Override
     protected void getReqParams(Bundle bundle) {
         pointSpikeId = (String) bundle.get("pointSpikeId");

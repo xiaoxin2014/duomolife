@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/iv_featured_comment_empty_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/featured_comment_empty"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/iv_featured_comment_empty_icon"
+        android:text="快来留言吧~"
+        android:textColor="@color/text_gray_hint_n"
+        android:textSize="@dimen/sc_mm_28"/>
+</RelativeLayout>

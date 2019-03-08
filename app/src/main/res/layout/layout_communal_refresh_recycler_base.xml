@@ -4,6 +4,7 @@
     android:id="@+id/smart_communal_refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_weight="1"
     cube_ptr:srlEnableOverScrollBounce="false">
 
     <include layout="@layout/layout_refresh_header_gif"/>

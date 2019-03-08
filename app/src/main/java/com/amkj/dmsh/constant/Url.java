@@ -586,8 +586,10 @@ public class Url {
     public static final String Q_POINT_SPIKE_AD = "api/goods/getBannerAd";
     //    整点秒商品
     public static final String Q_POINT_SPIKE_PRODUCT = "api/goods/activity/getActivityTimeAxisPorduct";
-//    设置整点秒商品状态
+    //    设置整点秒商品状态
     public static final String Q_POINT_SPIKE_PRODUCT_STATUS = "api/goods/addHoursActivityProductNotice";
+    //    整点秒杀商品点击统计
+    public static final String Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL = "api/goods/activity/addPorductClick";
     /**
      * 多么福利社
      */
