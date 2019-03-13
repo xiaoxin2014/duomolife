@@ -70,9 +70,6 @@ import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HOR_TYPE;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_TYPE;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
-;
-
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -216,17 +213,7 @@ public class QualityFragment extends BaseFragment {
 
     private void scrollTypeVisibility(int position) {
         CenterLinearLayoutManager linearLayoutManager = (CenterLinearLayoutManager) rv_quality_product_type.getLayoutManager();
-//        int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-//        int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
-//        int leftPosition = position - firstVisibleItemPosition;
-//        int rightPosition = lastVisibleItemPosition - position;
-//        if (leftPosition > rightPosition) {
-//
-//        } else {
-//        }
-//        int i = firstVisibleItemPosition+(leftPosition + rightPosition) / 2;
         linearLayoutManager.smoothScrollToPosition(rv_quality_product_type, new RecyclerView.State(),position);
-//        linearLayoutManager.setStackFromEnd(true);
     }
 
     @Override
