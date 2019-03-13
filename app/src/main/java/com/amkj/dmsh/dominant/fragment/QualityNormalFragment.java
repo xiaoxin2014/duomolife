@@ -81,7 +81,6 @@ import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
  * created on 2017/6/29
  * class description:良品分类
  */
-
 public class QualityNormalFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     RefreshLayout smart_communal_refresh;

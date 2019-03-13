@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -30,6 +29,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.CenterLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyco.tablayout.SlidingTabLayout;
@@ -182,7 +182,7 @@ public class QualityFragment extends BaseFragment {
             }
         });
 //        良品侧边栏分类
-        rv_quality_product_type.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_quality_product_type.setLayoutManager(new CenterLinearLayoutManager(getContext()));
         productTypeAdapter = new QualityProductTypeAdapter(qualityTypeBeanList);
         rv_quality_product_type.setAdapter(productTypeAdapter);
         productTypeAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -215,9 +215,18 @@ public class QualityFragment extends BaseFragment {
     }
 
     private void scrollTypeVisibility(int position) {
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) rv_quality_product_type.getLayoutManager();
-        linearLayoutManager.scrollToPositionWithOffset(position, 0);
-        linearLayoutManager.setStackFromEnd(true);
+        CenterLinearLayoutManager linearLayoutManager = (CenterLinearLayoutManager) rv_quality_product_type.getLayoutManager();
+//        int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+//        int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+//        int leftPosition = position - firstVisibleItemPosition;
+//        int rightPosition = lastVisibleItemPosition - position;
+//        if (leftPosition > rightPosition) {
+//
+//        } else {
+//        }
+//        int i = firstVisibleItemPosition+(leftPosition + rightPosition) / 2;
+        linearLayoutManager.smoothScrollToPosition(rv_quality_product_type, new RecyclerView.State(),position);
+//        linearLayoutManager.setStackFromEnd(true);
     }
 
     @Override
@@ -230,7 +239,7 @@ public class QualityFragment extends BaseFragment {
     }
 
     private void getFloatAd() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),H_Q_FLOAT_AD,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_Q_FLOAT_AD, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -264,7 +273,7 @@ public class QualityFragment extends BaseFragment {
         //购物车数量展示
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -307,7 +316,7 @@ public class QualityFragment extends BaseFragment {
 
 
     private void getQualityHorType() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),QUALITY_SHOP_HOR_TYPE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_SHOP_HOR_TYPE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -315,7 +324,7 @@ public class QualityFragment extends BaseFragment {
                 if (qualityTypeEntity != null) {
                     if (qualityTypeEntity.getCode().equals(SUCCESS_CODE)) {
                         setSlideData(qualityTypeEntity.getQualityTypeBeanList());
-                    } else if(!EMPTY_CODE.equals(qualityTypeEntity.getCode())){
+                    } else if (!EMPTY_CODE.equals(qualityTypeEntity.getCode())) {
                         showToast(getActivity(), qualityTypeEntity.getMsg());
                     }
                 }
@@ -324,13 +333,13 @@ public class QualityFragment extends BaseFragment {
 
             @Override
             public void onNotNetOrException() {
-                NetLoadUtils.getNetInstance().showLoadSir(loadService,qualityTypeEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityTypeEntity);
             }
         });
     }
 
     private void getQualitySideType() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),QUALITY_SHOP_TYPE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -433,6 +442,7 @@ public class QualityFragment extends BaseFragment {
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
     }
+
     @Override
     public boolean immersionBarEnabled() {
         return true;
