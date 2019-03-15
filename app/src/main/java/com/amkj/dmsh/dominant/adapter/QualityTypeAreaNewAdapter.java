@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,7 +51,6 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
             case ConstantVariable.TYPE_1:
             case ConstantVariable.TYPE_2:
                 final ImageView iv_type_center = helper.getView(R.id.iv_type_center);
-                final FrameLayout fl_type_center = helper.getView(R.id.fl_type_center);
                 final int layoutPosition = helper.getLayoutPosition();
                 iv_type_center.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -75,8 +73,9 @@ public class QualityTypeAreaNewAdapter extends BaseMultiItemQuickAdapter<Quality
                                 widthPx = 142;
                             }
                         }
-                        layoutParams.width = widthPx;
-                        layoutParams.height = widthPx;
+                        int reallyWidth = AutoSizeUtils.mm2px(context, widthPx);
+                        layoutParams.width = reallyWidth;
+                        layoutParams.height = reallyWidth;
                         if (qualityHomeTypeList.size() == 5 && layoutPosition == 0) {
                             layoutParams.setMargins(0, 0, AutoSizeUtils.mm2px(mAppContext,47), 0);
                         } else {

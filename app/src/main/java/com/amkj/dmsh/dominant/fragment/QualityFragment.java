@@ -163,14 +163,17 @@ public class QualityFragment extends BaseFragment {
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();//可见范围内的第一项的位置
                     QualityTypeBean firstTypeBean = qualityTypeSpecificBeanList.get(firstVisibleItemPosition);
                     if (firstTypeBean.getItemType() == TYPE_1 && !firstTypeBean.isSelect()) {
-                        scrollTypeVisibility(firstVisibleItemPosition);
-                        for (QualityTypeBean qualityTypeBean : qualityTypeBeanList) {
+                        int selectPosition = 0;
+                        for (int i = 0; i < qualityTypeBeanList.size(); i++) {
+                            QualityTypeBean qualityTypeBean = qualityTypeBeanList.get(i);
                             if (qualityTypeBean.getId() == firstTypeBean.getId()) {
                                 qualityTypeBean.setSelect(true);
+                                selectPosition = i;
                             } else {
                                 qualityTypeBean.setSelect(false);
                             }
                         }
+                        scrollTypeVisibility(selectPosition);
                         productTypeAdapter.notifyDataSetChanged();
                     }
                 } else {
