@@ -126,7 +126,7 @@ dependencies {
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
 
     //    渠道包
-    api 'com.leon.channel:helper:2.0.1'
+    api 'com.leon.channel:helper:2.0.2'
 
     //    google 标签
     implementation 'com.google.android:flexbox:1.0.0'
@@ -153,7 +153,7 @@ dependencies {
     implementation 'com.github.razerdp:BasePopup:2.1.6'
 
     //    下拉刷新
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-20'
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-21'
 
     //    leakcanary 内存
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
@@ -282,7 +282,7 @@ dependencies {
     //    加载dialog
     implementation 'com.kaopiz:kprogresshud:1.2.0'
 //    自定义Toast 避免关闭通知 不显示Toast
-    implementation 'com.hjq:toast:5.6'
+    implementation 'com.hjq:toast:5.8'
     //    gif展示
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'

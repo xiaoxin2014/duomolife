@@ -38,7 +38,6 @@ import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.kingja.loadsir.core.LoadSir;
-import com.leon.channel.helper.ChannelReaderUtil;
 import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
 import com.squareup.leakcanary.LeakCanary;
@@ -46,7 +45,6 @@ import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.stat.MtaSDkException;
@@ -79,7 +77,6 @@ import me.jessyan.autosize.unit.Subunits;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
@@ -381,16 +378,16 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * 配置统计渠道
      */
     private void setTotalChanel() {
-        String channel = ChannelReaderUtil.getChannel(mAppContext);
-        if (!TextUtils.isEmpty(channel)) {
-            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(mAppContext);
-            strategy.setAppChannel(channel);  //设置渠道
-            strategy.setAppVersion(getVersionName());      //App的版本
-            strategy.setAppPackageName(getStrings(mAppContext.getPackageName()));  //App的包名
-            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
-        } else {
+//        String channel = ChannelReaderUtil.getChannel(mAppContext);
+//        if (!TextUtils.isEmpty(channel)) {
+//            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(mAppContext);
+//            strategy.setAppChannel(channel);  //设置渠道
+//            strategy.setAppVersion(getVersionName());      //App的版本
+//            strategy.setAppPackageName(getStrings(mAppContext.getPackageName()));  //App的包名
+//            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
+//        } else {
             Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);
-        }
+//        }
     }
 
     //    获取版本号
@@ -459,7 +456,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     private void youMengInit() {
         //SDK 初始化
         UMConfigure.init(mAppContext, "57db8f1fe0f55a7ac0004684"
-                , getStrings(ChannelReaderUtil.getChannel(mAppContext)), UMConfigure.DEVICE_TYPE_PHONE, null);
+                , ""/*getStrings(ChannelReaderUtil.getChannel(mAppContext))*/, UMConfigure.DEVICE_TYPE_PHONE, null);
         /**
          * 设置组件化的Log开关
          * 参数: boolean 默认为false，如需查看LOG设置为true

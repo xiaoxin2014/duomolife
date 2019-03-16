@@ -669,6 +669,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         lvHeaderView.tv_indent_detail_to_refund.setVisibility(viewType);
     }
 
+    /**
+     * 根据主订单状态展示布局
+     * @param indentInfoDetailBean
+     */
     private void setIntentStatus(IndentInfoDetailBean indentInfoDetailBean) {
         OrderDetailBean orderDetailBean = indentInfoDetailBean.getOrderDetailBean();
         int statusCode = orderDetailBean.getStatus();
