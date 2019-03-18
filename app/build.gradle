@@ -270,7 +270,7 @@ dependencies {
     implementation 'q.rorbin:badgeview:1.1.2'
 
     //    自动适配屏幕
-    implementation 'me.jessyan:autosize:1.1.2'
+    implementation 'me.jessyan:autosize:1.1.1'
 
     //    BaseRecyclerViewAdapter
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'

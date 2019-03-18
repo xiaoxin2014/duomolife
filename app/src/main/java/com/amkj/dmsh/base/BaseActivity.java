@@ -34,7 +34,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.ButterKnife;
 import cn.jzvd.JzvdStd;
 import me.jessyan.autosize.AutoSize;
-import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -240,7 +239,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     @Override
     public Resources getResources() {
-        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
+//        AutoSize.autoConvertDensityOfGlobal(this);
+//        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
         return super.getResources();
     }
 

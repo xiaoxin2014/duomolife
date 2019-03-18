@@ -29,8 +29,6 @@ import butterknife.Unbinder;
 import cn.jzvd.Jzvd;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
-import me.jessyan.autosize.AutoSize;
-import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -110,7 +108,7 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AutoSize.autoConvertDensityOfGlobal(this);
+//        AutoSize.autoConvertDensityOfGlobal(this);
 //        友盟统计
         MobclickAgent.onResume(this);
 //        腾讯分析
@@ -214,9 +212,11 @@ public abstract class BaseFragmentActivity extends RxAppCompatActivity {
             recreate();
         }
     }
+
     @Override
     public Resources getResources() {
-        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
+//        AutoSize.autoConvertDensityOfGlobal(this);
+//        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
         return super.getResources();
     }
 }

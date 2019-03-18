@@ -910,11 +910,11 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
                     SharedPreferences.Editor edit = sharedPreferences.edit();
                     edit.putInt("selectServer", position);
-                    edit.apply();
+                    edit.commit();
                     SharedPreferences loginStatus = getSharedPreferences("LoginStatus", MODE_PRIVATE);
                     SharedPreferences.Editor loginEdit = loginStatus.edit();
                     loginEdit.putBoolean("isLogin", false);
-                    loginEdit.apply();
+                    loginEdit.commit();
                     RestartAPPTool.restartAPP(MainActivity.this);
                 }
             });
