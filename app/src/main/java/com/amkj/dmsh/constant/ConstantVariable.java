@@ -63,7 +63,7 @@ public class ConstantVariable {
     public static final int RELEVANCE_PRO_REQ = 201;
     //    背景图片请求码
     public static final int REQ_MINE_BG = 107;
-//    请求通知状态
+    //    请求通知状态
     public static final int REQUEST_NOTIFICATION_STATUS = 0x101;
     //    默认
     public static final int TYPE_0 = 0;
@@ -74,8 +74,10 @@ public class ConstantVariable {
     public static final int TYPE_3 = 3;
     //    访问资源文件前缀
     public static final String BASE_RESOURCE_DRAW = "android.resource://com.amkj.dmsh/drawable/";
-    //    订单操作
-//    重新购买
+    /**
+     * 订单操作
+     */
+    //    重新购买
     public static final String BUY_AGAIN = "buyAgain";
     //    删除
     public static final String DEL = "del";

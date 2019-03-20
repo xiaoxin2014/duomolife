@@ -38,10 +38,10 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.find.activity.FeaturedArticleActivity;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.mine.activity.AppDataActivity;
 import com.amkj.dmsh.mine.activity.MineInvitationListActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
@@ -663,9 +663,7 @@ public class MineDataFragment extends BaseFragment {
     //    跳转消息
     @OnClick(R.id.iv_mine_mes)
     void skipMes(View view) {
-//        Intent intent = new Intent(getActivity(), MessageActivity.class);
-//        startActivity(intent);
-        Intent intent = new Intent(getActivity(), FeaturedArticleActivity.class);
+        Intent intent = new Intent(getActivity(), MessageActivity.class);
         startActivity(intent);
     }
 

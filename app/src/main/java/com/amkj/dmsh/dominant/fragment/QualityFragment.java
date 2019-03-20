@@ -376,6 +376,10 @@ public class QualityFragment extends BaseFragment {
         });
     }
 
+    /**
+     * 设置横排良品类型
+     * @param qualityTypeBeanList
+     */
     private void setSlideData(List<QualityTypeBean> qualityTypeBeanList) {
         if (qualityTypeBeanList.size() > 0) {
             qualityTypeList.clear();
