@@ -168,6 +168,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
+
         if ("skipMinePage".equals(message.type)) {
             changeAdaptivePage(MAIN_MINE);
         } else if (message.type.equals("loginShowDialog")) {
