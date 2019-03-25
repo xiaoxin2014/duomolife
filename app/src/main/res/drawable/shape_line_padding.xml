@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="line">
+
+    <stroke
+        android:width="@dimen/sc_mm_1"
+        android:color="@color/text_color_e_s"/>
+
+    <!-- shape高度 -->
+    <size android:height="@dimen/sc_mm_1"/>
+
+</shape>

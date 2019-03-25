@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingTop="@dimen/sc_mm_30"
+                android:paddingEnd="@dimen/sc_mm_10"
+                android:paddingBottom="@dimen/sc_mm_50">
+
+    <ImageView
+        android:id="@+id/iv_head"
+        android:layout_width="@dimen/sc_mm_70"
+        android:layout_height="@dimen/sc_mm_70"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sc_mm_20"
+        android:layout_toEndOf="@+id/iv_head"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/textColor_alert_title"
+            android:textSize="@dimen/sc_mm_30"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_24"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/sc_mm_48"
+        android:drawableStart="@drawable/sel_art_like_heart"
+        android:drawablePadding="@dimen/sc_mm_10"
+        android:gravity="center_vertical|end"
+        android:text="@string/like"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_22"/>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_like"
+        android:layout_marginStart="@dimen/sc_mm_90"
+        android:layout_marginTop="@dimen/sc_mm_38"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_26"/>
+</RelativeLayout>

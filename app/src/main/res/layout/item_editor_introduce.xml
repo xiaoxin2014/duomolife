@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_403">
+
+        <ImageView
+            android:id="@+id/iv_big_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@color/mc"/>
+
+        <TextView
+            android:id="@+id/tv_direct_bug"
+            android:layout_width="@dimen/sc_mm_130"
+            android:layout_height="@dimen/sc_mm_40"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/sc_mm_26"
+            android:layout_marginBottom="@dimen/sc_mm_24"
+            android:background="@drawable/shap_circle_000"
+            android:gravity="center"
+            android:text="@string/direct_bug"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_22"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_goods_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sc_mm_40"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:text="@string/defaul"
+        android:textColor="@color/textColor_alert_msg"
+        android:textSize="@dimen/sc_mm_32"/>
+
+    <TextView
+        android:id="@+id/tv_goods_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sc_mm_40"
+        android:layout_marginTop="@dimen/sc_mm_36"
+        android:layout_marginEnd="@dimen/sc_mm_58"
+        android:text="@string/defaul"
+        android:textColor="@color/textColor_alert_title"
+        android:textSize="@dimen/sc_mm_28"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sc_mm_40"
+        android:layout_marginTop="@dimen/sc_mm_28"
+        android:layout_marginEnd="@dimen/sc_mm_20">
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_22"/>
+
+        <include
+            layout="@layout/layout_com_art_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_goods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_42"
+        android:scrollbars="none">
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>
