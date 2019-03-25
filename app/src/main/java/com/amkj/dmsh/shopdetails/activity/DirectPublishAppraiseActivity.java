@@ -103,14 +103,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
         recycler_direct_publish_appraise.setLayoutManager(new LinearLayoutManager(DirectPublishAppraiseActivity.this, LinearLayoutManager.VERTICAL, false));
         recycler_direct_publish_appraise.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-
-
-
-
-
-
-                .create());
+                .setDividerId(R.drawable.item_divider_five_dp).create());
         recycler_direct_publish_appraise.setAdapter(directPublishAppraiseAdapter);
     }
 

@@ -592,7 +592,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * 初始化web链接转换本地链接
      */
     private void initWebUrlTransformLocation() {
+//        app跳转地址
         webUrlTransform = new HashMap<>();
+//        携带参数
         webUrlParameterTransform = new HashMap<>();
         //        自营商品商品详情
         webUrlTransform.put("proprietary.html", "app://ShopScrollDetailsActivity");

@@ -503,6 +503,7 @@ public class ConstantMethod {
                     isMiniRoutine = true;
                 } else if (isWebLinkUrl(link)) {
                     String webUrl = "";
+//                    https://www.domolife.cn/ProductDetails.html?id=18137
                     int lastWebUrlIndex = link.lastIndexOf("/");
                     int linkLength = link.length();
                     if (lastWebUrlIndex != -1 && lastWebUrlIndex + 1 < linkLength) {
@@ -520,7 +521,8 @@ public class ConstantMethod {
                         intent.putExtra("loadUrl", link);
                     } else if (webUrlTransform != null && webUrlTransform.get(webUrl) != null
                             && webUrlParameterTransform != null && webUrlParameterTransform.get(webUrl) != null) {
-//                        获取本地地址
+//                        原生地址有参数
+//                    https://www.domolife.cn/ProductDetails.html?id=18137 ;最后转换成app://……activity?productId=18137                      获取本地地址
                         String skipUrl = webUrlTransform.get(webUrl);
 //                        获取参数
                         Map<String, String> parameterMap = webUrlParameterTransform.get(webUrl);
@@ -537,10 +539,12 @@ public class ConstantMethod {
                         setSkipPath(context, (skipUrl + "?" + parameter), isCloseActivity);
                         return;
                     } else if (webUrlTransform != null && webUrlTransform.get(webUrl) != null) {
+//                        原生地址无参数
                         String skipUrl = webUrlTransform.get(webUrl);
                         setSkipPath(context, skipUrl, isCloseActivity);
                         return;
                     } else {
+//                        web加载url
                         intent.setClass(context, DoMoLifeCommunalActivity.class);
                         intent.putExtra("loadUrl", link);
                     }

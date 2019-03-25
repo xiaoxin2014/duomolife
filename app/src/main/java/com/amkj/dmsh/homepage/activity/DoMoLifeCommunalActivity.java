@@ -1192,7 +1192,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this) ? 1 : 0));
     }
 
-    /**
+    /**android 原生进行jS交互（调起Js方法）
      * @param jsUrl
      */
     private void webViewJs(@NonNull String jsUrl) {
