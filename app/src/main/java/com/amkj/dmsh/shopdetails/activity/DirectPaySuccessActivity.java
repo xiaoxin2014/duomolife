@@ -46,7 +46,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -239,7 +238,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                     @Override
                     public void imageClick() {
-                        adClickTotal(communalADActivityBean.getId());
+                        adClickTotal(getActivity(),communalADActivityBean.getId());
                         setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
                         alertDialogAdImage.dismiss();
                     }
@@ -263,7 +262,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("order_no", indentNo);
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_PAY_SUCCESS_PRODUCT, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAY_SUCCESS_PRODUCT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

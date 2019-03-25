@@ -206,7 +206,7 @@ public class PersonalBgImgSelActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_BG_IMG_LIST, null, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_BG_IMG_LIST, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

@@ -67,29 +67,29 @@ public class DmlSearchDetailEntity extends BaseEntity{
          */
 
         private int isfront;
-        private int articletype;
+        private int articletype;//文章类型
         private boolean flag;
-        private boolean isFavor;
-        private boolean isCollect;
+        private boolean isFavor; //点赞数量
+        private boolean isCollect;//是否收藏
         private String avatar;
-        private String title;
-        private int productCount;
-        private int uid;
-        private String path;
+        private String title; //文章标题
+        private int productCount;//文章中的推荐商品数量
+        private int uid; //文章发布者的uid
+        private String path;//文章顶部图
         private int view;
-        private int favor;
+        private int favor; //点赞数量
         private String nickname;
-        private String ctime;
+        private String ctime;//发布时间
         private int comment;
-        private int id;
-        private int collect;
+        private int id;//文章id
+        private int collect;//文章被收藏的次数
         private int status;
-        private String category_title;
+        private String category_title;//文章类型
         private String digest;
         private int category_id;
         private List<CommunalDetailBean> description;
-        private List<ProductListBean> productList;
-        private List<LikedProductBean> documentProductList;
+        private List<ProductListBean> productList;  //文章中的推荐商品
+        private List<LikedProductBean> documentProductList;  //同类推荐商品
         @SerializedName("json")
         private List<RelevanceProBean> relevanceProList;
         private List<TagsBean> tags;

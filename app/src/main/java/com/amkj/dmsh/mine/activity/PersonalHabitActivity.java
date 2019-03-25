@@ -36,7 +36,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -123,7 +122,7 @@ public class PersonalHabitActivity extends BaseActivity {
     protected void loadData() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_HABIT_TYPE
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_HABIT_TYPE
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

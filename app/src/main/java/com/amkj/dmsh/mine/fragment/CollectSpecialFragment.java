@@ -32,7 +32,6 @@ import butterknife.BindView;
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -164,7 +163,7 @@ public class CollectSpecialFragment extends BaseFragment {
         params.put("currentPage", page);
         params.put("count", TOTAL_COUNT_TWENTY);
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_SPECIAL,
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), COLLECT_SPECIAL,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

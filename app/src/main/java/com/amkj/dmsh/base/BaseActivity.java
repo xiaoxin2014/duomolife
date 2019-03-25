@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -31,6 +32,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.ButterKnife;
 import cn.jzvd.JzvdStd;
 import me.jessyan.autosize.AutoSize;
@@ -40,13 +44,13 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
-;
 
 public abstract class BaseActivity extends RxAppCompatActivity {
     public KProgressHUD loadHud;
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
     public String TAG = getClass().getSimpleName();
+    public Map<String, Object> CommonMap = new HashMap<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +65,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50));
 //                .setDimAmount(0.5f)
+        //Api通用参数初始化
+        CommonMap.put("reqId", String.valueOf(System.currentTimeMillis()));
         // 重新加载逻辑
         if (isAddLoad()) {
             loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {
@@ -72,7 +78,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 }
             }, NetLoadUtils.getNetInstance().getLoadSirCover());
             String hintText;
-            switch (getClass().getSimpleName()) {
+            String simpleName = getClass().getSimpleName();
+            switch (simpleName) {
                 case "ShopScrollDetailsActivity":
                 case "IntegralScrollDetailsActivity":
                 case "ShopTimeScrollDetailsActivity":
@@ -89,22 +96,25 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                     hintText = "你还没有收藏商品\n赶快去收藏";
                     break;
                 case "MessageSysMesActivity":
-                    hintText = "最近45天没有通知消息哦";
+                    hintText = "最近20天没有通知消息哦";
                     break;
                 case "MessageIndentActivity":
-                    hintText = "最近45天没有订单消息哦";
+                    hintText = "最近20天没有订单消息哦";
                     break;
                 case "MessageHotActivity":
-                    hintText = "最近30天没有活动消息哦";
+                    hintText = "最近20天没有活动消息哦";
                     break;
                 case "MessageCommentActivity":
-                    hintText = "暂时没有评论消息哦";
+                    hintText = "最近20天没有评论消息哦";
                     break;
                 case "MessageLikedActivity":
-                    hintText = "暂时没有赞消息哦";
+                    hintText = "最近20天没有赞消息哦";
                     break;
                 case "MineProductBrowsingHistoryActivity":
                     hintText = "最近暂无浏览记录哦";
+                    break;
+                case "EditorCommentActivity":
+                    hintText = "快来留言吧~";
                     break;
                 default:
                     hintText = "暂无数据，稍后重试";
@@ -116,6 +126,10 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 public void order(Context context, View view) {
                     TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
                     tv_communal_net_tint.setText(finalHintText);
+                    if ("EditorCommentActivity".equals(simpleName)) {
+                        ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
+                        iv_communal_pic.setImageResource(R.drawable.editor_message);
+                    }
                 }
             });
         }
@@ -239,8 +253,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     @Override
     public Resources getResources() {
-//        AutoSize.autoConvertDensityOfGlobal(this);
-//        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));//如果没有自定义需求用这个方法
         return super.getResources();
     }
 
@@ -301,5 +313,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
             ToastUtils.init(TinkerManager.getApplication());
             recreate();
         }
+    }
+
+    protected BaseActivity getActivity() {
+        return this;
     }
 }

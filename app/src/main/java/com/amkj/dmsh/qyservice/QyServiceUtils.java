@@ -223,7 +223,7 @@ public class QyServiceUtils {
             pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
         }
         pageSource.quickEntryList.add(new QuickEntry(2, "新品发布", ""));
-        getIndentProductData();
+        getIndentProductData(context);
 
 //        排队设置
         SessionLifeCycleOptions lifeCycleOptions = new SessionLifeCycleOptions();
@@ -426,7 +426,7 @@ public class QyServiceUtils {
     /**
      * 获取订单数据
      */
-    private void getIndentProductData() {
+    private void getIndentProductData(Context activity) {
         String url = Url.BASE_URL + Url.Q_INQUIRY_ALL_ORDER;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
@@ -435,7 +435,7 @@ public class QyServiceUtils {
         params.put("orderType", "currency");
 //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 orderListBeanList.clear();

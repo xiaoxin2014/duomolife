@@ -1,6 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,11 +17,11 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,7 +64,7 @@ import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TY
  * 订单列表
  */
 public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoIndentListAdapter.IndentListViewHolder> implements View.OnClickListener {
-    private final Context context;
+    private final Activity context;
     private final LayoutInflater layoutInflater;
     private final List<OrderListBean> orderList;
     private OnClickViewListener listener;
@@ -72,7 +72,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     private Map<Integer, OrderListBean> beanMap = new HashMap<>();
     private ConstantMethod constantMethod;
 
-    public DoMoIndentListAdapter(Context context, List<OrderListBean> orderList) {
+    public DoMoIndentListAdapter(Activity context, List<OrderListBean> orderList) {
         super(R.layout.layout_communal_recycler_wrap, orderList);
         this.context = context;
         this.orderList = orderList;

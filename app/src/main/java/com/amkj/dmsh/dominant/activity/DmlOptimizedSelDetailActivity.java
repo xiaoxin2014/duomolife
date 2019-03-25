@@ -150,7 +150,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     dr_welfare_detail_pro.closeDrawers();
                     skipProductUrl(DmlOptimizedSelDetailActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalProNum(productListBean.getId(), dmlOptimizedSelDetailBean.getId());
+                    totalProNum(getActivity(),productListBean.getId(), dmlOptimizedSelDetailBean.getId());
                 }
             }
         });
@@ -182,7 +182,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             if (communalDetailBean != null) {
                 skipProductUrl(DmlOptimizedSelDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                 //                    统计商品点击
-                totalProNum(communalDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
+                totalProNum(getActivity(),communalDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
             }
         });
         //          关闭手势滑动
@@ -351,7 +351,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    ConstantMethod.addArticleShareCount(dmlOptimizedSelDetailBean.getId());
+                    ConstantMethod.addArticleShareCount(getActivity(),dmlOptimizedSelDetailBean.getId());
                 }
             });
         }

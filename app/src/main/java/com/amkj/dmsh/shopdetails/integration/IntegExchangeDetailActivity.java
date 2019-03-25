@@ -29,7 +29,6 @@ import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
-import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
@@ -42,6 +41,7 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.Inte
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity.IntegralOrderDetailBean;
+import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -67,7 +67,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -188,7 +187,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         Map<String, Object> params = new HashMap<>();
         params.put("no", indentNum);
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

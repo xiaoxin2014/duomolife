@@ -157,7 +157,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
 
     private void setSkipLocalPath(String link) {
 //        启东广告点击统计
-        adClickTotal(launcherAdId);
+        adClickTotal(this,launcherAdId);
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);

@@ -128,7 +128,7 @@ public class AccountSafeActivity extends BaseActivity {
     private void getCurrentAccountData() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_PAGE
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -169,7 +169,7 @@ public class AccountSafeActivity extends BaseActivity {
     private void getOtherAccountData() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_SYNC_LOGIN
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_SYNC_LOGIN
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

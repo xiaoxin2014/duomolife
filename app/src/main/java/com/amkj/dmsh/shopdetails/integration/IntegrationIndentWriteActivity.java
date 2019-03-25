@@ -686,7 +686,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         } else if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(orderCreateNo, webManualFinish);
+                unionPay.unionPayResult(this,orderCreateNo, webManualFinish);
             } else {
                 cancelIntegralIndent();
             }

@@ -952,7 +952,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    addArticleShareCount(invitationDetailBean.getId());
+                    addArticleShareCount(getActivity(),invitationDetailBean.getId());
                 }
             });
         }

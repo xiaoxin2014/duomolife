@@ -400,7 +400,7 @@ public class CommunalWebDetailUtils {
                                 baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
                                 baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(mContext, baseAddCarProInfoBean, loadHud);
+                                constantMethod.addShopCarGetSku(activity, baseAddCarProInfoBean, loadHud);
                             }
                             break;
                         default:
@@ -617,7 +617,7 @@ public class CommunalWebDetailUtils {
                     , getStrings(shareDataBean.getUrlLink()));
             if (shareDataBean.getBackId() > 0) {
                 umShareAction.setOnShareSuccessListener(() ->
-                        addArticleShareCount(shareDataBean.getBackId())
+                        addArticleShareCount(activity,shareDataBean.getBackId())
                 );
             }
         }

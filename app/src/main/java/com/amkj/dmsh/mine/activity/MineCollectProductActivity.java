@@ -40,7 +40,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -205,7 +204,7 @@ public class MineCollectProductActivity extends BaseActivity {
         params.put("uid", userId);
         params.put("currentPage", page);
         params.put("count", TOTAL_COUNT_TWENTY);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_PRO, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, COLLECT_PRO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

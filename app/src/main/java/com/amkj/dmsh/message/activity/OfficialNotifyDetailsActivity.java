@@ -39,7 +39,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
@@ -107,7 +106,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                 CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
                 if (communalDetailBean != null) {
                     skipProductUrl(OfficialNotifyDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    totalOfficialProNum(communalDetailBean.getId(), notifyId);
+                    totalOfficialProNum(getActivity(),communalDetailBean.getId(), notifyId);
                 }
             }
         });
@@ -168,7 +167,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, H_MES_OFFICIAL_DETAILS,
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_OFFICIAL_DETAILS,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

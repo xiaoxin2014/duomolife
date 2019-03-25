@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
@@ -25,6 +26,7 @@ import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleTypeAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
@@ -57,6 +59,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
@@ -84,9 +87,6 @@ import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_LIST;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
 import static com.amkj.dmsh.constant.Url.H_REGION_ACTIVITY;
-
-;
-;
 
 /**
  * @author LGuiPeng
@@ -129,6 +129,9 @@ public class HomePageFragment extends BaseFragment {
     RelativeLayout rel_home_page;
     @BindView(R.id.iv_float_ad_icon)
     ImageView iv_float_ad_icon;
+    @BindView(R.id.iv_float_editor_select)
+    ImageView mIvFloatEditorSelect;
+    Unbinder unbinder;
     private Badge badge;
     private List<CategoryTypeBean> categoryList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -167,8 +170,6 @@ public class HomePageFragment extends BaseFragment {
         rv_home_activity.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_img_white)
-
-
                 .create());
         homeImgActivityAdapter = new HomeImgActivityAdapter(getActivity(), activityList);
         rv_home_activity.setAdapter(homeImgActivityAdapter);
@@ -322,7 +323,7 @@ public class HomePageFragment extends BaseFragment {
         String url = Url.BASE_URL + Url.H_MES_STATISTICS;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -348,7 +349,7 @@ public class HomePageFragment extends BaseFragment {
      * 获取活动列表
      */
     private void getHotActivityList() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_HOT_ACTIVITY_LIST,isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + H_HOT_ACTIVITY_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -383,7 +384,7 @@ public class HomePageFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_AD_LIST, params,isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + H_AD_LIST, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -429,7 +430,7 @@ public class HomePageFragment extends BaseFragment {
      * 专区活动广告
      */
     private void getRegionActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+H_REGION_ACTIVITY, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + H_REGION_ACTIVITY, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -513,9 +514,16 @@ public class HomePageFragment extends BaseFragment {
     void floatAdSkip(View view) {
         CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag(R.id.iv_tag);
         if (communalADActivityBean != null) {
-            adClickTotal(communalADActivityBean.getId());
+            adClickTotal(getActivity(),communalADActivityBean.getId());
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
+    }
+
+    //跳转小编精选
+    @OnClick(R.id.iv_float_editor_select)
+    public void onViewClicked() {
+        if (BuildConfig.DEBUG) {
+            startActivity(new Intent(getActivity(), EditorSelectActivity.class));        }
     }
 
     /**
@@ -545,4 +553,5 @@ public class HomePageFragment extends BaseFragment {
         ImmersionBar.with(this).titleBar(tb_tool_home).keyboardEnable(true).navigationBarEnable(false)
                 .statusBarDarkFont(true).init();
     }
+
 }

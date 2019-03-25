@@ -82,6 +82,7 @@ public class ArticleTypeFragment extends BaseFragment {
                 CommunalArticleBean articleBean = (CommunalArticleBean) view.getTag();
                 if (articleBean != null) {
                     switch (view.getId()) {
+                        //收藏
                         case R.id.tv_com_art_collect_count:
                             if (userId > 0) {
                                 setArticleCollected(articleBean);
@@ -93,6 +94,7 @@ public class ArticleTypeFragment extends BaseFragment {
                                 getLoginStatus(ArticleTypeFragment.this);
                             }
                             break;
+                        //点赞
                         case R.id.tv_com_art_like_count:
                             if (userId > 0) {
                                 setArticleLiked(articleBean);

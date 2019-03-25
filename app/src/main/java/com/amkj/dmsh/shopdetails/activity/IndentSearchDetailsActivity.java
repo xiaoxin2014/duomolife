@@ -354,7 +354,7 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 //        3 组合赠品兼容
         params.put("version", 3);
         params.put("productName", getStrings(searchKey));
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, INDENT_SEARCH, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, INDENT_SEARCH, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

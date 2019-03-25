@@ -67,7 +67,6 @@ import butterknife.OnClick;
 
 import static android.widget.LinearLayout.SHOW_DIVIDER_END;
 import static android.widget.LinearLayout.SHOW_DIVIDER_NONE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -302,7 +301,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         params.put("orderProductId", orderProductId);
         params.put("userId", userId);
         params.put("no", no);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_REPAIR_DETAIL, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -350,7 +349,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         params.put("orderProductId", orderProductId);
         params.put("orderRefundProductId", orderRefundProductId);
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_REFUND_DETAIL, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REFUND_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

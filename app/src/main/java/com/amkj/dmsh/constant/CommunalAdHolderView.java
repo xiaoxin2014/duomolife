@@ -1,6 +1,6 @@
 package com.amkj.dmsh.constant;
 
-import android.content.Context;
+import android.app.Activity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,12 +30,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
  * class description:广告轮播图片 视频播放
  */
 public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
-    private final Context context;
+    private final Activity context;
     private final boolean isShowProduct;
     private ImageView iv_ad_image;
     private JzVideoPlayerStatus jvp_ad_video_play;
 
-    public CommunalAdHolderView(View itemView, Context context,boolean isShowProduct) {
+    public CommunalAdHolderView(View itemView, Activity context, boolean isShowProduct) {
         super(itemView);
         this.context = context;
         this.isShowProduct = isShowProduct;
@@ -57,17 +57,17 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
             jvp_ad_video_play.setVideoStatusListener(new JzVideoPlayerStatus.VideoStatusListener() {
                 @Override
                 public void startTurning() {
-                    EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN,START_AUTO_PAGE_TURN));
+                    EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
                 }
 
                 @Override
                 public void stopTurning() {
-                    EventBus.getDefault().post(new EventMessage(STOP_AUTO_PAGE_TURN,STOP_AUTO_PAGE_TURN));
+                    EventBus.getDefault().post(new EventMessage(STOP_AUTO_PAGE_TURN, STOP_AUTO_PAGE_TURN));
                 }
             });
-            if(!isShowProduct){
+            if (!isShowProduct) {
                 jvp_ad_video_play.setVideoSkipData(getStrings(communalADActivityBean.getVideoUrl()), "");
-                if(NetWorkUtils.isWifiByType(context)){
+                if (NetWorkUtils.isWifiByType(context)) {
                     jvp_ad_video_play.setVolumeOn(false);
                     jvp_ad_video_play.startButton.performClick();
                 }
@@ -75,15 +75,15 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
         } else {
             jvp_ad_video_play.setVisibility(View.GONE);
             iv_ad_image.setVisibility(View.VISIBLE);
-            if(isShowProduct){
+            if (isShowProduct) {
                 iv_ad_image.setTag(R.id.iv_tag, communalADActivityBean);
                 iv_ad_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         CommunalADActivityBean communalADActivity = (CommunalADActivityBean) v.getTag(R.id.iv_tag);
                         if (communalADActivity != null) {
-                            adClickTotal(communalADActivityBean.getId());
-                            setSkipPath(v.getContext(), communalADActivity.getAndroidLink(),true, false);
+                            adClickTotal(context, communalADActivityBean.getId());
+                            setSkipPath(context, communalADActivity.getAndroidLink(), true, false);
                         }
                     }
                 });

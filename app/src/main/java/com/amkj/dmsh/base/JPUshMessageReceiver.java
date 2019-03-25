@@ -102,7 +102,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                     setSkipPath(context, json.getString("androidLink"), false);
                 }
                 if (!TextUtils.isEmpty("pushId")) {
-                    totalPushMessage(pushId);
+                    totalPushMessage(context, pushId);
                     TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
                     Map<String, String> totalMap = new HashMap<>();
                     totalMap.put("pushId", pushId);

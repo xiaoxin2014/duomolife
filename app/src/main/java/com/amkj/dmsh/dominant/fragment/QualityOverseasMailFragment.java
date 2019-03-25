@@ -380,7 +380,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                             cbViewHolderCreator = new CBViewHolderCreator() {
                                 @Override
                                 public Holder createHolder(View itemView) {
-                                    return new CommunalAdHolderView(itemView, getContext(), true);
+                                    return new CommunalAdHolderView(itemView, getActivity(), true);
                                 }
 
                                 @Override

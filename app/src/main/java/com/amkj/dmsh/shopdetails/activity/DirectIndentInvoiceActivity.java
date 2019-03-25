@@ -45,7 +45,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -161,7 +160,7 @@ public class DirectIndentInvoiceActivity extends BaseActivity {
         if (orderDetailBean != null) {
             params.put("no", orderDetailBean.getNo());
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, INVOICE_DETAIL, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, INVOICE_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

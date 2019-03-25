@@ -35,7 +35,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -144,7 +143,7 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
     protected void loadData() {
         Map<String, Object> params = new HashMap<>();
         params.put("id", platformId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, H_MES_PLATFORM_DETAILS,
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_PLATFORM_DETAILS,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

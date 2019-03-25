@@ -50,10 +50,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUN
  */
 
 public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean, ArticleCommentAdapter.ArticleViewHolder> {
-    private final Context context;
+    private final Activity context;
     private final String commentType;
 
-    public ArticleCommentAdapter(Context context, List<DmlSearchCommentBean> articleCommentList,String commentType) {
+    public ArticleCommentAdapter(Activity context, List<DmlSearchCommentBean> articleCommentList,String commentType) {
         super(R.layout.adapter_article_comment, articleCommentList);
         this.context = context;
         this.commentType = commentType;
@@ -179,7 +179,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
         params.put("tuid", uid);
         //评论id
         params.put("id", replyCommListBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params,null);
         String likeCount = getNumber(textView.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
         textView.setText(String.valueOf(textView.isSelected()

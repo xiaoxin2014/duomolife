@@ -40,7 +40,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -248,7 +247,7 @@ public class MineInvitationListActivity extends BaseActivity {
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("uid", userId);
         params.put("version", 1);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_INVITATION_LIST,
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_INVITATION_LIST,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

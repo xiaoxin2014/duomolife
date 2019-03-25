@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -74,7 +73,7 @@ import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
  * class description:积分夺宝
  */
 public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, IntegralLotteryAdapter.IntegralLotteryViewHolder> {
-    private final Context context;
+    private final Activity context;
     private final List<PreviousInfoBean> integralLotteryList;
     private final LayoutInflater inflater;
     private ConstantMethod constantMethod;
@@ -85,7 +84,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     private LotteryAwardAdapter lotteryAwardAdapter;
     private List<String> lotteryCodeList = new ArrayList<>();
 
-    public IntegralLotteryAdapter(Context context, ConstantMethod constantMethod, List<PreviousInfoBean> integralLotteryList) {
+    public IntegralLotteryAdapter(Activity context, ConstantMethod constantMethod, List<PreviousInfoBean> integralLotteryList) {
         super(R.layout.adapter_integral_lottery, integralLotteryList);
         this.integralLotteryList = integralLotteryList;
         this.context = context;

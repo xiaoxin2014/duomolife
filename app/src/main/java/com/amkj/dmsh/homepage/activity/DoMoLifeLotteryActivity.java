@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -460,9 +461,9 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
 
 
     public class JsData {
-        private Context context;
+        private Activity context;
 
-        public JsData(Context context) {
+        public JsData(Activity context) {
             this.context = context;
         }
 

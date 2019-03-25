@@ -33,7 +33,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -159,7 +158,7 @@ public class ProRecommendActivity extends BaseActivity {
     private void getDoMoRecommend() {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_SP_DETAIL_RECOMMEND, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SP_DETAIL_RECOMMEND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -201,7 +200,7 @@ public class ProRecommendActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

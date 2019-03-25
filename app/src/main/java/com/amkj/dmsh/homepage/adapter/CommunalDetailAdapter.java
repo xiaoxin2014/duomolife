@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -117,7 +116,7 @@ import static me.jessyan.autosize.utils.AutoSizeUtils.mm2px;
  * Created by atd48 on 2016/8/30.
  */
 public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDetailObjectBean, CommunalDetailAdapter.CommunalHolderHelper> implements View.OnClickListener {
-    private final Context context;
+    private final Activity context;
     private final int screenWidth;
     private final KProgressHUD loadHud;
     //    换行
@@ -154,7 +153,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     //    是否是图片
     private boolean isImageTag;
 
-    public CommunalDetailAdapter(Context context, List<CommunalDetailObjectBean> descriptionBeanList) {
+    public CommunalDetailAdapter(Activity context, List<CommunalDetailObjectBean> descriptionBeanList) {
         super(descriptionBeanList);
 //        正常文本
         addItemType(NORTEXT, R.layout.layout_article_details);

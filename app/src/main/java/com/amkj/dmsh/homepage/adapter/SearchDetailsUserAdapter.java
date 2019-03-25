@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,10 +36,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  */
 public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFansBean, BaseViewHolder> {
 
-    private final Context context;
+    private final Activity context;
     private String type;
 
-    public SearchDetailsUserAdapter(Context context, List<UserAttentionFansBean> userAttentionFansList, String type) {
+    public SearchDetailsUserAdapter(Activity context, List<UserAttentionFansBean> userAttentionFansList, String type) {
         super(R.layout.adapter_search_details_user, userAttentionFansList);
         this.type = type;
         this.context = context;

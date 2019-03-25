@@ -26,7 +26,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -94,7 +93,7 @@ public class PersonalRealNameActivity extends BaseActivity {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_PAGE
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_PAGE
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

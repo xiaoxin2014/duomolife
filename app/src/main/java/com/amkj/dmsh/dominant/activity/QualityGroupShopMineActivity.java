@@ -435,7 +435,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         } else if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null && qualityUnionIndent.getQualityCreateUnionPayIndent() != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),webManualFinish);
+                unionPay.unionPayResult(this,qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),webManualFinish);
             } else {
                 showToast("支付取消！");
             }

@@ -40,7 +40,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -221,7 +220,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", page);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_WARM, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

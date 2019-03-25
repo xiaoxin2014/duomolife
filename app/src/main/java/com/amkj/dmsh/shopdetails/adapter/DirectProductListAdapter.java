@@ -1,6 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -76,11 +76,11 @@ import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TY
  */
 public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewHolder> {
     private final String type;
-    private final Context context;
+    private final Activity context;
     private List<CartProductInfoBean> preComProInfoBeanList = new ArrayList<>();
     private AlertDialogHelper refundOrderDialogHelper;
 
-    public DirectProductListAdapter(Context context, List list, String type) {
+    public DirectProductListAdapter(Activity context, List list, String type) {
         super(R.layout.layout_direct_indent_product_item, list);
         this.context = context;
         this.type = type;

@@ -63,7 +63,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -457,7 +456,7 @@ public class ShopCarActivity extends BaseActivity {
         params.put("currentPage", page);
         params.put("userId", userId);
         params.put("version", "v3.1.5");
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_SHOP_CAR_GOODS,
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_SHOP_CAR_GOODS,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -749,7 +748,7 @@ public class ShopCarActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("ids", carIds);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_SHOP_DETAILS_DEL_CAR,
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_DEL_CAR,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -997,7 +996,7 @@ public class ShopCarActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {

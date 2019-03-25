@@ -384,7 +384,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
         if (refundBean.getType() == 1) {
             params.put("refundPrice", refundBean.getRefundPrice());
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_APPLY_REFUND, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_APPLY_REFUND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

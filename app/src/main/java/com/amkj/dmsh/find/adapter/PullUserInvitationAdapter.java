@@ -1,6 +1,6 @@
 package com.amkj.dmsh.find.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,7 +54,7 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
  * 帖子列表适配器
  */
 public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetailBean, PullUserInvitationAdapter.InvitationViewHolder> {
-    private final Context context;
+    private final Activity context;
     private final String type;
     private List<RelevanceProBean> relevanceProList = new ArrayList<>();
     //    发现-图片列表
@@ -63,7 +63,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
     private String descriptionContent;
     private int userId;
 
-    public PullUserInvitationAdapter(Context context, List<InvitationDetailBean> invitationSearchList, String type) {
+    public PullUserInvitationAdapter(Activity context, List<InvitationDetailBean> invitationSearchList, String type) {
         super(R.layout.adapter_find_recommend, invitationSearchList);
         this.context = context;
         this.type = type;

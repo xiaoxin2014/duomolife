@@ -47,7 +47,6 @@ import butterknife.BindView;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -358,7 +357,7 @@ public class IntegralIndentFragment extends BaseFragment {
             if (!TextUtils.isEmpty(typeStatus)) {
                 params.put("statusCategory", typeStatus);
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();

@@ -235,7 +235,7 @@ public class DirectCouponGetActivity extends BaseActivity {
             params.put("uid", userId);
             params.put("isApp", 1);
             params.put("orderList", new Gson().toJson(selCouponGoodsEntityList));
-            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();

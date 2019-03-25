@@ -254,7 +254,7 @@ public class CollectInvitationFragment extends BaseFragment {
         params.put("count", TOTAL_COUNT_TWENTY);
         params.put("uid", userId);
         params.put("version", 1);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_INVITATION, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), COLLECT_INVITATION, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

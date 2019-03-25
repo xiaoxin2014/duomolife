@@ -434,7 +434,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(orderNo, webManualFinish);
+                unionPay.unionPayResult(this,orderNo, webManualFinish);
             } else {
                 showToast("支付取消！");
             }
@@ -449,7 +449,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         params.put("no", orderNo);
         //        版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_DETAILS
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_DETAILS
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

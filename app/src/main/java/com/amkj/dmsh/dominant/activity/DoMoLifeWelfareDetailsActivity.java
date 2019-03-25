@@ -273,7 +273,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     dr_welfare_detail_pro.closeDrawers();
                     skipProductUrl(DoMoLifeWelfareDetailsActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(productListBean.getId(), Integer.parseInt(welfareId));
+                    totalWelfareProNum(getActivity(),productListBean.getId(), Integer.parseInt(welfareId));
                 }
             }
         });
@@ -536,7 +536,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    addArticleShareCount(qualityWefBean.getId());
+                    addArticleShareCount(getActivity(),qualityWefBean.getId());
                 }
             });
         }
@@ -726,7 +726,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     if (communalDetailBean != null) {
                         skipProductUrl(DoMoLifeWelfareDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                         //                    统计商品点击
-                        totalWelfareProNum(communalDetailBean.getId(), Integer.parseInt(welfareId));
+                        totalWelfareProNum(getActivity(),communalDetailBean.getId(), Integer.parseInt(welfareId));
                     }
                 }
             });

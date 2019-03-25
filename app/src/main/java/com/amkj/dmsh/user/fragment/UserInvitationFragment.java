@@ -38,7 +38,6 @@ import butterknife.BindView;
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -197,7 +196,7 @@ public class UserInvitationFragment extends BaseFragment {
         if (userId > 0) {
             params.put("myUid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 adapterInvitationAdapter.loadMoreComplete();

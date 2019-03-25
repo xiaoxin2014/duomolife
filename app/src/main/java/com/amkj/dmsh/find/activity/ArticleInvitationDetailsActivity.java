@@ -626,7 +626,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     if (communalDetailBean != null) {
                         skipProductUrl(ArticleInvitationDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
 //                    统计商品点击
-                        totalProNum(communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                        totalProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
                     }
                 }
             });
@@ -879,7 +879,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    addArticleShareCount(dmlSearchDetailBean.getId());
+                    addArticleShareCount(getActivity(),dmlSearchDetailBean.getId());
                 }
             });
         }

@@ -184,6 +184,19 @@ public class Url {
     public static final String H_ATT_INTEG = "api/reminder/getSnigInfo";
     //    发现广告图
     public static final String FIND_AD = "api/website/getAdByFind";
+    //    小编精选列表
+    public static final String EDITOR_SELECT_LIST = "api/redactorpicked/redactorpickedList";
+    //    小编精选点赞
+    public static final String EDITOR_SELECT_FAVOR = "api/redactorpicked/favor";
+    //    订阅小编精选推送
+    public static final String SUBSCRIBER_EDITOR = "api/redactorpicked/subscribe";
+    //    小编精选添加留言
+    public static final String EDITOR_SELECT_COMMENT = "api/redactorpickedcomment/addComment";
+    //    小编精选留言点赞
+    public static final String EDITOR_COMMENT_FAVOR = "api/redactorpickedcomment/favor";
+    //    小编精选留言列表
+    public static final String EDITOR_COMMENT_LIST = "/api/redactorpickedcomment/getCommentList";
+
     /**
      * 我的
      */

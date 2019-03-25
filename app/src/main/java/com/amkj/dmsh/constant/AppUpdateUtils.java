@@ -59,7 +59,7 @@ public class AppUpdateUtils {
     /**
      * 获取app版本更新
      */
-    public void getAppUpdate(Context context) {
+    public void getAppUpdate(Activity context) {
         getAppUpdate(context, false);
     }
 

@@ -277,7 +277,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 dl_art_detail_pro.closeDrawers();
                 skipProductUrl(ArticleOfficialActivity.this, productListBean.getItemTypeId(), productListBean.getId());
 //                    统计商品点击
-                totalProNum(productListBean.getId(), dmlSearchDetailBean.getId());
+                totalProNum(getActivity(),productListBean.getId(), dmlSearchDetailBean.getId());
             }
         });
 
@@ -851,7 +851,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (communalDetailBean != null) {
                     skipProductUrl(ArticleOfficialActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
 //                    统计商品点击
-                    totalProNum(communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                    totalProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
                 }
             });
             communalDescripAdapter.setOnItemChildClickListener((adapter, view, position) -> {

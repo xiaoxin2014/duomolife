@@ -154,7 +154,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                         /**
                          * 3.1.9 加入好物广告统计
                          */
-                        adClickTotal(communalADActivityBean.getId());
+                        adClickTotal(getActivity(),communalADActivityBean.getId());
                         setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
                         break;
                 }
@@ -226,7 +226,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                     cbViewHolderCreator = new CBViewHolderCreator() {
                         @Override
                         public Holder createHolder(View itemView) {
-                            return new CommunalAdHolderView(itemView, getContext(), true);
+                            return new CommunalAdHolderView(itemView, getActivity(), true);
                         }
 
                         @Override

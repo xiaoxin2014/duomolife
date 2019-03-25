@@ -1,10 +1,12 @@
 package com.amkj.dmsh.network;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
@@ -26,6 +28,7 @@ import com.zhouyou.http.model.HttpParams;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,27 +75,36 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param url
      * @param netLoadListener
      */
-    public void loadNetDataPost(Context context, String url, NetLoadListener netLoadListener) {
+    public void loadNetDataPost(Activity context, String url, NetLoadListener netLoadListener) {
         loadNetDataPost(context, url, null, netLoadListener);
     }
 
-    /**post 请求
+    /**
+     * post 请求
+     *
      * @param context
      * @param url
-     * @param params 兼容以前map<></>
+     * @param params          兼容以前map<></>
      * @param netLoadListener
      */
-    public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
-        WeakReference<Context> weakReference = new WeakReference<Context>(context);
+    public void loadNetDataPost(Activity context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
+        Map<String, Object> map = new HashMap<>();
+        if (params != null) {
+            map.putAll(params);
+        }
+        WeakReference<Context> weakReference = new WeakReference<>(context);
+        if (context instanceof BaseActivity) {
+            map.putAll(((BaseActivity) context).CommonMap);
+        }
         if (NetWorkUtils.checkNet(context)) {
 //            先进行框架初始化
             NetApiManager.getInstance().initNetInstance();
-            HttpParams httpParams = getHttpParams(params);
+            HttpParams httpParams = getHttpParams(map);
 
             EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
-                    if (weakReference.get()!=null) {
+                    if (weakReference.get() != null) {
                         try {
                             if (netLoadListener != null) {
                                 netLoadListener.onNotNetOrException();
@@ -105,7 +117,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
 
                 @Override
                 public void onSuccess(String result) {
-                    if (weakReference.get()!=null) {
+                    if (weakReference.get() != null) {
                         try {
                             if (netLoadListener != null) {
                                 netLoadListener.onSuccess(result);
@@ -127,6 +139,61 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             }
         }
     }
+
+    /**
+     * post 请求
+     *
+     * @param context
+     * @param url
+     * @param params          兼容以前map<></>
+     * @param netLoadListener
+     */
+    public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
+        WeakReference<Context> weakReference = new WeakReference<>(context);
+        if (NetWorkUtils.checkNet(context)) {
+//            先进行框架初始化
+            NetApiManager.getInstance().initNetInstance();
+            HttpParams httpParams = getHttpParams(params);
+
+            EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    if (weakReference.get() != null) {
+                        try {
+                            if (netLoadListener != null) {
+                                netLoadListener.onNotNetOrException();
+                                netLoadListener.onError(e);
+                            }
+                        } catch (Exception e1) {
+                        }
+                    }
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    if (weakReference.get() != null) {
+                        try {
+                            if (netLoadListener != null) {
+                                netLoadListener.onSuccess(result);
+                            }
+                        } catch (Exception e) {
+                            try {
+                                netLoadListener.onNotNetOrException();
+                                netLoadListener.onError(e);
+                            } catch (Exception e1) {
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            if (netLoadListener != null) {
+                netLoadListener.onNotNetOrException();
+                netLoadListener.netClose();
+            }
+        }
+    }
+
 
     /**
      * 获取适配框架的参数
@@ -196,7 +263,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * 否，先使用缓存，不管是否存在，仍然请求网络
      * -->无网-->只读取缓存，缓存没有会返回null
      *
-     * @param url 必须是正常网址 区分正式测试库
+     * @param url                  必须是正常网址 区分正式测试库
      * @param params
      * @param isForceNet
      * @param netCacheLoadListener
@@ -229,7 +296,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         @Override
                         public void onSuccess(CacheResult<String> cacheResult) {
                             try {
-                                if(cacheResult==null){
+                                if (cacheResult == null) {
                                     if (netCacheLoadListener != null) {
                                         netCacheLoadListener.onError(new Throwable("数据为空！"));
                                         netCacheLoadListener.onNotNetOrException();
@@ -340,6 +407,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             }
         }
     }
+
     /**
      * 集合数据
      *
@@ -351,11 +419,12 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (loadService != null) {
             if (list != null && list.size() > 0) {
                 loadService.showWithConvertor(SUCCESS_CODE);
-            }else {
+            } else {
                 loadService.showWithConvertor(ERROR_CODE);
             }
         }
     }
+
     /**
      * 集合数据
      *

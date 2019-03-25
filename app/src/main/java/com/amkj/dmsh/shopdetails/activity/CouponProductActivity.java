@@ -31,7 +31,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -148,7 +147,7 @@ public class CouponProductActivity extends BaseActivity {
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("user_coupon_id", userCouponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_COUPON_PRODUCT_LIST,
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_COUPON_PRODUCT_LIST,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

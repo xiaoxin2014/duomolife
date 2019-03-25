@@ -175,12 +175,12 @@ public class MessageActivity extends BaseActivity {
                                 showToast(MessageActivity.this, messageTotalEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageTotalEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, messageTotalEntity);
                     }
 
                     @Override

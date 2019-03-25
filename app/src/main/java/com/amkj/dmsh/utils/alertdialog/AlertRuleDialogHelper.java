@@ -43,7 +43,7 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
     private List<CommunalDetailObjectBean> ruleList = new ArrayList<>();
     private boolean isFirstSet = true;
 
-    public AlertRuleDialogHelper (Context context) {
+    public AlertRuleDialogHelper (Activity context) {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.attendance_integral_rule, null, false);

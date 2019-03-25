@@ -31,7 +31,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -104,7 +103,7 @@ public class DirectRepairLogisticDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("orderRefundProductId", orderRefundProductId);
         params.put("orderProductId", orderProductId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_INDENT_REPAIR_LOGISTIC, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_LOGISTIC, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

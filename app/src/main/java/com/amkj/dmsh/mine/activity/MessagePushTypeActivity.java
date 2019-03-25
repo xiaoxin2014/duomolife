@@ -30,7 +30,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -171,7 +170,7 @@ public class MessagePushTypeActivity extends BaseActivity {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, MINE_MES_PUSH_LIST
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_MES_PUSH_LIST
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

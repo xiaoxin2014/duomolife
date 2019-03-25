@@ -221,4 +221,20 @@
     <string name="inden_data_failed">订单类型异常，请稍后重试~</string>
     <!--登录-->
     <string name="login_failed">登录失败，请稍后重试~</string>
+    <string name="editor_select">#小编精选#</string>
+    <string name="subscriber">订阅</string>
+    <string name="first_subsribe">首次订阅可得%d积分</string>
+    <string name="direct_bug"><![CDATA[立即购买>]]></string>
+    <string name="defaul">----</string>
+    <string name="see_detail"><![CDATA[查看详情>]]></string>
+    <string name="write_comment">写评论...</string>
+    <string name="send">发送</string>
+    <string name="like">赞</string>
+    <string name="editor_select_comment">精选留言</string>
+    <string name="editor_select_comment2">精选留言(%d)</string>
+    <string name="already_subscribe">已订阅</string>
+    <string name="subscriber_sucess">订阅成功</string>
+    <string name="subscriber_cancle">成功取消订阅</string>
+    <string name="subscriber_failed">订阅失败</string>
+    <string name="unsubscriber_failed">取消订阅失败</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.amkj.dmsh.find.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
@@ -46,9 +45,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * Created by atd48 on 2016/7/14.
  */
 public class AdapterReceiverComment extends BaseMultiItemQuickAdapter<ArticleCommentBean, BaseViewHolder> {
-    private final Context context;
+    private final Activity context;
 
-    public AdapterReceiverComment(Context context, List<ArticleCommentBean> articleCommentList) {
+    public AdapterReceiverComment(Activity context, List<ArticleCommentBean> articleCommentList) {
         super(articleCommentList);
         addItemType(ArticleCommentBean.NORMAL_CODE, R.layout.comment_layout);
         addItemType(ArticleCommentBean.FOOT_EMPTY_CODE, R.layout.communal_comment_not);

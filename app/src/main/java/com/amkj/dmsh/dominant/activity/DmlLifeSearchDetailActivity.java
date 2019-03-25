@@ -293,7 +293,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     dl_ql_search.closeDrawers();
                     skipProductUrl(DmlLifeSearchDetailActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(productListBean.getId(), dmlSearchDetailBean.getId());
+                    totalWelfareProNum(DmlLifeSearchDetailActivity.this, productListBean.getId(), dmlSearchDetailBean.getId());
                 }
             }
         });
@@ -304,7 +304,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 if (communalDetailBean != null && communalDetailBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_WEL) {
                     skipProductUrl(DmlLifeSearchDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                    totalWelfareProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
                 }
             }
         });
@@ -766,7 +766,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    addArticleShareCount(dmlSearchDetailBean.getId());
+                    addArticleShareCount(getActivity(),dmlSearchDetailBean.getId());
                 }
             });
         }

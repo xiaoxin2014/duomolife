@@ -815,7 +815,7 @@ public class ConstantMethod {
         }
     }
 
-    public void setSendComment(final Context context, CommunalComment communalComment) {
+    public void setSendComment(final Activity context, CommunalComment communalComment) {
         switch (communalComment.getCommType()) {
             case PRO_COMMENT:
                 setGoodsComment(context, communalComment);
@@ -845,7 +845,7 @@ public class ConstantMethod {
     }
 
 
-    private void setGoodsComment(final Context context, CommunalComment communalComment) {
+    private void setGoodsComment(final Activity context, CommunalComment communalComment) {
         String url = Url.BASE_URL + Url.GOODS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         //回复评论
@@ -902,7 +902,7 @@ public class ConstantMethod {
         });
     }
 
-    private void setDocComment(final Context context, CommunalComment communalComment) {
+    private void setDocComment(final Activity context, CommunalComment communalComment) {
         String url = Url.BASE_URL + Url.FIND_COMMENT;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
@@ -962,7 +962,7 @@ public class ConstantMethod {
      * @param context
      * @param communalComment
      */
-    private void setAdviceData(final Context context, CommunalComment communalComment) {
+    private void setAdviceData(final Activity context, CommunalComment communalComment) {
         String url = Url.BASE_URL + Url.SEARCH_LEAVE_MES;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", communalComment.getUserId());
@@ -1018,7 +1018,7 @@ public class ConstantMethod {
      * @param context
      * @param communalComment
      */
-    private void setFeedbackData(final Context context, CommunalComment communalComment) {
+    private void setFeedbackData(final Activity context, CommunalComment communalComment) {
         String url = Url.BASE_URL + Url.MINE_FEEDBACK;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", communalComment.getUserId());
@@ -1138,20 +1138,18 @@ public class ConstantMethod {
     }
 
     //    文章分享统计
-    public static void addArticleShareCount(int articleId) {
+    public static void addArticleShareCount(Activity activity, int articleId) {
         String url = Url.BASE_URL + Url.ARTICLE_SHARE_COUNT;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", articleId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
     }
 
     /**
      * 推送点击统计
-     *
-     * @param pushId
      */
-    public static void totalPushMessage(@NonNull String pushId) {
+    public static void totalPushMessage(Context activity, @NonNull String pushId) {
         String url = Url.BASE_URL + Url.TOTAL_PUSH_INFO;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
@@ -1159,16 +1157,16 @@ public class ConstantMethod {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
     }
 
     //    分享成功 奖励
-    public static void shareRewardSuccess(int uid, final Context context) {
+    public static void shareRewardSuccess(int uid, final Activity context) {
         String url = Url.BASE_URL + Url.SHARE_SUCCESS;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", uid);
         params.put("version", 2);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = RequestStatus.objectFromData(result);
@@ -1202,33 +1200,33 @@ public class ConstantMethod {
     }
 
     //      统计文章点击商品
-    public static void totalProNum(int productId, int artId) {
+    public static void totalProNum(Activity activity, int productId, int artId) {
         String url = Url.BASE_URL + Url.TOTAL_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("product_id", productId);
         params.put("doc_id", artId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
     }
 
     //      统计福利社点击商品
-    public static void totalWelfareProNum(int productId, int topId) {
+    public static void totalWelfareProNum(Activity activity, int productId, int topId) {
         String url = Url.BASE_URL + Url.TOTAL_WELFARE_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("productId", productId);
         params.put("topId", topId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
     }
 
     //      统计官方通知点击商品
-    public static void totalOfficialProNum(int productId, String officialId) {
+    public static void totalOfficialProNum(Activity activity, int productId, String officialId) {
         String url = Url.BASE_URL + Url.TOTAL_OFFICIAL_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("productId", productId);
         params.put("cId", officialId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
     }
 
     //    统计广告点击
@@ -1238,11 +1236,11 @@ public class ConstantMethod {
      *
      * @param adId
      */
-    public static void adClickTotal(int adId) {
+    public static void adClickTotal(Activity activity, int adId) {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", adId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, TOTAL_AD_COUNT, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
     }
 
     /**
@@ -1250,11 +1248,11 @@ public class ConstantMethod {
      *
      * @param adId
      */
-    public static void adDialogClickTotal(int adId) {
+    public static void adDialogClickTotal(Activity activity, int adId) {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", adId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, TOTAL_AD_DIALOG_COUNT, params, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_DIALOG_COUNT, params, null);
     }
 
     /**
@@ -1262,7 +1260,7 @@ public class ConstantMethod {
      *
      * @param pushType
      */
-    public void clickTotalPush(String pushType, String id) {
+    public void clickTotalPush( String pushType, String id) {
         String url = Url.BASE_URL + Url.TOTAL_JPUSH_COUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("type", pushType);
@@ -1398,7 +1396,7 @@ public class ConstantMethod {
      * @param oldOsVersion   后台数据APP版本
      * @param sysNotice
      */
-    public static void setDeviceInfo(Context context, String oldVersionName, String oldMobileModel, String oldOsVersion, int sysNotice) {
+    public static void setDeviceInfo(Activity context, String oldVersionName, String oldMobileModel, String oldOsVersion, int sysNotice) {
 //        系统版本号
         String osVersion = Build.VERSION.RELEASE;
 //        手机型号
@@ -1428,7 +1426,7 @@ public class ConstantMethod {
      * @param versionName        版本名称
      * @param notificationStatus app 通知开关
      */
-    private static void upDeviceInfo(Context context, String osVersion, String mobileModel, String versionName, int notificationStatus) {
+    private static void upDeviceInfo(Activity context, String osVersion, String mobileModel, String versionName, int notificationStatus) {
         String url = Url.BASE_URL + Url.DEVICE_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("device_source", "android");
@@ -1473,7 +1471,7 @@ public class ConstantMethod {
      * @param baseAddCarProInfoBean 商品基本信息
      * @param loadHud
      */
-    public void addShopCarGetSku(final Context context, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
+    public void addShopCarGetSku(final Activity context, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
         //商品详情内容
         this.loadHud = loadHud;
         this.context = context;
@@ -1513,7 +1511,7 @@ public class ConstantMethod {
                                     shopCarGoodsSkuDif.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
                                     shopCarGoodsSkuDif.setValuesName(!TextUtils.isEmpty(editGoodsSkuBean.getPropvalues().get(0).getPropValueName())
                                             ? editGoodsSkuBean.getPropvalues().get(0).getPropValueName() : "默认");
-                                    addShopCar(shopCarGoodsSkuDif);
+                                    addShopCar(context, shopCarGoodsSkuDif);
                                 } else {
                                     showToast(context, "商品已售罄，正在努力补货中~~~");
                                 }
@@ -1544,7 +1542,7 @@ public class ConstantMethod {
         });
     }
 
-    private void setSkuValue(Context context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean) {
+    private void setSkuValue(Activity context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean) {
         //        sku 展示
         SkuDialog skuDialog = new SkuDialog((Activity) context);
         if (!TextUtils.isEmpty(baseAddCarProInfoBean.getProPic())) {
@@ -1564,12 +1562,12 @@ public class ConstantMethod {
                 }
                 shopCarGoodsSku.setProductId(baseAddCarProInfoBean.getProductId());
                 shopCarGoodsSku.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
-                addShopCar(shopCarGoodsSku);
+                addShopCar(context, shopCarGoodsSku);
             }
         });
     }
 
-    private void addShopCar(final ShopCarGoodsSku shopCarGoodsSku) {
+    private void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku) {
         if (userId != 0) {
 //          加入购物车
             String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_ADD_CAR;
@@ -1582,7 +1580,7 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(shopCarGoodsSku.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSku.getActivityCode());
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -1956,7 +1954,7 @@ public class ConstantMethod {
         }
     }
 
-    public void getNewUserCouponDialog(Context context) {
+    public void getNewUserCouponDialog(Activity context) {
         if (NEW_USER_DIALOG && isContextExisted(context)) {
             NEW_USER_DIALOG = false;
             String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
@@ -2017,7 +2015,7 @@ public class ConstantMethod {
      * @param context
      * @param couponId
      */
-    private void getNewUserCoupon(Context context, int couponId) {
+    private void getNewUserCoupon(Activity context, int couponId) {
         if (couponId > 0) {
             String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
             Map<String, Object> params = new HashMap<>();

@@ -285,7 +285,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_integral_details.finishRefresh();
@@ -614,7 +614,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         String url = Url.BASE_URL + Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

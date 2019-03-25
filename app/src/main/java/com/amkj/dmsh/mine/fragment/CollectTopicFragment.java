@@ -162,7 +162,7 @@ public class CollectTopicFragment extends BaseFragment {
         params.put("currentPage", page);
         params.put("count", TOTAL_COUNT_TEN);
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, COLLECT_TOPIC, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), COLLECT_TOPIC, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

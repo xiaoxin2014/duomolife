@@ -12,7 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseFragmentActivity;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.SearchTabPageAdapter;
@@ -37,7 +37,7 @@ import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA
 
 ;
 
-public class AllSearchDetailsActivity extends BaseFragmentActivity {
+public class AllSearchDetailsActivity extends BaseActivity {
     @BindView(R.id.et_search_input)
     EditText et_search_input;
     @BindView(R.id.sliding_search_bar)

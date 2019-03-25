@@ -34,8 +34,8 @@ import android.widget.RadioGroup;
 import com.ali.auth.third.ui.context.CallbackContext;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.address.AddressUtils;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.BaseFragmentActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
@@ -139,7 +139,7 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
  * @author Liuguipeng
  * @date 2017/10/31
  */
-public class MainActivity extends BaseFragmentActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.rp_bottom_main)
     RadioGroup rp_bottom_main;
     private FragmentManager fragmentManager;
@@ -977,7 +977,7 @@ public class MainActivity extends BaseFragmentActivity implements View.OnClickLi
                     @Override
                     public void imageClick() {
                         alertDialogAdImage.dismiss();
-                        adDialogClickTotal(communalADActivityBean.getId());
+                        adDialogClickTotal(getActivity(),communalADActivityBean.getId());
                         setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
                     }
                 });

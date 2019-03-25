@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
@@ -67,8 +66,8 @@ public class UnionPay {
      *
      * @param orderNo
      */
-    public void unionPayResult(String orderNo) {
-        unionPayResult(orderNo, "");
+    public void unionPayResult(Activity activity,String orderNo) {
+        unionPayResult(activity,orderNo, "");
     }
 
     /**
@@ -77,7 +76,7 @@ public class UnionPay {
      * @param orderNo
      * @param webResultValue web调用返回值
      */
-    public void unionPayResult(String orderNo, String webResultValue) {
+    public void unionPayResult(Activity activity,String orderNo, String webResultValue) {
         if (unionPayResultCallBack == null) {
             throw new NullPointerException("支付回调监听不能为空");
         }
@@ -125,7 +124,7 @@ public class UnionPay {
                     unionPayResultCallBack.onUnionPayError("数据异常，请稍后重试！");
                 }
             };
-            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, Q_UNIONPAY_PAYMENT_INDENT
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_UNIONPAY_PAYMENT_INDENT
                     , params, netLoadListenerHelper);
         }
     }

@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.amkj.dmsh">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.amkj.dmsh">
     <!-- 涂图权限 -->
     <!-- 允许应用程序写数据到外部存储设备（主要是SD卡） -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 在sdcard中创建/删除文件的权限 -->
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA"/>
     <!--安卓8.0系统安装app 未知来源权限-->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <!-- 开启闪光灯权限 -->
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <!-- 访问网络 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 获取通知权限 -->
-    <uses-permission android:name="android.permission.OP_POST_NOTIFICATION" />
+    <uses-permission android:name="android.permission.OP_POST_NOTIFICATION"/>
     <!-- 获取WIFI信息 友盟统计 微信支付 shareSdk权限 oss-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!--腾讯bugly-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:name="android.hardware.camera.flash" />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
+    <uses-feature android:name="android.hardware.camera.flash"/>
     <!-- shareSdk权限 -->
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <!-- 友盟权限 -->
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
     <!-- 微信支付 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
     <!--这里的是清单文件的静态权限-->
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <!--危险权限 暂时移除-->
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS"
-        tools:node="remove" />
+        tools:node="remove"/>
     <uses-permission
         android:name="android.permission.SYSTEM_ALERT_WINDOW"
-        tools:node="remove" />
+        tools:node="remove"/>
     <uses-permission
         android:name="android.permission.RECORD_AUDIO"
-        tools:node="remove" />
+        tools:node="remove"/>
     <uses-permission
         android:name="android.permission.READ_CONTACTS"
-        tools:node="remove" />
+        tools:node="remove"/>
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
-        tools:node="remove" />
+        tools:node="remove"/>
 
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
         android:resizeable="true"
-        android:smallScreens="true" />
+        android:smallScreens="true"/>
     <application
         android:name=".base.TinkerBaseApplication"
         android:allowBackup="false"
@@ -74,30 +74,30 @@
         <!--android 9.0 默认移除 如继续使用 Apache HTTP 客户端-->
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false" />
+            android:required="false"/>
         <!--适配华为（huawei）刘海屏-->
         <meta-data
             android:name="android.notch_support"
-            android:value="true" />
+            android:value="true"/>
         <!--适配小米（xiaomi）刘海屏-->
         <meta-data
             android:name="notch.config"
-            android:value="portrait|landscape" />
+            android:value="portrait|landscape"/>
         <meta-data
             android:name="android.max_aspect"
-            android:value="2.4" />
+            android:value="2.4"/>
 
         <meta-data
             android:name="linkedme.sdk.key"
-            android:value="576097e25440399c5fabbbbaa1ce989d" />
+            android:value="576097e25440399c5fabbbbaa1ce989d"/>
 
         <activity
             android:name=".SplashLaunchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/fullTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -106,7 +106,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="linkedme.sdk.auto_link_keys"
-                android:value="linkedme" />
+                android:value="linkedme"/>
         </activity>
 
         <!--福利社-->
@@ -117,8 +117,8 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <!--不要改名，福利社-->
-                <action android:name="DuomoLifeActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DuomoLifeActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--签到-->
@@ -127,8 +127,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="AttendanceActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="AttendanceActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分获取-->
@@ -137,8 +137,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegralGetActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegralGetActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分详情-->
@@ -147,8 +147,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegralDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegralDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--限时特惠-->
@@ -158,8 +158,8 @@
             android:screenOrientation="portrait">
             <!--不要改名，限时特惠-->
             <intent-filter>
-                <action android:name="PromotionActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="PromotionActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--抽奖模块-->
@@ -168,8 +168,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DoMoLifeLotteryActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DoMoLifeLotteryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分夺宝-我的奖励-->
@@ -178,8 +178,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MineIntegralLotteryAwardActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MineIntegralLotteryAwardActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -187,8 +187,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegralProductShopActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegralProductShopActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分夺宝-领取奖励-->
@@ -197,8 +197,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegralLotteryAwardGetActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegralLotteryAwardGetActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--往期中奖-->
@@ -207,14 +207,14 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegralLotteryAwardHistoryActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegralLotteryAwardHistoryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--往期中奖人数-->
         <activity
             android:name=".homepage.activity.IntegralLotteryAwardPersonActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--分享赚-->
         <activity
             android:name=".homepage.activity.HomeCouponGetActivity"
@@ -222,8 +222,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="HomeCouponGetActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="HomeCouponGetActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--文章详情-->
@@ -233,12 +233,10 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ArticleOfficialActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ArticleOfficialActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <!--精选文章-->
-        <!--精选文章评论-->
         <!--首页 底部导航页面 放到activity-->
         <activity
             android:name=".homepage.activity.MainPageTabBarActivity"
@@ -246,8 +244,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MainPageTabBarActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MainPageTabBarActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--文章分类-->
@@ -256,8 +254,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ArticleTypeActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ArticleTypeActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--标签详情页-->
@@ -267,8 +265,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="FindTagDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="FindTagDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--帖子详情-->
@@ -278,8 +276,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ArticleDetailsImgActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ArticleDetailsImgActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--帖子文章-->
@@ -289,8 +287,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ArticleInvitationDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ArticleInvitationDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--web端公用-->
@@ -299,8 +297,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DoMoLifeCommunalActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DoMoLifeCommunalActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--发布图文-->
@@ -309,8 +307,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ReleaseImgArticleActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ReleaseImgArticleActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--福利社专题详情-->
@@ -320,8 +318,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DoMoLifeWelfareDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DoMoLifeWelfareDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--品牌团详情-->
@@ -331,8 +329,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="TimeBrandDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="TimeBrandDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--限时特惠详情-->
@@ -342,8 +340,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ShopTimeScrollDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ShopTimeScrollDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--优惠券-->
@@ -353,8 +351,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DirectMyCouponActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DirectMyCouponActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--自营商品详情-->
@@ -364,8 +362,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ShopScrollDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ShopScrollDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--商品推荐-->
@@ -375,8 +373,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ProRecommendActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ProRecommendActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分商品详情-->
@@ -386,8 +384,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegrationScrollDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegrationScrollDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--良品 必买清单-->
@@ -397,8 +395,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityShopBuyListActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityShopBuyListActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--历史清单详情-->
@@ -408,8 +406,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityShopHistoryListActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityShopHistoryListActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--拼团商品详情-->
@@ -419,8 +417,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityGroupShopDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityGroupShopDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--多么拼团-->
@@ -430,8 +428,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityGroupShopActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityGroupShopActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--海外直邮列表-->
@@ -441,8 +439,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityOverseasMailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityOverseasMailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--海外直邮详情-->
@@ -452,8 +450,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityOverseasDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityOverseasDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--良品商品分类-->
@@ -462,8 +460,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityTypeProductActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityTypeProductActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--新人专享-->
@@ -472,8 +470,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityNewUserActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityNewUserActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--热销单品-->
@@ -483,8 +481,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityTypeHotSaleProActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityTypeHotSaleProActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--多么优选-->
@@ -494,8 +492,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DmlOptimizedSelActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DmlOptimizedSelActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--多么优选详情-->
@@ -505,8 +503,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DmlOptimizedSelDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DmlOptimizedSelDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--多么研究所-->
@@ -516,8 +514,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityDMLLifeSearchActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityDMLLifeSearchActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--多么研究所详情-->
@@ -527,8 +525,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DmlLifeSearchDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DmlLifeSearchDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--历史福利社清单详情-->
@@ -539,8 +537,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityNewProActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityNewProActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--每周精选-->
@@ -550,8 +548,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityWeekOptimizedActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityWeekOptimizedActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--优惠券类别商品-->
@@ -561,8 +559,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="CouponProductActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="CouponProductActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--自定义专区-->
@@ -571,8 +569,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityCustomTopicActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityCustomTopicActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--营销专场-->
@@ -582,8 +580,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ProActActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ProActActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分订单详情-->
@@ -592,8 +590,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegExchangeDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegExchangeDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--用户首页-->
@@ -602,8 +600,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="UserPagerActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="UserPagerActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--购物车-->
@@ -612,8 +610,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ShopCarActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ShopCarActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--我的-收藏商品列表-->
@@ -622,8 +620,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MineCollectProductActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MineCollectProductActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--个人信息-->
@@ -632,8 +630,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="PersonalDataActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="PersonalDataActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--我的提醒列表-->
@@ -642,8 +640,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ShopTimeMyWarmActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ShopTimeMyWarmActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
 
@@ -653,8 +651,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="FindHotTopicListActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="FindHotTopicListActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--话题详情-->
@@ -664,8 +662,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="FindTopicDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="FindTopicDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--消息-->
@@ -676,8 +674,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MessageLikedActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MessageLikedActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -686,8 +684,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="OfficialNotifyDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="OfficialNotifyDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--官方文章-->
@@ -697,8 +695,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MessageHotActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MessageHotActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--订单物流消息-->
@@ -707,8 +705,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MessageIndentActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MessageIndentActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--系统消息-->
@@ -717,8 +715,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MessageSysMesActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MessageSysMesActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--评论消息-->
@@ -727,8 +725,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MessageCommentActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MessageCommentActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--消息-平台通知-->
@@ -738,8 +736,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="PlatformNotifyDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="PlatformNotifyDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--订单详情-->
@@ -749,8 +747,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DirectExchangeDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DirectExchangeDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--商品标签详情-->
@@ -760,8 +758,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ProductLabelDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ProductLabelDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--新的粉丝-->
@@ -773,8 +771,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/activityTheme">
             <intent-filter>
-                <action android:name="AllSearchDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="AllSearchDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--搜索无商品好物推荐-->
@@ -784,8 +782,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/activityTheme">
             <intent-filter>
-                <action android:name="SearchGoodProMoreActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="SearchGoodProMoreActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -801,67 +799,67 @@
             -->
             <intent-filter>
                 <!-- 此处scheme值需要替换为后台设置中的scheme值 -->
-                <data android:scheme="duomolife" />
-                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="duomolife"/>
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
             </intent-filter>
 
             <!-- APP Links方式,Android 23版本及以后支持 -->
             <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="MainActivity" />
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="MainActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <!-- 以下pathPrefix值需要替换为后台设置中 App ID 的值-->
                 <data
                     android:host="lkme.cc"
                     android:pathPrefix="/wsC"
-                    android:scheme="https" />
+                    android:scheme="https"/>
                 <data
                     android:host="lkme.cc"
                     android:pathPrefix="/wsC"
-                    android:scheme="http" />
+                    android:scheme="http"/>
                 <data
                     android:host="www.lkme.cc"
                     android:pathPrefix="/wsC"
-                    android:scheme="https" />
+                    android:scheme="https"/>
                 <data
                     android:host="www.lkme.cc"
                     android:pathPrefix="/wsC"
-                    android:scheme="http" />
+                    android:scheme="http"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="MainActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MainActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".WelcomeLaunchActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/fullTheme1" />
+            android:theme="@style/fullTheme1"/>
         <!--首页 - 搜索 -->
         <activity
             android:name=".homepage.activity.HomePageSearchActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="HomePageSearchActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="HomePageSearchActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".release.activity.RelevanceProListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".dominant.activity.DoMoGroupJoinShareActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DoMoGroupJoinShareActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DoMoGroupJoinShareActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--拼团 我的拼团-->
@@ -870,8 +868,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityGroupShopMineActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityGroupShopMineActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--全部拼团商品-->
@@ -880,8 +878,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="QualityGroupShopAllActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="QualityGroupShopAllActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--商品评论 更多评论-->
@@ -890,8 +888,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DirectProductEvaluationActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DirectProductEvaluationActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--整点秒杀-->
@@ -900,8 +898,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="WholePointSpikeProductActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="WholePointSpikeProductActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--文章帖子 评论详情-->
@@ -910,8 +908,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="CommentDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="CommentDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--消息列表-->
@@ -920,41 +918,41 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MessageActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MessageActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
 
         <activity
             android:name=".address.activity.AddressNewCreatedActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".address.activity.SelectedAddressActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.MessageWarmActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.AppDataActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.PersonalRealNameActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.SettingPersonalNameActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.MineLoginActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--注册账号-->
         <activity
             android:name=".mine.activity.RegisterAccountActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="RegisterAccountActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="RegisterAccountActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--账户安全-->
@@ -963,43 +961,43 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="AccountSafeActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="AccountSafeActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".mine.activity.BindingMobileActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.ChangePasswordActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.FoundPasswordActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--意见反馈-->
         <activity
             android:name=".mine.activity.SuggestionFeedBackActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="SuggestionFeedBackActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="SuggestionFeedBackActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".mine.activity.AboutUsDoMoLifeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.ChangeMobileActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--收藏内容-->
         <activity
             android:name=".mine.activity.MineCollectContentActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MineCollectContentActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MineCollectContentActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -1007,8 +1005,8 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MineProductBrowsingHistoryActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MineProductBrowsingHistoryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--我的帖子列表-->
@@ -1017,83 +1015,83 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="MineInvitationListActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="MineInvitationListActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".mine.activity.PersonalHabitActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.PersonalBgImgActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.PersonalBgImgSelActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.RegisterSelSexActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.MineBabyInfoPickerActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.MessagePushTypeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".user.activity.UserFansAttentionActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.AccountLogoutActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--订单列表-->
         <activity
             android:name=".shopdetails.activity.DoMoIndentAllActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DoMoIndentAllActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DoMoIndentAllActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".shopdetails.activity.SalesReturnAppealActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".shopdetails.activity.DirectPublishAppraiseActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".shopdetails.activity.DirectIndentWriteActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".shopdetails.activity.DirectCouponGetActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".shopdetails.activity.DirectIndentInvoiceActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--物流详情-->
         <activity
             android:name=".shopdetails.activity.DirectLogisticsDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DirectLogisticsDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DirectLogisticsDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".shopdetails.activity.DirectGoodsSaleAfterActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".shopdetails.activity.DirectRepairLogisticDetailsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--退款 售后申请-->
         <activity
             android:name=".shopdetails.activity.DirectApplyRefundActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DirectApplyRefundActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DirectApplyRefundActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--订单搜索-->
@@ -1102,24 +1100,24 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IndentSearchDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IndentSearchDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".shopdetails.activity.IndentDrawUpInvoiceActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".shopdetails.integration.IntegrationIndentWriteActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <!--退货售后详情-->
         <activity
             android:name=".shopdetails.activity.DoMoRefundDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DoMoRefundDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DoMoRefundDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--积分商品订单-->
@@ -1128,18 +1126,41 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="IntegralProductIndentActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="IntegralProductIndentActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
+        <!--小编精选-->
+        <activity
+            android:name=".homepage.activity.EditorSelectActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="EditorSelectActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--小编精选_留言-->
+        <activity
+            android:name=".homepage.activity.EditorCommentActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="EditorCommentActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <!--支付成功-->
         <activity
             android:name=".shopdetails.activity.DirectPaySuccessActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="DirectPaySuccessActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="DirectPaySuccessActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -1147,49 +1168,49 @@
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="WebRuleCommunalActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="WebRuleCommunalActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".find.activity.ImagePagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/fullTheme1" />
+            android:theme="@style/fullTheme1"/>
         <!--app重新启动-->
-        <service android:name=".utils.restartapputils.RestartAppService" />
+        <service android:name=".utils.restartapputils.RestartAppService"/>
         <!--app更新弹窗-->
         <activity
             android:name=".AppUpdateDialogActivity"
-            android:theme="@style/Dialog_Activity" />
+            android:theme="@style/Dialog_Activity"/>
         <!--uCrop裁切图片-->
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
         <!-- 涂图 -->
         <activity
             android:name="org.lasque.tusdk.impl.activity.TuFragmentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <!-- 友盟 -->
         <!--新浪-->
         <activity
             android:name="com.umeng.socialize.media.WBShareCallBackActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:theme="@style/fullTheme" />
+            android:theme="@style/fullTheme"/>
         <activity
             android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:theme="@style/fullTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="com.sina.weibo.sdk.share.WbShareTransActivity"
             android:launchMode="singleTask"
             android:theme="@style/fullTheme">
             <intent-filter>
-                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <!--qq-->
@@ -1199,57 +1220,57 @@
             android:noHistory="true"
             android:theme="@style/fullTheme">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="tencent1105138467" />
+                <data android:scheme="tencent1105138467"/>
             </intent-filter>
         </activity>
         <activity
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/fullTheme" />
+            android:theme="@style/fullTheme"/>
         <!--微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:theme="@style/fullTheme" />
+            android:theme="@style/fullTheme"/>
         <!-- 友盟appKey -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="57db8f1fe0f55a7ac0004684" />
+            android:value="57db8f1fe0f55a7ac0004684"/>
         <meta-data
             android:name="Wandoujia"
-            android:value="Umeng" />
+            android:value="Umeng"/>
         <!--阿里百川-->
         <meta-data
             android:name="com.alibaba.apmplus.app_key"
-            android:value="23304346" />
+            android:value="23304346"/>
         <!-- 支付宝支付 -->
         <activity
             android:name="com.alipay.sdk.auth.AuthActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind"
-            android:theme="@style/fullTheme" />
+            android:theme="@style/fullTheme"/>
         <!-- jPush消息推送 -->
         <receiver
             android:name=".base.JPUshMessageReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="cn.jpush.android.intent.REGISTRATION" /> <!-- Required  用户注册SDK的intent -->
-                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" /> <!-- Required  用户接收SDK消息的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" /> <!-- Required  用户接收SDK通知栏信息的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" /> <!-- Required  用户打开自定义通知栏的intent -->
-                <action android:name="cn.jpush.android.intent.ACTION_RICHPUSH_CALLBACK" /> <!-- Optional 用户接受Rich Push Javascript 回调函数的intent -->
-                <action android:name="cn.jpush.android.intent.CONNECTION" />
-                <action android:name="cn.broadcast.notify.click" />
-                <action android:name="install_app_progress" />
+                <action android:name="cn.jpush.android.intent.REGISTRATION"/> <!-- Required  用户注册SDK的intent -->
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> <!-- Required  用户接收SDK消息的intent -->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> <!-- Required  用户接收SDK通知栏信息的intent -->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> <!-- Required  用户打开自定义通知栏的intent -->
+                <action android:name="cn.jpush.android.intent.ACTION_RICHPUSH_CALLBACK"/> <!-- Optional 用户接受Rich Push Javascript 回调函数的intent -->
+                <action android:name="cn.jpush.android.intent.CONNECTION"/>
+                <action android:name="cn.broadcast.notify.click"/>
+                <action android:name="install_app_progress"/>
                 <!-- 接收网络变化 连接/断开 since 1.6.3 -->
-                <category android:name="com.amkj.dmsh" />
+                <category android:name="com.amkj.dmsh"/>
             </intent-filter>
         </receiver>
         <!-- 微信支付 -->
@@ -1257,10 +1278,10 @@
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/fullTheme" />
+            android:theme="@style/fullTheme"/>
         <!--腾讯bugly-->
         <!--升级策略-->
-        <activity android:name="com.tencent.bugly.beta.ui.BetaActivity" />
+        <activity android:name="com.tencent.bugly.beta.ui.BetaActivity"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -1271,7 +1292,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"
-                tools:replace="name,resource" />
+                tools:replace="name,resource"/>
         </provider>
         <provider
             android:name=".base.BaseFileProvider"
@@ -1280,28 +1301,28 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"/>
         </provider>
         <!--app服务启动-->
         <service
             android:name=".utils.ServiceDownUtils"
-            android:exported="false" />
+            android:exported="false"/>
         <!-- LinkedME官网注册应用后,从"设置"页面获取该Key -->
         <meta-data
             android:name="linkedme.sdk.key"
-            android:value="576097e25440399c5fabbbbaa1ce989d" />
+            android:value="576097e25440399c5fabbbbaa1ce989d"/>
         <!--autosize屏幕适配-->
         <meta-data
             android:name="design_width_in_dp"
-            android:value="750" />
+            android:value="750"/>
         <meta-data
             android:name="design_height_in_dp"
-            android:value="1336" />
+            android:value="1336"/>
         <!--七鱼广播通知-->
         <activity
             android:name=".qyservice.QyServiceNotifyReceiver"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:noHistory="true" />
+            android:noHistory="true"/>
     </application>
 </manifest>

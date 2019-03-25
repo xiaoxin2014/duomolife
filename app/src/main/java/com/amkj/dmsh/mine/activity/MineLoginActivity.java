@@ -142,7 +142,7 @@ public class MineLoginActivity extends BaseActivity {
         loadHud.setCancellable(true);
         String s1 = "《多么生活用户注册协议》";
         String s2 = "《多么生活用户隐私政策》";
-        String text = "登录即表示同意" + s1 +"和" +s2;
+        String text = "登录即表示同意" + s1 + "和" + s2;
         Link link1 = new Link(s1);
         Link link2 = new Link(s2);
         //        @用户昵称
@@ -378,6 +378,7 @@ public class MineLoginActivity extends BaseActivity {
 
     /**
      * 绑定第三方账号
+     *
      * @param otherAccountBindInfo
      */
     private void bindOtherAccount(final OtherAccountBindInfo otherAccountBindInfo) {
@@ -819,6 +820,7 @@ public class MineLoginActivity extends BaseActivity {
             alertDialogHelper.dismiss();
         }
     }
+
     class LoginFinishReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context arg0, Intent arg1) {

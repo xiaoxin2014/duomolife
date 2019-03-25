@@ -87,7 +87,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -1140,7 +1139,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
             params.put("version", "v3.1.5");
-            NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -1376,7 +1375,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 case UNION_RESULT_CODE:
                     String webManualFinish = data.getStringExtra("webManualFinish");
                     if (unionPay != null) {
-                        unionPay.unionPayResult(!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
+                        unionPay.unionPayResult(this,!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
                     } else {
                         payError();
                     }
