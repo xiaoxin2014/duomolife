@@ -4,6 +4,8 @@ import com.amkj.dmsh.base.BaseTimeEntity;
 
 import java.util.List;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+
 /**
  * Created by xiaoxin on 2019/3/16 0016
  */
@@ -58,6 +60,11 @@ public class EditorCommentEntity extends BaseTimeEntity {
     public int getFavorCount() {
         return favorCount;
     }
+
+    public String getFavorString() {
+        return getStrings(getFavorCount() == 0 ? "赞" : String.valueOf(getFavorCount()));
+    }
+
 
     public void setFavorCount(int favorCount) {
         this.favorCount = favorCount;
@@ -138,6 +145,10 @@ public class EditorCommentEntity extends BaseTimeEntity {
 
         public int getLikeNum() {
             return likeNum < 0 ? 0 : likeNum;
+        }
+
+        public String getLikeString() {
+            return getStrings(getLikeNum() == 0 ? "赞" : String.valueOf(getLikeNum()));
         }
 
         public void setLikeNum(int likeNum) {

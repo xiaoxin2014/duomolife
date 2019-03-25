@@ -37,10 +37,9 @@ public class EditorCommentAdapter extends BaseQuickAdapter<EditorCommentBean, Ba
             helper.setText(R.id.tv_name, getStrings(item.getNickname()))
                     .setText(R.id.tv_time, getDateFormat(item.getCreateTime(), ""))
                     .setText(R.id.tv_content, getStrings(item.getContent()))
-                    .setText(R.id.tv_like, getStrings(String.valueOf(item.getLikeNum())));
+                    .setText(R.id.tv_like, item.getLikeString());
             TextView tvLike = helper.getView(R.id.tv_like);
             tvLike.setSelected(item.getIsFavor());
-            tvLike.setText(getStrings(String.valueOf(item.getLikeNum())));
             helper.addOnClickListener(R.id.tv_like).setTag(R.id.tv_like, item);
             helper.itemView.setTag(item);
         }

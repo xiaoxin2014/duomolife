@@ -7,6 +7,8 @@ import com.amkj.dmsh.base.BaseTimeEntity;
 
 import java.util.List;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+
 /**
  * Created by xiaoxin on 2019/3/20 0020
  * ClassDescription :
@@ -171,6 +173,10 @@ public class EditorEntity extends BaseTimeEntity {
 
         public int getLikeNum() {
             return likeNum < 0 ? 0 : likeNum;
+        }
+
+        public String getLikeString() {
+            return getStrings(getLikeNum() == 0 ? "赞" : String.valueOf(getLikeNum()));
         }
 
         public void setLikeNum(int likeNum) {

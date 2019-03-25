@@ -23,7 +23,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by xiaoxin on 2019/3/16 0016
  * Version：V3.3.0
- * Class description:小编精选适配器
+ * class description:小编精选适配器
  */
 public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHolder> {
     private Context context;
@@ -41,7 +41,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
             GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_big_pic), item.getCoverImg());
             TextView tvLike = helper.getView(R.id.tv_com_art_like_count);
             tvLike.setSelected(item.getIsFavor());
-            tvLike.setText(getStrings(String.valueOf(item.getLikeNum())));
+            tvLike.setText(item.getLikeString());
 
             helper.setText(R.id.tv_goods_name, mainProductBean.getProductName())//商品名称
                     .setText(R.id.tv_goods_introduce, getStrings(item.getSummary()))//商品介绍

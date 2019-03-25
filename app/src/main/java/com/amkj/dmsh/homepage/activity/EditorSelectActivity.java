@@ -93,7 +93,7 @@ public class EditorSelectActivity extends BaseActivity {
                                 itemBean.getLikeNum() - 1);
                         TextView textView = (TextView) view;
                         textView.setSelected(!textView.isSelected());
-                        textView.setText(String.valueOf(itemBean.getLikeNum()));
+                        textView.setText(itemBean.getLikeString());
                         setGoodsLiked(itemBean);
                     } else {
                         getLoginStatus(this);
