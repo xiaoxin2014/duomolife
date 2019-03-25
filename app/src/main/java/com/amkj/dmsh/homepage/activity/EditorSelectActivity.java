@@ -43,6 +43,7 @@ import static com.amkj.dmsh.constant.Url.EDITOR_SELECT_FAVOR;
 
 /**
  * Created by xiaoxin on 2019/3/14 0014
+ * Version：V3.3.0
  * class description:小编精选
  */
 public class EditorSelectActivity extends BaseActivity {
@@ -147,22 +148,23 @@ public class EditorSelectActivity extends BaseActivity {
                 mSmartLayout.finishRefresh();
                 Gson gson = new Gson();
                 mEditorEntity = gson.fromJson(result, EditorEntity.class);
-                if (mEditorEntity == null) return;
-                List<EditorBean> resultList = mEditorEntity.getResult();
-                String code = mEditorEntity.getCode();
-                if (resultList == null || resultList.size() < 1 || EMPTY_CODE.equals(code)) {
-                    mEditorAdapter.loadMoreEnd();
-                } else if (SUCCESS_CODE.equals(code)) {
-                    if (page == 1) {
-                        EditorList.clear();
+                if (mEditorEntity != null) {
+                    List<EditorBean> resultList = mEditorEntity.getResult();
+                    String code = mEditorEntity.getCode();
+                    if (resultList == null || resultList.size() < 1 || EMPTY_CODE.equals(code)) {
+                        mEditorAdapter.loadMoreEnd();
+                    } else if (SUCCESS_CODE.equals(code)) {
+                        if (page == 1) {
+                            EditorList.clear();
+                        }
+                        EditorList.addAll(mEditorEntity.getResult());
+                        mEditorHeadView.updateData(mEditorEntity);
+                        mEditorAdapter.notifyDataSetChanged();
+                        mEditorAdapter.loadMoreComplete();
+                    } else {
+                        showToast(EditorSelectActivity.this, mEditorEntity.getMsg());
+                        mEditorAdapter.loadMoreFail();
                     }
-                    EditorList.addAll(mEditorEntity.getResult());
-                    mEditorHeadView.updateData(mEditorEntity);
-                    mEditorAdapter.notifyDataSetChanged();
-                    mEditorAdapter.loadMoreComplete();
-                } else {
-                    showToast(EditorSelectActivity.this, mEditorEntity.getMsg());
-                    mEditorAdapter.loadMoreFail();
                 }
 
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, EditorList, mEditorEntity);
@@ -207,11 +209,13 @@ public class EditorSelectActivity extends BaseActivity {
             case R.id.iv_img_share:
                 if (mEditorEntity != null && EditorList != null && EditorList.size() > 0) {
                     EditorBean editorBean = EditorList.get(0);
-                    CommunalWebDetailUtils.getCommunalWebInstance()
-                            .setShareData(this, new ShareDataBean(editorBean.getMainProduct().getProductImg()
-                                    , getStrings(mEditorEntity.getTitle())
-                                    , getStrings(mEditorEntity.getDescription())
-                                    , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), -1));
+                    if (editorBean.getMainProduct() != null) {
+                        CommunalWebDetailUtils.getCommunalWebInstance()
+                                .setShareData(this, new ShareDataBean(editorBean.getMainProduct().getProductImg()
+                                        , getStrings(mEditorEntity.getTitle())
+                                        , getStrings(mEditorEntity.getDescription())
+                                        , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), -1));
+                    }
                 }
                 break;
         }

@@ -19,6 +19,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016
+ * Version：V3.3.0
+ * class description:小编精选留言适配器
  */
 public class EditorCommentAdapter extends BaseQuickAdapter<EditorCommentBean, BaseViewHolder> {
     Context context;

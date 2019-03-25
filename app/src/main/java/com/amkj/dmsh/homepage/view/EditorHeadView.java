@@ -35,6 +35,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATU
 
 /**
  * Created by xiaoxin on 2019/3/18 0018
+ * Version：V3.3.0
  * ClassDescription :小编精选头布局
  */
 public class EditorHeadView extends LinearLayout {

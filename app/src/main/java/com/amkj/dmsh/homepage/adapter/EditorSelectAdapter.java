@@ -22,6 +22,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016
+ * Version：V3.3.0
+ * Class description:小编精选适配器
  */
 public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHolder> {
     private Context context;

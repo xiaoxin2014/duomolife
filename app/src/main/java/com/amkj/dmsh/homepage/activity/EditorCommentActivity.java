@@ -56,7 +56,8 @@ import static com.amkj.dmsh.constant.Url.EDITOR_SELECT_FAVOR;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016
- * class description:精选留言
+ * Version：V3.3.0
+ * class description:小编精选留言
  */
 public class EditorCommentActivity extends BaseActivity {
     @BindView(R.id.tv_life_back)
@@ -157,36 +158,36 @@ public class EditorCommentActivity extends BaseActivity {
         map.put("currentPage", page);
         map.put("showCount", TOTAL_COUNT_TEN);
         map.put("redactorpickedId", mRedactorpickedId);
-        Map<String, Object> map1 = new HashMap<>();
-        map.putAll(map1);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.EDITOR_COMMENT_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
                 Gson gson = new Gson();
                 mEditorCommentEntity = gson.fromJson(result, EditorCommentEntity.class);
-                if (mEditorCommentEntity == null) return;
-                List<EditorCommentBean> resultList = mEditorCommentEntity.getResult();
-                String code = mEditorCommentEntity.getCode();
-                if (resultList == null || resultList.size() < 1 || EMPTY_CODE.equals(code)) {
-                    mCommentAdapter.loadMoreEnd();
-                } else if (SUCCESS_CODE.equals(code)) {
-                    if (page == 1) {
-                        commentList.clear();
+                if (mEditorCommentEntity != null) {
+                    List<EditorCommentBean> resultList = mEditorCommentEntity.getResult();
+                    String code = mEditorCommentEntity.getCode();
+                    if (resultList == null || resultList.size() < 1 || EMPTY_CODE.equals(code)) {
+                        mCommentAdapter.loadMoreEnd();
+                    } else if (SUCCESS_CODE.equals(code)) {
+                        if (page == 1) {
+                            commentList.clear();
+                        }
+                        commentList.addAll(resultList);
+                        mCommentAdapter.notifyDataSetChanged();
+                        mCommentAdapter.loadMoreComplete();
+                    } else {
+                        showToast(EditorCommentActivity.this, mEditorCommentEntity.getMsg());
+                        mCommentAdapter.loadMoreFail();
                     }
-                    commentList.addAll(resultList);
-                    mCommentAdapter.notifyDataSetChanged();
-                    mCommentAdapter.loadMoreComplete();
-                } else {
-                    showToast(EditorCommentActivity.this, mEditorCommentEntity.getMsg());
-                    mCommentAdapter.loadMoreFail();
+
+                    //更新点赞数量和状态
+                    mTvHeaderTitle.setText(commentList.size() == 0 ? getString(R.string.editor_select_comment) :
+                            getIntegralFormat(EditorCommentActivity.this, R.string.editor_select_comment2, commentList.size()));
+                    mTvBottomLike.setSelected(mEditorCommentEntity.getIsFavor());
+                    mTvBottomLike.setText(getStrings(String.valueOf(mEditorCommentEntity.getFavorCount())));
                 }
 
-                //更新点赞数量和状态
-                mTvHeaderTitle.setText(commentList.size() == 0 ? getString(R.string.editor_select_comment) :
-                        getIntegralFormat(EditorCommentActivity.this, R.string.editor_select_comment2, commentList.size()));
-                mTvBottomLike.setSelected(mEditorCommentEntity.getIsFavor());
-                mTvBottomLike.setText(getStrings(String.valueOf(mEditorCommentEntity.getFavorCount())));
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, mEditorCommentEntity);
             }
 
