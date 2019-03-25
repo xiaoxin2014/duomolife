@@ -74,6 +74,7 @@ public class EditorHeadView extends LinearLayout {
         if (mEditorEntity != null) {
             mTvEditorTitle.setText(getStrings(mEditorEntity.getTitle()));
             mTvEditorTips.setText(getStrings(mEditorEntity.getDescription()));
+            mTvEditorTips.setText(mEditorEntity.getDescription());
             mTvSubscriber.setText(getResources().getText(mEditorEntity.getIsSubscribe() ? R.string.already_subscribe : R.string.subscriber));
             mTvSubscriber.setSelected(mEditorEntity.getIsSubscribe());
             mTvFirstSubscribe.setText(getStrings(String.format(getResources().getString(R.string.first_subsribe), mEditorEntity.getScore())));

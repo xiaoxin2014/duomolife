@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">多么生活</string>
     <string name="viewpager_indicator">%1$d/%2$d</string>
     <string name="prb_default_symbolic_string">$</string>
