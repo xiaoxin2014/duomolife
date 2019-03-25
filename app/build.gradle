@@ -5,6 +5,11 @@ apply from: 'tinker-support.gradle'
 // 添加插件
 apply plugin: 'com.mob.sdk'
 
+// 加载 local.properties 资源
+Properties properties = new Properties()
+InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream()
+properties.load( inputStream )
+
 android {
     compileSdkVersion versions.compileSdk
     defaultConfig {
@@ -37,11 +42,11 @@ android {
     signingConfigs {
         release {
             try {
-                keyAlias 'com.amkj.dmsh'
-                keyPassword 'comtmkj'
+                keyAlias properties.getProperty( 'keyAlias' )
+                keyPassword properties.getProperty( 'keyPassword' )
 //                storeFile file('C:/Users/atd48/Desktop/917555f39de315ae75eff6a621b59b47.keystore')
                 storeFile file('917555f39de315ae75eff6a621b59b47.keystore')
-                storePassword 'comtmkj'
+                storePassword properties.getProperty( 'keyPassword' )
                 v1SigningEnabled true
                 v2SigningEnabled true
             } catch (ex) {
