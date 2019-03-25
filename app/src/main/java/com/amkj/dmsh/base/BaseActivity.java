@@ -50,7 +50,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
     public String TAG = getClass().getSimpleName();
-    public Map<String, Object> CommonMap = new HashMap<>();
+    public Map<String, Object> commonMap = new HashMap<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50));
 //                .setDimAmount(0.5f)
         //Api通用参数初始化
-        CommonMap.put("reqId", String.valueOf(System.currentTimeMillis()));
+        commonMap.put("reqId", String.valueOf(System.currentTimeMillis()));
         // 重新加载逻辑
         if (isAddLoad()) {
             loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {

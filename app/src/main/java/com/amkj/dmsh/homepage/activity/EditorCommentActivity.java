@@ -46,6 +46,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.bean.EditorCommentEntity.EditorCommentBean;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -127,7 +128,7 @@ public class EditorCommentActivity extends BaseActivity {
                             itemBean.getLikeNum() - 1);
                     TextView textView = (TextView) view;
                     textView.setSelected(!textView.isSelected());
-                    textView.setText(itemBean.getLikeNum());
+                    textView.setText(getStrings(String.valueOf(itemBean.getLikeNum())));
                     setCommentLike(itemBean);
                 }
             } else {
@@ -182,10 +183,10 @@ public class EditorCommentActivity extends BaseActivity {
                 }
 
                 //更新点赞数量和状态
-                mTvHeaderTitle.setText(commentList.size()==0 ? getString(R.string.editor_select_comment) :
+                mTvHeaderTitle.setText(commentList.size() == 0 ? getString(R.string.editor_select_comment) :
                         getIntegralFormat(EditorCommentActivity.this, R.string.editor_select_comment2, commentList.size()));
                 mTvBottomLike.setSelected(mEditorCommentEntity.getIsFavor());
-                mTvBottomLike.setText(String.valueOf(mEditorCommentEntity.getFavorCount()));
+                mTvBottomLike.setText(getStrings(String.valueOf(mEditorCommentEntity.getFavorCount())));
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, mEditorCommentEntity);
             }
 
@@ -222,7 +223,7 @@ public class EditorCommentActivity extends BaseActivity {
                         setGoodsLiked(selected);
                         try {
                             int num = Integer.parseInt(mTvBottomLike.getText().toString());
-                            mTvBottomLike.setText(String.valueOf(selected ? num + 1 : num - 1));
+                            mTvBottomLike.setText(getStrings(String.valueOf(selected ? num + 1 : num - 1)));
                             mTvBottomLike.setSelected(selected);
                         } catch (Exception ignored) {
                         }

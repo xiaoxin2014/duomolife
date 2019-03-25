@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016
@@ -38,12 +39,12 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
             GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_big_pic), item.getCoverImg());
             TextView tvLike = helper.getView(R.id.tv_com_art_like_count);
             tvLike.setSelected(item.getIsFavor());
-            tvLike.setText(String.valueOf(item.getLikeNum()));
+            tvLike.setText(getStrings(String.valueOf(item.getLikeNum())));
 
             helper.setText(R.id.tv_goods_name, mainProductBean.getProductName())//商品名称
-                    .setText(R.id.tv_goods_introduce, item.getSummary())//商品介绍
+                    .setText(R.id.tv_goods_introduce, getStrings(item.getSummary()))//商品介绍
                     .setText(R.id.tv_time, getDateFormat(item.getPublishTime(), ""))//发布时间
-                    .setText(R.id.tv_com_art_comment_count, String.valueOf(item.getMessageCount()))
+                    .setText(R.id.tv_com_art_comment_count, getStrings(String.valueOf(item.getMessageCount())))
                     .addOnClickListener(R.id.tv_com_art_like_count).setTag(R.id.tv_com_art_like_count, item)
                     .addOnClickListener(R.id.tv_com_art_comment_count).setTag(R.id.tv_com_art_comment_count, item)
                     .addOnClickListener(R.id.iv_big_pic).setTag(R.id.iv_big_pic, R.id.iv_tag, item);
@@ -58,7 +59,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
             @Override
             protected void convert(BaseViewHolder helper, AttachProductListBean item) {
                 GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_goods_pic), item.getProductImg());
-                helper.setText(R.id.tv_goods_name2, item.getProductName());
+                helper.setText(R.id.tv_goods_name2, getStrings(item.getProductName()));
                 helper.itemView.setTag(item);
             }
         };

@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
@@ -70,11 +71,11 @@ public class EditorHeadView extends LinearLayout {
     public void updateData(EditorEntity editorEntity) {
         mEditorEntity = editorEntity;
         if (mEditorEntity != null) {
-            mTvEditorTitle.setText(mEditorEntity.getTitle());
-            mTvEditorTips.setText(mEditorEntity.getDescription());
+            mTvEditorTitle.setText(getStrings(mEditorEntity.getTitle()));
+            mTvEditorTips.setText(getStrings(mEditorEntity.getDescription()));
             mTvSubscriber.setText(getResources().getText(mEditorEntity.getIsSubscribe() ? R.string.already_subscribe : R.string.subscriber));
             mTvSubscriber.setSelected(mEditorEntity.getIsSubscribe());
-            mTvFirstSubscribe.setText(String.format(getResources().getString(R.string.first_subsribe), mEditorEntity.getScore()));
+            mTvFirstSubscribe.setText(getStrings(String.format(getResources().getString(R.string.first_subsribe), mEditorEntity.getScore())));
             mTvFirstSubscribe.setVisibility(mEditorEntity.getIsSubscribe() ? GONE : VISIBLE);
         }
     }

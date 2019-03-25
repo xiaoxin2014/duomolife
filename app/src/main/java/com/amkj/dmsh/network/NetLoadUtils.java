@@ -94,7 +94,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
         WeakReference<Context> weakReference = new WeakReference<>(context);
         if (context instanceof BaseActivity) {
-            map.putAll(((BaseActivity) context).CommonMap);
+            map.putAll(((BaseActivity) context).commonMap);
         }
         if (NetWorkUtils.checkNet(context)) {
 //            先进行框架初始化

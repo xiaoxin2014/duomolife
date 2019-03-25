@@ -15,6 +15,7 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016
@@ -31,13 +32,13 @@ public class EditorCommentAdapter extends BaseQuickAdapter<EditorCommentBean, Ba
     protected void convert(BaseViewHolder helper, EditorCommentBean item) {
         if (item != null) {
             GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_head), item.getAvatar(), AutoSizeUtils.mm2px(context, 70), R.drawable.default_ava_img);
-            helper.setText(R.id.tv_name, item.getNickname())
+            helper.setText(R.id.tv_name, getStrings(item.getNickname()))
                     .setText(R.id.tv_time, getDateFormat(item.getCreateTime(), ""))
-                    .setText(R.id.tv_content, item.getContent())
-                    .setText(R.id.tv_like, String.valueOf(item.getLikeNum()));
+                    .setText(R.id.tv_content, getStrings(item.getContent()))
+                    .setText(R.id.tv_like, getStrings(String.valueOf(item.getLikeNum())));
             TextView tvLike = helper.getView(R.id.tv_like);
             tvLike.setSelected(item.getIsFavor());
-            tvLike.setText(String.valueOf(item.getLikeNum()));
+            tvLike.setText(getStrings(String.valueOf(item.getLikeNum())));
             helper.addOnClickListener(R.id.tv_like).setTag(R.id.tv_like, item);
             helper.itemView.setTag(item);
         }

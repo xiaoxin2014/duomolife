@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
 import com.amkj.dmsh.homepage.view.EditorHeadView;
@@ -34,6 +33,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -209,13 +209,11 @@ public class EditorSelectActivity extends BaseActivity {
                     EditorBean editorBean = EditorList.get(0);
                     CommunalWebDetailUtils.getCommunalWebInstance()
                             .setShareData(this, new ShareDataBean(editorBean.getMainProduct().getProductImg()
-                                    , ConstantMethod.getStrings(mEditorEntity.getTitle())
-                                    , ConstantMethod.getStrings(mEditorEntity.getDescription())
+                                    , getStrings(mEditorEntity.getTitle())
+                                    , getStrings(mEditorEntity.getDescription())
                                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), -1));
                 }
                 break;
         }
     }
-
-
 }
