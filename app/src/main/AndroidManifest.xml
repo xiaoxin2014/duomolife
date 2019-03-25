@@ -238,27 +238,7 @@
             </intent-filter>
         </activity>
         <!--精选文章-->
-        <activity
-            android:name=".find.activity.FeaturedArticleActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="FeaturedArticleActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <!--精选文章评论-->
-        <activity
-            android:name=".find.activity.FeaturedArticleCommentActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="FeaturedArticleCommentActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <!--首页 底部导航页面 放到activity-->
         <activity
             android:name=".homepage.activity.MainPageTabBarActivity"
