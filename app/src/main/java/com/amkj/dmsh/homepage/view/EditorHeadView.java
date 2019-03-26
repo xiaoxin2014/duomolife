@@ -65,7 +65,11 @@ public class EditorHeadView extends LinearLayout {
         //订阅
         mTvSubscriber.setOnClickListener(view -> {
             //订阅成功隐藏mTvFirstSubscribe
-            openNotification();
+            if (userId > 0) {
+                openNotification();
+            } else {
+                getLoginStatus(mContext);
+            }
         });
     }
 

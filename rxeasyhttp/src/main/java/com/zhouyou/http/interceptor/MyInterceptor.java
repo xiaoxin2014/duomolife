@@ -18,7 +18,6 @@ import okhttp3.ResponseBody;
  */
 
 public class MyInterceptor implements Interceptor {
-
     private final String mDomoCommon;
 
     public MyInterceptor(String commonApiParameterJson) {
@@ -29,8 +28,14 @@ public class MyInterceptor implements Interceptor {
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
+        Request.Builder builder = request.newBuilder();
+        builder.addHeader("Domo-Custom", mDomoCommon);
+//        String token = (String) SharedPreUtils.getParam(ShareConstants.TOKEN, "");
+//        if (!TextUtils.isEmpty(token) && request.url().toString().startsWith(UrlConstants.BASE_URL + "/oauthapi")) {
+//            builder.addHeader("Authorization", token);
+//        }
 
-
+        Response response = chain.proceed(builder.build());
         if (BuildConfig.DEBUG) {
             Log.d("retrofit", "----------Start-----------");
             //打印请求Ulr
@@ -52,23 +57,13 @@ public class MyInterceptor implements Interceptor {
             }
         }
 
-
-        Request.Builder builder = request.newBuilder();
-        builder.addHeader("Domo-Custom", mDomoCommon);
-//        String token = (String) SharedPreUtils.getParam(ShareConstants.TOKEN, "");
-//        if (!TextUtils.isEmpty(token) && request.url().toString().startsWith(UrlConstants.BASE_URL + "/oauthapi")) {
-//            builder.addHeader("Authorization", token);
-//        }
-
-        Response response = chain.proceed(builder.build());
-
         //打印响应结果
         if (BuildConfig.DEBUG) {
             ResponseBody body = response.peekBody(1024 * 1024);
             String ss = body.string();
             Log.d("retrofitResponse", ss);
             Log.d("retrofit", "----------end-----------");
-            Log.d("retrofit", "\n");
+            Log.d("retrofit", "                        ");
         }
 
 //        //判断token是否过期
