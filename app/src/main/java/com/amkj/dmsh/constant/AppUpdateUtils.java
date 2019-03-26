@@ -15,6 +15,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.UpgradeInfo;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,13 +47,20 @@ import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.VERSION_UPDATE
  * class description:app更新提示 安装 工具
  */
 public class AppUpdateUtils {
-    private static AppUpdateUtils appUpdateUtils = new AppUpdateUtils();
+    private static volatile AppUpdateUtils appUpdateUtils;
     private Context context;
 
     private AppUpdateUtils() {
     }
 
     public static AppUpdateUtils getInstance() {
+        if (appUpdateUtils == null) {
+            synchronized (AppUpdateUtils.class) {
+                if (appUpdateUtils == null) {
+                    appUpdateUtils = new AppUpdateUtils();
+                }
+            }
+        }
         return appUpdateUtils;
     }
 
@@ -66,21 +74,25 @@ public class AppUpdateUtils {
     /**
      * 检查更新
      *
-     * @param context
+     * @param mContext
      * @param isManual 是否手动
      */
-    public void getAppUpdate(Context context, boolean isManual) {
-        this.context = context;
+    public void getAppUpdate(Context mContext, boolean isManual) {
+        WeakReference<Context> contextWeakReference = new WeakReference<>(mContext);
+        context = contextWeakReference.get();
         String url = Url.BASE_URL + Url.APP_VERSION_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("device_type_id", 2);
-        NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 AppVersionEntity appVersionEntity = AppVersionEntity.objectFromData(result);
                 if (appVersionEntity != null) {
                     if (appVersionEntity.getCode().equals(SUCCESS_CODE)
                             && appVersionEntity.getAppVersionBean() != null) {
+                        if (context == null) {
+                            return;
+                        }
                         AppVersionBean appVersionBean = appVersionEntity.getAppVersionBean();
                         SharedPreferences sharedPreferences = context.getSharedPreferences(APP_VERSION_INFO, MODE_PRIVATE);
                         String updateTime = sharedPreferences.getString(UPDATE_TIME, "");
@@ -90,13 +102,13 @@ public class AppUpdateUtils {
                          * 更新时间  时间间隔
                          */
                         if (isMandatoryUpdateVersion(appVersionBean.getCompel_version())) { // 是否是强制版本
-                            openDialog(appVersionBean,true);
+                            openDialog(appVersionBean, true);
                         } else if (isManual) { //是否手动更新
                             setAppUpdateData(appVersionEntity, sharedPreferences);
                             if (isHaveHeightUpdate(getStrings(appVersionBean.getVersion()))
 //                                    手动更新 新增版本
                                     || isHaveHeightUpdate(getStrings(appVersionBean.getLatestVersion()))) {
-                                openDialog(appVersionBean,false);
+                                openDialog(appVersionBean, false);
                             } else {
                                 /**
                                  * 获取升级信息
@@ -112,11 +124,11 @@ public class AppUpdateUtils {
                             if (!appVersionBean.getUpdateTime().equals(updateTime)) {
                                 setAppUpdateData(appVersionEntity, sharedPreferences);
                                 if (appVersionBean.getShowPop() == 1) {
-                                    openDialog(appVersionBean,false);
+                                    openDialog(appVersionBean, false);
                                 }
                             } else if (!isEndOrStartTimeAddSeconds(lastUpdateTime, appVersionEntity.getCurrentTime(), intervalTime)) {
                                 setAppUpdateData(appVersionEntity, sharedPreferences);
-                                openDialog(appVersionBean,false);
+                                openDialog(appVersionBean, false);
                             }
                         }
                     }
@@ -125,13 +137,17 @@ public class AppUpdateUtils {
 
             @Override
             public void netClose() {
-                showToast(context,R.string.unConnectedNetwork);
+                if (context == null) {
+                    return;
+                }
+                showToast(context, R.string.unConnectedNetwork);
             }
         });
     }
 
     /**
      * 强制更新当前版本
+     *
      * @param compel_version
      * @return
      */
@@ -173,7 +189,10 @@ public class AppUpdateUtils {
     /**
      * @param appVersionBean
      */
-    private void openDialog(AppVersionBean appVersionBean,boolean isMandatoryUpdate) {
+    private void openDialog(AppVersionBean appVersionBean, boolean isMandatoryUpdate) {
+        if (context == null) {
+            return;
+        }
         if (!TextUtils.isEmpty(appVersionBean.getLink())) {
             Intent intent = new Intent(context, AppUpdateDialogActivity.class);
             intent.putExtra(VERSION_DOWN_LINK, getStrings(appVersionBean.getLink()));
@@ -181,7 +200,7 @@ public class AppUpdateUtils {
             intent.putExtra(VERSION_UPDATE_LOW, getStrings(appVersionBean.getLowestVersion()));
             intent.putExtra(APP_CURRENT_UPDATE_VERSION, getStrings(appVersionBean.getVersion()));
             intent.putExtra(MANDATORY_UPDATE_LAST_VERSION, getStrings(appVersionBean.getLatestVersion()));
-            if(isMandatoryUpdate){
+            if (isMandatoryUpdate) {
                 intent.putExtra(APP_MANDATORY_UPDATE_VERSION, "1");
                 intent.putExtra(MANDATORY_UPDATE_DESCRIPTION, getStrings(appVersionBean.getCompel_up_desc()));
             }
@@ -197,6 +216,9 @@ public class AppUpdateUtils {
      * @return
      */
     private boolean isHaveHeightUpdate(String targetVersion) {
+        if (context == null) {
+            return false;
+        }
 //        后台数据版本
         String constraintVersion = getAppendNumber(targetVersion);
         String currentVersion = getAppendNumber(getVersionName(context));
