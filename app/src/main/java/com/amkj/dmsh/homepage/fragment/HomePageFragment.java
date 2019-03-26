@@ -129,8 +129,6 @@ public class HomePageFragment extends BaseFragment {
     RelativeLayout rel_home_page;
     @BindView(R.id.iv_float_ad_icon)
     ImageView iv_float_ad_icon;
-    @BindView(R.id.iv_float_editor_select)
-    ImageView mIvFloatEditorSelect;
     Unbinder unbinder;
     private Badge badge;
     private List<CategoryTypeBean> categoryList = new ArrayList<>();
@@ -506,24 +504,23 @@ public class HomePageFragment extends BaseFragment {
     //    跳转消息
     @OnClick(R.id.iv_home_message_total)
     void skipMessage(View view) {
-        Intent intent = new Intent(getActivity(), MessageActivity.class);
-        startActivity(intent);
+        // TODO: 2019/3/26 0026  
+        //跳转小编精选
+        if (BuildConfig.DEBUG) {
+            startActivity(new Intent(getActivity(), EditorSelectActivity.class));
+        }else {
+            Intent intent = new Intent(getActivity(), MessageActivity.class);
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.iv_float_ad_icon)
     void floatAdSkip(View view) {
         CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag(R.id.iv_tag);
         if (communalADActivityBean != null) {
-            adClickTotal(getActivity(),communalADActivityBean.getId());
+            adClickTotal(getActivity(), communalADActivityBean.getId());
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
-    }
-
-    //跳转小编精选
-    @OnClick(R.id.iv_float_editor_select)
-    public void onViewClicked() {
-        if (BuildConfig.DEBUG) {
-            startActivity(new Intent(getActivity(), EditorSelectActivity.class));        }
     }
 
     /**

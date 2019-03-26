@@ -92,15 +92,5 @@
         </android.support.design.widget.CoordinatorLayout>
 
         <include layout="@layout/layout_float_ad"/>
-
-        <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-                   android:id="@+id/iv_float_editor_select"
-                   android:layout_width="@dimen/sc_mm_142"
-                   android:layout_height="@dimen/sc_mm_120"
-                   android:layout_gravity="right|bottom"
-                   android:layout_marginRight="@dimen/sc_mm_30"
-                   android:layout_marginBottom="@dimen/sc_mm_60"
-                   android:scaleType="fitCenter"
-                   android:src="@color/gray"/>
     </FrameLayout>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

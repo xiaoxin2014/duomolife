@@ -90,7 +90,6 @@ public class EditorEntity extends BaseTimeEntity {
 
         private int id;
         private String title;
-        private String summary;
         private String content;
         private int status;
         private int pv;
@@ -137,14 +136,6 @@ public class EditorEntity extends BaseTimeEntity {
 
         public void setTitle(String title) {
             this.title = title;
-        }
-
-        public String getSummary() {
-            return summary;
-        }
-
-        public void setSummary(String summary) {
-            this.summary = summary;
         }
 
         public String getContent() {
@@ -374,7 +365,6 @@ public class EditorEntity extends BaseTimeEntity {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(this.id);
             dest.writeString(this.title);
-            dest.writeString(this.summary);
             dest.writeString(this.content);
             dest.writeInt(this.status);
             dest.writeInt(this.pv);
@@ -391,7 +381,6 @@ public class EditorEntity extends BaseTimeEntity {
         protected EditorBean(Parcel in) {
             this.id = in.readInt();
             this.title = in.readString();
-            this.summary = in.readString();
             this.content = in.readString();
             this.status = in.readInt();
             this.pv = in.readInt();
