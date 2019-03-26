@@ -122,7 +122,7 @@
     <!--商品-->
     <string name="refrence_only">该金额仅供参考，具体金额以实际结算为准</string>
     <string name="text_act_not_start">活动价 ￥%1$s（未开始）</string>
-    <string name="car_discount_price" >优惠了￥%1$s元</string>
+    <string name="car_discount_price">优惠了￥%1$s元</string>
     <string name="money_price_chn">￥%1$s</string>
     <string name="money_market_price_chn">参考价￥%1$s</string>
     <string name="cart_present">【赠品】%1$s</string>
@@ -130,8 +130,8 @@
     <string name="comment_count">全部评论(%1$d)</string>
     <string name="combine_price">组合价 </string>
     <!--skuDialog sku选择-->
-    <string name="sku_max_discount_price" >最多可优惠%1$s元</string>
-    <string name="sku_discount_price" >优惠了%1$s元</string>
+    <string name="sku_max_discount_price">最多可优惠%1$s元</string>
+    <string name="sku_discount_price">优惠了%1$s元</string>
     <!--订单商品信息-->
     <string name="price_count">共 %1$d 件 合计:￥%2$s</string>
     <string name="appraise_integral">评价赢积分</string>
