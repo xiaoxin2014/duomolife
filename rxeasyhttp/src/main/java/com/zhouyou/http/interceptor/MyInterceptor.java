@@ -3,8 +3,11 @@ package com.zhouyou.http.interceptor;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.zhouyou.http.BuildConfig;
+
 import java.io.IOException;
 
+import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -26,8 +29,29 @@ public class MyInterceptor implements Interceptor {
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
-        Log.d("retrofitRequest", String.format("Sending request %s",
-                request.url()));
+
+
+        if (BuildConfig.DEBUG) {
+            Log.d("retrofit", "----------Start-----------");
+            //打印请求Ulr
+            Log.d("retrofitRequest", String.format("Sending request %s",
+                    request.url()));
+
+            //打印请求参数
+            String method = request.method();
+            if ("POST".equals(method)) {
+                StringBuilder sb = new StringBuilder();
+                if (request.body() instanceof FormBody) {
+                    FormBody body = (FormBody) request.body();
+                    for (int i = 0; i < body.size(); i++) {
+                        sb.append(body.encodedName(i) + "=" + body.encodedValue(i) + ",");
+                    }
+                    sb.delete(sb.length() - 1, sb.length());
+                    Log.d("retrofitRequestBody", "{" + sb.toString() + "}");
+                }
+            }
+        }
+
 
         Request.Builder builder = request.newBuilder();
         builder.addHeader("Domo-Custom", mDomoCommon);
@@ -37,9 +61,16 @@ public class MyInterceptor implements Interceptor {
 //        }
 
         Response response = chain.proceed(builder.build());
-        ResponseBody body = response.peekBody(1024 * 1024);
-        String ss = body.string();
-        Log.d("retrofitResponse", ss);
+
+        //打印响应结果
+        if (BuildConfig.DEBUG) {
+            ResponseBody body = response.peekBody(1024 * 1024);
+            String ss = body.string();
+            Log.d("retrofitResponse", ss);
+            Log.d("retrofit", "----------end-----------");
+            Log.d("retrofit", "\n");
+        }
+
 //        //判断token是否过期
 //        if (response.code() == 401) {
 //            Request.Builder newbuilder = request.newBuilder();

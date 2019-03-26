@@ -44,7 +44,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
             tvLike.setText(item.getLikeString());
 
             helper.setText(R.id.tv_goods_name, mainProductBean.getProductName())//商品名称
-                    .setText(R.id.tv_goods_introduce, getStrings(item.getSummary()))//商品介绍
+                    .setText(R.id.tv_goods_introduce, getStrings(item.getContent()))//商品介绍
                     .setText(R.id.tv_time, getDateFormat(item.getPublishTime(), ""))//发布时间
                     .setText(R.id.tv_com_art_comment_count, getStrings(String.valueOf(item.getMessageCount())))
                     .addOnClickListener(R.id.tv_com_art_like_count).setTag(R.id.tv_com_art_like_count, item)
