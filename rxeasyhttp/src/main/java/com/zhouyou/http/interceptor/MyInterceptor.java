@@ -14,11 +14,11 @@ import okhttp3.ResponseBody;
  * Created by xiaoxin on 2018/1/16 0016
  */
 
-public class MyIntercepter implements Interceptor {
+public class MyInterceptor implements Interceptor {
 
     private final String mDomoCommon;
 
-    public MyIntercepter(String commonApiParameterJson) {
+    public MyInterceptor(String commonApiParameterJson) {
         mDomoCommon = commonApiParameterJson;
     }
 

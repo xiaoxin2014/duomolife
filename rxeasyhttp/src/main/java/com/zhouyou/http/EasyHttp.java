@@ -27,7 +27,7 @@ import com.zhouyou.http.cache.model.CacheMode;
 import com.zhouyou.http.cookie.CookieManger;
 import com.zhouyou.http.https.HttpsUtils;
 import com.zhouyou.http.interceptor.HttpLoggingInterceptor;
-import com.zhouyou.http.interceptor.MyIntercepter;
+import com.zhouyou.http.interceptor.MyInterceptor;
 import com.zhouyou.http.model.HttpHeaders;
 import com.zhouyou.http.model.HttpParams;
 import com.zhouyou.http.request.CustomRequest;
@@ -110,7 +110,7 @@ public final class EasyHttp {
         okHttpClientBuilder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         okHttpClientBuilder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         okHttpClientBuilder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.addInterceptor(new MyIntercepter(DeviceUtils.getCommonApiParameter(sContext)));
+        okHttpClientBuilder.addInterceptor(new MyInterceptor(DeviceUtils.getCommonApiParameter(sContext)));
         retrofitBuilder = new Retrofit.Builder();
         retrofitBuilder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());//增加RxJava2CallAdapterFactory
         rxCacheBuilder = new RxCache.Builder().init(sContext)

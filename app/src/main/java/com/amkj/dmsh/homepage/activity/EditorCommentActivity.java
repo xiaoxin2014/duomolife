@@ -110,6 +110,8 @@ public class EditorCommentActivity extends BaseActivity {
         mTvHeaderTitle.setText(R.string.editor_select_comment);
         mIvImgService.setVisibility(View.GONE);
         mIvImgShare.setVisibility(View.GONE);
+        mEmojiEditComment.setHint(getString(R.string.comment_article_hint));
+        mTvPublishComment.setText(getString(R.string.comment_article_hint));
         mTvArticleBottomCollect.setVisibility(View.GONE);
         if (getIntent() != null) {
             mRedactorpickedId = getIntent().getStringExtra("redactorpickedId");
@@ -129,7 +131,7 @@ public class EditorCommentActivity extends BaseActivity {
                             itemBean.getLikeNum() - 1);
                     TextView textView = (TextView) view;
                     textView.setSelected(!textView.isSelected());
-                    textView.setText(getStrings(String.valueOf(itemBean.getLikeNum())));
+                    textView.setText(itemBean.getLikeString());
                     setCommentLike(itemBean);
                 }
             } else {
@@ -158,6 +160,9 @@ public class EditorCommentActivity extends BaseActivity {
         map.put("currentPage", page);
         map.put("showCount", TOTAL_COUNT_TEN);
         map.put("redactorpickedId", mRedactorpickedId);
+        if (userId > 0) {
+            map.put("uid", userId);
+        }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.EDITOR_COMMENT_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -185,7 +190,7 @@ public class EditorCommentActivity extends BaseActivity {
                     mTvHeaderTitle.setText(commentList.size() == 0 ? getString(R.string.editor_select_comment) :
                             getIntegralFormat(EditorCommentActivity.this, R.string.editor_select_comment2, commentList.size()));
                     mTvBottomLike.setSelected(mEditorCommentEntity.getIsFavor());
-                    mTvBottomLike.setText(getStrings(String.valueOf(mEditorCommentEntity.getFavorCount())));
+                    mTvBottomLike.setText(mEditorCommentEntity.getFavorString());
                 }
 
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, mEditorCommentEntity);
@@ -223,8 +228,10 @@ public class EditorCommentActivity extends BaseActivity {
                     if (userId > 0) {
                         setGoodsLiked(selected);
                         try {
-                            int num = Integer.parseInt(mTvBottomLike.getText().toString());
-                            mTvBottomLike.setText(getStrings(String.valueOf(selected ? num + 1 : num - 1)));
+                            String numStr = mTvBottomLike.getText().toString();
+                            int likeNum = "赞".equals(numStr) ? 0 : Integer.parseInt(numStr);
+                            int num = selected ? likeNum + 1 : likeNum - 1;
+                            mTvBottomLike.setText(getStrings(num == 0 ? "赞" : String.valueOf(num)));
                             mTvBottomLike.setSelected(selected);
                         } catch (Exception ignored) {
                         }
@@ -242,7 +249,6 @@ public class EditorCommentActivity extends BaseActivity {
         if (VISIBLE == visibility) {
             mEmojiEditComment.requestFocus();
             //弹出键盘
-            mEmojiEditComment.setHint(getString(R.string.comment_article_hint));
             CommonUtils.showSoftInput(mEmojiEditComment.getContext(), mEmojiEditComment);
             mTvSendComment.setOnClickListener((v) -> {
                 //判断有内容调用接口

@@ -195,7 +195,7 @@ public class Url {
     //    小编精选留言点赞
     public static final String EDITOR_COMMENT_FAVOR = "api/redactorpickedcomment/favor";
     //    小编精选留言列表
-    public static final String EDITOR_COMMENT_LIST = "/api/redactorpickedcomment/getCommentList";
+    public static final String EDITOR_COMMENT_LIST = "api/redactorpickedcomment/getCommentList";
 
     /**
      * 我的
