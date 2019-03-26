@@ -158,8 +158,8 @@ public class EditorSelectActivity extends BaseActivity {
                             EditorList.clear();
                         }
                         EditorList.addAll(mEditorEntity.getResult());
-                        mEditorHeadView.updateData(mEditorEntity);
                         mEditorAdapter.notifyDataSetChanged();
+                        mEditorHeadView.updateData(mEditorEntity);
                         mEditorAdapter.loadMoreComplete();
                     } else {
                         showToast(EditorSelectActivity.this, mEditorEntity.getMsg());
