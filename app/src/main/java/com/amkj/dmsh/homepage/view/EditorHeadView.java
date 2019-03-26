@@ -60,8 +60,8 @@ public class EditorHeadView extends LinearLayout {
 
     public EditorHeadView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        View headview = LayoutInflater.from(context).inflate(R.layout.item_edictor_head, this, true);
-        ButterKnife.bind(this, headview);
+        View headView = LayoutInflater.from(context).inflate(R.layout.item_edictor_head, this, true);
+        ButterKnife.bind(this, headView);
         //订阅
         mTvSubscriber.setOnClickListener(view -> {
             //订阅成功隐藏mTvFirstSubscribe
