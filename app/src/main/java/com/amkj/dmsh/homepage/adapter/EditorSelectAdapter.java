@@ -15,6 +15,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.amkj.dmsh.bean.EditorEntity.EditorBean;
@@ -56,9 +57,9 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
 
         //初始化子列表
         RecyclerView rvGoods = helper.getView(R.id.rv_goods);
-        rvGoods.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        rvGoods.setLayoutManager(new LinearLayoutManager(context));
         rvGoods.setNestedScrollingEnabled(false);
-        BaseQuickAdapter<AttachProductListBean, BaseViewHolder> childAdapter = new BaseQuickAdapter<AttachProductListBean, BaseViewHolder>(R.layout.item_editor_goods, item.getAttachProductList()) {
+        BaseQuickAdapter<AttachProductListBean, BaseViewHolder> childAdapter = new BaseQuickAdapter<AttachProductListBean, BaseViewHolder>(R.layout.item_editor_goods, new ArrayList<>(item.getAttachProductList())) {
             @Override
             protected void convert(BaseViewHolder helper, AttachProductListBean item) {
                 GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_goods_pic), item.getProductImg());
