@@ -698,6 +698,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * 退出账号
+     * @param communalUserInfoBean
+     */
     private void doExitAccount(CommunalUserInfoBean communalUserInfoBean) {
         if (communalUserInfoBean.getApprove() == 1) {
             SharedPreferences sharedPreferences = getSharedPreferences(APP_FIRST_TIMES, MODE_PRIVATE);
