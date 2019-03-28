@@ -143,8 +143,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
                 .create());
 
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
@@ -176,8 +174,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     dr_communal_pro.closeDrawers();
                     Intent intent = new Intent(DoMoLifeWelfareActivity.this, DoMoLifeWelfareDetailsActivity.class);
                     intent.putExtra("welfareId", String.valueOf(qualityHistoryListBean.getId()));
-                    //记录sourceId
-                    ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().put(getClass().getSimpleName(), String.valueOf(qualityHistoryListBean.getId()));
                     startActivity(intent);
                 }
             }

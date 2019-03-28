@@ -114,7 +114,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                 page++;
                 getOptimizedData();
             }
-        },communal_recycler);
+        }, communal_recycler);
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -133,7 +133,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.hide(false);
                     }
-                    if(!download_btn_communal.isVisible()){
+                    if (!download_btn_communal.isVisible()) {
                         download_btn_communal.show(true);
                     }
                 } else {
@@ -201,7 +201,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                                 dmlOptimizedSelList.addAll(optimizedSelEntity.getDmlOptimizedSelList());
                             } else if (optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
                                 dmlOptimizedSelAdapter.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
                             }
                             dmlOptimizedSelAdapter.notifyDataSetChanged();
@@ -239,7 +239,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();

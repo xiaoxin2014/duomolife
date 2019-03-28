@@ -237,8 +237,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 if (qualityBuyListBean != null) {
                     Intent intent = new Intent(QualityShopBuyListActivity.this, ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
-                    //记录sourceId
-                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -249,8 +247,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 loadHud.show();
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
-                    //记录sourceId
-                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                     if (userId > 0) {
                         switch (view.getId()) {
                             case R.id.iv_ql_bl_add_car:
@@ -411,6 +407,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 if (shopDetailsEntity != null) {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
+                        //记录埋点参数sourceId(必买清单id)
+                        ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopBuyListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl());
                         if (descriptionBeanList != null) {

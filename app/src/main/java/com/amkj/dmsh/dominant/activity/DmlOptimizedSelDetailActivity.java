@@ -77,7 +77,7 @@ import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
  * class description:多么优选-多么定制详情
  */
 public class DmlOptimizedSelDetailActivity extends BaseActivity {
-    @BindView(R.id.smart_refresh_communal_details)
+    @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_refresh_ql_welfare_details;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
@@ -123,6 +123,8 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         optimizedId = intent.getStringExtra("optimizedId");
+        //记录埋点参数sourceId(多么定制专题对应的id)
+        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(optimizedId));
         iv_img_share.setVisibility(View.VISIBLE);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         tv_header_titleAll.setText("");

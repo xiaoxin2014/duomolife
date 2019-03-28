@@ -465,7 +465,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
             params.put("isApp", true);
         }
         params.put("source", 0);
-
+        //添加埋点来源参数
+        ConstantMethod.addSourceParameter(params);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_GROUP_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -612,7 +613,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 //        订单来源
         params.put("source", 0);
-        //添加来源参数
+        //添加埋点来源参数
         ConstantMethod.addSourceParameter(params);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override

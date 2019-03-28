@@ -15,7 +15,6 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.amkj.dmsh.bean.EditorEntity.EditorBean;
@@ -59,7 +58,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         RecyclerView rvGoods = helper.getView(R.id.rv_goods);
         rvGoods.setLayoutManager(new LinearLayoutManager(context));
         rvGoods.setNestedScrollingEnabled(false);
-        BaseQuickAdapter<AttachProductListBean, BaseViewHolder> childAdapter = new BaseQuickAdapter<AttachProductListBean, BaseViewHolder>(R.layout.item_editor_goods, new ArrayList<>(item.getAttachProductList())) {
+        BaseQuickAdapter<AttachProductListBean, BaseViewHolder> childAdapter = new BaseQuickAdapter<AttachProductListBean, BaseViewHolder>(R.layout.item_editor_goods,item.getAttachProductList()) {
             @Override
             protected void convert(BaseViewHolder helper, AttachProductListBean item) {
                 GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_goods_pic), item.getProductImg());
@@ -74,7 +73,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
                 //进入商品详情
                 Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(attachProductBean.getProductId()));
-                //记录sourceId
+                //记录埋点参数sourceId
                 ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(item.getId()));
                 context.startActivity(intent);
             }

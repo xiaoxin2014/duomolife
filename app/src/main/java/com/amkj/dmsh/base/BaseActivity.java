@@ -52,6 +52,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
     public Map<String, Object> commonMap = new HashMap<>();
+    private String mSimpleName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,8 +81,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 }
             }, NetLoadUtils.getNetInstance().getLoadSirCover());
             String hintText;
-            String simpleName = getClass().getSimpleName();
-            switch (simpleName) {
+            mSimpleName = getClass().getSimpleName();
+            switch (mSimpleName) {
                 case "ShopScrollDetailsActivity":
                 case "IntegralScrollDetailsActivity":
                 case "ShopTimeScrollDetailsActivity":
@@ -128,7 +129,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
                 public void order(Context context, View view) {
                     TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
                     tv_communal_net_tint.setText(finalHintText);
-                    if ("EditorCommentActivity".equals(simpleName)) {
+                    if ("EditorCommentActivity".equals(mSimpleName)) {
                         ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
                         iv_communal_pic.setImageResource(R.drawable.editor_message);
                     }
@@ -319,5 +320,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     protected BaseActivity getActivity() {
         return this;
+    }
+
+    protected String getSimpleName() {
+        return mSimpleName;
     }
 }

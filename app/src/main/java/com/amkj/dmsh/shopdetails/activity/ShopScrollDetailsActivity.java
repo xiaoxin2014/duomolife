@@ -1518,7 +1518,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (!TextUtils.isEmpty(shopCarGoodsSkuDif.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSkuDif.getActivityCode());
             }
-            //添加来源参数
+            //添加埋点来源参数
             ConstantMethod.addSourceParameter(params);
             NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override

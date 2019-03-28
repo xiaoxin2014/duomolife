@@ -2986,7 +2986,7 @@ public class ConstantMethod {
     //根据类名获取sourceType
     public static int getSourceType(String className) {
         switch (className) {
-            case "DoMoLifeWelfareActivity"://福利社专题
+            case "DoMoLifeWelfareActivity"://福利社专题列表
             case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
                 return 1;
             case "QualityShopBuyListActivity"://必买清单
@@ -2994,8 +2994,8 @@ public class ConstantMethod {
                 return 2;
             case "QualityWeekOptimizedActivity"://每周优选
                 return 3;
-            case "DmlOptimizedSelActivity"://多么定制
-            case "QualityCustomTopicActivity"://多么定制专区
+            case "DmlOptimizedSelDetailActivity"://多么定制详情
+//            case "QualityCustomTopicActivity"://自定义专区
                 return 4;
             case "EditorSelectActivity"://小编精选
                 return 5;
@@ -3014,8 +3014,8 @@ public class ConstantMethod {
             case "QualityShopBuyListActivity"://必买清单
             case "QualityShopHistoryListActivity"://历史清单
             case "QualityWeekOptimizedActivity"://每周优选
-            case "DmlOptimizedSelActivity"://多么定制
-            case "QualityCustomTopicActivity"://多么定制专区
+            case "DmlOptimizedSelDetailActivity"://多么定制详情
+//            case "QualityCustomTopicActivity"://自定义专区
             case "EditorSelectActivity"://小编精选
             case "ArticleOfficialActivity"://文章详情
                 return className;
@@ -3034,9 +3034,9 @@ public class ConstantMethod {
         return (String) ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().get(className);
     }
 
-    //添加来源参数
+    //添加埋点来源参数
     public static void addSourceParameter(Map<String, Object> params) {
-        //添加来源参数
+        //添加埋点来源参数
         TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         String simpleName = tinkerBaseApplicationLike.getPreviousActivity();
         int sourceType = getSourceType(simpleName);

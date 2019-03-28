@@ -59,8 +59,6 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                     if (type.equals("welfare")) {
                         intent.putExtra("welfareId", String.valueOf(dMLThemeBean.getId()));
                         intent.setClass(context, DoMoLifeWelfareDetailsActivity.class);
-                        //记录sourceId
-                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
                         context.startActivity(intent);
                     } else if (type.equals("overseas")) {
                         intent.putExtra("overseasId", String.valueOf(dMLThemeBean.getId()));
@@ -86,6 +84,8 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                         intent.setClass(context, ShopScrollDetailsActivity.class);
                         intent.putExtra("productId", String.valueOf(dMLGoodsBean.getId()));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //记录埋点参数sourceId(福利社专题对应的ID)
+                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
                         context.startActivity(intent);
                     } else if (dMLGoodsBean.getItemType() == ConstantVariable.TYPE_1) {
                         switch (type) {

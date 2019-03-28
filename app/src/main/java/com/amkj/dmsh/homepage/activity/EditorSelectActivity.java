@@ -111,7 +111,7 @@ public class EditorSelectActivity extends BaseActivity {
                     if (itemBean.getMainProduct() != null) {
                         intent = new Intent(this, ShopScrollDetailsActivity.class);
                         intent.putExtra("productId", String.valueOf(itemBean.getMainProduct().getProductId()));
-                        //记录sourceId
+                        //记录埋点参数sourceId
                         ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(itemBean.getId()));
                         startActivity(intent);
                     }

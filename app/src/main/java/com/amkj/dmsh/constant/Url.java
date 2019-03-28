@@ -496,7 +496,7 @@ public class Url {
     public static final String GROUP_MINE_SHARE = "api/gp/inviteToGp";
     //    商品评论点赞
     public static final String SHOP_EVA_LIKE = "api/goods/addEvaluateFavor";
-    //    必买清单详情
+    //    必买清单
     public static final String QUALITY_SHOP_BUY_DETAIL = "api/goods/mustbuy/getZone";
     //    历史清单
     public static final String QUALITY_SHOP_HISTORY_LIST = "api/goods/mustbuy/getoverdueZone";

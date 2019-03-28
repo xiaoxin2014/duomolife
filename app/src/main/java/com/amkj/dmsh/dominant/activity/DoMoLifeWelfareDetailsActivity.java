@@ -180,6 +180,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         Intent intent = getIntent();
         welfareId = intent.getStringExtra("welfareId");
+        //记录埋点参数sourceId(福利社专题对应的ID)
+        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(welfareId));
         View headerView = LayoutInflater.from(DoMoLifeWelfareDetailsActivity.this)
                 .inflate(R.layout.layout_welfare_header, (ViewGroup) communal_recycler.getParent(), false);
         welfareHeaderView = new WelfareHeaderView();
@@ -272,7 +274,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 ProductListBean productListBean = (ProductListBean) view.getTag();
                 if (productListBean != null) {
                     dr_welfare_detail_pro.closeDrawers();
-                    saveSourceId(getClass().getSimpleName(), welfareId);             //记录sourceId
+                    saveSourceId(getClass().getSimpleName(), welfareId);             //记录埋点参数sourceId
                     skipProductUrl(DoMoLifeWelfareDetailsActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
                     totalWelfareProNum(getActivity(), productListBean.getId(), Integer.parseInt(welfareId));

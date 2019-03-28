@@ -188,6 +188,8 @@ public class ArticleOfficialActivity extends BaseActivity {
         tv_header_titleAll.setText("");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
+        //记录埋点参数sourceId
+        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(artId));
         isScrollToComment = getStringChangeBoolean(intent.getStringExtra("scrollToComment"));
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
@@ -849,8 +851,6 @@ public class ArticleOfficialActivity extends BaseActivity {
             communalDescripAdapter.setOnItemClickListener((adapter, view, position) -> {
                 CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
                 if (communalDetailBean != null) {
-                    //记录sourceId
-                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(artId));
                     skipProductUrl(ArticleOfficialActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
 //                    统计商品点击
                     totalProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
