@@ -849,6 +849,8 @@ public class ArticleOfficialActivity extends BaseActivity {
             communalDescripAdapter.setOnItemClickListener((adapter, view, position) -> {
                 CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
                 if (communalDetailBean != null) {
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(artId));
                     skipProductUrl(ArticleOfficialActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
 //                    统计商品点击
                     totalProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());

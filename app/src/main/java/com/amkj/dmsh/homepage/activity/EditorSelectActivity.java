@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
 import com.amkj.dmsh.homepage.view.EditorHeadView;
@@ -110,6 +111,8 @@ public class EditorSelectActivity extends BaseActivity {
                     if (itemBean.getMainProduct() != null) {
                         intent = new Intent(this, ShopScrollDetailsActivity.class);
                         intent.putExtra("productId", String.valueOf(itemBean.getMainProduct().getProductId()));
+                        //记录sourceId
+                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(itemBean.getId()));
                         startActivity(intent);
                     }
                     break;

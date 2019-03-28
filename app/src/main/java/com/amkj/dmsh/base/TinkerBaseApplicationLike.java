@@ -27,6 +27,7 @@ import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
@@ -120,6 +121,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     //    是否已初始化TuSdk
     private boolean isInitTuSdk;
     private Map<String, Object> ossMap;
+    //统计订单来源
+    private Map<String, Object> sourceMap = new HashMap<>();
     private int activityCount = 0;
 
     public TinkerBaseApplicationLike(Application application, int tinkerFlags,
@@ -188,7 +191,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             public void onActivityStopped(Activity activity) {
                 activityCount--;
 //                处在后台，启动服务更新底部导航和启动广告
-                if(activityCount==0){
+                if (activityCount == 0) {
                     saveUpdateDate(activity);
                 }
             }
@@ -306,6 +309,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
     /**
      * 保存或者更新数据
+     *
      * @param activity
      */
     private void saveUpdateDate(Activity activity) {
@@ -386,7 +390,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //            strategy.setAppPackageName(getStrings(mAppContext.getPackageName()));  //App的包名
 //            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
 //        } else {
-            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);
+        Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);
 //        }
     }
 
@@ -727,6 +731,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * 关闭界面 到当前界面
      * 先判断是否存在当前activity
      * 存在找出位置 finish掉之后打开的activity
+     * xiaoxin添加备注：同理于singleTask模式，启动该Activity时，如果Activity已经存在栈中，却不在栈顶，会将该Activity上所有的界面出栈
      */
     public void finishToCurrentPage(String currentActivityName) {
         List<Activity> activities = new ArrayList<>(activityLinkedList);
@@ -807,6 +812,36 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     /**
+     * 寻找当前Activity的前一个
+     *
+     * @return 返回类名
+     */
+    public String getPreviousActivity() {
+//        for (int i = 0; i < activityLinkedList.size(); i++) {
+//            Activity activity = activityLinkedList.get(i);
+//            String simpleName = activity.getClass().getSimpleName();
+//            if (simpleName.equals(currentActivityName)) {
+//                int num = i - index;
+//                if (num >= 0) {
+//                    return activityLinkedList.get(num).getClass().getSimpleName();
+//                } else {
+//                    return "";
+//                }
+//            }
+//        }
+
+        for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
+            Activity activity = activityLinkedList.get(i);
+            String simpleName = activity.getClass().getSimpleName();
+            if (!TextUtils.isEmpty(ConstantMethod.getSourceName(simpleName))) {
+                return simpleName;
+            }
+        }
+
+        return "";
+    }
+
+    /**
      * 获取 webUrlTransform
      *
      * @return
@@ -843,5 +878,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Map<String, Object> getSourceMap() {
+        return sourceMap;
     }
 }

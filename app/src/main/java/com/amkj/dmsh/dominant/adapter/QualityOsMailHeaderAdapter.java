@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityOverseasDetailsActivity;
@@ -58,6 +59,8 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                     if (type.equals("welfare")) {
                         intent.putExtra("welfareId", String.valueOf(dMLThemeBean.getId()));
                         intent.setClass(context, DoMoLifeWelfareDetailsActivity.class);
+                        //记录sourceId
+                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
                         context.startActivity(intent);
                     } else if (type.equals("overseas")) {
                         intent.putExtra("overseasId", String.valueOf(dMLThemeBean.getId()));

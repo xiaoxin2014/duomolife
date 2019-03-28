@@ -82,6 +82,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
@@ -271,9 +272,10 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 ProductListBean productListBean = (ProductListBean) view.getTag();
                 if (productListBean != null) {
                     dr_welfare_detail_pro.closeDrawers();
+                    saveSourceId(getClass().getSimpleName(), welfareId);             //记录sourceId
                     skipProductUrl(DoMoLifeWelfareDetailsActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(getActivity(),productListBean.getId(), Integer.parseInt(welfareId));
+                    totalWelfareProNum(getActivity(), productListBean.getId(), Integer.parseInt(welfareId));
                 }
             }
         });
@@ -394,7 +396,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     private void getShareData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,SHARE_COMMUNAL_ARTICLE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, SHARE_COMMUNAL_ARTICLE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -445,7 +447,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         params.put("replyCurrentPage", 1);
         params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
         params.put("comtype", "topic");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_DML_SEARCH_COMMENT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 adapterTopicComment.loadMoreComplete();
@@ -459,7 +461,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                         articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
                     } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                         adapterTopicComment.loadMoreEnd();
-                    }else{
+                    } else {
                         showToast(DoMoLifeWelfareDetailsActivity.this, dmlSearchCommentEntity.getMsg());
                     }
                     adapterTopicComment.removeHeaderView(commentHeaderView);
@@ -483,7 +485,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -536,7 +538,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
                 @Override
                 public void onShareSuccess() {
-                    addArticleShareCount(getActivity(),qualityWefBean.getId());
+                    addArticleShareCount(getActivity(), qualityWefBean.getId());
                 }
             });
         }
@@ -559,7 +561,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_AND_COMMENT_FAV,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_AND_COMMENT_FAV, params, null);
     }
 
     //发送评论
@@ -712,7 +714,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 , qualityWefBean.getTitle()
                                 , ""
                                 , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
-                                + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")),qualityWefBean.getId());
+                                + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")), qualityWefBean.getId());
 
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
@@ -726,7 +728,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     if (communalDetailBean != null) {
                         skipProductUrl(DoMoLifeWelfareDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                         //                    统计商品点击
-                        totalWelfareProNum(getActivity(),communalDetailBean.getId(), Integer.parseInt(welfareId));
+                        totalWelfareProNum(getActivity(), communalDetailBean.getId(), Integer.parseInt(welfareId));
                     }
                 }
             });
@@ -768,6 +770,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -775,7 +778,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(imm!=null){
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }

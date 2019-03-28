@@ -612,6 +612,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 //        订单来源
         params.put("source", 0);
+        //添加来源参数
+        ConstantMethod.addSourceParameter(params);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -1375,7 +1377,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 case UNION_RESULT_CODE:
                     String webManualFinish = data.getStringExtra("webManualFinish");
                     if (unionPay != null) {
-                        unionPay.unionPayResult(this,!TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
+                        unionPay.unionPayResult(this, !TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
                     } else {
                         payError();
                     }

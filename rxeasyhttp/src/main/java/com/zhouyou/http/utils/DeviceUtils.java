@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import org.json.JSONObject;
 
@@ -54,8 +55,8 @@ public class DeviceUtils {
      *
      * @return 设备系统版本号
      */
-    public static int getSDKVersion() {
-        return Build.VERSION.SDK_INT;
+    public static String getSDKVersion() {
+        return Build.VERSION.RELEASE;
     }
 
     /**
@@ -269,6 +270,6 @@ public class DeviceUtils {
         map.put("clientMac", DeviceUtils.getMacAddress(context));
         map.put("deviceId", DeviceUtils.getAndroidID(context));
         JSONObject jsonObject = new JSONObject(map);
-        return jsonObject.toString();
+        return Base64.encodeToString(jsonObject.toString().getBytes(), Base64.NO_WRAP);
     }
 }

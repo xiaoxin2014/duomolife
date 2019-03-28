@@ -147,7 +147,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
     private AlertView selectServer;
-    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2","鸿星"};
+    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "Mr.W", "修改UID", "预发布", "王凯2", "鸿星"};
     private AlertView mAlertViewExt;
     private EditText etName;
     private List<MainIconBean> iconDataList = new ArrayList<>();
@@ -163,7 +163,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
     private AlertDialogHelper alertDialogHelper;
-//    底部限制98 padding top&bottom 10*2 drawablepadding 10 textsize 20
+    //    底部限制98 padding top&bottom 10*2 drawablepadding 10 textsize 20
     private float iconHeight = 32f;
 
     @Override
@@ -198,7 +198,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 getSelectedDialog();
             }
 //            打开app时间统计
-//            加载OSS配置
+//            加载OSS配置  (备注：做统计使用，保留该接口调用)
             getOSSConfig();
 //            获取地址版本
             getAddressVersion();
@@ -239,6 +239,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     /**
      * 设置intent底部数据
+     *
      * @return
      */
     private boolean setIntentBottomIconData() {
@@ -704,9 +705,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             int versionCode = sharedPreferences.getInt(APP_SAVE_VERSION, 0);
             int currentVersionCode = getCurrentVersionCode();
             if (versionCode < currentVersionCode) {
-                Map<String,Object> params = new HashMap<>();
-                params.put("uid",userId);
-                NetLoadUtils.getNetInstance().loadNetDataPost(MainActivity.this, CHECK_CLEAR_USER_DATA,params, new NetLoadListenerHelper() {
+                Map<String, Object> params = new HashMap<>();
+                params.put("uid", userId);
+                NetLoadUtils.getNetInstance().loadNetDataPost(MainActivity.this, CHECK_CLEAR_USER_DATA, params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         sharedPreferences.edit().putInt(APP_SAVE_VERSION, currentVersionCode).apply();
@@ -721,7 +722,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 });
             }
-        }else{
+        } else {
             savePersonalInfoCache(MainActivity.this, null);
         }
     }
@@ -977,7 +978,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     @Override
                     public void imageClick() {
                         alertDialogAdImage.dismiss();
-                        adDialogClickTotal(getActivity(),communalADActivityBean.getId());
+                        adDialogClickTotal(getActivity(), communalADActivityBean.getId());
                         setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
                     }
                 });

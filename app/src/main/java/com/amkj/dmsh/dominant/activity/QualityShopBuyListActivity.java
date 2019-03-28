@@ -137,6 +137,11 @@ public class QualityShopBuyListActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void initViews() {
         tv_header_titleAll.setText("必买清单");
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
@@ -220,6 +225,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     dr_communal_pro.closeDrawers();
                     Intent intent = new Intent(QualityShopBuyListActivity.this, QualityShopHistoryListActivity.class);
                     intent.putExtra("listId", String.valueOf(qualityHistoryListBean.getId()));
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(qualityHistoryListBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -231,6 +237,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 if (qualityBuyListBean != null) {
                     Intent intent = new Intent(QualityShopBuyListActivity.this, ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -241,6 +249,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 loadHud.show();
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                     if (userId > 0) {
                         switch (view.getId()) {
                             case R.id.iv_ql_bl_add_car:
@@ -277,7 +287,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -356,8 +366,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
-                            }else{
-                                showToast(QualityShopBuyListActivity.this,qualityBuyListEntity.getMsg());
+                            } else {
+                                showToast(QualityShopBuyListActivity.this, qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
@@ -426,7 +436,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
     }
 
     private void getHistoryList() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,QUALITY_SHOP_HISTORY_LIST,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_SHOP_HISTORY_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -478,7 +488,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                 public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                     ShareDataBean shareDataBean = null;
                     if (view.getId() == R.id.tv_communal_share && shopBuyDetailBean != null) {
-                        shareDataBean = new ShareDataBean( shopBuyDetailBean.getCoverImgUrl()
+                        shareDataBean = new ShareDataBean(shopBuyDetailBean.getCoverImgUrl()
                                 , "必买清单"
                                 , "集结各路口碑好货，为你精选出必买的家居、母婴优品，不踩雷，买得更顺心。"
                                 , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/must_buy.html");

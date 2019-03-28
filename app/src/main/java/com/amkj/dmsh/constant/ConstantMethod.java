@@ -1260,7 +1260,7 @@ public class ConstantMethod {
      *
      * @param pushType
      */
-    public void clickTotalPush( String pushType, String id) {
+    public void clickTotalPush(String pushType, String id) {
         String url = Url.BASE_URL + Url.TOTAL_JPUSH_COUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("type", pushType);
@@ -1580,6 +1580,9 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(shopCarGoodsSku.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSku.getActivityCode());
             }
+            addSourceParameter(params);
+
+
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
@@ -1624,6 +1627,7 @@ public class ConstantMethod {
             });
         }
     }
+
 
     /**
      * 加入购物车
@@ -2978,4 +2982,68 @@ public class ConstantMethod {
 //        InputStream is = context.getResources().openRawResource(resId);
 //        return BitmapFactory.decodeStream(is, null, opt);
 //    }
+
+    //根据类名获取sourceType
+    public static int getSourceType(String className) {
+        switch (className) {
+            case "DoMoLifeWelfareActivity"://福利社专题
+            case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
+                return 1;
+            case "QualityShopBuyListActivity"://必买清单
+            case "QualityShopHistoryListActivity"://历史清单
+                return 2;
+            case "QualityWeekOptimizedActivity"://每周优选
+                return 3;
+            case "DmlOptimizedSelActivity"://多么定制
+            case "QualityCustomTopicActivity"://多么定制专区
+                return 4;
+            case "EditorSelectActivity"://小编精选
+                return 5;
+            case "ArticleOfficialActivity"://文章
+                return 6;
+            default:
+                return -1;
+        }
+    }
+
+    //判断该类是不是需要埋点的类
+    public static String getSourceName(String className) {
+        switch (className) {
+            case "DoMoLifeWelfareActivity"://福利社专题
+            case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
+            case "QualityShopBuyListActivity"://必买清单
+            case "QualityShopHistoryListActivity"://历史清单
+            case "QualityWeekOptimizedActivity"://每周优选
+            case "DmlOptimizedSelActivity"://多么定制
+            case "QualityCustomTopicActivity"://多么定制专区
+            case "EditorSelectActivity"://小编精选
+            case "ArticleOfficialActivity"://文章详情
+                return className;
+            default:
+                return "";
+        }
+    }
+
+    //保存sourceId到全局map
+    public static void saveSourceId(String className, String id) {
+        ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().put(className, id);
+    }
+
+    //根据类名获取sourceId
+    public static String getSourceId(String className) {
+        return (String) ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().get(className);
+    }
+
+    //添加来源参数
+    public static void addSourceParameter(Map<String, Object> params) {
+        //添加来源参数
+        TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String simpleName = tinkerBaseApplicationLike.getPreviousActivity();
+        int sourceType = getSourceType(simpleName);
+        String sourceId = getSourceId(simpleName);
+        if (sourceType != -1 && !TextUtils.isEmpty(sourceId)) {
+            params.put("sourceType", sourceType);
+            params.put("sourceId", sourceId);
+        }
+    }
 }

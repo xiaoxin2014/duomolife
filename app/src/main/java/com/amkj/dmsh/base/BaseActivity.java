@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -49,7 +51,6 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     public KProgressHUD loadHud;
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
-    public String TAG = getClass().getSimpleName();
     public Map<String, Object> commonMap = new HashMap<>();
 
     @Override
@@ -57,6 +58,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
         ButterKnife.bind(this);
+        if (BuildConfig.DEBUG) Log.d("className", getClass().getSimpleName());
         // 注册当前Activity为订阅者
         EventBus eventBus = EventBus.getDefault();
         eventBus.register(this);

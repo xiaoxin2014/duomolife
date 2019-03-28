@@ -146,6 +146,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                 if (qualityBuyListBean != null) {
                     Intent intent = new Intent(QualityShopHistoryListActivity.this, ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -156,6 +158,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                 loadHud.show();
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                     if (userId > 0) {
                         switch (view.getId()) {
                             case R.id.iv_ql_bl_add_car:

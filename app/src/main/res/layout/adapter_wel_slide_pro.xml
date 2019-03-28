@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="@dimen/sc_mm_30">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:padding="@dimen/sc_mm_30">
 
     <ImageView
         android:id="@+id/iv_wel_slide_pro"
         android:layout_width="@dimen/sc_mm_120"
         android:layout_height="@dimen/sc_mm_120"
         android:scaleType="centerCrop"
-         />
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,18 +25,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:lines="2"
             android:gravity="center_vertical"
             android:lineSpacingExtra="@dimen/dimen_5_dp"
+            android:lines="2"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_24" />
+            android:textSize="@dimen/sc_mm_24"/>
+
         <TextView
             android:id="@+id/tv_wel_slide_pro_price"
             android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/sc_mm_18"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_18"
             android:gravity="center_vertical"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_28" />
+            android:textSize="@dimen/sc_mm_28"/>
     </LinearLayout>
 </LinearLayout>

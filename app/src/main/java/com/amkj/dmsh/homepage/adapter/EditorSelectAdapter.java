@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.EditorEntity.EditorBean.AttachProductListBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -72,6 +73,8 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
                 //进入商品详情
                 Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(attachProductBean.getProductId()));
+                //记录sourceId
+                ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(item.getId()));
                 context.startActivity(intent);
             }
         });

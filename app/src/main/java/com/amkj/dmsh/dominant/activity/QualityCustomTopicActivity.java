@@ -196,6 +196,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                 if (likedProductBean != null) {
                     Intent intent = new Intent(QualityCustomTopicActivity.this, ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(likedProductBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -206,6 +208,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                 loadHud.show();
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
                 if (likedProductBean != null) {
+                    //记录sourceId
+                    ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(likedProductBean.getId()));
                     if (userId > 0) {
                         switch (view.getId()) {
                             case R.id.iv_pro_add_car:

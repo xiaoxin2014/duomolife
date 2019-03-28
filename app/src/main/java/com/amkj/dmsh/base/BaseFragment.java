@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -127,6 +129,7 @@ public abstract class BaseFragment extends ImmersionFragment {
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getContentView(), null);
         mUnBinder = ButterKnife.bind(this, view);
+        if (BuildConfig.DEBUG) Log.d("className", getClass().getSimpleName());
         loadHud = KProgressHUD.create(getActivity())
                 .setCancellable(false)
                 .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50))
@@ -256,14 +259,14 @@ public abstract class BaseFragment extends ImmersionFragment {
         if (mUnBinder != null) {
             mUnBinder.unbind();
         }
-        if(getView()!=null){
+        if (getView() != null) {
             unbindDrawables(getView());
         }
         ImmersionBar.with(this).destroy();
     }
 
     private void unbindDrawables(View view) {
-        if(view==null){
+        if (view == null) {
             return;
         }
         if (view.getBackground() != null) {

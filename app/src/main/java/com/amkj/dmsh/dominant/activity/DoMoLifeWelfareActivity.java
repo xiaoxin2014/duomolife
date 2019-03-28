@@ -176,6 +176,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     dr_communal_pro.closeDrawers();
                     Intent intent = new Intent(DoMoLifeWelfareActivity.this, DoMoLifeWelfareDetailsActivity.class);
                     intent.putExtra("welfareId", String.valueOf(qualityHistoryListBean.getId()));
+                    //记录sourceId
+                    ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().put(getClass().getSimpleName(), String.valueOf(qualityHistoryListBean.getId()));
                     startActivity(intent);
                 }
             }
