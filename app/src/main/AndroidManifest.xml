@@ -118,6 +118,7 @@
             <intent-filter>
                 <!--不要改名，福利社-->
                 <action android:name="DuomoLifeActivity"/>
+                <action android:name="DoMoLifeWelfareActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>

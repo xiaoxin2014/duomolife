@@ -37,6 +37,14 @@ public class MyInterceptor implements Interceptor {
 
         Response response = chain.proceed(builder.build());
         if (BuildConfig.DEBUG) {
+
+        }
+
+        //打印响应结果
+        if (BuildConfig.DEBUG) {
+            ResponseBody body = response.peekBody(1024 * 1024);
+            String ss = body.string();
+
             Log.d("retrofit", "----------Start-----------");
             //打印请求Ulr
             Log.d("retrofitRequest", String.format("Sending request %s",
@@ -47,20 +55,15 @@ public class MyInterceptor implements Interceptor {
             if ("POST".equals(method)) {
                 StringBuilder sb = new StringBuilder();
                 if (request.body() instanceof FormBody) {
-                    FormBody body = (FormBody) request.body();
-                    for (int i = 0; i < body.size(); i++) {
-                        sb.append(body.encodedName(i) + "=" + body.encodedValue(i) + ",");
+                    FormBody formBody = (FormBody) request.body();
+                    for (int i = 0; i < formBody.size(); i++) {
+                        sb.append(formBody.encodedName(i) + "=" + formBody.encodedValue(i) + ",");
                     }
                     sb.delete(sb.length() - 1, sb.length());
                     Log.d("retrofitRequestBody", "{" + sb.toString() + "}");
                 }
             }
-        }
 
-        //打印响应结果
-        if (BuildConfig.DEBUG) {
-            ResponseBody body = response.peekBody(1024 * 1024);
-            String ss = body.string();
             Log.d("retrofitResponse", ss);
             Log.d("retrofit", "----------end-----------");
             Log.d("retrofit", "                        ");

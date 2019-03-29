@@ -453,6 +453,7 @@ public class ConstantMethod {
                     } else {
                         int prefixLength = link.indexOf(prefix) + prefix.length();
                         int urlIndex = link.indexOf("?", prefixLength);
+                        //判断是否有参数
                         if (urlIndex != -1) {
                             subUrl = link.substring(prefixLength, urlIndex).trim();
                             try {
@@ -473,7 +474,7 @@ public class ConstantMethod {
                             intent.setAction(subUrl);
                         }
                     }
-                } else if (link.contains(smallRoutine)) {
+                } else if (link.contains(smallRoutine)) {//小程序
                     int smallRoutineStart = link.indexOf(smallRoutine) + smallRoutine.length();
                     // 填应用AppId
                     IWXAPI api = WXAPIFactory.createWXAPI(context, APP_ID);
