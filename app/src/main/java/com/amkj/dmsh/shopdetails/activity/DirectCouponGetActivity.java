@@ -109,13 +109,7 @@ public class DirectCouponGetActivity extends BaseActivity {
                 loadData();
             }
         });
-        directMyCouponAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                selfChoiceCoupon();
-            }
-        }, communal_recycler);
+        directMyCouponAdapter.setEnableLoadMore(false);
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
