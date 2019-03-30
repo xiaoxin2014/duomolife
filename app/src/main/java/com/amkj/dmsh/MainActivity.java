@@ -871,6 +871,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+
+
     private void getSelectedDialog() {
         if (selectServer == null) {
             AlertSettingBean alertSettingBean = new AlertSettingBean();

@@ -2987,20 +2987,20 @@ public class ConstantMethod {
     //根据类名获取sourceType
     public static int getSourceType(String className) {
         switch (className) {
-            case "DoMoLifeWelfareActivity"://福利社专题列表
-            case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
+            case "ArticleOfficialActivity"://文章
                 return 1;
             case "QualityShopBuyListActivity"://必买清单
             case "QualityShopHistoryListActivity"://历史清单
                 return 2;
-            case "QualityWeekOptimizedActivity"://每周优选
+            case "DoMoLifeWelfareActivity"://福利社专题列表
+            case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
                 return 3;
             case "DmlOptimizedSelDetailActivity"://多么定制详情
 //            case "QualityCustomTopicActivity"://自定义专区
                 return 4;
             case "EditorSelectActivity"://小编精选
                 return 5;
-            case "ArticleOfficialActivity"://文章
+            case "QualityWeekOptimizedActivity"://每周优选
                 return 6;
             default:
                 return -1;

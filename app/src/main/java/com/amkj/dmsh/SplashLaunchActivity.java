@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,8 @@ public class SplashLaunchActivity extends BaseActivity {
         }
         firstRun = isFirstRun();
         if (firstRun) {
+            //统计首次安装设备信息
+            getFirstInstallInfo();
             localImages.add(R.mipmap.guide1);
             localImages.add(R.mipmap.guide2);
             localImages.add(R.mipmap.guide3);
@@ -78,6 +82,10 @@ public class SplashLaunchActivity extends BaseActivity {
         } else {
             skipWelcome();
         }
+    }
+
+    private void getFirstInstallInfo() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FIRST_INSTALL_DEVICE_INFO, null);
     }
 
     private void hideNavStatus() {

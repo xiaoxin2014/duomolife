@@ -37,6 +37,8 @@ public class Url {
      */
     //    首次启动获取push信息
     public static final String FIRST_PUSH_INFO = "api/my/sendAppPushRule";
+    //    统计首次安装设备信息
+    public static final String FIRST_INSTALL_DEVICE_INFO = "/api/home/firstInstallDeviceInfo";
     //    统计推送
     public static final String TOTAL_PUSH_INFO = "api/userbehavioursts/collectMessagePushInfo";
     //    上传数据容量
