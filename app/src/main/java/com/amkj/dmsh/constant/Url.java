@@ -45,6 +45,8 @@ public class Url {
     public static final String TOTAL_UP_SIZE = "api/userbehavioursts/getCollectSize";
     //    统计数据上传
     public static final String TOTAL_DATA_UP = "api/userbehavioursts/collectBehaviourData";
+    //    统计用户分享行为
+    public static final String STATISTICS_SHARE = "/api/shareRecord/myShare";
     //    push信息获取
     public static final String FIRST_PUSH_INFO_RECEIVE = "api/my/pushAppPush";
     //    设置设备信息

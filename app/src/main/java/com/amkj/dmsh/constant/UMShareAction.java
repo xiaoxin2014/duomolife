@@ -53,6 +53,8 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getThumbImgUrl;
  */
 
 public class UMShareAction {
+    private int id;
+    private String title;
     private Activity context;
     private OnShareSuccessListener onShareSuccessListener;
     private AlertDialogShareHelper alertDialogShareHelper;
@@ -108,6 +110,8 @@ public class UMShareAction {
                          final String title, final String description, final String urlLink, String routineUrl
             , int productId, boolean isSaveImg) {
         this.context = context;
+        this.title = title;
+        this.id = productId;
         if (!TextUtils.isEmpty(routineUrl)) {
             this.routineUrl = routineUrl;
         }
@@ -117,7 +121,7 @@ public class UMShareAction {
         } else {
             isSaveImg = false;
         }
-        if(alertDialogShareHelper==null){
+        if (alertDialogShareHelper == null) {
             alertDialogShareHelper = new AlertDialogShareHelper(context, isSaveImg);
         }
         alertDialogShareHelper.show();
@@ -159,19 +163,19 @@ public class UMShareAction {
                             SHARE_MEDIA sharePlatformType = shareIconTitleBean.getSharePlatformType();
                             if (!TextUtils.isEmpty(imgUrl)) {
                                 //        加载图片
-                                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl,300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
                                     public void onSuccess(Bitmap bitmap) {
-                                        setLoadImageShare(sharePlatformType,new UMImage(context, bitmap), context, urlLink, title, description);
+                                        setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
                                     }
 
                                     @Override
                                     public void onError() {
-                                        setLoadImageShare(sharePlatformType,new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                        setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
                                     }
                                 });
                             } else {
-                                setLoadImageShare(sharePlatformType,new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
                             }
                             break;
                     }
@@ -182,6 +186,7 @@ public class UMShareAction {
 
     /**
      * 加载图片分享
+     *
      * @param platformType
      * @param umImage
      * @param context
@@ -189,7 +194,7 @@ public class UMShareAction {
      * @param title
      * @param description
      */
-    private void setLoadImageShare(SHARE_MEDIA platformType,UMImage umImage,Activity context, final String urlLink,
+    private void setLoadImageShare(SHARE_MEDIA platformType, UMImage umImage, Activity context, final String urlLink,
                                    final String title, final String description) {
         umImage.compressFormat = Bitmap.CompressFormat.PNG;
         //        链接地址
@@ -197,7 +202,7 @@ public class UMShareAction {
         web.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");//标题
         web.setThumb(umImage);  //缩略图
         web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述
-        switch (platformType){
+        switch (platformType) {
             case SINA:
                 new ShareAction(context).setPlatform(platformType)
                         .withText((!TextUtils.isEmpty(title) ? title : "")
@@ -235,7 +240,7 @@ public class UMShareAction {
                 break;
             case QQ:
 //                qq需要获取读写文件权限
-                if(constantMethod==null){
+                if (constantMethod == null) {
                     constantMethod = new ConstantMethod();
                 }
                 constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
@@ -360,6 +365,8 @@ public class UMShareAction {
             if (userId > 0) {
                 shareRewardSuccess(userId, context);
             }
+            //统计用户分享行为
+            statisticsShare(context, "objid", title, 1, platform);
         }
 
         @Override
@@ -378,8 +385,30 @@ public class UMShareAction {
             if (alertDialogShareHelper != null) {
                 alertDialogShareHelper.dismiss();
             }
+            //统计用户分享行为
+            statisticsShare(context, "objid", title, 0, platform);
         }
     };
+
+    /**
+     * 统计用户分享行为
+     * @param activity
+     * @param objId       对应的内容ID，如-分享文章类型，则传文章ID，对于一些固定的专区，如每周优选，传0即可
+     * @param ObjName     分享对象名称， 如分享文章类型，则传文章标题
+     * @param status      要分享的平台
+     * @param platform    分享状态 （0-取消，1-成功） 如果不能获取到分享是否被取消，则固定传1
+     */
+    private void statisticsShare(Activity activity, String objId, String ObjName, int status, SHARE_MEDIA platform) {
+        int shareType = getShareType(activity.getClass().getSimpleName());
+        if (shareType == -1) return;
+        Map<String, Object> map = new HashMap<>();
+        map.put("shareType", getShareType(activity.getClass().getSimpleName()));
+        map.put("objId", objId);
+        map.put("road", getShareRoad(platform));
+        map.put("objName", ObjName);
+        map.put("status", status);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.STATISTICS_SHARE, null);
+    }
 
     /**
      * 返回分享平台名字
@@ -407,6 +436,71 @@ public class UMShareAction {
         return platformText;
     }
 
+
+    /**
+     * 返回分享途径字符串
+     *
+     * @param platform 平台
+     * @return
+     */
+    @NonNull
+    private String getShareRoad(SHARE_MEDIA platform) {
+        String roadText = "";
+        switch (platform) {
+            case QQ:
+                roadText = "qq";
+                break;
+            case WEIXIN:
+                roadText = "wechatFriend";
+                break;
+            case WEIXIN_CIRCLE:
+                roadText = "wechatMoment";
+                break;
+            case SINA:
+                roadText = "weibo";
+                break;
+        }
+        return roadText;
+    }
+
+    /*
+     *获取分享类型
+     * @param platform 平台
+     */
+    private int getShareType(String simpleName) {
+        switch (simpleName) {
+            case "ShopScrollDetailsActivity"://商品
+                return 1;
+            case "ArticleOfficialActivity"://文章
+                return 2;
+            case "ArticleDetailsImgActivity"://帖子
+                return 3;
+            case "EditorSelectActivity"://小编精选
+                return 4;
+            case "WholePointSpikeProductActivity"://整点秒杀
+                return 5;
+            case "QualityNewUserActivity"://新人专享
+                return 6;
+            case "QualityGroupShopDetailActivity"://品牌团
+                return 7;
+            case "DoMoLifeWelfareDetailsActivity"://福利社
+                return 8;
+            case "QualityCustomTopicActivity"://自定义专区
+                return 9;
+            case "QualityTypeProductActivity"://活动专区
+                return 10;
+            case "DmlOptimizedSelDetailActivity"://多么定制
+                return 11;
+            case "QualityShopBuyListActivity"://必买清单
+            case "QualityShopHistoryListActivity"://历史清单
+                return 12;
+            case "QualityWeekOptimizedActivity"://每周优选
+                return 13;
+            default:
+                return -1;
+        }
+    }
+
     public void setOnShareSuccessListener(OnShareSuccessListener onShareSuccessListener) {
         this.onShareSuccessListener = onShareSuccessListener;
     }
@@ -419,7 +513,6 @@ public class UMShareAction {
         ContentResolver localContentResolver = context.getContentResolver();
         ContentValues localContentValues = getImageContentValues(file, System.currentTimeMillis());
         localContentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, localContentValues);
-
         Intent localIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
         final Uri localUri = Uri.fromFile(file);
         localIntent.setData(localUri);

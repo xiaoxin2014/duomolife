@@ -75,7 +75,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param url
      * @param netLoadListener
      */
-    public void loadNetDataPost(Activity context, String url, NetLoadListener netLoadListener) {
+    public void
+    loadNetDataPost(Activity context, String url, NetLoadListener netLoadListener) {
         loadNetDataPost(context, url, null, netLoadListener);
     }
 

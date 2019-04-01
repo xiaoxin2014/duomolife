@@ -321,4 +321,12 @@ public class ConstantVariable {
     public static final String OSS_BUCKET_NAME = "O_B_N";
     public static final String OSS_URL = "O_S_U";
     public static final String OSS_OBJECT = "O_S_Obj";
+
+    /**
+     * SharedPre键值常量
+     */
+    public static final String IS_NEW_USER = "isNewUser"; //是否是新安装的用户
+    public static final String GET_FIRST_INSTALL_INFO = "getFirstInstallInfo";//是否成功调用 （统计首次安装设备信息）接口
+
+
 }

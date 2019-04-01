@@ -102,3 +102,5 @@ DmlOptimizedSelDetailActivity,多么定制相关专题,10003
 pushInfoTotal,推送通知,30000
 EditorSelectActivity,小编精选
 EditorCommentActivity,小编精选留言
+WholePointSpikeProductActivity,整点秒杀
+

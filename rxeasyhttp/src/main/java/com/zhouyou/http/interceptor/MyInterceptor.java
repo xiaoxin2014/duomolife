@@ -29,16 +29,13 @@ public class MyInterceptor implements Interceptor {
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder();
-        builder.addHeader("Domo-Custom", mDomoCommon);
+        builder.addHeader("domo-custom", mDomoCommon);
 //        String token = (String) SharedPreUtils.getParam(ShareConstants.TOKEN, "");
 //        if (!TextUtils.isEmpty(token) && request.url().toString().startsWith(UrlConstants.BASE_URL + "/oauthapi")) {
 //            builder.addHeader("Authorization", token);
 //        }
 
         Response response = chain.proceed(builder.build());
-        if (BuildConfig.DEBUG) {
-
-        }
 
         //打印响应结果
         if (BuildConfig.DEBUG) {

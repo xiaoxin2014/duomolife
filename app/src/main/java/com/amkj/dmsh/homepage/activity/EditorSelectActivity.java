@@ -22,6 +22,7 @@ import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -222,5 +223,12 @@ public class EditorSelectActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    //友盟分享注册回调
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 }

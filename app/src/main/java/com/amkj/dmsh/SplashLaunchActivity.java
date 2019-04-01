@@ -1,15 +1,16 @@
 package com.amkj.dmsh;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,10 @@ public class SplashLaunchActivity extends BaseActivity {
             return;
         }
         firstRun = isFirstRun();
+        //是否进入引导页
         if (firstRun) {
+            //保存新用户标志
+            SharedPreUtils.setParam(ConstantVariable.IS_NEW_USER, true);
             //统计首次安装设备信息
             getFirstInstallInfo();
             localImages.add(R.mipmap.guide1);
@@ -71,21 +75,30 @@ public class SplashLaunchActivity extends BaseActivity {
                 @Override
                 public void onPageScrollStateChanged(int state) {
                     if (isConform && state == SCROLL_STATE_IDLE) {
-                        SharedPreferences sp = getSharedPreferences("duomolife", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor edit = sp.edit();
-                        edit.putBoolean("isFirstRun", false);
-                        edit.apply();
+                        SharedPreUtils.setParam("isFirstRun", false);
                         skipWelcome();
                     }
                 }
             });
         } else {
+            boolean isNewUser = (boolean) SharedPreUtils.getParam(ConstantVariable.IS_NEW_USER, false);
+            boolean GetInfo = (boolean) SharedPreUtils.getParam(ConstantVariable.GET_FIRST_INSTALL_INFO, false);
+            //如果是新用户并且没有成功调用统计接口
+            if (isNewUser && !GetInfo) {
+                getFirstInstallInfo();
+            }
             skipWelcome();
         }
     }
 
     private void getFirstInstallInfo() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FIRST_INSTALL_DEVICE_INFO, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FIRST_INSTALL_DEVICE_INFO, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                SharedPreUtils.setParam(ConstantVariable.IS_NEW_USER, false);
+                SharedPreUtils.setParam(ConstantVariable.GET_FIRST_INSTALL_INFO, true);
+            }
+        });
     }
 
     private void hideNavStatus() {
@@ -114,8 +127,8 @@ public class SplashLaunchActivity extends BaseActivity {
     // 添加此处目的是针对后台APP通过uri scheme唤起的情况，
     // 注意：即使不区分用户是否登录也需要添加此设置，也可以添加到基类中
     private boolean isFirstRun() {
-        SharedPreferences sp = getSharedPreferences("duomolife", MODE_PRIVATE);
-        return sp.getBoolean("isFirstRun", true);
+        return (boolean) SharedPreUtils.getParam("isFirstRun", true);
     }
+
 
 }
