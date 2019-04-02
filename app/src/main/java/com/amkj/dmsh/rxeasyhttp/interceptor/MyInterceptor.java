@@ -40,9 +40,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 
 public class MyInterceptor implements Interceptor {
     private Context mContext;
+    private Map<String, Object> mDomoCommon;
 
+    //该构造方法只会调用一次
     public MyInterceptor(Context context) {
         mContext = context;
+        mDomoCommon = getCommonApiParameter(mContext);
     }
 
     @NonNull
@@ -50,16 +53,9 @@ public class MyInterceptor implements Interceptor {
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder();
-        //获取api公用参数
-        String mDomoCommon = getCommonApiParameter(mContext);
-        builder.addHeader("domo-custom", mDomoCommon);
-//        String token = (String) SharedPreUtils.getParam(ShareConstants.TOKEN, "");
-//        if (!TextUtils.isEmpty(token) && request.url().toString().startsWith(UrlConstants.BASE_URL + "/oauthapi")) {
-//            builder.addHeader("Authorization", token);
-//        }
-
+        checkToken(mDomoCommon);
+        builder.addHeader("domo-custom", Base64.encodeToString(new JSONObject(mDomoCommon).toString().getBytes(), Base64.NO_WRAP));
         Response response = chain.proceed(builder.build());
-
         //打印响应结果
         if (BuildConfig.DEBUG) {
             ResponseBody body = response.peekBody(1024 * 1024);
@@ -89,18 +85,11 @@ public class MyInterceptor implements Interceptor {
             Log.d("retrofit", "                        ");
         }
 
-//        //判断token是否过期
-//        if (response.code() == 401) {
-//            Request.Builder newbuilder = request.newBuilder();
-//            Response newresponse = chain.proceed(newbuilder.build());
-//            SharedPreUtils.setParam(ShareConstants.TOKEN, "");
-//            return newresponse;
-//        }
         return response;
     }
 
     //多么生活api通用参数
-    public static String getCommonApiParameter(Context context) {
+    private static Map<String, Object> getCommonApiParameter(Context context) {
         Map<String, Object> map = new HashMap<>();
         map.put("appVersion", DeviceUtils.getVersionName(context));
         map.put("device", DeviceUtils.getModel());
@@ -110,17 +99,23 @@ public class MyInterceptor implements Interceptor {
         map.put("clientIp", DeviceUtils.getIpAddress(context));
         map.put("clientMac", DeviceUtils.getMacAddress(context));
         map.put("deviceId", DeviceUtils.getAndroidID(context));
+        return map;
+    }
+
+    //多么生活api通用参数
+    private void checkToken(Map<String, Object> map) {
         if (ConstantMethod.userId > 0) {
+            map.put("uid", ConstantMethod.userId);
             String token = (String) SharedPreUtils.getParam(TOKEN, "");
             long tokenExpireTime = (long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L);
-            long currentTimeMillis = System.currentTimeMillis();
+            long currentTimeMillis = System.currentTimeMillis()/1000;
             //token不为空
-            if (!TextUtils.isEmpty(token)) {
+            if (!TextUtils.isEmpty(token) && tokenExpireTime != 0) {
                 map.put("token", token);
                 //如果token过期
                 if (currentTimeMillis > tokenExpireTime) {
                     //请求接口判断是否真的过期
-                    NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
+                    NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
                         @Override
                         public void onSuccess(String result) {
                             Gson gson = new Gson();
@@ -131,10 +126,10 @@ public class MyInterceptor implements Interceptor {
                                     SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getExpireTime());
                                 } else {
                                     //Token过期,清除本地登录信息
-                                    savePersonalInfoCache(context, null);
+                                    savePersonalInfoCache(mContext, null);
                                     //调用登出接口
-                                    NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.LOG_OUT, null, null);
-                                    context.startActivity(new Intent(context, MineLoginActivity.class));
+                                    NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
+                                    mContext.startActivity(new Intent(mContext, MineLoginActivity.class));
                                     ConstantMethod.showToast("长期未登录，请重新登录");
                                 }
                             }
@@ -142,9 +137,6 @@ public class MyInterceptor implements Interceptor {
                     });
                 }
             }
-
         }
-        JSONObject jsonObject = new JSONObject(map);
-        return Base64.encodeToString(jsonObject.toString().getBytes(), Base64.NO_WRAP);
     }
 }

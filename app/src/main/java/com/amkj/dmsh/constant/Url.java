@@ -305,7 +305,7 @@ public class Url {
     public static final String CONFIRM_LOGIN_TOKEN_EXPIRE = "api/my/confirmLoginTokenExpire";
     //    刷新用户登录token,每天第一次打开app的时候调用,刷新token时间
     public static final String FLUSH_LOGIN_TOKEN = "api/my/flushLoginToken";
-    //    用户登出
+    //    用户登出(清除记录的token信息)
     public static final String LOG_OUT = "/api/my/logOut";
 
 
