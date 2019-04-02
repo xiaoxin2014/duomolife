@@ -19,12 +19,12 @@ import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
 import com.kingja.loadsir.core.LoadService;
-import com.zhouyou.http.EasyHttp;
-import com.zhouyou.http.cache.model.CacheMode;
-import com.zhouyou.http.cache.model.CacheResult;
-import com.zhouyou.http.callback.SimpleCallBack;
-import com.zhouyou.http.exception.ApiException;
-import com.zhouyou.http.model.HttpParams;
+import com.amkj.dmsh.rxeasyhttp.EasyHttp;
+import com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode;
+import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
+import com.amkj.dmsh.rxeasyhttp.callback.SimpleCallBack;
+import com.amkj.dmsh.rxeasyhttp.exception.ApiException;
+import com.amkj.dmsh.rxeasyhttp.model.HttpParams;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -40,9 +40,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.zhouyou.http.cache.model.CacheMode.CACHEANDREMOTE;
-import static com.zhouyou.http.cache.model.CacheMode.FIRSTREMOTE;
-import static com.zhouyou.http.cache.model.CacheMode.ONLYCACHE;
+import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.CACHEANDREMOTE;
+import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.FIRSTREMOTE;
+import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.ONLYCACHE;
 
 /**
  * @author LGuiPeng

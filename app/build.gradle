@@ -182,6 +182,8 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit_rxjava2"
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp_logging"
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.jakewharton:disklrucache:2.0.2'
 
     //fastjson
     implementation 'com.alibaba:fastjson:1.2.54'
@@ -307,5 +309,4 @@ dependencies {
     implementation project(':convenientbanner')
     implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
     implementation project(':FloatingActionButton')
-    implementation project(':rxeasyhttp')
 }

@@ -301,6 +301,14 @@ public class Url {
     public static final String ACCOUNT_UNBIND_WECHAT = "api/my/wxUnbind";
     //    微博QQ解除绑定
     public static final String ACCOUNT_UNBIND_SINA_QQ = "api/my/sinaAndqqUnbind";
+    //    确认用户token是否真的过期
+    public static final String CONFIRM_LOGIN_TOKEN_EXPIRE = "api/my/confirmLoginTokenExpire";
+    //    刷新用户登录token,每天第一次打开app的时候调用,刷新token时间
+    public static final String FLUSH_LOGIN_TOKEN = "api/my/flushLoginToken";
+    //    用户登出
+    public static final String LOG_OUT = "/api/my/logOut";
+
+
     /**
      * 我的赞列表
      */

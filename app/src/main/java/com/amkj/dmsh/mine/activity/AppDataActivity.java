@@ -24,7 +24,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.google.gson.Gson;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.zhouyou.http.EasyHttp;
+import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 
 import java.io.File;
 import java.util.ArrayList;

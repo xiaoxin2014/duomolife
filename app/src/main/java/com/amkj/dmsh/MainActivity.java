@@ -900,7 +900,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 closeKeyboard();
                                 if (position1 != AlertView.CANCELPOSITION) {
                                     String inputUid = etName.getText().toString().trim();
-                                    SharedPreferences loginStatus = getSharedPreferences("LoginStatus", Context.MODE_PRIVATE);
+                                    SharedPreferences loginStatus = getSharedPreferences("loginStatus", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor edit = loginStatus.edit();
                                     edit.putBoolean("isLogin", true);
                                     edit.putInt("uid", Integer.parseInt(inputUid));
@@ -919,7 +919,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     SharedPreferences.Editor edit = sharedPreferences.edit();
                     edit.putInt("selectServer", position);
                     edit.commit();
-                    SharedPreferences loginStatus = getSharedPreferences("LoginStatus", MODE_PRIVATE);
+                    SharedPreferences loginStatus = getSharedPreferences("loginStatus", MODE_PRIVATE);
                     SharedPreferences.Editor loginEdit = loginStatus.edit();
                     loginEdit.putBoolean("isLogin", false);
                     loginEdit.commit();

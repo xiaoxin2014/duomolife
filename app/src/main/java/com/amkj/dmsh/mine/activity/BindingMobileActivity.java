@@ -219,6 +219,8 @@ public class BindingMobileActivity extends BaseActivity {
                             savePersonalInfoBean.setPhoneNum(getStrings(communalUserInfo.getMobile()));
                             savePersonalInfoBean.setUid(communalUserInfo.getUid());
                             savePersonalInfoBean.setLogin(true);
+                            savePersonalInfoBean.setToken(getStrings(communalUserInfo.getToken()));
+                            savePersonalInfoBean.setTokenExpireSeconds(System.currentTimeMillis() + communalUserInfo.getTokenExpireSeconds());
                             if (otherAccountBindInfo != null) {
                                 savePersonalInfoBean.setOpenId(getStrings(otherAccountBindInfo.getOpenid()));
                                 savePersonalInfoBean.setLoginType(getStrings(otherAccountBindInfo.getType()));

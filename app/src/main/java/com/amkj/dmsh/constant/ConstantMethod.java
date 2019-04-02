@@ -71,6 +71,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.utils.MarketUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -139,6 +140,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_SPACE_CHAR;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
@@ -665,7 +668,7 @@ public class ConstantMethod {
         if (context == null) {
             return;
         }
-        SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+        SharedPreferences loginStatus = context.getSharedPreferences("loginStatus", MODE_PRIVATE);
         if (loginStatus.getBoolean("isLogin", false)) {
             userId = loginStatus.getInt("uid", 0);
         } else {
@@ -681,7 +684,7 @@ public class ConstantMethod {
      * @param activity
      */
     public static void getLoginStatus(@NonNull Activity activity) {
-        SharedPreferences loginStatus = activity.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+        SharedPreferences loginStatus = activity.getSharedPreferences("loginStatus", MODE_PRIVATE);
         if (loginStatus.getBoolean("isLogin", false)) {
             userId = loginStatus.getInt("uid", 0);
         } else {
@@ -1756,15 +1759,15 @@ public class ConstantMethod {
             QyServiceUtils.getQyInstance().loginQyUserInfo(applicationContext, savePersonalInfo.getUid()
                     , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
 
-            SharedPreferences loginStatus = applicationContext.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+            SharedPreferences loginStatus = applicationContext.getSharedPreferences("loginStatus", MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
             edit.putBoolean("isLogin", true);
             edit.putInt("uid", savePersonalInfo.getUid());
             edit.putString("nickName", getStrings(savePersonalInfo.getNickName()));
             edit.putString("avatar", getStrings(savePersonalInfo.getAvatar()));
             edit.putString("P_NUM", getStrings(savePersonalInfo.getPhoneNum()));
-            edit.putString("token", getStrings(savePersonalInfo.getToken()));
-            edit.putString("tokenExpireTime", getStrings(savePersonalInfo.getTokenExpireSeconds()));
+            edit.putString(TOKEN, getStrings(savePersonalInfo.getToken()));
+            edit.putLong(TOKEN_EXPIRE_TIME, savePersonalInfo.getTokenExpireSeconds());
             if (!TextUtils.isEmpty(savePersonalInfo.getOpenId())) {
                 edit.putString("OPEN_ID", getStrings(savePersonalInfo.getOpenId()));
             }
@@ -1783,10 +1786,8 @@ public class ConstantMethod {
             MobclickAgent.onProfileSignOff();
 //            解绑JPush
             unBindJPush();
-            SharedPreferences loginStatus = applicationContext.getSharedPreferences("LoginStatus", MODE_PRIVATE);
-            SharedPreferences.Editor edit = loginStatus.edit();
-            edit.clear();
-            edit.commit();
+            //清除登录状态
+            SharedPreUtils.clearAll();
         }
     }
 
@@ -1797,7 +1798,7 @@ public class ConstantMethod {
      * @return
      */
     public static SavePersonalInfoBean getPersonalInfo(Context context) {
-        SharedPreferences loginStatus = context.getSharedPreferences("LoginStatus", MODE_PRIVATE);
+        SharedPreferences loginStatus = context.getSharedPreferences("loginStatus", MODE_PRIVATE);
         SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
         if (loginStatus.getBoolean("isLogin", false)) {
             savePersonalInfo.setUid(loginStatus.getInt("uid", 0));

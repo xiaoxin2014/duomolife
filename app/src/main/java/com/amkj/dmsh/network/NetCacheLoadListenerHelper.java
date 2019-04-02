@@ -1,6 +1,6 @@
 package com.amkj.dmsh.network;
 
-import com.zhouyou.http.cache.model.CacheResult;
+import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 
 /**
  * @author LGuiPeng

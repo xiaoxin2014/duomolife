@@ -305,9 +305,9 @@ public static final int *;
 -keep class com.google.gson.examples.android.model.** { *; }
 
 #RxEasyHttp
--keep class com.zhouyou.http.model.** {*;}
--keep class com.zhouyou.http.cache.model.** {*;}
--keep class com.zhouyou.http.cache.stategy.**{*;}
+-keep class com.amkj.dmsh.rxeasyhttp.model.** {*;}
+-keep class com.amkj.dmsh.rxeasyhttp.cache.model.** {*;}
+-keep class com.amkj.dmsh.rxeasyhttp.cache.stategy.**{*;}
 
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule

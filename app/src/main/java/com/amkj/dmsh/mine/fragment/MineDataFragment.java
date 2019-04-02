@@ -70,7 +70,7 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
-import com.zhouyou.http.cache.model.CacheResult;
+import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;

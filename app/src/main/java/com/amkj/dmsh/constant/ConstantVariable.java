@@ -327,7 +327,14 @@ public class ConstantVariable {
      */
     public static final String IS_NEW_USER = "isNewUser"; //是否是新安装的用户
     public static final String GET_FIRST_INSTALL_INFO = "getFirstInstallInfo";//是否成功调用 （统计首次安装设备信息）接口
-    public static final String Token = "token";//是否成功调用 （统计首次安装设备信息）接口
+    public static final String TOKEN = "token";//token
+    public static final String TOKEN_EXPIRE_TIME = "tokenExpireTime";//token过期时间
+    public static final String TOKEN_REFRESH_TIME = "tokenExpireTime";//token刷新时间
+
+
+
+    public static final String DEMO_LIFE_FILE = "duomolife";//用户信息本地shared_prefs文件名
+
 
 
 }
