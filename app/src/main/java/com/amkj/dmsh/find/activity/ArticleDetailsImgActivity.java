@@ -76,7 +76,6 @@ import butterknife.OnTouch;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -204,7 +203,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.hide(false);
                     }
-                    if(!download_btn_communal.isVisible()){
+                    if (!download_btn_communal.isVisible()) {
                         download_btn_communal.show(true);
                     }
                 } else {
@@ -363,7 +362,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
         tv_article_bottom_like.setSelected(!tv_article_bottom_like.isSelected());
         String likeCount = getNumber(tv_article_bottom_like.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
@@ -383,6 +382,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
 
     /**
      * 设置评论点赞
+     *
      * @param dmlSearchCommentBean
      */
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
@@ -392,7 +392,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
     }
 
     //    文章收藏
@@ -404,7 +404,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -807,7 +807,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 flag = "add";
             }
             params.put("ftype", flag);
-            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleDetailsImgActivity.this,UPDATE_ATTENTION,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleDetailsImgActivity.this, UPDATE_ATTENTION, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -848,7 +848,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
             if (userId > 0) {
                 params.put("fuid", String.valueOf(userId));
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleDetailsImgActivity.this,F_INVITATION_DETAIL,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleDetailsImgActivity.this, F_INVITATION_DETAIL, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
@@ -944,17 +944,11 @@ public class ArticleDetailsImgActivity extends BaseActivity {
     @OnClick({R.id.tv_header_shared})
     void setShare() {
         if (invitationDetailBean != null) {
-            UMShareAction umShareAction = new UMShareAction(ArticleDetailsImgActivity.this
+            new UMShareAction(ArticleDetailsImgActivity.this
                     , invitationDetailBean.getPath()
                     , "分享" + invitationDetailBean.getNickname() + "帖子"
                     , invitationDetailBean.getDescription()
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + invitationDetailBean.getId());
-            umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
-                @Override
-                public void onShareSuccess() {
-                    addArticleShareCount(getActivity(),invitationDetailBean.getId());
-                }
-            });
         }
     }
 

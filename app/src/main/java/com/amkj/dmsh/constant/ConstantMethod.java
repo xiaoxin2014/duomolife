@@ -1763,6 +1763,8 @@ public class ConstantMethod {
             edit.putString("nickName", getStrings(savePersonalInfo.getNickName()));
             edit.putString("avatar", getStrings(savePersonalInfo.getAvatar()));
             edit.putString("P_NUM", getStrings(savePersonalInfo.getPhoneNum()));
+            edit.putString("token", getStrings(savePersonalInfo.getToken()));
+            edit.putString("tokenExpireTime", getStrings(savePersonalInfo.getTokenExpireSeconds()));
             if (!TextUtils.isEmpty(savePersonalInfo.getOpenId())) {
                 edit.putString("OPEN_ID", getStrings(savePersonalInfo.getOpenId()));
             }

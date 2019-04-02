@@ -14,7 +14,6 @@ public class ShareDataBean {
     private String urlLink;
 //    回调传的Id--> 奖励 没有该值 分享不会回调获取奖励
     private int backId;
-    private int id;  //对应的内容ID，如-分享文章类型，则传文章ID，对于一些固定的专区，如每周优选，传0即可
 
     /**
      *

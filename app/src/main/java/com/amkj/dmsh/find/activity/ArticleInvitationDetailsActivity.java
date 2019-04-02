@@ -72,7 +72,6 @@ import butterknife.OnTouch;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -285,6 +284,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             }
         });
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -351,7 +351,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         //关注id
         params.put("id", dmlSearchDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_article_bottom_like.setSelected(!tv_article_bottom_like.isSelected());
         String likeCount = getNumber(tv_article_bottom_like.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
@@ -375,7 +375,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_AND_COMMENT_FAV,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_AND_COMMENT_FAV, params, null);
     }
 
     //    文章收藏
@@ -386,7 +386,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         //文章id
         params.put("object_id", dmlSearchDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -540,7 +540,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
         params.put("replyCurrentPage", 1);
         params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
         params.put("comtype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT,params,new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -553,9 +553,9 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 if (dmlSearchCommentEntity != null) {
                     if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
-                    }else if(EMPTY_CODE.equals(dmlSearchCommentEntity.getCode())){
+                    } else if (EMPTY_CODE.equals(dmlSearchCommentEntity.getCode())) {
                         adapterArticleComment.loadMoreEnd();
-                    }else{
+                    } else {
                         showToast(ArticleInvitationDetailsActivity.this, dmlSearchCommentEntity.getMsg());
                     }
                     if (articleCommentList.size() > 0) {
@@ -626,20 +626,20 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     if (communalDetailBean != null) {
                         skipProductUrl(ArticleInvitationDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
 //                    统计商品点击
-                        totalProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                        totalProNum(getActivity(), communalDetailBean.getId(), dmlSearchDetailBean.getId());
                     }
                 }
             });
             communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-                    ShareDataBean shareDataBean = null;
-                    if (view.getId() == R.id.tv_communal_share&&dmlSearchDetailBean!=null) {
-                        shareDataBean = new ShareDataBean(dmlSearchDetailBean.getPath()
-                                , "分享" + dmlSearchDetailBean.getNickname() + "帖子"
-                                , dmlSearchDetailBean.getDigest()
-                                , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + dmlSearchDetailBean.getId(), dmlSearchDetailBean.getId());
-                    }
-                    CommunalWebDetailUtils.getCommunalWebInstance()
-                            .setWebDataClick(ArticleInvitationDetailsActivity.this, shareDataBean, view, loadHud);
+                ShareDataBean shareDataBean = null;
+                if (view.getId() == R.id.tv_communal_share && dmlSearchDetailBean != null) {
+                    shareDataBean = new ShareDataBean(dmlSearchDetailBean.getPath()
+                            , "分享" + dmlSearchDetailBean.getNickname() + "帖子"
+                            , dmlSearchDetailBean.getDigest()
+                            , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + dmlSearchDetailBean.getId(), dmlSearchDetailBean.getId());
+                }
+                CommunalWebDetailUtils.getCommunalWebInstance()
+                        .setWebDataClick(ArticleInvitationDetailsActivity.this, shareDataBean, view, loadHud);
             });
             tv_live_attention.setVisibility(View.VISIBLE);
         }
@@ -726,7 +726,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                 flag = "add";
             }
             params.put("ftype", flag);
-            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleInvitationDetailsActivity.this,UPDATE_ATTENTION,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleInvitationDetailsActivity.this, UPDATE_ATTENTION, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -771,9 +771,9 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
             if (userId > 0) {
                 params.put("fuid", String.valueOf(userId));
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleInvitationDetailsActivity.this,F_INVITATION_DETAIL
+            NetLoadUtils.getNetInstance().loadNetDataPost(ArticleInvitationDetailsActivity.this, F_INVITATION_DETAIL
                     , params
-                    ,new NetLoadListenerHelper() {
+                    , new NetLoadListenerHelper() {
                         @Override
                         public void onSuccess(String result) {
                             smart_communal_refresh.finishRefresh();
@@ -871,17 +871,11 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
 
     private void setDetailShare() {
         if (dmlSearchDetailBean != null) {
-            UMShareAction umShareAction = new UMShareAction(ArticleInvitationDetailsActivity.this
+            new UMShareAction(ArticleInvitationDetailsActivity.this
                     , dmlSearchDetailBean.getPath()
                     , "分享" + dmlSearchDetailBean.getNickname() + "帖子"
                     , dmlSearchDetailBean.getDigest()
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + dmlSearchDetailBean.getId());
-            umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
-                @Override
-                public void onShareSuccess() {
-                    addArticleShareCount(getActivity(),dmlSearchDetailBean.getId());
-                }
-            });
         }
     }
 

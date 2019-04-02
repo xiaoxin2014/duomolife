@@ -77,7 +77,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.R.id.ll_communal_pro_list;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -537,12 +536,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     , ""
                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
                     + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")));
-            umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
-                @Override
-                public void onShareSuccess() {
-                    addArticleShareCount(getActivity(), qualityWefBean.getId());
-                }
-            });
         }
     }
 

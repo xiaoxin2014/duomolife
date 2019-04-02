@@ -80,7 +80,6 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
@@ -304,7 +303,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 if (communalDetailBean != null && communalDetailBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_WEL) {
                     skipProductUrl(DmlLifeSearchDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                    totalWelfareProNum(getActivity(), communalDetailBean.getId(), dmlSearchDetailBean.getId());
                 }
             }
         });
@@ -581,7 +580,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         params.put("tuid", userId);
         //评论id
         params.put("id", dmlSearchCommentBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,FIND_AND_COMMENT_FAV,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_AND_COMMENT_FAV, params, null);
     }
 
     private void setArticleLike() {
@@ -591,7 +590,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         //关注id
         params.put("id", dmlSearchDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_article_bottom_like.setSelected(!tv_article_bottom_like.isSelected());
         String likeCount = getNumber(tv_article_bottom_like.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
@@ -617,7 +616,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         //文章id
         params.put("object_id", dmlSearchDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_SEARCH);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -643,7 +642,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
             @Override
             public void netClose() {
-                showToast(DmlLifeSearchDetailActivity.this,R.string.unConnectedNetwork);
+                showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -757,18 +756,12 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
     private void setShareData() {
         if (dmlSearchDetailBean != null) {
-            UMShareAction umShareAction = new UMShareAction(DmlLifeSearchDetailActivity.this
+            new UMShareAction(DmlLifeSearchDetailActivity.this
                     , dmlSearchDetailBean.getPath()
                     , getStrings(dmlSearchDetailBean.getTitle())
                     , getStrings(dmlSearchDetailBean.getDigest())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/study_detail.html?id="
                     + dmlSearchDetailBean.getId());
-            umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
-                @Override
-                public void onShareSuccess() {
-                    addArticleShareCount(getActivity(),dmlSearchDetailBean.getId());
-                }
-            });
         }
     }
 
@@ -898,6 +891,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -905,7 +899,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(imm!=null){
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }

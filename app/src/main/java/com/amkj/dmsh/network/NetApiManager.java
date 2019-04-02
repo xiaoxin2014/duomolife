@@ -2,6 +2,7 @@ package com.amkj.dmsh.network;
 
 import android.app.Application;
 
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.cache.converter.GsonDiskConverter;
@@ -37,7 +38,7 @@ public class NetApiManager {
     public void initNetInstance() {
         if(!isInitNet){
             Application application = TinkerManager.getTinkerApplicationLike().getApplication();
-            EasyHttp.init(application);//默认初始化
+            EasyHttp.init(application,ConstantMethod.userId);//默认初始化
             String rxCacheFileName = application.getCacheDir() + "/rxCache";
             File rxCacheFile = new File(rxCacheFileName);
             if(!rxCacheFile.exists()){

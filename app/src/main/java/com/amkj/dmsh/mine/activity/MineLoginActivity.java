@@ -251,6 +251,8 @@ public class MineLoginActivity extends BaseActivity {
         savePersonalInfo.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
         savePersonalInfo.setUid(communalUserInfoBean.getUid());
         savePersonalInfo.setLogin(true);
+        savePersonalInfo.setToken(getStrings(communalUserInfoBean.getToken()));
+        savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + communalUserInfoBean.getTokenExpireSeconds());
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no()
@@ -419,6 +421,8 @@ public class MineLoginActivity extends BaseActivity {
                             savePersonalInfo.setPhoneNum(getStrings(otherAccountBean.getMobile()));
                             savePersonalInfo.setOpenId(getStrings(otherAccountBindInfo.getOpenid()));
                             savePersonalInfo.setLoginType(getStrings(otherAccountBindInfo.getType()));
+                            savePersonalInfo.setToken(getStrings(otherAccountBean.getToken()));
+                            savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + otherAccountBean.getTokenExpireSeconds());
                             if (OTHER_WECHAT.equals(getStrings(otherAccountBindInfo.getType()))) {
                                 savePersonalInfo.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
                             }

@@ -259,7 +259,7 @@ public class DeviceUtils {
     }
 
     //多么生活api通用参数
-    public static String getCommonApiParameter(Context context) {
+    public static String getCommonApiParameter(Context context, int userId) {
         Map<String, Object> map = new HashMap<>();
         map.put("appVersion", DeviceUtils.getVersionName(context));
         map.put("device", DeviceUtils.getModel());
@@ -269,6 +269,17 @@ public class DeviceUtils {
         map.put("clientIp", DeviceUtils.getIpAddress(context));
         map.put("clientMac", DeviceUtils.getMacAddress(context));
         map.put("deviceId", DeviceUtils.getAndroidID(context));
+        if (userId > 0) {
+            String token = context.getSharedPreferences("duomolife", Context.MODE_PRIVATE).getString("token", "");
+            long tokenExpireTime = context.getSharedPreferences("duomolife", Context.MODE_PRIVATE).getLong("tokenExpireTime", 0);
+            long currentTimeMillis = System.currentTimeMillis();
+            //token不为空并且没有过期
+            if (currentTimeMillis > tokenExpireTime && !TextUtils.isEmpty(token)) {
+                map.put("token", token);
+            } else {
+
+            }
+        }
         JSONObject jsonObject = new JSONObject(map);
         return Base64.encodeToString(jsonObject.toString().getBytes(), Base64.NO_WRAP);
     }

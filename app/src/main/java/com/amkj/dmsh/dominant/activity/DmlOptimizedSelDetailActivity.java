@@ -152,7 +152,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     dr_welfare_detail_pro.closeDrawers();
                     skipProductUrl(DmlOptimizedSelDetailActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalProNum(getActivity(),productListBean.getId(), dmlOptimizedSelDetailBean.getId());
+                    totalProNum(getActivity(), productListBean.getId(), dmlOptimizedSelDetailBean.getId());
                 }
             }
         });
@@ -172,7 +172,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                             dmlOptimizedSelDetailBean.getTitle() : "多么定制"
                             , getStrings(dmlOptimizedSelDetailBean.getSubtitle())
                             , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/optimize_detail.html?id="
-                            + dmlOptimizedSelDetailBean.getId(),dmlOptimizedSelDetailBean.getId());
+                            + dmlOptimizedSelDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
 
                 }
                 CommunalWebDetailUtils.getCommunalWebInstance()
@@ -184,7 +184,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             if (communalDetailBean != null) {
                 skipProductUrl(DmlOptimizedSelDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                 //                    统计商品点击
-                totalProNum(getActivity(),communalDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
+                totalProNum(getActivity(), communalDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
             }
         });
         //          关闭手势滑动
@@ -343,19 +343,13 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     @OnClick(R.id.iv_img_share)
     void sendShare() {
         if (dmlOptimizedSelDetailBean != null) {
-            UMShareAction umShareAction = new UMShareAction(DmlOptimizedSelDetailActivity.this
+            new UMShareAction(DmlOptimizedSelDetailActivity.this
                     , dmlOptimizedSelDetailBean.getPicUrl()
                     , !TextUtils.isEmpty(dmlOptimizedSelDetailBean.getTitle()) ?
                     dmlOptimizedSelDetailBean.getTitle() : "多么定制"
                     , getStrings(dmlOptimizedSelDetailBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/optimize_detail.html?id="
                     + dmlOptimizedSelDetailBean.getId());
-            umShareAction.setOnShareSuccessListener(new UMShareAction.OnShareSuccessListener() {
-                @Override
-                public void onShareSuccess() {
-                    ConstantMethod.addArticleShareCount(getActivity(),dmlOptimizedSelDetailBean.getId());
-                }
-            });
         }
     }
 

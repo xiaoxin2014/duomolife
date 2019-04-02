@@ -86,6 +86,24 @@ public class AuthorizeSuccessOtherData implements Parcelable {
         private String openid;
         private int login;
         private String mobile;
+        private String token;
+        private long tokenExpireSeconds;
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public long getTokenExpireSeconds() {
+            return tokenExpireSeconds;
+        }
+
+        public void setTokenExpireSeconds(long tokenExpireSeconds) {
+            this.tokenExpireSeconds = tokenExpireSeconds;
+        }
 
         public String getMobile() {
             return mobile;
@@ -268,6 +286,8 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             dest.writeString(this.openid);
             dest.writeInt(this.login);
             dest.writeString(this.mobile);
+            dest.writeString(this.token);
+            dest.writeLong(this.tokenExpireSeconds);
         }
 
         protected OtherAccountBean(Parcel in) {
@@ -290,6 +310,8 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.openid = in.readString();
             this.login = in.readInt();
             this.mobile = in.readString();
+            this.token = in.readString();
+            this.tokenExpireSeconds = in.readLong();
         }
 
         public static final Creator<OtherAccountBean> CREATOR = new Creator<OtherAccountBean>() {

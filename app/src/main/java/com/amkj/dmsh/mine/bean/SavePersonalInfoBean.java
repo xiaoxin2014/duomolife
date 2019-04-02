@@ -14,6 +14,8 @@ public class SavePersonalInfoBean {
     private String phoneNum;
     private String loginType;
     private String openId;
+    private String token;
+    private long tokenExpireSeconds;
     /**
      * 微信专属Id
      */
@@ -21,6 +23,22 @@ public class SavePersonalInfoBean {
     private boolean isLogin;
 
     public SavePersonalInfoBean() {
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public long getTokenExpireSeconds() {
+        return tokenExpireSeconds;
+    }
+
+    public void setTokenExpireSeconds(long tokenExpireSeconds) {
+        this.tokenExpireSeconds = tokenExpireSeconds;
     }
 
     public SavePersonalInfoBean(boolean isLogin) {

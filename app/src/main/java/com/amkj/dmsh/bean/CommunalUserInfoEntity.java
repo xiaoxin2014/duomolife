@@ -35,6 +35,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
     @SerializedName("result")
     private CommunalUserInfoBean communalUserInfoBean;
+
     /**
      * result : {"is_sign":0,"fllow":0,"uid":23287,"sex":0,"nickname":"虫子","last_login_time":0,"status":1,"fans":1,"device_type":"web","score":0,"reg_time":0,"remindtime":30,"reg_ip":"116.25.96.117","rtime":"2016-08-29 11:01:21","login":0}
      * code : 01
@@ -74,6 +75,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String device_type;
         private boolean baby_verification;
         private String token;
+        private long tokenExpireSeconds;
         private String qq;
         private String avatar;
         private int firstAppLogin;
@@ -82,6 +84,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String idcard;
         private String real_name;
         private String interests;
+
         private int approve;
         private List<BabyBean> babys;
 
@@ -89,6 +92,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
          * cartTotal：购物车数量
          * couponTotal：优惠券数量
          * jfTotal：积分订单数量
+         *
          * @return
          */
         private int cartTotal;
@@ -116,6 +120,14 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         public static CommunalUserInfoBean objectFromData(String str) {
 
             return new Gson().fromJson(str, CommunalUserInfoBean.class);
+        }
+
+        public long getTokenExpireSeconds() {
+            return tokenExpireSeconds;
+        }
+
+        public void setTokenExpireSeconds(long tokenExpireSeconds) {
+            this.tokenExpireSeconds = tokenExpireSeconds;
         }
 
         public int getApprove() {
@@ -465,7 +477,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.noticeInfo = noticeInfo;
         }
 
-        public static class NoticeInfoBean {
+        public static class NoticeInfoBean implements Parcelable {
             /**
              * group_id : 4
              * ios_link : app://DMLGoodsProductsInfoViewController
@@ -534,6 +546,45 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             public void setContent(String content) {
                 this.content = content;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.group_id);
+                dest.writeString(this.ios_link);
+                dest.writeString(this.web_pc_link);
+                dest.writeString(this.android_link);
+                dest.writeString(this.web_link);
+                dest.writeString(this.content);
+            }
+
+            public NoticeInfoBean() {
+            }
+
+            protected NoticeInfoBean(Parcel in) {
+                this.group_id = in.readString();
+                this.ios_link = in.readString();
+                this.web_pc_link = in.readString();
+                this.android_link = in.readString();
+                this.web_link = in.readString();
+                this.content = in.readString();
+            }
+
+            public static final Creator<NoticeInfoBean> CREATOR = new Creator<NoticeInfoBean>() {
+                @Override
+                public NoticeInfoBean createFromParcel(Parcel source) {
+                    return new NoticeInfoBean(source);
+                }
+
+                @Override
+                public NoticeInfoBean[] newArray(int size) {
+                    return new NoticeInfoBean[size];
+                }
+            };
         }
 
         @Override
@@ -567,6 +618,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             dest.writeString(this.device_type);
             dest.writeByte(this.baby_verification ? (byte) 1 : (byte) 0);
             dest.writeString(this.token);
+            dest.writeLong(this.tokenExpireSeconds);
             dest.writeString(this.qq);
             dest.writeString(this.avatar);
             dest.writeInt(this.firstAppLogin);
@@ -575,6 +627,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             dest.writeString(this.idcard);
             dest.writeString(this.real_name);
             dest.writeString(this.interests);
+            dest.writeInt(this.approve);
             dest.writeTypedList(this.babys);
             dest.writeInt(this.cartTotal);
             dest.writeInt(this.couponTotal);
@@ -584,6 +637,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             dest.writeString(this.device_model);
             dest.writeString(this.device_sys_version);
             dest.writeInt(this.sysNotice);
+            dest.writeParcelable(this.noticeInfo, flags);
         }
 
         protected CommunalUserInfoBean(Parcel in) {
@@ -611,6 +665,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.device_type = in.readString();
             this.baby_verification = in.readByte() != 0;
             this.token = in.readString();
+            this.tokenExpireSeconds = in.readLong();
             this.qq = in.readString();
             this.avatar = in.readString();
             this.firstAppLogin = in.readInt();
@@ -619,6 +674,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.idcard = in.readString();
             this.real_name = in.readString();
             this.interests = in.readString();
+            this.approve = in.readInt();
             this.babys = in.createTypedArrayList(BabyBean.CREATOR);
             this.cartTotal = in.readInt();
             this.couponTotal = in.readInt();
@@ -628,6 +684,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.device_model = in.readString();
             this.device_sys_version = in.readString();
             this.sysNotice = in.readInt();
+            this.noticeInfo = in.readParcelable(NoticeInfoBean.class.getClassLoader());
         }
 
         public static final Creator<CommunalUserInfoBean> CREATOR = new Creator<CommunalUserInfoBean>() {
@@ -660,7 +717,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         this.communalUserInfoBean = in.readParcelable(CommunalUserInfoBean.class.getClassLoader());
     }
 
-    public static final Creator<CommunalUserInfoEntity> CREATOR = new Creator<CommunalUserInfoEntity>() {
+    public static final Parcelable.Creator<CommunalUserInfoEntity> CREATOR = new Parcelable.Creator<CommunalUserInfoEntity>() {
         @Override
         public CommunalUserInfoEntity createFromParcel(Parcel source) {
             return new CommunalUserInfoEntity(source);

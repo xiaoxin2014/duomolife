@@ -87,6 +87,7 @@ public final class EasyHttp {
     private static final int DEFAULT_RETRY_INCREASEDELAY = 0;         //默认重试叠加时间
     private static final int DEFAULT_RETRY_DELAY = 500;               //默认重试延时
     public static final int DEFAULT_CACHE_NEVER_EXPIRE = -1;          //缓存过期时间，默认永久缓存
+    private static int userId;
     private Cache mCache = null;                                      //Okhttp缓存对象
     private CacheMode mCacheMode = CacheMode.NO_CACHE;                //缓存类型
     private long mCacheTime = -1;                                     //缓存时间
@@ -110,7 +111,7 @@ public final class EasyHttp {
         okHttpClientBuilder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         okHttpClientBuilder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         okHttpClientBuilder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.addInterceptor(new MyInterceptor(DeviceUtils.getCommonApiParameter(sContext)));
+        okHttpClientBuilder.addInterceptor(new MyInterceptor(DeviceUtils.getCommonApiParameter(sContext,userId)));
         retrofitBuilder = new Retrofit.Builder();
         retrofitBuilder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());//增加RxJava2CallAdapterFactory
         rxCacheBuilder = new RxCache.Builder().init(sContext)
@@ -132,8 +133,9 @@ public final class EasyHttp {
     /**
      * 必须在全局Application先调用，获取context上下文，否则缓存无法使用
      */
-    public static void init(Application app) {
+    public static void init(Application app,int uid) {
         sContext = app;
+        userId =uid;
     }
 
     /**

@@ -57,8 +57,14 @@ public class Url {
     public static final String APP_SYS_NOTIFICATION = "api/my/remind/getSysNoticeInfo";
     //    用户关注
     public static final String UPDATE_ATTENTION = "api/find/followsaveOrupdate";
-    //    用户手机密码登录
+    //   手机号密码登录
     public static final String LOGIN_ACCOUNT = "api/my/mobileAndPasswordToLogin";
+    //    手机号验证码登录
+    public static final String LOGIN_CHECK_SMS_CODE = "api/my/mobileToLogin";
+    //    第三方登录
+    public static final String MINE_OTHER_ACCOUNT = "api/my/syncLogin";
+    //账号安全，第三方账号绑定手机
+    public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
     //    首页文章分类列表
     public static final String H_CATEGORY_LIST = "api/home/getNewCategoryList";
     //    首页热门活动列表
@@ -277,10 +283,6 @@ public class Url {
     public static final String MINE_CHANGE_MOBILE = "api/my/updateMobile";
     //账号安全，绑定第三方账号
     public static final String MINE_BIND_ACCOUNT = "api/my/bindSyncLogin";
-    //    第三方登录
-    public static final String MINE_OTHER_ACCOUNT = "api/my/syncLogin";
-    //账号安全，第三方账号绑定手机
-    public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
     //意见反馈
     public static final String MINE_FEEDBACK = "api/my/addFeedBackNew";
     //    意见反馈类型
@@ -293,8 +295,6 @@ public class Url {
     public static final String CHECK_CLEAR_USER_DATA = "api/my/checkUserCleanLogin";
     //    请求验证码
     public static final String REQ_SEND_SMS_CODE = "api/SMS/appSendSMSV2";
-    //    手机号验证码登录
-    public static final String LOGIN_CHECK_SMS_CODE = "api/my/mobileToLogin";
     //    修改兴趣爱好
     public static final String CHANGE_USER_HABIT = "api/my/deitMemberInterest";
     //    微信解除绑定
