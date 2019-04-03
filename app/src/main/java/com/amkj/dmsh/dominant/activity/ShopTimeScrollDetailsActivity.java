@@ -269,10 +269,10 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.show(false);
                     }
-                    if(!download_btn_communal.isVisible()){
+                    if (!download_btn_communal.isVisible()) {
                         download_btn_communal.show(false);
                     }
-                }else{
+                } else {
                     if (download_btn_communal.isVisible()) {
                         download_btn_communal.hide(false);
                     }
@@ -366,7 +366,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,CANCEL_MINE_WARM,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, CANCEL_MINE_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -396,7 +396,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,ADD_MINE_WARM,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADD_MINE_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -662,7 +662,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private void isFirstRemind(PromotionProductDetailBean productDetailBean) {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_SHOW_PRO_WARM,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_SHOW_PRO_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -691,7 +691,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(ShopTimeScrollDetailsActivity.this,R.string.do_failed);
+                showToast(ShopTimeScrollDetailsActivity.this, R.string.do_failed);
             }
 
             @Override
@@ -740,7 +740,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("m_uid", userId);
         params.put("longtime", number);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_WARM_PRO,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_WARM_PRO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -890,7 +890,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private void setClickProductTotal() {
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_PRODUCT_CLICK_TOTAL,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_PRODUCT_CLICK_TOTAL, params, null);
     }
 
     public void skipAliBCWebView(final String url) {
@@ -994,7 +994,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     , productDetailBean.getPicUrl()
                     , "我在多么生活看中了" + productDetailBean.getName()
                     , getStrings(productDetailBean.getSubtitle())
-                    , sharePageUrl + productDetailBean.getId());
+                    , sharePageUrl + productDetailBean.getId(), productDetailBean.getId());
         }
     }
 

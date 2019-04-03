@@ -948,7 +948,7 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                     , invitationDetailBean.getPath()
                     , "分享" + invitationDetailBean.getNickname() + "帖子"
                     , invitationDetailBean.getDescription()
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + invitationDetailBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + invitationDetailBean.getId(), invitationDetailBean.getId());
         }
     }
 

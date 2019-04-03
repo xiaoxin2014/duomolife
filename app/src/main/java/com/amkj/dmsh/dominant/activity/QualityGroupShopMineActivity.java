@@ -227,7 +227,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     , getStrings(qualityGroupMineBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupMineBean.getGpInfoId()
                     + "&record=" + qualityGroupMineBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupMineBean.getGpInfoId()
-                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo()) ? "&gpRecordId=" + qualityGroupMineBean.getGpRecordId() : "&order=" + qualityGroupMineBean.getOrderNo()));
+                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo()) ? "&gpRecordId=" + qualityGroupMineBean.getGpRecordId() : "&order=" + qualityGroupMineBean.getOrderNo()),qualityGroupMineBean.getGpInfoId());
         }
     }
 

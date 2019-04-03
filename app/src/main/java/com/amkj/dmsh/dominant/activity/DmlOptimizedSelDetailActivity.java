@@ -349,7 +349,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     dmlOptimizedSelDetailBean.getTitle() : "多么定制"
                     , getStrings(dmlOptimizedSelDetailBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/optimize_detail.html?id="
-                    + dmlOptimizedSelDetailBean.getId());
+                    + dmlOptimizedSelDetailBean.getId(),dmlOptimizedSelDetailBean.getId());
         }
     }
 

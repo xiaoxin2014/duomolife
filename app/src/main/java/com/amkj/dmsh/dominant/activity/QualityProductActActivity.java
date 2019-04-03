@@ -284,7 +284,7 @@ public class QualityProductActActivity extends BaseActivity {
                                 setActProInfo(likedProductEntity);
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(QualityProductActActivity.this, likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
@@ -336,7 +336,7 @@ public class QualityProductActActivity extends BaseActivity {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -449,7 +449,7 @@ public class QualityProductActActivity extends BaseActivity {
                     , getStrings(likedProductEntity.getTitle())
                     , getStrings(likedProductEntity.getActivityDesc())
                     , BASE_SHARE_PAGE_TWO + "m/template/common/activitySpecial.html?id=" + likedProductBean.getActivityCode()
-                    , "pages/activitySpecial/activitySpecial?id=" + likedProductBean.getActivityCode());
+                    , "pages/activitySpecial/activitySpecial?id=" + likedProductBean.getActivityCode(), likedProductBean.getId());
         }
     }
 

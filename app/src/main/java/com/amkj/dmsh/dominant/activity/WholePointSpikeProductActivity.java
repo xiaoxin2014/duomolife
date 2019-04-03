@@ -264,6 +264,6 @@ public class WholePointSpikeProductActivity extends BaseActivity {
                 , picUrl
                 , title
                 , description
-                , BASE_SHARE_PAGE_TWO + "m/template/common/hours_activity.html?nav=1");
+                , BASE_SHARE_PAGE_TWO + "m/template/common/hours_activity.html?nav=1",1);
     }
 }

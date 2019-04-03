@@ -438,7 +438,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                     , shopBuyDetailBean.getCoverImgUrl()
                     , "必买清单"
                     , "集结各路口碑好货，为你精选出必买的家居、母婴优品，不踩雷，买得更顺心。"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/must_buy.html");
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/must_buy.html",shopBuyDetailBean.getId());
         }
     }
 

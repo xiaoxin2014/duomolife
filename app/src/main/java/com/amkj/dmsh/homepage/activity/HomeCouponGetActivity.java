@@ -336,7 +336,7 @@ public class HomeCouponGetActivity extends BaseActivity {
                     , "http://image.domolife.cn/platform/wWyEfQwCaF1504945636936.png"
                     , "领券中心"
                     , "领券买买买"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/couponCenter.html");
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/couponCenter.html",communalDescriptionBean.getId());
         }
     }
 

@@ -217,7 +217,7 @@ public class EditorSelectActivity extends BaseActivity {
                                 , editorBean.getMainProduct().getProductImg()
                                 , getStrings(mEditorEntity.getTitle())
                                 , getStrings(mEditorEntity.getDescription())
-                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"));
+                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"),1);
                     }
                 }
                 break;
