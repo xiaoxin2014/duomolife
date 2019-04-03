@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -49,7 +50,7 @@ public class SplashLaunchActivity extends BaseActivity {
         long tokenExpireTime = ((long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L));
         long tokenRefreshTime = ((long) SharedPreUtils.getParam(TOKEN_REFRESH_TIME, 0L));
         //如果Token有效刷新Token(每24个小时刷新一次)
-        if (tokenExpireTime != 0 && System.currentTimeMillis()/1000 < tokenExpireTime && System.currentTimeMillis()- tokenRefreshTime > 86400000) {
+        if (ConstantMethod.userId > 0 && System.currentTimeMillis() / 1000 < tokenExpireTime && System.currentTimeMillis() - tokenRefreshTime > 86400000) {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FLUSH_LOGIN_TOKEN, null);
             //记录刷新时间
             SharedPreUtils.setParam(TOKEN_REFRESH_TIME, System.currentTimeMillis());

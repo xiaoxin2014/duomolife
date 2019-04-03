@@ -2,29 +2,38 @@ package com.amkj.dmsh.network;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.Gravity;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
 import com.amkj.dmsh.network.downfile.DownloadHelper;
 import com.amkj.dmsh.network.downfile.DownloadListener;
-import com.amkj.dmsh.utils.NetWorkUtils;
-import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.callback.SuccessCallback;
-import com.kingja.loadsir.core.Convertor;
-import com.kingja.loadsir.core.LoadService;
 import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode;
 import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 import com.amkj.dmsh.rxeasyhttp.callback.SimpleCallBack;
 import com.amkj.dmsh.rxeasyhttp.exception.ApiException;
 import com.amkj.dmsh.rxeasyhttp.model.HttpParams;
+import com.amkj.dmsh.user.bean.TokenExpireBean;
+import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.google.gson.Gson;
+import com.kingja.loadsir.callback.Callback;
+import com.kingja.loadsir.callback.SuccessCallback;
+import com.kingja.loadsir.core.Convertor;
+import com.kingja.loadsir.core.LoadService;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -36,10 +45,13 @@ import java.util.Map;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringMapValue;
+import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.CACHEANDREMOTE;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.FIRSTREMOTE;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.ONLYCACHE;
@@ -98,6 +110,14 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             map.putAll(((BaseActivity) context).commonMap);
         }
         if (NetWorkUtils.checkNet(context)) {
+            if (ConstantMethod.userId > 0) {
+                long tokenExpireTime = (long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L);
+                long currentTimeMillis = System.currentTimeMillis() / 1000;
+                if (tokenExpireTime != 0 && currentTimeMillis > tokenExpireTime && !(url.contains(Url.CONFIRM_LOGIN_TOKEN_EXPIRE) || url.contains(Url.FLUSH_LOGIN_TOKEN) || url.contains(Url.LOG_OUT))) {
+                    checkToken(context);
+                    return;
+                }
+            }
 //            先进行框架初始化
             NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = getHttpParams(map);
@@ -139,6 +159,56 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 netLoadListener.netClose();
             }
         }
+    }
+
+    private void checkToken(Activity mContext) {
+        //请求接口判断是否真的过期
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                TokenExpireBean tokenExpireBean = gson.fromJson(result, TokenExpireBean.class);
+                if (tokenExpireBean != null) {
+                    //未过期(更新本地过期时间)
+                    if (tokenExpireBean.getStatus() == 1) {
+                        SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() / 1000 + tokenExpireBean.getExpireTime());
+                    } else {
+                        //判断条件是为了避免重复调用
+                        if (userId > 0) {
+                            //调用登出接口
+                            NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
+                            //Token过期,清除本地登录信息
+                            savePersonalInfoCache(mContext, null);
+                            //提示用户登录
+                            AlertDialogHelper notificationAlertDialogHelper = new AlertDialogHelper(mContext);
+                            notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    mContext.startActivity(new Intent(mContext, MineLoginActivity.class));
+                                }
+
+                                @Override
+                                public void cancel() {
+                                    notificationAlertDialogHelper.dismiss();
+                                }
+                            });
+
+                            notificationAlertDialogHelper.setTitle("长期未登录，请重新登录")
+                                    .setCancelText("取消")
+                                    .setMsgTextGravity(Gravity.CENTER)
+                                    .setConfirmText("登录");
+                            notificationAlertDialogHelper.show();
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                super.onNotNetOrException();
+            }
+        });
     }
 
     /**

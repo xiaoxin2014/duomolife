@@ -40,7 +40,7 @@ public class CBLoopScaleHelper {
                 //这里变换位置实现循环
                 CBPageAdapter adapter = (CBPageAdapter) mRecyclerView.getAdapter();
                 int count = adapter.getRealItemCount();
-                if(adapter.isCanLoop()) {
+                if (adapter.isCanLoop()) {
                     if (position < count) {
                         position = count + position;
                         setCurrentItem(position);
@@ -49,9 +49,11 @@ public class CBLoopScaleHelper {
                         setCurrentItem(position);
                     }
                 }
-                if(onPageChangeListener != null) {
+                if (onPageChangeListener != null) {
                     onPageChangeListener.onScrollStateChanged(recyclerView, newState);
-                    onPageChangeListener.onPageSelected(position % count);
+                    if (position != 0) {
+                        onPageChangeListener.onPageSelected(position % count);
+                    }
                 }
             }
 
@@ -59,7 +61,7 @@ public class CBLoopScaleHelper {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 //Log.e("TAG", String.format("onScrolled dx=%s, dy=%s", dx, dy));
                 super.onScrolled(recyclerView, dx, dy);
-                if(onPageChangeListener != null)
+                if (onPageChangeListener != null)
                     onPageChangeListener.onScrolled(recyclerView, dx, dy);
                 onScrolledChangedCallback();
             }
@@ -82,7 +84,7 @@ public class CBLoopScaleHelper {
     }
 
     public void setCurrentItem(int item) {
-        setCurrentItem(item,false);
+        setCurrentItem(item, false);
     }
 
     public void setCurrentItem(int item, boolean smoothScroll) {
@@ -91,7 +93,7 @@ public class CBLoopScaleHelper {
         }
         if (smoothScroll) {
             mRecyclerView.smoothScrollToPosition(item);
-        }else {
+        } else {
             scrollToPosition(item);
         }
     }
@@ -125,14 +127,15 @@ public class CBLoopScaleHelper {
 
     public int getCurrentItem() {
         View view = mPagerSnapHelper.findSnapView(mRecyclerView.getLayoutManager());
-        if(view != null)
+        if (view != null)
             return mRecyclerView.getLayoutManager().getPosition(view);
         return 0;
     }
+
     public int getRealCurrentItem() {
         CBPageAdapter adapter = (CBPageAdapter) mRecyclerView.getAdapter();
         int count = adapter.getRealItemCount();
-        return getCurrentItem()%count;
+        return getCurrentItem() % count;
     }
 
     public void setPagePadding(int pagePadding) {
@@ -147,7 +150,7 @@ public class CBLoopScaleHelper {
         return mFirstItemPos;
     }
 
-    public int getRealItemCount(){
+    public int getRealItemCount() {
         CBPageAdapter adapter = (CBPageAdapter) mRecyclerView.getAdapter();
         int count = adapter.getRealItemCount();
         return count;
