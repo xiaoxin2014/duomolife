@@ -10,22 +10,23 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Sai on 15/7/29.
  */
-public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder>{
+public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder> {
     private final Context context;
-    protected List<T> datas;
+    private List<T> datas = new ArrayList<>();
     private CBViewHolderCreator creator;
     private CBPageAdapterHelper helper;
     private boolean canLoop;
     private OnItemClickListener onItemClickListener;
 
-    public CBPageAdapter(Context context,CBViewHolderCreator creator, List<T> datas, boolean canLoop) {
+    public CBPageAdapter(Context context, CBViewHolderCreator creator, List<T> datas, boolean canLoop) {
         this.creator = creator;
-        this.datas = datas;
+        this.datas.addAll(datas);
         this.context = context;
         this.canLoop = canLoop;
         helper = new CBPageAdapterHelper();
@@ -36,17 +37,17 @@ public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder>{
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = creator.getLayoutId();
         View itemView = LayoutInflater.from(context).inflate(layoutId, parent, false);
-        helper.onCreateViewHolder(parent,itemView);
+        helper.onCreateViewHolder(parent, itemView);
         return creator.createHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         helper.onBindViewHolder(holder.itemView, position, getItemCount());
-        int realPosition = position%datas.size();
+        int realPosition = position % datas.size();
         holder.updateUI(datas.get(realPosition));
 
-        if(onItemClickListener != null){
+        if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(new OnPageClickListener(realPosition));
         }
     }
@@ -54,16 +55,16 @@ public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder>{
     @Override
     public int getItemCount() {
         //根据模式决定长度
-        if(datas.size() == 0) return 0;
-        return canLoop ? 3*datas.size() : datas.size();
+        if (datas == null || datas.size() == 0) return 0;
+        return canLoop ? 3 * datas.size() : datas.size();
     }
 
-    public void setCanLoop(boolean canLoop){
+    public void setCanLoop(boolean canLoop) {
         this.canLoop = canLoop;
     }
 
-    public int getRealItemCount(){
-        return datas.size();
+    public int getRealItemCount() {
+        return datas == null ? 0 : datas.size();
     }
 
     public boolean isCanLoop() {
@@ -76,12 +77,14 @@ public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder>{
 
     class OnPageClickListener implements View.OnClickListener {
         private int position;
-        public OnPageClickListener(int position){
+
+        public OnPageClickListener(int position) {
             this.position = position;
         }
+
         @Override
         public void onClick(View v) {
-            if(onItemClickListener != null)
+            if (onItemClickListener != null)
                 onItemClickListener.onItemClick(position);
         }
 

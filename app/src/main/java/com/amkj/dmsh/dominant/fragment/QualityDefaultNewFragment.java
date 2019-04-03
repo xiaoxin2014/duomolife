@@ -298,7 +298,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getCenterType() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CENTER_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL+Q_HOME_CENTER_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -377,7 +377,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getHomeIndexType() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_CLASS_TYPE,isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL+Q_HOME_CLASS_TYPE,isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

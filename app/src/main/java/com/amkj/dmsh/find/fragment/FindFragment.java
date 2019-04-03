@@ -324,7 +324,7 @@ public class FindFragment extends BaseFragment {
      * 发现-活动图
      */
     private void getFindActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 findActivityList.clear();
@@ -350,7 +350,7 @@ public class FindFragment extends BaseFragment {
      * 获取热门主题
      */
     private void getHotTopic() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (topicPage == 1) {

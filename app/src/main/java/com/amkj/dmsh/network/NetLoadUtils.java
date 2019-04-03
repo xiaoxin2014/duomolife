@@ -2,7 +2,6 @@ package com.amkj.dmsh.network;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -12,7 +11,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
@@ -89,7 +87,10 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public void
     loadNetDataPost(Activity context, String url, NetLoadListener netLoadListener) {
-        loadNetDataPost(context, url, null, netLoadListener);
+        //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
+        if (checkTokenExpire(context, url)) {
+            loadNetDataPost(context, url, null, netLoadListener);
+        }
     }
 
     /**
@@ -110,14 +111,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             map.putAll(((BaseActivity) context).commonMap);
         }
         if (NetWorkUtils.checkNet(context)) {
-            if (ConstantMethod.userId > 0) {
-                long tokenExpireTime = (long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L);
-                long currentTimeMillis = System.currentTimeMillis() / 1000;
-                if (tokenExpireTime != 0 && currentTimeMillis > tokenExpireTime && !(url.contains(Url.CONFIRM_LOGIN_TOKEN_EXPIRE) || url.contains(Url.FLUSH_LOGIN_TOKEN) || url.contains(Url.LOG_OUT))) {
-                    checkToken(context);
-                    return;
-                }
-            }
 //            先进行框架初始化
             NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = getHttpParams(map);
@@ -159,56 +152,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 netLoadListener.netClose();
             }
         }
-    }
-
-    private void checkToken(Activity mContext) {
-        //请求接口判断是否真的过期
-        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                TokenExpireBean tokenExpireBean = gson.fromJson(result, TokenExpireBean.class);
-                if (tokenExpireBean != null) {
-                    //未过期(更新本地过期时间)
-                    if (tokenExpireBean.getStatus() == 1) {
-                        SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() / 1000 + tokenExpireBean.getExpireTime());
-                    } else {
-                        //判断条件是为了避免重复调用
-                        if (userId > 0) {
-                            //调用登出接口
-                            NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
-                            //Token过期,清除本地登录信息
-                            savePersonalInfoCache(mContext, null);
-                            //提示用户登录
-                            AlertDialogHelper notificationAlertDialogHelper = new AlertDialogHelper(mContext);
-                            notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    mContext.startActivity(new Intent(mContext, MineLoginActivity.class));
-                                }
-
-                                @Override
-                                public void cancel() {
-                                    notificationAlertDialogHelper.dismiss();
-                                }
-                            });
-
-                            notificationAlertDialogHelper.setTitle("长期未登录，请重新登录")
-                                    .setCancelText("取消")
-                                    .setMsgTextGravity(Gravity.CENTER)
-                                    .setConfirmText("登录");
-                            notificationAlertDialogHelper.show();
-                        }
-
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                super.onNotNetOrException();
-            }
-        });
     }
 
     /**
@@ -324,8 +267,11 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
     }
 
-    public void loadNetDataGetCache(String url, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
-        loadNetDataGetCache(url, null, isForceNet, netCacheLoadListener);
+    public void loadNetDataGetCache(Activity activity, String url, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
+        //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
+        if (checkTokenExpire(activity, url)) {
+            loadNetDataGetCache(url, null, isForceNet, netCacheLoadListener);
+        }
     }
 
     /**
@@ -629,4 +575,69 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
         return convertor;
     }
+
+    //检验token是否过期
+    private boolean checkTokenExpire(Activity activity, String url) {
+        if (ConstantMethod.userId > 0) {
+            long tokenExpireTime = (long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L);
+            long currentTimeMillis = System.currentTimeMillis() / 1000;
+            if (currentTimeMillis > tokenExpireTime && !(url.contains(Url.CONFIRM_LOGIN_TOKEN_EXPIRE) || url.contains(Url.FLUSH_LOGIN_TOKEN) || url.contains(Url.LOG_OUT))) {
+                checkToken(activity);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void checkToken(Activity mContext) {
+        //请求接口判断是否真的过期
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                TokenExpireBean tokenExpireBean = gson.fromJson(result, TokenExpireBean.class);
+                if (tokenExpireBean != null) {
+                    //未过期(更新本地过期时间)
+                    if (tokenExpireBean.getStatus() == 1) {
+                        SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() / 1000 + tokenExpireBean.getExpireTime());
+                    } else {
+                        //判断条件是为了避免重复调用
+                        if (userId > 0) {
+                            //调用登出接口
+                            NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
+
+                            //Token过期,清除本地登录信息
+                            savePersonalInfoCache(mContext, null);
+                            //提示用户登录
+                            AlertDialogHelper notificationAlertDialogHelper = new AlertDialogHelper(mContext);
+                            notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                   ConstantMethod.getLoginStatus(mContext);
+                                }
+
+                                @Override
+                                public void cancel() {
+                                    notificationAlertDialogHelper.dismiss();
+                                }
+                            });
+
+                            notificationAlertDialogHelper.setTitle("提醒")
+                                    .setMsg("长期未登录，请重新登录")
+                                    .setCancelText("取消")
+                                    .setMsgTextGravity(Gravity.CENTER)
+                                    .setConfirmText("登录");
+                            notificationAlertDialogHelper.show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                super.onNotNetOrException();
+            }
+        });
+    }
+
 }
