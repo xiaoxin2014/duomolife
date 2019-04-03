@@ -90,6 +90,9 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
         if (checkTokenExpire(context, url)) {
             loadNetDataPost(context, url, null, netLoadListener);
+        }else {
+            netLoadListener.onNotNetOrException();
+            netLoadListener.netClose();
         }
     }
 
@@ -271,6 +274,9 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
         if (checkTokenExpire(activity, url)) {
             loadNetDataGetCache(url, null, isForceNet, netCacheLoadListener);
+        }else {
+            netCacheLoadListener.onNotNetOrException();
+            netCacheLoadListener.netClose();
         }
     }
 
