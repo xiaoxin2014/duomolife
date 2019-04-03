@@ -418,7 +418,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     , qualityShopDescripEntity.getQualityShopDescBean().getPicUrl()
                     , qualityShopDescripEntity.getQualityShopDescBean().getTitle()
                     , getStrings(qualityShopDescripEntity.getQualityShopDescBean().getSubtitle())
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/Project_details.html?id=" + qualityShopDescripEntity.getQualityShopDescBean().getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/Project_details.html?id=" + qualityShopDescripEntity.getQualityShopDescBean().getId(),qualityShopDescripEntity.getQualityShopDescBean().getId());
         }
     }
 

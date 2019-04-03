@@ -788,7 +788,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     , productInfoBean.getPicUrl()
                     , "我在多么生活看中了" + productInfoBean.getName()
                     , "积分商品"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId(),productInfoBean.getId());
         }
     }
 

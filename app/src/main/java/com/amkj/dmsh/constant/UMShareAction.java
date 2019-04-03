@@ -78,14 +78,14 @@ public class UMShareAction {
      * @param description
      * @param urlLink
      */
-//    public UMShareAction(final Activity context, String imgUrl,
-//                         final String title, final String description, final String urlLink, int id) {
-//        this(context, imgUrl, title, description, urlLink, null, id);
-//    }
     public UMShareAction(final Activity context, String imgUrl,
-                         final String title, final String description, final String urlLink) {
-        this(context, imgUrl, title, description, urlLink, null);
+                         final String title, final String description, final String urlLink, int id) {
+        this(context, imgUrl, title, description, urlLink, null, id);
     }
+//    public UMShareAction(final Activity context, String imgUrl,
+//                         final String title, final String description, final String urlLink) {
+//        this(context, imgUrl, title, description, urlLink, null);
+//    }
 
     /**
      * 分享内容 加载图片
@@ -97,14 +97,14 @@ public class UMShareAction {
      * @param urlLink     正常地址
      * @param routineUrl  小程序地址
      */
-//    public UMShareAction(final Activity context, String imgUrl,
-//                         final String title, final String description, final String urlLink, String routineUrl, int id) {
-//        this(context, imgUrl, title, description, urlLink, routineUrl, id, false);
-//    }
     public UMShareAction(final Activity context, String imgUrl,
-                         final String title, final String description, final String urlLink, String routineUrl) {
-        this(context, imgUrl, title, description, urlLink, routineUrl, 0, false);
+                         final String title, final String description, final String urlLink, String routineUrl, int id) {
+        this(context, imgUrl, title, description, urlLink, routineUrl, id, false);
     }
+//    public UMShareAction(final Activity context, String imgUrl,
+//                         final String title, final String description, final String urlLink, String routineUrl) {
+//        this(context, imgUrl, title, description, urlLink, routineUrl, 0, false);
+//    }
 
     /**
      * @param context

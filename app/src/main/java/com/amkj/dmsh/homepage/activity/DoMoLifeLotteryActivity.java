@@ -520,7 +520,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                         , imageUrl
                         , TextUtils.isEmpty(title) ? "多么生活" : title
                         , TextUtils.isEmpty(content) ? "抽奖活动" : content
-                        , url);
+                        , url,1);
                 umShareAction.setOnShareSuccessListener(shareSuccessListener);
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -453,7 +453,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                     , getStrings(tagBean.getImg_url())
                     , getStrings(tagBean.getTag_name())
                     , ""
-                    , "");
+                    , "",1);
         }
     }
 

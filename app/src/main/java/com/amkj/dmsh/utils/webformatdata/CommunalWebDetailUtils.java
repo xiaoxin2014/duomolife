@@ -614,10 +614,10 @@ public class CommunalWebDetailUtils {
                     , shareDataBean.getImgUrl()
                     , getStrings(shareDataBean.getTitle())
                     , getStrings(shareDataBean.getDescription())
-                    , getStrings(shareDataBean.getUrlLink()));
+                    , getStrings(shareDataBean.getUrlLink()), shareDataBean.getBackId());
             if (shareDataBean.getBackId() > 0) {
                 umShareAction.setOnShareSuccessListener(() ->
-                        addArticleShareCount(activity,shareDataBean.getBackId())
+                        addArticleShareCount(activity, shareDataBean.getBackId())
                 );
             }
         }

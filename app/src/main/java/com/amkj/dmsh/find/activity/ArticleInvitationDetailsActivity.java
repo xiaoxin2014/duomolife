@@ -875,7 +875,7 @@ public class ArticleInvitationDetailsActivity extends BaseActivity {
                     , dmlSearchDetailBean.getPath()
                     , "分享" + dmlSearchDetailBean.getNickname() + "帖子"
                     , dmlSearchDetailBean.getDigest()
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + dmlSearchDetailBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + dmlSearchDetailBean.getId(),dmlSearchDetailBean.getId());
         }
     }
 

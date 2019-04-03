@@ -1254,7 +1254,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
                             , TextUtils.isEmpty(content) ? "" : content
-                            , url, routineUrl);
+                            , url, routineUrl,1);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

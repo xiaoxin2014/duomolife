@@ -761,7 +761,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     , getStrings(dmlSearchDetailBean.getTitle())
                     , getStrings(dmlSearchDetailBean.getDigest())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/study_detail.html?id="
-                    + dmlSearchDetailBean.getId());
+                    + dmlSearchDetailBean.getId(),dmlSearchDetailBean.getId());
         }
     }
 

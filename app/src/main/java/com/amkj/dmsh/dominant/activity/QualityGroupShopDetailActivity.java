@@ -981,7 +981,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     , !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage()
                     , groupShopDetailsBean.getName()
                     , "超值两人团，好货又便宜。"
-                    , sharePageUrl + groupShopDetailsBean.getGpInfoId(), "pages/groupDetails/groupDetails?id=" + groupShopDetailsBean.getGpInfoId());
+                    , sharePageUrl + groupShopDetailsBean.getGpInfoId(), "pages/groupDetails/groupDetails?id=" + groupShopDetailsBean.getGpInfoId(), groupShopDetailsBean.getGpInfoId());
         }
     }
 
@@ -1000,7 +1000,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             , getStrings(qualityGroupShareBean.getSubtitle())
                             , BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                             + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                            + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo));
+                            + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
                 } else {
                     isCanJoinGroup(null, qualityGroupShareEntity, shareJoinGroup);
                 }
@@ -1120,7 +1120,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
         public void initView() {
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-            joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this,constantMethod, groupShopJoinList);
+            joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this, constantMethod, groupShopJoinList);
             headerView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_text, null);
             tv_partner_join = (TextView) headerView.findViewById(R.id.tv_partner_join);
             communal_recycler_wrap.setAdapter(joinGroupAdapter);
