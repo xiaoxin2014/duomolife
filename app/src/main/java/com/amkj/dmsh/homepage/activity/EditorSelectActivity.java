@@ -10,14 +10,13 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
 import com.amkj.dmsh.homepage.view.EditorHeadView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -31,8 +30,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
-
-import com.amkj.dmsh.bean.EditorEntity.EditorBean;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -213,9 +210,9 @@ public class EditorSelectActivity extends BaseActivity {
             case R.id.iv_img_share:
                 if (mEditorEntity != null && EditorList != null && EditorList.size() > 0) {
                     EditorBean editorBean = EditorList.get(0);
-                    if (editorBean.getMainProduct() != null) {
+                    if (editorBean != null) {
                         new UMShareAction(this
-                                , editorBean.getMainProduct().getProductImg()
+                                , editorBean.getCoverImg()
                                 , getStrings(mEditorEntity.getTitle())
                                 , getStrings(mEditorEntity.getDescription())
                                 , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), 1);

@@ -13,6 +13,7 @@ import com.amkj.dmsh.bean.EditorEntity.EditorBean.AttachProductListBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -54,7 +55,8 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         RecyclerView rvPicGoods = helper.getView(R.id.communal_recycler_wrap);
         rvPicGoods.setLayoutManager(new LinearLayoutManager(context));
         rvPicGoods.setNestedScrollingEnabled(false);
-        CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, item.getContent());
+        CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context,
+                CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(item.getContent()));
         rvPicGoods.setAdapter(communalDetailAdapter);
 
         //初始化商品列表

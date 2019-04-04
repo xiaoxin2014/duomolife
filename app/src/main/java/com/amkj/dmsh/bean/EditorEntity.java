@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
+import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class EditorEntity extends BaseTimeEntity {
         private String publishTime;
         private int isFavor;
         private String coverImg;
-        private List<CommunalDetailObjectBean> content;
+        private List<CommunalDetailBean> content;
         private List<AttachProductListBean> attachProductList;
 
 
@@ -256,11 +257,11 @@ public class EditorEntity extends BaseTimeEntity {
             this.coverImg = coverImg;
         }
 
-        public List<CommunalDetailObjectBean> getContent() {
+        public List<CommunalDetailBean> getContent() {
             return content;
         }
 
-        public void setContent(List<CommunalDetailObjectBean> content) {
+        public void setContent(List<CommunalDetailBean> content) {
             this.content = content;
         }
 
@@ -303,7 +304,7 @@ public class EditorEntity extends BaseTimeEntity {
             this.publishTime = in.readString();
             this.isFavor = in.readInt();
             this.coverImg = in.readString();
-            this.content = new ArrayList<CommunalDetailObjectBean>();
+            this.content = new ArrayList<CommunalDetailBean>();
             in.readList(this.content, CommunalDetailObjectBean.class.getClassLoader());
             this.attachProductList = new ArrayList<AttachProductListBean>();
             in.readList(this.attachProductList, AttachProductListBean.class.getClassLoader());
