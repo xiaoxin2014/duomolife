@@ -154,7 +154,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
                         /**
                          * 3.1.9 加入好物广告统计
                          */
-                        adClickTotal(getActivity(),communalADActivityBean.getId());
+                        adClickTotal(getActivity(), communalADActivityBean.getId());
                         setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
                         break;
                 }
@@ -206,7 +206,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL+Q_HOME_AD_LOOP, params, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + Q_HOME_AD_LOOP, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 getADJsonData(result);
@@ -298,7 +298,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getCenterType() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL+Q_HOME_CENTER_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + Q_HOME_CENTER_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -377,7 +377,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     }
 
     private void getHomeIndexType() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL+Q_HOME_CLASS_TYPE,isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + Q_HOME_CLASS_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

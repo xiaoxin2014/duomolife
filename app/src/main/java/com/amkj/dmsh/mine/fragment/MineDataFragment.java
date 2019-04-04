@@ -38,6 +38,7 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
@@ -55,6 +56,7 @@ import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 import com.amkj.dmsh.shopdetails.activity.DirectGoodsSaleAfterActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentTypeAdapter;
@@ -70,7 +72,6 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
-import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,6 +96,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_LOG_OUT;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
@@ -323,6 +325,7 @@ public class MineDataFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        //刷新我的界面
         getLoginStatus();
         getMineAd();
     }
@@ -334,6 +337,8 @@ public class MineDataFragment extends BaseFragment {
         } else {
             try {
                 setErrorUserData();
+                //调用登出接口
+                NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.LOG_OUT, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -496,7 +501,7 @@ public class MineDataFragment extends BaseFragment {
     private void getNetDataInfo() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("uid", String.valueOf(userId));
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(MINE_PAGE
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),MINE_PAGE
                 , params, false, new NetCacheLoadListenerHelper() {
                     @Override
                     public void onSuccessCacheResult(CacheResult<String> cacheResult) {
@@ -765,6 +770,8 @@ public class MineDataFragment extends BaseFragment {
                 ad_mine.stopTurning();
                 ad_mine.setPointViewVisible(false);
             }
+        } else if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
+           setErrorUserData();
         }
     }
 
@@ -830,4 +837,6 @@ public class MineDataFragment extends BaseFragment {
     public boolean immersionBarEnabled() {
         return true;
     }
+
+
 }

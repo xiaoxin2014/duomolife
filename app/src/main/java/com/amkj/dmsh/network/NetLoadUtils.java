@@ -9,6 +9,7 @@ import android.view.Gravity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -23,7 +24,6 @@ import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 import com.amkj.dmsh.rxeasyhttp.callback.SimpleCallBack;
 import com.amkj.dmsh.rxeasyhttp.exception.ApiException;
 import com.amkj.dmsh.rxeasyhttp.model.HttpParams;
-import com.amkj.dmsh.user.bean.TokenExpireBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -65,6 +65,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
 
     private static NetLoadUtils netLoadUtils;
     private Convertor<String> convertor;
+    private static boolean confirmIng = true;  //避免确认token过期接口重复调用
+    private static boolean outIng = false;
 
     private NetLoadUtils() {
     }
@@ -90,7 +92,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
         if (checkTokenExpire(context, url)) {
             loadNetDataPost(context, url, null, netLoadListener);
-        }else {
+        } else {
             netLoadListener.onNotNetOrException();
             netLoadListener.netClose();
         }
@@ -273,8 +275,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     public void loadNetDataGetCache(Activity activity, String url, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
         //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
         if (checkTokenExpire(activity, url)) {
-            loadNetDataGetCache(url, null, isForceNet, netCacheLoadListener);
-        }else {
+            loadNetDataGetCache(activity, url, null, isForceNet, netCacheLoadListener);
+        } else {
             netCacheLoadListener.onNotNetOrException();
             netCacheLoadListener.netClose();
         }
@@ -291,12 +293,21 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param isForceNet
      * @param netCacheLoadListener
      */
-    public void loadNetDataGetCache(String url, LinkedHashMap<String, String> params, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
+    public void loadNetDataGetCache(Activity activity, String url, LinkedHashMap<String, String> params, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
         if (!TextUtils.isEmpty(url)) {
+            Map<String, String> map = new HashMap<>();
+            if (params != null) {
+                map.putAll(params);
+            }
+            if (activity instanceof BaseActivity) {
+                String reqId = (String) ((BaseActivity) activity).commonMap.get("reqId");
+                if (!TextUtils.isEmpty(reqId)) map.put("reqId", reqId);
+            }
+
             //            先进行框架初始化
             NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = new HttpParams();
-            httpParams.put(params);
+            httpParams.put(map);
             CacheMode cacheMode = NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTE) : ONLYCACHE;
             EasyHttp.get(url).params(httpParams)
 //                    cachekey 默认网址加参数
@@ -586,8 +597,9 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     private boolean checkTokenExpire(Activity activity, String url) {
         if (ConstantMethod.userId > 0) {
             long tokenExpireTime = (long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L);
-            long currentTimeMillis = System.currentTimeMillis() / 1000;
-            if (currentTimeMillis > tokenExpireTime && !(url.contains(Url.CONFIRM_LOGIN_TOKEN_EXPIRE) || url.contains(Url.FLUSH_LOGIN_TOKEN) || url.contains(Url.LOG_OUT))) {
+            long currentTimeMillis = System.currentTimeMillis();
+            if (confirmIng && currentTimeMillis > tokenExpireTime && !(url.contains(Url.CONFIRM_LOGIN_TOKEN_EXPIRE) || url.contains(Url.FLUSH_LOGIN_TOKEN) || url.contains(Url.LOG_OUT))) {
+                confirmIng = false;
                 checkToken(activity);
                 return false;
             }
@@ -601,17 +613,16 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                TokenExpireBean tokenExpireBean = gson.fromJson(result, TokenExpireBean.class);
+                CommunalUserInfoBean tokenExpireBean = gson.fromJson(result, CommunalUserInfoBean.class);
                 if (tokenExpireBean != null) {
                     //未过期(更新本地过期时间)
                     if (tokenExpireBean.getStatus() == 1) {
-                        SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() / 1000 + tokenExpireBean.getExpireTime());
+                        SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getExpireTime());
                     } else {
                         //判断条件是为了避免重复调用
                         if (userId > 0) {
-                            //调用登出接口
+                            //调用登出接口,清除后台记录的token信息
                             NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
-
                             //Token过期,清除本地登录信息
                             savePersonalInfoCache(mContext, null);
                             //提示用户登录
@@ -619,7 +630,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                             notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
                                 public void confirm() {
-                                   ConstantMethod.getLoginStatus(mContext);
+                                    ConstantMethod.getLoginStatus(mContext);
                                 }
 
                                 @Override
@@ -637,10 +648,12 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         }
                     }
                 }
+                confirmIng = true;
             }
 
             @Override
             public void onNotNetOrException() {
+                confirmIng = true;
                 super.onNotNetOrException();
             }
         });

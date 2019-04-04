@@ -252,7 +252,7 @@ public class MineLoginActivity extends BaseActivity {
         savePersonalInfo.setUid(communalUserInfoBean.getUid());
         savePersonalInfo.setLogin(true);
         savePersonalInfo.setToken(getStrings(communalUserInfoBean.getToken()));
-        savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() / 1000 + communalUserInfoBean.getTokenExpireSeconds());
+        savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + communalUserInfoBean.getTokenExpireSeconds());
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
 // 上传设备信息
         setDeviceInfo(this, communalUserInfoBean.getApp_version_no()

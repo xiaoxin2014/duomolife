@@ -76,6 +76,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private boolean baby_verification;
         private String token;
         private long tokenExpireSeconds;
+        private long expireTime;
         private String qq;
         private String avatar;
         private int firstAppLogin;
@@ -117,13 +118,21 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         private NoticeInfoBean noticeInfo;
 
+        public long getExpireTime() {
+            return expireTime * 1000;
+        }
+
+        public void setExpireTime(long expireTime) {
+            this.expireTime = expireTime;
+        }
+
         public static CommunalUserInfoBean objectFromData(String str) {
 
             return new Gson().fromJson(str, CommunalUserInfoBean.class);
         }
 
         public long getTokenExpireSeconds() {
-            return tokenExpireSeconds;
+            return tokenExpireSeconds * 1000;
         }
 
         public void setTokenExpireSeconds(long tokenExpireSeconds) {

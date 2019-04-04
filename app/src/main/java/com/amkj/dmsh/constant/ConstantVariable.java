@@ -32,6 +32,8 @@ public class ConstantVariable {
     public static final String STOP_AUTO_PAGE_TURN = "stopAutoPageTurn";
     //    启动自动翻页
     public static final String START_AUTO_PAGE_TURN = "startAutoPageTurn";
+    //    token过期，强制登出
+    public static final String TOKEN_EXPIRE_LOG_OUT = "startAutoPageTurn";
     //    是否跳转
     public static final String SKIP_PAGE = "isSkipPage";
     //    首页
@@ -329,7 +331,7 @@ public class ConstantVariable {
     public static final String GET_FIRST_INSTALL_INFO = "getFirstInstallInfo";//是否成功调用 （统计首次安装设备信息）接口
     public static final String TOKEN = "token";//token
     public static final String TOKEN_EXPIRE_TIME = "tokenExpireTime";//token过期时间
-    public static final String TOKEN_REFRESH_TIME = "tokenExpireTime";//token刷新时间
+    public static final String TOKEN_REFRESH_TIME = "tokenRefreshTime";//token刷新时间
 
 
 

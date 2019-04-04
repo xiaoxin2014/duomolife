@@ -380,7 +380,7 @@ public class HomePageFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(BASE_URL + H_AD_LIST, params, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + H_AD_LIST, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

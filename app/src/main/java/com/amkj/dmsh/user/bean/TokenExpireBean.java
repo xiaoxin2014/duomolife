@@ -17,12 +17,21 @@ public class TokenExpireBean extends BaseEntity {
      */
 
     private int expireTime;
+    private int tokenExpireSeconds;
     private int status;
     private String sysTime;
     private int uid;
 
     public int getExpireTime() {
-        return expireTime;
+        return expireTime * 1000;
+    }
+
+    public int getTokenExpireSeconds() {
+        return tokenExpireSeconds*1000;
+    }
+
+    public void setTokenExpireSeconds(int tokenExpireSeconds) {
+        this.tokenExpireSeconds = tokenExpireSeconds;
     }
 
     public void setExpireTime(int expireTime) {

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
@@ -20,7 +21,6 @@ import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 
@@ -44,30 +44,47 @@ public class MyInterceptor implements Interceptor {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder();
         Map<String, Object> newMap = new HashMap<>(mDomoCommon);
+        //登录情况下传uid和token
         if (ConstantMethod.userId > 0) {
             newMap.put("uid", ConstantMethod.userId);
             String token = (String) SharedPreUtils.getParam(TOKEN, "");
             newMap.put("token", token);
         }
         String DomoJson = new JSONObject(newMap).toString();
-        builder.addHeader("domo-custom", Base64.encodeToString(DomoJson.getBytes(), Base64.NO_WRAP));
+        builder.addHeader("domo-custom", getBase64(newMap));
         Response response = chain.proceed(builder.build());
+        String responseInfo = response.peekBody(1024 * 1024 * 4).string();
+
+        //如果Token校验失败，就不要传uid和token
+        try {
+            Map<String, Object> responseMap = JSON.parseObject(responseInfo);
+            if ("52".equals(responseMap.get("code"))) {
+                Request.Builder newBuilder = request.newBuilder();
+                newBuilder.addHeader("domo-custom", getBase64(mDomoCommon));
+                return chain.proceed(newBuilder.build());
+            }
+        } catch (IOException e) {
+            Log.d("retro", "interceptorException");
+        }
+
         //打印响应结果
-        httpLog(request, DomoJson, response);
+        httpLog(request, DomoJson, responseInfo);
         return response;
     }
 
-    private void httpLog(Request request, String domoJson, Response response) throws IOException {
+    private String getBase64(Map map) {
+        return Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
+    }
+
+    private void httpLog(Request request, String domoJson, String responseInfo) throws IOException {
         if (BuildConfig.DEBUG) {
-            ResponseBody body = response.peekBody(1024 * 1024);
-            String ss = body.string();
 
             Log.d("retrofit", "----------Start-----------");
             //打印请求Ulr
             Log.d("retrofitRequest", String.format("Sending request %s",
                     request.url()));
 
-            Log.d("retrofitHeaderJson", domoJson + "----" + Base64.encodeToString(domoJson.getBytes(), Base64.NO_WRAP));
+            Log.d("retrofitHeaderJson", domoJson);
             //打印请求参数
             String method = request.method();
             if ("POST".equals(method)) {
@@ -82,9 +99,10 @@ public class MyInterceptor implements Interceptor {
                 }
             }
 
-            Log.d("retrofitResponse", ss);
+            Log.d("retrofitResponse", responseInfo);
+//            Log.d("retrofitResponseCode", "响应码:" + response.code());
             Log.d("retrofit", "----------end-----------");
-            Log.d("retrofit", "                        ");
+
         }
     }
 
@@ -101,4 +119,6 @@ public class MyInterceptor implements Interceptor {
         map.put("deviceId", DeviceUtils.getAndroidID(context));
         return map;
     }
+
+
 }

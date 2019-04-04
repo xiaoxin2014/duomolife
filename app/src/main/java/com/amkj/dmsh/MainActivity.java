@@ -50,6 +50,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.SysNotificationEntity;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.fragment.QualityFragment;
 import com.amkj.dmsh.find.fragment.FindFragment;
@@ -69,6 +70,7 @@ import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -122,6 +124,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_REFRESH_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
@@ -189,6 +193,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragmentManager = getSupportFragmentManager();
         boolean isFirstTime = setIntentBottomIconData();
         if (isFirstTime) {
+//        七鱼客服登录 获取用户信息 登进登出……
+            getNetDataInfo();
+            //刷新token
+            flushToken();
 //            弹窗广告
             getADDialog();
 //            启动广告
@@ -217,6 +225,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //            检查推送权限
             checkPushPermission();
         }
+
+
         rp_bottom_main.setOnCheckedChangeListener((group, checkedId) -> {
             isChecked = true;
             for (int i = 0; i < group.getChildCount(); i++) {
@@ -233,8 +243,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
-        //        七鱼客服登录 获取用户信息 登进登出……
-        getNetDataInfo();
+    }
+
+
+    /**
+     * 刷新Token
+     */
+    private void flushToken() {
+        long tokenExpireTime = ((long) SharedPreUtils.getParam(TOKEN_EXPIRE_TIME, 0L));
+        long tokenRefreshTime = ((long) SharedPreUtils.getParam(TOKEN_REFRESH_TIME, 0L));
+        //1.登录情况下 2.token有效 3.距离上次登录超过一天
+        if (tokenExpireTime != 0 && System.currentTimeMillis() < tokenExpireTime && System.currentTimeMillis() - tokenRefreshTime > 86400000) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FLUSH_LOGIN_TOKEN, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson = new Gson();
+                    CommunalUserInfoBean tokenExpireBean = gson.fromJson(result, CommunalUserInfoBean.class);
+                    //刷新本地token过期时间
+                    SharedPreUtils.setParam(ConstantVariable.TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getTokenExpireSeconds());
+                }
+            });
+            //记录刷新时间
+            SharedPreUtils.setParam(TOKEN_REFRESH_TIME, System.currentTimeMillis());
+        }
     }
 
     /**
@@ -701,6 +732,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     /**
      * 退出账号
+     *
      * @param communalUserInfoBean
      */
     private void doExitAccount(CommunalUserInfoBean communalUserInfoBean) {
@@ -870,7 +902,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
     }
-
 
 
     private void getSelectedDialog() {
