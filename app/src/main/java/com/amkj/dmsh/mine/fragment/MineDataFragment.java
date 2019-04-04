@@ -38,7 +38,6 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
@@ -337,8 +336,6 @@ public class MineDataFragment extends BaseFragment {
         } else {
             try {
                 setErrorUserData();
-                //调用登出接口
-                NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.LOG_OUT, null, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

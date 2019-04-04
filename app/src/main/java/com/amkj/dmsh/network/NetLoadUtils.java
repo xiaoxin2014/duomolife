@@ -9,8 +9,10 @@ import android.view.Gravity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
@@ -32,6 +34,8 @@ import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
 import com.kingja.loadsir.core.LoadService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -625,6 +629,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                             NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
                             //Token过期,清除本地登录信息
                             savePersonalInfoCache(mContext, null);
+                            //通知我的界面刷新
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
                             //提示用户登录
                             AlertDialogHelper notificationAlertDialogHelper = new AlertDialogHelper(mContext);
                             notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {

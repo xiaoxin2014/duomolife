@@ -33,7 +33,7 @@ public class ConstantVariable {
     //    启动自动翻页
     public static final String START_AUTO_PAGE_TURN = "startAutoPageTurn";
     //    token过期，强制登出
-    public static final String TOKEN_EXPIRE_LOG_OUT = "startAutoPageTurn";
+    public static final String TOKEN_EXPIRE_LOG_OUT = "tokenExpireLogOut";
     //    是否跳转
     public static final String SKIP_PAGE = "isSkipPage";
     //    首页

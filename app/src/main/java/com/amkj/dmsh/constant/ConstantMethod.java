@@ -49,7 +49,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -92,8 +91,6 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -1794,8 +1791,6 @@ public class ConstantMethod {
             unBindJPush();
             //清除登录状态
             SharedPreUtils.clearAll();
-            //通知我的界面刷新
-            EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
         }
     }
 

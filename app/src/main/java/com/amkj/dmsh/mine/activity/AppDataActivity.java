@@ -15,16 +15,17 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.google.gson.Gson;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -183,6 +184,8 @@ public class AppDataActivity extends BaseActivity {
                 @Override
                 public void confirm() {
                     NEW_USER_DIALOG = true;
+                    //调用登出接口
+                    NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.LOG_OUT, null, null);
                     savePersonalInfoCache(AppDataActivity.this, null);
                     showToast(AppDataActivity.this, "注销成功");
                     exitNewTaoBaoAccount();
