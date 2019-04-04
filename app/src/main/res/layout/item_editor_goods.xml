@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/sc_mm_26"
-    android:layout_marginEnd="@dimen/sc_mm_58"
+    android:background="@color/light_gray_f"
+    android:layout_marginLeft="@dimen/sc_mm_26"
+    android:layout_marginRight="@dimen/sc_mm_58"
     android:layout_marginTop="@dimen/sc_mm_38"
     android:orientation="horizontal">
 
@@ -18,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/sc_mm_20"
+        android:layout_marginLeft="@dimen/sc_mm_20"
         android:orientation="vertical">
 
         <TextView

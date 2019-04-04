@@ -32,7 +32,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.bean.EditorEntity.EditorBean;
+import com.amkj.dmsh.bean.EditorEntity.EditorBean;
+
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -106,16 +107,16 @@ public class EditorSelectActivity extends BaseActivity {
                     intent.putExtra("redactorpickedId", String.valueOf(itemBean.getId()));
                     startActivity(intent);
                     break;
-                //进入商品详情
-                case R.id.iv_big_pic:
-                    if (itemBean.getMainProduct() != null) {
-                        intent = new Intent(this, ShopScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(itemBean.getMainProduct().getProductId()));
-                        //记录埋点参数sourceId
-                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(itemBean.getId()));
-                        startActivity(intent);
-                    }
-                    break;
+//                //进入商品详情
+//                case R.id.iv_big_pic:
+//                    if (itemBean.getMainProduct() != null) {
+//                        intent = new Intent(this, ShopScrollDetailsActivity.class);
+//                        intent.putExtra("productId", String.valueOf(itemBean.getMainProduct().getProductId()));
+//                        //记录埋点参数sourceId
+//                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(itemBean.getId()));
+//                        startActivity(intent);
+//                    }
+//                    break;
             }
 
         });
@@ -217,7 +218,7 @@ public class EditorSelectActivity extends BaseActivity {
                                 , editorBean.getMainProduct().getProductImg()
                                 , getStrings(mEditorEntity.getTitle())
                                 , getStrings(mEditorEntity.getDescription())
-                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"),1);
+                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), 1);
                     }
                 }
                 break;
