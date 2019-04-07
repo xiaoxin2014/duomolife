@@ -40,7 +40,7 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     private String cpName;
     //    淘宝优惠券地址
     private String couponUrl;
-//    是否是最后一张淘宝优惠券
+    //    是否是最后一张淘宝优惠券
     private boolean lastTbCoupon;
     //    音频 视频地址
     private String url;
@@ -57,18 +57,18 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     //    商品图片列表
     private List<GoodsParataxisBean> goodsList;
 
+    //    文本
     public static final int NORTEXT = 0;
+    //    限时特惠优惠券
     public static final int TYPE_LUCKY_MONEY = 1;
     //    商品优惠券
     public static final int TYPE_COUPON = 2;
     //    动态图片商品
     public static final int TYPE_GIF_IMG = 3;
-    //    福利社列表商品
+    //    带加入购物车的商品
     public static final int TYPE_GOODS_WEL = 4;
     //    图片商品
     public static final int TYPE_GOODS_IMG = 5;
-
-    //    0 文本 1 限时特惠优惠券 2 自营商品优惠券 3 自营商品
     //    视频播放
     public static final int TYPE_VIDEO = 6;
     //    分享文章
@@ -91,9 +91,9 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     public static final int TYPE_PRODUCT_RECOMMEND = 15;
     //    关联商品
     public static final int TYPE_RELEVANCE_PRODUCT = 16;
-//    限时特惠 头部红柱 + 标题 top灰色间隔
+    //    限时特惠 头部红柱 + 标题 top灰色间隔
     public static final int TYPE_PROMOTION_TITLE = 17;
-//    并列商品列表
+    //    并列商品列表
     public static final int TYPE_PARATAXIS_GOOD = 18;
 
     public CommunalDetailObjectBean() {
@@ -264,7 +264,7 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
         this.moreDataList = moreDataList;
     }
 
-    public static class GoodsParataxisBean extends BaseRemoveExistProductBean implements MultiItemEntity{
+    public static class GoodsParataxisBean extends BaseRemoveExistProductBean implements MultiItemEntity {
         /**
          * picUrl : http://image.domolife.cn/platform/20170225/20170225180759430.jpg
          * marketPrice : 118.00

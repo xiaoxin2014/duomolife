@@ -10,14 +10,13 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
 import com.amkj.dmsh.homepage.view.EditorHeadView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -32,7 +31,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -77,13 +75,8 @@ public class EditorSelectActivity extends BaseActivity {
     private void initRv() {
         mEditorAdapter = new EditorSelectAdapter(this, R.layout.item_editor_introduce, EditorList);
         mEditorAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            EditorBean itemBean;
+            EditorBean itemBean = (EditorBean) view.getTag();
             Intent intent;
-            if (view.getId() == R.id.iv_big_pic) {
-                itemBean = (EditorBean) view.getTag(R.id.iv_tag);
-            } else {
-                itemBean = (EditorBean) view.getTag();
-            }
             if (itemBean == null) return;
             switch (view.getId()) {
                 //文章点赞
@@ -106,16 +99,6 @@ public class EditorSelectActivity extends BaseActivity {
                     intent.putExtra("redactorpickedId", String.valueOf(itemBean.getId()));
                     startActivity(intent);
                     break;
-                //进入商品详情
-                case R.id.iv_big_pic:
-                    if (itemBean.getMainProduct() != null) {
-                        intent = new Intent(this, ShopScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(itemBean.getMainProduct().getProductId()));
-                        //记录埋点参数sourceId
-                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(itemBean.getId()));
-                        startActivity(intent);
-                    }
-                    break;
             }
 
         });
@@ -129,9 +112,7 @@ public class EditorSelectActivity extends BaseActivity {
         }, mRvEditor);
         mRvEditor.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
-                this, LinearLayoutManager.VERTICAL, AutoSizeUtils.mm2px(this, 50), getResources().getColor(R.color.white)));
-        mRvEditor.setNestedScrollingEnabled(false);
-        mEditorAdapter.removeAllHeaderView();
+                this, LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(this, 1), getResources().getColor(R.color.text_color_e_s)));
         mEditorHeadView = new EditorHeadView(EditorSelectActivity.this);
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);
@@ -212,12 +193,12 @@ public class EditorSelectActivity extends BaseActivity {
             case R.id.iv_img_share:
                 if (mEditorEntity != null && EditorList != null && EditorList.size() > 0) {
                     EditorBean editorBean = EditorList.get(0);
-                    if (editorBean.getMainProduct() != null) {
+                    if (editorBean != null) {
                         new UMShareAction(this
-                                , editorBean.getMainProduct().getProductImg()
+                                , editorBean.getCoverImg()
                                 , getStrings(mEditorEntity.getTitle())
                                 , getStrings(mEditorEntity.getDescription())
-                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"),1);
+                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), 1);
                     }
                 }
                 break;

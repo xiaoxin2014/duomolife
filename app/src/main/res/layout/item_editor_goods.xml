@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/sc_mm_26"
-    android:layout_marginEnd="@dimen/sc_mm_58"
-    android:layout_marginTop="@dimen/sc_mm_38"
-    android:orientation="horizontal">
+    android:padding="@dimen/sc_mm_15"
+    android:background="@color/light_gray_f"
+    android:layout_marginLeft="@dimen/sc_mm_30"
+    android:layout_marginRight="@dimen/sc_mm_25"
+    android:layout_marginTop="@dimen/sc_mm_36"
+    android:orientation="horizontal"
+    tools:ignore="MissingDefaultResource">
 
     <ImageView
         android:id="@+id/iv_goods_pic"
@@ -18,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/sc_mm_20"
+        android:layout_marginLeft="@dimen/sc_mm_20"
         android:orientation="vertical">
 
         <TextView
