@@ -3,7 +3,7 @@ package com.amkj.dmsh.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.amkj.dmsh.base.BaseTimeEntity;
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 
@@ -16,7 +16,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * Created by xiaoxin on 2019/3/20 0020
  * ClassDescription :
  */
-public class EditorEntity extends BaseTimeEntity {
+public class EditorEntity extends BaseEntity {
 
 
     /**
@@ -116,7 +116,7 @@ public class EditorEntity extends BaseTimeEntity {
         private List<AttachProductListBean> attachProductList;
 
 
-        public  class AttachProductListBean implements Parcelable {
+        public class AttachProductListBean implements Parcelable {
             /**
              * productId : 15871
              * productName : Let's diet恒温蕾丝内衣
@@ -172,7 +172,7 @@ public class EditorEntity extends BaseTimeEntity {
                 this.productImg = in.readString();
             }
 
-            public  final Creator<AttachProductListBean> CREATOR = new Creator<AttachProductListBean>() {
+            public final Creator<AttachProductListBean> CREATOR = new Creator<AttachProductListBean>() {
                 @Override
                 public AttachProductListBean createFromParcel(Parcel source) {
                     return new AttachProductListBean(source);
@@ -310,7 +310,7 @@ public class EditorEntity extends BaseTimeEntity {
             in.readList(this.attachProductList, AttachProductListBean.class.getClassLoader());
         }
 
-        public  final Parcelable.Creator<EditorBean> CREATOR = new Parcelable.Creator<EditorBean>() {
+        public final Parcelable.Creator<EditorBean> CREATOR = new Parcelable.Creator<EditorBean>() {
             @Override
             public EditorBean createFromParcel(Parcel source) {
                 return new EditorBean(source);

@@ -75,13 +75,8 @@ public class EditorSelectActivity extends BaseActivity {
     private void initRv() {
         mEditorAdapter = new EditorSelectAdapter(this, R.layout.item_editor_introduce, EditorList);
         mEditorAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            EditorBean itemBean;
+            EditorBean itemBean = (EditorBean) view.getTag();
             Intent intent;
-            if (view.getId() == R.id.iv_big_pic) {
-                itemBean = (EditorBean) view.getTag(R.id.iv_tag);
-            } else {
-                itemBean = (EditorBean) view.getTag();
-            }
             if (itemBean == null) return;
             switch (view.getId()) {
                 //文章点赞
@@ -104,16 +99,6 @@ public class EditorSelectActivity extends BaseActivity {
                     intent.putExtra("redactorpickedId", String.valueOf(itemBean.getId()));
                     startActivity(intent);
                     break;
-//                //进入商品详情
-//                case R.id.iv_big_pic:
-//                    if (itemBean.getMainProduct() != null) {
-//                        intent = new Intent(this, ShopScrollDetailsActivity.class);
-//                        intent.putExtra("productId", String.valueOf(itemBean.getMainProduct().getProductId()));
-//                        //记录埋点参数sourceId
-//                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(itemBean.getId()));
-//                        startActivity(intent);
-//                    }
-//                    break;
             }
 
         });
@@ -127,9 +112,7 @@ public class EditorSelectActivity extends BaseActivity {
         }, mRvEditor);
         mRvEditor.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
-                this, LinearLayoutManager.VERTICAL, AutoSizeUtils.mm2px(this, 50), getResources().getColor(R.color.white)));
-        mRvEditor.setNestedScrollingEnabled(false);
-        mEditorAdapter.removeAllHeaderView();
+                this, LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(this, 1), getResources().getColor(R.color.text_color_e_s)));
         mEditorHeadView = new EditorHeadView(EditorSelectActivity.this);
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);

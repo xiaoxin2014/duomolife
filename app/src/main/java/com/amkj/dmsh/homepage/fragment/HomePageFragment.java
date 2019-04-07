@@ -345,7 +345,7 @@ public class HomePageFragment extends BaseFragment {
      * 获取活动列表
      */
     private void getHotActivityList() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + H_HOT_ACTIVITY_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + H_HOT_ACTIVITY_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -426,7 +426,7 @@ public class HomePageFragment extends BaseFragment {
      * 专区活动广告
      */
     private void getRegionActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + H_REGION_ACTIVITY, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + H_REGION_ACTIVITY, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

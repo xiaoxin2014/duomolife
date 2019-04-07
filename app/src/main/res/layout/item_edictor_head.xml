@@ -1,67 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingLeft="@dimen/sc_mm_30"
-              android:paddingTop="@dimen/sc_mm_46"
-              android:paddingRight="@dimen/sc_mm_40"
-              android:paddingBottom="@dimen/sc_mm_38">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingTop="@dimen/sc_mm_46"
+    android:paddingRight="@dimen/sc_mm_40"
+    android:paddingBottom="@dimen/sc_mm_38">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/iv_editor_head"
+        android:layout_width="@dimen/sc_mm_140"
+        android:layout_height="@dimen/sc_mm_140"
+        android:src="@drawable/handpick_icon"/>
+
+    <TextView
+        android:id="@+id/tv_subscriber"
+        android:layout_width="@dimen/sc_mm_150"
+        android:layout_height="@dimen/sc_mm_60"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/sc_mm_22"
+        android:background="@drawable/sel_subscriber_blue"
+        android:gravity="center"
+        android:text="@string/subscriber"
+        android:textColor="@color/selector_font_white_gray_s"
+        android:textSize="@dimen/sc_mm_28"/>
+
+    <TextView
+        android:id="@+id/tv_first_subscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_subscriber"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/sc_mm_16"
+        android:text="@string/defaul"
+        android:textColor="@color/color_blue_reply_com"
+        android:textSize="@dimen/sc_mm_22"/>
+
+    <TextView
+        android:id="@+id/tv_editor_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_editor_head"
+        android:layout_marginTop="@dimen/sc_mm_60"
+        android:text="@string/editor_select"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_34"/>
+
+    <TextView
+        android:id="@+id/tv_editor_tips"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/iv_editor_head"
-            android:layout_width="@dimen/sc_mm_140"
-            android:layout_height="@dimen/sc_mm_140"
-            android:src="@drawable/handpick_icon"/>
-
-        <TextView
-            android:id="@+id/tv_subscriber"
-            android:layout_width="@dimen/sc_mm_150"
-            android:layout_height="@dimen/sc_mm_60"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/sc_mm_22"
-            android:background="@drawable/sel_subscriber_blue"
-            android:gravity="center"
-            android:text="@string/subscriber"
-            android:textColor="@color/selector_font_white_gray_s"
-            android:textSize="@dimen/sc_mm_28"/>
-
-        <TextView
-            android:id="@+id/tv_first_subscribe"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_subscriber"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/sc_mm_16"
-            android:text="@string/defaul"
-            android:textColor="@color/color_blue_reply_com"
-            android:textSize="@dimen/sc_mm_22"/>
-
-        <TextView
-            android:id="@+id/tv_editor_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_editor_head"
-            android:layout_marginTop="@dimen/sc_mm_60"
-            android:text="@string/editor_select"
-            android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_34"/>
-
-        <TextView
-            android:id="@+id/tv_editor_tips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_editor_head"
-            android:layout_marginTop="@dimen/sc_mm_135"
-            android:text="@string/defaul"
-            android:textColor="@color/color_blue_reply_com"
-            android:textSize="@dimen/sc_mm_26"/>
-    </RelativeLayout>
-
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_editor_head"
+        android:layout_marginTop="@dimen/sc_mm_135"
+        android:text="@string/defaul"
+        android:textColor="@color/color_blue_reply_com"
+        android:textSize="@dimen/sc_mm_26"/>
+</RelativeLayout>

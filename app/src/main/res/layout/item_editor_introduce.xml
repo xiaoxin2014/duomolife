@@ -8,6 +8,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="@dimen/sc_mm_30">
 
         <ImageView
@@ -17,84 +19,42 @@
             android:layout_centerVertical="true"
             android:src="@drawable/handpick_icon"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_goods_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/sc_mm_24"
             android:layout_toRightOf="@+id/iv_goods_icon"
-            android:orientation="vertical">
+            android:text="@string/defaul"
+            android:textColor="@color/textColor_alert_msg"
+            android:textSize="@dimen/sc_mm_32"/>
 
-            <TextView
-                android:id="@+id/tv_goods_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/defaul"
-                android:textColor="@color/textColor_alert_msg"
-                android:textSize="@dimen/sc_mm_32"/>
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_goods_name"
+            android:layout_marginLeft="@dimen/sc_mm_24"
+            android:layout_marginTop="@dimen/sc_mm_12"
+            android:layout_toRightOf="@+id/iv_goods_icon"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_22"/>
 
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sc_mm_12"
-                android:text="@string/defaul"
-                android:textColor="@color/color_blue_reply_com"
-                android:textSize="@dimen/sc_mm_22"/>
-        </LinearLayout>
     </RelativeLayout>
 
-    <!--<RelativeLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content">-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/iv_big_pic"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:scaleType="centerCrop"-->
-    <!--android:src="@color/mc"/>-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_direct_bug"-->
-    <!--android:layout_width="@dimen/sc_mm_130"-->
-    <!--android:layout_height="@dimen/sc_mm_40"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_marginRight="@dimen/sc_mm_26"-->
-    <!--android:layout_marginBottom="@dimen/sc_mm_24"-->
-    <!--android:background="@drawable/shap_circle_000"-->
-    <!--android:gravity="center"-->
-    <!--android:text="@string/direct_bug"-->
-    <!--android:textColor="@color/white"-->
-    <!--android:textSize="@dimen/sc_mm_22"/>-->
-    <!--</RelativeLayout>-->
-    <include layout="layout_communal_recycler_wrap_wrap"/>
-
-    <!--<TextView-->
-        <!--android:id="@+id/tv_goods_introduce"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginLeft="@dimen/sc_mm_30"-->
-        <!--android:layout_marginTop="@dimen/sc_mm_36"-->
-        <!--android:layout_marginRight="@dimen/sc_mm_58"-->
-        <!--android:text="@string/defaul"-->
-        <!--android:textColor="@color/textColor_alert_title"-->
-        <!--android:textSize="@dimen/sc_mm_28"/>-->
+    <include layout="@layout/layout_communal_recycler_wrap"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_36"
         android:background="@color/white"
-        android:paddingLeft="@dimen/sc_mm_25"
-        android:paddingRight="@dimen/sc_mm_25"
         android:scrollbars="none">
     </android.support.v7.widget.RecyclerView>
 
     <include
         layout="@layout/layout_com_art_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_89"/>
 </LinearLayout>
