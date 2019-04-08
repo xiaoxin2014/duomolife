@@ -27,6 +27,7 @@ import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
+import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -390,7 +391,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //            strategy.setAppPackageName(getStrings(mAppContext.getPackageName()));  //App的包名
 //            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
 //        } else {
-        Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);
+        if (!BuildConfig.DEBUG) {
+            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);
+        }
 //        }
     }
 
