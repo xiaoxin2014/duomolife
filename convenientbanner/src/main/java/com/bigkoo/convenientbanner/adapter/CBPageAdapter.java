@@ -10,6 +10,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder> {
     private final Context context;
-    private List<T> datas;
+    private List<T> datas = new ArrayList<>();
     private CBViewHolderCreator creator;
     private CBPageAdapterHelper helper;
     private boolean canLoop;
@@ -25,7 +26,7 @@ public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder> {
 
     public CBPageAdapter(Context context, CBViewHolderCreator creator, List<T> datas, boolean canLoop) {
         this.creator = creator;
-        this.datas = datas;
+        this.datas.addAll(datas);
         this.context = context;
         this.canLoop = canLoop;
         helper = new CBPageAdapterHelper();
@@ -44,6 +45,8 @@ public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder> {
     public void onBindViewHolder(Holder holder, int position) {
         helper.onBindViewHolder(holder.itemView, position, getItemCount());
         int realPosition = position % datas.size();
+        //防止数组下标越界
+        if (realPosition >= datas.size()) realPosition = datas.size() - 1;
         holder.updateUI(datas.get(realPosition));
 
         if (onItemClickListener != null) {
