@@ -8,6 +8,8 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 
@@ -44,11 +46,16 @@ public class MyInterceptor implements Interceptor {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder();
         Map<String, Object> newMap = new HashMap<>(mDomoCommon);
-        //登录情况下传uid和token
         if (ConstantMethod.userId > 0) {
+            //登录情况下传uid和token
             newMap.put("uid", ConstantMethod.userId);
             String token = (String) SharedPreUtils.getParam(TOKEN, "");
             newMap.put("token", token);
+        } else if (request.url().toString().contains(Url.LOG_OUT)) {
+            //因为登出接口是异步的，在调接口之前可能本地token就被清掉了
+            // 所以为了保证请求头里一定有token和uid参数，在这里添加上
+            newMap.put("uid", NetLoadUtils.uid);
+            newMap.put("token", NetLoadUtils.token);
         }
         String DomoJson = new JSONObject(newMap).toString();
         builder.addHeader("domo-custom", getBase64(newMap));

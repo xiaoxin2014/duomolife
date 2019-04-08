@@ -113,6 +113,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.GET_FIRST_INSTALL_INFO;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_NEW_USER;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_FIND;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_HOME;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
@@ -224,6 +226,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             setShareTint();
 //            检查推送权限
             checkPushPermission();
+//            统计首次安装设备信息
+            getFirstInstallInfo();
         }
 
 
@@ -245,6 +249,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+    /**
+     * 统计首次安装设备信息
+     */
+    private void getFirstInstallInfo() {
+        boolean isNewUser = (boolean) SharedPreUtils.getParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, false);
+        boolean GetInfo = (boolean) SharedPreUtils.getParam(ConstantVariable.DEMO_LIFE_FILE, GET_FIRST_INSTALL_INFO, false);
+        //如果是新用户并且没有成功调用统计接口
+        if (isNewUser && !GetInfo) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FIRST_INSTALL_DEVICE_INFO, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, false);
+                    SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, GET_FIRST_INSTALL_INFO, true);
+                }
+                @Override
+                public void onNotNetOrException() {
+                    super.onNotNetOrException();
+                }
+            });
+        }
+    }
 
     /**
      * 刷新Token

@@ -49,10 +49,10 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.CACHEANDREMOTE;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.FIRSTREMOTE;
@@ -70,7 +70,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     private static NetLoadUtils netLoadUtils;
     private Convertor<String> convertor;
     private static boolean confirmIng = true;  //避免确认token过期接口重复调用
-    private static boolean outIng = false;
+    public static String token;
+    public static String uid;
 
     private NetLoadUtils() {
     }
@@ -624,8 +625,10 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getExpireTime());
                     } else {
                         //判断条件是为了避免重复调用
-                        if (userId > 0) {
+                        if (ConstantMethod.userId > 0) {
                             //调用登出接口,清除后台记录的token信息
+                            token = (String) SharedPreUtils.getParam(TOKEN, "");
+                            uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
                             NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
                             //Token过期,清除本地登录信息
                             savePersonalInfoCache(mContext, null);

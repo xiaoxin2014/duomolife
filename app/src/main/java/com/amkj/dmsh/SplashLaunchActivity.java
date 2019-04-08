@@ -7,9 +7,6 @@ import android.view.View;
 
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.network.NetLoadListenerHelper;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 
 import java.util.ArrayList;
@@ -18,7 +15,6 @@ import java.util.List;
 import butterknife.BindView;
 
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
-import static com.amkj.dmsh.constant.ConstantVariable.GET_FIRST_INSTALL_INFO;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_NEW_USER;
 
 /**
@@ -49,8 +45,6 @@ public class SplashLaunchActivity extends BaseActivity {
         if (isFirstRun()) {
             //保存新用户标志
             SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, true);
-            //统计首次安装设备信息
-            getFirstInstallInfo();
             localImages.add(R.mipmap.guide1);
             localImages.add(R.mipmap.guide2);
             localImages.add(R.mipmap.guide3);
@@ -82,25 +76,11 @@ public class SplashLaunchActivity extends BaseActivity {
                 }
             });
         } else {
-            boolean isNewUser = (boolean) SharedPreUtils.getParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, false);
-            boolean GetInfo = (boolean) SharedPreUtils.getParam(ConstantVariable.DEMO_LIFE_FILE, GET_FIRST_INSTALL_INFO, false);
-            //如果是新用户并且没有成功调用统计接口
-            if (isNewUser && !GetInfo) {
-                getFirstInstallInfo();
-            }
             skipWelcome();
         }
     }
 
-    private void getFirstInstallInfo() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FIRST_INSTALL_DEVICE_INFO, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, false);
-                SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, GET_FIRST_INSTALL_INFO, true);
-            }
-        });
-    }
+
 
     private void hideNavStatus() {
         View decorView = getWindow().getDecorView();

@@ -62,6 +62,8 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
             if (communalDetailBean != null) {
                 CommunalWebDetailUtils.getCommunalWebInstance()
                         .setWebDataClick(context, view, context.loadHud);
+                //记录埋点参数sourceId
+                ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
             }
         });
         rvPicGoods.setAdapter(communalDetailAdapter);
@@ -87,7 +89,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
                 Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(attachProductBean.getProductId()));
                 //记录埋点参数sourceId
-                ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(item.getId()));
+                ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
                 context.startActivity(intent);
             }
         });
