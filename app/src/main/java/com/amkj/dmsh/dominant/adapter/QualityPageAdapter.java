@@ -10,6 +10,7 @@ import com.amkj.dmsh.dominant.fragment.QualityCustomTopicFragment;
 import com.amkj.dmsh.dominant.fragment.QualityDefaultNewFragment;
 import com.amkj.dmsh.dominant.fragment.QualityNormalFragment;
 import com.amkj.dmsh.dominant.fragment.QualityOverseasMailFragment;
+import com.amkj.dmsh.dominant.fragment.WholePointSpikeProductFragment;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
 
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class QualityPageAdapter extends FragmentPagerAdapter {
                 return BaseFragment.newInstance(QualityCustomTopicFragment.class, params, null);
             case 5:
                 return BaseFragment.newInstance(QualityDefaultNewFragment.class, null, null);
+            case 7:
+                return BaseFragment.newInstance(WholePointSpikeProductFragment.class, null, null);
             default:
                 params.put(CATEGORY_TYPE, String.valueOf(qualityTypeBean.getCategoryType()));
                 params.put(CATEGORY_ID, String.valueOf(qualityTypeBean.getRelateId()));

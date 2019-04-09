@@ -16,7 +16,6 @@
             android:id="@+id/iv_goods_icon"
             android:layout_width="@dimen/sc_mm_60"
             android:layout_height="@dimen/sc_mm_60"
-            android:layout_centerVertical="true"
             android:src="@drawable/handpick_icon"/>
 
         <TextView
