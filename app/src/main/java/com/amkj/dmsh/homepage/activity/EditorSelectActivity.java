@@ -67,7 +67,7 @@ public class EditorSelectActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        mTvHeaderTitle.setVisibility(View.GONE);
+        mTvHeaderTitle.setText("小编精选");
         mIvImgService.setVisibility(View.GONE);
         initRv();
     }

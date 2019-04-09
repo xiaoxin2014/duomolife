@@ -1,19 +1,14 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.dominant.activity.WholePointSpikeProductActivity;
 import com.amkj.dmsh.dominant.adapter.PointSpikeTimeShaftAdapter;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity.TimeAxisInfoListBean;
@@ -36,28 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_AD;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_TIME_SHAFT;
 
 
 /**
- * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2019/3/1
+ * @author xiaoxin
+ * created on 2019/4/9
  * version 3.3.0
  * class description:整点秒杀
  */
 public class WholePointSpikeProductFragment extends BaseFragment {
-    @BindView(R.id.tv_header_title)
-    TextView tvHeaderTitle;
     @BindView(R.id.ad_point_spike)
     ConvenientBanner adPointSpike;
     @BindView(R.id.std_point_spike_type)
@@ -66,11 +54,7 @@ public class WholePointSpikeProductFragment extends BaseFragment {
     ViewPager vpPointSpikeContainer;
     @BindView(R.id.smart_point_spike)
     SmartRefreshLayout smartPointSpike;
-    @BindView(R.id.tv_header_shared)
-    TextView tv_header_shared;
-    @BindView(R.id.tl_normal_bar)
-    Toolbar mTlNormalBar;
-    Unbinder unbinder;
+
     //    时间轴数据
     private List<TimeAxisInfoListBean> timeAxisInfoList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -84,13 +68,6 @@ public class WholePointSpikeProductFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        if (getActivity() != null) {
-            //如果是嵌在tab栏，不需要显示标题
-            String simpleName = getActivity().getClass().getSimpleName();
-            mTlNormalBar.setVisibility("WholePointSpikeProductActivity".equals(simpleName) ? View.VISIBLE : View.GONE);
-        }
-        tv_header_shared.setEnabled(false);
-        tvHeaderTitle.setText("整点秒");
         stdPointSpikeType.setTextsize(AutoSizeUtils.mm2px(getActivity(), 28));
         stdPointSpikeType.setSubTextsize(AutoSizeUtils.mm2px(getActivity(), 24));
         smartPointSpike.setOnRefreshListener(new OnRefreshListener() {
@@ -209,7 +186,6 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                 , null, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        tv_header_shared.setEnabled(true);
                         adBeanList.clear();
                         CommunalADActivityEntity communalADActivityEntity = new Gson().fromJson(result, CommunalADActivityEntity.class);
                         if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
@@ -234,12 +210,16 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                                     .setPointViewVisible(true).setCanScroll(true)
                                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+
+                            //设置分享封面图
+                            if (getActivity() != null && getActivity() instanceof WholePointSpikeProductActivity && adBeanList.size() > 0) {
+                                ((WholePointSpikeProductActivity) getActivity()).setUrl(adBeanList.get(0));
+                            }
                         }
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        tv_header_shared.setEnabled(true);
                         if (adPointSpike.getVisibility() == View.VISIBLE) {
                             adPointSpike.setVisibility(View.GONE);
                         }
@@ -250,45 +230,5 @@ public class WholePointSpikeProductFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
-    }
-
-    @OnClick(R.id.tv_life_back)
-    void goBack() {
-        if (getActivity() != null) {
-            getActivity().finish();
-        }
-    }
-
-    @OnClick(R.id.tv_header_shared)
-    void setShare() {
-        CommunalADActivityBean communalADActivityBean = null;
-        if (adBeanList.size() > 0) {
-            communalADActivityBean = adBeanList.get(0);
-        }
-        String title = "限时限量秒杀";
-        String description = "每天都有惊喜价，买到就是省钱，手慢无!";
-        String picUrl = "";
-        if (communalADActivityBean != null) {
-            picUrl = communalADActivityBean.getPicUrl();
-        }
-        new UMShareAction(getActivity()
-                , picUrl
-                , title
-                , description
-                , BASE_SHARE_PAGE_TWO + "m/template/common/hours_activity.html?nav=1", 1);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 }

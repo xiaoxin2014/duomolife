@@ -4,7 +4,5 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <include layout="@layout/activity_domolife_header" />
-
     <include layout="@layout/layout_whole_point_spike"/>
 </LinearLayout>

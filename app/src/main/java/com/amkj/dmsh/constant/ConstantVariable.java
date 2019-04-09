@@ -32,6 +32,8 @@ public class ConstantVariable {
     public static final String STOP_AUTO_PAGE_TURN = "stopAutoPageTurn";
     //    启动自动翻页
     public static final String START_AUTO_PAGE_TURN = "startAutoPageTurn";
+//    //    整点秒杀数据加载完成
+//    public static final String POINT_SPIKE_LOAD_COMPLETE = "pointSpikeLoadComplete";
     //    token过期，强制登出
     public static final String TOKEN_EXPIRE_LOG_OUT = "tokenExpireLogOut";
     //    是否跳转
@@ -334,9 +336,7 @@ public class ConstantVariable {
     public static final String TOKEN_REFRESH_TIME = "tokenRefreshTime";//token刷新时间
 
 
-
     public static final String DEMO_LIFE_FILE = "duomolife";//用户信息本地shared_prefs文件名
-
 
 
 }

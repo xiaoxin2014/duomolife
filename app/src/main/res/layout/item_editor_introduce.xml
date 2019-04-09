@@ -10,12 +10,16 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/sc_mm_30">
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingTop="@dimen/sc_mm_25"
+        android:paddingBottom="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30">
 
         <ImageView
             android:id="@+id/iv_goods_icon"
             android:layout_width="@dimen/sc_mm_60"
             android:layout_height="@dimen/sc_mm_60"
+            android:layout_marginTop="@dimen/sc_mm_5"
             android:src="@drawable/handpick_icon"/>
 
         <TextView
@@ -24,7 +28,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/sc_mm_24"
             android:layout_toRightOf="@+id/iv_goods_icon"
-            android:text="@string/defaul"
+            android:gravity="left|top"
+            android:padding="@dimen/sc_mm_0"
+            android:text="标题"
             android:textColor="@color/textColor_alert_msg"
             android:textSize="@dimen/sc_mm_32"/>
 
@@ -36,6 +42,7 @@
             android:layout_marginLeft="@dimen/sc_mm_24"
             android:layout_marginTop="@dimen/sc_mm_12"
             android:layout_toRightOf="@+id/iv_goods_icon"
+            android:gravity="left|top"
             android:text="@string/defaul"
             android:textColor="@color/color_blue_reply_com"
             android:textSize="@dimen/sc_mm_22"/>

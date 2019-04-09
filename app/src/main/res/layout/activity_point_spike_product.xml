@@ -4,9 +4,11 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <include layout="@layout/activity_domolife_header"/>
+
     <fragment
+        android:id="@+id/fragment_point_spike"
         android:name="com.amkj.dmsh.dominant.fragment.WholePointSpikeProductFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragment_point_spike"/>
+        android:layout_height="match_parent"/>
 </LinearLayout>
