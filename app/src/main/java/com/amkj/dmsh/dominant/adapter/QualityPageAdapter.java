@@ -12,6 +12,7 @@ import com.amkj.dmsh.dominant.fragment.QualityNormalFragment;
 import com.amkj.dmsh.dominant.fragment.QualityOverseasMailFragment;
 import com.amkj.dmsh.dominant.fragment.WholePointSpikeProductFragment;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
+import com.amkj.dmsh.homepage.fragment.EditorSelectFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,19 +47,21 @@ public class QualityPageAdapter extends FragmentPagerAdapter {
         QualityTypeBean qualityTypeBean = qualityTypeBeanList.get(position);
         params.clear();
         switch (qualityTypeBean.getType()) {
-            case 2:
+            case 2://网页链接
                 params.put("loadUrl", getStrings(qualityTypeBean.getWebLink()));
                 return BaseFragment.newInstance(AliBCFragment.class, params, null);
-            case 3:
+            case 3://APP之活动专区
                 params.put(CATEGORY_ID, getStringsInteger(qualityTypeBean.getId()));
                 params.put(CATEGORY_TYPE, getStringsInteger(qualityTypeBean.getType()));
                 return BaseFragment.newInstance(QualityOverseasMailFragment.class, params, null);
-            case 4:
+            case 4://APP之自定义专区
                 params.put("productType", getStringsInteger(qualityTypeBean.getRelateId()));
                 return BaseFragment.newInstance(QualityCustomTopicFragment.class, params, null);
-            case 5:
+            case 5://良品
                 return BaseFragment.newInstance(QualityDefaultNewFragment.class, null, null);
-            case 7:
+            case 6://小编精选
+                return BaseFragment.newInstance(EditorSelectFragment.class, null, null);
+            case 7://整点秒杀
                 return BaseFragment.newInstance(WholePointSpikeProductFragment.class, null, null);
             default:
                 params.put(CATEGORY_TYPE, String.valueOf(qualityTypeBean.getCategoryType()));

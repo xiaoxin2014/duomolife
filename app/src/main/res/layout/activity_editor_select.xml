@@ -1,27 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:focusableInTouchMode="true"
-    android:focusable="true">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical"
+              android:focusable="true"
+              android:focusableInTouchMode="true">
 
-    <include layout="@layout/layout_ql_cart_share_header" />
+    <include layout="@layout/layout_ql_cart_share_header"/>
 
-    <include layout="@layout/ysf_include_divider" />
-
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/smart_layout"
+    <fragment
+        android:id="@+id/fragment_editor_select"
+        android:name="com.amkj.dmsh.homepage.fragment.EditorSelectFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include layout="@layout/layout_refresh_header_gif" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_editor"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none"/>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+        android:layout_height="match_parent"/>
 </LinearLayout>

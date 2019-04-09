@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,9 +32,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHolder> {
     private BaseActivity context;
 
-    public EditorSelectAdapter(BaseActivity context, int layoutResId, @Nullable List<EditorBean> data) {
+    public EditorSelectAdapter(Activity context, int layoutResId, @Nullable List<EditorBean> data) {
         super(layoutResId, data);
-        this.context = context;
+        this.context = (BaseActivity) context;
     }
 
     @Override

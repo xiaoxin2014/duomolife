@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,10 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -49,12 +50,12 @@ public class EditorHeadView extends LinearLayout {
     @BindView(R.id.tv_editor_title)
     TextView mTvEditorTitle;
 
-    private EditorSelectActivity mContext;
+    private BaseActivity mContext;
     private EditorEntity mEditorEntity;
 
-    public EditorHeadView(EditorSelectActivity activity) {
+    public EditorHeadView(Activity activity) {
         this(activity, null);
-        mContext = activity;
+        mContext = ((BaseActivity) activity);
         updateData(mEditorEntity);
     }
 
