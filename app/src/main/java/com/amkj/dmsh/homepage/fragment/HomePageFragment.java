@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
@@ -26,7 +25,6 @@ import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.activity.WholePointSpikeProductActivity;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleTypeAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
@@ -504,7 +502,7 @@ public class HomePageFragment extends BaseFragment {
     //    跳转消息
     @OnClick(R.id.iv_home_message_total)
     void skipMessage(View view) {
-        Intent intent = new Intent(getActivity(), BuildConfig.DEBUG ? WholePointSpikeProductActivity.class : MessageActivity.class);
+        Intent intent = new Intent(getActivity(), MessageActivity.class);
         startActivity(intent);
     }
 
