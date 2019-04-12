@@ -10,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,7 +55,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
@@ -127,7 +124,6 @@ public class HomePageFragment extends BaseFragment {
     RelativeLayout rel_home_page;
     @BindView(R.id.iv_float_ad_icon)
     ImageView iv_float_ad_icon;
-    Unbinder unbinder;
     private Badge badge;
     private List<CategoryTypeBean> categoryList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -181,16 +177,6 @@ public class HomePageFragment extends BaseFragment {
         std_home_art_type.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 40));
         std_home_art_type.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 1));
         std_home_art_type.setIndicatorCornerRadius(AutoSizeUtils.mm2px(mAppContext, 1));
-        rel_home_page.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                rel_home_page.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) rel_home_page.getLayoutParams();
-                int measuredHeight = tb_tool_home.getMeasuredHeight() + ImmersionBar.getStatusBarHeight(getActivity());
-                layoutParams.setMargins(0, measuredHeight, 0, 0);
-                rel_home_page.setLayoutParams(layoutParams);
-            }
-        });
     }
 
     @Override

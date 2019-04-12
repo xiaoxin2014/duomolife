@@ -5,6 +5,8 @@
               android:background="@color/white"
               android:orientation="vertical">
 
+    <include layout="@layout/layout_home_page"/>
+
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
@@ -44,8 +46,7 @@
                             <RelativeLayout
                                 android:id="@+id/rel_home_page"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/sc_mm_118">
+                                android:layout_height="wrap_content">
 
                                 <include layout="@layout/layout_al_new_sp_banner"/>
 
@@ -72,7 +73,6 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <include layout="@layout/layout_home_page"/>
                     </android.support.design.widget.CollapsingToolbarLayout>
 
                     <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"

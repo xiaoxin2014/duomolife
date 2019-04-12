@@ -8,8 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,7 +15,6 @@ import android.widget.RelativeLayout;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.activity.FindHotTopicListActivity;
@@ -45,7 +42,6 @@ import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -148,25 +144,12 @@ public class FindFragment extends BaseFragment {
             }
         });
         badge = getTopBadge(getActivity(), fra_find_message_total);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        ll_find_header.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ll_find_header.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int statusBarHeight = ImmersionBar.getStatusBarHeight(getActivity());
-                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) ll_find_header.getLayoutParams();
-                layoutParams.setMargins(0, tl_find_header.getMeasuredHeight() + statusBarHeight, 0, 0);
-                ll_find_header.setLayoutParams(layoutParams);
-            }
-        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         communal_recycler_wrap.setLayoutManager(linearLayoutManager);
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_nine_dp_white)
-
-
                 .create());
         findHotTopicAdapter = new FindHotTopicAdapter(getActivity(), hotTopicList);
         communal_recycler_wrap.setAdapter(findHotTopicAdapter);

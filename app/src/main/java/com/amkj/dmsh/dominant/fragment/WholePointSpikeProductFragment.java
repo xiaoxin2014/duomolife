@@ -2,13 +2,14 @@ package com.amkj.dmsh.dominant.fragment;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.dominant.activity.WholePointSpikeProductActivity;
 import com.amkj.dmsh.dominant.adapter.PointSpikeTimeShaftAdapter;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity.TimeAxisInfoListBean;
@@ -33,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_AD;
@@ -40,8 +42,9 @@ import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_TIME_SHAFT;
 
 
 /**
- * @author xiaoxin
- * created on 2019/4/9
+ * @author LGuiPeng
+ * @email liuguipeng163@163.com
+ * created on 2019/3/1
  * version 3.3.0
  * class description:整点秒杀
  */
@@ -54,7 +57,10 @@ public class WholePointSpikeProductFragment extends BaseFragment {
     ViewPager vpPointSpikeContainer;
     @BindView(R.id.smart_point_spike)
     SmartRefreshLayout smartPointSpike;
-
+    @BindView(R.id.tv_header_shared)
+    TextView tv_header_shared;
+    @BindView(R.id.tl_normal_bar)
+    Toolbar mTlNormalBar;
     //    时间轴数据
     private List<TimeAxisInfoListBean> timeAxisInfoList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -63,13 +69,14 @@ public class WholePointSpikeProductFragment extends BaseFragment {
 
     @Override
     protected int getContentView() {
-        return R.layout.fragment_point_spike_product;
+        return R.layout.activity_point_spike_product;
     }
 
     @Override
     protected void initViews() {
-        stdPointSpikeType.setTextsize(AutoSizeUtils.mm2px(getActivity(), 28));
-        stdPointSpikeType.setSubTextsize(AutoSizeUtils.mm2px(getActivity(), 24));
+        mTlNormalBar.setVisibility(View.GONE);
+        stdPointSpikeType.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
+        stdPointSpikeType.setSubTextsize(AutoSizeUtils.mm2px(mAppContext, 24));
         smartPointSpike.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -143,7 +150,7 @@ public class WholePointSpikeProductFragment extends BaseFragment {
             if (vpPointSpikeContainer.getAdapter() != null) {
                 defaultItemPosition = vpPointSpikeContainer.getCurrentItem();
             }
-            float sWidth = AutoSizeUtils.mm2px(getActivity(), 178);
+            float sWidth = AutoSizeUtils.mm2px(mAppContext, 178);
             int sItemCount = (int) (screenWidth / sWidth);
             if (sItemCount >= timeAxisInfoList.size()) {
                 sWidth = (int) (screenWidth * 1f / timeAxisInfoList.size());
@@ -186,6 +193,7 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                 , null, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
+                        tv_header_shared.setEnabled(true);
                         adBeanList.clear();
                         CommunalADActivityEntity communalADActivityEntity = new Gson().fromJson(result, CommunalADActivityEntity.class);
                         if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
@@ -210,22 +218,19 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                                     .setPointViewVisible(true).setCanScroll(true)
                                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-
-                            //设置分享封面图
-                            if (getActivity() != null && getActivity() instanceof WholePointSpikeProductActivity && adBeanList.size() > 0) {
-                                ((WholePointSpikeProductActivity) getActivity()).setUrl(adBeanList.get(0));
-                            }
                         }
                     }
 
                     @Override
                     public void onNotNetOrException() {
+                        tv_header_shared.setEnabled(true);
                         if (adPointSpike.getVisibility() == View.VISIBLE) {
                             adPointSpike.setVisibility(View.GONE);
                         }
                     }
                 });
     }
+
 
     @Override
     protected boolean isAddLoad() {
