@@ -820,19 +820,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * @return 返回类名
      */
     public String getPreviousActivity() {
-//        for (int i = 0; i < activityLinkedList.size(); i++) {
-//            Activity activity = activityLinkedList.get(i);
-//            String simpleName = activity.getClass().getSimpleName();
-//            if (simpleName.equals(currentActivityName)) {
-//                int num = i - index;
-//                if (num >= 0) {
-//                    return activityLinkedList.get(num).getClass().getSimpleName();
-//                } else {
-//                    return "";
-//                }
-//            }
-//        }
-
         for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
             Activity activity = activityLinkedList.get(i);
             String simpleName = activity.getClass().getSimpleName();

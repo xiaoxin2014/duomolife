@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
             <FrameLayout
@@ -24,7 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/mine_no_login_bg" />
+                    android:src="@drawable/mine_no_login_bg"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -38,7 +39,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <include layout="@layout/layout_mine_header" />
+                        <include layout="@layout/layout_mine_header"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -50,11 +51,11 @@
                             android:id="@+id/ll_mime_no_login"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:orientation="vertical"
                             android:paddingTop="@dimen/sc_mm_8"
-                            android:layout_centerInParent="true"
                             android:visibility="gone">
 
                             <TextView
@@ -64,7 +65,7 @@
                                 android:lineSpacingExtra="@dimen/dimen_10_dp"
                                 android:text="多么生活 您的生活美学专家\n为你提供最优质、省钱、放心的产品"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_28" />
+                                android:textSize="@dimen/sc_mm_28"/>
 
                             <TextView
                                 android:id="@+id/tv_no_login_show"
@@ -74,15 +75,15 @@
                                 android:gravity="center"
                                 android:text="登录/注册"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_32" />
+                                android:textSize="@dimen/sc_mm_32"/>
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/ll_mine_login"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
                             android:layout_centerInParent="true"
+                            android:gravity="center"
                             android:orientation="vertical"
                             android:visibility="visible">
 
@@ -102,7 +103,7 @@
                                 android:paddingLeft="@dimen/sc_mm_150"
                                 android:paddingRight="@dimen/sc_mm_150"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_30" />
+                                android:textSize="@dimen/sc_mm_30"/>
 
                             <RelativeLayout
                                 android:id="@+id/rel_integral_more"
@@ -117,7 +118,7 @@
                                     android:layout_centerVertical="true"
                                     android:text="积分：430"
                                     android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_24" />
+                                    android:textSize="@dimen/sc_mm_24"/>
 
                                 <TextView
                                     android:id="@+id/tv_mine_get_score_more"
@@ -128,7 +129,7 @@
                                     android:paddingLeft="@dimen/gap_left"
                                     android:text="获取更多积分"
                                     android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_22" />
+                                    android:textSize="@dimen/sc_mm_22"/>
                             </RelativeLayout>
 
                             <LinearLayout
@@ -144,11 +145,11 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:lines="2"
                                     android:lineSpacingExtra="@dimen/sc_mm_10"
+                                    android:lines="2"
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/sc_mm_28"
-                                    android:visibility="visible" />
+                                    android:visibility="visible"/>
 
                                 <TextView
                                     android:id="@+id/tv_mine_fans_count"
@@ -156,21 +157,21 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:lines="2"
                                     android:lineSpacingExtra="@dimen/sc_mm_10"
+                                    android:lines="2"
                                     android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_28" />
+                                    android:textSize="@dimen/sc_mm_28"/>
 
-                                    <TextView
-                                        android:id="@+id/tv_mine_inv_count"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center"
-                                        android:lines="2"
-                                        android:lineSpacingExtra="@dimen/sc_mm_10"
-                                        android:textColor="@color/white"
-                                        android:textSize="@dimen/sc_mm_28" />
+                                <TextView
+                                    android:id="@+id/tv_mine_inv_count"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:lineSpacingExtra="@dimen/sc_mm_10"
+                                    android:lines="2"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/sc_mm_28"/>
                             </LinearLayout>
                         </LinearLayout>
 
@@ -191,7 +192,7 @@
                     android:layout_width="@dimen/sc_mm_40"
                     android:layout_height="@dimen/sc_mm_40"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/mine_tips" />
+                    android:src="@drawable/mine_tips"/>
 
                 <TextView
                     android:id="@+id/tv_personal_data_sup"
@@ -201,7 +202,7 @@
                     android:layout_toRightOf="@+id/iv_personal_data_sup"
                     android:gravity="center_vertical"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_28" />
+                    android:textSize="@dimen/sc_mm_28"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -216,7 +217,7 @@
                     android:layout_marginLeft="@dimen/sc_mm_26"
                     android:text="我的订单"
                     android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_32" />
+                    android:textSize="@dimen/sc_mm_32"/>
 
                 <TextView
                     android:id="@+id/tv_mine_all_indent"
@@ -225,13 +226,13 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
 
-                    android:drawablePadding="@dimen/dimen_5_dp"
                     android:drawableRight="@drawable/att_integ_next"
+                    android:drawablePadding="@dimen/dimen_5_dp"
                     android:gravity="center_vertical"
                     android:paddingRight="@dimen/sc_mm_20"
                     android:text="查看全部订单"
                     android:textColor="@color/text_gray_hint_n"
-                    android:textSize="@dimen/sc_mm_28" />
+                    android:textSize="@dimen/sc_mm_28"/>
             </RelativeLayout>
 
             <LinearLayout
@@ -245,9 +246,10 @@
                     android:id="@+id/rv_mine_indent_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none" />
+                    android:focusable="false"
+                    android:scrollbars="none"/>
 
-                <include layout="@layout/layout_communal_recycler_wrap" />
+                <include layout="@layout/layout_communal_recycler_wrap"/>
 
                 <com.bigkoo.convenientbanner.ConvenientBanner
                     android:id="@+id/ad_mine"

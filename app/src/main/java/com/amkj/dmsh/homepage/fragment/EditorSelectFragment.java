@@ -3,6 +3,8 @@ package com.amkj.dmsh.homepage.fragment;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -11,7 +13,6 @@ import com.amkj.dmsh.bean.EditorEntity;
 import com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.EditorCommentActivity;
-import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
 import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
 import com.amkj.dmsh.homepage.view.EditorHeadView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -38,14 +39,16 @@ import static com.amkj.dmsh.constant.Url.EDITOR_SELECT_FAVOR;
 
 /**
  * Created by xiaoxin on 2019/3/14 0014
- * Version：V3.3.0
- * class description:小编精选
+ * Version：V4.0.0
+ * class description:小编精选抽取Fragment
  */
 public class EditorSelectFragment extends BaseFragment {
     @BindView(R.id.rv_editor)
     RecyclerView mRvEditor;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
+    @BindView(R.id.tl_quality_bar)
+    Toolbar mTlQualityBar;
     private EditorSelectAdapter mEditorAdapter;
     List<EditorBean> EditorList = new ArrayList<>();
     private int page = 1;
@@ -54,11 +57,12 @@ public class EditorSelectFragment extends BaseFragment {
 
     @Override
     protected int getContentView() {
-        return R.layout.fragment_editor_select;
+        return R.layout.activity_editor_select;
     }
 
     @Override
     protected void initViews() {
+        mTlQualityBar.setVisibility(View.GONE);
         initRv();
     }
 
@@ -80,7 +84,7 @@ public class EditorSelectFragment extends BaseFragment {
                         textView.setText(itemBean.getLikeString());
                         setGoodsLiked(itemBean);
                     } else {
-                        getLoginStatus(this);
+                        getLoginStatus(getActivity());
                     }
                     break;
                 //文章评论
@@ -135,11 +139,6 @@ public class EditorSelectFragment extends BaseFragment {
                         mEditorAdapter.notifyDataSetChanged();
                         mEditorHeadView.updateData(mEditorEntity);
                         mEditorAdapter.loadMoreComplete();
-
-                        //设置分享封面图
-                        if (getActivity() != null && getActivity() instanceof EditorSelectActivity) {
-                            ((EditorSelectActivity) getActivity()).setUrl(mEditorEntity);
-                        }
                     } else {
                         showToast(getActivity(), mEditorEntity.getMsg());
                         mEditorAdapter.loadMoreFail();
@@ -172,4 +171,5 @@ public class EditorSelectFragment extends BaseFragment {
     protected boolean isAddLoad() {
         return true;
     }
+
 }

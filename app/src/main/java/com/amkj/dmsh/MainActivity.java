@@ -78,6 +78,7 @@ import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.beta.tinker.TinkerManager;
+import com.umeng.socialize.UMShareAPI;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -1067,6 +1068,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
         }
         CallbackContext.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(getActivity()).onActivityResult(requestCode, resultCode, data);
     }
 
     private void initMainPage() {

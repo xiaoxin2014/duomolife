@@ -1,4 +1,4 @@
-package com.amkj.dmsh.dominant.activity;
+package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
@@ -13,24 +13,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.adapter.QualityHistoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
-import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -67,7 +66,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
@@ -75,13 +73,12 @@ import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
-;
-
 /**
- * Created by atd48 on 2016/6/27.
- * Class Description:福利社专题列表
+ * Created by xiaoxin on 2019/4/12 0012
+ * Version:v4.0.0
+ * ClassDescription :福利社专题列表抽取Fragment
  */
-public class DoMoLifeWelfareActivity extends BaseActivity {
+public class DoMoLifeWelfareFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -89,12 +86,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    @BindView(R.id.tv_header_title)
-    TextView tv_header_titleAll;
-    @BindView(R.id.iv_img_service)
-    ImageView iv_img_service;
-    @BindView(R.id.iv_img_share)
-    ImageView iv_img_share;
     @BindView(R.id.fl_header_service)
     FrameLayout fl_header_service;
     //    滑动布局
@@ -133,11 +124,9 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        iv_img_share.setVisibility(GONE);
-        tv_header_titleAll.setText("多么福利社");
-        iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
-        communal_recycler.setLayoutManager(new GridLayoutManager(DoMoLifeWelfareActivity.this, 2));
-        View headerView = LayoutInflater.from(DoMoLifeWelfareActivity.this)
+        tl_quality_bar.setVisibility(GONE);
+        communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        View headerView = LayoutInflater.from(getActivity())
                 .inflate(R.layout.layout_communal_recycler_wrap, (ViewGroup) communal_recycler.getParent(), false);
         overseasHeaderView = new OverseasHeaderView();
         ButterKnife.bind(overseasHeaderView, headerView);
@@ -152,12 +141,12 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 loadData();
             }
         });
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(DoMoLifeWelfareActivity.this, typeDetails);
+        qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
         communal_recycler.setVerticalScrollBarEnabled(false);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
 
-        rv_communal_pro.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
+        rv_communal_pro.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
@@ -173,7 +162,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 QualityHistoryListBean qualityHistoryListBean = (QualityHistoryListBean) view.getTag();
                 if (qualityHistoryListBean != null) {
                     dr_communal_pro.closeDrawers();
-                    Intent intent = new Intent(DoMoLifeWelfareActivity.this, DoMoLifeWelfareDetailsActivity.class);
+                    Intent intent = new Intent(getActivity(), DoMoLifeWelfareDetailsActivity.class);
                     intent.putExtra("welfareId", String.valueOf(qualityHistoryListBean.getId()));
                     startActivity(intent);
                 }
@@ -211,7 +200,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(DoMoLifeWelfareActivity.this, baseAddCarProInfoBean, loadHud);
+                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
                                 constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
                                     @Override
                                     public void onAddCarSuccess() {
@@ -222,7 +211,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus(DoMoLifeWelfareActivity.this);
+                        getLoginStatus(getActivity());
                     }
                 }
             }
@@ -232,17 +221,17 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
                 if (likedProductBean != null) {
-                    Intent intent = new Intent(DoMoLifeWelfareActivity.this, ShopScrollDetailsActivity.class);
+                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
                     startActivity(intent);
                 }
             }
         });
-        overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
+        overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f).create());
-        qualityWelfareHeaderAdapter = new QualityOsMailHeaderAdapter(DoMoLifeWelfareActivity.this, themeList, "welfare");
+        qualityWelfareHeaderAdapter = new QualityOsMailHeaderAdapter(getActivity(), themeList, "welfare");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityWelfareHeaderAdapter);
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
@@ -285,10 +274,10 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        badge = ConstantMethod.getBadge(DoMoLifeWelfareActivity.this, fl_header_service);
+        badge = ConstantMethod.getBadge(getActivity(), fl_header_service);
         //          关闭手势滑动
         dr_communal_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        totalPersonalTrajectory = insertNewTotalData(DoMoLifeWelfareActivity.this);
+        totalPersonalTrajectory = insertNewTotalData(getActivity());
     }
 
     //    商品列表
@@ -296,7 +285,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", productPage);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_DML_RECOMMEND, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_DML_RECOMMEND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityTypeProductAdapter.loadMoreComplete();
@@ -310,7 +299,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
                     } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
+                        showToast(getActivity(), likedProductEntity.getMsg());
                     }
                 }
                 qualityTypeProductAdapter.notifyDataSetChanged();
@@ -325,7 +314,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("goodsCurrentPage", 1);
         params.put("goodsShowCount", 8);
-        NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, H_DML_THEME
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_DML_THEME
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -346,7 +335,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                                     overseasHeaderView.communal_recycler_wrap.setVisibility(GONE);
                                 }
                             } else {
-                                showToast(DoMoLifeWelfareActivity.this, dmlTheme.getMsg());
+                                showToast(getActivity(), dmlTheme.getMsg());
                             }
                             qualityWelfareHeaderAdapter.notifyDataSetChanged();
                         }
@@ -361,20 +350,14 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
 
                     @Override
                     public void netClose() {
-                        showToast(DoMoLifeWelfareActivity.this, R.string.unConnectedNetwork);
+                        showToast(getActivity(), R.string.unConnectedNetwork);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(DoMoLifeWelfareActivity.this, R.string.invalidData);
+                        showToast(getActivity(), R.string.invalidData);
                     }
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
     }
 
     private void getCarCount() {
@@ -382,7 +365,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -392,7 +375,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(DoMoLifeWelfareActivity.this, requestStatus);
+                            showToastRequestMsg(getActivity(), requestStatus);
                         }
                     }
                 }
@@ -405,7 +388,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
      */
     private void getPreviousTopic() {
         Map<String, Object> params = new HashMap<>();
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_DML_PREVIOUS_THEME, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_DML_PREVIOUS_THEME, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityPreviousAdapter.loadMoreComplete();
@@ -450,18 +433,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         tv_communal_pro_title.setText("更多专题");
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            productPage = 1;
-            getWelfareProData();
-            getCarCount();
-        }
-    }
 
     @Override
     protected void loadData() {
@@ -471,31 +442,15 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         getData();
     }
 
-    @Override
-    protected View getLoadView() {
-        return smart_communal_refresh;
-    }
 
     @Override
     protected boolean isAddLoad() {
         return true;
     }
 
-    @Override
-    protected void getData() {
+    private void getData() {
         getWelfareThemeData();
         getPreviousTopic();
-    }
-
-    @OnClick(R.id.iv_img_service)
-    void skipShopCar(View view) {
-        Intent intent = new Intent(DoMoLifeWelfareActivity.this, ShopCarActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        finish();
     }
 
     class OverseasHeaderView {

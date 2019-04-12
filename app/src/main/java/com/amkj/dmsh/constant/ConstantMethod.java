@@ -683,7 +683,8 @@ public class ConstantMethod {
      *
      * @param activity
      */
-    public static void getLoginStatus(@NonNull Activity activity) {
+    public static void getLoginStatus(Activity activity) {
+        if (activity == null || activity.isFinishing()) return;
         SharedPreferences loginStatus = activity.getSharedPreferences("loginStatus", MODE_PRIVATE);
         if (loginStatus.getBoolean("isLogin", false)) {
             userId = loginStatus.getInt("uid", 0);

@@ -1,19 +1,23 @@
-package com.amkj.dmsh.dominant.activity;
+package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dominant.activity.DmlOptimizedSelDetailActivity;
 import com.amkj.dmsh.dominant.adapter.DmlOptimizedSelAdapter;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity;
 import com.amkj.dmsh.dominant.bean.DmlOptimizedSelEntity.DmlOptimizedSelBean;
@@ -29,7 +33,6 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +40,9 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
@@ -51,16 +56,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_DML_OPTIMIZED_LIST;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
-;
-
-
 /**
- * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2017/7/10
- * class description:多么定制列表
+ * Created by xiaoxin on 2019/4/12 0012
+ * Version:v4.0.0
+ * ClassDescription :多么定制抽取Fragment
  */
-public class DmlOptimizedSelActivity extends BaseActivity {
+public class DmlOptimizedSelFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -70,12 +71,11 @@ public class DmlOptimizedSelActivity extends BaseActivity {
     public FloatingActionButton download_btn_communal;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
-    @BindView(R.id.iv_img_service)
-    ImageView iv_img_service;
     @BindView(R.id.fl_header_service)
     FrameLayout fl_header_service;
-    @BindView(R.id.iv_img_share)
-    ImageView iv_img_share;
+    @BindView(R.id.tl_quality_bar)
+    Toolbar mTlQualityBar;
+    Unbinder unbinder;
     private int page = 1;
     private float screenHeight;
     private Badge badge;
@@ -90,20 +90,18 @@ public class DmlOptimizedSelActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        iv_img_share.setVisibility(View.GONE);
-        iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
-        tv_header_titleAll.setText("");
-        communal_recycler.setLayoutManager(new OffsetLinearLayoutManager(DmlOptimizedSelActivity.this));
+        mTlQualityBar.setVisibility(GONE);
+        communal_recycler.setLayoutManager(new OffsetLinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_nine_dp_white).create());
-        dmlOptimizedSelAdapter = new DmlOptimizedSelAdapter(DmlOptimizedSelActivity.this, dmlOptimizedSelList);
+        dmlOptimizedSelAdapter = new DmlOptimizedSelAdapter(getActivity(), dmlOptimizedSelList);
         communal_recycler.setAdapter(dmlOptimizedSelAdapter);
         dmlOptimizedSelAdapter.setOnItemClickListener((adapter, view, position) -> {
             DmlOptimizedSelBean dmlOptimizedSelBean = (DmlOptimizedSelBean) view.getTag();
             if (dmlOptimizedSelBean != null) {
                 Intent intent = new Intent();
-                intent.setClass(DmlOptimizedSelActivity.this, DmlOptimizedSelDetailActivity.class);
+                intent.setClass(getActivity(), DmlOptimizedSelDetailActivity.class);
                 intent.putExtra("optimizedId", String.valueOf(dmlOptimizedSelBean.getId()));
                 startActivity(intent);
             }
@@ -152,12 +150,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                 linearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
-        badge = ConstantMethod.getBadge(DmlOptimizedSelActivity.this, fl_header_service);
-    }
-
-    @Override
-    protected View getLoadView() {
-        return smart_communal_refresh;
+        badge = ConstantMethod.getBadge(getActivity(), fl_header_service);
     }
 
     @Override
@@ -171,8 +164,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
         getData();
     }
 
-    @Override
-    protected void getData() {
+    private void getData() {
         getOptimizedData();
         getCarCount();
     }
@@ -184,7 +176,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(DmlOptimizedSelActivity.this, Q_DML_OPTIMIZED_LIST, params,
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_DML_OPTIMIZED_LIST, params,
                 new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -202,7 +194,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                             } else if (optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
                                 dmlOptimizedSelAdapter.loadMoreEnd();
                             } else {
-                                showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
+                                showToast(getActivity(), optimizedSelEntity.getMsg());
                             }
                             dmlOptimizedSelAdapter.notifyDataSetChanged();
                         }
@@ -218,20 +210,14 @@ public class DmlOptimizedSelActivity extends BaseActivity {
 
                     @Override
                     public void netClose() {
-                        showToast(DmlOptimizedSelActivity.this, R.string.unConnectedNetwork);
+                        showToast(getActivity(), R.string.unConnectedNetwork);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(DmlOptimizedSelActivity.this, R.string.invalidData);
+                        showToast(getActivity(), R.string.invalidData);
                     }
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
     }
 
     private void getCarCount() {
@@ -239,7 +225,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -255,27 +241,24 @@ public class DmlOptimizedSelActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        finish();
-    }
 
     @OnClick(R.id.iv_img_service)
     void skipService(View view) {
-        Intent intent = new Intent(DmlOptimizedSelActivity.this, ShopCarActivity.class);
+        Intent intent = new Intent(getActivity(), ShopCarActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }
