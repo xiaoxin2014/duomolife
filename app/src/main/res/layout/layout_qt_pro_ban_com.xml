@@ -10,7 +10,7 @@
 
     <include layout="@layout/layout_al_new_sp_banner" />
 
-    <com.flyco.tablayout.CommonTabLayout
+    <com.amkj.dmsh.views.tablayout.CommonTabLayout
         android:id="@+id/ctb_qt_pro_type"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_88"

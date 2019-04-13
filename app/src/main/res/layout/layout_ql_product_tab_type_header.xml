@@ -27,7 +27,7 @@
             android:textColor="@color/home_text_color"
             android:textSize="@dimen/sc_mm_32" />
 
-        <com.flyco.tablayout.CommonTabLayout
+        <com.amkj.dmsh.views.tablayout.CommonTabLayout
             android:id="@+id/ctb_qt_tab_product_type"
             android:layout_width="wrap_content"
             android:layout_centerInParent="true"

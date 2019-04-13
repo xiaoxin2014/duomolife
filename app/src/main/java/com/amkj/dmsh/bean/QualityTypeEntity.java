@@ -58,6 +58,7 @@ public class QualityTypeEntity extends BaseEntity{
         private String sortName;
         private String childName;
         private int itemType;
+
         /**
          * childCategoryList : [{"picUrl":"http://image.domolife.cn/platform/445b8Rj24P1523673457180.jpeg","name":"布艺家纺","pid":4,"id":48,"type":1},{"picUrl":"","name":"家居家具","pid":4,"id":49,"type":1},{"picUrl":"","name":"收纳整理","pid":4,"id":50,"type":1},{"picUrl":"","name":"居家日化","pid":4,"id":51,"type":1},{"picUrl":"","name":"家庭清洁","pid":4,"id":52,"type":1},{"picUrl":"","name":"厨房用品","pid":4,"id":53,"type":1}]
          * pid : 0

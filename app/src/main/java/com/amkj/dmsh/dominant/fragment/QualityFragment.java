@@ -31,8 +31,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.CenterLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 

@@ -29,6 +29,7 @@ import java.util.Map;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -106,7 +107,7 @@ public class EditorSelectFragment extends BaseFragment {
         }, mRvEditor);
         mRvEditor.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
-                getActivity(), LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(getActivity(), 1), getResources().getColor(R.color.text_color_e_s)));
+                getActivity(), LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(mAppContext, 1), getResources().getColor(R.color.text_color_e_s)));
         mEditorHeadView = new EditorHeadView(getActivity());
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);

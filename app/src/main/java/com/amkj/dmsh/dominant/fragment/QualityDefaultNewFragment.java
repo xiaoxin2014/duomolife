@@ -125,8 +125,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
                 .create());
 
         qualityGoodNewProAdapter.setOnLoadMoreListener(() -> {
@@ -376,6 +374,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
         });
     }
 
+    //第二栏
     private void getHomeIndexType() {
         NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + Q_HOME_CLASS_TYPE, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override

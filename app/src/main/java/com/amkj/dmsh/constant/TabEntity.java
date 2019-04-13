@@ -1,6 +1,7 @@
 package com.amkj.dmsh.constant;
 
-import com.flyco.tablayout.listener.CustomTabEntity;
+
+import com.amkj.dmsh.views.tablayout.listener.CustomTabEntity;
 
 /**
  * flycoTabLayout entity

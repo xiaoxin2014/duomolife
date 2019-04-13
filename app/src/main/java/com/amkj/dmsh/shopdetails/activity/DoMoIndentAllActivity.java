@@ -10,8 +10,8 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentPagerAdapter;
-import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.tablayout.listener.OnTabSelectListener;;
 
 import butterknife.BindView;
 import butterknife.OnClick;

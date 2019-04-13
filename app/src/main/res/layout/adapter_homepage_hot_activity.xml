@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:gravity="center_vertical">
+                android:layout_width="@dimen/sc_mm_200"
+                android:layout_height="@dimen/sc_mm_200"
+                android:background="@color/white"
+                android:gravity="center_vertical">
 
     <LinearLayout
-        android:layout_width="@dimen/sc_mm_200"
-        android:layout_height="@dimen/sc_mm_200"
         android:id="@+id/ll_hot_layout"
-        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:background="@color/transparent"
         android:gravity="center"
         android:orientation="vertical">
@@ -18,8 +18,8 @@
             android:id="@+id/iv_home_hot_img"
             android:layout_width="@dimen/sc_mm_114"
             android:layout_height="@dimen/sc_mm_114"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
 
         <TextView
             android:id="@+id/tv_home_hot_title"
@@ -27,6 +27,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sc_mm_20"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_24" />
+            android:textSize="@dimen/sc_mm_24"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/sc_mm_20"
+        android:layout_marginRight="@dimen/sc_mm_20"
+        android:background="@drawable/shap_bubble_bg"
+        android:text="小气泡"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_18"
+        android:visibility="gone"/>
 </RelativeLayout>

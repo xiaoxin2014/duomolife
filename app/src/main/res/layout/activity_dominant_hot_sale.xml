@@ -30,7 +30,7 @@
             </android.support.design.widget.CollapsingToolbarLayout>
 
 
-            <com.flyco.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+            <com.amkj.dmsh.views.tablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/std_dominant_hot_sale"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_80"

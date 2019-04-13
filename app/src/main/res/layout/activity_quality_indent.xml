@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:layout_height="match_parent">
     <include layout="@layout/activity_domolife_header"/>
-    <com.flyco.tablayout.SlidingTabLayout
+    <com.amkj.dmsh.views.tablayout.SlidingTabLayout
         android:id="@+id/search_sliding_bar"
         android:background="@drawable/border_top_bottom_line"
         android:layout_width="match_parent"

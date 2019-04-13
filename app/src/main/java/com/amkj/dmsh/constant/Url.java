@@ -11,22 +11,23 @@ public class Url {
 
     public Url(Context context, int position) {
         if (context != null) {
-            if (position == 0) {
+            if (position == 0) {//正式库
                 BASE_URL = "https://app.domolife.cn/";
-            } else if (position == 1) {
+            } else if (position == 1) {//测试库
                 BASE_URL = "http://ts.domolife.cn/";
-            } else if (position == 2) {
+            } else if (position == 2) {//钊立
                 BASE_URL = "http://192.168.1.98:8080/";
-            } else if (position == 3) {
+            } else if (position == 3) {//泽鑫
                 BASE_URL = "http://192.168.1.180:8080/";
-            } else if (position == 4) {
+            } else if (position == 4) {//子维
                 BASE_URL = "http://192.168.1.212/";
-            } else if (position == 6) {
+            } else if (position == 6) {//预发布
                 BASE_URL = "http://dev.domolife.cn/";
-            } else if (position == 7) {
+            } else if (position == 7) {//王凯
                 BASE_URL = "http://192.168.1.87:8080/";
-            } else if (position == 8) {
-                BASE_URL = "http://192.168.101.12:8080/";
+            } else if (position == 8) {//鸿星
+//                BASE_URL = "http://192.168.101.12:8080/";
+                BASE_URL = "http://192.168.1.9:8080/";
             }
         }
     }
@@ -153,7 +154,6 @@ public class Url {
     public static final String H_ATTENDANCE_INTEGRAL_LOTTERY_AWARD_HISTORY = "api/activity/getOverLotteryActivity";
     //    夺宝规则
     public static final String H_ATTENDANCE_INTEGRAL_LOTTERY_RULE = "api/activity/getLotteryExplain";
-
     //    领券中心
     public static final String H_COUPON_CENTER_DATA = "api/reminder/getCouponCore";
     //限时特惠详情
@@ -207,6 +207,13 @@ public class Url {
     //    小编精选留言列表
     public static final String EDITOR_COMMENT_LIST = "api/redactorpickedcomment/getCommentList";
 
+    /**
+     * 大改版首页
+     */
+    //    首页横排Tab
+    public static final String GTE_HOME_NAVBAR = "api/appindex/getAppIndexNavBarList";
+    //    首页Top
+    public static final String GTE_HOME_TOP = "api/appindex/getAppIndexActivityZoneList";
     /**
      * 我的
      */

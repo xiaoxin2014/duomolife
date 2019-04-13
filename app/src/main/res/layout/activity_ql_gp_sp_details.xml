@@ -146,7 +146,7 @@
 
                             <include layout="@layout/layout_communal_recycler_wrap" />
 
-                            <com.flyco.tablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                            <com.amkj.dmsh.views.tablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/ctb_ql_gp_sp_tab"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/sc_mm_88"

@@ -26,6 +26,7 @@ public class CBPageAdapter<T> extends RecyclerView.Adapter<Holder> {
 
     public CBPageAdapter(Context context, CBViewHolderCreator creator, List<T> datas, boolean canLoop) {
         this.creator = creator;
+        this.datas.clear();
         this.datas.addAll(datas);
         this.context = context;
         this.canLoop = canLoop;

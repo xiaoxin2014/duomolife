@@ -17,7 +17,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.SearchTabPageAdapter;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.flyco.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
 
 import org.greenrobot.eventbus.EventBus;
 

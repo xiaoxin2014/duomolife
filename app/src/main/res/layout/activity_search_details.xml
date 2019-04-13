@@ -10,7 +10,7 @@
 
     <include layout="@layout/activity_search_header" />
 
-    <com.flyco.tablayout.SlidingTabLayout
+    <com.amkj.dmsh.views.tablayout.SlidingTabLayout
         android:id="@+id/sliding_search_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_88"

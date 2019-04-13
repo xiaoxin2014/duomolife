@@ -37,7 +37,7 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.flyco.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -71,8 +71,6 @@ import static com.amkj.dmsh.constant.Url.FIND_AD;
 import static com.amkj.dmsh.constant.Url.F_ACTIVITY_AD;
 import static com.amkj.dmsh.constant.Url.F_HOT_TOPIC_LIST;
 import static com.amkj.dmsh.constant.Url.H_MESSAGE_WARM;
-
-;
 
 /**
  * Created by atd48 on 2016/6/21.

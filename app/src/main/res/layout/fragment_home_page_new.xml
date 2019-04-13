@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_fragment_quality"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/fragment_homepage_new_header"/>
+
+        <com.amkj.dmsh.views.tablayout.SlidingIconTabLayout
+            xmlns:tl="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tablayout_home"
+            tl_indicator_margin_left="@dimen/dimen_17dp"
+            tl_indicator_margin_right="@dimen/dimen_17dp"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_88"
+            android:background="@drawable/border_bottom_line"
+            tl:tl_indicator_color="@color/text_black_t"
+            tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+            tl:tl_indicator_gravity="BOTTOM"
+            tl:tl_indicator_height="@dimen/dimen_2dp"
+            tl:tl_indicator_style="NORMAL"
+            tl:tl_indicator_width_equal_title="true"
+            tl:tl_textSelectColor="@color/text_black_t"
+            tl:tl_textUnselectColor="@color/text_login_gray_s"
+            tl:tl_textsize="15sp"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <include layout="@layout/layout_float_ad"/>
+</FrameLayout>

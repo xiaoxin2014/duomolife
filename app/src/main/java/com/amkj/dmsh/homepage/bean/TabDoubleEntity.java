@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.bean;
 
-import com.flyco.tablayout.listener.CustomTabDoubleEntity;
+
+import com.amkj.dmsh.views.tablayout.listener.CustomTabDoubleEntity;
 
 /**
  * @author LGuiPeng

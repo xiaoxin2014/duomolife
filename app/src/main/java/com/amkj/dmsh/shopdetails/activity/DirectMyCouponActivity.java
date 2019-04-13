@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.shopdetails.adapter.CouponStatusAdapter;
-import com.flyco.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
 
 import butterknife.BindView;
 import butterknife.OnClick;
