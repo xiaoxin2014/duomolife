@@ -1,34 +1,54 @@
 package com.amkj.dmsh.homepage.fragment;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.bean.DMLThemeEntity;
+import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.homepage.adapter.HomeNewUserAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeTopAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.homepage.bean.HomeNewUserEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
+import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.Unbinder;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_TOP;
+import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
 
 
@@ -44,11 +64,34 @@ public class HomeDefalutFragment extends BaseFragment {
     RecyclerView mRvTop;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
+    @BindView(R.id.iv_cover)
+    ImageView mIvCover;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.tv_desc)
+    TextView mTvDesc;
+    @BindView(R.id.rv_new_goods)
+    RecyclerView mRvNewGoods;
+    Unbinder unbinder;
+    @BindView(R.id.ll_new_user)
+    LinearLayout mLlNewUser;
+    @BindView(R.id.tv_welfare_title)
+    TextView mTvWelfareTitle;
+    @BindView(R.id.tv_welfare_desc)
+    TextView mTvWelfareDesc;
+    @BindView(R.id.rv_felware)
+    RecyclerView mRvFelware;
+    @BindView(R.id.ll_felware)
+    LinearLayout mLlFelware;
     private boolean isUpdateCache;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<CommunalADActivityBean> mTopList = new ArrayList<>();
+    private List<DMLThemeBean> mThemeList = new ArrayList<>();
+    private List<HomeNewUserEntity.HomeNewUserBean> mNewUserGoodsList = new ArrayList<>();
     private HomeTopAdapter mHomeTopAdapter;
+    private HomeNewUserAdapter mHomeNewUserAdapter;
+    private HomeWelfareAdapter mHomeWelfareAdapter;
 
     @Override
     protected int getContentView() {
@@ -57,9 +100,10 @@ public class HomeDefalutFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
+        //初始化Top适配器
+        LinearLayoutManager topManager = new LinearLayoutManager(getActivity()
                 , LinearLayoutManager.HORIZONTAL, false);
-        mRvTop.setLayoutManager(linearLayoutManager);
+        mRvTop.setLayoutManager(topManager);
         mHomeTopAdapter = new HomeTopAdapter(getActivity(), mTopList);
         mRvTop.setAdapter(mHomeTopAdapter);
         mHomeTopAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -72,14 +116,43 @@ public class HomeDefalutFragment extends BaseFragment {
             isUpdateCache = true;
             loadData();
         });
+
+
+        //初始化新人专享适配器
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity()
+                , 2);
+        mRvNewGoods.setLayoutManager(gridLayoutManager);
+        mRvNewGoods.addItemDecoration(new RecycleViewDivider(
+                getActivity(), LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(mAppContext, 29), getResources().getColor(R.color.white)));
+        mHomeNewUserAdapter = new HomeNewUserAdapter(getActivity(), mNewUserGoodsList);
+        mHomeNewUserAdapter.setOnItemClickListener((adapter, view, position) -> {
+            //跳转商品详情
+        });
+        mIvCover.setOnClickListener(view -> {
+            //跳转新人专区
+        });
+        mRvNewGoods.setAdapter(mHomeNewUserAdapter);
+
+        //福利精选专题
+        LinearLayoutManager felwareManager = new LinearLayoutManager(getActivity()
+                , LinearLayoutManager.HORIZONTAL, false);
+        mRvFelware.setLayoutManager(felwareManager);
+        mRvFelware.addItemDecoration(new RecycleViewDivider(
+                getActivity(), LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(mAppContext, 22), getResources().getColor(R.color.white)));
+        mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), mThemeList);
+        mRvFelware.setAdapter(mHomeWelfareAdapter);
     }
 
     @Override
     protected void loadData() {
         getAdLoop();
         getHomeIndexType();
+        getNewUserGoods();
+        getWelfare();
     }
 
+
+    //获取Banner
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
@@ -141,21 +214,67 @@ public class HomeDefalutFragment extends BaseFragment {
                     }
                 }
 
-                if (mTopList.size() > 0) {
-                    mRvTop.setVisibility(View.VISIBLE);
-                } else {
-                    mRvTop.setVisibility(View.GONE);
+                mRvTop.setVisibility(mTopList.size() > 0 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mRvTop.setVisibility(mTopList.size() > 0 ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    //获取新人专享商品
+    private void getNewUserGoods() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("source", 1);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_NEW_USER_GOODS, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                HomeNewUserEntity homeTypeEntity = gson.fromJson(result, HomeNewUserEntity.class);
+                if (homeTypeEntity != null) {
+                    GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, homeTypeEntity.getCover());
+                    mTvTitle.setText(getStrings(homeTypeEntity.getTitle()));
+                    mTvDesc.setText(getStrings(homeTypeEntity.getDesc()));
+                    List<HomeNewUserEntity.HomeNewUserBean> homeNewUserGoods = homeTypeEntity.getHomeNewUserGoods();
+                    if (homeNewUserGoods != null && homeNewUserGoods.size() > 0) {
+                        mLlNewUser.setVisibility(View.VISIBLE);
+                        mNewUserGoodsList.clear();
+                        mNewUserGoodsList.add(homeNewUserGoods.get(0));
+                        mNewUserGoodsList.add(homeNewUserGoods.get(1));
+                        mHomeNewUserAdapter.notifyDataSetChanged();
+                    }
+                    mLlNewUser.setVisibility(mNewUserGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+
                 }
             }
 
             @Override
             public void onNotNetOrException() {
-                if (mTopList.size() > 0) {
-                    mRvTop.setVisibility(View.VISIBLE);
-                } else {
-                    mRvTop.setVisibility(View.GONE);
-                }
+                mLlNewUser.setVisibility(mNewUserGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }
+
+    //获取福利社商品
+    private void getWelfare() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", 1);
+        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("goodsCurrentPage", 1);
+        params.put("goodsShowCount", 8);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_DML_THEME
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
+                        if (dmlTheme != null && dmlTheme.getThemeList().size() > 0) {
+
+                        }
+                    }
+                });
+    }
+
 }

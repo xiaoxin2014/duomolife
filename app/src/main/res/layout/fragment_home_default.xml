@@ -28,13 +28,92 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_208"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_ql_center_pro"
+            <LinearLayout
+                android:id="@+id/ll_new_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/bg_red_home"
+                android:padding="@dimen/sc_mm_29">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white">
+
+                    <ImageView
+                        android:id="@+id/iv_cover"
+                        android:layout_width="@dimen/sc_mm_240"
+                        android:layout_height="@dimen/sc_mm_396"
+                        android:scaleType="centerCrop"/>
+
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_33"
+                        android:layout_marginTop="@dimen/sc_mm_48"
+                        android:layout_toRightOf="@+id/iv_cover"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"/>
+
+                    <TextView
+                        android:id="@+id/tv_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_title"
+                        android:layout_marginLeft="@dimen/sc_mm_33"
+                        android:layout_marginTop="@dimen/sc_mm_12"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="@dimen/sc_mm_26"/>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_new_goods"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/sc_mm_33"
+                        android:layout_marginRight="@dimen/sc_mm_33"
+                        android:layout_marginBottom="@dimen/sc_mm_48"
+                        android:scrollbars="none"/>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_felware"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/sc_mm_20"
-                android:background="@color/white"
-                android:scrollbars="none"/>
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingTop="@dimen/sc_mm_45"
+                android:paddingBottom="@dimen/sc_mm_22">
+
+                <TextView
+                    android:id="@+id/tv_welfare_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_32"/>
+
+                <TextView
+                    android:layout_marginTop="@dimen/sc_mm_12"
+                    android:id="@+id/tv_welfare_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_26"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_marginTop="@dimen/sc_mm_26"
+                    android:id="@+id/rv_felware"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:scrollbars="none"/>
+            </LinearLayout>
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

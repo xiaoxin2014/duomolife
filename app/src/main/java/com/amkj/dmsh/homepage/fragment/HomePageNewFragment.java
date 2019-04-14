@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
@@ -26,7 +25,9 @@ import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +41,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.GTE_HOME_NAVBAR;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.homepage.bean.HomeNavbarEntity.HomeNavbarBean;
 import static com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
@@ -80,6 +79,8 @@ public class HomePageNewFragment extends BaseFragment {
     private List<HomeNavbarBean> mGoodsNavbarList = new ArrayList<>();
     private List<String> titleList = new ArrayList<>();
     private HomeNavbarEntity mHomeNavbarEntity;
+    private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
+            "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity"};
 
 
     @Override
@@ -103,42 +104,55 @@ public class HomePageNewFragment extends BaseFragment {
 
     //获取首页Tab栏数据
     private void getHomeNavbar() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("source", 1);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GTE_HOME_NAVBAR, map, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mHomeNavbarEntity = gson.fromJson(result, HomeNavbarEntity.class);
-                if (mHomeNavbarEntity != null) {
-                    List<HomeNavbarBean> goodsNavbarList = mHomeNavbarEntity.getGoodsNavbarList();
-                    String code = mHomeNavbarEntity.getCode();
-                    if (ERROR_CODE.equals(code)) {
-                        ConstantMethod.showToast(mHomeNavbarEntity.getMsg());
-                    } else {
-                        if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
-                            mGoodsNavbarList.clear();
-                            mGoodsNavbarList.add(new HomeNavbarBean("1",
-                                    "", "良品优选", "", "app://HomeDefalutFragment"));
-                            mGoodsNavbarList.addAll(goodsNavbarList);
-                            HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageNewFragment.this.getChildFragmentManager(), mGoodsNavbarList);
-                            mVpHome.setAdapter(homePageNewAdapter);
-                            mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);
-                            mTablayoutHome.setViewPager(mVpHome, mGoodsNavbarList);
-                            mVpHome.setCurrentItem(0);
-                        }
-                    }
-                }
-
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsNavbarList, mHomeNavbarEntity);
-
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("source", 1);
+//        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GTE_HOME_NAVBAR, map, new NetLoadListenerHelper() {
+//            @Override
+//            public void onSuccess(String result) {
+//                Gson gson = new Gson();
+//                mHomeNavbarEntity = gson.fromJson(result, HomeNavbarEntity.class);
+//                if (mHomeNavbarEntity != null) {
+//                    List<HomeNavbarBean> goodsNavbarList = mHomeNavbarEntity.getGoodsNavbarList();
+//                    String code = mHomeNavbarEntity.getCode();
+//                    if (ERROR_CODE.equals(code)) {
+//                        ConstantMethod.showToast(mHomeNavbarEntity.getMsg());
+//                    } else {
+//                        if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
+        mGoodsNavbarList.clear();
+        mGoodsNavbarList.add(new HomeNavbarBean("1",
+                "", "良品优选", "", "app://HomeDefalutFragment"));
+        mGoodsNavbarList.add(new HomeNavbarBean("2",
+                "http://image.domolife.cn/platform/zcr8wydBYQ1548667564114.png", "小编精选", "", "app://EditorSelectActivity"));
+        mGoodsNavbarList.add(new HomeNavbarBean("1",
+                "", "热销单品", "9977FE", "app://QualityTypeHotSaleProActivity"));
+//                            mGoodsNavbarList.addAll(goodsNavbarList);
+        //筛选数据，防止版本api数据不同，会有不支持的action
+        List<String> actionList = Arrays.asList(actionArrays);
+        Iterator<HomeNavbarBean> iterator = mGoodsNavbarList.iterator();
+        while (iterator.hasNext()) {
+            HomeNavbarBean bean = iterator.next();
+            if (!actionList.contains(bean.getLink())) {
+                iterator.remove();
             }
-
-            @Override
-            public void onNotNetOrException() {
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsNavbarList, mHomeNavbarEntity);
-            }
-        });
+        }
+        HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageNewFragment.this.getChildFragmentManager(), mGoodsNavbarList);
+        mVpHome.setAdapter(homePageNewAdapter);
+        mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);
+        mTablayoutHome.setViewPager(mVpHome, mGoodsNavbarList);
+        mVpHome.setCurrentItem(0);
+//                        }
+//                    }
+//                }
+//
+//                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsNavbarList, mHomeNavbarEntity);
+//
+//            }
+//
+//            @Override
+//            public void onNotNetOrException() {
+//                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsNavbarList, mHomeNavbarEntity);
+//            }
+//        });
     }
 
     @Override
@@ -147,6 +161,7 @@ public class HomePageNewFragment extends BaseFragment {
         getMessageWarm();
         getCarCount();
     }
+
 
     private void getCarCount() {
         if (userId < 1) {

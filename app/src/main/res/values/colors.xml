@@ -63,7 +63,8 @@
     <color name="text_pink_bs_color">#ffb6bc</color>
     <color name="bg_pink_ffen_color">#ffe9eb</color>
     <color name="pinkColor">#ff8da1</color>
-    <color name="bg_red_ffae">#ffaeb5</color>
+    <color name="bg_red_ffae">#ffebed</color>
+    <color name="bg_red_home">#ffaeb5</color>
     <color name="mine_secretary_color">#FF91B4</color>
     <color name="text_pink_red">#ff8593</color>
     <color name="bg_light_red">#ff8593</color>

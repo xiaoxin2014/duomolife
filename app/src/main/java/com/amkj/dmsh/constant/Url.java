@@ -210,10 +210,14 @@ public class Url {
     /**
      * 大改版首页
      */
-    //    首页横排Tab
+    //    横排Tab
     public static final String GTE_HOME_NAVBAR = "api/appindex/getAppIndexNavBarList";
-    //    首页Top
+    //    Top栏
     public static final String GTE_HOME_TOP = "api/appindex/getAppIndexActivityZoneList";
+    //    新人专享
+    public static final String GTE_NEW_USER_GOODS = "api/appindex/getAppIndexActivityZoneList";
+    //    获取中间位置的商品信息
+    public static final String GTE_MIDDLE_GOODS = "api/appindex/getAppIndexSpecialZoneList";
     /**
      * 我的
      */

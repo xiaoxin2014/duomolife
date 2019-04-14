@@ -324,7 +324,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         params.put("currentPage", themePage);
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("goodsCurrentPage", 1);
-        params.put("goodsShowCount", 8);
+        params.put("goodsShowCount", 3);
         NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, H_DML_THEME
                 , params, new NetLoadListenerHelper() {
                     @Override
