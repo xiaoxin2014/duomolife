@@ -215,9 +215,10 @@ public class Url {
     //    Top栏
     public static final String GTE_HOME_TOP = "api/appindex/getAppIndexActivityZoneList";
     //    新人专享
-    public static final String GTE_NEW_USER_GOODS = "api/appindex/getAppIndexActivityZoneList";
-    //    获取中间位置的商品信息
-    public static final String GTE_MIDDLE_GOODS = "api/appindex/getAppIndexSpecialZoneList";
+    public static final String GTE_NEW_USER_GOODS = "/api/appindex/getAppIndexDynamicArea";
+    //    获取并排专区
+    public static final String GTE_HOME_DOUBLE = "api/appindex/getAppIndexSpecialZoneList";
+
     /**
      * 我的
      */

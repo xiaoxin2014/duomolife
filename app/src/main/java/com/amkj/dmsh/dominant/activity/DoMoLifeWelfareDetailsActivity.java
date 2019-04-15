@@ -199,8 +199,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
                 .create());
         adapterTopicComment.setOnItemChildClickListener((adapter, view, position) -> {
             DmlSearchCommentBean dmlSearchCommentBean = (DmlSearchCommentBean) view.getTag(R.id.iv_tag);

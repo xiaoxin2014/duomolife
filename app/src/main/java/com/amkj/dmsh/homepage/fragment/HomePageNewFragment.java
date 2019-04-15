@@ -14,7 +14,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
-import com.amkj.dmsh.homepage.bean.HomeNavbarEntity;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
@@ -45,7 +45,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
-import static com.amkj.dmsh.homepage.bean.HomeNavbarEntity.HomeNavbarBean;
+import static com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import static com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 
 /**
@@ -76,9 +76,9 @@ public class HomePageNewFragment extends BaseFragment {
     FrameLayout mFlShopCar;
     private Badge badgeCart;
     private Badge badgeMsg;
-    private List<HomeNavbarBean> mGoodsNavbarList = new ArrayList<>();
+    private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
     private List<String> titleList = new ArrayList<>();
-    private HomeNavbarEntity mHomeNavbarEntity;
+    private HomeCommonEntity mHomeNavbarEntity;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity"};
 
@@ -110,27 +110,27 @@ public class HomePageNewFragment extends BaseFragment {
 //            @Override
 //            public void onSuccess(String result) {
 //                Gson gson = new Gson();
-//                mHomeNavbarEntity = gson.fromJson(result, HomeNavbarEntity.class);
+//                mHomeNavbarEntity = gson.fromJson(result, HomeCommonEntity.class);
 //                if (mHomeNavbarEntity != null) {
-//                    List<HomeNavbarBean> goodsNavbarList = mHomeNavbarEntity.getGoodsNavbarList();
+//                    List<HomeCommonBean> goodsNavbarList = mHomeNavbarEntity.getResult();
 //                    String code = mHomeNavbarEntity.getCode();
 //                    if (ERROR_CODE.equals(code)) {
 //                        ConstantMethod.showToast(mHomeNavbarEntity.getMsg());
 //                    } else {
 //                        if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
         mGoodsNavbarList.clear();
-        mGoodsNavbarList.add(new HomeNavbarBean("1",
+        mGoodsNavbarList.add(new HomeCommonBean("1",
                 "", "良品优选", "", "app://HomeDefalutFragment"));
-        mGoodsNavbarList.add(new HomeNavbarBean("2",
+        mGoodsNavbarList.add(new HomeCommonBean("2",
                 "http://image.domolife.cn/platform/zcr8wydBYQ1548667564114.png", "小编精选", "", "app://EditorSelectActivity"));
-        mGoodsNavbarList.add(new HomeNavbarBean("1",
+        mGoodsNavbarList.add(new HomeCommonBean("1",
                 "", "热销单品", "9977FE", "app://QualityTypeHotSaleProActivity"));
 //                            mGoodsNavbarList.addAll(goodsNavbarList);
         //筛选数据，防止版本api数据不同，会有不支持的action
         List<String> actionList = Arrays.asList(actionArrays);
-        Iterator<HomeNavbarBean> iterator = mGoodsNavbarList.iterator();
+        Iterator<HomeCommonEntity.HomeCommonBean> iterator = mGoodsNavbarList.iterator();
         while (iterator.hasNext()) {
-            HomeNavbarBean bean = iterator.next();
+            HomeCommonEntity.HomeCommonBean bean = iterator.next();
             if (!actionList.contains(bean.getLink())) {
                 iterator.remove();
             }

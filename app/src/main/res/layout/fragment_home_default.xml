@@ -8,8 +8,7 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/gray_color_bg">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,22 +25,28 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_top"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_208"/>
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingLeft="@dimen/sc_mm_13"
+                android:paddingTop="@dimen/sc_mm_30"
+                android:paddingRight="@dimen/sc_mm_13"
+                android:paddingBottom="@dimen/sc_mm_40"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/ll_new_user"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/bg_red_home"
+                android:layout_height="@dimen/sc_mm_454"
+                android:background="@color/bg_red_ffae"
                 android:padding="@dimen/sc_mm_29">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@color/white">
 
                     <ImageView
-                        android:id="@+id/iv_cover"
+                        android:id="@+id/iv_newuser_cover"
                         android:layout_width="@dimen/sc_mm_240"
                         android:layout_height="@dimen/sc_mm_396"
                         android:scaleType="centerCrop"/>
@@ -52,7 +57,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/sc_mm_33"
                         android:layout_marginTop="@dimen/sc_mm_48"
-                        android:layout_toRightOf="@+id/iv_cover"
+                        android:layout_toRightOf="@+id/iv_newuser_cover"
+                        android:text="@string/defaul"
                         android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_32"/>
 
@@ -63,6 +69,8 @@
                         android:layout_below="@+id/tv_title"
                         android:layout_marginLeft="@dimen/sc_mm_33"
                         android:layout_marginTop="@dimen/sc_mm_12"
+                        android:layout_toRightOf="@+id/iv_newuser_cover"
+                        android:text="@string/defaul"
                         android:textColor="@color/text_login_gray_s"
                         android:textSize="@dimen/sc_mm_26"/>
 
@@ -71,49 +79,203 @@
                         android:id="@+id/rv_new_goods"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/sc_mm_33"
-                        android:layout_marginRight="@dimen/sc_mm_33"
+                        android:layout_below="@+id/tv_desc"
+                        android:layout_marginTop="@dimen/sc_mm_20"
                         android:layout_marginBottom="@dimen/sc_mm_48"
+                        android:layout_toRightOf="@+id/iv_newuser_cover"
                         android:scrollbars="none"/>
                 </RelativeLayout>
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_double"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/light_gray_f"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_double_left"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/sc_mm_54"
+                    android:paddingBottom="@dimen/sc_mm_54">
+
+                    <TextView
+                        android:id="@+id/tv_double_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/sc_mm_15"
+                        android:text="@string/defaul"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_double_left"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_30"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="@dimen/sc_mm_2"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_double_right"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/sc_mm_54"
+                    android:paddingBottom="@dimen/sc_mm_54">
+
+                    <TextView
+                        android:id="@+id/tv_double_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/sc_mm_15"
+                        android:text="@string/defaul"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_double_right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_30"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_20"
+                android:background="@color/light_gray_f"/>
 
             <LinearLayout
-                android:id="@+id/ll_felware"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/sc_mm_20"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/sc_mm_30"
-                android:paddingTop="@dimen/sc_mm_45"
-                android:paddingBottom="@dimen/sc_mm_22">
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_welfare_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_32"/>
+                <RelativeLayout
+                    android:id="@+id/rl_felware"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingTop="@dimen/sc_mm_45"
+                    android:paddingBottom="@dimen/sc_mm_36">
 
-                <TextView
-                    android:layout_marginTop="@dimen/sc_mm_12"
-                    android:id="@+id/tv_welfare_desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_26"/>
+                    <TextView
+                        android:id="@+id/tv_welfare_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="精选专题"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"/>
+
+                    <TextView
+                        android:id="@+id/tv_welfare_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_welfare_title"
+                        android:layout_marginTop="@dimen/sc_mm_12"
+                        android:text="想你所想，生活幸福感添加剂~"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="@dimen/sc_mm_26"/>
+
+                    <TextView
+                        android:id="@+id/tv_more_topic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/sc_mm_28"
+                        android:drawableRight="@drawable/black_next_icon"
+                        android:drawablePadding="@dimen/sc_mm_12"
+                        android:text="更多"/>
+                </RelativeLayout>
+
 
                 <android.support.v7.widget.RecyclerView
-                    android:layout_marginTop="@dimen/sc_mm_26"
                     android:id="@+id/rv_felware"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_26"
                     android:background="@color/white"
                     android:scrollbars="none"/>
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_20"
+                android:background="@color/light_gray_f"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/light_gray_f"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_nice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingTop="@dimen/sc_mm_45"
+                    android:paddingBottom="@dimen/sc_mm_36">
+
+                    <TextView
+                        android:id="@+id/tv_nice_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="精选专题"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"/>
+
+                    <TextView
+                        android:id="@+id/tv_nice_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_nice_title"
+                        android:layout_marginTop="@dimen/sc_mm_12"
+                        android:text="想你所想，生活幸福感添加剂~"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="@dimen/sc_mm_26"/>
+
+                    <TextView
+                        android:id="@+id/tv_more_nice_topic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/sc_mm_28"
+                        android:drawableRight="@drawable/black_next_icon"
+                        android:drawablePadding="@dimen/sc_mm_12"
+                        android:text="更多"/>
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_10"
+                    android:background="@color/light_gray_f"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_nice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_gray_f"
+                    android:paddingBottom="@dimen/sc_mm_10"
+                    android:scrollbars="none"/>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

@@ -11,6 +11,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+
 /**
  * Created by xiaoxin on 2019/4/14 0014
  * Version:v4.0.0
@@ -28,7 +30,7 @@ public class HomeNewUserAdapter extends BaseQuickAdapter<HomeNewUserBean, BaseVi
     @Override
     protected void convert(BaseViewHolder helper, HomeNewUserBean item) {
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), item.getPic());
-        helper.setText(R.id.tv_goods_price, item.getPrice());
+        helper.setText(R.id.tv_goods_price, "¥" + getStrings(item.getPrice()));
         helper.itemView.setTag(item);
     }
 }

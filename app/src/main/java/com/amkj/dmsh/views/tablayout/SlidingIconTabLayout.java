@@ -28,7 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.homepage.bean.HomeNavbarEntity.HomeNavbarBean;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.tablayout.listener.OnTabSelectListener;
 import com.amkj.dmsh.views.tablayout.utils.UnreadMsgUtils;
@@ -43,7 +44,7 @@ import java.util.List;
 public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
     private Context mContext;
     private ViewPager mViewPager;
-    private ArrayList<HomeNavbarBean> HomeNavbarList;
+    private ArrayList<HomeCommonBean> HomeNavbarList;
     private LinearLayout mTabsContainer;
     private int mCurrentTab;
     private float mCurrentPositionOffset;
@@ -204,7 +205,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     /**
      * 关联ViewPager,用于不想在ViewPager适配器中设置HomeNavbarList数据的情况
      */
-    public void setViewPager(ViewPager vp, List<HomeNavbarBean> list) {
+    public void setViewPager(ViewPager vp, List<HomeCommonBean> list) {
         if (vp == null || vp.getAdapter() == null) {
             throw new IllegalStateException("ViewPager or ViewPager adapter can not be NULL !");
         }
@@ -340,20 +341,20 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     private void updateTabStyles() {
         for (int i = 0; i < mTabCount; i++) {
             View v = mTabsContainer.getChildAt(i);
-            HomeNavbarBean homeNavbarBean = HomeNavbarList.get(i);
+            HomeCommonEntity.HomeCommonBean homeCommonBean = HomeNavbarList.get(i);
 //            v.setPadding((int) mTabPadding, v.getPaddingTop(), (int) mTabPadding, v.getPaddingBottom());
             TextView tv_tab_title = v.findViewById(R.id.tv_tab_title);
             ImageView iv_tab_title = v.findViewById(R.id.iv_tab_title);
             if (tv_tab_title != null && iv_tab_title != null) {
-                if ("1".equals(homeNavbarBean.getShowType())) {
+                if ("1".equals(homeCommonBean.getShowType())) {
                     iv_tab_title.setVisibility(GONE);
                     tv_tab_title.setVisibility(VISIBLE);
-                    if (TextUtils.isEmpty(homeNavbarBean.getColor())) {
+                    if (TextUtils.isEmpty(homeCommonBean.getColor())) {
                         tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
                     } else {
-                        if (!TextUtils.isEmpty(homeNavbarBean.getColor())) {
-                            String textColor = homeNavbarBean.getColor().trim();
-                            if (!homeNavbarBean.getColor().startsWith("#")) {
+                        if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
+                            String textColor = homeCommonBean.getColor().trim();
+                            if (!homeCommonBean.getColor().startsWith("#")) {
                                 textColor = "#" + textColor;
                             }
                             tv_tab_title.setTextColor(Color.parseColor(textColor));
@@ -368,7 +369,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
                 } else {
                     tv_tab_title.setVisibility(GONE);
                     iv_tab_title.setVisibility(VISIBLE);
-                    GlideImageLoaderUtil.loadImage(mContext, iv_tab_title, homeNavbarBean.getIcon());
+                    GlideImageLoaderUtil.loadImage(mContext, iv_tab_title, homeCommonBean.getIcon());
                     iv_tab_title.setImageResource(R.drawable.duoma_select);
                 }
             }
@@ -379,14 +380,14 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         for (int i = 0; i < mTabCount; ++i) {
             View tabView = mTabsContainer.getChildAt(i);
             final boolean isSelect = i == position;
-            HomeNavbarBean homeNavbarBean = HomeNavbarList.get(i);
+            HomeCommonEntity.HomeCommonBean homeCommonBean = HomeNavbarList.get(i);
             TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
-            if (TextUtils.isEmpty(homeNavbarBean.getColor())) {
+            if (TextUtils.isEmpty(homeCommonBean.getColor())) {
                 tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
             } else {
-                if (!TextUtils.isEmpty(homeNavbarBean.getColor())) {
-                    String textColor = homeNavbarBean.getColor().trim();
-                    if (!homeNavbarBean.getColor().startsWith("#")) {
+                if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
+                    String textColor = homeCommonBean.getColor().trim();
+                    if (!homeCommonBean.getColor().startsWith("#")) {
                         textColor = "#" + textColor;
                     }
                     tv_tab_title.setTextColor(Color.parseColor(textColor));

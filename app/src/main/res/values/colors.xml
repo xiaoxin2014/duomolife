@@ -58,6 +58,7 @@
     <color name="text_buy_red_color">#ff4719</color>
     <color name="ct_deep_red_bg">#fd493d</color>
     <color name="text_b_red_color">#ff5e5e</color>
+    <color name="bg_home_topic">#fff5f6</color>
     <color name="text_normal_red">#ff5e6b</color>
     <color name="text_red_color">#ff6d6d</color>
     <color name="text_pink_bs_color">#ffb6bc</color>

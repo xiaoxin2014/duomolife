@@ -12,7 +12,8 @@ import com.amkj.dmsh.dominant.fragment.QualityNewProFragment;
 import com.amkj.dmsh.dominant.fragment.QualityNewUserFragment;
 import com.amkj.dmsh.dominant.fragment.QualityTypeHotSaleProFragment;
 import com.amkj.dmsh.dominant.fragment.WholePointSpikeProductFragment;
-import com.amkj.dmsh.homepage.bean.HomeNavbarEntity.HomeNavbarBean;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.fragment.EditorSelectFragment;
 import com.amkj.dmsh.homepage.fragment.HomeCouponGetFragment;
 import com.amkj.dmsh.homepage.fragment.HomeDefalutFragment;
@@ -26,18 +27,18 @@ import java.util.List;
  */
 
 public class HomePageNewAdapter extends FragmentPagerAdapter {
-    private final List<HomeNavbarBean> homeNavbarBeanList;
+    private final List<HomeCommonBean> mHomeCommonBeanList;
 
 
-    public HomePageNewAdapter(FragmentManager fm, List<HomeNavbarBean> homeNavbarBeanList) {
+    public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
         super(fm);
-        this.homeNavbarBeanList = homeNavbarBeanList;
+        this.mHomeCommonBeanList = homeCommonBeanList;
     }
 
     @Override
     public Fragment getItem(int position) {
-        HomeNavbarBean homeNavbarBean = homeNavbarBeanList.get(position);
-        String link = homeNavbarBean.getLink();
+        HomeCommonEntity.HomeCommonBean homeCommonBean = mHomeCommonBeanList.get(position);
+        String link = homeCommonBean.getLink();
 //        String prefix = "app://";
 //        String action = "";
 //        if (!TextUtils.isEmpty(link)) {
@@ -73,6 +74,6 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return homeNavbarBeanList.size();
+        return mHomeCommonBeanList.size();
     }
 }

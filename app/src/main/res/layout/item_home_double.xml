@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/fl_goods_cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_goods_cover"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_143"
+            android:background="@drawable/home_goods_bg"
+            android:scaleType="centerCrop"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_143"
+            android:background="@drawable/home_goods_bg"/>
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fl_goods_cover"
+        android:layout_marginTop="@dimen/sc_mm_24"
+        android:text="@string/defaul"
+        android:textColor="@color/text_normal_red"
+        android:textSize="@dimen/sc_mm_28"/>
+
+    <TextView
+        android:id="@+id/tv_market_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_goods_icon"
+        android:layout_alignBaseline="@+id/tv_price"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_toRightOf="@+id/tv_price"
+        android:maxLines="1"
+        android:text="@string/defaul"
+        android:textColor="@color/color_blue_reply_com"
+        android:textSize="@dimen/sc_mm_20"/>
+</RelativeLayout>
