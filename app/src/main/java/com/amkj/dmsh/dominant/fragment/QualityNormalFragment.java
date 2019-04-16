@@ -72,8 +72,6 @@ import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
-;
-
 
 /**
  * @author LGuiPeng

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_more_product"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/sc_mm_54"
+        android:paddingRight="@dimen/sc_mm_28"
+        android:paddingBottom="@dimen/sc_mm_12">
+
+        <TextView
+            android:id="@+id/tv_catergory_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="种草特辑"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_32"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/sc_mm_5"
+            android:drawableRight="@drawable/black_next_icon"
+            android:drawablePadding="@dimen/sc_mm_12"
+            android:text="更多"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_ad"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_200"
+        android:scaleType="centerCrop"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_catergory_goods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"/>
+
+</LinearLayout>

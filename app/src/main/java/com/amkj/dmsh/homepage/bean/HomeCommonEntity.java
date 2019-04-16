@@ -128,11 +128,20 @@ public class HomeCommonEntity extends BaseEntity {
          */
 
         private String img;
+        private String cover;
         private String price;
         private String marketPrice;
 
         public String getImg() {
             return img;
+        }
+
+        public String getCover() {
+            return cover;
+        }
+
+        public void setCover(String cover) {
+            this.cover = cover;
         }
 
         public void setImg(String img) {

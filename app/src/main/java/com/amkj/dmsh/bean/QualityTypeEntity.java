@@ -59,6 +59,8 @@ public class QualityTypeEntity extends BaseEntity{
         private String childName;
         private int itemType;
 
+
+
         /**
          * childCategoryList : [{"picUrl":"http://image.domolife.cn/platform/445b8Rj24P1523673457180.jpeg","name":"布艺家纺","pid":4,"id":48,"type":1},{"picUrl":"","name":"家居家具","pid":4,"id":49,"type":1},{"picUrl":"","name":"收纳整理","pid":4,"id":50,"type":1},{"picUrl":"","name":"居家日化","pid":4,"id":51,"type":1},{"picUrl":"","name":"家庭清洁","pid":4,"id":52,"type":1},{"picUrl":"","name":"厨房用品","pid":4,"id":53,"type":1}]
          * pid : 0
@@ -67,7 +69,13 @@ public class QualityTypeEntity extends BaseEntity{
         private int pid;
         private String pName;
 
+
         private List<ChildCategoryListBean> childCategoryList;
+        /**
+         * ad : {"picUrl":"http://image.domolife.cn/platform/mW6GEFis3N1555323545506.jpg","web":"http://www.domolife.cn/m/template/common/proprietary.html?id=14634","android":"app://ShopScrollDetailsActivity?productId=14634","wechat":"/pages/goodsDetails/goodsDetails?id=14634","ios":"app://DMLGoodsProductsInfoViewController?goodsId=14634"}
+         */
+
+        private AdBean ad;
 
         public int getCategoryId() {
             return categoryId;
@@ -265,6 +273,14 @@ public class QualityTypeEntity extends BaseEntity{
             this.childCategoryList = childCategoryList;
         }
 
+        public AdBean getAd() {
+            return ad;
+        }
+
+        public void setAd(AdBean ad) {
+            this.ad = ad;
+        }
+
         public static class ChildCategoryListBean {
             /**
              * picUrl : http://image.domolife.cn/platform/445b8Rj24P1523673457180.jpeg
@@ -317,6 +333,63 @@ public class QualityTypeEntity extends BaseEntity{
 
             public void setType(int type) {
                 this.type = type;
+            }
+        }
+
+        public static class AdBean {
+            /**
+             * picUrl : http://image.domolife.cn/platform/mW6GEFis3N1555323545506.jpg
+             * web : http://www.domolife.cn/m/template/common/proprietary.html?id=14634
+             * android : app://ShopScrollDetailsActivity?productId=14634
+             * wechat : /pages/goodsDetails/goodsDetails?id=14634
+             * ios : app://DMLGoodsProductsInfoViewController?goodsId=14634
+             */
+
+            @SerializedName("picUrl")
+            private String picUrlX;
+            private String web;
+            private String android;
+            private String wechat;
+            private String ios;
+
+            public String getPicUrlX() {
+                return picUrlX;
+            }
+
+            public void setPicUrlX(String picUrlX) {
+                this.picUrlX = picUrlX;
+            }
+
+            public String getWeb() {
+                return web;
+            }
+
+            public void setWeb(String web) {
+                this.web = web;
+            }
+
+            public String getAndroid() {
+                return android;
+            }
+
+            public void setAndroid(String android) {
+                this.android = android;
+            }
+
+            public String getWechat() {
+                return wechat;
+            }
+
+            public void setWechat(String wechat) {
+                this.wechat = wechat;
+            }
+
+            public String getIos() {
+                return ios;
+            }
+
+            public void setIos(String ios) {
+                this.ios = ios;
             }
         }
     }

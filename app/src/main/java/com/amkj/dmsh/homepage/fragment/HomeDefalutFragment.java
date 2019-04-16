@@ -1,14 +1,11 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,6 +16,8 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.HomeWelfareEntity;
 import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
+import com.amkj.dmsh.bean.QualityTypeEntity;
+import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -26,6 +25,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
+import com.amkj.dmsh.dominant.adapter.HomeProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
@@ -45,6 +45,7 @@ import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -64,7 +65,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
@@ -80,6 +80,7 @@ import static com.amkj.dmsh.constant.Url.GTE_HOME_TOP;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
+import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
 
@@ -152,6 +153,9 @@ public class HomeDefalutFragment extends BaseFragment {
     @BindView(R.id.tv_refresh_artical)
     TextView mTvRefreshArtical;
     Unbinder unbinder;
+    @BindView(R.id.rv_product)
+    RecyclerView mRvProduct;
+    Unbinder unbinder1;
     private boolean isUpdateCache;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -163,6 +167,8 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeAllList = new ArrayList<>();
+    private List<QualityTypeBean> qualityTypeList = new ArrayList<>();
+    private List<UserLikedProductEntity> mProductList = new ArrayList<>();
     private HomeTopAdapter mHomeTopAdapter;
     private HomeNewUserAdapter mHomeNewUserAdapter;
     private HomeWelfareAdapter mHomeWelfareAdapter;
@@ -177,6 +183,8 @@ public class HomeDefalutFragment extends BaseFragment {
     private CommunalArticleEntity mCommunalArticleEntity;
     private int page = 1;
     private HomeDynamicEntity mHomeDynamicEntity;
+    private UserLikedProductEntity mUserLikedProductEntity;
+    private HomeProductAdapter mHomeProductAdapter;
 
     @Override
     protected int getContentView() {
@@ -344,6 +352,12 @@ public class HomeDefalutFragment extends BaseFragment {
             }
         });
         mRvArtical.setAdapter(homeArticleAdapter);
+
+        //获取首页分类商品适配器
+        LinearLayoutManager productManager = new LinearLayoutManager(getActivity());
+        mRvProduct.setLayoutManager(productManager);
+        mHomeProductAdapter = new HomeProductAdapter(getActivity(), mProductList);
+        mRvProduct.setAdapter(mHomeProductAdapter);
     }
 
     @Override
@@ -447,7 +461,7 @@ public class HomeDefalutFragment extends BaseFragment {
                     List<ProductInfoListBean> productInfoList = mHomeDynamicEntity.getProductInfoList();
                     if (productInfoList != null && productInfoList.size() > 0) {
                         mDynamicGoodsList.clear();
-                        for (int i = 0; i < (productInfoList.size() > 2 ? 2 : 1); i++) {
+                        for (int i = 0; i < (productInfoList.size() >= 2 ? 2 : 1); i++) {
                             mDynamicGoodsList.add(productInfoList.get(i));
                         }
                         mHomeNewUserAdapter.notifyDataSetChanged();
@@ -636,6 +650,70 @@ public class HomeDefalutFragment extends BaseFragment {
         });
     }
 
+    //获取商品分类集合
+    public void getQualityTypeList() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                QualityTypeEntity qualityTypeEntity = new Gson().fromJson(result, QualityTypeEntity.class);
+                if (qualityTypeEntity != null) {
+                    List<QualityTypeBean> typeBeanList = qualityTypeEntity.getQualityTypeBeanList();
+                    if (typeBeanList != null && typeBeanList.size() > 0) {
+                        qualityTypeList.clear();
+                        qualityTypeList.addAll(typeBeanList);
+
+                        for (int i = 0; i < (typeBeanList.size() >= 3 ? 3 : typeBeanList.size()); i++) {
+                            getQualityTypePro(typeBeanList.get(i));
+                            qualityTypeList.remove(typeBeanList.get(i));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                super.onNotNetOrException();
+            }
+        });
+    }
+
+    private void getQualityTypePro(QualityTypeBean qualityTypeBean) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", 6);
+        if (!TextUtils.isEmpty(qualityTypeBean.getChildCategory())) {
+            params.put("id", qualityTypeBean.getChildCategory());
+            params.put("pid", qualityTypeBean.getId());
+        } else {
+            params.put("id", qualityTypeBean.getId());
+            params.put("pid", 0);
+        }
+        params.put("orderTypeId", "1");
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_PRODUCT_TYPE_LIST,
+                params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Gson gson = new Gson();
+                        mUserLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (mUserLikedProductEntity != null) {
+                            mUserLikedProductEntity.setCatergoryName(qualityTypeBean.getName());
+                            if (qualityTypeBean.getAd() != null) {
+                                QualityTypeBean.AdBean ad = qualityTypeBean.getAd();
+                                mUserLikedProductEntity.setAdCover(ad.getAndroid());
+                                mUserLikedProductEntity.setAdUrl(ad.getPicUrlX());
+                            }
+
+                            mProductList.add(mUserLikedProductEntity);
+                            mHomeProductAdapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                    }
+                });
+    }
+
     //设置文章列表数据并刷新
     private void setArticalData() {
         articleTypeList.clear();
@@ -678,19 +756,5 @@ public class HomeDefalutFragment extends BaseFragment {
 
                 break;
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/9/14.
  */
-public class UserLikedProductEntity extends BaseEntity{
+public class UserLikedProductEntity extends BaseEntity {
 
     /**
      * result : [{"id":5,"title":"川宁 洋甘菊茶包 洋甘菊花茶","price":0,"path":"/Uploads/goods_img/2016-04-26/571f13ad9fbd9.jpg"},{"id":6,"title":"北鼎K206高档电热水壶304食品级不锈钢烧水壶","price":0,"path":"/Uploads/goods_img/2016-04-26/571f146c7bff3.jpg"},{"id":7,"title":"日本代购迪士尼萌宠侧档DC-71","price":0,"path":"/Uploads/goods_img/2016-04-26/571f1523acdc9.jpg"},{"id":13,"title":"modern twist硅胶软围嘴宝宝吃饭围兜","price":0,"path":"/Uploads/goods_img/2016-04-28/5721ca3e8ed74.jpg"},{"id":15,"title":"膳魔师真空焖烧杯保温杯sk-3000儿童焖烧罐","price":0,"path":"/Uploads/goods_img/2016-04-28/5721cabde4190.jpg"},{"id":3,"title":"宫廷风雕花淡蓝色描金奢华感相框","price":0,"path":"/Uploads/goods_img/2016-04-26/571f131fa0bb5.jpg"},{"id":17,"title":"UMBRA正品 创意滑盖首饰盒","price":0,"path":"/Uploads/goods_img/2016-04-28/5721ccac196fe.jpg"},{"id":73,"title":"韩国promise me 权志龙GD太阳BIGBANG ","price":7000,"path":"/Uploads/goods_img/2016-03-17/56ea1bf1af0e8.jpg"},{"id":4,"title":"可爱卡通动漫长颈鹿大象书档 动物风格","price":0,"path":"/Uploads/goods_img/2016-04-26/571f135e22db0.jpg"}]
@@ -29,7 +29,12 @@ public class UserLikedProductEntity extends BaseEntity{
     private String activityRule;
     private String currentTime;
     private String activityDesc;
-
+    //商品分类名称
+    private String catergoryName;
+    //跟分类绑定的广告位
+    private String adCover;
+    //广告位跳转链接
+    private String adUrl;
 
 
     /**
@@ -49,6 +54,30 @@ public class UserLikedProductEntity extends BaseEntity{
     private String category_id;
     private String recommendFlag;
     private String noIds;
+
+    public String getCatergoryName() {
+        return catergoryName;
+    }
+
+    public void setCatergoryName(String catergoryName) {
+        this.catergoryName = catergoryName;
+    }
+
+    public String getAdCover() {
+        return adCover;
+    }
+
+    public void setAdCover(String adCover) {
+        this.adCover = adCover;
+    }
+
+    public String getAdUrl() {
+        return adUrl;
+    }
+
+    public void setAdUrl(String adUrl) {
+        this.adUrl = adUrl;
+    }
 
     public String getActivityDesc() {
         return activityDesc;
@@ -171,7 +200,7 @@ public class UserLikedProductEntity extends BaseEntity{
         private String ext;
         private int type_id;
         private int commentNum;
-        @SerializedName(value = "picUrl",alternate = "path")
+        @SerializedName(value = "picUrl", alternate = "path")
         private String picUrl;
         private String price;
         private String name;
@@ -376,9 +405,9 @@ public class UserLikedProductEntity extends BaseEntity{
         public static class MarketLabelBean {
             private int id;
             private String title;
-//            自定义属性 1 为活动标签 0 为营销标签
+            //            自定义属性 1 为活动标签 0 为营销标签
             private int labelCode;
-//            活动标签专属属性
+            //            活动标签专属属性
             private String activityCode;
 
             public int getId() {

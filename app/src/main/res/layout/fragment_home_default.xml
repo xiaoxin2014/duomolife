@@ -65,7 +65,7 @@
                         android:id="@+id/tv_dynamic_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_title"
+                        android:layout_below="@+id/tv_dynamic_title"
                         android:layout_marginLeft="@dimen/sc_mm_33"
                         android:layout_marginTop="@dimen/sc_mm_12"
                         android:layout_toRightOf="@+id/iv_dynamic_cover"
@@ -364,6 +364,12 @@
                         android:textSize="@dimen/sc_mm_28"/>
                 </LinearLayout>
             </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_product"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
