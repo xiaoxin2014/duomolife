@@ -36,7 +36,7 @@ public class HomeCommonEntity extends BaseEntity {
         this.guidanceInfoList = goodsNavbarList;
     }
 
-    public static class HomeCommonBean {
+    public class HomeCommonBean {
         /**
          * color : string
          * icon : string
@@ -49,12 +49,9 @@ public class HomeCommonEntity extends BaseEntity {
         private String color;
         private String icon;
         private String link;
-        private String cover;
         private String name;
         private String showType;
-        private String title;
         private String description;
-        private String isDisplay;
         private List<ProductInfoListBean> productInfoList;
 
         public HomeCommonBean(String showType, String icon, String name, String color, String link) {
@@ -121,33 +118,9 @@ public class HomeCommonEntity extends BaseEntity {
         public void setShowType(String showType) {
             this.showType = showType;
         }
-
-        public String getCover() {
-            return cover;
-        }
-
-        public void setCover(String cover) {
-            this.cover = cover;
-        }
-
-        public String getIsDisplay() {
-            return isDisplay;
-        }
-
-        public void setIsDisplay(String isDisplay) {
-            this.isDisplay = isDisplay;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
     }
 
-    public static class ProductInfoListBean {
+    public class ProductInfoListBean {
         /**
          * img : http://image.domolife.cn/platform/20171218/20171218161441555.jpg
          * price : 59.00

@@ -1,11 +1,14 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -37,7 +40,7 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.ProductInfoListBean;
-import com.amkj.dmsh.homepage.bean.HomeNewUserEntity;
+import com.amkj.dmsh.homepage.bean.HomeDynamicEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -61,7 +64,9 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -90,16 +95,12 @@ public class HomeDefalutFragment extends BaseFragment {
     RecyclerView mRvTop;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
-    @BindView(R.id.iv_newuser_cover)
+    @BindView(R.id.iv_dynamic_cover)
     ImageView mIvCover;
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.tv_desc)
-    TextView mTvDesc;
     @BindView(R.id.rv_new_goods)
     RecyclerView mRvNewGoods;
-    @BindView(R.id.ll_new_user)
-    LinearLayout mLlNewUser;
+    @BindView(R.id.ll_dynamic)
+    LinearLayout mLlDynamic;
     @BindView(R.id.tv_welfare_title)
     TextView mTvWelfareTitle;
     @BindView(R.id.tv_welfare_desc)
@@ -140,6 +141,17 @@ public class HomeDefalutFragment extends BaseFragment {
     RecyclerView mRvArtical;
     @BindView(R.id.ll_artical)
     LinearLayout mLlArtical;
+    @BindView(R.id.tv_dynamic_title)
+    TextView mTvDynamicTitle;
+    @BindView(R.id.tv_dynamic_desc)
+    TextView mTvDynamicDesc;
+    @BindView(R.id.tv_more_nice_topic)
+    TextView mTvMoreNiceTopic;
+    @BindView(R.id.tv_artical_topic)
+    TextView mTvArticalTopic;
+    @BindView(R.id.tv_refresh_artical)
+    TextView mTvRefreshArtical;
+    Unbinder unbinder;
     private boolean isUpdateCache;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -147,7 +159,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<HomeWelfareBean> mThemeList = new ArrayList<>();
     private List<ProductInfoListBean> mDoubleLeftList = new ArrayList<>();
     private List<ProductInfoListBean> mDoubleRightList = new ArrayList<>();
-    private List<HomeNewUserEntity.HomeNewUserBean> mNewUserGoodsList = new ArrayList<>();
+    private List<ProductInfoListBean> mDynamicGoodsList = new ArrayList<>();
     private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeAllList = new ArrayList<>();
@@ -164,6 +176,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private HomeArticleNewAdapter homeArticleAdapter;
     private CommunalArticleEntity mCommunalArticleEntity;
     private int page = 1;
+    private HomeDynamicEntity mHomeDynamicEntity;
 
     @Override
     protected int getContentView() {
@@ -199,7 +212,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_fifteen_white)
                 .create();
         mRvNewGoods.addItemDecoration(itemDecoration);
-        mHomeNewUserAdapter = new HomeNewUserAdapter(getActivity(), mNewUserGoodsList);
+        mHomeNewUserAdapter = new HomeNewUserAdapter(getActivity(), mDynamicGoodsList);
         mHomeNewUserAdapter.setOnItemClickListener((adapter, view, position) -> {
             //跳转商品详情
         });
@@ -418,7 +431,7 @@ public class HomeDefalutFragment extends BaseFragment {
         });
     }
 
-    //新人专享专区
+    //动态专区(新人专享)
     private void getNewUserGoods() {
         HashMap<String, Object> map = new HashMap<>();
         map.put("source", 1);
@@ -426,28 +439,29 @@ public class HomeDefalutFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                HomeNewUserEntity homeTypeEntity = gson.fromJson(result, HomeNewUserEntity.class);
-                if (homeTypeEntity != null) {
-                    GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, homeTypeEntity.getCover());
-                    mTvTitle.setText(getStrings(homeTypeEntity.getTitle()));
-                    mTvDesc.setText(getStrings(homeTypeEntity.getDesc()));
-                    List<HomeNewUserEntity.HomeNewUserBean> homeNewUserGoods = homeTypeEntity.getHomeNewUserGoods();
-                    if (homeNewUserGoods != null && homeNewUserGoods.size() > 0) {
-                        mLlNewUser.setVisibility(View.VISIBLE);
-                        mNewUserGoodsList.clear();
-                        for (int i = 0; i < (homeNewUserGoods.size() > 2 ? 2 : 1); i++) {
-                            mNewUserGoodsList.add(homeNewUserGoods.get(i));
+                mHomeDynamicEntity = gson.fromJson(result, HomeDynamicEntity.class);
+                if (mHomeDynamicEntity != null) {
+                    GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, mHomeDynamicEntity.getCover());
+                    mTvDynamicTitle.setText(getStrings(mHomeDynamicEntity.getTitle()));
+                    mTvDynamicDesc.setText(getStrings(mHomeDynamicEntity.getDescription()));
+                    List<ProductInfoListBean> productInfoList = mHomeDynamicEntity.getProductInfoList();
+                    if (productInfoList != null && productInfoList.size() > 0) {
+                        mDynamicGoodsList.clear();
+                        for (int i = 0; i < (productInfoList.size() > 2 ? 2 : 1); i++) {
+                            mDynamicGoodsList.add(productInfoList.get(i));
                         }
                         mHomeNewUserAdapter.notifyDataSetChanged();
                     }
-                    mLlNewUser.setVisibility(mNewUserGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
 
+                    mLlDynamic.setVisibility(mDynamicGoodsList.size() > 0 && "1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
                 }
             }
 
             @Override
             public void onNotNetOrException() {
-                mLlNewUser.setVisibility(mNewUserGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+                if (mHomeDynamicEntity != null) {
+                    mLlDynamic.setVisibility(mDynamicGoodsList.size() > 0 && "1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
+                }
             }
         });
     }
@@ -664,5 +678,19 @@ public class HomeDefalutFragment extends BaseFragment {
 
                 break;
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

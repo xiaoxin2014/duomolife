@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.homepage.bean.HomeNewUserEntity.HomeNewUserBean;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity.ProductInfoListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -18,18 +18,18 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * Version:v4.0.0
  * ClassDescription :
  */
-public class HomeNewUserAdapter extends BaseQuickAdapter<HomeNewUserBean, BaseViewHolder> {
+public class HomeNewUserAdapter extends BaseQuickAdapter<ProductInfoListBean, BaseViewHolder> {
 
     private final Context mContext;
 
-    public HomeNewUserAdapter(Context context, @Nullable List<HomeNewUserBean> data) {
+    public HomeNewUserAdapter(Context context, @Nullable List<ProductInfoListBean> data) {
         super(R.layout.item_home_new_user_goods, data);
         mContext = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, HomeNewUserBean item) {
-        GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), item.getPic());
+    protected void convert(BaseViewHolder helper, ProductInfoListBean item) {
+        GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), item.getImg());
         helper.setText(R.id.tv_goods_price, "¥" + getStrings(item.getPrice()));
         helper.itemView.setTag(item);
     }
