@@ -157,6 +157,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 }
             });
         } else {
+            showToast(context, R.string.unConnectedNetwork);
             if (netLoadListener != null) {
                 netLoadListener.onNotNetOrException();
                 netLoadListener.netClose();
@@ -211,6 +212,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 }
             });
         } else {
+            showToast(context, R.string.unConnectedNetwork);
             if (netLoadListener != null) {
                 netLoadListener.onNotNetOrException();
                 netLoadListener.netClose();

@@ -2,6 +2,11 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
@@ -25,14 +30,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 public class HomeTopAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHolder> {
     private final List<HomeCommonBean> communalADActivityBeanList;
     private Context context;
-    private final int screenWidth;
 
     public HomeTopAdapter(Context context, List<HomeCommonBean> homeTopBeanList) {
         super(R.layout.item_home_top, homeTopBeanList);
         this.context = context;
         this.communalADActivityBeanList = homeTopBeanList;
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenWidth = app.getScreenWidth();
     }
 
     @Override
@@ -44,25 +46,25 @@ public class HomeTopAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHol
             holder.setText(R.id.tv_bubble, homeTopBean.getDescription());
         }
 
-        holder.itemView.setTag(homeTopBean);
-    }
+        View itemView = holder.itemView;
+        itemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                int width = (screenWidth / communalADActivityBeanList.size());
+                ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+                layoutParams.width = width;
+                itemView.setLayoutParams(layoutParams);
 
-//    public class HotViewHolderHelper extends BaseViewHolder {
-//        LinearLayout ll_hot_layout;
-//
-//        public HotViewHolderHelper(View view) {
-//            super(view);
-//            ll_hot_layout = view.findViewById(R.id.ll_hot_layout);
-//            ll_hot_layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//                @Override
-//                public void onGlobalLayout() {
-//                    ll_hot_layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                    int width = (screenWidth / (communalADActivityBeanList.size() > 5 ? 5 : communalADActivityBeanList.size()) + 1);
-//                    ViewGroup.LayoutParams layoutParams = ll_hot_layout.getLayoutParams();
-//                    layoutParams.width = width;
-//                    ll_hot_layout.setLayoutParams(layoutParams);
-//                }
-//            });
-//        }
-//    }
+                TextView tvBubble = holder.getView(R.id.tv_bubble);
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.getView(R.id.tv_bubble).getLayoutParams();
+                lp.rightMargin = width / 2 - AutoSizeUtils.mm2px(mContext, 70);
+                tvBubble.setLayoutParams(lp);
+            }
+        });
+
+
+        itemView.setTag(homeTopBean);
+    }
 }

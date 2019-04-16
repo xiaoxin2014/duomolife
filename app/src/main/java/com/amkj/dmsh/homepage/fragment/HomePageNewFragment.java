@@ -77,8 +77,6 @@ public class HomePageNewFragment extends BaseFragment {
     private Badge badgeCart;
     private Badge badgeMsg;
     private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
-    private List<String> titleList = new ArrayList<>();
-    private HomeCommonEntity mHomeNavbarEntity;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity"};
 

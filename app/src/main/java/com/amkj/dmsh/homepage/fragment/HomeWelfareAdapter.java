@@ -3,7 +3,7 @@ package com.amkj.dmsh.homepage.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,7 +17,6 @@ import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean.GoodsBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
@@ -25,6 +24,8 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
@@ -36,38 +37,35 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 public class HomeWelfareAdapter extends BaseQuickAdapter<HomeWelfareBean, BaseViewHolder> {
 
     private final Context mContext;
+    private final int mWidth;
 
     public HomeWelfareAdapter(Context context, @Nullable List<HomeWelfareBean> data) {
         super(R.layout.item_home_walfare, data);
         mContext = context;
+        int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+        mWidth = (screenWidth / 5 * 4);
     }
 
     @Override
     protected void convert(BaseViewHolder helper, HomeWelfareBean item) {
         GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), 10);
         helper.setText(R.id.tv_topic_name, item.getTitle())
-                .addOnClickListener(R.id.iv_welfare_cover);
+                .addOnClickListener(R.id.iv_welfare_cover).setTag(R.id.iv_welfare_cover, R.id.iv_tag, item);
 //        helper.setText(R.id.tv_topic_desc, item.get());
         RecyclerView rvTopicGoods = helper.getView(R.id.rv_topic_goods);
         View itemView = helper.itemView;
+        //动态设置福利社主题Item宽度
         itemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
-                int width = (screenWidth / 5 * 4);
                 ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-                layoutParams.width = width;
+                layoutParams.width = mWidth;
                 itemView.setLayoutParams(layoutParams);
             }
         });
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 3);
-        rvTopicGoods.setLayoutManager(gridLayoutManager);
-        ItemDecoration itemDecorationRight = new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp_red)
-                .create();
-        rvTopicGoods.addItemDecoration(itemDecorationRight);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        rvTopicGoods.setLayoutManager(linearLayoutManager);
         List<GoodsBean> goods = item.getGoods();
         List<GoodsBean> newGoods = new ArrayList<>();
         //最多显示三个
@@ -75,11 +73,12 @@ public class HomeWelfareAdapter extends BaseQuickAdapter<HomeWelfareBean, BaseVi
             newGoods.add(goods.get(i));
         }
 
+        //初始化福利社商品适配器
         BaseQuickAdapter topicGoodsAdapter = new BaseQuickAdapter<GoodsBean, BaseViewHolder>(R.layout.item_welfear_goods, newGoods) {
             @Override
             protected void convert(BaseViewHolder helper, GoodsBean goodsBean) {
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsBean.getPicUrl());
-                helper.setText(R.id.tv_price, goodsBean.getPrice());
+                helper.setText(R.id.tv_price, "¥" + goodsBean.getPrice());
                 FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
                 if (!TextUtils.isEmpty(goodsBean.getActivityTag()) || (goodsBean.getMarketLabelList() != null
                         && goodsBean.getMarketLabelList().size() > 0)) {
@@ -99,17 +98,29 @@ public class HomeWelfareAdapter extends BaseQuickAdapter<HomeWelfareBean, BaseVi
                 } else {
                     fbl_label.setVisibility(View.GONE);
                 }
-                helper.itemView.setTag(goodsBean);
+
+                View childItemView = helper.itemView;
+                //动态设置商品宽度
+                childItemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        childItemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ViewGroup.LayoutParams layoutParams = childItemView.getLayoutParams();
+                        layoutParams.width = (mWidth - AutoSizeUtils.mm2px(mContext, 10) * 4) / newGoods.size();
+                        childItemView.setLayoutParams(layoutParams);
+                    }
+                });
+                childItemView.setTag(goodsBean);
             }
         };
         topicGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
             GoodsBean goodsBean = (GoodsBean) view.getTag();
             Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
-            intent.putExtra("productId", goodsBean.getId());
+            intent.putExtra("productId", String.valueOf(goodsBean.getId()));
             mContext.startActivity(intent);
         });
         rvTopicGoods.setAdapter(topicGoodsAdapter);
 
-        helper.itemView.setTag(item);
+        itemView.setTag(item);
     }
 }

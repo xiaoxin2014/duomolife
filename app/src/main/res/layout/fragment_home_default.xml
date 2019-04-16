@@ -8,11 +8,12 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
             <com.bigkoo.convenientbanner.ConvenientBanner
@@ -27,18 +28,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:paddingLeft="@dimen/sc_mm_13"
                 android:paddingTop="@dimen/sc_mm_30"
-                android:paddingRight="@dimen/sc_mm_13"
-                android:paddingBottom="@dimen/sc_mm_40"
-                android:visibility="gone"/>
+                android:paddingBottom="@dimen/sc_mm_40"/>
 
             <LinearLayout
                 android:id="@+id/ll_new_user"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_454"
                 android:background="@color/bg_red_ffae"
-                android:padding="@dimen/sc_mm_29">
+                android:padding="@dimen/sc_mm_29"
+                android:visibility="gone">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -103,7 +102,8 @@
                     android:background="@color/white"
                     android:orientation="vertical"
                     android:paddingTop="@dimen/sc_mm_54"
-                    android:paddingBottom="@dimen/sc_mm_54">
+                    android:paddingBottom="@dimen/sc_mm_54"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tv_double_left"
@@ -133,7 +133,8 @@
                     android:background="@color/white"
                     android:orientation="vertical"
                     android:paddingTop="@dimen/sc_mm_54"
-                    android:paddingBottom="@dimen/sc_mm_54">
+                    android:paddingBottom="@dimen/sc_mm_54"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tv_double_right"
@@ -158,19 +159,21 @@
                 android:background="@color/light_gray_f"/>
 
             <LinearLayout
+                android:id="@+id/ll_felware"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="@dimen/sc_mm_45"
+                android:paddingBottom="@dimen/sc_mm_22"
+                android:visibility="gone">
 
                 <RelativeLayout
-                    android:id="@+id/rl_felware"
+                    android:id="@+id/rl_more_welfare_topic"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/sc_mm_30"
-                    android:paddingTop="@dimen/sc_mm_45"
-                    android:paddingBottom="@dimen/sc_mm_36">
+                    android:paddingLeft="@dimen/sc_mm_30">
 
                     <TextView
                         android:id="@+id/tv_welfare_title"
@@ -191,7 +194,6 @@
                         android:textSize="@dimen/sc_mm_26"/>
 
                     <TextView
-                        android:id="@+id/tv_more_topic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -210,21 +212,23 @@
                     android:layout_marginTop="@dimen/sc_mm_26"
                     android:background="@color/white"
                     android:scrollbars="none"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_20"
+                    android:background="@color/light_gray_f"/>
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_20"
-                android:background="@color/light_gray_f"/>
-
             <LinearLayout
+                android:id="@+id/ll_nice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/light_gray_f"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <RelativeLayout
-                    android:id="@+id/rl_nice"
+                    android:id="@+id/rl_more_nice_topic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
@@ -237,7 +241,7 @@
                         android:id="@+id/tv_nice_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="精选专题"
+                        android:text="优选好物"
                         android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_32"/>
 
@@ -247,12 +251,11 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_nice_title"
                         android:layout_marginTop="@dimen/sc_mm_12"
-                        android:text="想你所想，生活幸福感添加剂~"
+                        android:text="多妈团队甄选的全球好货"
                         android:textColor="@color/text_login_gray_s"
                         android:textSize="@dimen/sc_mm_26"/>
 
                     <TextView
-                        android:id="@+id/tv_more_nice_topic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -275,6 +278,91 @@
                     android:background="@color/light_gray_f"
                     android:paddingBottom="@dimen/sc_mm_10"
                     android:scrollbars="none"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_118"
+                    android:background="@color/white"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_more_nice_topic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/black_next_icon"
+                        android:drawablePadding="@dimen/sc_mm_12"
+                        android:text="查看更多"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="@dimen/sc_mm_28"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_20"
+                    android:background="@color/light_gray_f"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/ll_artical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_more_artical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/sc_mm_54"
+                    android:paddingRight="@dimen/sc_mm_28"
+                    android:paddingBottom="@dimen/sc_mm_12">
+
+                    <TextView
+                        android:id="@+id/tv_artical_topic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="种草特辑"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="@dimen/sc_mm_5"
+                        android:drawableRight="@drawable/black_next_icon"
+                        android:drawablePadding="@dimen/sc_mm_12"
+                        android:text="更多"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_24"/>
+                </RelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_artical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingRight="@dimen/sc_mm_20"
+                    android:scrollbars="none"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_118"
+                    android:background="@color/white"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_refresh_artical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/web_refresh"
+                        android:drawablePadding="@dimen/sc_mm_20"
+                        android:text="换一批"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="@dimen/sc_mm_28"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

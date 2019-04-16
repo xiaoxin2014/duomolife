@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:layout_marginLeft="@dimen/sc_mm_10"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_180"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_goods_pic"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/sc_mm_180"
         android:layout_height="@dimen/sc_mm_180"
         android:scaleType="centerCrop"/>
 
@@ -26,7 +27,6 @@
         android:id="@+id/tv_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_15"
         android:layout_marginTop="@dimen/sc_mm_12"
         android:layout_marginBottom="@dimen/sc_mm_4"
         android:text="@string/defaul"
