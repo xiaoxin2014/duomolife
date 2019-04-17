@@ -21,19 +21,19 @@ import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
+import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
 import com.amkj.dmsh.dominant.adapter.HomeProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
+import com.amkj.dmsh.homepage.activity.QualityGoodActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeDoubleAdapter;
-import com.amkj.dmsh.homepage.adapter.HomeNewUserAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeTopAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
@@ -76,6 +76,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.CATE_DOC_LIST;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_TOP;
@@ -157,6 +160,14 @@ public class HomeDefalutFragment extends BaseFragment {
     Unbinder unbinder;
     @BindView(R.id.rv_product)
     RecyclerView mRvProduct;
+    @BindView(R.id.iv_dynamic_cover_left)
+    ImageView mIvDynamicCoverLeft;
+    @BindView(R.id.tv_dynamic_price_left)
+    TextView mTvDynamicPriceLeft;
+    @BindView(R.id.iv_dynamic_cover_right)
+    ImageView mIvDynamicCoverRight;
+    @BindView(R.id.tv_dynamic_priceright)
+    TextView mTvDynamicPriceright;
     private boolean isUpdateCache;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -171,7 +182,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<QualityTypeBean> qualityTypeList = new ArrayList<>();
     private List<UserLikedProductEntity> mProductList = new ArrayList<>();
     private HomeTopAdapter mHomeTopAdapter;
-    private HomeNewUserAdapter mHomeNewUserAdapter;
+    //    private HomeNewUserAdapter mHomeNewUserAdapter;
     private HomeWelfareAdapter mHomeWelfareAdapter;
     private HomeDoubleAdapter mDoubleLeftAdapter;
     private HomeDoubleAdapter mDoubleRightAdapter;
@@ -213,28 +224,6 @@ public class HomeDefalutFragment extends BaseFragment {
                 setSkipPath(getActivity(), homeCommonBean.getLink(), false);
             }
         });
-
-        //初始化新人专享适配器
-        GridLayoutManager newUserManager = new GridLayoutManager(getActivity()
-                , 2);
-        mRvNewGoods.setLayoutManager(newUserManager);
-        ItemDecoration itemDecoration = new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_fifteen_white)
-                .create();
-        mRvNewGoods.addItemDecoration(itemDecoration);
-        mHomeNewUserAdapter = new HomeNewUserAdapter(getActivity(), mDynamicGoodsList);
-        mHomeNewUserAdapter.setOnItemClickListener((adapter, view, position) -> {
-            //跳转商品详情
-        });
-        mIvCover.setOnClickListener(view -> {
-            //跳转新人专区
-            Intent intent = new Intent(getActivity(), QualityNewUserActivity.class);
-            if (getActivity() != null) {
-                getActivity().startActivity(intent);
-            }
-        });
-        mRvNewGoods.setAdapter(mHomeNewUserAdapter);
 
         //初始化Double专区左边适配器
         GridLayoutManager gridLeftManager = new GridLayoutManager(getActivity()
@@ -280,7 +269,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 HomeWelfareBean homeWelfareBean = (HomeWelfareBean) view.getTag(R.id.iv_tag);
                 Intent intent = new Intent(getActivity(), DoMoLifeWelfareDetailsActivity.class);
                 intent.putExtra("welfareId", String.valueOf(homeWelfareBean.getId()));
-                getActivity().startActivity(intent);
+                startActivity(intent);
             }
         });
         mRvFelware.setAdapter(mHomeWelfareAdapter);
@@ -359,10 +348,21 @@ public class HomeDefalutFragment extends BaseFragment {
         //获取首页分类商品适配器
         LinearLayoutManager productManager = new LinearLayoutManager(getActivity());
         mRvProduct.setLayoutManager(productManager);
+        mRvProduct.setNestedScrollingEnabled(false);
         mHomeProductAdapter = new HomeProductAdapter(getActivity(), mProductList);
         mRvProduct.setAdapter(mHomeProductAdapter);
         mHomeProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-
+            if (view.getId() == R.id.rl_more_product) {
+                UserLikedProductEntity entity = (UserLikedProductEntity) view.getTag();
+                Intent intent = new Intent(getActivity(), QualityTypeProductActivity.class);
+                intent.putExtra(CATEGORY_NAME, entity.getCatergoryName());
+                intent.putExtra(CATEGORY_ID, entity.getId());
+                intent.putExtra(CATEGORY_TYPE, entity.getType());
+                startActivity(intent);
+            } else if (view.getId() == R.id.iv_ad) {
+                UserLikedProductEntity entity = (UserLikedProductEntity) view.getTag(R.id.iv_tag);
+                setSkipPath(getActivity(), entity.getAdLink(), false);
+            }
         });
 
         mHomeProductAdapter.setOnLoadMoreListener(() -> {
@@ -372,7 +372,6 @@ public class HomeDefalutFragment extends BaseFragment {
             } else {
                 mHomeProductAdapter.loadMoreEnd();
             }
-
         }, mRvProduct);
     }
 
@@ -477,21 +476,24 @@ public class HomeDefalutFragment extends BaseFragment {
                     mTvDynamicDesc.setText(getStrings(mHomeDynamicEntity.getDescription()));
                     List<ProductInfoListBean> productInfoList = mHomeDynamicEntity.getProductInfoList();
                     if (productInfoList != null && productInfoList.size() > 0) {
-                        mDynamicGoodsList.clear();
-                        for (int i = 0; i < (productInfoList.size() >= 2 ? 2 : 1); i++) {
-                            mDynamicGoodsList.add(productInfoList.get(i));
+                        ProductInfoListBean productInfoListBean = productInfoList.get(0);
+                        GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverLeft, productInfoListBean.getCover());
+                        mTvDynamicPriceLeft.setText("¥" + productInfoListBean.getPrice());
+                        if (productInfoList.size() > 1) {
+                            productInfoListBean = productInfoList.get(1);
+                            GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverRight, productInfoListBean.getCover());
+                            mTvDynamicPriceright.setText("¥" + productInfoListBean.getPrice());
                         }
-                        mHomeNewUserAdapter.notifyDataSetChanged();
                     }
 
-                    mLlDynamic.setVisibility(mDynamicGoodsList.size() > 0 && "1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
+                    mLlDynamic.setVisibility("1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
                 }
             }
 
             @Override
             public void onNotNetOrException() {
                 if (mHomeDynamicEntity != null) {
-                    mLlDynamic.setVisibility(mDynamicGoodsList.size() > 0 && "1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
+                    mLlDynamic.setVisibility("1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
                 }
             }
         });
@@ -715,6 +717,9 @@ public class HomeDefalutFragment extends BaseFragment {
                         String code = mUserLikedProductEntity.getCode();
                         if (mUserLikedProductEntity != null) {
                             mUserLikedProductEntity.setCatergoryName(qualityTypeBean.getName());
+                            mUserLikedProductEntity.setId(String.valueOf(qualityTypeBean.getId()));
+                            mUserLikedProductEntity.setPid(String.valueOf(qualityTypeBean.getPid()));
+                            mUserLikedProductEntity.setType(String.valueOf(qualityTypeBean.getType()));
                             List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getLikedProductBeanList();
                             if (qualityTypeBean.getAd() != null) {
                                 QualityTypeBean.AdBean ad = qualityTypeBean.getAd();
@@ -722,14 +727,14 @@ public class HomeDefalutFragment extends BaseFragment {
                                 mUserLikedProductEntity.setAdLink(ad.getAndroid());
                             }
 
-                            if (likedProductBeanList != null || likedProductBeanList.size() > 0) {
+                            if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
                                 if (catergoryPage == 0) {
                                     mProductList.clear();
                                 }
                                 mProductList.add(mUserLikedProductEntity);
                                 mHomeProductAdapter.notifyDataSetChanged();
                                 mHomeProductAdapter.loadMoreComplete();
-                            }else if (ConstantVariable.EMPTY_CODE.equals(code)){
+                            } else {
                                 mHomeProductAdapter.loadMoreFail();
                             }
                         }
@@ -753,25 +758,26 @@ public class HomeDefalutFragment extends BaseFragment {
 
     }
 
-    @OnClick({R.id.rl_more_welfare_topic, R.id.rl_more_nice_topic, R.id.tv_more_nice_topic, R.id.rl_more_artical, R.id.tv_refresh_artical})
+    @OnClick({R.id.rl_more_welfare_topic, R.id.rl_more_nice_topic, R.id.tv_more_nice_topic, R.id.rl_more_artical, R.id.tv_refresh_artical, R.id.ll_dynamic})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
             //跳转福利社列表
             case R.id.rl_more_welfare_topic:
                 intent = new Intent(getActivity(), DoMoLifeWelfareActivity.class);
-                if (getActivity() != null) getActivity().startActivity(intent);
+                if (getActivity() != null) startActivity(intent);
                 break;
             //跳转好物列表
             case R.id.rl_more_nice_topic:
             case R.id.tv_more_nice_topic:
-
+                intent = new Intent(getActivity(), QualityGoodActivity.class);
+                if (getActivity() != null) startActivity(intent);
                 break;
             //跳转文章列表
             case R.id.rl_more_artical:
                 intent = new Intent(getActivity(), ArticleTypeActivity.class);
                 intent.putExtra("categoryTitle", "种草特辑");
-                if (getActivity() != null) getActivity().startActivity(intent);
+                if (getActivity() != null) startActivity(intent);
                 break;
             //换一批文章
             case R.id.tv_refresh_artical:
@@ -786,6 +792,13 @@ public class HomeDefalutFragment extends BaseFragment {
                     getArticleTypeList(true);
                 }
 
+                break;
+            case R.id.ll_dynamic:
+                //跳转新人专区
+                intent = new Intent(getActivity(), QualityNewUserActivity.class);
+                if (getActivity() != null) {
+                    startActivity(intent);
+                }
                 break;
         }
     }

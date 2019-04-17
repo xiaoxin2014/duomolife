@@ -5,6 +5,7 @@
               android:orientation="vertical">
 
     <RelativeLayout
+        android:layout_marginBottom="@dimen/sc_mm_42"
         android:id="@+id/rl_more_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,6 +41,8 @@
         android:scaleType="centerCrop"/>
 
     <android.support.v7.widget.RecyclerView
+        android:paddingTop="@dimen/sc_mm_10"
+        android:paddingBottom="@dimen/sc_mm_10"
         android:id="@+id/rv_catergory_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

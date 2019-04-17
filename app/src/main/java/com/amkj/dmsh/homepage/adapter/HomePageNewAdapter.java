@@ -45,6 +45,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
 //            int prefixLength = link.indexOf(prefix) + prefix.length();
 //            action = link.substring(prefixLength, link.length()).trim();
 //        }
+
         switch (link) {
             case "app://HomeDefalutFragment"://良品优选
                 return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);

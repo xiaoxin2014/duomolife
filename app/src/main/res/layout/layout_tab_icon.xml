@@ -16,10 +16,9 @@
 
     <ImageView
         android:id="@+id/iv_tab_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/sc_mm_150"
+        android:layout_height="@dimen/sc_mm_36"
         android:layout_centerInParent="true"
-        android:gravity="center"
         android:singleLine="true"
         android:visibility="gone"/>
 

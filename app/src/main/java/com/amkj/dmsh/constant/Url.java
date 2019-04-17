@@ -215,7 +215,7 @@ public class Url {
     //    Top栏
     public static final String GTE_HOME_TOP = "api/appindex/getAppIndexActivityZoneList";
     //    动态专区（新人专享）
-    public static final String GTE_NEW_USER_GOODS = "/api/appindex/getAppIndexDynamicArea";
+    public static final String GTE_NEW_USER_GOODS = "api/appindex/getAppIndexDynamicArea";
     //    获取并排专区
     public static final String GTE_HOME_DOUBLE = "api/appindex/getAppIndexSpecialZoneList";
 

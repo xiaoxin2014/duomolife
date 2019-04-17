@@ -31,6 +31,12 @@ public class UserLikedProductEntity extends BaseEntity {
     private String activityDesc;
     //商品分类名称
     private String catergoryName;
+    //商品分类pid
+    private String pid;
+    //商品分类id
+    private String id;
+    //商品分类type
+    private String type;
     //跟分类绑定的广告位
     private String adCover;
     //广告位跳转链接
@@ -61,6 +67,30 @@ public class UserLikedProductEntity extends BaseEntity {
 
     public void setCatergoryName(String catergoryName) {
         this.catergoryName = catergoryName;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getAdCover() {

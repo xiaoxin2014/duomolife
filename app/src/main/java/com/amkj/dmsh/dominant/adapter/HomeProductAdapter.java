@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.bean.HomeWelfareEntity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -31,7 +30,6 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 public class HomeProductAdapter extends BaseQuickAdapter<UserLikedProductEntity, BaseViewHolder> {
     private final Context context;
-    private boolean isFist = true;
 
     public HomeProductAdapter(Context context, List<UserLikedProductEntity> productList) {
         super(R.layout.item_home_catergory, productList);
@@ -42,20 +40,25 @@ public class HomeProductAdapter extends BaseQuickAdapter<UserLikedProductEntity,
     protected void convert(BaseViewHolder helper, UserLikedProductEntity userLikedProductEntity) {
         if (userLikedProductEntity == null) return;
         helper.setText(R.id.tv_catergory_name, userLikedProductEntity.getCatergoryName())
-                .setGone(R.id.iv_ad, TextUtils.isEmpty(userLikedProductEntity.getAdCover()));
-        GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_ad), userLikedProductEntity.getAdCover());
+                .addOnClickListener(R.id.rl_more_product).setTag(R.id.rl_more_product, userLikedProductEntity)
+                .addOnClickListener(R.id.iv_ad).setTag(R.id.iv_ad, R.id.iv_tag, userLikedProductEntity);
+
+        helper.getView(R.id.iv_ad).setVisibility(TextUtils.isEmpty(userLikedProductEntity.getAdCover()) ? View.GONE : View.VISIBLE);
+        if (!TextUtils.isEmpty(userLikedProductEntity.getAdCover())) {
+            GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_ad), userLikedProductEntity.getAdCover());
+        }
         RecyclerView rvGoods = helper.getView(R.id.rv_catergory_goods);
         //初始化新人专享适配器
         GridLayoutManager newUserManager = new GridLayoutManager(mContext
                 , 3);
         rvGoods.setLayoutManager(newUserManager);
-        if (isFist) {
+        if (rvGoods.getTag() == null) {
             ItemDecoration itemDecoration = new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f)
                     .create();
             rvGoods.addItemDecoration(itemDecoration);
-            isFist = false;
+            rvGoods.setTag(userLikedProductEntity);
         }
         rvGoods.setNestedScrollingEnabled(false);
         BaseQuickAdapter baseQuickAdapter = new BaseQuickAdapter<LikedProductBean, BaseViewHolder>(R.layout.item_home_catergory_goods, userLikedProductEntity.getLikedProductBeanList()) {
@@ -99,7 +102,7 @@ public class HomeProductAdapter extends BaseQuickAdapter<UserLikedProductEntity,
             }
         };
         baseQuickAdapter.setOnItemClickListener((adapter, view, position) -> {
-            HomeWelfareEntity.HomeWelfareBean.GoodsBean goodsBean = (HomeWelfareEntity.HomeWelfareBean.GoodsBean) view.getTag();
+            LikedProductBean goodsBean = (LikedProductBean) view.getTag();
             Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
             intent.putExtra("productId", String.valueOf(goodsBean.getId()));
             mContext.startActivity(intent);

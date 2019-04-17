@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -177,7 +178,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         mTextsize = ta.getDimension(R.styleable.SlidingTabLayout_tl_textsize, sp2px(14));
         mTextSelectColor = ta.getColor(R.styleable.SlidingTabLayout_tl_textSelectColor, Color.parseColor("#ffffff"));
         mTextUnselectColor = ta.getColor(R.styleable.SlidingTabLayout_tl_textUnselectColor, Color.parseColor("#AAffffff"));
-        mTextBold = ta.getInt(R.styleable.SlidingTabLayout_tl_textBold, TEXT_BOLD_NONE);
+        mTextBold = ta.getInt(R.styleable.SlidingTabLayout_tl_textBold, TEXT_BOLD_WHEN_SELECT);
         mTextAllCaps = ta.getBoolean(R.styleable.SlidingTabLayout_tl_textAllCaps, false);
 
         mTabSpaceEqual = ta.getBoolean(R.styleable.SlidingTabLayout_tl_tab_space_equal, false);
@@ -348,29 +349,36 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
             if (tv_tab_title != null && iv_tab_title != null) {
                 if ("1".equals(homeCommonBean.getShowType())) {
                     iv_tab_title.setVisibility(GONE);
-                    tv_tab_title.setVisibility(VISIBLE);
-                    if (TextUtils.isEmpty(homeCommonBean.getColor())) {
-                        tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
-                    } else {
-                        if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
-                            String textColor = homeCommonBean.getColor().trim();
-                            if (!homeCommonBean.getColor().startsWith("#")) {
-                                textColor = "#" + textColor;
-                            }
-                            tv_tab_title.setTextColor(Color.parseColor(textColor));
+//                    if (TextUtils.isEmpty(homeCommonBean.getColor())) {
+//                        tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
+//                    } else {
+                    if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
+                        String textColor = homeCommonBean.getColor().trim();
+                        if (!homeCommonBean.getColor().startsWith("#")) {
+                            textColor = "#" + textColor;
                         }
+                        tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : Color.parseColor(textColor));
                     }
+//                    }
                     tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
                     tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
                     if (mTextAllCaps) {
                         tv_tab_title.setText(tv_tab_title.getText().toString().toUpperCase());
                     }
-                    tv_tab_title.getPaint().setFakeBoldText(i == mCurrentTab);
+//                    tv_tab_title.getPaint().setFakeBoldText(i == mCurrentTab);
+                    tv_tab_title.setTypeface(Typeface.defaultFromStyle(i == mCurrentTab ? Typeface.BOLD : Typeface.NORMAL));
                 } else {
-                    tv_tab_title.setVisibility(GONE);
+                    tv_tab_title.setText("-----------");
+                    tv_tab_title.setTextColor(getResources().getColor(R.color.white));
                     iv_tab_title.setVisibility(VISIBLE);
                     GlideImageLoaderUtil.loadImage(mContext, iv_tab_title, homeCommonBean.getIcon());
                     iv_tab_title.setImageResource(R.drawable.duoma_select);
+                }
+
+                if (mTextBold == TEXT_BOLD_BOTH) {
+                    tv_tab_title.getPaint().setFakeBoldText(true);
+                } else if (mTextBold == TEXT_BOLD_NONE) {
+                    tv_tab_title.getPaint().setFakeBoldText(false);
                 }
             }
         }
@@ -382,18 +390,22 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
             final boolean isSelect = i == position;
             HomeCommonEntity.HomeCommonBean homeCommonBean = HomeNavbarList.get(i);
             TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
-            if (TextUtils.isEmpty(homeCommonBean.getColor())) {
-                tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
-            } else {
-                if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
-                    String textColor = homeCommonBean.getColor().trim();
-                    if (!homeCommonBean.getColor().startsWith("#")) {
-                        textColor = "#" + textColor;
-                    }
-                    tv_tab_title.setTextColor(Color.parseColor(textColor));
+//            if (TextUtils.isEmpty(homeCommonBean.getColor())) {
+//                tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
+//            } else {
+            if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
+                String textColor = homeCommonBean.getColor().trim();
+                if (!homeCommonBean.getColor().startsWith("#")) {
+                    textColor = "#" + textColor;
                 }
+                tv_tab_title.setTextColor(isSelect ? mTextSelectColor : Color.parseColor(textColor));
             }
-            tv_tab_title.getPaint().setFakeBoldText(isSelect);
+//            }
+//            tv_tab_title.getPaint().setFakeBoldText(isSelect);
+            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect? Typeface.BOLD : Typeface.NORMAL));
+            if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
+                tv_tab_title.getPaint().setFakeBoldText(isSelect);
+            }
         }
     }
 
