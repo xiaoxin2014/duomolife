@@ -29,18 +29,4 @@
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_24"/>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_bubble"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/sc_mm_20"
-        android:layout_marginRight="@dimen/sc_mm_20"
-        android:background="@drawable/shap_bubble_bg"
-        android:text="小气泡"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_18"
-        android:visibility="gone"/>
 </RelativeLayout>

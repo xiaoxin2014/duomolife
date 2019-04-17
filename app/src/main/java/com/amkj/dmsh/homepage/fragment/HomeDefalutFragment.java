@@ -21,6 +21,7 @@ import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
@@ -29,6 +30,7 @@ import com.amkj.dmsh.dominant.adapter.HomeProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeDoubleAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeNewUserAdapter;
@@ -155,7 +157,6 @@ public class HomeDefalutFragment extends BaseFragment {
     Unbinder unbinder;
     @BindView(R.id.rv_product)
     RecyclerView mRvProduct;
-    Unbinder unbinder1;
     private boolean isUpdateCache;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -181,7 +182,8 @@ public class HomeDefalutFragment extends BaseFragment {
     private HomeWelfareEntity mHomeWelfareEntity;
     private HomeArticleNewAdapter homeArticleAdapter;
     private CommunalArticleEntity mCommunalArticleEntity;
-    private int page = 1;
+    private int articalPage = 1;
+    private int catergoryPage = 0;
     private HomeDynamicEntity mHomeDynamicEntity;
     private UserLikedProductEntity mUserLikedProductEntity;
     private HomeProductAdapter mHomeProductAdapter;
@@ -195,7 +197,8 @@ public class HomeDefalutFragment extends BaseFragment {
     protected void initViews() {
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
-            page = 1;
+            articalPage = 1;
+            catergoryPage = 0;
             loadData();
         });
         //初始化Top适配器
@@ -358,6 +361,19 @@ public class HomeDefalutFragment extends BaseFragment {
         mRvProduct.setLayoutManager(productManager);
         mHomeProductAdapter = new HomeProductAdapter(getActivity(), mProductList);
         mRvProduct.setAdapter(mHomeProductAdapter);
+        mHomeProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+
+        });
+
+        mHomeProductAdapter.setOnLoadMoreListener(() -> {
+            catergoryPage++;
+            if (catergoryPage < qualityTypeList.size()) {
+                getProduct(catergoryPage);
+            } else {
+                mHomeProductAdapter.loadMoreEnd();
+            }
+
+        }, mRvProduct);
     }
 
     @Override
@@ -369,6 +385,7 @@ public class HomeDefalutFragment extends BaseFragment {
         getHomeDouble();
         getGoodsPro();
         getArticleTypeList(false);
+        getProductTypeList();
     }
 
     //获取Banner
@@ -572,7 +589,7 @@ public class HomeDefalutFragment extends BaseFragment {
     //获取好物商品
     private void getGoodsPro() {
         Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
+        params.put("currentPage", articalPage);
         /**
          * version 1 区分是否带入广告页
          */
@@ -619,7 +636,7 @@ public class HomeDefalutFragment extends BaseFragment {
             loadHud.show();
         }
         Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
+        params.put("currentPage", articalPage);
         params.put("shouCount", 10);
         if (userId > 0) {
             params.put("uid", userId);
@@ -651,7 +668,7 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     //获取商品分类集合
-    public void getQualityTypeList() {
+    public void getProductTypeList() {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -661,11 +678,7 @@ public class HomeDefalutFragment extends BaseFragment {
                     if (typeBeanList != null && typeBeanList.size() > 0) {
                         qualityTypeList.clear();
                         qualityTypeList.addAll(typeBeanList);
-
-                        for (int i = 0; i < (typeBeanList.size() >= 3 ? 3 : typeBeanList.size()); i++) {
-                            getQualityTypePro(typeBeanList.get(i));
-                            qualityTypeList.remove(typeBeanList.get(i));
-                        }
+                        getProduct(0);
                     }
                 }
             }
@@ -675,11 +688,15 @@ public class HomeDefalutFragment extends BaseFragment {
                 super.onNotNetOrException();
             }
         });
+
     }
 
-    private void getQualityTypePro(QualityTypeBean qualityTypeBean) {
+
+    //获取分类对应的商品
+    private void getProduct(int catergoryPage) {
+        QualityTypeBean qualityTypeBean = qualityTypeList.get(catergoryPage);
         Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
+        params.put("currentPage", 1);
         params.put("showCount", 6);
         if (!TextUtils.isEmpty(qualityTypeBean.getChildCategory())) {
             params.put("id", qualityTypeBean.getChildCategory());
@@ -695,23 +712,35 @@ public class HomeDefalutFragment extends BaseFragment {
                     public void onSuccess(String result) {
                         Gson gson = new Gson();
                         mUserLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        String code = mUserLikedProductEntity.getCode();
                         if (mUserLikedProductEntity != null) {
                             mUserLikedProductEntity.setCatergoryName(qualityTypeBean.getName());
+                            List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getLikedProductBeanList();
                             if (qualityTypeBean.getAd() != null) {
                                 QualityTypeBean.AdBean ad = qualityTypeBean.getAd();
-                                mUserLikedProductEntity.setAdCover(ad.getAndroid());
-                                mUserLikedProductEntity.setAdUrl(ad.getPicUrlX());
+                                mUserLikedProductEntity.setAdCover(ad.getPicUrlX());
+                                mUserLikedProductEntity.setAdLink(ad.getAndroid());
                             }
 
-                            mProductList.add(mUserLikedProductEntity);
-                            mHomeProductAdapter.notifyDataSetChanged();
+                            if (likedProductBeanList != null || likedProductBeanList.size() > 0) {
+                                if (catergoryPage == 0) {
+                                    mProductList.clear();
+                                }
+                                mProductList.add(mUserLikedProductEntity);
+                                mHomeProductAdapter.notifyDataSetChanged();
+                                mHomeProductAdapter.loadMoreComplete();
+                            }else if (ConstantVariable.EMPTY_CODE.equals(code)){
+                                mHomeProductAdapter.loadMoreFail();
+                            }
                         }
                     }
 
                     @Override
                     public void onNotNetOrException() {
+                        mHomeProductAdapter.loadMoreFail();
                     }
                 });
+
     }
 
     //设置文章列表数据并刷新
@@ -726,10 +755,11 @@ public class HomeDefalutFragment extends BaseFragment {
 
     @OnClick({R.id.rl_more_welfare_topic, R.id.rl_more_nice_topic, R.id.tv_more_nice_topic, R.id.rl_more_artical, R.id.tv_refresh_artical})
     public void onViewClicked(View view) {
+        Intent intent;
         switch (view.getId()) {
             //跳转福利社列表
             case R.id.rl_more_welfare_topic:
-                Intent intent = new Intent(getActivity(), DoMoLifeWelfareActivity.class);
+                intent = new Intent(getActivity(), DoMoLifeWelfareActivity.class);
                 if (getActivity() != null) getActivity().startActivity(intent);
                 break;
             //跳转好物列表
@@ -739,7 +769,9 @@ public class HomeDefalutFragment extends BaseFragment {
                 break;
             //跳转文章列表
             case R.id.rl_more_artical:
-
+                intent = new Intent(getActivity(), ArticleTypeActivity.class);
+                intent.putExtra("categoryTitle", "种草特辑");
+                if (getActivity() != null) getActivity().startActivity(intent);
                 break;
             //换一批文章
             case R.id.tv_refresh_artical:
@@ -747,7 +779,7 @@ public class HomeDefalutFragment extends BaseFragment {
                     setArticalData();
                 } else {
                     //加载下一页数据
-                    page++;
+                    articalPage++;
                     if (loadHud != null) {
                         loadHud.show();
                     }

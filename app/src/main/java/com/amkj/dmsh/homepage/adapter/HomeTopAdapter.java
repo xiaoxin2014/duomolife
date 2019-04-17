@@ -20,6 +20,7 @@ import java.util.List;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
@@ -39,7 +40,8 @@ public class HomeTopAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHol
 
     @Override
     protected void convert(BaseViewHolder holder, HomeCommonBean homeTopBean) {
-        GlideImageLoaderUtil.loadRoundImg(context, holder.getView(R.id.iv_icon), homeTopBean.getIcon(), AutoSizeUtils.mm2px(mContext, 45));
+        GlideImageLoaderUtil.loadRoundImg(context, holder.getView(R.id.iv_icon), homeTopBean.getIcon(), AutoSizeUtils.mm2px(
+                mAppContext, 45));
         holder.setText(R.id.tv_name, getStrings(homeTopBean.getName()));
         if (!TextUtils.isEmpty(homeTopBean.getDescription())) {
             holder.setVisible(R.id.tv_bubble, true);

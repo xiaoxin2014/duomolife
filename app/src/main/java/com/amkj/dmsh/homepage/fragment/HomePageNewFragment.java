@@ -132,7 +132,7 @@ public class HomePageNewFragment extends BaseFragment {
                             mGoodsNavbarList.addAll(goodsNavbarList);
                             //筛选数据，防止版本api数据不同，会有不支持的action
                             List<String> actionList = Arrays.asList(actionArrays);
-                            Iterator<HomeCommonEntity.HomeCommonBean> iterator = mGoodsNavbarList.iterator();
+                            Iterator<HomeCommonBean> iterator = mGoodsNavbarList.iterator();
                             while (iterator.hasNext()) {
                                 HomeCommonEntity.HomeCommonBean bean = iterator.next();
                                 if (!actionList.contains(bean.getLink())) {
@@ -255,8 +255,8 @@ public class HomePageNewFragment extends BaseFragment {
                 .statusBarDarkFont(true).init();
     }
 
-//    @Override
-//    protected boolean isAddLoad() {
-//        return true;
-//    }
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
 }

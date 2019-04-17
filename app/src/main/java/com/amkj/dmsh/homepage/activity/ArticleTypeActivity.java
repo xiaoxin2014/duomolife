@@ -232,7 +232,7 @@ public class ArticleTypeActivity extends BaseActivity {
         //文章id
         params.put("object_id", articleBean.getId());
         params.put("type", "document");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, null);
     }
 
     //  点赞
@@ -243,7 +243,7 @@ public class ArticleTypeActivity extends BaseActivity {
         //文章id
         params.put("id", articleBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
     }
 
     @Override
@@ -258,7 +258,9 @@ public class ArticleTypeActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        params.put("categoryid", categoryId);
+        if (!TextUtils.isEmpty(categoryId)) {
+            params.put("categoryid", categoryId);
+        }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, CATE_DOC_LIST
                 , params, new NetLoadListenerHelper() {
                     @Override
@@ -279,7 +281,7 @@ public class ArticleTypeActivity extends BaseActivity {
                                 }
                             } else if (categoryDocBean.getCode().equals(EMPTY_CODE)) {
                                 homeArticleAdapter.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(ArticleTypeActivity.this, categoryDocBean.getMsg());
                             }
                             homeArticleAdapter.notifyDataSetChanged();

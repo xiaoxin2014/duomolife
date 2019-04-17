@@ -34,7 +34,7 @@ public class UserLikedProductEntity extends BaseEntity {
     //跟分类绑定的广告位
     private String adCover;
     //广告位跳转链接
-    private String adUrl;
+    private String adLink;
 
 
     /**
@@ -71,12 +71,12 @@ public class UserLikedProductEntity extends BaseEntity {
         this.adCover = adCover;
     }
 
-    public String getAdUrl() {
-        return adUrl;
+    public String getAdLink() {
+        return adLink;
     }
 
-    public void setAdUrl(String adUrl) {
-        this.adUrl = adUrl;
+    public void setAdLink(String adLink) {
+        this.adLink = adLink;
     }
 
     public String getActivityDesc() {

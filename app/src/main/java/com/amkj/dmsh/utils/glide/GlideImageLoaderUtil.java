@@ -38,15 +38,14 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.FILE_IMAGE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
-import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.FILE_IMAGE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
-;
 
 /**
  * 图片加载工具类
@@ -54,6 +53,17 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * @author liangzx
  */
 public class GlideImageLoaderUtil {
+    // 加载圆形且带默认图标
+    public static void loadCircleImageUrl(Context context, ImageView imageView, String url) {
+        Glide.with(context)
+                .load(url)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.load_loading_image)
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .error(R.drawable.load_loading_image))
+                .into(imageView);
+    }
 
     /**
      * @param context
@@ -378,7 +388,7 @@ public class GlideImageLoaderUtil {
         if (null != context) {
             Observable.create(new ObservableOnSubscribe<Bitmap>() {
                 @Override
-                public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
+                public void subscribe(ObservableEmitter<Bitmap> emitter) {
                     RequestOptions requestOptions = new RequestOptions().centerCrop()
                             .placeholder(R.drawable.load_loading_image)
                             .skipMemoryCache(true);
@@ -442,21 +452,21 @@ public class GlideImageLoaderUtil {
     public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
         if (null != context) {
             // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
-            Map<String,Object> params = new HashMap<>();
-            params.put("imgUrl",imgUrl);
-            params.put("imgView",imageView);
-            Observable.create(new ObservableOnSubscribe<Map<String,Object>>() {
+            Map<String, Object> params = new HashMap<>();
+            params.put("imgUrl", imgUrl);
+            params.put("imgView", imageView);
+            Observable.create(new ObservableOnSubscribe<Map<String, Object>>() {
                 @Override
-                public void subscribe(ObservableEmitter<Map<String,Object>> emitter) throws Exception {
+                public void subscribe(ObservableEmitter<Map<String, Object>> emitter) {
                     int[] imageUrlWidthHeight = getImageUrlWidthHeight(imgUrl);
                     if (imageUrlWidthHeight.length < 2) {
                         imageUrlWidthHeight = new int[]{0, 0};
                     }
-                    params.put("imgSize",imageUrlWidthHeight);
+                    params.put("imgSize", imageUrlWidthHeight);
                     emitter.onNext(params);
                 }
             }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Map<String,Object>>() {
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Map<String, Object>>() {
                 Disposable disposable;
 
                 @Override
@@ -465,12 +475,12 @@ public class GlideImageLoaderUtil {
                 }
 
                 @Override
-                public void onNext(Map<String,Object> params) {
+                public void onNext(Map<String, Object> params) {
                     int imgWidth = Target.SIZE_ORIGINAL;
                     int imgHeight = Target.SIZE_ORIGINAL;
                     String imgUrlX = null;
                     ImageView imageViewX = null;
-                    int[] imageUrlWidthHeight = new int[]{imgWidth,imgHeight};
+                    int[] imageUrlWidthHeight = new int[]{imgWidth, imgHeight};
                     try {
                         imgUrlX = (String) params.get("imgUrl");
                         imageViewX = (ImageView) params.get("imgView");
@@ -483,7 +493,7 @@ public class GlideImageLoaderUtil {
                                 imgHeight = 3574;
                             }
                         }
-                        if (isContextExisted(context)&&imageViewX!=null) {
+                        if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).asDrawable().load(imgUrlX)
                                     .apply(new RequestOptions().dontAnimate()
                                             .error(R.drawable.load_loading_image)
@@ -491,7 +501,7 @@ public class GlideImageLoaderUtil {
                                     .into(imageViewX);
                         }
                     } catch (Exception e) {
-                        if (isContextExisted(context)&&imageViewX!=null) {
+                        if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).asDrawable().load(imgUrl)
                                     .apply(new RequestOptions().dontAnimate()
                                             .error(R.drawable.load_loading_image)
@@ -504,7 +514,7 @@ public class GlideImageLoaderUtil {
 
                 @Override
                 public void onError(Throwable e) {
-                    if(disposable!=null){
+                    if (disposable != null) {
                         disposable.dispose();
                     }
                 }
@@ -531,7 +541,7 @@ public class GlideImageLoaderUtil {
             params.put("imgView", imageView);
             Observable.create(new ObservableOnSubscribe<Map<String, Object>>() {
                 @Override
-                public void subscribe(ObservableEmitter<Map<String, Object>> emitter) throws Exception {
+                public void subscribe(ObservableEmitter<Map<String, Object>> emitter) {
                     int[] imageUrlWidthHeight = getImageUrlWidthHeight(imgUrl);
                     if (imageUrlWidthHeight.length < 2) {
                         imageUrlWidthHeight = new int[]{0, 0};
@@ -567,7 +577,7 @@ public class GlideImageLoaderUtil {
                                 imgHeight = 3574;
                             }
                         }
-                        if (isContextExisted(context)&&imageViewX!=null) {
+                        if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).load(imgUrlX)
                                     .apply(new RequestOptions()
                                             .error(R.drawable.load_loading_image)
@@ -578,7 +588,7 @@ public class GlideImageLoaderUtil {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        if (isContextExisted(context)&&imageViewX!=null) {
+                        if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).load(imgUrlX)
                                     .apply(new RequestOptions()
                                             .error(R.drawable.load_loading_image)
@@ -612,7 +622,7 @@ public class GlideImageLoaderUtil {
         if (null != context) {
             Observable.create(new ObservableOnSubscribe<File>() {
                 @Override
-                public void subscribe(ObservableEmitter<File> emitter) throws Exception {
+                public void subscribe(ObservableEmitter<File> emitter) {
                     Glide.with(context).download(originalImgUrl).apply(new RequestOptions().skipMemoryCache(true)
                             .diskCacheStrategy(DiskCacheStrategy.DATA)).listener(new RequestListener<File>() {
                         @Override
@@ -900,7 +910,7 @@ public class GlideImageLoaderUtil {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     if (imageLoaderListener != null) {
                         imageLoaderListener.onSuccess(new File(imageFilePath));
                     }
