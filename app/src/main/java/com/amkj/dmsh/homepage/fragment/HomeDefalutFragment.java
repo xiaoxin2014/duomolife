@@ -175,7 +175,6 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<HomeWelfareBean> mThemeList = new ArrayList<>();
     private List<ProductInfoListBean> mDoubleLeftList = new ArrayList<>();
     private List<ProductInfoListBean> mDoubleRightList = new ArrayList<>();
-    private List<ProductInfoListBean> mDynamicGoodsList = new ArrayList<>();
     private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeAllList = new ArrayList<>();

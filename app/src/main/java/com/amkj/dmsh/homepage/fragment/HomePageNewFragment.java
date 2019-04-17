@@ -27,9 +27,7 @@ import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +52,7 @@ import static com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 /**
  * Created by xiaoxin on 2019/4/12 0012
  * Version:v4.0.0
- * ClassDescription :
+ * ClassDescription :新版首页
  */
 public class HomePageNewFragment extends BaseFragment {
     @BindView(R.id.iv_message)
@@ -80,8 +78,6 @@ public class HomePageNewFragment extends BaseFragment {
     private Badge badgeCart;
     private Badge badgeMsg;
     private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
-    private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
-            "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity"};
     private HomeCommonEntity mHomeNavbarEntity;
 
 
@@ -121,24 +117,9 @@ public class HomePageNewFragment extends BaseFragment {
                     } else {
                         if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
                             mGoodsNavbarList.clear();
-//                            mGoodsNavbarList.add(new HomeCommonBean("1",
-//                                    "", "良品优选", "", "app://HomeDefalutFragment"));
-//                            mGoodsNavbarList.add(new HomeCommonBean("2",
-//                                    "http://image.domolife.cn/platform/zcr8wydBYQ1548667564114.png", "小编精选", "", "app://EditorSelectActivity"));
-//                            mGoodsNavbarList.add(new HomeCommonBean("1",
-//                                    "", "热销单品", "9977FE", "app://QualityTypeHotSaleProActivity"));
                             goodsNavbarList.get(0).setLink("app://HomeDefalutFragment");
                             goodsNavbarList.get(0).setName("良品优选");
                             mGoodsNavbarList.addAll(goodsNavbarList);
-                            //筛选数据，防止版本api数据不同，会有不支持的action
-                            List<String> actionList = Arrays.asList(actionArrays);
-                            Iterator<HomeCommonBean> iterator = mGoodsNavbarList.iterator();
-                            while (iterator.hasNext()) {
-                                HomeCommonEntity.HomeCommonBean bean = iterator.next();
-                                if (!actionList.contains(bean.getLink())) {
-                                    iterator.remove();
-                                }
-                            }
                             HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageNewFragment.this.getChildFragmentManager(), mGoodsNavbarList);
                             mVpHome.setAdapter(homePageNewAdapter);
                             mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);

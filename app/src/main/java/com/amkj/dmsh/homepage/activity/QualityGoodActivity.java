@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -54,7 +53,7 @@ import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 /**
  * Created by xiaoxin on 2019/4/17 0017
  * Version:v4.0.0
- * ClassDescription :
+ * ClassDescription :好物列表
  */
 public class QualityGoodActivity extends BaseActivity {
 
@@ -216,10 +215,9 @@ public class QualityGoodActivity extends BaseActivity {
                 });
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+
+    @OnClick(R.id.tv_life_back)
+    public void onViewClicked() {
+        finish();
     }
 }
