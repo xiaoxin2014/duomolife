@@ -17,9 +17,7 @@
         <ImageView
             android:id="@+id/iv_icon"
             android:layout_width="@dimen/sc_mm_90"
-            android:layout_height="@dimen/sc_mm_90"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"/>
+            android:layout_height="@dimen/sc_mm_90"/>
 
         <TextView
             android:id="@+id/tv_name"

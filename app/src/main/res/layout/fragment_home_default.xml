@@ -20,7 +20,7 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/cb_banner"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_403"
+                android:layout_height="@dimen/sc_mm_300"
                 app:canLoop="true"/>
 
             <android.support.v7.widget.RecyclerView
@@ -46,9 +46,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:clipChildren="false"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/sc_mm_45"
-                android:visibility="gone">
+                android:paddingTop="@dimen/sc_mm_45">
 
                 <RelativeLayout
                     android:id="@+id/rl_more_welfare_topic"
@@ -86,15 +86,17 @@
                         android:text="更多"/>
                 </RelativeLayout>
 
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_felware"
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vp_welfare"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/sc_mm_590"
+                    android:paddingLeft="@dimen/sc_mm_20"
                     android:layout_marginTop="@dimen/sc_mm_26"
+                    android:paddingRight="@dimen/sc_mm_130"
                     android:layout_marginBottom="@dimen/sc_mm_22"
                     android:background="@color/white"
-                    android:scrollbars="none"/>
+                    android:clipChildren="false"
+                    android:clipToPadding="false"/>
 
                 <include layout="@layout/view_decoration_20_gray"/>
             </LinearLayout>

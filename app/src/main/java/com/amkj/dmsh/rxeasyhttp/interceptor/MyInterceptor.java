@@ -75,7 +75,11 @@ public class MyInterceptor implements Interceptor {
         }
 
         //打印响应结果
-        httpLog(request, DomoJson, responseInfo);
+        try {
+            httpLog(request, DomoJson, responseInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return response;
     }
 
@@ -83,7 +87,7 @@ public class MyInterceptor implements Interceptor {
         return Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
     }
 
-    private void httpLog(Request request, String domoJson, String responseInfo) throws IOException {
+    private void httpLog(Request request, String domoJson, String responseInfo) {
         if (BuildConfig.DEBUG) {
 
             Log.d("retrofit", "----------Start-----------");
@@ -109,7 +113,6 @@ public class MyInterceptor implements Interceptor {
             Log.d("retrofitResponse", responseInfo);
 //            Log.d("retrofitResponseCode", "响应码:" + response.code());
             Log.d("retrofit", "----------end-----------");
-
         }
     }
 

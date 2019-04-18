@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.CommonPagerAdapter;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.HomeWelfareEntity;
 import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
@@ -23,7 +25,6 @@ import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
-import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
 import com.amkj.dmsh.dominant.adapter.HomeProductAdapter;
@@ -68,7 +69,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
@@ -110,16 +113,14 @@ public class HomeDefalutFragment extends BaseFragment {
     TextView mTvWelfareTitle;
     @BindView(R.id.tv_welfare_desc)
     TextView mTvWelfareDesc;
-    @BindView(R.id.rv_felware)
-    RecyclerView mRvFelware;
+    @BindView(R.id.vp_welfare)
+    ViewPager mVpFelware;
     @BindView(R.id.rv_nice)
     RecyclerView mRvNice;
     @BindView(R.id.ll_felware)
     LinearLayout mLlFelware;
     @BindView(R.id.ll_nice)
     LinearLayout mLlNice;
-    @BindView(R.id.rl_more_welfare_topic)
-    RelativeLayout mRlMoreWelfareTopic;
     @BindView(R.id.tv_nice_title)
     TextView mTvNiceTitle;
     @BindView(R.id.tv_nice_desc)
@@ -163,7 +164,6 @@ public class HomeDefalutFragment extends BaseFragment {
     private HomeProductAdapter mHomeProductAdapter;
     private HomeZoneAdapter mHomeZoneAdapter;
     private HomeTopAdapter mHomeTopAdapter;
-    private HomeWelfareAdapter mHomeWelfareAdapter;
     private QualityGoodNewProAdapter qualityGoodNewProAdapter;
     private HomeArticleNewAdapter homeArticleAdapter;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -178,7 +178,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private int articalPage = 1;
     private int catergoryPage = 0;
     private boolean isUpdateCache;
-
+    private CommonPagerAdapter mHomeWelfareAdapter;
 
     @Override
     protected int getContentView() {
@@ -206,6 +206,7 @@ public class HomeDefalutFragment extends BaseFragment {
             }
         });
 
+
         //初始化专区适配器
         GridLayoutManager speicalZoneManager = new GridLayoutManager(getActivity()
                 , 2);
@@ -224,20 +225,12 @@ public class HomeDefalutFragment extends BaseFragment {
                 .create());
         mRvSpecialZone.setAdapter(mHomeZoneAdapter);
 
-        //初始化福利精选适配器
-        LinearLayoutManager felwareManager = new LinearLayoutManager(getActivity()
-                , LinearLayoutManager.HORIZONTAL, false);
-        mRvFelware.setLayoutManager(felwareManager);
-        mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), mThemeList);
-        mHomeWelfareAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (view.getId() == R.id.iv_welfare_cover && getActivity() != null) {
-                HomeWelfareBean homeWelfareBean = (HomeWelfareBean) view.getTag(R.id.iv_tag);
-                Intent intent = new Intent(getActivity(), DoMoLifeWelfareDetailsActivity.class);
-                intent.putExtra("welfareId", String.valueOf(homeWelfareBean.getId()));
-                startActivity(intent);
-            }
-        });
-        mRvFelware.setAdapter(mHomeWelfareAdapter);
+
+        //初始化精选专题（福利社）适配器
+        mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), null);
+        mVpFelware.setAdapter(mHomeWelfareAdapter);
+        mVpFelware.setPageMargin(AutoSizeUtils.mm2px(mAppContext, 22));
+        mVpFelware.setOffscreenPageLimit(2);
 
         //初始化好物适配器
         GridLayoutManager niceManager = new GridLayoutManager(getActivity()
@@ -296,6 +289,7 @@ public class HomeDefalutFragment extends BaseFragment {
         });
         mRvNice.setAdapter(qualityGoodNewProAdapter);
 
+
         //初始化文章适配器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRvArtical.setLayoutManager(linearLayoutManager);
@@ -309,6 +303,7 @@ public class HomeDefalutFragment extends BaseFragment {
             }
         });
         mRvArtical.setAdapter(homeArticleAdapter);
+
 
         //获取首页分类商品适配器
         LinearLayoutManager productManager = new LinearLayoutManager(getActivity());
@@ -327,6 +322,7 @@ public class HomeDefalutFragment extends BaseFragment {
             } else if (view.getId() == R.id.iv_ad) {
                 UserLikedProductEntity entity = (UserLikedProductEntity) view.getTag(R.id.iv_tag);
                 setSkipPath(getActivity(), entity.getAdLink(), false);
+//                adClickTotal();
             }
         });
 
@@ -512,7 +508,7 @@ public class HomeDefalutFragment extends BaseFragment {
                             if (themeList != null && themeList.size() > 0) {
                                 mThemeList.clear();
                                 mThemeList.addAll(mHomeWelfareEntity.getResult());
-                                mHomeWelfareAdapter.notifyDataSetChanged();
+                                mHomeWelfareAdapter.refresh(mThemeList);
                             }
                         }
 

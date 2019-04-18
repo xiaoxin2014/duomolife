@@ -52,14 +52,12 @@ public class UserLikedProductEntity extends BaseEntity {
 
     @SerializedName("result")
     private List<LikedProductBean> likedProductBeanList;
-    /**
-     * category_id : 58
-     * noIds : 11235, 12788, 6132, 11236, 12004, 8869, 6326, 6327, 6264, 6265, 6255
-     */
+
 
     private String category_id;
     private String recommendFlag;
     private String noIds;
+    private List<AdBean> ad;
 
     public String getCatergoryName() {
         return catergoryName;
@@ -219,6 +217,14 @@ public class UserLikedProductEntity extends BaseEntity {
 
     public void setNoIds(String noIds) {
         this.noIds = noIds;
+    }
+
+    public List<AdBean> getAd() {
+        return ad;
+    }
+
+    public void setAd(List<AdBean> ad) {
+        this.ad = ad;
     }
 
     public static class LikedProductBean extends Attribute implements MultiItemEntity {
@@ -471,6 +477,73 @@ public class UserLikedProductEntity extends BaseEntity {
             public void setActivityCode(String activityCode) {
                 this.activityCode = activityCode;
             }
+        }
+    }
+
+    public static class AdBean {
+        /**
+         * picUrl : http://image.domolife.cn/platform/FnCcckQHQZ1555488706470.jpg
+         * web : http://www.domolife.cn/m/template/share_template/group.html
+         * android : app://QualityGroupShopActivity
+         * id : 1935
+         * ios : app://DMLGroupPurchaseListViewController
+         * miniprogram : /pages/group/group
+         */
+
+        private String picUrl;
+        private String web;
+        private String android;
+        @SerializedName("id")
+        private int idX;
+        private String ios;
+        private String miniprogram;
+
+        public String getPicUrl() {
+            return picUrl;
+        }
+
+        public void setPicUrl(String picUrl) {
+            this.picUrl = picUrl;
+        }
+
+        public String getWeb() {
+            return web;
+        }
+
+        public void setWeb(String web) {
+            this.web = web;
+        }
+
+        public String getAndroid() {
+            return android;
+        }
+
+        public void setAndroid(String android) {
+            this.android = android;
+        }
+
+        public int getIdX() {
+            return idX;
+        }
+
+        public void setIdX(int idX) {
+            this.idX = idX;
+        }
+
+        public String getIos() {
+            return ios;
+        }
+
+        public void setIos(String ios) {
+            this.ios = ios;
+        }
+
+        public String getMiniprogram() {
+            return miniprogram;
+        }
+
+        public void setMiniprogram(String miniprogram) {
+            this.miniprogram = miniprogram;
         }
     }
 }

@@ -2,9 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_welfare"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/sc_mm_20"
+    android:layout_width="@dimen/sc_mm_578"
+    android:layout_height="match_parent"
     android:background="@drawable/shap_home_topic_bg"
     android:orientation="vertical"
     android:paddingTop="@dimen/sc_mm_10"
@@ -19,8 +18,8 @@
 
         <ImageView
             android:id="@+id/iv_welfare_cover"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_300"
             android:scaleType="centerCrop"
             android:src="@drawable/load_loading_image"/>
 
