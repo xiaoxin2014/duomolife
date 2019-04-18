@@ -48,6 +48,7 @@ public class HomeWelfareAdapter extends BaseQuickAdapter<HomeWelfareBean, BaseVi
 
     @Override
     protected void convert(BaseViewHolder helper, HomeWelfareBean item) {
+        if (item==null) return;
         GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), 10);
         helper.setText(R.id.tv_topic_name, item.getTitle())
                 .addOnClickListener(R.id.iv_welfare_cover).setTag(R.id.iv_welfare_cover, R.id.iv_tag, item);

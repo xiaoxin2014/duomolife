@@ -33,8 +33,8 @@ import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.QualityGoodActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
-import com.amkj.dmsh.homepage.adapter.HomeDoubleAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeTopAdapter;
+import com.amkj.dmsh.homepage.adapter.HomeZoneAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
@@ -68,7 +68,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -113,20 +112,6 @@ public class HomeDefalutFragment extends BaseFragment {
     TextView mTvWelfareDesc;
     @BindView(R.id.rv_felware)
     RecyclerView mRvFelware;
-    @BindView(R.id.tv_double_left)
-    TextView mTvDoubleLeft;
-    @BindView(R.id.rv_double_left)
-    RecyclerView mRvDoubleLeft;
-    @BindView(R.id.tv_double_right)
-    TextView mTvDoubleRight;
-    @BindView(R.id.rv_double_right)
-    RecyclerView mRvDoubleRight;
-    @BindView(R.id.ll_double)
-    LinearLayout mLlDouble;
-    @BindView(R.id.ll_double_left)
-    LinearLayout mLlDoubleLeft;
-    @BindView(R.id.ll_double_right)
-    LinearLayout mLlDoubleRight;
     @BindView(R.id.rv_nice)
     RecyclerView mRvNice;
     @BindView(R.id.ll_felware)
@@ -157,7 +142,6 @@ public class HomeDefalutFragment extends BaseFragment {
     TextView mTvArticalTopic;
     @BindView(R.id.tv_refresh_artical)
     TextView mTvRefreshArtical;
-    Unbinder unbinder;
     @BindView(R.id.rv_product)
     RecyclerView mRvProduct;
     @BindView(R.id.iv_dynamic_cover_left)
@@ -168,35 +152,33 @@ public class HomeDefalutFragment extends BaseFragment {
     ImageView mIvDynamicCoverRight;
     @BindView(R.id.tv_dynamic_priceright)
     TextView mTvDynamicPriceright;
-    private boolean isUpdateCache;
+    @BindView(R.id.rv_special_zone)
+    RecyclerView mRvSpecialZone;
     private CBViewHolderCreator cbViewHolderCreator;
+    private HomeCommonEntity mHomeCommonEntity;
+    private HomeWelfareEntity mHomeWelfareEntity;
+    private CommunalArticleEntity mCommunalArticleEntity;
+    private HomeDynamicEntity mHomeDynamicEntity;
+    private UserLikedProductEntity mUserLikedProductEntity;
+    private HomeProductAdapter mHomeProductAdapter;
+    private HomeZoneAdapter mHomeZoneAdapter;
+    private HomeTopAdapter mHomeTopAdapter;
+    private HomeWelfareAdapter mHomeWelfareAdapter;
+    private QualityGoodNewProAdapter qualityGoodNewProAdapter;
+    private HomeArticleNewAdapter homeArticleAdapter;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<HomeCommonBean> mTopList = new ArrayList<>();
     private List<HomeWelfareBean> mThemeList = new ArrayList<>();
-    private List<ProductInfoListBean> mDoubleLeftList = new ArrayList<>();
-    private List<ProductInfoListBean> mDoubleRightList = new ArrayList<>();
+    private List<HomeCommonBean> mZoneList = new ArrayList<>();
     private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeAllList = new ArrayList<>();
     private List<QualityTypeBean> qualityTypeList = new ArrayList<>();
     private List<UserLikedProductEntity> mProductList = new ArrayList<>();
-    private HomeTopAdapter mHomeTopAdapter;
-    //    private HomeNewUserAdapter mHomeNewUserAdapter;
-    private HomeWelfareAdapter mHomeWelfareAdapter;
-    private HomeDoubleAdapter mDoubleLeftAdapter;
-    private HomeDoubleAdapter mDoubleRightAdapter;
-    QualityGoodNewProAdapter qualityGoodNewProAdapter;
-    private HomeCommonEntity mHomeCommonEntity;
-    private String mDoubleLeftLink;
-    private String mDoubleRightLink;
-    private HomeWelfareEntity mHomeWelfareEntity;
-    private HomeArticleNewAdapter homeArticleAdapter;
-    private CommunalArticleEntity mCommunalArticleEntity;
     private int articalPage = 1;
     private int catergoryPage = 0;
-    private HomeDynamicEntity mHomeDynamicEntity;
-    private UserLikedProductEntity mUserLikedProductEntity;
-    private HomeProductAdapter mHomeProductAdapter;
+    private boolean isUpdateCache;
+
 
     @Override
     protected int getContentView() {
@@ -224,39 +206,23 @@ public class HomeDefalutFragment extends BaseFragment {
             }
         });
 
-        //初始化Double专区左边适配器
-        GridLayoutManager gridLeftManager = new GridLayoutManager(getActivity()
+        //初始化专区适配器
+        GridLayoutManager speicalZoneManager = new GridLayoutManager(getActivity()
                 , 2);
-        mRvDoubleLeft.setLayoutManager(gridLeftManager);
-        mDoubleLeftAdapter = new HomeDoubleAdapter(getActivity(), mDoubleLeftList);
-        mDoubleLeftAdapter.setOnItemClickListener((adapter, view, position) -> {
+        mRvSpecialZone.setLayoutManager(speicalZoneManager);
+        mHomeZoneAdapter = new HomeZoneAdapter(getActivity(), mZoneList);
+        mHomeZoneAdapter.setOnItemClickListener((adapter, view, position) -> {
+            HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             //跳转对应专区
-            if (!TextUtils.isEmpty(mDoubleLeftLink)) {
-                setSkipPath(getActivity(), mDoubleLeftLink, false);
+            if (!TextUtils.isEmpty(homeCommonBean.getLink())) {
+                setSkipPath(getActivity(), homeCommonBean.getLink(), false);
             }
         });
-        mRvDoubleLeft.setAdapter(mDoubleLeftAdapter);
-        mRvDoubleLeft.addItemDecoration(new ItemDecoration.Builder()
+        mRvSpecialZone.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_white)
+                .setDividerId(R.drawable.item_divider_half_gray)
                 .create());
-
-        //初始化Double专区右边适配器
-        GridLayoutManager gridRightManager = new GridLayoutManager(getActivity()
-                , 2);
-        mRvDoubleRight.setLayoutManager(gridRightManager);
-        mDoubleRightAdapter = new HomeDoubleAdapter(getActivity(), mDoubleRightList);
-        mDoubleRightAdapter.setOnItemClickListener((adapter, view, position) -> {
-            //跳转对应专区
-            if (!TextUtils.isEmpty(mDoubleRightLink)) {
-                setSkipPath(getActivity(), mDoubleRightLink, false);
-            }
-        });
-        mRvDoubleRight.setAdapter(mDoubleRightAdapter);
-        mRvDoubleRight.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_white)
-                .create());
+        mRvSpecialZone.setAdapter(mHomeZoneAdapter);
 
         //初始化福利精选适配器
         LinearLayoutManager felwareManager = new LinearLayoutManager(getActivity()
@@ -502,55 +468,28 @@ public class HomeDefalutFragment extends BaseFragment {
     private void getHomeDouble() {
         Map<String, Object> map = new HashMap<>();
         map.put("source", 1);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_DOUBLE, map, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_SPECIAL_ZONE, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 mHomeCommonEntity = gson.fromJson(result, HomeCommonEntity.class);
-                List<HomeCommonBean> doubleList = mHomeCommonEntity.getResult();
+                List<HomeCommonBean> homeCommonBeanList = mHomeCommonEntity.getResult();
                 if (mHomeCommonEntity != null) {
-                    if (doubleList != null && doubleList.size() > 0) {
-                        //解析左边专区
-                        HomeCommonBean homeCommonBeanLeft = doubleList.get(0);
-                        if (homeCommonBeanLeft != null) {
-                            mTvDoubleLeft.setText(getStrings(homeCommonBeanLeft.getName()));
-                            mDoubleLeftLink = homeCommonBeanLeft.getLink();
-                            mLlDoubleLeft.setOnClickListener(view -> {
-                                setSkipPath(getActivity(), homeCommonBeanLeft.getLink(), false);
-                            });
-                            mDoubleLeftList.clear();
-                            int size = homeCommonBeanLeft.getProductInfoList().size();
-                            for (int i = 0; i < (size > 4 ? 4 : size); i++) {
-                                mDoubleLeftList.add(homeCommonBeanLeft.getProductInfoList().get(i));
+                    if (homeCommonBeanList != null && homeCommonBeanList.size() > 0) {
+                        mZoneList.clear();
+                        for (int i = 0; i < homeCommonBeanList.size(); i++) {
+                            List<ProductInfoListBean> productInfoList = homeCommonBeanList.get(i).getProductInfoList();
+                            if (productInfoList != null && productInfoList.size() > 0) {
+                                mZoneList.add(homeCommonBeanList.get(i));
                             }
                         }
-                        mDoubleLeftAdapter.notifyDataSetChanged();
-
-                        //解析右边专区
-                        if (doubleList.size() > 1) {
-                            HomeCommonBean homeCommonBeanRight = doubleList.get(1);
-                            if (homeCommonBeanRight != null) {
-                                mTvDoubleRight.setText(getStrings(homeCommonBeanRight.getName()));
-                                mDoubleRightLink = homeCommonBeanRight.getLink();
-                                mDoubleRightList.clear();
-                                int size = homeCommonBeanRight.getProductInfoList().size();
-                                for (int i = 0; i < (size > 4 ? 4 : size); i++) {
-                                    mDoubleRightList.add(homeCommonBeanRight.getProductInfoList().get(i));
-                                }
-                            }
-                        }
-                        mDoubleRightAdapter.notifyDataSetChanged();
+                        mHomeZoneAdapter.notifyDataSetChanged();
                     }
                 }
-
-                mLlDoubleLeft.setVisibility(mDoubleLeftList.size() > 0 ? View.VISIBLE : View.GONE);
-                mLlDoubleRight.setVisibility(mDoubleRightList.size() > 0 ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                mLlDoubleLeft.setVisibility(mDoubleLeftList.size() > 0 ? View.VISIBLE : View.GONE);
-                mLlDoubleRight.setVisibility(mDoubleRightList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }

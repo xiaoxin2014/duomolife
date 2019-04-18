@@ -40,6 +40,7 @@ public class HomeTopAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHol
 
     @Override
     protected void convert(BaseViewHolder holder, HomeCommonBean homeTopBean) {
+        if (homeTopBean==null) return;
         GlideImageLoaderUtil.loadRoundImg(context, holder.getView(R.id.iv_icon), homeTopBean.getIcon(), AutoSizeUtils.mm2px(
                 mAppContext, 45));
         holder.setText(R.id.tv_name, getStrings(homeTopBean.getName()));

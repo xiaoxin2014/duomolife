@@ -35,7 +35,7 @@
             android:layout_marginTop="@dimen/sc_mm_16"/>
 
         <TextView
-            android:id="@+id/tv_qt_pro_descrip"
+            android:id="@+id/tv_qt_pro_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/fbl_market_label"
@@ -49,10 +49,10 @@
             android:textSize="@dimen/sc_mm_24"/>
 
         <TextView
-            android:id="@+id/tv_qt_pro_name"
+            android:id="@+id/tv_qt_pro_descrip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_qt_pro_descrip"
+            android:layout_below="@id/tv_qt_pro_name"
             android:layout_marginLeft="@dimen/sc_mm_8"
             android:layout_marginTop="@dimen/sc_mm_16"
             android:ellipsize="end"

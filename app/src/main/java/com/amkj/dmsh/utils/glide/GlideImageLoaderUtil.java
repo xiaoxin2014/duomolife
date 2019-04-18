@@ -38,7 +38,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.FILE_IMAGE;
@@ -53,17 +52,6 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * @author liangzx
  */
 public class GlideImageLoaderUtil {
-    // 加载圆形且带默认图标
-    public static void loadCircleImageUrl(Context context, ImageView imageView, String url) {
-        Glide.with(context)
-                .load(url)
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.load_loading_image)
-                        .diskCacheStrategy(DiskCacheStrategy.DATA)
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .error(R.drawable.load_loading_image))
-                .into(imageView);
-    }
 
     /**
      * @param context

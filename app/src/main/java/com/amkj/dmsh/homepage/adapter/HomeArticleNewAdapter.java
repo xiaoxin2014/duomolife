@@ -30,6 +30,7 @@ public class HomeArticleNewAdapter extends BaseQuickAdapter<CommunalArticleBean,
 
     @Override
     protected void convert(BaseViewHolder helper, CommunalArticleBean item) {
+        if (item == null) return;
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_artical_cover), item.getPath());
         helper.setText(R.id.tv_artical_title, getStrings(item.getTitle()))
                 .setText(R.id.tv_artical_desc, getStrings(item.getDigest()));

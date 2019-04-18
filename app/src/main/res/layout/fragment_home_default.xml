@@ -33,74 +33,13 @@
 
             <include layout="@layout/layout_dynamic"/>
 
-
-            <LinearLayout
-                android:id="@+id/ll_double"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_special_zone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/light_gray_f"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/ll_double_left"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/white"
-                    android:orientation="vertical"
-                    android:paddingTop="@dimen/sc_mm_54"
-                    android:paddingBottom="@dimen/sc_mm_54"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/tv_double_left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/sc_mm_15"
-                        android:text="@string/defaul"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_32"/>
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_double_left"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sc_mm_30"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="@dimen/sc_mm_2"
-                    android:layout_height="wrap_content"/>
-
-                <LinearLayout
-                    android:id="@+id/ll_double_right"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/white"
-                    android:orientation="vertical"
-                    android:paddingTop="@dimen/sc_mm_54"
-                    android:paddingBottom="@dimen/sc_mm_54"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/tv_double_right"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/sc_mm_15"
-                        android:text="@string/defaul"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_32"/>
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_double_right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sc_mm_30"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <include layout="@layout/view_decoration_20_gray"/>
+                android:paddingBottom="@dimen/sc_mm_20"
+                android:scrollbars="none"/>
 
             <LinearLayout
                 android:id="@+id/ll_felware"
