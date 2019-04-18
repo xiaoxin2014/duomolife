@@ -348,6 +348,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
             ImageView iv_tab_title = v.findViewById(R.id.iv_tab_title);
             if (tv_tab_title != null && iv_tab_title != null) {
                 if ("1".equals(homeCommonBean.getShowType())) {
+                    tv_tab_title.setVisibility(VISIBLE);
                     iv_tab_title.setVisibility(GONE);
 //                    if (TextUtils.isEmpty(homeCommonBean.getColor())) {
 //                        tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
@@ -368,8 +369,8 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
 //                    tv_tab_title.getPaint().setFakeBoldText(i == mCurrentTab);
                     tv_tab_title.setTypeface(Typeface.defaultFromStyle(i == mCurrentTab ? Typeface.BOLD : Typeface.NORMAL));
                 } else {
-                    tv_tab_title.setText("-----------");
-                    tv_tab_title.setTextColor(getResources().getColor(R.color.white));
+                    tv_tab_title.setVisibility(INVISIBLE);
+                    tv_tab_title.setText("多么生活");//设置文本默认值，否则显示图标没有指示器（指示器长度由标题长度决定）
                     iv_tab_title.setVisibility(VISIBLE);
                     GlideImageLoaderUtil.loadImage(mContext, iv_tab_title, homeCommonBean.getIcon());
                     iv_tab_title.setImageResource(R.drawable.duoma_select);
@@ -402,7 +403,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
             }
 //            }
 //            tv_tab_title.getPaint().setFakeBoldText(isSelect);
-            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect? Typeface.BOLD : Typeface.NORMAL));
+            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect ? Typeface.BOLD : Typeface.NORMAL));
             if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
                 tv_tab_title.getPaint().setFakeBoldText(isSelect);
             }

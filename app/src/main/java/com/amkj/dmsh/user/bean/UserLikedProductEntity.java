@@ -37,10 +37,6 @@ public class UserLikedProductEntity extends BaseEntity {
     private String id;
     //商品分类type
     private String type;
-    //跟分类绑定的广告位
-    private String adCover;
-    //广告位跳转链接
-    private String adLink;
 
 
     /**
@@ -89,22 +85,6 @@ public class UserLikedProductEntity extends BaseEntity {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getAdCover() {
-        return adCover;
-    }
-
-    public void setAdCover(String adCover) {
-        this.adCover = adCover;
-    }
-
-    public String getAdLink() {
-        return adLink;
-    }
-
-    public void setAdLink(String adLink) {
-        this.adLink = adLink;
     }
 
     public String getActivityDesc() {
@@ -219,11 +199,11 @@ public class UserLikedProductEntity extends BaseEntity {
         this.noIds = noIds;
     }
 
-    public List<AdBean> getAd() {
+    public List<AdBean> getAdList() {
         return ad;
     }
 
-    public void setAd(List<AdBean> ad) {
+    public void setAdList(List<AdBean> ad) {
         this.ad = ad;
     }
 

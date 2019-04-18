@@ -23,11 +23,12 @@ import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
-import com.amkj.dmsh.dominant.adapter.HomeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
@@ -161,7 +162,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private CommunalArticleEntity mCommunalArticleEntity;
     private HomeDynamicEntity mHomeDynamicEntity;
     private UserLikedProductEntity mUserLikedProductEntity;
-    private HomeProductAdapter mHomeProductAdapter;
+    private HomeCatergoryAdapter mHomeCatergoryAdapter;
     private HomeZoneAdapter mHomeZoneAdapter;
     private HomeTopAdapter mHomeTopAdapter;
     private QualityGoodNewProAdapter qualityGoodNewProAdapter;
@@ -176,9 +177,11 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<QualityTypeBean> qualityTypeList = new ArrayList<>();
     private List<UserLikedProductEntity> mProductList = new ArrayList<>();
     private int articalPage = 1;
-    private int catergoryPage = 0;
+    private int mCatergoryPage = 0;
+    boolean isFisrt = true;
     private boolean isUpdateCache;
     private CommonPagerAdapter mHomeWelfareAdapter;
+    private int mI1;
 
     @Override
     protected int getContentView() {
@@ -190,7 +193,7 @@ public class HomeDefalutFragment extends BaseFragment {
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             articalPage = 1;
-            catergoryPage = 0;
+            mCatergoryPage = 0;
             loadData();
         });
         //初始化Top适配器
@@ -223,6 +226,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_half_gray)
                 .create());
+        mRvSpecialZone.setNestedScrollingEnabled(false);
         mRvSpecialZone.setAdapter(mHomeZoneAdapter);
 
 
@@ -240,6 +244,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
+        mRvNice.setNestedScrollingEnabled(false);
         qualityGoodNewProAdapter = new QualityGoodNewProAdapter(getActivity(), goodsProList);
         qualityGoodNewProAdapter.setOnItemClickListener((adapter, view, position) -> {
             QualityGoodProductEntity.Attribute attribute = (QualityGoodProductEntity.Attribute) view.getTag();
@@ -260,7 +265,6 @@ public class HomeDefalutFragment extends BaseFragment {
                         setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
                         break;
                 }
-
             }
         });
         qualityGoodNewProAdapter.setOnItemChildClickListener((adapter, view, position) -> {
@@ -309,9 +313,9 @@ public class HomeDefalutFragment extends BaseFragment {
         LinearLayoutManager productManager = new LinearLayoutManager(getActivity());
         mRvProduct.setLayoutManager(productManager);
         mRvProduct.setNestedScrollingEnabled(false);
-        mHomeProductAdapter = new HomeProductAdapter(getActivity(), mProductList);
-        mRvProduct.setAdapter(mHomeProductAdapter);
-        mHomeProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+        mHomeCatergoryAdapter = new HomeCatergoryAdapter(getActivity(), mProductList);
+        mRvProduct.setAdapter(mHomeCatergoryAdapter);
+        mHomeCatergoryAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (view.getId() == R.id.rl_more_product) {
                 UserLikedProductEntity entity = (UserLikedProductEntity) view.getTag();
                 Intent intent = new Intent(getActivity(), QualityTypeProductActivity.class);
@@ -319,20 +323,15 @@ public class HomeDefalutFragment extends BaseFragment {
                 intent.putExtra(CATEGORY_ID, entity.getId());
                 intent.putExtra(CATEGORY_TYPE, entity.getType());
                 startActivity(intent);
-            } else if (view.getId() == R.id.iv_ad) {
-                UserLikedProductEntity entity = (UserLikedProductEntity) view.getTag(R.id.iv_tag);
-                setSkipPath(getActivity(), entity.getAdLink(), false);
-//                adClickTotal();
             }
         });
 
-        mHomeProductAdapter.setOnLoadMoreListener(() -> {
-            catergoryPage++;
-            if (catergoryPage < qualityTypeList.size()) {
-                getProduct(catergoryPage);
-            } else {
-                mHomeProductAdapter.loadMoreEnd();
+        mHomeCatergoryAdapter.setOnLoadMoreListener(() -> {
+            if (mI1 + 1 % 3 == 0) {
+                mHomeCatergoryAdapter.loadMoreFail();
             }
+            mCatergoryPage = mCatergoryPage + 3;
+            getProduct();
         }, mRvProduct);
     }
 
@@ -340,13 +339,14 @@ public class HomeDefalutFragment extends BaseFragment {
     protected void loadData() {
         getAdLoop();
         getHomeIndexType();
-        getNewUserGoods();
+        getDynamic();
         getWelfare();
-        getHomeDouble();
+        getSpecialZone();
         getGoodsPro();
         getArticleTypeList(false);
         getProductTypeList();
     }
+
 
     //获取Banner
     private void getAdLoop() {
@@ -395,7 +395,6 @@ public class HomeDefalutFragment extends BaseFragment {
     //Top活动位
     private void getHomeIndexType() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        map.put("source", "1");
         NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), GTE_HOME_TOP, map, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -423,9 +422,8 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     //动态专区(新人专享)
-    private void getNewUserGoods() {
+    private void getDynamic() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("source", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_NEW_USER_GOODS, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -461,9 +459,8 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     //获取并排专区
-    private void getHomeDouble() {
+    private void getSpecialZone() {
         Map<String, Object> map = new HashMap<>();
-        map.put("source", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_SPECIAL_ZONE, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -614,14 +611,10 @@ public class HomeDefalutFragment extends BaseFragment {
                     if (typeBeanList != null && typeBeanList.size() > 0) {
                         qualityTypeList.clear();
                         qualityTypeList.addAll(typeBeanList);
-                        getProduct(0);
+                        mCatergoryPage = mCatergoryPage + 3;
+                        getProduct();
                     }
                 }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                super.onNotNetOrException();
             }
         });
 
@@ -629,57 +622,66 @@ public class HomeDefalutFragment extends BaseFragment {
 
 
     //获取分类对应的商品
-    private void getProduct(int catergoryPage) {
-        QualityTypeBean qualityTypeBean = qualityTypeList.get(catergoryPage);
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", 1);
-        params.put("showCount", 6);
-        if (!TextUtils.isEmpty(qualityTypeBean.getChildCategory())) {
-            params.put("id", qualityTypeBean.getChildCategory());
-            params.put("pid", qualityTypeBean.getId());
-        } else {
-            params.put("id", qualityTypeBean.getId());
-            params.put("pid", 0);
-        }
-        params.put("orderTypeId", "1");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_PRODUCT_TYPE_LIST,
-                params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        mUserLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                        String code = mUserLikedProductEntity.getCode();
-                        if (mUserLikedProductEntity != null) {
-                            mUserLikedProductEntity.setCatergoryName(qualityTypeBean.getName());
-                            mUserLikedProductEntity.setId(String.valueOf(qualityTypeBean.getId()));
-                            mUserLikedProductEntity.setPid(String.valueOf(qualityTypeBean.getPid()));
-                            mUserLikedProductEntity.setType(String.valueOf(qualityTypeBean.getType()));
-                            List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getLikedProductBeanList();
-                            if (qualityTypeBean.getAd() != null) {
-                                QualityTypeBean.AdBean ad = qualityTypeBean.getAd();
-                                mUserLikedProductEntity.setAdCover(ad.getPicUrlX());
-                                mUserLikedProductEntity.setAdLink(ad.getAndroid());
-                            }
+    private void getProduct() {
+        int catergoryPage = mCatergoryPage;
+        for (int i = catergoryPage - 3; i < mCatergoryPage; i++) {
+            mI1 = i;
+            if (i >= qualityTypeList.size()) {
+                mHomeCatergoryAdapter.loadMoreEnd();
+                return;
+            }
 
-                            if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
-                                if (catergoryPage == 0) {
-                                    mProductList.clear();
+            QualityTypeBean qualityTypeBean = qualityTypeList.get(i);
+            Map<String, Object> params = new HashMap<>();
+            params.put("currentPage", 1);
+            params.put("showCount", 6);
+            if (!TextUtils.isEmpty(qualityTypeBean.getChildCategory())) {
+                params.put("id", qualityTypeBean.getChildCategory());
+                params.put("pid", qualityTypeBean.getId());
+            } else {
+                params.put("id", qualityTypeBean.getId());
+                params.put("pid", 0);
+            }
+            params.put("orderTypeId", "1");
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_PRODUCT_TYPE_LIST,
+                    params, new NetLoadListenerHelper() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Gson gson = new Gson();
+                            mUserLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                            if (mUserLikedProductEntity != null) {
+                                mUserLikedProductEntity.setCatergoryName(qualityTypeBean.getName());
+                                mUserLikedProductEntity.setId(String.valueOf(qualityTypeBean.getId()));
+                                mUserLikedProductEntity.setPid(String.valueOf(qualityTypeBean.getPid()));
+                                mUserLikedProductEntity.setType(String.valueOf(qualityTypeBean.getType()));
+                                List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getLikedProductBeanList();
+                                if (qualityTypeBean.getAd() != null) {
+                                    List<UserLikedProductEntity.AdBean> ad = qualityTypeBean.getAd();
+                                    mUserLikedProductEntity.setAdList(ad);
                                 }
-                                mProductList.add(mUserLikedProductEntity);
-                                mHomeProductAdapter.notifyDataSetChanged();
-                                mHomeProductAdapter.loadMoreComplete();
-                            } else {
-                                mHomeProductAdapter.loadMoreFail();
+
+
+                                if (likedProductBeanList != null && likedProductBeanList.size() > 0 && ConstantVariable.SUCCESS_CODE.equals(mUserLikedProductEntity.getCode())) {
+                                    if (mCatergoryPage == 0) {
+                                        mProductList.clear();
+                                    }
+                                    mProductList.add(mUserLikedProductEntity);
+                                    mHomeCatergoryAdapter.notifyDataSetChanged();
+                                    mHomeCatergoryAdapter.loadMoreComplete();
+                                } else if (ConstantVariable.ERROR_CODE.equals(mUserLikedProductEntity.getCode())) {
+                                    mHomeCatergoryAdapter.loadMoreFail();
+                                } else {
+                                    mHomeCatergoryAdapter.loadMoreEnd();
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onNotNetOrException() {
-                        mHomeProductAdapter.loadMoreFail();
-                    }
-                });
-
+                        @Override
+                        public void onNotNetOrException() {
+                            mHomeCatergoryAdapter.loadMoreFail();
+                        }
+                    });
+        }
     }
 
     //设置文章列表数据并刷新

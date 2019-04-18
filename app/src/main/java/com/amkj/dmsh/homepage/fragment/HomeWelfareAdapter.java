@@ -44,7 +44,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
     public void convert(ViewHolder helper, int position, HomeWelfareBean item) {
         if (item == null) return;
         ImageView ivCover = helper.getView(R.id.iv_welfare_cover);
-        GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), AutoSizeUtils.mm2px(mAppContext, 5));
+        GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), AutoSizeUtils.mm2px(mAppContext, 3));
         helper.setText(R.id.tv_topic_name, item.getTitle());
         ivCover.setOnClickListener(view -> {
 

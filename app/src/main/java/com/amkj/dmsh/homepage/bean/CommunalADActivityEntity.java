@@ -33,6 +33,7 @@ public class CommunalADActivityEntity extends BaseTimeEntity{
     }
 
     public static class CommunalADActivityBean extends Attribute {
+
         /**
          * beginTime :
          * link : app://DMLSpringSaleViewController

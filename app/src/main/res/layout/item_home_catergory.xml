@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_marginBottom="@dimen/sc_mm_42"
         android:id="@+id/rl_more_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/sc_mm_54"
+        android:paddingTop="@dimen/sc_mm_42"
         android:paddingRight="@dimen/sc_mm_28"
-        android:paddingBottom="@dimen/sc_mm_12">
+        android:paddingBottom="@dimen/sc_mm_32">
 
         <TextView
             android:id="@+id/tv_catergory_name"
@@ -34,18 +34,17 @@
             android:textSize="@dimen/sc_mm_24"/>
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/iv_ad"
+    <com.bigkoo.convenientbanner.ConvenientBanner
+        android:id="@+id/cb_banner"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_200"
-        android:scaleType="centerCrop"/>
+        android:layout_height="@dimen/sc_mm_200"/>
 
     <android.support.v7.widget.RecyclerView
-        android:paddingTop="@dimen/sc_mm_10"
-        android:paddingBottom="@dimen/sc_mm_10"
         android:id="@+id/rv_catergory_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/light_gray_f"
+        android:paddingTop="@dimen/sc_mm_10"
+        android:paddingBottom="@dimen/sc_mm_10"
         android:scrollbars="none"/>
 </LinearLayout>
