@@ -49,7 +49,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
 
 
         //专区右边商品
-        helper.getView(R.id.rl_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
+        helper.getView(R.id.ll_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
         if (productInfoList.size() > 1) {
             productInfoListBean = productInfoList.get(1);
             if (productInfoListBean!=null){

@@ -144,8 +144,6 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
     @BindView(R.id.tv_article_bottom_collect)
     TextView tv_article_bottom_collect;
     @BindView(R.id.tl_quality_bar)
-    Toolbar tl_quality_bar;
-    @BindView(R.id.tl_quality_bar)
     Toolbar mTlQualityBar;
 
 

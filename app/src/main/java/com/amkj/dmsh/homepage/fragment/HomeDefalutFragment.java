@@ -194,6 +194,8 @@ public class HomeDefalutFragment extends BaseFragment {
             isUpdateCache = true;
             articalPage = 1;
             mCatergoryPage = 0;
+            mProductList.clear();
+            mHomeCatergoryAdapter.notifyDataSetChanged();
             loadData();
         });
         //初始化Top适配器
@@ -614,7 +616,7 @@ public class HomeDefalutFragment extends BaseFragment {
                         qualityTypeList.clear();
                         for (int i = 0; i < typeBeanList.size(); i++) {
                             QualityTypeBean qualityTypeBean = typeBeanList.get(i);
-                            if (qualityTypeBean.getType()!=4){
+                            if (qualityTypeBean.getType() != 4) {
                                 qualityTypeList.add(qualityTypeBean);
                             }
                         }
@@ -667,11 +669,7 @@ public class HomeDefalutFragment extends BaseFragment {
                                     mUserLikedProductEntity.setAdList(ad);
                                 }
 
-
                                 if (likedProductBeanList != null && likedProductBeanList.size() > 0 && ConstantVariable.SUCCESS_CODE.equals(mUserLikedProductEntity.getCode())) {
-                                    if (mCatergoryPage == 0) {
-                                        mProductList.clear();
-                                    }
                                     mProductList.add(mUserLikedProductEntity);
                                     mSmartLayout.finishLoadMore();
                                     mHomeCatergoryAdapter.notifyDataSetChanged();

@@ -33,7 +33,7 @@
         android:drawablePadding="@dimen/dimen_8_dp"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/sc_mm_20"
-        android:text="@string/quality_search_hint"
+        android:text="搜索美好生活"
         android:textColor="@color/text_gray_hint_n"
         android:textSize="@dimen/sc_mm_26"/>
 
