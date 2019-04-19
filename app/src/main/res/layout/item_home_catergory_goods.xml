@@ -2,15 +2,14 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_420"
+    android:layout_height="@dimen/sc_mm_430"
     android:background="@color/white"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_goods_pic"
-        android:layout_width="@dimen/sc_mm_236"
-        android:layout_height="@dimen/sc_mm_236"
-        android:scaleType="centerCrop"/>
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_236"/>
 
     <com.google.android.flexbox.FlexboxLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -39,7 +38,7 @@
         android:id="@+id/tv_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_20"
+        android:layout_marginTop="@dimen/sc_mm_16"
         android:paddingLeft="@dimen/sc_mm_12"
         android:text="@string/defaul"
         android:textColor="@color/text_normal_red"

@@ -80,10 +80,10 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
                 adBeanList.add(communalADActivityBean);
             }
 
-            convenientBanner.setPages(context, cbViewHolderCreator, adBeanList).setCanLoop(false)
+            convenientBanner.setPages(context, cbViewHolderCreator, adBeanList).setCanLoop(true)
                     .setPointViewVisible(true).setCanScroll(true)
                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
-                    .startTurning(getShowNumber("3") * 1000);
+                    .startTurning(getShowNumber("5") * 1000);
         } else {
             convenientBanner.setVisibility(View.GONE);
         }

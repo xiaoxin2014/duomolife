@@ -59,6 +59,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -178,10 +179,9 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<UserLikedProductEntity> mProductList = new ArrayList<>();
     private int articalPage = 1;
     private int mCatergoryPage = 0;
-    boolean isFisrt = true;
     private boolean isUpdateCache;
     private CommonPagerAdapter mHomeWelfareAdapter;
-    private int mI1;
+    private boolean isFirst = true;
 
     @Override
     protected int getContentView() {
@@ -325,14 +325,16 @@ public class HomeDefalutFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-
-        mHomeCatergoryAdapter.setOnLoadMoreListener(() -> {
-            if (mI1 + 1 % 3 == 0) {
-                mHomeCatergoryAdapter.loadMoreFail();
-            }
+        mSmartLayout.setEnableAutoLoadMore(false);
+        mSmartLayout.setOnLoadMoreListener(refreshLayout -> {
             mCatergoryPage = mCatergoryPage + 3;
             getProduct();
-        }, mRvProduct);
+        });
+        mSmartLayout.setEnableAutoLoadMore(false);//使上拉加载具有弹性效果
+        mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
+        mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
+        mSmartLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
+
     }
 
     @Override
@@ -610,7 +612,12 @@ public class HomeDefalutFragment extends BaseFragment {
                     List<QualityTypeBean> typeBeanList = qualityTypeEntity.getQualityTypeBeanList();
                     if (typeBeanList != null && typeBeanList.size() > 0) {
                         qualityTypeList.clear();
-                        qualityTypeList.addAll(typeBeanList);
+                        for (int i = 0; i < typeBeanList.size(); i++) {
+                            QualityTypeBean qualityTypeBean = typeBeanList.get(i);
+                            if (qualityTypeBean.getType()!=4){
+                                qualityTypeList.add(qualityTypeBean);
+                            }
+                        }
                         mCatergoryPage = mCatergoryPage + 3;
                         getProduct();
                     }
@@ -625,9 +632,9 @@ public class HomeDefalutFragment extends BaseFragment {
     private void getProduct() {
         int catergoryPage = mCatergoryPage;
         for (int i = catergoryPage - 3; i < mCatergoryPage; i++) {
-            mI1 = i;
             if (i >= qualityTypeList.size()) {
-                mHomeCatergoryAdapter.loadMoreEnd();
+                mSmartLayout.finishLoadMoreWithNoMoreData();
+                mSmartLayout.setNoMoreData(true);
                 return;
             }
 
@@ -666,19 +673,21 @@ public class HomeDefalutFragment extends BaseFragment {
                                         mProductList.clear();
                                     }
                                     mProductList.add(mUserLikedProductEntity);
+                                    mSmartLayout.finishLoadMore();
                                     mHomeCatergoryAdapter.notifyDataSetChanged();
-                                    mHomeCatergoryAdapter.loadMoreComplete();
                                 } else if (ConstantVariable.ERROR_CODE.equals(mUserLikedProductEntity.getCode())) {
-                                    mHomeCatergoryAdapter.loadMoreFail();
+                                    mSmartLayout.finishLoadMore(false);
                                 } else {
-                                    mHomeCatergoryAdapter.loadMoreEnd();
+                                    mSmartLayout.finishLoadMore();
                                 }
+                            } else {
+                                mSmartLayout.finishLoadMore(false);
                             }
                         }
 
                         @Override
                         public void onNotNetOrException() {
-                            mHomeCatergoryAdapter.loadMoreFail();
+                            mSmartLayout.finishLoadMore(false);
                         }
                     });
         }
@@ -736,6 +745,15 @@ public class HomeDefalutFragment extends BaseFragment {
                     startActivity(intent);
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isFirst) {
+            getDynamic();
+            isFirst = false;
         }
     }
 }

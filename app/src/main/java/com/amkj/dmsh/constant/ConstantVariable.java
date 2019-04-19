@@ -32,10 +32,12 @@ public class ConstantVariable {
     public static final String STOP_AUTO_PAGE_TURN = "stopAutoPageTurn";
     //    启动自动翻页
     public static final String START_AUTO_PAGE_TURN = "startAutoPageTurn";
-//    //    整点秒杀数据加载完成
+    //    //    整点秒杀数据加载完成
 //    public static final String POINT_SPIKE_LOAD_COMPLETE = "pointSpikeLoadComplete";
     //    token过期，强制登出
     public static final String TOKEN_EXPIRE_LOG_OUT = "tokenExpireLogOut";
+//    //    用户登录状态改变
+//    public static final String LOGIN_STATUS_CHANGE = "loginStatusChange";
     //    是否跳转
     public static final String SKIP_PAGE = "isSkipPage";
     //    首页
