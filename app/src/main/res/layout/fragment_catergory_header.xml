@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tb_catergory"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_88"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingRight="@dimen/sc_mm_30">
+
+    <TextView
+        android:id="@+id/tv_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_64"
+        android:background="@drawable/border_civ_3dp_light_gray"
+        android:drawableLeft="@drawable/quality_search"
+        android:drawablePadding="@dimen/dimen_8_dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:text="搜索美好生活"
+        android:textColor="@color/text_gray_hint_n"
+        android:textSize="@dimen/sc_mm_26"/>
+</LinearLayout>

@@ -598,7 +598,6 @@ public class HomeDefalutFragment extends BaseFragment {
             @Override
             public void onNotNetOrException() {
                 loadHud.dismiss();
-//                        NetLoadUtils.getNetInstance().showLoadSir(loadService, articleTypeList, mCommunalArticleEntity);
                 mLlArtical.setVisibility(articleTypeList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
@@ -606,7 +605,7 @@ public class HomeDefalutFragment extends BaseFragment {
 
     //获取商品分类集合
     public void getProductTypeList() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.HOME_CATERGORY, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 QualityTypeEntity qualityTypeEntity = new Gson().fromJson(result, QualityTypeEntity.class);

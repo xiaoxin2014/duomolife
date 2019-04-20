@@ -244,6 +244,7 @@ public class ConstantVariable {
     public static final String CATEGORY_ID = "categoryId";
     public static final String CATEGORY_NAME = "categoryName";
     public static final String CATEGORY_CHILD = "childCategory";
+    public static final String CATEGORY_TWO_LEVEL_LIST = "twoLevelCategoryList"; //二级分类集合
     /**
      * 公用web数据类型
      */

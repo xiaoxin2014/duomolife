@@ -20,14 +20,14 @@
         <RadioButton
             android:id="@+id/rb_gProduct"
             style="@style/RadioButtonStyleBottom"
-            android:drawableTop="@drawable/selector_bottom_quality_bar"
-            android:text="良品" />
+            android:drawableTop="@drawable/selector_bottom_catergory_bar"
+            android:text="分类" />
 
         <RadioButton
             android:id="@+id/rb_time"
             style="@style/RadioButtonStyleBottom"
             android:drawableTop="@drawable/selector_bottom_time_bar"
-            android:text="限时特惠" />
+            android:text="淘好货" />
 
         <RadioButton
             android:id="@+id/rb_find"

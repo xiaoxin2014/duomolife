@@ -1163,6 +1163,17 @@
             </intent-filter>
         </activity>
 
+        <!--二级分类商品列表-->
+        <activity
+            android:name=".homepage.activity.CatergoryTwoLevelActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="CatergoryTwoLevelActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <!--支付成功-->
         <activity
             android:name=".shopdetails.activity.DirectPaySuccessActivity"

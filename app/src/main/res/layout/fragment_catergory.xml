@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_fragment_quality"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/fragment_catergory_header"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tablayout_catergory"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_88"
+            app:tabIndicatorColor="@color/text_black_t"
+            app:tabPaddingEnd="@dimen/sc_mm_32"
+            app:tabPaddingStart="@dimen/sc_mm_32"
+            app:tabSelectedTextColor="@color/text_black_t"
+            app:tabTextColor="@color/text_login_gray_s">
+        </android.support.design.widget.TabLayout>
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <include layout="@layout/layout_refresh_header_gif"/>
+
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/rv_catergory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
+
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </LinearLayout>
+
+    <include layout="@layout/layout_float_ad"/>
+</FrameLayout>

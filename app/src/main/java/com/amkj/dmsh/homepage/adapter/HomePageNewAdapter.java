@@ -3,6 +3,7 @@ package com.amkj.dmsh.homepage.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsFragment;
@@ -51,18 +52,22 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
         while (iterator.hasNext()) {
             HomeCommonEntity.HomeCommonBean bean = iterator.next();
             String link = bean.getLink();
-            if (link.contains(prefix) && !actionList.contains(bean.getLink())) {
-                int prefixLength = link.indexOf(prefix) + prefix.length();
-                int urlIndex = link.indexOf("?", prefixLength);
-                if (urlIndex != -1) {
-                    link = link.substring(link.indexOf(prefix), urlIndex).trim();
-                    if (!actionList.contains(link)) {
+            if (TextUtils.isEmpty(link.trim())) {
+                iterator.remove();
+            } else {
+                if (link.contains(prefix) && !actionList.contains(bean.getLink())) {
+                    int prefixLength = link.indexOf(prefix) + prefix.length();
+                    int urlIndex = link.indexOf("?", prefixLength);
+                    if (urlIndex != -1) {
+                        link = link.substring(link.indexOf(prefix), urlIndex).trim();
+                        if (!actionList.contains(link)) {
+                            iterator.remove();
+                        }
+                    } else {
                         iterator.remove();
                     }
-                } else {
-                    iterator.remove();
-                }
 
+                }
             }
         }
     }
@@ -82,7 +87,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
             int urlIndex = link.indexOf("?", prefixLength);
             if (urlIndex != -1) {
                 Map<String, String> urlParams = getUrlParams(link);
-                switch (link.substring(link.indexOf(prefix) , urlIndex).trim()) {
+                switch (link.substring(link.indexOf(prefix), urlIndex).trim()) {
                     case "app://DoMoLifeWelfareDetailsActivity"://福利社专题
                         return BaseFragment.newInstance(DoMoLifeWelfareDetailsFragment.class, urlParams, null);
                     default:

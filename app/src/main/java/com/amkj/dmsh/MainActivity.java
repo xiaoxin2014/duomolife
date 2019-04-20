@@ -48,11 +48,11 @@ import com.amkj.dmsh.bean.OSSConfigEntity.OSSConfigBean;
 import com.amkj.dmsh.bean.PushInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.SysNotificationEntity;
+import com.amkj.dmsh.catergory.fragment.CatergoryFragment;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.fragment.QualityFragment;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -1151,7 +1151,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             fragment = BaseFragment.newInstance(HomePageNewFragment.class, null, null);
                             break;
                         case MAIN_QUALITY:
-                            fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
+                            fragment = BaseFragment.newInstance(CatergoryFragment.class, null, null);
                             break;
                         case MAIN_TIME:
                             fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);

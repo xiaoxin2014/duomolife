@@ -18,7 +18,8 @@ public class Url {
             } else if (position == 2) {//钊立
                 BASE_URL = "http://192.168.1.98:8080/";
             } else if (position == 3) {//泽鑫
-                BASE_URL = "http://192.168.1.180:8080/";
+//                BASE_URL = "http://192.168.1.180:8080/";
+                BASE_URL = "http://192.168.1.51:8080/";
             } else if (position == 4) {//子维
                 BASE_URL = "http://192.168.1.212/";
             } else if (position == 6) {//预发布
@@ -538,6 +539,8 @@ public class Url {
     public static final String QUALITY_SHOP_HOR_TYPE = "api/goods/navbarconfg/getNavbarConfig";
     //    良品侧栏分类
     public static final String QUALITY_SHOP_TYPE = "api/goods/category/getCategoryListV2";
+    //    新版首页分类
+    public static final String HOME_CATERGORY = "api/goods/category/getCategoryLevelOneList";
     //    良品好物
     public static final String QUALITY_SHOP_GOODS_PRO = "api/goods/greate/getGreateGoodList";
     //    良品首栏分类入口

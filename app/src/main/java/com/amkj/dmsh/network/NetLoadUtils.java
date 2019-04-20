@@ -439,12 +439,16 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     @SuppressWarnings("unchecked")
     public void showLoadSir(LoadService loadService, List<T> list, E resultClass) {
         if (loadService != null) {
-            if (list != null && list.size() > 0) {
-                loadService.showWithConvertor(SUCCESS_CODE);
-            } else if (resultClass != null) {
-                loadService.showWithConvertor(resultClass.getCode());
+            if (resultClass != null) {
+                if (list != null && list.size() > 0 ) {
+                    loadService.showWithConvertor(SUCCESS_CODE);
+                } else if (ERROR_CODE.equals(resultClass.getCode())) {
+                    loadService.showWithConvertor(ERROR_CODE);
+                } else {
+                    loadService.showWithConvertor(EMPTY_CODE);
+                }
             } else {
-                loadService.showWithConvertor(ERROR_CODE);
+                loadService.showWithConvertor(EMPTY_CODE);
             }
         }
     }
