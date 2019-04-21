@@ -2,13 +2,10 @@ package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.CommonPagerAdapter;
@@ -17,6 +14,7 @@ import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
@@ -43,22 +41,25 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
     @Override
     public void convert(ViewHolder helper, int position, HomeWelfareBean item) {
         if (item == null) return;
-        ImageView ivCover = helper.getView(R.id.iv_welfare_cover);
         GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), AutoSizeUtils.mm2px(mAppContext, 3));
-        helper.setText(R.id.tv_topic_name, item.getTitle());
-        ivCover.setOnClickListener(view -> {
-
-        });
-//        helper.setText(R.id.tv_topic_desc, item.get());
         RecyclerView rvTopicGoods = helper.getView(R.id.rv_topic_goods);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
-        rvTopicGoods.setLayoutManager(linearLayoutManager);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 3);
+        rvTopicGoods.setLayoutManager(gridLayoutManager);
+        if (rvTopicGoods.getTag()==null){
+            ItemDecoration itemDecoration = new ItemDecoration.Builder()
+                    // 设置分隔线资源ID
+                    .setDividerId(R.drawable.item_divider_five_dp)
+                    .create();
+            rvTopicGoods.addItemDecoration(itemDecoration);
+            rvTopicGoods.setTag(item);
+        }
         List<HomeWelfareBean.GoodsBean> goods = item.getGoods();
         List<HomeWelfareBean.GoodsBean> newGoods = new ArrayList<>();
         //最多显示三个
         for (int i = 0; i < (goods.size() > 3 ? 3 : goods.size()); i++) {
             newGoods.add(goods.get(i));
         }
+
 
         //初始化福利社商品适配器
         BaseQuickAdapter topicGoodsAdapter = new BaseQuickAdapter<HomeWelfareBean.GoodsBean, BaseViewHolder>(R.layout.item_welfear_goods, newGoods) {
@@ -85,19 +86,6 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                 } else {
                     fbl_label.setVisibility(View.GONE);
                 }
-
-                View childItemView = helper.itemView;
-                //动态设置商品宽度
-                childItemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        childItemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        ViewGroup.LayoutParams layoutParams = childItemView.getLayoutParams();
-
-                        layoutParams.width = AutoSizeUtils.mm2px(mContext, 548) / 3;
-                        childItemView.setLayoutParams(layoutParams);
-                    }
-                });
             }
         };
         topicGoodsAdapter.setOnItemClickListener((adapter, view, position1) -> {

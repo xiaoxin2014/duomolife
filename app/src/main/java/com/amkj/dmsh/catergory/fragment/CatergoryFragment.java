@@ -99,7 +99,6 @@ public class CatergoryFragment extends BaseFragment {
                     break;
                 //点击进入文章详情
                 case R.id.fl_artical_right:
-                    relateArticleBean = (RelateArticleBean) view.getTag(R.id.fl_artical_right);
                     if (relateArticleBean != null) {
                         Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
                         intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(0).getDocumentId()));

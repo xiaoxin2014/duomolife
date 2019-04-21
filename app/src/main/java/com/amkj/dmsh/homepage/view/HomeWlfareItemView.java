@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -48,10 +47,6 @@ public class HomeWlfareItemView extends LinearLayout {
     ImageView mIvWelfareCover;
     @BindView(R.id.tv_topic_name)
     TextView mTvTopicName;
-    @BindView(R.id.tv_topic_desc)
-    TextView mTvTopicDesc;
-    @BindView(R.id.fl_welfare)
-    FrameLayout mFlWelfare;
     @BindView(R.id.rv_topic_goods)
     RecyclerView mRvTopicGoods;
     @BindView(R.id.ll_welfare)

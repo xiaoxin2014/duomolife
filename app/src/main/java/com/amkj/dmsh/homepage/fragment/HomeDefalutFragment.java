@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -107,14 +106,8 @@ public class HomeDefalutFragment extends BaseFragment {
     SmartRefreshLayout mSmartLayout;
     @BindView(R.id.iv_dynamic_cover)
     ImageView mIvCover;
-    @BindView(R.id.rv_new_goods)
-    RecyclerView mRvNewGoods;
     @BindView(R.id.ll_dynamic)
     LinearLayout mLlDynamic;
-    @BindView(R.id.tv_welfare_title)
-    TextView mTvWelfareTitle;
-    @BindView(R.id.tv_welfare_desc)
-    TextView mTvWelfareDesc;
     @BindView(R.id.vp_welfare)
     ViewPager mVpFelware;
     @BindView(R.id.rv_nice)
@@ -123,14 +116,6 @@ public class HomeDefalutFragment extends BaseFragment {
     LinearLayout mLlFelware;
     @BindView(R.id.ll_nice)
     LinearLayout mLlNice;
-    @BindView(R.id.tv_nice_title)
-    TextView mTvNiceTitle;
-    @BindView(R.id.tv_nice_desc)
-    TextView mTvNiceDesc;
-    @BindView(R.id.rl_more_nice_topic)
-    RelativeLayout mRlMoreNiceTopic;
-    @BindView(R.id.rl_more_artical)
-    RelativeLayout mRlMoreArtical;
     @BindView(R.id.rv_artical)
     RecyclerView mRvArtical;
     @BindView(R.id.ll_artical)
@@ -190,6 +175,11 @@ public class HomeDefalutFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+        mSmartLayout.setEnableAutoLoadMore(false);
+        mSmartLayout.setEnableAutoLoadMore(false);//使上拉加载具有弹性效果
+        mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
+        mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
+        mSmartLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             articalPage = 1;
@@ -327,16 +317,10 @@ public class HomeDefalutFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        mSmartLayout.setEnableAutoLoadMore(false);
         mSmartLayout.setOnLoadMoreListener(refreshLayout -> {
             mCatergoryPage = mCatergoryPage + 3;
             getProduct();
         });
-        mSmartLayout.setEnableAutoLoadMore(false);//使上拉加载具有弹性效果
-        mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
-        mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
-        mSmartLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
-
     }
 
     @Override
@@ -633,9 +617,8 @@ public class HomeDefalutFragment extends BaseFragment {
     private void getProduct() {
         int catergoryPage = mCatergoryPage;
         for (int i = catergoryPage - 3; i < mCatergoryPage; i++) {
-            if (i >= qualityTypeList.size()) {
-                mSmartLayout.finishLoadMoreWithNoMoreData();
-                mSmartLayout.setNoMoreData(true);
+            int position = i;
+            if (i > qualityTypeList.size() - 1) {
                 return;
             }
 
@@ -679,6 +662,11 @@ public class HomeDefalutFragment extends BaseFragment {
                                 }
                             } else {
                                 mSmartLayout.finishLoadMore(false);
+                            }
+
+                            if (position == qualityTypeList.size() - 1) {
+                                mSmartLayout.finishLoadMoreWithNoMoreData();
+                                mSmartLayout.setNoMoreData(true);
                             }
                         }
 

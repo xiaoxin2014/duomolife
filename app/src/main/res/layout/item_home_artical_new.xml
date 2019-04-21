@@ -14,7 +14,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/sc_mm_28"
         android:layout_marginTop="@dimen/sc_mm_44"
         android:orientation="vertical">
@@ -36,6 +36,7 @@
             android:layout_marginTop="@dimen/sc_mm_14"
             android:layout_weight="1"
             android:ellipsize="end"
+            android:gravity="left|top"
             android:maxLines="2"
             android:text="@string/defaul"
             android:textColor="@color/color_blue_reply_com"
@@ -44,7 +45,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1mm"
-            android:layout_marginTop="@dimen/sc_mm_40"
             android:background="@color/text_color_e_s"/>
     </LinearLayout>
 </LinearLayout>

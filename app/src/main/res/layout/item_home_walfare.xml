@@ -3,53 +3,25 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_welfare"
     android:layout_width="@dimen/sc_mm_578"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/shap_home_topic_bg"
     android:orientation="vertical"
     android:paddingTop="@dimen/sc_mm_10"
     android:paddingBottom="@dimen/sc_mm_10">
 
-    <FrameLayout
-        android:id="@+id/fl_welfare"
+    <ImageView
+        android:id="@+id/iv_welfare_cover"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_300"
-        android:paddingLeft="@dimen/sc_mm_10"
-        android:paddingRight="@dimen/sc_mm_10">
-
-        <ImageView
-            android:id="@+id/iv_welfare_cover"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_300"
-            android:src="@drawable/load_loading_image"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sc_mm_93"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_topic_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/defaul"/>
-
-            <TextView
-                android:id="@+id/tv_topic_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sc_mm_23"
-                android:gravity="center"
-                android:text="@string/defaul"/>
-        </LinearLayout>
-    </FrameLayout>
+        android:layout_marginLeft="@dimen/sc_mm_10"
+        android:layout_marginRight="@dimen/sc_mm_10"
+        android:src="@drawable/load_loading_image"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_topic_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_10"
+        android:layout_marginBottom="@dimen/sc_mm_4"
         android:scrollbars="none"/>
 </LinearLayout>
