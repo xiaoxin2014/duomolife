@@ -62,10 +62,10 @@ public abstract class BaseFragment extends ImmersionFragment {
     /**
      * 懒加载机制
      */
-//    控件是否初始化完成
-    protected boolean isInitView = false;
-    //    是否加载过数据
-    protected boolean isLoadData = false;
+    protected boolean isViewInitiated; //是否初始化过布局
+    protected boolean isVisibleToUser; //当前界面对用户是否可见
+    protected boolean isDataInitiated; //是否已经加载过数据（保证数据只会加载一次）
+    protected boolean isLazy = true;          //当前Fragment是否需要使用懒加载方式
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
 
@@ -183,14 +183,11 @@ public abstract class BaseFragment extends ImmersionFragment {
                 }
             });
         }
-        initViews();
         // 注册当前Fragment为订阅者
         EventBus eventBus = EventBus.getDefault();
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
-        isInitView = true;
-        isCanLoadData();
         AutoSize.autoConvertDensityOfGlobal(getActivity());
         return loadService != null ? loadService.getLoadLayout() : view;
     }
@@ -205,8 +202,36 @@ public abstract class BaseFragment extends ImmersionFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        isCanLoadData();
+        this.isVisibleToUser = isVisibleToUser;
+        if (isVisibleToUser) {
+            prepareFetchData();
+        }
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isViewInitiated = true;
+        initViews();
+        if (!isLazy()) {
+            loadData();
+        }
+        prepareFetchData();
+    }
+
+    //判断懒加载条件
+    public void prepareFetchData() {
+        if (isVisibleToUser && isViewInitiated && isLazy() && !isDataInitiated) {
+            loadData();
+            isDataInitiated = true;
+        }
+    }
+
+    //判断当前fragment是否启用懒加载
+    protected boolean isLazy() {
+        return isLazy;
+    }
+
 
     /**
      * 获取参数，在子类中定义逻辑
@@ -251,8 +276,8 @@ public abstract class BaseFragment extends ImmersionFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        isInitView = false;
-        isLoadData = false;
+        isViewInitiated = false;
+        isDataInitiated = false;
         if (EventBus.getDefault().isRegistered(getActivity())) {
             EventBus.getDefault().unregister(this);
         }
@@ -319,21 +344,6 @@ public abstract class BaseFragment extends ImmersionFragment {
             }
         } else {
             totalPersonalTrajectory = new TotalPersonalTrajectory(this.getContext(), this.getClass().getSimpleName());
-        }
-    }
-
-    /**
-     * 是否可加载数据
-     */
-    private void isCanLoadData() {
-        if (!isInitView) {
-            return;
-        }
-        if (getUserVisibleHint() && !isLoadData) {
-            loadData();
-            isLoadData = true;
-        } else if (isLoadData) {
-            stopLoadData();
         }
     }
 

@@ -11,6 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.CommonPagerAdapter;
 import com.amkj.dmsh.base.ViewHolder;
 import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
+import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -42,10 +43,15 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
     public void convert(ViewHolder helper, int position, HomeWelfareBean item) {
         if (item == null) return;
         GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), AutoSizeUtils.mm2px(mAppContext, 3));
+        helper.getView(R.id.iv_welfare_cover).setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, DoMoLifeWelfareDetailsActivity.class);
+            intent.putExtra("welfareId", String.valueOf(item.getId()));
+            mContext.startActivity(intent);
+        });
         RecyclerView rvTopicGoods = helper.getView(R.id.rv_topic_goods);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 3);
         rvTopicGoods.setLayoutManager(gridLayoutManager);
-        if (rvTopicGoods.getTag()==null){
+        if (rvTopicGoods.getTag() == null) {
             ItemDecoration itemDecoration = new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_dp)
@@ -65,6 +71,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
         BaseQuickAdapter topicGoodsAdapter = new BaseQuickAdapter<HomeWelfareBean.GoodsBean, BaseViewHolder>(R.layout.item_welfear_goods, newGoods) {
             @Override
             protected void convert(BaseViewHolder helper, HomeWelfareBean.GoodsBean goodsBean) {
+                if (goodsBean == null) return;
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsBean.getPicUrl());
                 helper.setText(R.id.tv_price, "¥" + goodsBean.getPrice());
                 FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
@@ -86,14 +93,19 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                 } else {
                     fbl_label.setVisibility(View.GONE);
                 }
+
+                helper.itemView.setTag(goodsBean);
             }
         };
         topicGoodsAdapter.setOnItemClickListener((adapter, view, position1) -> {
             HomeWelfareBean.GoodsBean goodsBean = (HomeWelfareBean.GoodsBean) view.getTag();
-            Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
-            intent.putExtra("productId", String.valueOf(goodsBean.getId()));
-            mContext.startActivity(intent);
+            if (goodsBean != null) {
+                Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", String.valueOf(goodsBean.getId()));
+                mContext.startActivity(intent);
+            }
         });
         rvTopicGoods.setAdapter(topicGoodsAdapter);
+        helper.itemView.setTag(item);
     }
 }

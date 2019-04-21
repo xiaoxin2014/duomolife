@@ -143,6 +143,7 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+        isLazy = false;
         smart_refresh_home.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             loadData();
@@ -529,4 +530,8 @@ public class HomePageFragment extends BaseFragment {
                 .statusBarDarkFont(true).init();
     }
 
+    @Override
+    protected boolean isLazy() {
+        return false;
+    }
 }

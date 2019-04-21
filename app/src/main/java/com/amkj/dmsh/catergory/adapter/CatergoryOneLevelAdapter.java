@@ -13,6 +13,7 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean.ArticlesBean;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -85,6 +86,7 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
                 Intent intent = new Intent(mContext, CatergoryTwoLevelActivity.class);
                 intent.putParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST, (ArrayList<? extends Parcelable>) item.getChildCategoryList());
                 intent.putExtra("position", position);
+                intent.putExtra(ConstantVariable.CATEGORY_NAME, item.getName());
                 mContext.startActivity(intent);
             }
         });

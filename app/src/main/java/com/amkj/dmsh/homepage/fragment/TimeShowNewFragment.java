@@ -181,4 +181,9 @@ public class TimeShowNewFragment extends BaseFragment {
         ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true)
                 .statusBarDarkFont(true).fitsSystemWindows(true).navigationBarEnable(false).init();
     }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
+    }
 }

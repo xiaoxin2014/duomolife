@@ -13,6 +13,7 @@
     <color name="white">#fff</color>
     <color name="text_gray_c">#cccccc</color>
     <color name="text_black_t">#333</color>
+    <color name="text_black_t2">#444</color>
     <color name="text_transculent_black">#7f535353</color>
     <color name="gray_bg">#f7f6f1</color>
     <color name="gray_light">#fafafa</color>

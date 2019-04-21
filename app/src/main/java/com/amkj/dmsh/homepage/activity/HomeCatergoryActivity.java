@@ -1,0 +1,269 @@
+package com.amkj.dmsh.homepage.activity;
+
+import android.content.Intent;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.catergory.adapter.CatergoryOneLevelAdapter;
+import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity;
+import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean;
+import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
+import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.google.gson.Gson;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_PID;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
+
+;
+
+/**
+ * Created by xiaoxin on 2019/4/21 0021
+ * Version:v4.0.0
+ * ClassDescription :
+ */
+public class HomeCatergoryActivity extends BaseActivity {
+    @BindView(R.id.rv_catergory)
+    RecyclerView mRvCatergory;
+    @BindView(R.id.smart_layout)
+    SmartRefreshLayout mSmartLayout;
+    @BindView(R.id.tv_header_title)
+    TextView mTvHeaderTitle;
+    @BindView(R.id.iv_img_service)
+    ImageView mIvImgService;
+    @BindView(R.id.iv_img_share)
+    ImageView mIvImgShare;
+    @BindView(R.id.tv_life_back)
+    TextView mTvLifeBack;
+    @BindView(R.id.rv_catergory_goods)
+    RecyclerView mRvCatergoryGoods;
+    private List<CatergoryOneLevelBean> mCatergoryBeanList = new ArrayList<>();
+    private List<LikedProductBean> productList = new ArrayList<>();
+    private int page = 1;
+    private UserLikedProductEntity likedProductEntity;
+    private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
+    CatergoryGoodsAdapter mCatergoryGoodsAdapter;
+    private CatergoryOneLevelEntity mCatergoryEntity;
+    private CatergoryOneLevelAdapter mOneLevelAdapter;
+    private String mCategoryPid;
+    private String mCategoryName;
+    private String mCategoryId;
+    private String mCategoryType;
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_home_catergory;
+    }
+
+    @Override
+    protected void initViews() {
+        mIvImgService.setVisibility(View.GONE);
+        mIvImgShare.setVisibility(View.GONE);
+        if (getIntent() != null) {
+            mCategoryPid = getIntent().getStringExtra(CATEGORY_PID);
+            mCategoryName = getIntent().getStringExtra(CATEGORY_NAME);
+            mCategoryId = getIntent().getStringExtra(CATEGORY_ID);
+            mCategoryType = getIntent().getStringExtra(CATEGORY_TYPE);
+
+            mTvHeaderTitle.setText(mCategoryName);
+        }
+
+        mSmartLayout.setOnRefreshListener(refreshLayout -> {
+            page = 1;
+            loadData();
+        });
+        mOneLevelAdapter = new CatergoryOneLevelAdapter(getActivity(), mCatergoryBeanList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mRvCatergory.setLayoutManager(linearLayoutManager);
+        mRvCatergory.addItemDecoration(new ItemDecoration.Builder()
+                // 设置分隔线资源ID
+                .setDividerId(R.drawable.item_divider_ten_dp)
+                .create());
+        mRvCatergory.setAdapter(mOneLevelAdapter);
+        mRvCatergory.setNestedScrollingEnabled(false);
+        mOneLevelAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            RelateArticleBean relateArticleBean = (RelateArticleBean) view.getTag();
+            switch (view.getId()) {
+                //进入文章专题
+                case R.id.rl_more_artical:
+                    if (relateArticleBean != null) {
+                        Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
+                        intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
+                        intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
+                        if (getActivity() != null) startActivity(intent);
+                    }
+                    break;
+                //点击进入文章详情
+                case R.id.fl_artical_left:
+                    if (relateArticleBean != null) {
+                        Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
+                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(0).getDocumentId()));
+                        startActivity(intent);
+                    }
+                    break;
+                //点击进入文章详情
+                case R.id.fl_artical_right:
+                    if (relateArticleBean != null) {
+                        Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
+                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(1).getDocumentId()));
+                        startActivity(intent);
+                    }
+                    break;
+            }
+        });
+
+
+        //分类商品适配器
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this
+                , 3);
+        mRvCatergoryGoods.setLayoutManager(gridLayoutManager);
+        mRvCatergoryGoods.setNestedScrollingEnabled(false);
+        ItemDecoration itemDecoration = new ItemDecoration.Builder()
+                // 设置分隔线资源ID
+                .setDividerId(R.drawable.item_divider_five_gray_f)
+                .create();
+        mRvCatergoryGoods.addItemDecoration(itemDecoration);
+        mCatergoryGoodsAdapter = new CatergoryGoodsAdapter(this, productList);
+        mCatergoryGoodsAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getCatergoryGoods();
+        });
+        mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
+
+    }
+
+    @Override
+    protected void loadData() {
+        getOneLevelData();
+        getCatergoryGoods();
+    }
+
+
+    private void getOneLevelData() {
+        Map<String, String> map = new HashMap<>();
+        map.put("categoryPid", mCategoryPid);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.QUALITY_SHOP_TYPE, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mSmartLayout.finishRefresh();
+                mCatergoryEntity = new Gson().fromJson(result, CatergoryOneLevelEntity.class);
+                if (mCatergoryEntity != null) {
+                    String code = mCatergoryEntity.getCode();
+                    List<CatergoryOneLevelBean> catergoryList = mCatergoryEntity.getResult();
+                    if (catergoryList != null && catergoryList.size() > 0) {
+                        mCatergoryBeanList.clear();
+                        mCatergoryBeanList.addAll(catergoryList);
+                        mOneLevelAdapter.notifyDataSetChanged();
+                    } else if (ERROR_CODE.equals(code)) {
+                        ConstantMethod.showToast(mCatergoryEntity.getMsg());
+                    }
+                }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mCatergoryBeanList, mCatergoryEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mSmartLayout.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mCatergoryBeanList, mCatergoryEntity);
+            }
+        });
+    }
+
+    private void getCatergoryGoods() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", page);
+        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("id", mCategoryPid);
+        params.put("pid", mCategoryId);
+        params.put("orderTypeId", mCategoryType);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PRODUCT_TYPE_LIST
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        mSmartLayout.finishRefresh();
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+
+                        Gson gson = new Gson();
+                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        if (likedProductEntity != null) {
+                            List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
+                            if (likedProductBeanList != null && likedProductBeanList.size() > 0 && SUCCESS_CODE.equals(likedProductEntity.getCode())) {
+                                if (page == 1) {
+                                    productList.clear();
+                                    removeExistUtils.clearData();
+                                }
+                                productList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                                mCatergoryGoodsAdapter.notifyDataSetChanged();
+                                mCatergoryGoodsAdapter.loadMoreComplete();
+
+
+                            } else if (ERROR_CODE.equals(likedProductEntity.getCode())) {
+                                ConstantMethod.showToast(likedProductEntity.getMsg());
+                                mCatergoryGoodsAdapter.loadMoreFail();
+                            } else {
+                                mCatergoryGoodsAdapter.loadMoreEnd();
+                            }
+                        } else {
+                            mCatergoryGoodsAdapter.loadMoreEnd();
+                        }
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productList, likedProductEntity);
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        mSmartLayout.finishRefresh();
+                        if (loadHud != null) {
+                            loadHud.dismiss();
+                        }
+                        mCatergoryGoodsAdapter.loadMoreFail();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productList, likedProductEntity);
+                    }
+                });
+    }
+
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    protected View getLoadView() {
+        return mSmartLayout;
+    }
+
+    @OnClick(R.id.tv_life_back)
+    public void onViewClicked() {
+        finish();
+    }
+}

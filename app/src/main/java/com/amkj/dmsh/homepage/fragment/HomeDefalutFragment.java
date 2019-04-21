@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -26,12 +27,12 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
-import com.amkj.dmsh.dominant.activity.QualityTypeProductActivity;
 import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
+import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.QualityGoodActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeTopAdapter;
@@ -81,6 +82,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
+import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_PID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.CATE_DOC_LIST;
@@ -107,7 +109,7 @@ public class HomeDefalutFragment extends BaseFragment {
     @BindView(R.id.iv_dynamic_cover)
     ImageView mIvCover;
     @BindView(R.id.ll_dynamic)
-    LinearLayout mLlDynamic;
+    RelativeLayout mLlDynamic;
     @BindView(R.id.vp_welfare)
     ViewPager mVpFelware;
     @BindView(R.id.rv_nice)
@@ -175,6 +177,7 @@ public class HomeDefalutFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+        isLazy = false;
         mSmartLayout.setEnableAutoLoadMore(false);
         mSmartLayout.setEnableAutoLoadMore(false);//使上拉加载具有弹性效果
         mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
@@ -310,9 +313,10 @@ public class HomeDefalutFragment extends BaseFragment {
         mHomeCatergoryAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (view.getId() == R.id.rl_more_product) {
                 UserLikedProductEntity entity = (UserLikedProductEntity) view.getTag();
-                Intent intent = new Intent(getActivity(), QualityTypeProductActivity.class);
+                Intent intent = new Intent(getActivity(), HomeCatergoryActivity.class);
                 intent.putExtra(CATEGORY_NAME, entity.getCatergoryName());
-                intent.putExtra(CATEGORY_ID, entity.getId());
+                intent.putExtra(CATEGORY_PID, entity.getId());
+                intent.putExtra(CATEGORY_ID, entity.getPid());
                 intent.putExtra(CATEGORY_TYPE, entity.getType());
                 startActivity(intent);
             }
@@ -617,8 +621,11 @@ public class HomeDefalutFragment extends BaseFragment {
     private void getProduct() {
         int catergoryPage = mCatergoryPage;
         for (int i = catergoryPage - 3; i < mCatergoryPage; i++) {
-            int position = i;
             if (i > qualityTypeList.size() - 1) {
+                if (mCatergoryPage - qualityTypeList.size() >= 3) {
+                    mSmartLayout.finishLoadMoreWithNoMoreData();
+                    mSmartLayout.setNoMoreData(true);
+                }
                 return;
             }
 
@@ -664,10 +671,7 @@ public class HomeDefalutFragment extends BaseFragment {
                                 mSmartLayout.finishLoadMore(false);
                             }
 
-                            if (position == qualityTypeList.size() - 1) {
-                                mSmartLayout.finishLoadMoreWithNoMoreData();
-                                mSmartLayout.setNoMoreData(true);
-                            }
+
                         }
 
                         @Override

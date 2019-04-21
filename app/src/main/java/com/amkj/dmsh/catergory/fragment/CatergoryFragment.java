@@ -101,7 +101,7 @@ public class CatergoryFragment extends BaseFragment {
                 case R.id.fl_artical_right:
                     if (relateArticleBean != null) {
                         Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
-                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(0).getDocumentId()));
+                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(1).getDocumentId()));
                         startActivity(intent);
                     }
                     break;
@@ -188,6 +188,11 @@ public class CatergoryFragment extends BaseFragment {
     }
 
     @Override
+    protected boolean isLazy() {
+        return false;
+    }
+
+    @Override
     public boolean immersionBarEnabled() {
         return true;
     }
@@ -197,5 +202,4 @@ public class CatergoryFragment extends BaseFragment {
         ImmersionBar.with(this).titleBar(mTbCatergory).keyboardEnable(true).navigationBarEnable(false)
                 .statusBarDarkFont(true).init();
     }
-
 }

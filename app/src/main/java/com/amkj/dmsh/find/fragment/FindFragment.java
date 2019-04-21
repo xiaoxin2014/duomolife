@@ -394,4 +394,9 @@ public class FindFragment extends BaseFragment {
     public boolean immersionBarEnabled() {
         return true;
     }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
+    }
 }

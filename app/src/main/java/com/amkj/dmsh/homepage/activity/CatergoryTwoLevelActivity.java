@@ -1,8 +1,8 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import android.support.design.widget.TabLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -16,7 +16,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
+import com.amkj.dmsh.dominant.adapter.CatergoryNameAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -59,8 +61,6 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     ImageView mIvImgShare;
     @BindView(R.id.tl_quality_bar)
     Toolbar mTlQualityBar;
-    @BindView(R.id.tablayout_catergory)
-    TabLayout mTablayoutCatergory;
     @BindView(R.id.rb_new)
     RadioButton mRbNew;
     @BindView(R.id.radio_group)
@@ -69,13 +69,18 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     RecyclerView mRvCatergoryGoods;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
-    private List<ChildCategoryListBean> mChildCategoryListBeanList;
+    @BindView(R.id.rv_catergory_name)
+    RecyclerView mRvCatergoryName;
+    private List<ChildCategoryListBean> mChildCategoryListBeanList = new ArrayList<>();
     private List<LikedProductBean> productList = new ArrayList<>();
     private int mPosition;
+    private String mCatergoryName;
+    private String orderType = "1";
     private int page = 1;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
     CatergoryGoodsAdapter mCatergoryGoodsAdapter;
+    CatergoryNameAdapter mCatergoryNameAdapter;
 
     @Override
     protected int getContentView() {
@@ -89,63 +94,47 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
         Intent intent = getIntent();
         if (intent != null && getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST) != null && getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST).size() > 0) {
             mChildCategoryListBeanList = getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST);
-            mPosition = getIntent().getIntExtra("position", 0);
-            ChildCategoryListBean childCategoryListBean = mChildCategoryListBeanList.get(mPosition);
+            mPosition = getIntent().getIntExtra("position", 0) + 1;
+            mCatergoryName = getIntent().getStringExtra(ConstantVariable.CATEGORY_NAME);
             //加上(全部)分类
             ChildCategoryListBean allCatergoryBean = new ChildCategoryListBean();
             allCatergoryBean.setType(4);
             allCatergoryBean.setName("全部");
-            mChildCategoryListBeanList.add(allCatergoryBean);
-            mTvHeaderTitle.setText(childCategoryListBean.getName());
+            mChildCategoryListBeanList.add(0, allCatergoryBean);
+            mTvHeaderTitle.setText(mChildCategoryListBeanList.get(mPosition).getName());
         } else {
             showToast(this, R.string.miss_parameters_hint);
             return;
         }
 
-        mTablayoutCatergory.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (page != 1) {
-                    //获取分类商品
-                    if (!loadHud.isShowing()) loadHud.show();
-                    page = 1;
-                    mPosition = tab.getPosition();
-                    getCatergoryGoods();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        mTablayoutCatergory.setTabMode(TabLayout.MODE_SCROLLABLE);
-
-        mRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
-            RadioButton childAt = (RadioButton) radioGroup.getChildAt(i);
-            if (childAt.getId() == R.id.rb_new) {
-
-            } else if (childAt.getId() == R.id.rb_num) {
-
-            }
-        });
-
+        //初始化监听事件
+        initListener();
         //初始化适配器
         initAdapter();
     }
 
-    private void initAdapter() {
+    private void initListener() {
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             page = 1;
+            orderType = "1";
+            ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(false);
+            ((RadioButton) mRadioGroup.getChildAt(1)).setChecked(false);
             loadData();
         });
-        //初始化新人专享适配器
+
+        mRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
+            if (!loadHud.isShowing()) loadHud.show();
+            if (i == 0) {
+                orderType = "4";
+            } else if (i == 1) {
+                orderType = "2";
+            }
+        });
+
+    }
+
+    private void initAdapter() {
+        //分类商品适配器
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this
                 , 3);
         mRvCatergoryGoods.setLayoutManager(gridLayoutManager);
@@ -160,11 +149,25 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
             loadData();
         });
         mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
+
+        //分类名称适配器
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRvCatergoryName.setLayoutManager(linearLayoutManager);
+        mCatergoryNameAdapter = new CatergoryNameAdapter(this, mChildCategoryListBeanList, mPosition);
+        mRvCatergoryName.setAdapter(mCatergoryNameAdapter);
+        mCatergoryNameAdapter.setOnItemClickListener((adapter, view, position) -> {
+            if (!loadHud.isShowing()) loadHud.show();
+            page = 1;
+            mPosition = position;
+            mCatergoryNameAdapter.setSelectPosition(position);
+            mCatergoryNameAdapter.notifyDataSetChanged();
+            mTvHeaderTitle.setText(position == 0 ? mCatergoryName : mChildCategoryListBeanList.get(position).getName());
+            getCatergoryGoods();
+        });
     }
 
     @Override
     protected void loadData() {
-        //获取分类商品
         getCatergoryGoods();
     }
 
@@ -176,7 +179,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
         params.put("showCount", TOTAL_COUNT_TWENTY);
         params.put("id", childCategoryListBean.getId());
         params.put("pid", childCategoryListBean.getPid());
-        params.put("orderTypeId", childCategoryListBean.getType());
+        params.put("orderTypeId", orderType);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PRODUCT_TYPE_LIST
                 , params, new NetLoadListenerHelper() {
                     @Override
@@ -199,15 +202,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
                                 mCatergoryGoodsAdapter.notifyDataSetChanged();
                                 mCatergoryGoodsAdapter.loadMoreComplete();
 
-                                if (page == 1) {
-                                    mTablayoutCatergory.removeAllTabs();
-                                    for (int i = 0; i < mChildCategoryListBeanList.size(); i++) {
-                                        if (i != mPosition) {
-                                            TabLayout.Tab tab = mTablayoutCatergory.newTab().setText(mChildCategoryListBeanList.get(i).getName());
-                                            mTablayoutCatergory.addTab(tab);
-                                        }
-                                    }
-                                }
+
                             } else if (ERROR_CODE.equals(likedProductEntity.getCode())) {
                                 ConstantMethod.showToast(likedProductEntity.getMsg());
                                 mCatergoryGoodsAdapter.loadMoreFail();

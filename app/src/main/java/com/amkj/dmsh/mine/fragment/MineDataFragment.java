@@ -498,7 +498,7 @@ public class MineDataFragment extends BaseFragment {
     private void getNetDataInfo() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("uid", String.valueOf(userId));
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),MINE_PAGE
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), MINE_PAGE
                 , params, false, new NetCacheLoadListenerHelper() {
                     @Override
                     public void onSuccessCacheResult(CacheResult<String> cacheResult) {
@@ -768,7 +768,7 @@ public class MineDataFragment extends BaseFragment {
                 ad_mine.setPointViewVisible(false);
             }
         } else if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
-           setErrorUserData();
+            setErrorUserData();
         }
     }
 
@@ -835,5 +835,8 @@ public class MineDataFragment extends BaseFragment {
         return true;
     }
 
-
+    @Override
+    protected boolean isLazy() {
+        return false;
+    }
 }

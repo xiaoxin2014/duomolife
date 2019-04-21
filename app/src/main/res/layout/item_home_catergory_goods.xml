@@ -31,7 +31,7 @@
         android:maxLines="2"
         android:paddingLeft="@dimen/sc_mm_12"
         android:text="@string/defaul"
-        android:textColor="@color/text_black_t"
+        android:textColor="@color/text_black_t2"
         android:textSize="@dimen/sc_mm_26"/>
 
     <TextView

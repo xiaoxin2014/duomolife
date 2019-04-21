@@ -240,4 +240,9 @@ public class HomePageNewFragment extends BaseFragment {
     protected boolean isAddLoad() {
         return true;
     }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
+    }
 }
