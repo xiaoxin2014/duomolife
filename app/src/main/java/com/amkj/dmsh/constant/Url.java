@@ -353,6 +353,8 @@ public class Url {
     public static final String TIME_SHOW_PRODUCT_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
     //    限时特惠top推荐
     public static final String TIME_SHOW_PRO_TOP_PRODUCT = "api/goods/flashSale/getGoodsRecommend";
+    //    淘宝长期商品推荐
+    public static final String TIME_SHOW_TAOBAO_PRODUCT = "api/goods/flashSale/getLongTimeTaobaoProducts";
     //    是否设置过提醒
     public static final String TIME_SHOW_PRO_WARM = "api/my/remind/getHadRemind";
     //    设置提醒时间
@@ -540,7 +542,7 @@ public class Url {
     //    良品侧栏分类
     public static final String QUALITY_SHOP_TYPE = "api/goods/category/getCategoryListV2";
     //    新版首页分类
-    public static final String HOME_CATERGORY = "api/goods/category/getCategoryLevelOneList";
+    public static final String HOME_CATERGORY_ONE_LIST = "api/goods/category/getCategoryLevelOneList";
     //    良品好物
     public static final String QUALITY_SHOP_GOODS_PRO = "api/goods/greate/getGreateGoodList";
     //    良品首栏分类入口

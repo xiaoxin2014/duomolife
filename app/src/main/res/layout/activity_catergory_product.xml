@@ -9,14 +9,12 @@
 
     <include layout="@layout/layout_ql_cart_share_header"/>
 
-    <include layout="@layout/ysf_include_divider"/>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_catergory_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"/>
 
+    <include layout="@layout/ysf_include_divider"/>
 
     <RadioGroup
         android:id="@+id/radio_group"
@@ -32,6 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/border_right_line"
             android:button="@null"
             android:gravity="center"
             android:text="上新"

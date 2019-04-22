@@ -67,8 +67,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_4;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRODUCT_TOPIC_SHAFT;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_TOP_PRODUCT;
+import static com.amkj.dmsh.constant.Url.TIME_SHOW_TAOBAO_PRODUCT;
 
 ;
 
@@ -328,18 +330,18 @@ public class SpringSaleFragment extends BaseFragment {
                                 springSaleRecyclerAdapter.setEnableLoadMore(false);
                                 if (timeForeShowEntity.getCode().equals(EMPTY_CODE)) {
                                     int currentPosition = timeShowBean.getHourShaft().lastIndexOf(searchDateHour);
-                                    if(currentPosition!=-1){
+                                    if (currentPosition != -1) {
                                         page = 1;
                                         if (currentPosition == timeShowBean.getHourShaft().size() - 1) {
 //                                                更换天数时间轴
 //                                                是否是最后一天
                                             int currentDayIndex = showTimeList.indexOf(timeShowBean);
-                                            if(currentDayIndex!=-1){
+                                            if (currentDayIndex != -1) {
                                                 if (currentDayIndex == showTimeList.size() - 1) {
 //                                                            最后一天
                                                     getTopRecommendData();
                                                 } else {
-                                                    timeShowBean = showTimeList.get(currentDayIndex+1);
+                                                    timeShowBean = showTimeList.get(currentDayIndex + 1);
                                                     searchDateHour = timeShowBean.getHourShaft().get(0);
                                                     oldDateDay = searchDateDay;
                                                     searchDateDay = timeShowBean.getDate();
@@ -350,7 +352,7 @@ public class SpringSaleFragment extends BaseFragment {
                                             }
                                         } else {
 //                                                更换小时时间轴
-                                            searchDateHour = timeShowBean.getHourShaft().get(currentPosition+1);
+                                            searchDateHour = timeShowBean.getHourShaft().get(currentPosition + 1);
                                             oldDateDay = searchDateDay;
                                             getProductData();
                                         }
@@ -385,7 +387,7 @@ public class SpringSaleFragment extends BaseFragment {
     }
 
     /**
-     * 获取
+     * 获取团品推荐
      */
     private void getTopRecommendData() {
         Map<String, Object> params = new HashMap<>();
@@ -414,6 +416,48 @@ public class SpringSaleFragment extends BaseFragment {
                             }
                             springSaleRecyclerAdapter.loadMoreEnd();
                         }
+
+                        //获取淘宝关联商品数据
+                        getTaoBaoData();
+
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        springSaleRecyclerAdapter.loadMoreEnd(true);
+                    }
+                });
+    }
+
+    private void getTaoBaoData() {
+        Map<String, Object> params = new HashMap<>();
+        if (userId != 0) {
+            params.put("uid", userId);
+        }
+        params.put("currentPage", 1);
+        params.put("showCount", 20);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), TIME_SHOW_TAOBAO_PRODUCT
+                , params, new NetLoadListenerHelper() {
+                    @Override
+                    public void onSuccess(String result) {
+                        springSaleRecyclerAdapter.loadMoreComplete();
+                        Gson gson = new Gson();
+                        timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+                        if (timeForeShowEntity != null) {
+                            if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
+                                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                                if (timeForeShowEntity.getTimeForeShowList() != null
+                                        && timeForeShowEntity.getTimeForeShowList().size() > 0) {
+                                    BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
+                                    baseTimeProductTopicBean.setItemType(TYPE_4);
+                                    saleTimeTotalList.add(baseTimeProductTopicBean);
+                                    saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
+                                }
+                                springSaleRecyclerAdapter.notifyDataSetChanged();
+                            }
+                            springSaleRecyclerAdapter.loadMoreEnd();
+                        }
+
                     }
 
                     @Override

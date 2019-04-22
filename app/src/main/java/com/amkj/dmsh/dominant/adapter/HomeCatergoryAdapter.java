@@ -31,12 +31,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
  */
 
 public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntity, BaseViewHolder> {
-    private final Activity context;
+    private final Activity mContext;
     private CBViewHolderCreator cbViewHolderCreator;
 
     public HomeCatergoryAdapter(Activity context, List<UserLikedProductEntity> productList) {
         super(R.layout.item_home_catergory, productList);
-        this.context = context;
+        this.mContext = context;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
                 cbViewHolderCreator = new CBViewHolderCreator() {
                     @Override
                     public Holder createHolder(View itemView) {
-                        return new CommunalAdHolderView(itemView, context, true);
+                        return new CommunalAdHolderView(itemView, mContext, true);
                     }
 
                     @Override
@@ -75,7 +75,7 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
                 adBeanList.add(communalADActivityBean);
             }
 
-            convenientBanner.setPages(context, cbViewHolderCreator, adBeanList).setCanLoop(true)
+            convenientBanner.setPages(mContext, cbViewHolderCreator, adBeanList).setCanLoop(true)
                     .setPointViewVisible(true).setCanScroll(true)
                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                     .startTurning(getShowNumber("5") * 1000);
@@ -86,7 +86,7 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
 
         RecyclerView rvGoods = helper.getView(R.id.rv_catergory_goods);
         //初始化新人专享适配器
-        GridLayoutManager newUserManager = new GridLayoutManager(context
+        GridLayoutManager newUserManager = new GridLayoutManager(mContext
                 , 3);
         rvGoods.setLayoutManager(newUserManager);
         if (rvGoods.getTag() == null) {
@@ -101,9 +101,11 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
         CatergoryGoodsAdapter catergoryGoodsAdapter = new CatergoryGoodsAdapter(mContext, userLikedProductEntity.getLikedProductBeanList());
         catergoryGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
             LikedProductBean goodsBean = (LikedProductBean) view.getTag();
-            Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
-            intent.putExtra("productId", String.valueOf(goodsBean.getId()));
-            context.startActivity(intent);
+            if (goodsBean != null) {
+                Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", String.valueOf(goodsBean.getId()));
+                mContext.startActivity(intent);
+            }
         });
 
         rvGoods.setAdapter(catergoryGoodsAdapter);

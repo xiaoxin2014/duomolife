@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
-    android:id="@+id/tv_catergory_name"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:paddingLeft="@dimen/sc_mm_30"
-    android:paddingRight="@dimen/sc_mm_30"
+    android:id="@+id/tv_catergory_name"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/sc_mm_80"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     android:gravity="center"
+    android:paddingLeft="@dimen/sc_mm_48"
+    android:paddingTop="@dimen/sc_mm_21"
+    android:paddingBottom="@dimen/sc_mm_21"
     android:textColor="@color/text_login_gray_s"
-    android:textSize="@dimen/sc_mm_28"/>
+    android:textSize="@dimen/sc_mm_30"/>

@@ -23,6 +23,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_4;
 
 ;
 
@@ -42,6 +43,7 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Base
         addItemType(TYPE_1, R.layout.adapter_promotion_foreshow_topic);
         addItemType(TYPE_2, R.layout.adapter_promotion_foreshow_date_header);
         addItemType(TYPE_3, R.layout.adapter_promotion_foreshow_recommend_header);
+        addItemType(TYPE_4, R.layout.adapter_promotion_foreshow_taobao_header);
     }
 
     @Override

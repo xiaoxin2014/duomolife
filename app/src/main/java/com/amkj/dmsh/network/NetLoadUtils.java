@@ -448,7 +448,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                     loadService.showWithConvertor(EMPTY_CODE);
                 }
             } else {
-                loadService.showWithConvertor(EMPTY_CODE);
+                loadService.showWithConvertor(ERROR_CODE);
             }
         }
     }

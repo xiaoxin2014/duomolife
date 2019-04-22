@@ -21,7 +21,7 @@
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:maxWidth="@dimen/sc_mm_150"
-        android:maxHeight="@dimen/sc_mm_36"
+        android:maxHeight="@dimen/sc_mm_45"
         android:visibility="gone"/>
 
     <com.amkj.dmsh.views.tablayout.widget.MsgView

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_top_5dp_gray">
+
+    <TextView
+        android:id="@+id/tv_foreshow_promotion_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_50"
+        android:gravity="center"
+        android:text="淘你所爱"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_32"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_foreshow_promotion_title"
+        android:layout_marginTop="@dimen/sc_mm_12"
+        android:layout_marginBottom="@dimen/sc_mm_38"
+        android:gravity="center"
+        android:text="选品小姐姐精选好物，让你天天淘不停"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_26"/>
+</RelativeLayout>

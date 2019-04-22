@@ -36,7 +36,7 @@ public class ConstantVariable {
 //    public static final String POINT_SPIKE_LOAD_COMPLETE = "pointSpikeLoadComplete";
     //    token过期，强制登出
     public static final String TOKEN_EXPIRE_LOG_OUT = "tokenExpireLogOut";
-//    //    用户登录状态改变
+    //    //    用户登录状态改变
 //    public static final String LOGIN_STATUS_CHANGE = "loginStatusChange";
     //    是否跳转
     public static final String SKIP_PAGE = "isSkipPage";
@@ -77,7 +77,10 @@ public class ConstantVariable {
     public static final int TYPE_1 = 1;
     //    没有更多
     public static final int TYPE_2 = 2;
+    //TOP团品标题
     public static final int TYPE_3 = 3;
+    //淘宝长期商品标题
+    public static final int TYPE_4 = 4;
     //    访问资源文件前缀
     public static final String BASE_RESOURCE_DRAW = "android.resource://com.amkj.dmsh/drawable/";
     /**

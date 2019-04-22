@@ -1,11 +1,13 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -56,6 +58,12 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
             fbl_label.setVisibility(View.GONE);
         }
 
+        helper.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
+            intent.putExtra("productId", String.valueOf(goodsBean.getId()));
+            mContext.startActivity(intent);
+
+        });
         helper.itemView.setTag(goodsBean);
     }
 }

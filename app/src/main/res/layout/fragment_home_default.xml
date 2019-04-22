@@ -33,7 +33,7 @@
                 android:paddingTop="@dimen/sc_mm_30"
                 android:paddingBottom="@dimen/sc_mm_40"/>
 
-            <include layout="@layout/layout_dynamic"/>
+            <include layout="@layout/layout_home_dynamic"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_special_zone"
@@ -89,7 +89,7 @@
                 <android.support.v4.view.ViewPager
                     android:id="@+id/vp_welfare"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_590"
+                    android:layout_height="@dimen/sc_mm_600"
                     android:layout_marginTop="@dimen/sc_mm_26"
                     android:layout_marginBottom="@dimen/sc_mm_22"
                     android:background="@color/white"

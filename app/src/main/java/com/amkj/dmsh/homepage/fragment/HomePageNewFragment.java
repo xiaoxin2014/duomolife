@@ -117,8 +117,6 @@ public class HomePageNewFragment extends BaseFragment {
                     } else {
                         if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
                             mGoodsNavbarList.clear();
-                            goodsNavbarList.get(0).setLink("app://HomeDefalutFragment");
-                            goodsNavbarList.get(0).setName("良品优选");
                             mGoodsNavbarList.addAll(goodsNavbarList);
                             HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageNewFragment.this.getChildFragmentManager(), mGoodsNavbarList);
                             mVpHome.setAdapter(homePageNewAdapter);

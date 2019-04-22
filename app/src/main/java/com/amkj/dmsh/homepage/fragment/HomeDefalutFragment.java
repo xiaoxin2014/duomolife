@@ -178,8 +178,7 @@ public class HomeDefalutFragment extends BaseFragment {
     @Override
     protected void initViews() {
         isLazy = false;
-        mSmartLayout.setEnableAutoLoadMore(false);
-        mSmartLayout.setEnableAutoLoadMore(false);//使上拉加载具有弹性效果
+        mSmartLayout.setEnableAutoLoadMore(true);
         mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
         mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
         mSmartLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
@@ -593,7 +592,7 @@ public class HomeDefalutFragment extends BaseFragment {
 
     //获取商品分类集合
     public void getProductTypeList() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.HOME_CATERGORY, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.HOME_CATERGORY_ONE_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 QualityTypeEntity qualityTypeEntity = new Gson().fromJson(result, QualityTypeEntity.class);

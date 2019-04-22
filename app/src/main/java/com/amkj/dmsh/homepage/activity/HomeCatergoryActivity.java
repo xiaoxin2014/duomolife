@@ -20,9 +20,9 @@ import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -39,8 +39,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_PID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 
 ;
@@ -155,7 +153,7 @@ public class HomeCatergoryActivity extends BaseActivity {
         mCatergoryGoodsAdapter.setOnLoadMoreListener(() -> {
             page++;
             getCatergoryGoods();
-        });
+        }, mRvCatergoryGoods);
         mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
 
     }
@@ -163,7 +161,6 @@ public class HomeCatergoryActivity extends BaseActivity {
     @Override
     protected void loadData() {
         getOneLevelData();
-        getCatergoryGoods();
     }
 
 
@@ -186,6 +183,8 @@ public class HomeCatergoryActivity extends BaseActivity {
                         ConstantMethod.showToast(mCatergoryEntity.getMsg());
                     }
                 }
+
+                getCatergoryGoods();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mCatergoryBeanList, mCatergoryEntity);
             }
 
@@ -200,33 +199,28 @@ public class HomeCatergoryActivity extends BaseActivity {
     private void getCatergoryGoods() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("showCount", 18);
         params.put("id", mCategoryPid);
         params.put("pid", mCategoryId);
-        params.put("orderTypeId", mCategoryType);
+        params.put("orderTypeId", 1);
+
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PRODUCT_TYPE_LIST
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         mSmartLayout.finishRefresh();
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-
                         Gson gson = new Gson();
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
-                            if (likedProductBeanList != null && likedProductBeanList.size() > 0 && SUCCESS_CODE.equals(likedProductEntity.getCode())) {
+                            if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
                                 if (page == 1) {
                                     productList.clear();
                                     removeExistUtils.clearData();
                                 }
-                                productList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                                productList.addAll(removeExistUtils.removeExistList(likedProductBeanList));
                                 mCatergoryGoodsAdapter.notifyDataSetChanged();
                                 mCatergoryGoodsAdapter.loadMoreComplete();
-
-
                             } else if (ERROR_CODE.equals(likedProductEntity.getCode())) {
                                 ConstantMethod.showToast(likedProductEntity.getMsg());
                                 mCatergoryGoodsAdapter.loadMoreFail();
@@ -242,9 +236,6 @@ public class HomeCatergoryActivity extends BaseActivity {
                     @Override
                     public void onNotNetOrException() {
                         mSmartLayout.finishRefresh();
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
                         mCatergoryGoodsAdapter.loadMoreFail();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, productList, likedProductEntity);
                     }

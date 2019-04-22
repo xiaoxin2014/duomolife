@@ -39,8 +39,6 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TWO_LEVEL_LIST;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 
 /**
@@ -73,6 +71,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     RecyclerView mRvCatergoryName;
     private List<ChildCategoryListBean> mChildCategoryListBeanList = new ArrayList<>();
     private List<LikedProductBean> productList = new ArrayList<>();
+    private List<String> titleList = new ArrayList<>();
     private int mPosition;
     private String mCatergoryName;
     private String orderType = "1";
@@ -102,6 +101,12 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
             allCatergoryBean.setName("全部");
             mChildCategoryListBeanList.add(0, allCatergoryBean);
             mTvHeaderTitle.setText(mChildCategoryListBeanList.get(mPosition).getName());
+
+            for (int i = 0; i < mChildCategoryListBeanList.size(); i++) {
+                if (i != mPosition) {
+                    titleList.add(mChildCategoryListBeanList.get(i).getName());
+                }
+            }
         } else {
             showToast(this, R.string.miss_parameters_hint);
             return;
@@ -122,21 +127,44 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
             loadData();
         });
 
-        mRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
+        mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
             if (!loadHud.isShowing()) loadHud.show();
-            if (i == 0) {
+            if (id == R.id.rb_new) {
                 orderType = "4";
-            } else if (i == 1) {
+            } else if (id == R.id.rb_num) {
                 orderType = "2";
             }
+            loadData();
         });
 
     }
 
     private void initAdapter() {
+
+        //分类名称适配器
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRvCatergoryName.setLayoutManager(linearLayoutManager);
+        mCatergoryNameAdapter = new CatergoryNameAdapter(this, titleList);
+        mRvCatergoryName.setAdapter(mCatergoryNameAdapter);
+        mCatergoryNameAdapter.setOnItemClickListener((adapter, view, position) -> {
+            if (!loadHud.isShowing()) loadHud.show();
+            page = 1;
+            titleList.clear();
+            mPosition = (position >= mPosition) ? position + 1 : position;
+            for (int i = 0; i < mChildCategoryListBeanList.size(); i++) {
+                if (i != mPosition) {
+                    titleList.add(mChildCategoryListBeanList.get(i).getName());
+                }
+            }
+            mCatergoryNameAdapter.notifyDataSetChanged();
+            mTvHeaderTitle.setText(position == 0 ? mCatergoryName : mChildCategoryListBeanList.get(mPosition).getName());
+            getCatergoryGoods();
+        });
+
+
         //分类商品适配器
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this
-                , 3);
+                , 2);
         mRvCatergoryGoods.setLayoutManager(gridLayoutManager);
         ItemDecoration itemDecoration = new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -149,21 +177,6 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
             loadData();
         });
         mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
-
-        //分类名称适配器
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRvCatergoryName.setLayoutManager(linearLayoutManager);
-        mCatergoryNameAdapter = new CatergoryNameAdapter(this, mChildCategoryListBeanList, mPosition);
-        mRvCatergoryName.setAdapter(mCatergoryNameAdapter);
-        mCatergoryNameAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!loadHud.isShowing()) loadHud.show();
-            page = 1;
-            mPosition = position;
-            mCatergoryNameAdapter.setSelectPosition(position);
-            mCatergoryNameAdapter.notifyDataSetChanged();
-            mTvHeaderTitle.setText(position == 0 ? mCatergoryName : mChildCategoryListBeanList.get(position).getName());
-            getCatergoryGoods();
-        });
     }
 
     @Override
@@ -176,7 +189,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
         ChildCategoryListBean childCategoryListBean = mChildCategoryListBeanList.get(mPosition);
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        params.put("showCount", TOTAL_COUNT_TWENTY);
+        params.put("showCount", 18);
         params.put("id", childCategoryListBean.getId());
         params.put("pid", childCategoryListBean.getPid());
         params.put("orderTypeId", orderType);
@@ -193,7 +206,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
-                            if (likedProductBeanList != null && likedProductBeanList.size() > 0 && SUCCESS_CODE.equals(likedProductEntity.getCode())) {
+                            if (likedProductBeanList != null && likedProductBeanList.size() > 0 ) {
                                 if (page == 1) {
                                     productList.clear();
                                     removeExistUtils.clearData();
@@ -201,8 +214,6 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
                                 productList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
                                 mCatergoryGoodsAdapter.notifyDataSetChanged();
                                 mCatergoryGoodsAdapter.loadMoreComplete();
-
-
                             } else if (ERROR_CODE.equals(likedProductEntity.getCode())) {
                                 ConstantMethod.showToast(likedProductEntity.getMsg());
                                 mCatergoryGoodsAdapter.loadMoreFail();
