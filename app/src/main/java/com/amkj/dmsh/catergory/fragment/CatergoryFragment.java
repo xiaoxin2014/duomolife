@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +22,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -32,7 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
+import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 
 /**
@@ -47,14 +54,14 @@ public class CatergoryFragment extends BaseFragment {
     LinearLayout mTbCatergory;
     @BindView(R.id.tablayout_catergory)
     TabLayout mTablayoutCatergory;
-    @BindView(R.id.iv_float_ad_icon)
-    ImageView mIvFloatAdIcon;
     @BindView(R.id.fl_fragment_quality)
     FrameLayout mFlFragmentQuality;
     @BindView(R.id.rv_catergory)
     RecyclerView mRvCatergory;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
+    @BindView(R.id.iv_float_ad_icon)
+    ImageView iv_float_ad_icon;
     private List<CatergoryOneLevelBean> mCatergoryBeanList = new ArrayList<>();
     private CatergoryOneLevelEntity mCatergoryEntity;
     private CatergoryOneLevelAdapter mOneLevelAdapter;
@@ -67,7 +74,7 @@ public class CatergoryFragment extends BaseFragment {
     @Override
     protected void initViews() {
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
-            loadData();
+            getOneLevelData();
         });
         mOneLevelAdapter = new CatergoryOneLevelAdapter(getActivity(), mCatergoryBeanList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -140,7 +147,10 @@ public class CatergoryFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        //获取一级分类数据
         getOneLevelData();
+        //浮窗广告
+        getFloatAd(getActivity(), iv_float_ad_icon);
     }
 
 
@@ -202,4 +212,14 @@ public class CatergoryFragment extends BaseFragment {
         ImmersionBar.with(this).titleBar(mTbCatergory).keyboardEnable(true).navigationBarEnable(false)
                 .statusBarDarkFont(true).init();
     }
+
+    @OnClick(R.id.iv_float_ad_icon)
+    void floatAdSkip(View view) {
+        CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = (CommunalADActivityEntity.CommunalADActivityBean) view.getTag(R.id.iv_tag);
+        if (communalADActivityBean != null) {
+            adClickTotal(getActivity(), communalADActivityBean.getId());
+            setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
+        }
+    }
+
 }

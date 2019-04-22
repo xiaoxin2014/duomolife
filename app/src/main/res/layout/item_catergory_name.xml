@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:gravity="center"
     android:paddingLeft="@dimen/sc_mm_48"
-    android:paddingTop="@dimen/sc_mm_21"
+    android:paddingTop="@dimen/sc_mm_10"
     android:paddingBottom="@dimen/sc_mm_21"
     android:textColor="@color/text_login_gray_s"
     android:textSize="@dimen/sc_mm_30"/>

@@ -50,7 +50,7 @@
                 android:background="@color/white"
                 android:clipChildren="false"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/sc_mm_45">
+                android:paddingTop="@dimen/sc_mm_35">
 
                 <RelativeLayout
                     android:id="@+id/rl_more_welfare_topic"
@@ -116,7 +116,7 @@
                     android:background="@color/white"
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/sc_mm_30"
-                    android:paddingTop="@dimen/sc_mm_45"
+                    android:paddingTop="@dimen/sc_mm_35"
                     android:paddingBottom="@dimen/sc_mm_36">
 
                     <TextView
@@ -189,7 +189,7 @@
                     android:id="@+id/rl_more_artical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/sc_mm_54"
+                    android:paddingTop="@dimen/sc_mm_40"
                     android:paddingRight="@dimen/sc_mm_28"
                     android:paddingBottom="@dimen/sc_mm_12">
 

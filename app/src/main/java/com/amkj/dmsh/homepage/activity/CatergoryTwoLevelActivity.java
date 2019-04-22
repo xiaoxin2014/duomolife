@@ -15,12 +15,14 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean;
+import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.dominant.adapter.CatergoryNameAdapter;
+import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
@@ -36,7 +38,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TWO_LEVEL_LIST;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
@@ -78,7 +83,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     private int page = 1;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
-    CatergoryGoodsAdapter mCatergoryGoodsAdapter;
+    QualityTypeProductAdapter mCatergoryGoodsAdapter;
     CatergoryNameAdapter mCatergoryNameAdapter;
 
     @Override
@@ -171,12 +176,42 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create();
         mRvCatergoryGoods.addItemDecoration(itemDecoration);
-        mCatergoryGoodsAdapter = new CatergoryGoodsAdapter(this, productList);
+        mCatergoryGoodsAdapter = new QualityTypeProductAdapter(this, productList);
         mCatergoryGoodsAdapter.setOnLoadMoreListener(() -> {
             page++;
             loadData();
-        });
+        }, mRvCatergoryGoods);
         mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
+        mCatergoryGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
+            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
+            if (likedProductBean != null) {
+                Intent intent = new Intent(this, ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
+                startActivity(intent);
+            }
+        });
+        mCatergoryGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            loadHud.show();
+            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
+            if (likedProductBean != null) {
+                if (userId > 0) {
+                    switch (view.getId()) {
+                        case R.id.iv_pro_add_car:
+                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
+                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
+                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
+                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
+                            ConstantMethod constantMethod = new ConstantMethod();
+                            constantMethod.addShopCarGetSku(this, baseAddCarProInfoBean, loadHud);
+                            break;
+                    }
+                } else {
+                    loadHud.dismiss();
+                    getLoginStatus(this);
+                }
+            }
+        });
     }
 
     @Override
@@ -206,7 +241,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
-                            if (likedProductBeanList != null && likedProductBeanList.size() > 0 ) {
+                            if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
                                 if (page == 1) {
                                     productList.clear();
                                     removeExistUtils.clearData();

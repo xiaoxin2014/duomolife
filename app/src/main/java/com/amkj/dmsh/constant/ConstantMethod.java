@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
@@ -150,6 +152,7 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
+import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_DIALOG_COUNT;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -1069,6 +1072,34 @@ public class ConstantMethod {
             @Override
             public void netClose() {
                 showToast(context, R.string.unConnectedNetwork);
+            }
+        });
+    }
+
+    //获取浮动广告
+    public static void getFloatAd(Activity activity, ImageView iv_float_ad_icon) {
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, H_Q_FLOAT_AD, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
+                if (floatAdEntity != null) {
+                    if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (floatAdEntity.getCommunalADActivityBean() != null) {
+                            iv_float_ad_icon.setVisibility(View.VISIBLE);
+                            GlideImageLoaderUtil.loadFitCenter(activity, iv_float_ad_icon,
+                                    getStrings(floatAdEntity.getCommunalADActivityBean().getPicUrl()));
+                            iv_float_ad_icon.setTag(R.id.iv_tag, floatAdEntity.getCommunalADActivityBean());
+                        }
+                    } else {
+                        iv_float_ad_icon.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                iv_float_ad_icon.setVisibility(View.GONE);
             }
         });
     }

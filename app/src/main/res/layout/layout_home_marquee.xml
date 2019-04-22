@@ -1,37 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_68"
-    android:id="@+id/ll_home_marquee"
-    android:visibility="gone"
-    android:gravity="center_vertical"
-    android:background="@color/bg_blue_dz"
-    android:orientation="horizontal">
+              android:id="@+id/ll_home_marquee"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_68"
+              android:background="@color/bg_blue_dz"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:visibility="gone">
+
     <ImageView
         android:layout_width="@dimen/sc_mm_29"
-        android:src="@drawable/marquee_not"
+        android:layout_height="@dimen/sc_mm_28"
         android:layout_marginLeft="@dimen/sc_mm_15"
         android:layout_marginRight="@dimen/sc_mm_16"
-        android:layout_height="@dimen/sc_mm_28" />
+        android:src="@drawable/marquee_not"/>
+
     <com.amkj.dmsh.views.MarqueeTextView
-        android:layout_width="0px"
-        android:layout_weight="1"
-        android:singleLine="true"
         android:id="@+id/tv_marquee_text"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:ellipsize="marquee"
-        android:textSize="@dimen/sc_mm_24"
-        android:textColor="@color/text_login_gray_s"
         android:marqueeRepeatLimit="1"
-        android:layout_height="wrap_content" />
+        android:singleLine="true"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24"/>
+
     <View
         android:layout_width="@dimen/sc_mm_2"
-        android:background="@color/text_login_gray_s"
-        android:layout_height="@dimen/sc_mm_35"/>
+        android:layout_height="@dimen/sc_mm_35"
+        android:background="@color/text_login_gray_s"/>
+
     <ImageView
-        android:layout_width="@dimen/sc_mm_67"
-        android:padding="@dimen/sc_mm_20"
         android:id="@+id/iv_home_marquee_close"
-        android:src="@drawable/marquee_close"
+        android:layout_width="@dimen/sc_mm_67"
+        android:layout_height="match_parent"
+        android:padding="@dimen/sc_mm_20"
         android:scaleType="fitCenter"
-        android:layout_height="match_parent" />
+        android:src="@drawable/marquee_close"/>
 </LinearLayout>

@@ -9,9 +9,9 @@
         android:id="@+id/rl_more_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/sc_mm_42"
+        android:paddingTop="@dimen/sc_mm_38"
         android:paddingRight="@dimen/sc_mm_28"
-        android:paddingBottom="@dimen/sc_mm_32">
+        android:paddingBottom="@dimen/sc_mm_30">
 
         <TextView
             android:id="@+id/tv_catergory_name"

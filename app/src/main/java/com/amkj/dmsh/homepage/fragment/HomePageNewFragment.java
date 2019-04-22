@@ -15,13 +15,16 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
+import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.views.MarqueeTextView;
 import com.amkj.dmsh.views.tablayout.SlidingIconTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
@@ -37,7 +40,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
+import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -46,6 +53,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_NAVBAR;
+import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 
@@ -65,8 +73,6 @@ public class HomePageNewFragment extends BaseFragment {
     SlidingIconTabLayout mTablayoutHome;
     @BindView(R.id.vp_home)
     ViewPager mVpHome;
-    @BindView(R.id.iv_float_ad_icon)
-    ImageView mIvFloatAdIcon;
     @BindView(R.id.fl_fragment_quality)
     FrameLayout mFlFragmentQuality;
     @BindView(R.id.tb_home_new)
@@ -75,10 +81,18 @@ public class HomePageNewFragment extends BaseFragment {
     FrameLayout mFraHomeMessage;
     @BindView(R.id.fl_shop_car)
     FrameLayout mFlShopCar;
+    @BindView(R.id.iv_float_ad_icon)
+    ImageView iv_float_ad_icon;
+    //    跑马灯布局
+    @BindView(R.id.ll_home_marquee)
+    LinearLayout ll_home_marquee;
+    @BindView(R.id.tv_marquee_text)
+    MarqueeTextView tv_marquee_text;
     private Badge badgeCart;
     private Badge badgeMsg;
     private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
     private HomeCommonEntity mHomeNavbarEntity;
+    private boolean isAutoClose;
 
 
     @Override
@@ -96,7 +110,14 @@ public class HomePageNewFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        //获取tab栏
         getHomeNavbar();
+        //浮窗广告
+        getFloatAd(getActivity(), iv_float_ad_icon);
+        //跑马灯
+        if (!isAutoClose) {
+            getMarqueeData();
+        }
     }
 
 
@@ -137,6 +158,34 @@ public class HomePageNewFragment extends BaseFragment {
             }
         });
     }
+
+    private void getMarqueeData() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_Q_MARQUEE_AD, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                MarqueeTextEntity marqueeTextEntity = MarqueeTextEntity.objectFromData(result);
+                if (marqueeTextEntity != null) {
+                    if (marqueeTextEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (marqueeTextEntity.getMarqueeTextList() != null && marqueeTextEntity.getMarqueeTextList().size() > 0) {
+                            ll_home_marquee.setVisibility(View.VISIBLE);
+                            tv_marquee_text.setText(getStrings(marqueeTextEntity.getMarqueeTextList().get(0).getContent()));
+                            tv_marquee_text.setMarqueeRepeatLimit(marqueeTextEntity.getMarqueeTextList().get(0).getShow_count());
+                        } else {
+                            ll_home_marquee.setVisibility(View.GONE);
+                        }
+                    } else {
+                        ll_home_marquee.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                ll_home_marquee.setVisibility(View.GONE);
+            }
+        });
+    }
+
 
     @Override
     public void onResume() {
@@ -203,7 +252,7 @@ public class HomePageNewFragment extends BaseFragment {
 
     }
 
-    @OnClick({R.id.iv_message, R.id.tv_search, R.id.iv_home_shop_car})
+    @OnClick({R.id.iv_message, R.id.tv_search, R.id.iv_home_shop_car, R.id.iv_home_marquee_close})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -220,8 +269,22 @@ public class HomePageNewFragment extends BaseFragment {
                 intent = new Intent(getActivity(), ShopCarActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.iv_home_marquee_close:
+                isAutoClose = true;
+                ll_home_marquee.setVisibility(View.GONE);
+                break;
         }
     }
+
+    @OnClick(R.id.iv_float_ad_icon)
+    void floatAdSkip(View view) {
+        CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = (CommunalADActivityEntity.CommunalADActivityBean) view.getTag(R.id.iv_tag);
+        if (communalADActivityBean != null) {
+            adClickTotal(getActivity(), communalADActivityBean.getId());
+            setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
+        }
+    }
+
 
     @Override
     public boolean immersionBarEnabled() {
