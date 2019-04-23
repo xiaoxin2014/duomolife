@@ -7,7 +7,7 @@
               android:focusableInTouchMode="true"
               android:orientation="vertical">
 
-    <include layout="@layout/layout_ql_cart_share_header"/>
+    <include layout="@layout/layout_head_catergory_two_level"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_catergory_name"

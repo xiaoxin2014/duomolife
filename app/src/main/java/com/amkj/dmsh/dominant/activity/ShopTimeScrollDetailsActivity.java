@@ -794,7 +794,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 tvPromotionProductTimeStatus.setText("距结束");
             }
             ctPromotionProductTime.updateShow(timeMillis);
-
+            relPromotionProductTime.setVisibility(timeMillis > 0 ? VISIBLE : GONE);
         } catch (ParseException e) {
             e.printStackTrace();
         }

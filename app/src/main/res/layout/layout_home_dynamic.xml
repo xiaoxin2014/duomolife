@@ -2,8 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/bg_home_topic_gray"
-    android:padding="@dimen/sc_mm_29">
+    android:background="@color/bg_home_topic_gray">
 
     <include layout="@layout/view_decoration_20_gray"/>
 
@@ -11,6 +10,7 @@
         android:id="@+id/ll_dynamic"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_416"
+        android:layout_margin="@dimen/sc_mm_29"
         android:background="@color/white">
 
         <ImageView

@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -65,6 +64,7 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -88,9 +88,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.CATE_DOC_LIST;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_TOP;
+import static com.amkj.dmsh.constant.Url.H_AD_LIST;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
-import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
 
@@ -106,7 +106,6 @@ public class HomeDefalutFragment extends BaseFragment {
     @BindView(R.id.rv_top)
     RecyclerView mRvTop;
     @BindView(R.id.smart_layout)
-    TabLayout
     SmartRefreshLayout mSmartLayout;
     @BindView(R.id.iv_dynamic_cover)
     ImageView mIvCover;
@@ -345,7 +344,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), Q_HOME_AD_LOOP, params, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), H_AD_LIST, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 getADJsonData(result);
@@ -620,8 +619,8 @@ public class HomeDefalutFragment extends BaseFragment {
 
     //获取分类对应的商品
     private void getProduct() {
-        int catergoryPage = mCatergoryPage;
-        for (int i = catergoryPage - 3; i < mCatergoryPage; i++) {
+        for (int i = mCatergoryPage - 3; i < mCatergoryPage; i++) {
+            int catergoryPage = i;
             if (i > qualityTypeList.size() - 1) {
                 if (mCatergoryPage - qualityTypeList.size() >= 3) {
                     mSmartLayout.finishLoadMoreWithNoMoreData();
@@ -653,6 +652,7 @@ public class HomeDefalutFragment extends BaseFragment {
                                 mUserLikedProductEntity.setId(String.valueOf(qualityTypeBean.getId()));
                                 mUserLikedProductEntity.setPid(String.valueOf(qualityTypeBean.getPid()));
                                 mUserLikedProductEntity.setType(String.valueOf(qualityTypeBean.getType()));
+                                mUserLikedProductEntity.setPosition(catergoryPage);
                                 List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getLikedProductBeanList();
                                 if (qualityTypeBean.getAd() != null) {
                                     List<UserLikedProductEntity.AdBean> ad = qualityTypeBean.getAd();
@@ -661,6 +661,8 @@ public class HomeDefalutFragment extends BaseFragment {
 
                                 if (likedProductBeanList != null && likedProductBeanList.size() > 0 && ConstantVariable.SUCCESS_CODE.equals(mUserLikedProductEntity.getCode())) {
                                     mProductList.add(mUserLikedProductEntity);
+                                    //按照分类名称排序，因为同步调用多个接口无法保证顺序
+                                    Collections.sort(mProductList);
                                     mSmartLayout.finishLoadMore();
                                     mHomeCatergoryAdapter.notifyDataSetChanged();
                                 } else if (ConstantVariable.ERROR_CODE.equals(mUserLikedProductEntity.getCode())) {
@@ -671,8 +673,6 @@ public class HomeDefalutFragment extends BaseFragment {
                             } else {
                                 mSmartLayout.finishLoadMore(false);
                             }
-
-
                         }
 
                         @Override

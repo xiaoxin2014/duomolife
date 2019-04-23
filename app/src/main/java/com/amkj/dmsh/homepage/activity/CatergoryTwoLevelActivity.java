@@ -6,8 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -56,12 +54,6 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     TextView mTvLifeBack;
     @BindView(R.id.tv_header_title)
     TextView mTvHeaderTitle;
-    @BindView(R.id.iv_img_service)
-    ImageView mIvImgService;
-    @BindView(R.id.fl_header_service)
-    FrameLayout mFlHeaderService;
-    @BindView(R.id.iv_img_share)
-    ImageView mIvImgShare;
     @BindView(R.id.tl_quality_bar)
     Toolbar mTlQualityBar;
     @BindView(R.id.rb_new)
@@ -88,13 +80,11 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_catergory_product;
+        return R.layout.activity_catergory_two_level;
     }
 
     @Override
     protected void initViews() {
-        mIvImgShare.setVisibility(View.GONE);
-        mIvImgService.setVisibility(View.GONE);
         Intent intent = getIntent();
         if (intent != null && getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST) != null && getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST).size() > 0) {
             mChildCategoryListBeanList = getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST);

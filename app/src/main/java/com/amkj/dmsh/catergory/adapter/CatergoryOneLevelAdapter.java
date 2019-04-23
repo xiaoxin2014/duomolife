@@ -49,7 +49,7 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_top_cover), getStrings(item.getPicUrl()));
         //初始化文章数据
         RelateArticleBean relateArticle = item.getRelateArticle();
-        helper.setText(R.id.tv_topic_name, getStrings(item.getName())).addOnClickListener(R.id.rl_more_artical).setTag(R.id.rl_more_artical, relateArticle);
+        helper.addOnClickListener(R.id.rl_more_artical).setTag(R.id.rl_more_artical, relateArticle);
         helper.getView(R.id.ll_artical).setVisibility(relateArticle != null && relateArticle.getArticles() != null && relateArticle.getArticles().size() > 0 ? View.VISIBLE : View.GONE);
         if (relateArticle != null) {
             List<RelateArticleBean.ArticlesBean> articlesList = relateArticle.getArticles();

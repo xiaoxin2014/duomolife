@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -115,9 +114,9 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     /**
      * title
      */
-    private static final int TEXT_BOLD_NONE = 0;
-    private static final int TEXT_BOLD_WHEN_SELECT = 1;
-    private static final int TEXT_BOLD_BOTH = 2;
+    private static final int TEXT_BOLD_NONE = 0;//不加粗
+    private static final int TEXT_BOLD_WHEN_SELECT = 1;//选中加粗
+    private static final int TEXT_BOLD_BOTH = 2;//不管选不选中都加粗
     private float mTextsize;
     private int mTextSelectColor;
     private int mTextUnselectColor;
@@ -189,7 +188,8 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         mTextsize = ta.getDimension(R.styleable.SlidingTabLayout_tl_textsize, sp2px(14));
         mTextSelectColor = ta.getColor(R.styleable.SlidingTabLayout_tl_textSelectColor, Color.parseColor("#ffffff"));
         mTextUnselectColor = ta.getColor(R.styleable.SlidingTabLayout_tl_textUnselectColor, Color.parseColor("#AAffffff"));
-        mTextBold = ta.getInt(R.styleable.SlidingTabLayout_tl_textBold, TEXT_BOLD_WHEN_SELECT);
+        //获取是否加粗的属性
+        mTextBold = ta.getInt(R.styleable.SlidingTabLayout_tl_textBold, TEXT_BOLD_NONE);
         mTextAllCaps = ta.getBoolean(R.styleable.SlidingTabLayout_tl_textAllCaps, false);
 
         mTabSpaceEqual = ta.getBoolean(R.styleable.SlidingTabLayout_tl_tab_space_equal, false);
@@ -373,7 +373,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
                         if (mTextAllCaps) {
                             tv_tab_title.setText(tv_tab_title.getText().toString().toUpperCase());
                         }
-                        tv_tab_title.setTypeface(Typeface.defaultFromStyle(i == mCurrentTab ? Typeface.BOLD : Typeface.NORMAL));
+//                        tv_tab_title.setTypeface(Typeface.defaultFromStyle(i == mCurrentTab ? Typeface.BOLD : Typeface.NORMAL));//设置选中加粗
                     } else {
                         tv_tab_title.setVisibility(INVISIBLE);
                         tv_tab_title.setText("多么生活");//设置文本默认值，否则显示图标没有指示器（指示器长度由标题长度决定）
@@ -421,9 +421,6 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
             final boolean isSelect = i == position;
             HomeCommonEntity.HomeCommonBean homeCommonBean = HomeNavbarList.get(i);
             TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
-//            if (TextUtils.isEmpty(homeCommonBean.getColor())) {
-//                tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
-//            } else {
             if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
                 String textColor = homeCommonBean.getColor().trim();
                 if (!homeCommonBean.getColor().startsWith("#")) {
@@ -432,8 +429,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
                 tv_tab_title.setTextColor(isSelect ? mTextSelectColor : Color.parseColor(textColor));
             }
 //            }
-//            tv_tab_title.getPaint().setFakeBoldText(isSelect);
-            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect ? Typeface.BOLD : Typeface.NORMAL));
+//            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect ? Typeface.BOLD : Typeface.NORMAL));//加粗
             if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
                 tv_tab_title.getPaint().setFakeBoldText(isSelect);
             }

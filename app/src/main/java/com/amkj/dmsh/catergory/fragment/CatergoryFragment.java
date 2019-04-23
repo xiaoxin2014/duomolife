@@ -1,11 +1,15 @@
 package com.amkj.dmsh.catergory.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +30,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -34,7 +39,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
@@ -62,6 +69,12 @@ public class CatergoryFragment extends BaseFragment {
     SmartRefreshLayout mSmartLayout;
     @BindView(R.id.iv_float_ad_icon)
     ImageView iv_float_ad_icon;
+    @BindView(R.id.stb_catergory)
+    SlidingIconTabLayout mStbCatergory;
+    Unbinder unbinder;
+    @BindView(R.id.vp_catergory)
+    ViewPager mVpCatergory;
+    Unbinder unbinder1;
     private List<CatergoryOneLevelBean> mCatergoryBeanList = new ArrayList<>();
     private CatergoryOneLevelEntity mCatergoryEntity;
     private CatergoryOneLevelAdapter mOneLevelAdapter;
@@ -171,11 +184,16 @@ public class CatergoryFragment extends BaseFragment {
                         }
                         mOneLevelAdapter.notifyDataSetChanged();
                         mTablayoutCatergory.removeAllTabs();
+                        List<String> titleList = new ArrayList<>();
                         for (int i = 0; i < mCatergoryBeanList.size(); i++) {
                             TabLayout.Tab tab = mTablayoutCatergory.newTab();
                             tab.setText(mCatergoryBeanList.get(i).getName());
                             mTablayoutCatergory.addTab(tab);
+                            titleList.add(mCatergoryBeanList.get(i).getName());
                         }
+//                        MyPagerAdapter myPagerAdapter = new MyPagerAdapter();
+//                        mVpCatergory.setAdapter(myPagerAdapter,titleList );
+
                     } else if (ERROR_CODE.equals(code)) {
                         ConstantMethod.showToast(mCatergoryEntity.getMsg());
                     }
@@ -219,5 +237,19 @@ public class CatergoryFragment extends BaseFragment {
             adClickTotal(getActivity(), communalADActivityBean.getId());
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder1 = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder1.unbind();
     }
 }

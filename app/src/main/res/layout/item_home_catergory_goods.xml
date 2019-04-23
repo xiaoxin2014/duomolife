@@ -9,7 +9,8 @@
     <ImageView
         android:id="@+id/iv_goods_pic"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_236"/>
+        android:layout_height="@dimen/sc_mm_236"
+        android:scaleType="centerCrop"/>
 
     <com.google.android.flexbox.FlexboxLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"

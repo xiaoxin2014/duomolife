@@ -5,8 +5,6 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.amkj.dmsh.homepage.view.HomeWlfareItemView;
-
 import java.util.List;
 
 /**
@@ -14,13 +12,13 @@ import java.util.List;
  */
 public class MyPagerAdapter extends PagerAdapter {
 
-    private List<HomeWlfareItemView> views;
+    private List<View> views;
 
-    public MyPagerAdapter(List<HomeWlfareItemView> views) {
+    public MyPagerAdapter(List<View> views) {
         this.views = views;
     }
 
-    public void refresh(List<HomeWlfareItemView> views) {
+    public void refresh(List<View> views) {
         this.views = views;
         notifyDataSetChanged();
     }
