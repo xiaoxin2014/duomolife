@@ -146,22 +146,22 @@
 
                             <include layout="@layout/layout_communal_recycler_wrap" />
 
-                            <com.amkj.dmsh.views.tablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
-                                android:id="@+id/ctb_ql_gp_sp_tab"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_88"
-                                android:layout_marginBottom="@dimen/dimen_1dp"
-                                android:background="@drawable/border_bottom_line"
-                                tl:tl_iconMargin="@dimen/dimen_1dp"
-                                tl:tl_indicator_color="@color/text_normal_red"
-                                tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
-                                tl:tl_indicator_gravity="BOTTOM"
-                                tl:tl_indicator_height="@dimen/dimen_1dp"
-                                tl:tl_indicator_width="@dimen/dimen_60dp"
-                                tl:tl_tab_space_equal="true"
-                                tl:tl_textSelectColor="@color/text_normal_red"
-                                tl:tl_textUnselectColor="@color/text_black_t"
-                                tl:tl_textsize="15sp" />
+                            <com.amkj.dmsh.views.flycoTablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                                                                                android:id="@+id/ctb_ql_gp_sp_tab"
+                                                                                android:layout_width="match_parent"
+                                                                                android:layout_height="@dimen/sc_mm_88"
+                                                                                android:layout_marginBottom="@dimen/dimen_1dp"
+                                                                                android:background="@drawable/border_bottom_line"
+                                                                                tl:tl_iconMargin="@dimen/dimen_1dp"
+                                                                                tl:tl_indicator_color="@color/text_normal_red"
+                                                                                tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
+                                                                                tl:tl_indicator_gravity="BOTTOM"
+                                                                                tl:tl_indicator_height="@dimen/dimen_1dp"
+                                                                                tl:tl_indicator_width="@dimen/dimen_60dp"
+                                                                                tl:tl_tab_space_equal="true"
+                                                                                tl:tl_textSelectColor="@color/text_normal_red"
+                                                                                tl:tl_textUnselectColor="@color/text_black_t"
+                                                                                tl:tl_textsize="15sp" />
                         </LinearLayout>
 
                         <FrameLayout

@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
     <include layout="@layout/activity_duomolife_indent_header"/>
-    <com.amkj.dmsh.views.tablayout.SlidingTabLayout
+    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
         android:id="@+id/stl_integral_indent"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_88"

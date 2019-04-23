@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
+    android:paddingLeft="@dimen/sc_mm_25"
+    android:paddingRight="@dimen/sc_mm_25"
     android:clipToPadding="false">
 
     <TextView
@@ -19,12 +21,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:adjustViewBounds="true"
-        android:maxWidth="@dimen/sc_mm_150"
-        android:maxHeight="@dimen/sc_mm_45"
         android:visibility="gone"/>
 
-    <com.amkj.dmsh.views.tablayout.widget.MsgView
+    <!--<ImageView-->
+        <!--android:id="@+id/iv_tab_title"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:maxWidth="@dimen/sc_mm_150"-->
+        <!--android:maxHeight="@dimen/sc_mm_45"-->
+        <!--android:visibility="gone"/>-->
+
+    <com.amkj.dmsh.views.flycoTablayout.widget.MsgView
         xmlns:mv="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rtv_msg_tip"
         android:layout_width="wrap_content"

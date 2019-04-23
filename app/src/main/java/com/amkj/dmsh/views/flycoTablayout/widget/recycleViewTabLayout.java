@@ -1,4 +1,4 @@
-package com.amkj.dmsh.views.tablayout.widget;
+package com.amkj.dmsh.views.flycoTablayout.widget;
 
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
@@ -27,10 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.views.tablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.tablayout.listener.OnTabSelectListener;
-import com.amkj.dmsh.views.tablayout.utils.FragmentChangeManager;
-import com.amkj.dmsh.views.tablayout.utils.UnreadMsgUtils;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
+import com.amkj.dmsh.views.flycoTablayout.utils.FragmentChangeManager;
+import com.amkj.dmsh.views.flycoTablayout.utils.UnreadMsgUtils;
 
 import java.util.ArrayList;
 

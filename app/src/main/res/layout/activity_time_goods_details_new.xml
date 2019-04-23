@@ -142,22 +142,22 @@
 
                     <include layout="@layout/layout_communal_recycler_wrap" />
 
-                    <com.amkj.dmsh.views.tablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/ctb_promotion_product"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/sc_mm_110"
-                        android:background="@drawable/border_top_5dp_gray"
-                        tl:tl_iconMargin="@dimen/dimen_1dp"
-                        tl:tl_indicator_color="@color/text_normal_red"
-                        tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
-                        tl:tl_indicator_gravity="BOTTOM"
-                        tl:tl_indicator_height="@dimen/dimen_2dp"
-                        tl:tl_indicator_margin_bottom="@dimen/dp_10"
-                        tl:tl_indicator_width="@dimen/dimen_70dp"
-                        tl:tl_tab_space_equal="true"
-                        tl:tl_textSelectColor="@color/text_normal_red"
-                        tl:tl_textUnselectColor="@color/text_black_t"
-                        tl:tl_textsize="15sp" />
+                    <com.amkj.dmsh.views.flycoTablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                                                                        android:id="@+id/ctb_promotion_product"
+                                                                        android:layout_width="match_parent"
+                                                                        android:layout_height="@dimen/sc_mm_110"
+                                                                        android:background="@drawable/border_top_5dp_gray"
+                                                                        tl:tl_iconMargin="@dimen/dimen_1dp"
+                                                                        tl:tl_indicator_color="@color/text_normal_red"
+                                                                        tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
+                                                                        tl:tl_indicator_gravity="BOTTOM"
+                                                                        tl:tl_indicator_height="@dimen/dimen_2dp"
+                                                                        tl:tl_indicator_margin_bottom="@dimen/dp_10"
+                                                                        tl:tl_indicator_width="@dimen/dimen_70dp"
+                                                                        tl:tl_tab_space_equal="true"
+                                                                        tl:tl_textSelectColor="@color/text_normal_red"
+                                                                        tl:tl_textUnselectColor="@color/text_black_t"
+                                                                        tl:tl_textsize="15sp" />
 
                     <FrameLayout
                         android:id="@+id/fl_promotion_product_details_contain"

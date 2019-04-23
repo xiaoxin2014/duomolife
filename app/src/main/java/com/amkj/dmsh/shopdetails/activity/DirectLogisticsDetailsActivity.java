@@ -15,7 +15,7 @@ import com.amkj.dmsh.shopdetails.adapter.LogisticsPagerAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticPacketBean;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean;
-import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;

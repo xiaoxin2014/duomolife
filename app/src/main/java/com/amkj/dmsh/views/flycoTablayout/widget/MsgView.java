@@ -1,4 +1,4 @@
-package com.amkj.dmsh.views.tablayout.widget;
+package com.amkj.dmsh.views.flycoTablayout.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;

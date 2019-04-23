@@ -1,4 +1,4 @@
-package com.amkj.dmsh.views.tablayout.listener;
+package com.amkj.dmsh.views.flycoTablayout.listener;
 
 public interface OnTabSelectListener {
     void onTabSelect(int position);

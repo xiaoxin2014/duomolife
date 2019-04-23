@@ -22,7 +22,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;

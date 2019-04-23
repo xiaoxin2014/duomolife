@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -36,7 +37,7 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
     @Override
     protected void convert(BaseViewHolder helper, LikedProductBean goodsBean) {
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsBean.getPicUrl());
-        helper.setText(R.id.tv_price, "¥" + goodsBean.getPrice())
+        helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()))
                 .setText(R.id.tv_name, getStrings(goodsBean.getName()));
         FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
         if (!TextUtils.isEmpty(goodsBean.getActivityTag()) || (goodsBean.getMarketLabelList() != null

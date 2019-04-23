@@ -23,7 +23,7 @@
                 android:visibility="visible"
                 android:background="@drawable/border_top_bottom_line"
                 android:layout_height="@dimen/sc_mm_80">
-                <com.amkj.dmsh.views.tablayout.SlidingTabLayout
+                <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
                     android:id="@+id/stl_direct_logistics_details"
                     android:layout_width="wrap_content"
                     android:layout_centerInParent="true"

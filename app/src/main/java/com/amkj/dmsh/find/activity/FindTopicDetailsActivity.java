@@ -24,7 +24,7 @@ import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.utils.AppBarStateChangeListener;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
-import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;

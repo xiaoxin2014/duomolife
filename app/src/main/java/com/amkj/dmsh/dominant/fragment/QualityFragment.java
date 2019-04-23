@@ -31,7 +31,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.CenterLinearLayoutManager;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
@@ -451,5 +451,10 @@ public class QualityFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
     }
 }

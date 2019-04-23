@@ -1,11 +1,11 @@
-package com.amkj.dmsh.views.tablayout.utils;
+package com.amkj.dmsh.views.flycoTablayout.utils;
 
 
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.amkj.dmsh.views.tablayout.widget.MsgView;
+import com.amkj.dmsh.views.flycoTablayout.widget.MsgView;
 
 /**
  * 未读消息提示View,显示小红点或者带有数字的红点:

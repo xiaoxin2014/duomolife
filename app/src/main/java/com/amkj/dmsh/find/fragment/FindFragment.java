@@ -37,7 +37,7 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;

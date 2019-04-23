@@ -1,4 +1,4 @@
-package com.amkj.dmsh.views.tablayout;
+package com.amkj.dmsh.views.flycoTablayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,16 +7,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -24,39 +23,29 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
-import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.views.tablayout.listener.OnTabSelectListener;
-import com.amkj.dmsh.views.tablayout.utils.UnreadMsgUtils;
-import com.amkj.dmsh.views.tablayout.widget.MsgView;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
+import com.amkj.dmsh.views.flycoTablayout.utils.UnreadMsgUtils;
+import com.amkj.dmsh.views.flycoTablayout.widget.MsgView;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
-/**
- * 滑动TabLayout,对于ViewPager的依赖性强
- */
-public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
+/** 滑动TabLayout,对于ViewPager的依赖性强 */
+public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
     private Context mContext;
     private ViewPager mViewPager;
-    private ArrayList<HomeCommonBean> HomeNavbarList;
+    private ArrayList<String> mTitles;
     private LinearLayout mTabsContainer;
     private int mCurrentTab;
     private float mCurrentPositionOffset;
     private int mTabCount;
-    /**
-     * 用于绘制显示器
-     */
+    /** 用于绘制显示器 */
     private Rect mIndicatorRect = new Rect();
-    /**
-     * 用于实现滚动居中
-     */
+    /** 用于实现滚动居中 */
     private Rect mTabRect = new Rect();
     private GradientDrawable mIndicatorDrawable = new GradientDrawable();
 
@@ -73,9 +62,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     private boolean mTabSpaceEqual;
     private float mTabWidth;
 
-    /**
-     * indicator
-     */
+    /** indicator */
     private int mIndicatorColor;
     private float mIndicatorHeight;
     private float mIndicatorWidth;
@@ -87,23 +74,17 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     private int mIndicatorGravity;
     private boolean mIndicatorWidthEqualTitle;
 
-    /**
-     * underline
-     */
+    /** underline */
     private int mUnderlineColor;
     private float mUnderlineHeight;
     private int mUnderlineGravity;
 
-    /**
-     * divider
-     */
+    /** divider */
     private int mDividerColor;
     private float mDividerWidth;
     private float mDividerPadding;
 
-    /**
-     * title
-     */
+    /** title */
     private static final int TEXT_BOLD_NONE = 0;
     private static final int TEXT_BOLD_WHEN_SELECT = 1;
     private static final int TEXT_BOLD_BOTH = 2;
@@ -117,15 +98,15 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     private int mHeight;
     private boolean mSnapOnTabClick;
 
-    public SlidingIconTabLayout(Context context) {
+    public SlidingTabLayout(Context context) {
         this(context, null, 0);
     }
 
-    public SlidingIconTabLayout(Context context, AttributeSet attrs) {
+    public SlidingTabLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SlidingIconTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SlidingTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setFillViewport(true);//设置滚动视图是否可以伸缩其内容以填充视口
         setWillNotDraw(false);//重写onDraw方法,需要调用这个方法来清除flag
@@ -178,7 +159,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         mTextsize = ta.getDimension(R.styleable.SlidingTabLayout_tl_textsize, sp2px(14));
         mTextSelectColor = ta.getColor(R.styleable.SlidingTabLayout_tl_textSelectColor, Color.parseColor("#ffffff"));
         mTextUnselectColor = ta.getColor(R.styleable.SlidingTabLayout_tl_textUnselectColor, Color.parseColor("#AAffffff"));
-        mTextBold = ta.getInt(R.styleable.SlidingTabLayout_tl_textBold, TEXT_BOLD_WHEN_SELECT);
+        mTextBold = ta.getInt(R.styleable.SlidingTabLayout_tl_textBold, TEXT_BOLD_NONE);
         mTextAllCaps = ta.getBoolean(R.styleable.SlidingTabLayout_tl_textAllCaps, false);
 
         mTabSpaceEqual = ta.getBoolean(R.styleable.SlidingTabLayout_tl_tab_space_equal, false);
@@ -188,9 +169,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         ta.recycle();
     }
 
-    /**
-     * 关联ViewPager
-     */
+    /** 关联ViewPager */
     public void setViewPager(ViewPager vp) {
         if (vp == null || vp.getAdapter() == null) {
             throw new IllegalStateException("ViewPager or ViewPager adapter can not be NULL !");
@@ -203,50 +182,75 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         notifyDataSetChanged();
     }
 
-    /**
-     * 关联ViewPager,用于不想在ViewPager适配器中设置HomeNavbarList数据的情况
-     */
-    public void setViewPager(ViewPager vp, List<HomeCommonBean> list) {
+    /** 关联ViewPager,用于不想在ViewPager适配器中设置titles数据的情况 */
+    public void setViewPager(ViewPager vp, String[] titles) {
         if (vp == null || vp.getAdapter() == null) {
             throw new IllegalStateException("ViewPager or ViewPager adapter can not be NULL !");
         }
 
-        if (list == null || list.size() == 0) {
+        if (titles == null || titles.length == 0) {
             throw new IllegalStateException("Titles can not be EMPTY !");
         }
 
-        if (list.size() != vp.getAdapter().getCount()) {
+        if (titles.length != vp.getAdapter().getCount()) {
             throw new IllegalStateException("Titles length must be the same as the page count !");
         }
 
         this.mViewPager = vp;
-        HomeNavbarList = new ArrayList<>();
-        HomeNavbarList.addAll(list);
+        mTitles = new ArrayList<>();
+        Collections.addAll(mTitles, titles);
+
         this.mViewPager.removeOnPageChangeListener(this);
         this.mViewPager.addOnPageChangeListener(this);
         notifyDataSetChanged();
     }
 
-    /**
-     * 更新数据
-     */
+    /** 关联ViewPager,用于连适配器都不想自己实例化的情况 */
+    public void setViewPager(ViewPager vp, String[] titles, FragmentActivity fa, ArrayList<Fragment> fragments) {
+        if (vp == null) {
+            throw new IllegalStateException("ViewPager can not be NULL !");
+        }
+
+        if (titles == null || titles.length == 0) {
+            throw new IllegalStateException("Titles can not be EMPTY !");
+        }
+
+        this.mViewPager = vp;
+        this.mViewPager.setAdapter(new InnerPagerAdapter(fa.getSupportFragmentManager(), fragments, titles));
+
+        this.mViewPager.removeOnPageChangeListener(this);
+        this.mViewPager.addOnPageChangeListener(this);
+        notifyDataSetChanged();
+    }
+
+    /** 更新数据 */
     public void notifyDataSetChanged() {
         mTabsContainer.removeAllViews();
-        this.mTabCount = HomeNavbarList == null ? mViewPager.getAdapter().getCount() : HomeNavbarList.size();
+        this.mTabCount = mTitles == null ? mViewPager.getAdapter().getCount() : mTitles.size();
         View tabView;
         for (int i = 0; i < mTabCount; i++) {
-            tabView = View.inflate(mContext, R.layout.layout_tab_icon, null);
-            CharSequence pageTitle = HomeNavbarList.size() == 0 ? mViewPager.getAdapter().getPageTitle(i) : HomeNavbarList.get(i).getName();
+            tabView = View.inflate(mContext, R.layout.layout_tab, null);
+            CharSequence pageTitle = mTitles == null ? mViewPager.getAdapter().getPageTitle(i) : mTitles.get(i);
             addTab(i, pageTitle.toString(), tabView);
         }
 
         updateTabStyles();
     }
 
+    public void addNewTab(String title) {
+        View tabView = View.inflate(mContext, R.layout.layout_tab, null);
+        if (mTitles != null) {
+            mTitles.add(title);
+        }
 
-    /**
-     * 创建并添加tab
-     */
+        CharSequence pageTitle = mTitles == null ? mViewPager.getAdapter().getPageTitle(mTabCount) : mTitles.get(mTabCount);
+        addTab(mTabCount, pageTitle.toString(), tabView);
+        this.mTabCount = mTitles == null ? mViewPager.getAdapter().getCount() : mTitles.size();
+
+        updateTabStyles();
+    }
+
+    /** 创建并添加tab */
     private void addTab(final int position, String title, View tabView) {
         TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
         if (tv_tab_title != null) {
@@ -288,6 +292,27 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         mTabsContainer.addView(tabView, position, lp_tab);
     }
 
+    private void updateTabStyles() {
+        for (int i = 0; i < mTabCount; i++) {
+            View v = mTabsContainer.getChildAt(i);
+//            v.setPadding((int) mTabPadding, v.getPaddingTop(), (int) mTabPadding, v.getPaddingBottom());
+            TextView tv_tab_title = (TextView) v.findViewById(R.id.tv_tab_title);
+            if (tv_tab_title != null) {
+                tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
+                tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
+                tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
+                if (mTextAllCaps) {
+                    tv_tab_title.setText(tv_tab_title.getText().toString().toUpperCase());
+                }
+
+                if (mTextBold == TEXT_BOLD_BOTH) {
+                    tv_tab_title.getPaint().setFakeBoldText(true);
+                } else if (mTextBold == TEXT_BOLD_NONE) {
+                    tv_tab_title.getPaint().setFakeBoldText(false);
+                }
+            }
+        }
+    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -310,9 +335,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     public void onPageScrollStateChanged(int state) {
     }
 
-    /**
-     * HorizontalScrollView滚到当前tab,并且居中显示
-     */
+    /** HorizontalScrollView滚到当前tab,并且居中显示 */
     private void scrollToCurrentTab() {
         if (mTabCount <= 0) {
             return;
@@ -339,73 +362,17 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         }
     }
 
-    private void updateTabStyles() {
-        for (int i = 0; i < mTabCount; i++) {
-            View v = mTabsContainer.getChildAt(i);
-            HomeCommonEntity.HomeCommonBean homeCommonBean = HomeNavbarList.get(i);
-//            v.setPadding((int) mTabPadding, v.getPaddingTop(), (int) mTabPadding, v.getPaddingBottom());
-            TextView tv_tab_title = v.findViewById(R.id.tv_tab_title);
-            ImageView iv_tab_title = v.findViewById(R.id.iv_tab_title);
-            if (tv_tab_title != null && iv_tab_title != null) {
-                if ("1".equals(homeCommonBean.getShowType())) {
-                    tv_tab_title.setVisibility(VISIBLE);
-                    iv_tab_title.setVisibility(GONE);
-//                    if (TextUtils.isEmpty(homeCommonBean.getColor())) {
-//                        tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
-//                    } else {
-                    if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
-                        String textColor = homeCommonBean.getColor().trim();
-                        if (!homeCommonBean.getColor().startsWith("#")) {
-                            textColor = "#" + textColor;
-                        }
-                        tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : Color.parseColor(textColor));
-                    }
-//                    }
-                    tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
-                    tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
-                    if (mTextAllCaps) {
-                        tv_tab_title.setText(tv_tab_title.getText().toString().toUpperCase());
-                    }
-//                    tv_tab_title.getPaint().setFakeBoldText(i == mCurrentTab);
-                    tv_tab_title.setTypeface(Typeface.defaultFromStyle(i == mCurrentTab ? Typeface.BOLD : Typeface.NORMAL));
-                } else {
-                    tv_tab_title.setVisibility(INVISIBLE);
-                    tv_tab_title.setText("多么生活");//设置文本默认值，否则显示图标没有指示器（指示器长度由标题长度决定）
-                    iv_tab_title.setVisibility(VISIBLE);
-                    GlideImageLoaderUtil.loadImage(mContext, iv_tab_title, homeCommonBean.getIcon());
-                    iv_tab_title.setImageResource(R.drawable.duoma_select);
-                }
-
-                if (mTextBold == TEXT_BOLD_BOTH) {
-                    tv_tab_title.getPaint().setFakeBoldText(true);
-                } else if (mTextBold == TEXT_BOLD_NONE) {
-                    tv_tab_title.getPaint().setFakeBoldText(false);
-                }
-            }
-        }
-    }
-
     private void updateTabSelection(int position) {
         for (int i = 0; i < mTabCount; ++i) {
             View tabView = mTabsContainer.getChildAt(i);
             final boolean isSelect = i == position;
-            HomeCommonEntity.HomeCommonBean homeCommonBean = HomeNavbarList.get(i);
-            TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
-//            if (TextUtils.isEmpty(homeCommonBean.getColor())) {
-//                tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
-//            } else {
-            if (!TextUtils.isEmpty(homeCommonBean.getColor())) {
-                String textColor = homeCommonBean.getColor().trim();
-                if (!homeCommonBean.getColor().startsWith("#")) {
-                    textColor = "#" + textColor;
+            TextView tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
+
+            if (tab_title != null) {
+                tab_title.setTextColor(isSelect ? mTextSelectColor : mTextUnselectColor);
+                if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
+                    tab_title.getPaint().setFakeBoldText(isSelect);
                 }
-                tv_tab_title.setTextColor(isSelect ? mTextSelectColor : Color.parseColor(textColor));
-            }
-//            }
-//            tv_tab_title.getPaint().setFakeBoldText(isSelect);
-            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect ? Typeface.BOLD : Typeface.NORMAL));
-            if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
-                tv_tab_title.getPaint().setFakeBoldText(isSelect);
             }
         }
     }
@@ -831,9 +798,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         showMsg(position, 0);
     }
 
-    /**
-     * 隐藏未读消息
-     */
+    /** 隐藏未读消息 */
     public void hideMsg(int position) {
         if (position >= mTabCount) {
             position = mTabCount - 1;
@@ -846,9 +811,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         }
     }
 
-    /**
-     * 设置未读消息偏移,原点为文字的右上角.当控件高度固定,消息提示位置易控制,显示效果佳
-     */
+    /** 设置未读消息偏移,原点为文字的右上角.当控件高度固定,消息提示位置易控制,显示效果佳 */
     public void setMsgMargin(int position, float leftPadding, float bottomPadding) {
         if (position >= mTabCount) {
             position = mTabCount - 1;
@@ -867,9 +830,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         }
     }
 
-    /**
-     * 当前类只提供了少许设置未读消息属性的方法,可以通过该方法获取MsgView对象从而各种设置
-     */
+    /** 当前类只提供了少许设置未读消息属性的方法,可以通过该方法获取MsgView对象从而各种设置 */
     public MsgView getMsgView(int position) {
         if (position >= mTabCount) {
             position = mTabCount - 1;
@@ -887,12 +848,12 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
 
     class InnerPagerAdapter extends FragmentPagerAdapter {
         private ArrayList<Fragment> fragments = new ArrayList<>();
-        private String[] HomeNavbarList;
+        private String[] titles;
 
-        public InnerPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, String[] HomeNavbarList) {
+        public InnerPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, String[] titles) {
             super(fm);
             this.fragments = fragments;
-            this.HomeNavbarList = HomeNavbarList;
+            this.titles = titles;
         }
 
         @Override
@@ -902,7 +863,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return HomeNavbarList[position];
+            return titles[position];
         }
 
         @Override

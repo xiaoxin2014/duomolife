@@ -82,7 +82,7 @@
 
                 </android.support.design.widget.CollapsingToolbarLayout>
 
-                <com.amkj.dmsh.views.tablayout.SlidingTabLayout
+                <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
                     xmlns:tl="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/std_find_art_type"
                     android:layout_width="wrap_content"

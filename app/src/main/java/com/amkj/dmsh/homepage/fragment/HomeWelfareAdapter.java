@@ -11,6 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.CommonPagerAdapter;
 import com.amkj.dmsh.base.ViewHolder;
 import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -73,7 +74,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             protected void convert(BaseViewHolder helper, HomeWelfareBean.GoodsBean goodsBean) {
                 if (goodsBean == null) return;
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsBean.getPicUrl());
-                helper.setText(R.id.tv_price, "¥" + goodsBean.getPrice());
+                helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()));
                 FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
                 if (!TextUtils.isEmpty(goodsBean.getActivityTag()) || (goodsBean.getMarketLabelList() != null
                         && goodsBean.getMarketLabelList().size() > 0)) {

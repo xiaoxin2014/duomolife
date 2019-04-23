@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.ProductInfoListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -40,9 +41,9 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
 
         //专区左边商品
         ProductInfoListBean productInfoListBean = productInfoList.get(0);
-        if (productInfoListBean!=null){
+        if (productInfoListBean != null) {
             GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_left), productInfoListBean.getImg());
-            helper.setText(R.id.tv_price_left, "¥" + getStrings(productInfoListBean.getPrice()));
+            helper.setText(R.id.tv_price_left, ConstantMethod.getRmbFormat(mContext, productInfoListBean.getPrice()));
             helper.setText(R.id.tv_market_price_left, "¥" + getStrings(productInfoListBean.getMarketPrice()));
             ((TextView) helper.getView(R.id.tv_market_price_left)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
@@ -52,9 +53,9 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         helper.getView(R.id.ll_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
         if (productInfoList.size() > 1) {
             productInfoListBean = productInfoList.get(1);
-            if (productInfoListBean!=null){
+            if (productInfoListBean != null) {
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), productInfoListBean.getImg());
-                helper.setText(R.id.tv_price_right, "¥" + getStrings(productInfoListBean.getPrice()));
+                helper.setText(R.id.tv_price_right, ConstantMethod.getRmbFormat(mContext, productInfoListBean.getPrice()));
                 helper.setText(R.id.tv_market_price_right, "¥" + getStrings(productInfoListBean.getMarketPrice()));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }

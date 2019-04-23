@@ -25,7 +25,7 @@ import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.views.MarqueeTextView;
-import com.amkj.dmsh.views.tablayout.SlidingIconTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 
@@ -105,7 +105,7 @@ public class HomePageNewFragment extends BaseFragment {
         badgeMsg = getTopBadge(getActivity(), mFraHomeMessage);
         badgeCart = getTopBadge(getActivity(), mFlShopCar);
         mTablayoutHome.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
-        mTablayoutHome.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 40));
+        mTablayoutHome.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 1));
     }
 
     @Override

@@ -117,7 +117,6 @@ public class CatergoryFragment extends BaseFragment {
         mTablayoutCatergory.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
                 RecyclerViewScrollHelper.scrollToPosition(mRvCatergory, tab.getPosition());
             }
 
@@ -221,5 +220,4 @@ public class CatergoryFragment extends BaseFragment {
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
     }
-
 }

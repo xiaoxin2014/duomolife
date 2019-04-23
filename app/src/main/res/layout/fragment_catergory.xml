@@ -22,8 +22,7 @@
             app:tabPaddingEnd="@dimen/sc_mm_32"
             app:tabPaddingStart="@dimen/sc_mm_32"
             app:tabSelectedTextColor="@color/text_black_t"
-            app:tabTextColor="@color/text_login_gray_s">
-        </android.support.design.widget.TabLayout>
+            app:tabTextColor="@color/text_login_gray_s"/>
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/smart_layout"

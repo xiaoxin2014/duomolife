@@ -54,9 +54,9 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.views.tablayout.CommonTabLayout;
-import com.amkj.dmsh.views.tablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.tablayout.listener.OnTabSelectListener;;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
@@ -96,9 +96,6 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODU
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
-;
-;
-
 public class IntegralScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_integral_details)
     SmartRefreshLayout smart_integral_details;
@@ -124,7 +121,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     /**
      * 商品评论
      */
-
     @BindView(R.id.ll_product_comment)
     LinearLayout ll_product_comment;
     //    评论头部

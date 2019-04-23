@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -105,6 +106,7 @@ public class HomeDefalutFragment extends BaseFragment {
     @BindView(R.id.rv_top)
     RecyclerView mRvTop;
     @BindView(R.id.smart_layout)
+    TabLayout
     SmartRefreshLayout mSmartLayout;
     @BindView(R.id.iv_dynamic_cover)
     ImageView mIvCover;
@@ -428,11 +430,11 @@ public class HomeDefalutFragment extends BaseFragment {
                     if (productInfoList != null && productInfoList.size() > 0) {
                         ProductInfoListBean productInfoListBean = productInfoList.get(0);
                         GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverLeft, productInfoListBean.getCover());
-                        mTvDynamicPriceLeft.setText("¥" + productInfoListBean.getPrice());
+                        mTvDynamicPriceLeft.setText(ConstantMethod.getRmbFormat(getActivity(), productInfoListBean.getPrice()));
                         if (productInfoList.size() > 1) {
                             productInfoListBean = productInfoList.get(1);
                             GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverRight, productInfoListBean.getCover());
-                            mTvDynamicPriceright.setText("¥" + productInfoListBean.getPrice());
+                            mTvDynamicPriceright.setText(ConstantMethod.getRmbFormat(getActivity(), productInfoListBean.getPrice()));
                         }
                     }
 

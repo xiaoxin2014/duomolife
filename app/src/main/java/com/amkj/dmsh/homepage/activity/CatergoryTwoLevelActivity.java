@@ -221,6 +221,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
 
 
     private void getCatergoryGoods() {
+        if (mPosition >= mChildCategoryListBeanList.size()) return;
         ChildCategoryListBean childCategoryListBean = mChildCategoryListBeanList.get(mPosition);
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);

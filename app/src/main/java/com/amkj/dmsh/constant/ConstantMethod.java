@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
@@ -323,6 +324,31 @@ public class ConstantMethod {
         }
         return String.format(context.getResources().getString(R.string.money_price_chn), price);
     }
+
+    /**
+     * 人民币价格格式化
+     *
+     * @param price
+     * @return
+     */
+    public static CharSequence getRmbFormat(Context context, String price) {
+        try {
+            if (TextUtils.isEmpty(price)) return "";
+            String stringsChNPrice = getStringsChNPrice(context, price);
+            Pattern pattern = Pattern.compile("[^\\x00-\\xff]");
+            Link link = new Link(pattern);
+            link.setTextColor(Color.parseColor("#ff5a6b"));
+            link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+            link.setUnderlined(false);
+            link.setHighlightAlpha(0f);
+            return LinkBuilder.from(context, stringsChNPrice)
+                    .addLink(link)
+                    .build();
+        } catch (Exception e) {
+            return getStrings("¥" + price);
+        }
+    }
+
 
     /**
      * @param context

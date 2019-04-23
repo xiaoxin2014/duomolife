@@ -1,4 +1,4 @@
-package com.amkj.dmsh.views.tablayout.utils;
+package com.amkj.dmsh.views.flycoTablayout.utils;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

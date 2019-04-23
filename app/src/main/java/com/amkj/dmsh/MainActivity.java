@@ -662,7 +662,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case 1:
                 setDefaultButtonData(i, rb, MAIN_QUALITY);
-                drawable = getResources().getDrawable(R.drawable.selector_bottom_quality_bar);
+                drawable = getResources().getDrawable(R.drawable.selector_bottom_catergory_bar);
                 drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
                 rb.setCompoundDrawables(null, drawable, null, null);
                 break;

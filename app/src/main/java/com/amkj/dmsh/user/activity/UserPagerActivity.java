@@ -25,7 +25,7 @@ import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity.UserInfoBean;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.views.tablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;

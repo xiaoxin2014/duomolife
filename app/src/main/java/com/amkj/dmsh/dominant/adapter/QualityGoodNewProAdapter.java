@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -44,7 +45,7 @@ public class QualityGoodNewProAdapter extends BaseQuickAdapter<Attribute, BaseVi
         ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
         ll_quality_product.setVisibility(View.GONE);
         iv_quality_good_product_ad.setVisibility(View.GONE);
-        if(attribute==null){
+        if (attribute == null) {
             return;
         }
         switch (getStrings(attribute.getObjectType())) {
@@ -57,32 +58,32 @@ public class QualityGoodNewProAdapter extends BaseQuickAdapter<Attribute, BaseVi
                         .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                                 getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
-                        .setText(R.id.tv_qt_pro_price, "￥" + likedProductBean.getPrice())
+                        .setText(R.id.tv_qt_pro_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
                         .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean);
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
-                if(!TextUtils.isEmpty(likedProductBean.getActivityTag())||(likedProductBean.getMarketLabelList()!=null
-                        &&likedProductBean.getMarketLabelList().size()>0)){
+                if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
+                        && likedProductBean.getMarketLabelList().size() > 0)) {
                     fbl_market_label.setVisibility(View.VISIBLE);
                     fbl_market_label.removeAllViews();
-                    if(!TextUtils.isEmpty(likedProductBean.getActivityTag())){
-                        fbl_market_label.addView(getLabelInstance().createLabelText(context,likedProductBean.getActivityTag(),1));
+                    if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
+                        fbl_market_label.addView(getLabelInstance().createLabelText(context, likedProductBean.getActivityTag(), 1));
                     }
-                    if(likedProductBean.getMarketLabelList()!=null
-                            &&likedProductBean.getMarketLabelList().size()>0){
-                        for (MarketLabelBean marketLabelBean:likedProductBean.getMarketLabelList()) {
-                            if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                                fbl_market_label.addView(getLabelInstance().createLabelText(context,marketLabelBean.getTitle(),0));
+                    if (likedProductBean.getMarketLabelList() != null
+                            && likedProductBean.getMarketLabelList().size() > 0) {
+                        for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                            if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                                fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
                             }
                         }
                     }
-                }else{
+                } else {
                     fbl_market_label.setVisibility(View.GONE);
                 }
                 break;
             case "ad":
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) attribute;
                 iv_quality_good_product_ad.setVisibility(View.VISIBLE);
-                GlideImageLoaderUtil.loadCenterCrop(context,iv_quality_good_product_ad,getStrings(communalADActivityBean.getPicUrl()));
+                GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(communalADActivityBean.getPicUrl()));
                 break;
         }
         helper.itemView.setTag(attribute);

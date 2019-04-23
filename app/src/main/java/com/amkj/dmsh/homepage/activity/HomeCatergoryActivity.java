@@ -1,8 +1,6 @@
 package com.amkj.dmsh.homepage.activity;
 
-import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,10 +8,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.catergory.adapter.CatergoryOneLevelAdapter;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean;
-import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
+import com.amkj.dmsh.catergory.view.CatergoryHeadView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
@@ -37,7 +34,6 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_PID;
-import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 
@@ -49,8 +45,6 @@ import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
  * ClassDescription :
  */
 public class HomeCatergoryActivity extends BaseActivity {
-    @BindView(R.id.rv_catergory)
-    RecyclerView mRvCatergory;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
     @BindView(R.id.tv_header_title)
@@ -63,18 +57,16 @@ public class HomeCatergoryActivity extends BaseActivity {
     TextView mTvLifeBack;
     @BindView(R.id.rv_catergory_goods)
     RecyclerView mRvCatergoryGoods;
-    private List<CatergoryOneLevelBean> mCatergoryBeanList = new ArrayList<>();
     private List<LikedProductBean> productList = new ArrayList<>();
     private int page = 1;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
     CatergoryGoodsAdapter mCatergoryGoodsAdapter;
     private CatergoryOneLevelEntity mCatergoryEntity;
-    private CatergoryOneLevelAdapter mOneLevelAdapter;
     private String mCategoryPid;
     private String mCategoryName;
     private String mCategoryId;
-    private String mCategoryType;
+    private CatergoryHeadView mCatergoryHeadView;
 
     @Override
     protected int getContentView() {
@@ -89,8 +81,6 @@ public class HomeCatergoryActivity extends BaseActivity {
             mCategoryPid = getIntent().getStringExtra(CATEGORY_PID);
             mCategoryName = getIntent().getStringExtra(CATEGORY_NAME);
             mCategoryId = getIntent().getStringExtra(CATEGORY_ID);
-            mCategoryType = getIntent().getStringExtra(CATEGORY_TYPE);
-
             mTvHeaderTitle.setText(mCategoryName);
         }
 
@@ -98,52 +88,11 @@ public class HomeCatergoryActivity extends BaseActivity {
             page = 1;
             loadData();
         });
-        mOneLevelAdapter = new CatergoryOneLevelAdapter(getActivity(), mCatergoryBeanList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        mRvCatergory.setLayoutManager(linearLayoutManager);
-        mRvCatergory.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_ten_dp)
-                .create());
-        mRvCatergory.setAdapter(mOneLevelAdapter);
-        mRvCatergory.setNestedScrollingEnabled(false);
-        mOneLevelAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            RelateArticleBean relateArticleBean = (RelateArticleBean) view.getTag();
-            switch (view.getId()) {
-                //进入文章专题
-                case R.id.rl_more_artical:
-                    if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
-                        intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
-                        intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
-                        if (getActivity() != null) startActivity(intent);
-                    }
-                    break;
-                //点击进入文章详情
-                case R.id.fl_artical_left:
-                    if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
-                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(0).getDocumentId()));
-                        startActivity(intent);
-                    }
-                    break;
-                //点击进入文章详情
-                case R.id.fl_artical_right:
-                    if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
-                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(1).getDocumentId()));
-                        startActivity(intent);
-                    }
-                    break;
-            }
-        });
-
 
         //分类商品适配器
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this
                 , 3);
         mRvCatergoryGoods.setLayoutManager(gridLayoutManager);
-        mRvCatergoryGoods.setNestedScrollingEnabled(false);
         ItemDecoration itemDecoration = new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
@@ -154,15 +103,16 @@ public class HomeCatergoryActivity extends BaseActivity {
             page++;
             getCatergoryGoods();
         }, mRvCatergoryGoods);
+        mCatergoryHeadView = new CatergoryHeadView(getActivity(), null);
+        mCatergoryGoodsAdapter.addHeaderView(mCatergoryHeadView);
         mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
-
     }
 
     @Override
     protected void loadData() {
         getOneLevelData();
+        getCatergoryGoods();
     }
-
 
     private void getOneLevelData() {
         Map<String, String> map = new HashMap<>();
@@ -176,22 +126,16 @@ public class HomeCatergoryActivity extends BaseActivity {
                     String code = mCatergoryEntity.getCode();
                     List<CatergoryOneLevelBean> catergoryList = mCatergoryEntity.getResult();
                     if (catergoryList != null && catergoryList.size() > 0) {
-                        mCatergoryBeanList.clear();
-                        mCatergoryBeanList.addAll(catergoryList);
-                        mOneLevelAdapter.notifyDataSetChanged();
+                        mCatergoryHeadView.updateView(catergoryList.get(0));
                     } else if (ERROR_CODE.equals(code)) {
                         ConstantMethod.showToast(mCatergoryEntity.getMsg());
                     }
                 }
-
-                getCatergoryGoods();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mCatergoryBeanList, mCatergoryEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 mSmartLayout.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mCatergoryBeanList, mCatergoryEntity);
             }
         });
     }

@@ -39,7 +39,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.amkj.dmsh.views.tablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
