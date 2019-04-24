@@ -344,18 +344,15 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
                             }
                         }
+                        rel_topic_bottom.setVisibility(VISIBLE);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
+                        rel_topic_bottom.setVisibility(VISIBLE);
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, R.string.unConnectedNetwork);
                     }
 
                     @Override
@@ -533,7 +530,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     , qualityWefBean.getTitle()
                     , ""
                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
-                    + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")),qualityWefBean.getId() );
+                    + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")), qualityWefBean.getId());
         }
     }
 

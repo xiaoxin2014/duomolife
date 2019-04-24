@@ -1,22 +1,19 @@
 package com.amkj.dmsh.catergory.fragment;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.MyPagerAdapter;
 import com.amkj.dmsh.base.RecyclerViewScrollHelper;
 import com.amkj.dmsh.catergory.adapter.CatergoryOneLevelAdapter;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity;
@@ -30,7 +27,8 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -39,10 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -59,10 +57,6 @@ public class CatergoryFragment extends BaseFragment {
     TextView mTvSearch;
     @BindView(R.id.tb_catergory)
     LinearLayout mTbCatergory;
-    @BindView(R.id.tablayout_catergory)
-    TabLayout mTablayoutCatergory;
-    @BindView(R.id.fl_fragment_quality)
-    FrameLayout mFlFragmentQuality;
     @BindView(R.id.rv_catergory)
     RecyclerView mRvCatergory;
     @BindView(R.id.smart_layout)
@@ -70,11 +64,9 @@ public class CatergoryFragment extends BaseFragment {
     @BindView(R.id.iv_float_ad_icon)
     ImageView iv_float_ad_icon;
     @BindView(R.id.stb_catergory)
-    SlidingIconTabLayout mStbCatergory;
-    Unbinder unbinder;
+    SlidingTabLayout mStbCatergory;
     @BindView(R.id.vp_catergory)
     ViewPager mVpCatergory;
-    Unbinder unbinder1;
     private List<CatergoryOneLevelBean> mCatergoryBeanList = new ArrayList<>();
     private CatergoryOneLevelEntity mCatergoryEntity;
     private CatergoryOneLevelAdapter mOneLevelAdapter;
@@ -86,6 +78,8 @@ public class CatergoryFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+        mStbCatergory.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
+        mStbCatergory.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 48));
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             getOneLevelData();
         });
@@ -127,19 +121,15 @@ public class CatergoryFragment extends BaseFragment {
                     break;
             }
         });
-        mTablayoutCatergory.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+        mStbCatergory.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                RecyclerViewScrollHelper.scrollToPosition(mRvCatergory, tab.getPosition());
+            public void onTabSelect(int position) {
+                RecyclerViewScrollHelper.scrollToPosition(mRvCatergory, position);
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+            public void onTabReselect(int position) {
 
             }
         });
@@ -149,11 +139,9 @@ public class CatergoryFragment extends BaseFragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int position = linearLayoutManager.findFirstVisibleItemPosition();
-                mTablayoutCatergory.setScrollPosition(position, 0, true);
+                mStbCatergory.setCurrentTab(position, false);
             }
         });
-
-        mTablayoutCatergory.setTabMode(TabLayout.MODE_SCROLLABLE);
 
     }
 
@@ -183,17 +171,18 @@ public class CatergoryFragment extends BaseFragment {
                             }
                         }
                         mOneLevelAdapter.notifyDataSetChanged();
-                        mTablayoutCatergory.removeAllTabs();
+                        //因为SlidingTabLayout对viewpager有依赖性，所以暂时创建空数据的viewpager进行关联
                         List<String> titleList = new ArrayList<>();
+                        List<View> viewList = new ArrayList<>();
                         for (int i = 0; i < mCatergoryBeanList.size(); i++) {
-                            TabLayout.Tab tab = mTablayoutCatergory.newTab();
-                            tab.setText(mCatergoryBeanList.get(i).getName());
-                            mTablayoutCatergory.addTab(tab);
                             titleList.add(mCatergoryBeanList.get(i).getName());
+                            ImageView imageView = new ImageView(getActivity());
+                            imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            viewList.add(imageView);
                         }
-//                        MyPagerAdapter myPagerAdapter = new MyPagerAdapter();
-//                        mVpCatergory.setAdapter(myPagerAdapter,titleList );
-
+                        MyPagerAdapter myPagerAdapter = new MyPagerAdapter(viewList);
+                        mVpCatergory.setAdapter(myPagerAdapter);
+                        mStbCatergory.setViewPager(mVpCatergory, titleList.toArray(new String[titleList.size()]));
                     } else if (ERROR_CODE.equals(code)) {
                         ConstantMethod.showToast(mCatergoryEntity.getMsg());
                     }
@@ -237,19 +226,5 @@ public class CatergoryFragment extends BaseFragment {
             adClickTotal(getActivity(), communalADActivityBean.getId());
             setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder1 = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder1.unbind();
     }
 }

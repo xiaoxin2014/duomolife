@@ -49,7 +49,6 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_top_cover), getStrings(item.getPicUrl()));
         //初始化文章数据
         RelateArticleBean relateArticle = item.getRelateArticle();
-        helper.addOnClickListener(R.id.rl_more_artical).setTag(R.id.rl_more_artical, relateArticle);
         helper.getView(R.id.ll_artical).setVisibility(relateArticle != null && relateArticle.getArticles() != null && relateArticle.getArticles().size() > 0 ? View.VISIBLE : View.GONE);
         if (relateArticle != null) {
             List<RelateArticleBean.ArticlesBean> articlesList = relateArticle.getArticles();
@@ -57,7 +56,8 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
                 ArticlesBean articleLeftBean = articlesList.get(0);
                 GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_left_cover), articleLeftBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 5));
                 helper.setText(R.id.tv_left_title, articleLeftBean.getDocumentName())
-                        .addOnClickListener(R.id.fl_artical_left).setTag(R.id.fl_artical_left, relateArticle);
+                        .addOnClickListener(R.id.fl_artical_left).setTag(R.id.fl_artical_left, relateArticle).
+                        addOnClickListener(R.id.rl_more_artical).setTag(R.id.rl_more_artical, relateArticle);
                 if (articlesList.size() > 1) {
                     ArticlesBean articleRightBean = articlesList.get(1);
                     GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_right_cover), articleRightBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 5));

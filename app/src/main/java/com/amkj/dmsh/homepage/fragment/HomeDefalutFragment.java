@@ -471,10 +471,12 @@ public class HomeDefalutFragment extends BaseFragment {
                         mHomeZoneAdapter.notifyDataSetChanged();
                     }
                 }
+                mRvSpecialZone.setVisibility(mZoneList.size() > 0 ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onNotNetOrException() {
+                mRvSpecialZone.setVisibility(mZoneList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }

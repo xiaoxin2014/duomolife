@@ -50,17 +50,10 @@ public class HomeCommonEntity extends BaseEntity {
         private String icon;
         private String link;
         private String name;
+        private String subtitle;
         private String showType;
         private String description;
         private List<ProductInfoListBean> productInfoList;
-
-        public HomeCommonBean(String showType, String icon, String name, String color, String link) {
-            this.color = color;
-            this.icon = icon;
-            this.link = link;
-            this.name = name;
-            this.showType = showType;
-        }
 
 
         public List<ProductInfoListBean> getProductInfoList() {
@@ -117,6 +110,14 @@ public class HomeCommonEntity extends BaseEntity {
 
         public void setShowType(String showType) {
             this.showType = showType;
+        }
+
+        public String getSubtitle() {
+            return subtitle;
+        }
+
+        public void setSubtitle(String subtitle) {
+            this.subtitle = subtitle;
         }
     }
 

@@ -334,9 +334,8 @@ public class ConstantMethod {
     public static CharSequence getRmbFormat(Context context, String price) {
         try {
             if (TextUtils.isEmpty(price)) return "";
-            String stringsChNPrice = getStringsChNPrice(context, price);
-            Pattern pattern = Pattern.compile("[^\\x00-\\xff]");
-            Link link = new Link(pattern);
+            String stringsChNPrice = "¥" + price;
+            Link link = new Link("¥");
             link.setTextColor(Color.parseColor("#ff5a6b"));
             link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
             link.setUnderlined(false);
@@ -348,7 +347,6 @@ public class ConstantMethod {
             return getStrings("¥" + price);
         }
     }
-
 
     /**
      * @param context
