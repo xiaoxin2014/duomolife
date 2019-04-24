@@ -68,7 +68,7 @@ public class TimeShowNewFragment extends BaseFragment {
     protected void initViews() {
         tv_life_back.setVisibility(View.GONE);
         tv_header_shared.setVisibility(View.GONE);
-        tv_header_title.setText("限时特惠");
+        tv_header_title.setText("淘好货");
         rp_time_spring.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

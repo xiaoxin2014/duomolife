@@ -30,8 +30,8 @@ import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
+import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
-import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.QualityGoodActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
@@ -712,7 +712,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 break;
             //跳转文章列表
             case R.id.rl_more_artical:
-                intent = new Intent(getActivity(), ArticleTypeActivity.class);
+                intent = new Intent(getActivity(), ArticalCatergoryActivity.class);
                 intent.putExtra("categoryTitle", "种草特辑");
                 if (getActivity() != null) startActivity(intent);
                 break;

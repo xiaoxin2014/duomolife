@@ -3,6 +3,7 @@ package com.amkj.dmsh.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/8/27.
  */
-public class CategoryTypeEntity {
+public class CategoryTypeEntity extends BaseEntity {
 
     /**
      * result : [{"icon":"http://img.domolife.cn/platform/JYj2rs2wb21494487118056.png","id":48,"title":"多么优选"},{"icon":"http://img.domolife.cn/platform/YxrcEjtkBr.png","id":1,"title":"品生活"},{"icon":"http://img.domolife.cn/platform/BDApw4dES8.png","id":40,"title":"种草营"},{"icon":"http://img.domolife.cn/platform/NeNr3rMjxR.png","id":41,"title":"小书屋"},{"icon":"http://img.domolife.cn/platform/jyDAsGKNC2.png","id":47,"title":"下厨吧"},{"icon":"http://img.domolife.cn/platform/Ds3WFBfmpR.png","id":2,"title":"育儿"}]
@@ -18,26 +19,8 @@ public class CategoryTypeEntity {
      * code : 01
      */
 
-    private String msg;
-    private String code;
     @SerializedName("result")
     private List<CategoryTypeBean> categoryTypeList;
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public List<CategoryTypeBean> getCategoryTypeList() {
         return categoryTypeList;
@@ -57,6 +40,10 @@ public class CategoryTypeEntity {
         private String icon;
         private int id;
         private String title;
+
+        public CategoryTypeBean(String title) {
+            this.title = title;
+        }
 
         public String getIcon() {
             return icon;

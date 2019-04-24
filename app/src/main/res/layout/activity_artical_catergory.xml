@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
+
+    <include layout="@layout/layout_head_catergory_two_level"/>
+
+    <LinearLayout
+        android:id="@+id/ll_catergory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+            xmlns:tl="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/stb_artical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/sc_mm_16"
+            android:paddingBottom="@dimen/sc_mm_16"
+            tl:tl_indicator_color="@color/text_login_blue_z"
+            tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+            tl:tl_indicator_gravity="BOTTOM"
+            tl:tl_indicator_height="@dimen/dimen_2dp"
+            tl:tl_indicator_style="NORMAL"
+            tl:tl_indicator_width_equal_title="true"
+            tl:tl_textSelectColor="@color/text_black_t"
+            tl:tl_textUnselectColor="@color/text_login_gray_s"
+            tl:tl_textsize="15sp"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+</LinearLayout>

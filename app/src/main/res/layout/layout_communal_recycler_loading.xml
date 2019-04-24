@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode = "true"
     android:background="@color/white">
+
+
     <include layout="@layout/layout_communal_recycler" />
 
 </FrameLayout>

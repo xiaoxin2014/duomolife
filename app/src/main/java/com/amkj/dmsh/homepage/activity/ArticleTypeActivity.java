@@ -45,8 +45,6 @@ import static com.amkj.dmsh.constant.Url.CATE_DOC_LIST;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 
-;
-
 
 /**
  * @author LGuiPeng
@@ -64,8 +62,6 @@ public class ArticleTypeActivity extends BaseActivity {
     public FloatingActionButton download_btn_communal;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
-    @BindView(R.id.tv_header_shared)
-    TextView tv_header_shared;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
@@ -81,7 +77,6 @@ public class ArticleTypeActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        tv_header_shared.setVisibility(GONE);
         try {
             Intent intent = getIntent();
             categoryId = intent.getStringExtra("categoryId");
@@ -90,7 +85,6 @@ public class ArticleTypeActivity extends BaseActivity {
             e.printStackTrace();
         }
         tv_header_titleAll.setText(getStrings(categoryTitle));
-
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArticleTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);

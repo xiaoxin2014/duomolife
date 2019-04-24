@@ -75,20 +75,21 @@
 
                     </android.support.design.widget.CollapsingToolbarLayout>
 
-                    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
-                                                                         android:id="@+id/std_home_art_type"
-                                                                         android:layout_width="match_parent"
-                                                                         android:layout_height="@dimen/sc_mm_88"
-                                                                         android:background="@color/white"
-                                                                         tl:tl_indicator_color="@color/text_login_blue_z"
-                                                                         tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
-                                                                         tl:tl_indicator_gravity="BOTTOM"
-                                                                         tl:tl_indicator_height="@dimen/sc_mm_2"
-                                                                         tl:tl_indicator_style="NORMAL"
-                                                                         tl:tl_indicator_width_equal_title="true"
-                                                                         tl:tl_textSelectColor="@color/text_login_blue_z"
-                                                                         tl:tl_textUnselectColor="@color/text_login_gray_s"
-                                                                         tl:tl_textsize="@dimen/sc_mm_15"/>
+                    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+                        xmlns:tl="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/std_home_art_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_88"
+                        android:background="@color/white"
+                        tl:tl_indicator_color="@color/text_login_blue_z"
+                        tl:tl_indicator_corner_radius="@dimen/sc_mm_1"
+                        tl:tl_indicator_gravity="BOTTOM"
+                        tl:tl_indicator_height="@dimen/sc_mm_2"
+                        tl:tl_indicator_style="NORMAL"
+                        tl:tl_indicator_width_equal_title="true"
+                        tl:tl_textSelectColor="@color/text_login_blue_z"
+                        tl:tl_textUnselectColor="@color/text_login_gray_s"
+                        tl:tl_textsize="@dimen/sc_mm_15"/>
                 </android.support.design.widget.AppBarLayout>
 
                 <android.support.v4.view.ViewPager

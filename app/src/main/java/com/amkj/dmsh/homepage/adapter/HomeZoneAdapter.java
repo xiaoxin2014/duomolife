@@ -52,12 +52,13 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         //专区右边商品
         helper.getView(R.id.ll_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
         if (productInfoList.size() > 1) {
-            productInfoListBean = productInfoList.get(1);
-            if (productInfoListBean != null) {
-                GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), productInfoListBean.getImg());
-                CharSequence rmbPrice = ConstantMethod.getRmbFormat(mContext, productInfoListBean.getPrice());
+            ProductInfoListBean  rightBean = productInfoList.get(1);
+            if (rightBean != null) {
+                GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), rightBean.getImg());
+//                CharSequence rmbPrice = ConstantMethod.getRmbFormat(mContext, productInfoListBean.getPrice());
+                CharSequence rmbPrice = ConstantMethod.getRmbFormat(mContext, rightBean.getPrice());
                 helper.setText(R.id.tv_price_right, rmbPrice);
-                helper.setText(R.id.tv_market_price_right, "¥" + getStrings(productInfoListBean.getMarketPrice()));
+                helper.setText(R.id.tv_market_price_right, "¥" + getStrings(rightBean.getMarketPrice()));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }
         }

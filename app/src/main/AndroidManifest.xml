@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.amkj.dmsh">
-    <!-- 涂图权限 -->
     <!-- 允许应用程序写数据到外部存储设备（主要是SD卡） -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 在sdcard中创建/删除文件的权限 -->
@@ -1173,12 +1172,23 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name=".homepage.activity.HomeCatergoryActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="HomeCatergoryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".homepage.activity.ArticalCatergoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ArticalCatergoryActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>

@@ -53,11 +53,11 @@ import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.fragment.QualityFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
+import com.amkj.dmsh.homepage.fragment.HomePageFragment;
 import com.amkj.dmsh.homepage.fragment.HomePageNewFragment;
 import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -1157,7 +1157,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);
                             break;
                         case MAIN_FIND:
-                            fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
+                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
                             break;
                         case MAIN_MINE:
                             fragment = BaseFragment.newInstance(MineDataFragment.class, null, null);

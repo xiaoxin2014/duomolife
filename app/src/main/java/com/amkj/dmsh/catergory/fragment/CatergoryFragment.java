@@ -21,8 +21,9 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
-import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
+import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -46,6 +47,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
+import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 
 /**
  * Created by xiaoxin on 2019/4/19 0019
@@ -97,7 +100,7 @@ public class CatergoryFragment extends BaseFragment {
                 //进入文章专题
                 case R.id.rl_more_artical:
                     if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
+                        Intent intent = new Intent(getActivity(), ArticalCatergoryActivity.class);
                         intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
                         intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
                         if (getActivity() != null) startActivity(intent);
@@ -219,12 +222,22 @@ public class CatergoryFragment extends BaseFragment {
                 .statusBarDarkFont(true).init();
     }
 
-    @OnClick(R.id.iv_float_ad_icon)
-    void floatAdSkip(View view) {
-        CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = (CommunalADActivityEntity.CommunalADActivityBean) view.getTag(R.id.iv_tag);
-        if (communalADActivityBean != null) {
-            adClickTotal(getActivity(), communalADActivityBean.getId());
-            setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
+
+    @OnClick({R.id.tv_search, R.id.iv_float_ad_icon})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_search:
+                Intent intent = new Intent(getActivity(), HomePageSearchActivity.class);
+                intent.putExtra(SEARCH_TYPE, SEARCH_ALL);
+                startActivity(intent);
+                break;
+            case R.id.iv_float_ad_icon:
+                CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = (CommunalADActivityEntity.CommunalADActivityBean) view.getTag(R.id.iv_tag);
+                if (communalADActivityBean != null) {
+                    adClickTotal(getActivity(), communalADActivityBean.getId());
+                    setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
+                }
+                break;
         }
     }
 }
