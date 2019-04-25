@@ -108,7 +108,7 @@
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/iv_child_catergory"
+        android:id="@+id/rv_child_catergory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_14"

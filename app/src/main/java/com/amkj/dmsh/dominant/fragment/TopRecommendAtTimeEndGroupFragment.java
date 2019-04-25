@@ -49,6 +49,11 @@ public class TopRecommendAtTimeEndGroupFragment extends BaseFragment {
     private SpringSaleRecyclerAdapterNew springSaleRecyclerAdapter;
 
     @Override
+    protected boolean isLazy() {
+        return false;
+    }
+
+    @Override
     protected int getContentView() {
         return R.layout.layout_communal_recycler_wrap;
     }

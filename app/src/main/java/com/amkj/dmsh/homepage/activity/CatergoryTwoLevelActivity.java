@@ -57,7 +57,6 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
 
             if (extraList != null && extraList.size() > 0) {
                 mChildCategoryListBeanList.addAll(extraList);
-                position++;
             }
 
             String catergoryOneLevelName = getIntent().getStringExtra(ConstantVariable.CATEGORY_NAME);
@@ -94,8 +93,8 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
 
                 }
             });
-            NetLoadUtils.getNetInstance().showLoadSir(loadService, mChildCategoryListBeanList);
         }
+        NetLoadUtils.getNetInstance().showLoadSir(loadService, mChildCategoryListBeanList);
     }
 
     private void setTitleName(int position, String catergoryOneLevelName) {

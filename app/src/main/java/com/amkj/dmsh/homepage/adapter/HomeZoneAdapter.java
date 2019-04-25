@@ -13,6 +13,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -42,7 +43,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         ProductInfoListBean productInfoListBean = productInfoList.get(0);
         if (productInfoListBean != null) {
             GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_left), productInfoListBean.getImg());
-            helper.setText(R.id.tv_price_left, productInfoListBean.getPrice());
+            helper.setText(R.id.tv_price_left, new BigDecimal(getStrings(productInfoListBean.getPrice())).stripTrailingZeros().toPlainString());
             helper.setText(R.id.tv_market_price_left, "¥" + getStrings(productInfoListBean.getMarketPrice()));
             ((TextView) helper.getView(R.id.tv_market_price_left)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
@@ -53,7 +54,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
             ProductInfoListBean  rightBean = productInfoList.get(1);
             if (rightBean != null) {
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), rightBean.getImg());
-                helper.setText(R.id.tv_price_right, rightBean.getPrice());
+                helper.setText(R.id.tv_price_right, new BigDecimal(getStrings(rightBean.getPrice())).stripTrailingZeros().toPlainString());
                 helper.setText(R.id.tv_market_price_right, "¥" + getStrings(rightBean.getMarketPrice()));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }

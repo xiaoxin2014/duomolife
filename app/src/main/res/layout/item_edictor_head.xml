@@ -40,6 +40,7 @@
         android:textSize="@dimen/sc_mm_22"/>
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_editor_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_editor_head"
-        android:layout_marginTop="@dimen/sc_mm_135"
+        android:layout_marginTop="@dimen/sc_mm_75"
         android:text="@string/defaul"
         android:textColor="@color/color_blue_reply_com"
         android:textSize="@dimen/sc_mm_26"/>

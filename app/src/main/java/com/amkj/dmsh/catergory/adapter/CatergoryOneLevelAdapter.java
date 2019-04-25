@@ -51,7 +51,7 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
         RelateArticleBean relateArticle = item.getRelateArticle();
         helper.getView(R.id.ll_artical).setVisibility(relateArticle != null && relateArticle.getArticles() != null && relateArticle.getArticles().size() > 0 ? View.VISIBLE : View.GONE);
         helper.getView(R.id.iv_top_cover).setOnClickListener(view -> {
-            skipTwoLevel(item, 0);
+            skipCatergoryTwoLevel(item, 0);
         });
         if (relateArticle != null) {
             List<RelateArticleBean.ArticlesBean> articlesList = relateArticle.getArticles();
@@ -71,7 +71,7 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
         }
 
         //初始化二级分类
-        RecyclerView rvTwoCatergory = helper.getView(R.id.iv_child_catergory);
+        RecyclerView rvTwoCatergory = helper.getView(R.id.rv_child_catergory);
         rvTwoCatergory.setLayoutManager(new GridLayoutManager(mContext, 4));
         rvTwoCatergory.setNestedScrollingEnabled(false);
         BaseQuickAdapter baseQuickAdapter = new BaseQuickAdapter<ChildCategoryListBean, BaseViewHolder>(R.layout.item_child_catergory, item.getChildCategoryList()) {
@@ -86,13 +86,13 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
             //进入二级分类页面
             ChildCategoryListBean childCategoryListBean = (ChildCategoryListBean) view.getTag();
             if (childCategoryListBean != null) {
-                skipTwoLevel(item, position);
+                skipCatergoryTwoLevel(item, position+1);
             }
         });
         rvTwoCatergory.setAdapter(baseQuickAdapter);
     }
 
-    private void skipTwoLevel(CatergoryOneLevelBean item, int i) {
+    private void skipCatergoryTwoLevel(CatergoryOneLevelBean item, int i) {
         Intent intent = new Intent(mContext, CatergoryTwoLevelActivity.class);
         intent.putParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST, (ArrayList<? extends Parcelable>) item.getChildCategoryList());
         intent.putExtra("position", i);

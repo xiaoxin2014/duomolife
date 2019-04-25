@@ -69,4 +69,9 @@ public class GroupCustomerServiceFragment extends BaseFragment {
             }
         });
     }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
+    }
 }

@@ -32,10 +32,12 @@ public class DirectImgArticleFragment extends BaseFragment {
     RecyclerView recycler_shop_details_evaluation_comment;
     private CommunalDetailAdapter contentOfficialAdapter;
     private List<CommunalDetailObjectBean> itemBodyBeanList = new ArrayList();
+
     @Override
     protected int getContentView() {
         return R.layout.fragment_shop_layout_recycler_no_refresh;
     }
+
     @Override
     protected void initViews() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -46,7 +48,7 @@ public class DirectImgArticleFragment extends BaseFragment {
         contentOfficialAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (view.getId() == R.id.tv_communal_share){
+                if (view.getId() == R.id.tv_communal_share) {
                     return;
                 }
 //                不做回调，故用activity
@@ -76,5 +78,10 @@ public class DirectImgArticleFragment extends BaseFragment {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
     }
 }

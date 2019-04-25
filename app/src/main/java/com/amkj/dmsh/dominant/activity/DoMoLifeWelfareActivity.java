@@ -134,7 +134,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     @Override
     protected void initViews() {
         iv_img_share.setVisibility(GONE);
-        tv_header_titleAll.setText("多么福利社");
+        tv_header_titleAll.setText("精选专题");
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new GridLayoutManager(DoMoLifeWelfareActivity.this, 2));
         View headerView = LayoutInflater.from(DoMoLifeWelfareActivity.this)
