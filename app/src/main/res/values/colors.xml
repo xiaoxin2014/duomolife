@@ -61,6 +61,7 @@
     <color name="ct_deep_red_bg">#fd493d</color>
     <color name="text_b_red_color">#ff5e5e</color>
     <color name="bg_home_topic">#fff5f6</color>
+    <color name="rmb_small">#ff5a6b</color>
     <color name="bg_home_topic_gray">#f7f7f7</color>
     <color name="text_normal_red">#ff5e6b</color>
     <color name="text_red_color">#ff6d6d</color>

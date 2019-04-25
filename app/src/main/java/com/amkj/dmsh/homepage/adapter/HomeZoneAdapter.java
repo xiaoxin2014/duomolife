@@ -7,14 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.ProductInfoListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -44,8 +42,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         ProductInfoListBean productInfoListBean = productInfoList.get(0);
         if (productInfoListBean != null) {
             GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_left), productInfoListBean.getImg());
-            CharSequence rmbPrice = ConstantMethod.getRmbFormat(mContext, new BigDecimal(productInfoListBean.getPrice()).stripTrailingZeros().toString());
-            helper.setText(R.id.tv_price_left, rmbPrice);
+            helper.setText(R.id.tv_price_left, productInfoListBean.getPrice());
             helper.setText(R.id.tv_market_price_left, "¥" + getStrings(productInfoListBean.getMarketPrice()));
             ((TextView) helper.getView(R.id.tv_market_price_left)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
@@ -56,8 +53,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
             ProductInfoListBean  rightBean = productInfoList.get(1);
             if (rightBean != null) {
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), rightBean.getImg());
-                CharSequence rmbPrice = ConstantMethod.getRmbFormat(mContext,new BigDecimal(rightBean.getPrice()).stripTrailingZeros().toString());
-                helper.setText(R.id.tv_price_right, rmbPrice);
+                helper.setText(R.id.tv_price_right, rightBean.getPrice());
                 helper.setText(R.id.tv_market_price_right, "¥" + getStrings(rightBean.getMarketPrice()));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }

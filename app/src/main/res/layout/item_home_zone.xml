@@ -21,12 +21,12 @@
             android:textSize="@dimen/sc_mm_32"/>
 
         <TextView
-            android:layout_toRightOf="@+id/tv_zone_name"
             android:id="@+id/tv_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/tv_zone_name"
             android:layout_marginLeft="@dimen/sc_mm_16"
+            android:layout_toRightOf="@+id/tv_zone_name"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/color_blue_reply_com"
@@ -61,6 +61,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sc_mm_24"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¥"
+                    android:textColor="@color/rmb_small"
+                    android:textSize="@dimen/sc_mm_22"/>
 
                 <TextView
                     android:id="@+id/tv_price_left"
@@ -106,6 +113,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sc_mm_24"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¥"
+                    android:textColor="@color/rmb_small"
+                    android:textSize="@dimen/sc_mm_22"/>
 
                 <TextView
                     android:id="@+id/tv_price_right"
