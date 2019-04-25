@@ -9,8 +9,6 @@
 
     <include layout="@layout/layout_ql_cart_share_header" />
 
-    <include layout="@layout/ysf_include_divider" />
-
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/smart_layout"
         android:layout_width="match_parent"

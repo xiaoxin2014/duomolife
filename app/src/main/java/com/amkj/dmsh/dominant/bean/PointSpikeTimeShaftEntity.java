@@ -43,6 +43,15 @@ public class PointSpikeTimeShaftEntity extends BaseTimeEntity{
         private String startTime;
         private String endTime;
         private String status;
+        private int statusCode;
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public void setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+        }
 
         public int getId() {
             return id;

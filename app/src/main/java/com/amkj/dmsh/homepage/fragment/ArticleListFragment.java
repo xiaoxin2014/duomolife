@@ -58,7 +58,7 @@ public class ArticleListFragment extends BaseFragment {
     private CategoryTypeBean categoryTypeBean;
     private ArticleListAdapter homeArticleAdapter;
     private CommunalArticleEntity categoryDocBean;
-    private String sortType = "";
+    private String sortType = "1";
 
     @Override
     protected int getContentView() {
@@ -70,7 +70,7 @@ public class ArticleListFragment extends BaseFragment {
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             page = 1;
             sortType = "1";
-            ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(false);
+            ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
             ((RadioButton) mRadioGroup.getChildAt(1)).setChecked(false);
             loadData();
         });

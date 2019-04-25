@@ -130,7 +130,7 @@ public class WholePointSpikeProductActivity extends BaseActivity {
      */
     private void setTimeShaftData(List<TimeAxisInfoListBean> timeAxisInfoList) {
         if (timeAxisInfoList.size() > 0) {
-            if(stdPointSpikeType.getVisibility() == View.GONE){
+            if (stdPointSpikeType.getVisibility() == View.GONE) {
                 stdPointSpikeType.setVisibility(View.VISIBLE);
                 vpPointSpikeContainer.setVisibility(View.VISIBLE);
             }
@@ -161,14 +161,22 @@ public class WholePointSpikeProductActivity extends BaseActivity {
             PointSpikeTimeShaftAdapter spikeTimeShaftAdapter = new PointSpikeTimeShaftAdapter(getSupportFragmentManager(), timeAxisInfoList);
             vpPointSpikeContainer.setAdapter(spikeTimeShaftAdapter);
             stdPointSpikeType.setViewPager(vpPointSpikeContainer, customTabDoubleEntities);
+
+            //默认选中抢购中
+            for (int i = 0; i < timeAxisInfoList.size(); i++) {
+                if (timeAxisInfoList.get(i).getStatusCode() == 1) {
+                    defaultItemPosition = i;
+                    break;
+                }
+            }
             if (defaultItemPosition > 0) {
                 stdPointSpikeType.setCurrentTab(defaultItemPosition);
                 vpPointSpikeContainer.setCurrentItem(defaultItemPosition);
             } else {
                 setDefaultCategoryType();
             }
-        }else{
-            if(stdPointSpikeType.getVisibility() == View.VISIBLE){
+        } else {
+            if (stdPointSpikeType.getVisibility() == View.VISIBLE) {
                 stdPointSpikeType.setVisibility(View.GONE);
                 vpPointSpikeContainer.setVisibility(View.GONE);
             }
@@ -264,6 +272,6 @@ public class WholePointSpikeProductActivity extends BaseActivity {
                 , picUrl
                 , title
                 , description
-                , BASE_SHARE_PAGE_TWO + "m/template/common/hours_activity.html?nav=1",1);
+                , BASE_SHARE_PAGE_TWO + "m/template/common/hours_activity.html?nav=1", 1);
     }
 }

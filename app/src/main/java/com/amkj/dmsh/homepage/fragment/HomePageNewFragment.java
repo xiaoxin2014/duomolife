@@ -13,13 +13,13 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
-import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -257,7 +257,7 @@ public class HomePageNewFragment extends BaseFragment {
         Intent intent;
         switch (view.getId()) {
             case R.id.iv_message:
-                intent = new Intent(getActivity(), MessageActivity.class);
+                intent = new Intent(getActivity(), EditorSelectActivity.class);
                 startActivity(intent);
                 break;
             case R.id.tv_search:

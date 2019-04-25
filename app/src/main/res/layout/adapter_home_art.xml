@@ -8,7 +8,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_382"
-        android:layout_margin="@dimen/sc_mm_20"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_marginRight="@dimen/sc_mm_20"
+        android:layout_marginBottom="@dimen/sc_mm_20"
         android:scaleType="centerCrop">
 
         <ImageView
