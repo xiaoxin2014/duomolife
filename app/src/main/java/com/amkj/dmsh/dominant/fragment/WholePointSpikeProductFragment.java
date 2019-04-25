@@ -159,6 +159,14 @@ public class WholePointSpikeProductFragment extends BaseFragment {
             PointSpikeTimeShaftAdapter spikeTimeShaftAdapter = new PointSpikeTimeShaftAdapter(getActivity().getSupportFragmentManager(), timeAxisInfoList);
             vpPointSpikeContainer.setAdapter(spikeTimeShaftAdapter);
             stdPointSpikeType.setViewPager(vpPointSpikeContainer, customTabDoubleEntities);
+
+            //默认选中抢购中
+            for (int i = 0; i < timeAxisInfoList.size(); i++) {
+                if (timeAxisInfoList.get(i).getStatusCode() == 1) {
+                    defaultItemPosition = i;
+                    break;
+                }
+            }
             if (defaultItemPosition > 0) {
                 stdPointSpikeType.setCurrentTab(defaultItemPosition);
                 vpPointSpikeContainer.setCurrentItem(defaultItemPosition);
