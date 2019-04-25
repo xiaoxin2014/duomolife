@@ -1,68 +1,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/white"
-              android:focusable="true"
-              android:focusableInTouchMode="true"
               android:orientation="vertical">
 
     <include layout="@layout/layout_head_catergory_two_level"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_catergory_name"
+    <LinearLayout
+        android:id="@+id/ll_catergory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <include layout="@layout/ysf_include_divider"/>
-
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/sc_mm_26"
-        android:paddingBottom="@dimen/sc_mm_26">
-
-        <RadioButton
-            android:id="@+id/rb_new"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/border_right_line"
-            android:button="@null"
-            android:gravity="center"
-            android:text="上新"
-            android:textColor="@color/sel_text_gray_light_blue2"
-            android:textSize="@dimen/sc_mm_30"/>
-
-        <RadioButton
-            android:id="@+id/rb_num"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:text="销量"
-            android:textColor="@color/sel_text_gray_light_blue2"
-            android:textSize="@dimen/sc_mm_30"/>
-    </RadioGroup>
-
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/smart_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include layout="@layout/layout_refresh_header_gif"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_catergory_goods"
+        <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+            xmlns:tl="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/stb_goods_catergory"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray_f"
-            android:paddingTop="@dimen/sc_mm_10"
-            android:paddingBottom="@dimen/sc_mm_10"
-            android:scrollbars="none"/>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/sc_mm_16"
+            android:paddingBottom="@dimen/sc_mm_16"
+            tl:tl_indicator_color="@color/text_login_blue_z"
+            tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+            tl:tl_indicator_gravity="BOTTOM"
+            tl:tl_indicator_height="@dimen/dimen_2dp"
+            tl:tl_indicator_style="NORMAL"
+            tl:tl_indicator_width_equal_title="true"
+            tl:tl_textSelectColor="@color/text_black_t"
+            tl:tl_textUnselectColor="@color/text_login_gray_s"
+            tl:tl_textsize="15sp"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 </LinearLayout>

@@ -28,13 +28,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/7/28
- * class description:首页-文章
+ * class description:文章分类-列表
  */
 
-public class HomeArticleAdapter extends BaseQuickAdapter<CommunalArticleBean, HomeArticleAdapter.ArticleCoverViewHolder> {
+public class ArticleListAdapter extends BaseQuickAdapter<CommunalArticleBean, ArticleListAdapter.ArticleCoverViewHolder> {
     private final Context context;
 
-    public HomeArticleAdapter(Context context, List<CommunalArticleBean> articleBeanList) {
+    public ArticleListAdapter(Context context, List<CommunalArticleBean> articleBeanList) {
         super(R.layout.adapter_home_art, articleBeanList);
         this.context = context;
     }

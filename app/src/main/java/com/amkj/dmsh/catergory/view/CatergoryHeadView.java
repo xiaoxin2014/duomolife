@@ -21,8 +21,8 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean.ArticlesBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
-import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -89,9 +89,9 @@ public class CatergoryHeadView extends LinearLayout {
             GlideImageLoaderUtil.loadImage(mContext, mIvTopCover, getStrings(CatergoryOneLevelBean.getPicUrl()));
             //初始化文章数据
             CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean relateArticleBean = CatergoryOneLevelBean.getRelateArticle();
-            mTvTopicName.setText(getStrings(CatergoryOneLevelBean.getName()));
+            mTvTopicName.setText("种草特辑");
             mRlMoreArtical.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, ArticleTypeActivity.class);
+                Intent intent = new Intent(mContext, ArticalCatergoryActivity.class);
                 intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
                 intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
                 mContext.startActivity(intent);

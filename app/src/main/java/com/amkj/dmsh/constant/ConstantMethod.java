@@ -328,11 +328,12 @@ public class ConstantMethod {
     /**
      * 人民币价格格式化
      *
-     * @param price
+     * @param priceText
      * @return
      */
-    public static CharSequence getRmbFormat(Context context, String price) {
+    public static CharSequence getRmbFormat(Context context, String priceText) {
         try {
+            String price = getStrings(priceText);
             if (TextUtils.isEmpty(price)) return "";
             String stringsChNPrice = "¥" + price;
             Link link = new Link("¥");
@@ -344,7 +345,7 @@ public class ConstantMethod {
                     .addLink(link)
                     .build();
         } catch (Exception e) {
-            return getStrings("¥" + price);
+            return getStrings("¥" + priceText);
         }
     }
 

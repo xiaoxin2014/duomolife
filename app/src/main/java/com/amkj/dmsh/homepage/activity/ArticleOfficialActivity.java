@@ -104,8 +104,6 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODU
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TAG;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
 
-;
-
 /**
  * Created by atd48 on 2016/6/30.
  */
@@ -160,7 +158,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     //    详细描述
     private List<CommunalDetailObjectBean> descripDetailList = new ArrayList<>();
     //侧滑商品列表
-    private List<ProductListBean> searchProductList = new ArrayList();
+    private List<ProductListBean> searchProductList = new ArrayList<>();
 
     private ArticleCommentAdapter adapterArticleComment;
     private String artId;
@@ -875,8 +873,8 @@ public class ArticleOfficialActivity extends BaseActivity {
         void skipArticleLabel() {
             if (dmlSearchDetailBean.getCategory_id() > 0
                     && !TextUtils.isEmpty(dmlSearchDetailBean.getCategory_title())) {
-                Intent intent = new Intent(ArticleOfficialActivity.this, ArticleTypeActivity.class);
-                intent.putExtra("categoryId", String.valueOf(dmlSearchDetailBean.getCategory_id()));
+                Intent intent = new Intent(ArticleOfficialActivity.this, ArticalCatergoryActivity.class);
+                intent.putExtra("categoryId", dmlSearchDetailBean.getCategory_id());
                 intent.putExtra("categoryTitle", getStrings(dmlSearchDetailBean.getCategory_title()));
                 startActivity(intent);
             }

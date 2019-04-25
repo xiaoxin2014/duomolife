@@ -12,9 +12,9 @@ import android.widget.RadioGroup;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
+import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
-import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
-import com.amkj.dmsh.homepage.adapter.HomeArticleAdapter;
+import com.amkj.dmsh.homepage.adapter.ArticleListAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.Unbinder;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -47,22 +46,17 @@ import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
  * created on 2017/7/29
  * class description:文章分类
  */
-public class ArticleTypeFragment extends BaseFragment {
+public class ArticleListFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    @BindView(R.id.rb_new)
-    RadioButton mRbNew;
-    @BindView(R.id.rb_hot)
-    RadioButton mRbHot;
     @BindView(R.id.radio_group)
     RadioGroup mRadioGroup;
     @BindView(R.id.smart_layout)
     SmartRefreshLayout mSmartLayout;
-    Unbinder unbinder;
     private int page = 1;
     private List<CommunalArticleBean> articleTypeList = new ArrayList<>();
     private CategoryTypeBean categoryTypeBean;
-    private HomeArticleAdapter homeArticleAdapter;
+    private ArticleListAdapter homeArticleAdapter;
     private CommunalArticleEntity categoryDocBean;
     private String sortType = "";
 
@@ -82,7 +76,7 @@ public class ArticleTypeFragment extends BaseFragment {
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         communal_recycler.setLayoutManager(linearLayoutManager);
-        homeArticleAdapter = new HomeArticleAdapter(getActivity(), articleTypeList);
+        homeArticleAdapter = new ArticleListAdapter(getActivity(), articleTypeList);
         communal_recycler.setAdapter(homeArticleAdapter);
         homeArticleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -110,7 +104,7 @@ public class ArticleTypeFragment extends BaseFragment {
                                         articleBean.getCollect() + 1 : articleBean.getCollect() - 1);
                                 homeArticleAdapter.notifyItemChanged(position);
                             } else {
-                                getLoginStatus(ArticleTypeFragment.this);
+                                getLoginStatus(ArticleListFragment.this);
                             }
                             break;
                         //点赞
@@ -122,16 +116,18 @@ public class ArticleTypeFragment extends BaseFragment {
                                         articleBean.getFavor() + 1 : articleBean.getFavor() - 1);
                                 homeArticleAdapter.notifyItemChanged(position);
                             } else {
-                                getLoginStatus(ArticleTypeFragment.this);
+                                getLoginStatus(ArticleListFragment.this);
                             }
                             break;
                         case R.id.tv_article_type:
                             if (articleBean.getCategory_id() > 0
                                     && !TextUtils.isEmpty(articleBean.getCategory_name())) {
-                                Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
+                                Intent intent = new Intent(getActivity(), ArticalCatergoryActivity.class);
                                 intent.putExtra("categoryId", String.valueOf(articleBean.getCategory_id()));
                                 intent.putExtra("categoryTitle", getStrings(articleBean.getCategory_name()));
                                 startActivity(intent);
+
+
                             }
                             break;
                         case R.id.tv_com_art_comment_count:

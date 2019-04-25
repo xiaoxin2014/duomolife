@@ -36,7 +36,13 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
 
     @Override
     protected void convert(BaseViewHolder helper, LikedProductBean goodsBean) {
-        GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsBean.getPicUrl());
+        if (goodsBean == null) return;
+        String waterRemark = goodsBean.getWaterRemark();
+        String goodsUrl = goodsBean.getPicUrl();
+        if (!TextUtils.isEmpty(waterRemark)) {
+            goodsUrl = GlideImageLoaderUtil.getWaterMarkImgUrl(goodsBean.getPicUrl(), goodsBean.getWaterRemark());
+        }
+        GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsUrl);
         helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()))
                 .setText(R.id.tv_name, getStrings(goodsBean.getName()));
         FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);

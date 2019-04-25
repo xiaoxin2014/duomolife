@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
-import com.amkj.dmsh.homepage.fragment.ArticleTypeFragment;
+import com.amkj.dmsh.homepage.fragment.ArticleListFragment;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +31,7 @@ public class HomeArticleTypeAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         Map<String, Object> params = new HashMap<>();
         params.put("articleType", categoryList.get(position));
-        return BaseFragment.newInstance(ArticleTypeFragment.class, null, params);
+        return BaseFragment.newInstance(ArticleListFragment.class, null, params);
     }
 
     @Override

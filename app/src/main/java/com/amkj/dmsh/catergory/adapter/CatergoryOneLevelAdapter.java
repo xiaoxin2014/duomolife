@@ -50,6 +50,9 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
         //初始化文章数据
         RelateArticleBean relateArticle = item.getRelateArticle();
         helper.getView(R.id.ll_artical).setVisibility(relateArticle != null && relateArticle.getArticles() != null && relateArticle.getArticles().size() > 0 ? View.VISIBLE : View.GONE);
+        helper.getView(R.id.iv_top_cover).setOnClickListener(view -> {
+            skipTwoLevel(item, 0);
+        });
         if (relateArticle != null) {
             List<RelateArticleBean.ArticlesBean> articlesList = relateArticle.getArticles();
             if (articlesList != null && articlesList.size() > 0) {
@@ -83,14 +86,18 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
             //进入二级分类页面
             ChildCategoryListBean childCategoryListBean = (ChildCategoryListBean) view.getTag();
             if (childCategoryListBean != null) {
-                Intent intent = new Intent(mContext, CatergoryTwoLevelActivity.class);
-                intent.putParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST, (ArrayList<? extends Parcelable>) item.getChildCategoryList());
-                intent.putExtra("position", position);
-                intent.putExtra(ConstantVariable.CATEGORY_NAME, item.getName());
-                mContext.startActivity(intent);
+                skipTwoLevel(item, position);
             }
         });
         rvTwoCatergory.setAdapter(baseQuickAdapter);
     }
 
+    private void skipTwoLevel(CatergoryOneLevelBean item, int i) {
+        Intent intent = new Intent(mContext, CatergoryTwoLevelActivity.class);
+        intent.putParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST, (ArrayList<? extends Parcelable>) item.getChildCategoryList());
+        intent.putExtra("position", i);
+        intent.putExtra(ConstantVariable.CATEGORY_PID, item.getId());
+        intent.putExtra(ConstantVariable.CATEGORY_NAME, item.getName());
+        mContext.startActivity(intent);
+    }
 }

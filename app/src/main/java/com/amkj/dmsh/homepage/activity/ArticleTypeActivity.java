@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.homepage.adapter.HomeArticleAdapter;
+import com.amkj.dmsh.homepage.adapter.ArticleListAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
@@ -66,8 +66,8 @@ public class ArticleTypeActivity extends BaseActivity {
     private int scrollY;
     private float screenHeight;
     private List<CommunalArticleBean> articleTypeList = new ArrayList();
-    private HomeArticleAdapter homeArticleAdapter;
-    private String categoryId;
+    private ArticleListAdapter homeArticleAdapter;
+    private int categoryId;
     private String categoryTitle;
 
     @Override
@@ -79,7 +79,7 @@ public class ArticleTypeActivity extends BaseActivity {
     protected void initViews() {
         try {
             Intent intent = getIntent();
-            categoryId = intent.getStringExtra("categoryId");
+            categoryId = intent.getIntExtra("categoryId", 0);
             categoryTitle = intent.getStringExtra("categoryTitle");
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +88,7 @@ public class ArticleTypeActivity extends BaseActivity {
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArticleTypeActivity.this);
         communal_recycler.setLayoutManager(linearLayoutManager);
-        homeArticleAdapter = new HomeArticleAdapter(ArticleTypeActivity.this, articleTypeList);
+        homeArticleAdapter = new ArticleListAdapter(ArticleTypeActivity.this, articleTypeList);
         communal_recycler.setAdapter(homeArticleAdapter);
         homeArticleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -252,7 +252,7 @@ public class ArticleTypeActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        if (!TextUtils.isEmpty(categoryId)) {
+        if (categoryId != 0) {
             params.put("categoryid", categoryId);
         }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, CATE_DOC_LIST

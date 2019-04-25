@@ -1,48 +1,27 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.dominant.adapter.CatergoryNameAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
-import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.homepage.adapter.CatergoryTwoLevelAdapter;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.utils.RemoveExistUtils;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TWO_LEVEL_LIST;
-import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
-import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 
 /**
  * Created by xiaoxin on 2019/4/20 0020
@@ -56,27 +35,13 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     TextView mTvHeaderTitle;
     @BindView(R.id.tl_quality_bar)
     Toolbar mTlQualityBar;
-    @BindView(R.id.rb_new)
-    RadioButton mRbNew;
-    @BindView(R.id.radio_group)
-    RadioGroup mRadioGroup;
-    @BindView(R.id.rv_catergory_goods)
-    RecyclerView mRvCatergoryGoods;
-    @BindView(R.id.smart_layout)
-    SmartRefreshLayout mSmartLayout;
-    @BindView(R.id.rv_catergory_name)
-    RecyclerView mRvCatergoryName;
+    @BindView(R.id.stb_goods_catergory)
+    SlidingTabLayout mStbGoodsCatergory;
+    @BindView(R.id.viewpager_container)
+    ViewPager mVpContainer;
+    @BindView(R.id.ll_catergory)
+    LinearLayout mLlCatergory;
     private List<ChildCategoryListBean> mChildCategoryListBeanList = new ArrayList<>();
-    private List<LikedProductBean> productList = new ArrayList<>();
-    private List<String> titleList = new ArrayList<>();
-    private int mPosition;
-    private String mCatergoryName;
-    private String orderType = "1";
-    private int page = 1;
-    private UserLikedProductEntity likedProductEntity;
-    private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
-    QualityTypeProductAdapter mCatergoryGoodsAdapter;
-    CatergoryNameAdapter mCatergoryNameAdapter;
 
     @Override
     protected int getContentView() {
@@ -86,182 +51,60 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     @Override
     protected void initViews() {
         Intent intent = getIntent();
-        if (intent != null && getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST) != null && getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST).size() > 0) {
-            mChildCategoryListBeanList = getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST);
-            mPosition = getIntent().getIntExtra("position", 0) + 1;
-            mCatergoryName = getIntent().getStringExtra(ConstantVariable.CATEGORY_NAME);
+        if (intent != null) {
+            List<ChildCategoryListBean> extraList = getIntent().getParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST);
+            int position = getIntent().getIntExtra("position", 0);
+
+            if (extraList != null && extraList.size() > 0) {
+                mChildCategoryListBeanList.addAll(extraList);
+                position++;
+            }
+
+            String catergoryOneLevelName = getIntent().getStringExtra(ConstantVariable.CATEGORY_NAME);
+            int pid = getIntent().getIntExtra(ConstantVariable.CATEGORY_PID, 0);
+
             //加上(全部)分类
             ChildCategoryListBean allCatergoryBean = new ChildCategoryListBean();
             allCatergoryBean.setType(4);
             allCatergoryBean.setName("全部");
+            allCatergoryBean.setId(0);
+            allCatergoryBean.setPid(pid);
             mChildCategoryListBeanList.add(0, allCatergoryBean);
-            mTvHeaderTitle.setText(mChildCategoryListBeanList.get(mPosition).getName());
 
-            for (int i = 0; i < mChildCategoryListBeanList.size(); i++) {
-                if (i != mPosition) {
-                    titleList.add(mChildCategoryListBeanList.get(i).getName());
+            CatergoryTwoLevelAdapter twoLevelAdapter = new CatergoryTwoLevelAdapter(getSupportFragmentManager(), mChildCategoryListBeanList);
+            mVpContainer.setAdapter(twoLevelAdapter);
+            mStbGoodsCatergory.setViewPager(mVpContainer);
+            mVpContainer.setOffscreenPageLimit(mChildCategoryListBeanList.size() - 1);
+            setTitleName(position, catergoryOneLevelName);
+            mStbGoodsCatergory.setCurrentTab(position);
+            mVpContainer.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int i, float v, int i1) {
+
                 }
-            }
-        } else {
-            showToast(this, R.string.miss_parameters_hint);
-            return;
+
+                @Override
+                public void onPageSelected(int i) {
+                    setTitleName(i, catergoryOneLevelName);
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int i) {
+
+                }
+            });
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, mChildCategoryListBeanList);
         }
-
-        //初始化监听事件
-        initListener();
-        //初始化适配器
-        initAdapter();
     }
 
-    private void initListener() {
-        mSmartLayout.setOnRefreshListener(refreshLayout -> {
-            page = 1;
-            orderType = "1";
-            ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(false);
-            ((RadioButton) mRadioGroup.getChildAt(1)).setChecked(false);
-            loadData();
-        });
-
-        mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            if (!loadHud.isShowing()) loadHud.show();
-            if (id == R.id.rb_new) {
-                orderType = "4";
-            } else if (id == R.id.rb_num) {
-                orderType = "2";
-            }
-            loadData();
-        });
-
-    }
-
-    private void initAdapter() {
-
-        //分类名称适配器
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRvCatergoryName.setLayoutManager(linearLayoutManager);
-        mCatergoryNameAdapter = new CatergoryNameAdapter(this, titleList);
-        mRvCatergoryName.setAdapter(mCatergoryNameAdapter);
-        mCatergoryNameAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!loadHud.isShowing()) loadHud.show();
-            page = 1;
-            titleList.clear();
-            mPosition = (position >= mPosition) ? position + 1 : position;
-            for (int i = 0; i < mChildCategoryListBeanList.size(); i++) {
-                if (i != mPosition) {
-                    titleList.add(mChildCategoryListBeanList.get(i).getName());
-                }
-            }
-            mCatergoryNameAdapter.notifyDataSetChanged();
-            mTvHeaderTitle.setText(position == 0 ? mCatergoryName : mChildCategoryListBeanList.get(mPosition).getName());
-            getCatergoryGoods();
-        });
-
-
-        //分类商品适配器
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this
-                , 2);
-        mRvCatergoryGoods.setLayoutManager(gridLayoutManager);
-        ItemDecoration itemDecoration = new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_gray_f)
-                .create();
-        mRvCatergoryGoods.addItemDecoration(itemDecoration);
-        mCatergoryGoodsAdapter = new QualityTypeProductAdapter(this, productList);
-        mCatergoryGoodsAdapter.setOnLoadMoreListener(() -> {
-            page++;
-            loadData();
-        }, mRvCatergoryGoods);
-        mRvCatergoryGoods.setAdapter(mCatergoryGoodsAdapter);
-        mCatergoryGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                Intent intent = new Intent(this, ShopScrollDetailsActivity.class);
-                intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                startActivity(intent);
-            }
-        });
-        mCatergoryGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            loadHud.show();
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                if (userId > 0) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(this, baseAddCarProInfoBean, loadHud);
-                            break;
-                    }
-                } else {
-                    loadHud.dismiss();
-                    getLoginStatus(this);
-                }
-            }
-        });
+    private void setTitleName(int position, String catergoryOneLevelName) {
+        mTvHeaderTitle.setText(position == 0 ? catergoryOneLevelName + "(全部)" : mChildCategoryListBeanList.get(position).getName());
     }
 
     @Override
     protected void loadData() {
-        getCatergoryGoods();
-    }
 
-
-    private void getCatergoryGoods() {
-        if (mPosition >= mChildCategoryListBeanList.size()) return;
-        ChildCategoryListBean childCategoryListBean = mChildCategoryListBeanList.get(mPosition);
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
-        params.put("showCount", 18);
-        params.put("id", childCategoryListBean.getId());
-        params.put("pid", childCategoryListBean.getPid());
-        params.put("orderTypeId", orderType);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PRODUCT_TYPE_LIST
-                , params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        mSmartLayout.finishRefresh();
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                        if (likedProductEntity != null) {
-                            List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
-                            if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
-                                if (page == 1) {
-                                    productList.clear();
-                                    removeExistUtils.clearData();
-                                }
-                                productList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
-                                mCatergoryGoodsAdapter.notifyDataSetChanged();
-                                mCatergoryGoodsAdapter.loadMoreComplete();
-                            } else if (ERROR_CODE.equals(likedProductEntity.getCode())) {
-                                ConstantMethod.showToast(likedProductEntity.getMsg());
-                                mCatergoryGoodsAdapter.loadMoreFail();
-                            } else {
-                                mCatergoryGoodsAdapter.loadMoreEnd();
-                            }
-                        } else {
-                            mCatergoryGoodsAdapter.loadMoreEnd();
-                        }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productList, likedProductEntity);
-                    }
-
-                    @Override
-                    public void onNotNetOrException() {
-                        mSmartLayout.finishRefresh();
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                        mCatergoryGoodsAdapter.loadMoreFail();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productList, likedProductEntity);
-                    }
-                });
     }
 
     @OnClick(R.id.tv_life_back)
@@ -276,6 +119,6 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
 
     @Override
     protected View getLoadView() {
-        return mSmartLayout;
+        return mLlCatergory;
     }
 }
