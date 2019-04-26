@@ -23,6 +23,8 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016
@@ -55,8 +57,15 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         RecyclerView rvPicGoods = helper.getView(R.id.communal_recycler_wrap);
         rvPicGoods.setLayoutManager(new LinearLayoutManager(context));
         rvPicGoods.setNestedScrollingEnabled(false);
-        CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context,
-                CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(item.getContent()));
+        rvPicGoods.setFocusable(false);
+        //手动修改itemtype，显示立即购买按钮
+        List<CommunalDetailObjectBean> webDetailsFormatDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(item.getContent());
+        for (int i = 0; i < webDetailsFormatDataList.size(); i++) {
+            int itemType = webDetailsFormatDataList.get(i).getItemType();
+            if (itemType == TYPE_GOODS_IMG)
+                webDetailsFormatDataList.get(i).setItemType(TYPE_GOODS_IMG_DIRECT_BUY);
+        }
+        CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, webDetailsFormatDataList);
         communalDetailAdapter.setEnableLoadMore(false);
         communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
@@ -73,6 +82,7 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         RecyclerView rvGoods = helper.getView(R.id.rv_goods);
         rvGoods.setLayoutManager(new LinearLayoutManager(context));
         rvGoods.setNestedScrollingEnabled(false);
+        rvGoods.setFocusable(false);
         BaseQuickAdapter<AttachProductListBean, BaseViewHolder> childAdapter = new BaseQuickAdapter<AttachProductListBean, BaseViewHolder>(R.layout.item_editor_goods, item.getAttachProductList()) {
             @Override
             protected void convert(BaseViewHolder helper, AttachProductListBean item) {

@@ -10,32 +10,4 @@
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"/>
-
-    <LinearLayout
-        android:id="@+id/ll_direct_bug"
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="right"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="@dimen/sc_mm_130"
-            android:layout_height="@dimen/sc_mm_40"
-            android:layout_marginRight="@dimen/sc_mm_26"
-            android:layout_marginBottom="@dimen/sc_mm_24"
-            android:background="@drawable/shap_circle_000"
-            android:gravity="center"
-            android:text="@string/direct_bug"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_22"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_24"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"/>
-    </LinearLayout>
-
 </RelativeLayout>

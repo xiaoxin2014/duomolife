@@ -438,7 +438,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
-        if (null != context) {
+        if (null != context && !TextUtils.isEmpty(imgUrl)) {
             // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
             Map<String, Object> params = new HashMap<>();
             params.put("imgUrl", imgUrl);

@@ -414,7 +414,7 @@ public class CommunalWebDetailUtils {
             case R.id.iv_communal_cover_wrap:
                 CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
                 if (detailObjectBean != null) {
-                    if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG) {
+                    if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG||detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY) {
                         Intent newIntent = new Intent(mContext, ShopScrollDetailsActivity.class);
                         newIntent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
                         mContext.startActivity(newIntent);

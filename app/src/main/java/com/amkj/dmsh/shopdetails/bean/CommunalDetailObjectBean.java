@@ -69,6 +69,8 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     public static final int TYPE_GOODS_WEL = 4;
     //    图片商品
     public static final int TYPE_GOODS_IMG = 5;
+    //    带有立即购买的图片商品
+    public static final int TYPE_GOODS_IMG_DIRECT_BUY = 19;
     //    视频播放
     public static final int TYPE_VIDEO = 6;
     //    分享文章

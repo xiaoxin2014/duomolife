@@ -36,7 +36,6 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
-import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -95,6 +94,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GIF_IMG;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_WEL;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_LINK_TAOBAO;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_LUCKY_MONEY;
@@ -168,6 +168,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         addItemType(TYPE_GOODS_WEL, R.layout.adapter_border_pro_wel);
 //        插入图片商品
         addItemType(TYPE_GOODS_IMG, R.layout.layout_communal_cover_wrap);
+//        插入带有立即购买的图片商品
+        addItemType(TYPE_GOODS_IMG_DIRECT_BUY, R.layout.layout_communal_cover_direct_buy);
 //        动态图片处理
         addItemType(TYPE_GIF_IMG, R.layout.layout_communal_img_gif);
 //        视频播放
@@ -226,9 +228,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 holder.itemView.setTag(detailObjectBean);
                 break;
             case TYPE_GOODS_IMG:
+            case TYPE_GOODS_IMG_DIRECT_BUY:
                 final ImageView iv_communal_cover_wrap = holder.getView(R.id.iv_communal_cover_wrap);
                 GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_cover_wrap, detailObjectBean.getNewPirUrl());
-                holder.setVisible(R.id.ll_direct_bug, EditorSelectActivity.class.getSimpleName().equals(context.getClass().getSimpleName()));
                 holder.addOnClickListener(R.id.iv_communal_cover_wrap).setTag(R.id.iv_communal_cover_wrap, R.id.iv_tag, detailObjectBean);
                 holder.itemView.setTag(detailObjectBean);
                 break;
