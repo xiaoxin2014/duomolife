@@ -440,7 +440,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         iv_communal_image.setTag(R.id.iv_tag, content);
                         iv_communal_image.setOnClickListener(this);
                         //判断content是不是正确的图片地址
-                        boolean isPic = (content.startsWith("http:") || content.startsWith("https:")) && (content.endsWith("gif") || content.endsWith("jpg") || content.endsWith("jpeg") ||
+                        boolean isPic = (content.startsWith("http:") || content.startsWith("https:")) || (content.endsWith("gif") || content.endsWith("jpg") || content.endsWith("jpeg") ||
                                 content.endsWith("png") || content.endsWith("GIF") || content.endsWith("JPG") || content.endsWith("PNG") || content.endsWith("gif"));
                         GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
                     } else {

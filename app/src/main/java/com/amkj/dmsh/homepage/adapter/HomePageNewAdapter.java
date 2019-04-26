@@ -9,6 +9,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsFragment;
 import com.amkj.dmsh.dominant.fragment.DmlOptimizedSelFragment;
 import com.amkj.dmsh.dominant.fragment.DoMoLifeWelfareFragment;
+import com.amkj.dmsh.dominant.fragment.QualityCustomTopicFragment;
 import com.amkj.dmsh.dominant.fragment.QualityGroupShopFragment;
 import com.amkj.dmsh.dominant.fragment.QualityNewProFragment;
 import com.amkj.dmsh.dominant.fragment.QualityNewUserFragment;
@@ -40,9 +41,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
-            "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity"};
+            "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity", "app://QualityCustomTopicActivity"};
     private String prefix = "app://";
 
+    //    productType = intent.getStringExtra("productType");
+//    showType = intent.getStringExtra("showType");
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
         super(fm);
         this.mHomeCommonBeanList = homeCommonBeanList;
@@ -90,8 +93,10 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                 switch (link.substring(link.indexOf(prefix), urlIndex).trim()) {
                     case "app://DoMoLifeWelfareDetailsActivity"://福利社专题
                         return BaseFragment.newInstance(DoMoLifeWelfareDetailsFragment.class, urlParams, null);
+                    case "app://QualityCustomTopicActivity"://自定义专区
+                        return BaseFragment.newInstance(QualityCustomTopicFragment.class, urlParams, null);
                     default:
-                        return BaseFragment.newInstance(DoMoLifeWelfareDetailsFragment.class, urlParams, null);
+                        return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);
                 }
             } else {
                 switch (link) {
