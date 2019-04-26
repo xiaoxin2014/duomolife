@@ -437,7 +437,10 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         iv_communal_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
                         iv_communal_image.setTag(R.id.iv_tag, content);
                         iv_communal_image.setOnClickListener(this);
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, content);
+                        //判断content是不是正确的图片地址
+                        boolean isPic = (content.startsWith("http:") || content.startsWith("https:")) && (content.endsWith("gif") || content.endsWith("jpg") || content.endsWith("jpeg") ||
+                                content.endsWith("png") || content.endsWith("GIF") || content.endsWith("JPG") || content.endsWith("PNG") || content.endsWith("gif"));
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
                     } else {
                         rel_communal_image.setVisibility(View.GONE);
                         tv_content_type.setVisibility(View.VISIBLE);
@@ -558,31 +561,30 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 holder.setSize(screenWidth, AutoSizeUtils.mm2px(mAppContext, 400));
                                 super.onFailure(holder, e);
                             }
-                        })
-                                .imageClick(new OnImageClickListener() {
-                                    @Override
-                                    public void imageClicked(List<String> imageUrls, int position) {
-                                        String key = imageUrls.get(position);
-                                        if (loadHud != null) {
-                                            loadHud.show();
-                                        }
-                                        if (!TextUtils.isEmpty(urlMap.get(key))) {
-                                            skipAliBCWebView(urlMap.get(key));
-                                        } else {
-                                            if (loadHud != null) {
-                                                loadHud.dismiss();
-                                            }
-                                            ImageBean imageBean = null;
-                                            List<ImageBean> imageBeanList = new ArrayList<>();
-                                            for (String picUrl : imageUrls) {
-                                                imageBean = new ImageBean();
-                                                imageBean.setPicUrl(picUrl);
-                                                imageBeanList.add(imageBean);
-                                            }
-                                            ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position, null);
-                                        }
+                        }).imageClick(new OnImageClickListener() {
+                            @Override
+                            public void imageClicked(List<String> imageUrls, int position) {
+                                String key = imageUrls.get(position);
+                                if (loadHud != null) {
+                                    loadHud.show();
+                                }
+                                if (!TextUtils.isEmpty(urlMap.get(key))) {
+                                    skipAliBCWebView(urlMap.get(key));
+                                } else {
+                                    if (loadHud != null) {
+                                        loadHud.dismiss();
                                     }
-                                })
+                                    ImageBean imageBean = null;
+                                    List<ImageBean> imageBeanList = new ArrayList<>();
+                                    for (String picUrl : imageUrls) {
+                                        imageBean = new ImageBean();
+                                        imageBean.setPicUrl(picUrl);
+                                        imageBeanList.add(imageBean);
+                                    }
+                                    ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position, null);
+                                }
+                            }
+                        })
                                 .urlClick(new OnUrlClickListener() {
                                     @Override
                                     public boolean urlClicked(String url) {

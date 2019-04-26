@@ -48,7 +48,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
-import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
+import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 /**
  * Created by xiaoxin on 2019/4/17 0017

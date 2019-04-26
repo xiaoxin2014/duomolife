@@ -61,7 +61,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
-import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
+import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 ;
 

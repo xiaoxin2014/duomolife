@@ -68,7 +68,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_LIST;
 import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
-import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
+import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 ;
 

@@ -67,7 +67,7 @@ import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
 import static com.amkj.dmsh.constant.Url.Q_HOME_CENTER_TYPE;
 import static com.amkj.dmsh.constant.Url.Q_HOME_CLASS_TYPE;
-import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
+import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 ;
 

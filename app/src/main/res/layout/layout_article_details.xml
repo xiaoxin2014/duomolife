@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
-    <android.support.text.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+
+    <android.support.text.emoji.widget.EmojiTextView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/tv_content_type"
-        android:layout_marginLeft="@dimen/gap_left"
-        android:paddingRight="@dimen/gap_right"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/gap_left"
         android:background="@color/white"
         android:gravity="center_vertical"
         android:lineSpacingExtra="@dimen/sc_mm_6"
+        android:paddingRight="@dimen/gap_right"
         android:textColor="@color/home_text_color"
         android:textSize="@dimen/sc_mm_30"
-        app:emojiconSize = "17sp"/>
+        app:emojiconSize="17sp"/>
+
     <RelativeLayout
-        android:layout_width="match_parent"
         android:id="@+id/rel_communal_image"
-        android:visibility="visible"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
         <ImageView
-            android:layout_width="match_parent"
             android:id="@+id/iv_communal_image"
-            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:layout_height="wrap_content" />
+            android:scaleType="fitXY"/>
     </RelativeLayout>
 </FrameLayout>

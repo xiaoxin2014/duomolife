@@ -13,10 +13,11 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 
 /**
  * Created by xiaoxin on 2019/4/18 0018
@@ -43,19 +44,19 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         ProductInfoListBean productInfoListBean = productInfoList.get(0);
         if (productInfoListBean != null) {
             GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_left), productInfoListBean.getImg());
-            helper.setText(R.id.tv_price_left, new BigDecimal(getStrings(productInfoListBean.getPrice())).stripTrailingZeros().toPlainString());
-            helper.setText(R.id.tv_market_price_left, "¥" + getStrings(productInfoListBean.getMarketPrice()));
+            helper.setText(R.id.tv_price_left, getRmbFormat(mContext, productInfoListBean.getPrice()));
+            helper.setText(R.id.tv_market_price_left, "¥" + stripTrailingZeros(getStrings(productInfoListBean.getMarketPrice())));
             ((TextView) helper.getView(R.id.tv_market_price_left)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
         //专区右边商品
         helper.getView(R.id.ll_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
         if (productInfoList.size() > 1) {
-            ProductInfoListBean  rightBean = productInfoList.get(1);
+            ProductInfoListBean rightBean = productInfoList.get(1);
             if (rightBean != null) {
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), rightBean.getImg());
-                helper.setText(R.id.tv_price_right, new BigDecimal(getStrings(rightBean.getPrice())).stripTrailingZeros().toPlainString());
-                helper.setText(R.id.tv_market_price_right, "¥" + getStrings(rightBean.getMarketPrice()));
+                helper.setText(R.id.tv_price_right,getRmbFormat(mContext, rightBean.getPrice()));
+                helper.setText(R.id.tv_market_price_right, "¥" + stripTrailingZeros(getStrings(rightBean.getMarketPrice())));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }
         }

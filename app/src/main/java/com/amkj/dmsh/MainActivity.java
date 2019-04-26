@@ -48,7 +48,7 @@ import com.amkj.dmsh.bean.OSSConfigEntity.OSSConfigBean;
 import com.amkj.dmsh.bean.PushInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.SysNotificationEntity;
-import com.amkj.dmsh.catergory.fragment.CatergoryFragment;
+import com.amkj.dmsh.catergory.fragment.QualityFragment;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -58,7 +58,7 @@ import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
-import com.amkj.dmsh.homepage.fragment.HomePageNewFragment;
+import com.amkj.dmsh.homepage.fragment.HomePageFragment;
 import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
@@ -1148,10 +1148,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     switch (getStrings(tag)) {
                         case MAIN_HOME:
-                            fragment = BaseFragment.newInstance(HomePageNewFragment.class, null, null);
+                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
                             break;
                         case MAIN_QUALITY:
-                            fragment = BaseFragment.newInstance(CatergoryFragment.class, null, null);
+                            fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
                             break;
                         case MAIN_TIME:
                             fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);
@@ -1163,7 +1163,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             fragment = BaseFragment.newInstance(MineDataFragment.class, null, null);
                             break;
                         default:
-                            fragment = BaseFragment.newInstance(HomePageNewFragment.class, null, null);
+                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
                             break;
                     }
                 }

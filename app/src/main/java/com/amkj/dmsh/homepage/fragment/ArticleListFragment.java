@@ -12,7 +12,7 @@ import android.widget.RadioGroup;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
-import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.ArticleListAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
@@ -122,7 +122,7 @@ public class ArticleListFragment extends BaseFragment {
                         case R.id.tv_article_type:
                             if (articleBean.getCategory_id() > 0
                                     && !TextUtils.isEmpty(articleBean.getCategory_name())) {
-                                Intent intent = new Intent(getActivity(), ArticalCatergoryActivity.class);
+                                Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
                                 intent.putExtra("categoryId", String.valueOf(articleBean.getCategory_id()));
                                 intent.putExtra("categoryTitle", getStrings(articleBean.getCategory_name()));
                                 startActivity(intent);

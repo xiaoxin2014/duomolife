@@ -873,7 +873,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         void skipArticleLabel() {
             if (dmlSearchDetailBean.getCategory_id() > 0
                     && !TextUtils.isEmpty(dmlSearchDetailBean.getCategory_title())) {
-                Intent intent = new Intent(ArticleOfficialActivity.this, ArticalCatergoryActivity.class);
+                Intent intent = new Intent(ArticleOfficialActivity.this, ArticleTypeActivity.class);
                 intent.putExtra("categoryId", dmlSearchDetailBean.getCategory_id());
                 intent.putExtra("categoryTitle", getStrings(dmlSearchDetailBean.getCategory_title()));
                 startActivity(intent);

@@ -1,12 +1,16 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -16,6 +20,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.CommonPagerAdapter;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeWelfareEntity;
 import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
 import com.amkj.dmsh.bean.QualityTypeEntity;
@@ -30,8 +35,8 @@ import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
-import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.QualityGoodActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
@@ -58,8 +63,10 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
+import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -71,9 +78,13 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -92,7 +103,7 @@ import static com.amkj.dmsh.constant.Url.H_AD_LIST;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
-import static com.amkj.dmsh.dominant.fragment.QualityFragment.updateCarNum;
+import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 
 /**
@@ -145,6 +156,11 @@ public class HomeDefalutFragment extends BaseFragment {
     TextView mTvDynamicPriceright;
     @BindView(R.id.rv_special_zone)
     RecyclerView mRvSpecialZone;
+    @BindView(R.id.download_btn_communal)
+    FloatingActionButton download_btn_communal;
+    @BindView(R.id.scrollview)
+    NestedScrollView mScrollview;
+    Unbinder unbinder;
     private CBViewHolderCreator cbViewHolderCreator;
     private HomeCommonEntity mHomeCommonEntity;
     private HomeWelfareEntity mHomeWelfareEntity;
@@ -179,6 +195,7 @@ public class HomeDefalutFragment extends BaseFragment {
     @Override
     protected void initViews() {
         isLazy = false;
+        int screenHeight = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenHeight();
         mSmartLayout.setEnableAutoLoadMore(true);
         mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
         mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
@@ -190,6 +207,27 @@ public class HomeDefalutFragment extends BaseFragment {
             mProductList.clear();
             mHomeCatergoryAdapter.notifyDataSetChanged();
             loadData();
+        });
+        //一键回到顶部
+        mScrollview.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (nestedScrollView, i, newY, i2, oldY) -> {
+            if (newY > screenHeight * 1.5) {
+                if (download_btn_communal.getVisibility() == GONE) {
+                    download_btn_communal.setVisibility(VISIBLE);
+                    download_btn_communal.show(false);
+                }
+                if (!download_btn_communal.isVisible()) {
+                    download_btn_communal.show(false);
+                }
+            } else {
+                if (download_btn_communal.isVisible()) {
+                    download_btn_communal.hide(false);
+                }
+            }
+        });
+        download_btn_communal.setOnClickListener(v -> {
+            mScrollview.fling(0);
+            mScrollview.scrollTo(0, 0);
+            download_btn_communal.hide(false);
         });
         //初始化Top适配器
         LinearLayoutManager topManager = new LinearLayoutManager(getActivity()
@@ -712,7 +750,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 break;
             //跳转文章列表
             case R.id.rl_more_artical:
-                intent = new Intent(getActivity(), ArticalCatergoryActivity.class);
+                intent = new Intent(getActivity(), ArticleTypeActivity.class);
                 intent.putExtra("categoryTitle", "种草特辑");
                 if (getActivity() != null) startActivity(intent);
                 break;
@@ -747,5 +785,19 @@ public class HomeDefalutFragment extends BaseFragment {
             getDynamic();
             isFirst = false;
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

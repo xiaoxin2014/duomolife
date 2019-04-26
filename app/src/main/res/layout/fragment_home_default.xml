@@ -1,253 +1,263 @@
-<com.scwang.smartrefresh.layout.SmartRefreshLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/smart_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <include layout="@layout/layout_refresh_header_gif"/>
-
-    <android.support.v4.widget.NestedScrollView
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/smart_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <include layout="@layout/layout_refresh_header_gif"/>
+
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scrollview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical">
-
-            <com.bigkoo.convenientbanner.ConvenientBanner
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/cb_banner"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_300"
-                app:canLoop="true"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_top"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:paddingTop="@dimen/sc_mm_30"
-                android:paddingBottom="@dimen/sc_mm_40"/>
-
-            <include layout="@layout/layout_home_dynamic"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_special_zone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_gray_f"
-                android:paddingBottom="@dimen/sc_mm_20"
-                android:scrollbars="none"/>
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/ll_felware"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:clipChildren="false"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/sc_mm_35">
+                android:descendantFocusability="blocksDescendants"
+                android:orientation="vertical">
 
-                <RelativeLayout
-                    android:id="@+id/rl_more_welfare_topic"
+                <com.bigkoo.convenientbanner.ConvenientBanner
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/cb_banner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/sc_mm_30">
-
-                    <TextView
-                        android:id="@+id/tv_welfare_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="精选专题"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_32"/>
-
-                    <TextView
-                        android:id="@+id/tv_welfare_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_welfare_title"
-                        android:layout_marginTop="@dimen/sc_mm_12"
-                        android:text="想你所想，生活幸福感添加剂~"
-                        android:textColor="@color/text_login_gray_s"
-                        android:textSize="@dimen/sc_mm_26"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/sc_mm_28"
-                        android:text="更多 >"/>
-                </RelativeLayout>
-
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/vp_welfare"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_600"
-                    android:layout_marginTop="@dimen/sc_mm_26"
-                    android:layout_marginBottom="@dimen/sc_mm_22"
-                    android:background="@color/white"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:paddingLeft="@dimen/sc_mm_20"
-                    android:paddingRight="@dimen/sc_mm_130"/>
-
-                <include layout="@layout/view_decoration_20_gray"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_nice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_gray_f"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <RelativeLayout
-                    android:id="@+id/rl_more_nice_topic"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/sc_mm_30"
-                    android:paddingTop="@dimen/sc_mm_35"
-                    android:paddingBottom="@dimen/sc_mm_36">
-
-                    <TextView
-                        android:id="@+id/tv_nice_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="优选好物"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_32"/>
-
-                    <TextView
-                        android:id="@+id/tv_nice_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_nice_title"
-                        android:layout_marginTop="@dimen/sc_mm_12"
-                        android:text="多妈团队甄选的全球好货"
-                        android:textColor="@color/text_login_gray_s"
-                        android:textSize="@dimen/sc_mm_26"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/sc_mm_28"
-                        android:text="更多 >"/>
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_10"
-                    android:background="@color/light_gray_f"/>
+                    android:layout_height="@dimen/sc_mm_300"
+                    app:canLoop="true"/>
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_nice"
+                    android:id="@+id/rv_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingTop="@dimen/sc_mm_30"
+                    android:paddingBottom="@dimen/sc_mm_40"/>
+
+                <include layout="@layout/layout_home_dynamic"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_special_zone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/light_gray_f"
-                    android:paddingBottom="@dimen/sc_mm_10"
+                    android:paddingBottom="@dimen/sc_mm_20"
                     android:scrollbars="none"/>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_118"
-                    android:background="@color/white"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tv_more_nice_topic"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="查看更多 >"
-                        android:textColor="@color/text_login_gray_s"
-                        android:textSize="@dimen/sc_mm_28"/>
-                </LinearLayout>
-
-                <include layout="@layout/view_decoration_20_gray"/>
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/ll_artical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <RelativeLayout
-                    android:id="@+id/rl_more_artical"
+                    android:id="@+id/ll_felware"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/sc_mm_40"
-                    android:paddingRight="@dimen/sc_mm_28"
-                    android:paddingBottom="@dimen/sc_mm_12">
+                    android:background="@color/white"
+                    android:clipChildren="false"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/sc_mm_35">
 
-                    <TextView
-                        android:id="@+id/tv_artical_topic"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:id="@+id/rl_more_welfare_topic"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="种草特辑"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_32"/>
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/sc_mm_30">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_welfare_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="精选专题"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_32"/>
+
+                        <TextView
+                            android:id="@+id/tv_welfare_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_welfare_title"
+                            android:layout_marginTop="@dimen/sc_mm_12"
+                            android:text="想你所想，生活幸福感添加剂~"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_26"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/sc_mm_28"
+                            android:text="更多 >"/>
+                    </RelativeLayout>
+
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/vp_welfare"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_600"
+                        android:layout_marginTop="@dimen/sc_mm_26"
+                        android:layout_marginBottom="@dimen/sc_mm_22"
+                        android:background="@color/white"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:paddingLeft="@dimen/sc_mm_20"
+                        android:paddingRight="@dimen/sc_mm_130"/>
+
+                    <include layout="@layout/view_decoration_20_gray"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_nice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_gray_f"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_more_nice_topic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/sc_mm_30"
+                        android:paddingTop="@dimen/sc_mm_35"
+                        android:paddingBottom="@dimen/sc_mm_36">
+
+                        <TextView
+                            android:id="@+id/tv_nice_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="优选好物"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_32"/>
+
+                        <TextView
+                            android:id="@+id/tv_nice_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_nice_title"
+                            android:layout_marginTop="@dimen/sc_mm_12"
+                            android:text="多妈团队甄选的全球好货"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_26"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/sc_mm_28"
+                            android:text="更多 >"/>
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_10"
+                        android:background="@color/light_gray_f"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_nice"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="@dimen/sc_mm_5"
-                        android:text="更多 >"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_24"/>
-                </RelativeLayout>
+                        android:background="@color/light_gray_f"
+                        android:paddingBottom="@dimen/sc_mm_10"
+                        android:scrollbars="none"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_118"
+                        android:background="@color/white"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_more_nice_topic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="查看更多 >"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_28"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/view_decoration_20_gray"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/ll_artical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_more_artical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/sc_mm_40"
+                        android:paddingRight="@dimen/sc_mm_28"
+                        android:paddingBottom="@dimen/sc_mm_12">
+
+                        <TextView
+                            android:id="@+id/tv_artical_topic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:text="种草特辑"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_32"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="@dimen/sc_mm_5"
+                            android:text="更多 >"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_24"/>
+                    </RelativeLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_artical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/sc_mm_30"
+                        android:paddingRight="@dimen/sc_mm_20"
+                        android:scrollbars="none"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_118"
+                        android:background="@color/white"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_refresh_artical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/home_refresh"
+                            android:drawablePadding="@dimen/sc_mm_20"
+                            android:text="换一批"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_28"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_20"
+                        android:background="@color/light_gray_f"/>
+                </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_artical"
+                    android:id="@+id/rv_product"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/sc_mm_30"
-                    android:paddingRight="@dimen/sc_mm_20"
                     android:scrollbars="none"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_118"
-                    android:background="@color/white"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tv_refresh_artical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/home_refresh"
-                        android:drawablePadding="@dimen/sc_mm_20"
-                        android:text="换一批"
-                        android:textColor="@color/text_login_gray_s"
-                        android:textSize="@dimen/sc_mm_28"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_20"
-                    android:background="@color/light_gray_f"/>
             </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_product"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"/>
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
-</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <include layout="@layout/layout_communal_floating"/>
+</FrameLayout>

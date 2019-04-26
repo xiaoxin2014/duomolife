@@ -21,7 +21,7 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -55,7 +55,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
  * Version:v4.0.0
  * ClassDescription :一级分类(代替良品)
  */
-public class CatergoryFragment extends BaseFragment {
+public class QualityFragment extends BaseFragment {
     @BindView(R.id.tv_search)
     TextView mTvSearch;
     @BindView(R.id.tb_catergory)
@@ -100,7 +100,7 @@ public class CatergoryFragment extends BaseFragment {
                 //进入文章专题
                 case R.id.rl_more_artical:
                     if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticalCatergoryActivity.class);
+                        Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
                         intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
                         intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
                         if (getActivity() != null) startActivity(intent);

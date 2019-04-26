@@ -1183,18 +1183,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".homepage.activity.ArticalCatergoryActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="ArticalCatergoryActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
-
         <!--支付成功-->
         <activity
             android:name=".shopdetails.activity.DirectPaySuccessActivity"

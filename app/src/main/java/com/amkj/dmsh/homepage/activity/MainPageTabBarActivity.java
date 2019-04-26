@@ -8,10 +8,10 @@ import android.text.TextUtils;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.dominant.fragment.QualityFragment;
+import com.amkj.dmsh.dominant.fragment.QualityOldFragment;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
-import com.amkj.dmsh.homepage.fragment.HomePageFragment;
+import com.amkj.dmsh.homepage.fragment.HomePageOldFragment;
 import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
 
@@ -63,10 +63,10 @@ public class MainPageTabBarActivity extends BaseActivity {
         }else{
             switch (getStrings(tabType)) {
                 case MAIN_HOME:
-                    fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
+                    fragment = BaseFragment.newInstance(HomePageOldFragment.class, null, null);
                     break;
                 case MAIN_QUALITY:
-                    fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
+                    fragment = BaseFragment.newInstance(QualityOldFragment.class, null, null);
                     break;
                 case MAIN_TIME:
                     fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);
@@ -78,7 +78,7 @@ public class MainPageTabBarActivity extends BaseActivity {
                     fragment = BaseFragment.newInstance(MineDataFragment.class, null, null);
                     break;
                 default:
-                    fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
+                    fragment = BaseFragment.newInstance(HomePageOldFragment.class, null, null);
                     break;
             }
         }

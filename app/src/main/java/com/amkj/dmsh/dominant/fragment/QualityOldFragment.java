@@ -76,7 +76,7 @@ import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
  * created on 2017/6/5
  * class description:良品首页
  */
-public class QualityFragment extends BaseFragment {
+public class QualityOldFragment extends BaseFragment {
     @BindView(R.id.dl_quality)
     public DrawerLayout dl_quality;
     @BindView(R.id.rel_quality_header)

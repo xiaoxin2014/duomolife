@@ -334,20 +334,39 @@ public class ConstantMethod {
     public static CharSequence getRmbFormat(Context context, String priceText) {
         try {
             String price = getStrings(priceText);
-            if (TextUtils.isEmpty(price)) return "";
-            String stringsChNPrice = "¥" + price;
-            Link link = new Link("¥");
-            link.setTextColor(Color.parseColor("#ff5a6b"));
-            link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
-            link.setUnderlined(false);
-            link.setHighlightAlpha(0f);
-            return LinkBuilder.from(context, stringsChNPrice)
-                    .addLink(link)
-                    .build();
+            if (!TextUtils.isEmpty(price)) {
+                price = "¥" + stripTrailingZeros(price);
+                Link link = new Link("¥");
+                link.setTextColor(Color.parseColor("#ff5a6b"));
+                link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
+                link.setUnderlined(false);
+                link.setHighlightAlpha(0f);
+                return LinkBuilder.from(context, price)
+                        .addLink(link)
+                        .build();
+            } else {
+                return context.getResources().getString(R.string.defaul);
+            }
         } catch (Exception e) {
             return getStrings("¥" + priceText);
         }
     }
+
+
+    /**
+     * 去掉多余的0
+     *
+     * @param priceText
+     * @return
+     */
+    public static String stripTrailingZeros(String priceText) {
+        try {
+            return new BigDecimal(priceText).stripTrailingZeros().toPlainString();
+        } catch (Exception e) {
+            return getStrings("¥" + priceText);
+        }
+    }
+
 
     /**
      * @param context

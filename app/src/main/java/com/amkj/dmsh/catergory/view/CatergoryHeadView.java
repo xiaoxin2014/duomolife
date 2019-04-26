@@ -21,7 +21,7 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean.ArticlesBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.homepage.activity.ArticalCatergoryActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -92,7 +92,7 @@ public class CatergoryHeadView extends LinearLayout {
             mTvTopicName.setText("种草特辑");
             mIvTopCover.setOnClickListener(view -> skipCatergoryTwoLevel(CatergoryOneLevelBean, 0));
             mRlMoreArtical.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, ArticalCatergoryActivity.class);
+                Intent intent = new Intent(mContext, ArticleTypeActivity.class);
                 intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
                 intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
                 mContext.startActivity(intent);

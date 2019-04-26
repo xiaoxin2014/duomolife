@@ -5,6 +5,6 @@
     android:background="@color/light_gray_f"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-    <include layout="@layout/layout_head_catergory_two_level"/>
+    <include layout="@layout/activity_domolife_header"/>
     <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading"/>
 </LinearLayout>
