@@ -282,9 +282,11 @@ dependencies {
 
     //    BaseRecyclerViewAdapter
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
-    implementation 'com.zzhoujay.richtext:richtext:3.0.5'
 
-    //    implementation 'com.zzhoujay:html:1.0.1'
+    //富文本
+    implementation 'com.zzhoujay.richtext:richtext:3.0.8'
+    implementation 'com.zzhoujay:html:1.0.2'
+
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     //    加载dialog

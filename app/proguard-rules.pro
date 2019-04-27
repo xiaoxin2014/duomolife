@@ -343,3 +343,4 @@ public static final int *;
 -keep interface me.jessyan.autosize.** { *; }
 #状态栏
  -keep class com.gyf.barlibrary.* {*;}
+ -keep class com.zzhoujay.html.** { *;}

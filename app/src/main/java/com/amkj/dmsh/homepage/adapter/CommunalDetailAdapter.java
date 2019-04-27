@@ -2,16 +2,12 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -111,7 +107,6 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
 import static me.jessyan.autosize.utils.AutoSizeUtils.mm2px;
 
-;
 
 /**
  * Created by atd48 on 2016/8/30.
@@ -397,7 +392,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case NORTEXT:
                 String content = detailObjectBean.getContent();
-                final EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
+                final TextView tv_content_type = holder.getView(R.id.tv_content_type);
                 tv_content_type.setPadding(0, 0, 0, 0);
                 final RelativeLayout rel_communal_image = holder.getView(R.id.rel_communal_image);
                 final ImageView iv_communal_image = holder.getView(R.id.iv_communal_image);
@@ -446,81 +441,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     } else {
                         rel_communal_image.setVisibility(View.GONE);
                         tv_content_type.setVisibility(View.VISIBLE);
-                        //                字体样式
-                        int lineStyleIndex = 0;
-                        int fontStyleTag = content.indexOf(lineStyle);
-                        if (fontStyleTag != -1) {
-                            try {
-                                lineStyleIndex = content.indexOf(";", fontStyleTag) > 0 ?
-                                        content.indexOf(";", fontStyleTag) :
-                                        content.indexOf(lineFontEndStyle, fontStyleTag) < 0 ? fontStyleTag + 4
-                                                : content.indexOf(lineFontEndStyle, fontStyleTag);
-                                content = content.replaceAll(content.substring(fontStyleTag, lineStyleIndex), "");
-                            } catch (Exception e) {
-                                lineStyleIndex = -1;
-                                e.printStackTrace();
-                            }
-                        }
-                        tv_content_type.setGravity(Gravity.LEFT);
-
-                        tv_content_type.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 30));
-                        tv_content_type.setTextColor(context.getResources().getColor(R.color.home_text_color));
-                        ViewGroup.LayoutParams layoutParams = tv_content_type.getLayoutParams();
-                        tv_content_type.setText("");
-                        if (content.contains(br)
-                                && ((lineStyleIndex > 0 && !Pattern.compile("[\u4e00-\u9fa5]").matcher(content).find()))) {
-                            layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 12);
-                            tv_content_type.setLayoutParams(layoutParams);
-                        } else {
-                            if (layoutParams.height != -2) {
-                                layoutParams.height = -2;
-                                tv_content_type.setLayoutParams(layoutParams);
-                            }
-
-                            //                匹配间距
-                            if (detailObjectBean.getFirstLinePadding()) {
-                                tv_content_type.setPadding(0, AutoSizeUtils.mm2px(mAppContext, 10), 0, 0);
-                            }
-//                    匹配字体颜色
-                            List<String> fontColorValue = getStyleValue(content, content.indexOf(text_color));
-                            if (fontColorValue != null && fontColorValue.size() > 2) {
-                                if (Integer.parseInt(fontColorValue.get(0)) == 255
-                                        && Integer.parseInt(fontColorValue.get(1)) == 255
-                                        && Integer.parseInt(fontColorValue.get(2)) == 255) {
-                                } else {
-                                    tv_content_type.setTextColor(Color.argb(255
-                                            , Integer.parseInt(fontColorValue.get(0))
-                                            , Integer.parseInt(fontColorValue.get(1))
-                                            , Integer.parseInt(fontColorValue.get(2))));
-                                }
-                            }
-//                    匹配显示位置
-                            int alignGravityIndex = content.indexOf(alignGravity);
-                            if (alignGravityIndex != -1 && !isImageTag) {
-                                if (content.indexOf(endStyle, alignGravityIndex) != -1) {
-                                    String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endStyle, alignGravityIndex)).trim();
-                                    if (locationGravity.equals(alignCenter)) {
-                                        tv_content_type.setGravity(Gravity.CENTER);
-                                    } else if (locationGravity.equals(alignRight)) {
-                                        tv_content_type.setGravity(Gravity.RIGHT);
-                                    } else {
-                                        tv_content_type.setGravity(Gravity.LEFT);
-                                    }
-                                } else if (content.indexOf(endDash, alignGravityIndex) != -1) {
-                                    String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endDash, alignGravityIndex)).trim();
-                                    if (locationGravity.equals(alignCenter)) {
-                                        tv_content_type.setGravity(Gravity.CENTER);
-                                    } else if (locationGravity.equals(alignRight)) {
-                                        tv_content_type.setGravity(Gravity.RIGHT);
-                                    } else {
-                                        tv_content_type.setGravity(Gravity.LEFT);
-                                    }
-                                }
-                            }
-                        }
-                        RichText.initCacheDir(context);
 //                        硬件加速不能关闭，会对图片展示不兼容
-//                        tv_content_type.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        tv_content_type.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                         DrawableGetter drawableGetter = new DrawableGetter() {
                             @Override
                             public Drawable getDrawable(ImageHolder holder, RichTextConfig config, TextView textView) {
@@ -586,14 +508,13 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                     ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position, null);
                                 }
                             }
-                        })
-                                .urlClick(new OnUrlClickListener() {
-                                    @Override
-                                    public boolean urlClicked(String url) {
-                                        setSkipPath(context, url, false);
-                                        return true;
-                                    }
-                                }).into(tv_content_type);
+                        }).urlClick(new OnUrlClickListener() {
+                            @Override
+                            public boolean urlClicked(String url) {
+                                setSkipPath(context, url, false);
+                                return true;
+                            }
+                        }).into(tv_content_type);
                     }
                 }
                 break;
@@ -603,28 +524,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             default:
                 break;
         }
-    }
-
-    /**
-     * 匹配颜色样式
-     *
-     * @param content
-     * @param lineHeightIndex
-     * @return
-     */
-    private List<String> getStyleValue(String content, int lineHeightIndex) {
-        if (lineHeightIndex != -1 && !isImageTag) {
-            if (content.indexOf(endStyle, lineHeightIndex) == -1) {
-                if (content.indexOf(endDash, lineHeightIndex) != -1) {
-                    return getNumber(content.substring(lineHeightIndex, content.indexOf(endDash, lineHeightIndex)));
-                } else {
-                    return null;
-                }
-            } else {
-                return getNumber(content.substring(lineHeightIndex, content.indexOf(endDash, lineHeightIndex)));
-            }
-        }
-        return null;
     }
 
     public void skipAliBCWebView(final String url) {
