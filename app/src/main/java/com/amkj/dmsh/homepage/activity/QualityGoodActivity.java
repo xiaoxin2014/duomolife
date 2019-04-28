@@ -220,4 +220,14 @@ public class QualityGoodActivity extends BaseActivity {
     public void onViewClicked() {
         finish();
     }
+
+    @Override
+    protected View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
 }

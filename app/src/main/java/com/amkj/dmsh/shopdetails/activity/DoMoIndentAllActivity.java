@@ -24,7 +24,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 
-;
 
 public class DoMoIndentAllActivity extends BaseActivity {
     @BindView(R.id.communal_stl_tab)
@@ -93,6 +92,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
         } else {
             communal_stl_tab.setCurrentTab(0);
         }
+
     }
 
     @Override

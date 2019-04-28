@@ -62,6 +62,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
@@ -435,7 +436,7 @@ public class SpringSaleFragment extends BaseFragment {
             params.put("uid", userId);
         }
         params.put("currentPage", 1);
-        params.put("showCount", 20);
+        params.put("showCount", TOTAL_COUNT_FORTY);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), TIME_SHOW_TAOBAO_PRODUCT
                 , params, new NetLoadListenerHelper() {
                     @Override
