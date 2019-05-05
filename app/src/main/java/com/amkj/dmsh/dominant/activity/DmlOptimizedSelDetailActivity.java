@@ -116,7 +116,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_ql_welfare_details;
+        return R.layout.activity_ql_optimized_details;
     }
 
     @Override
