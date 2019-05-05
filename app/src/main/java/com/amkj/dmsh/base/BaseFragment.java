@@ -33,7 +33,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,30 +76,19 @@ public abstract class BaseFragment extends ImmersionFragment {
             T fragment = (T) constructor.newInstance(new Object[]{});
 
             Bundle bundle = new Bundle();
-
-            if (params != null && params.size() > 0 && objectParams != null && objectParams.size() > 0) {
+            if (params != null && params.size() > 0) {
                 for (String key : params.keySet()) {
                     String value = params.get(key);
                     bundle.putString(key, value);
                 }
+            }
+            if (objectParams != null && objectParams.size() > 0) {
                 for (String key : objectParams.keySet()) {
                     Object value = objectParams.get(key);
                     if (value instanceof List) {
                         bundle.putParcelableArrayList(key, (ArrayList<? extends Parcelable>) value);
-                    } else {
-                        bundle.putParcelable(key, (Parcelable) value);
-                    }
-                }
-            } else if (params != null && params.size() > 0) {
-                for (String key : params.keySet()) {
-                    String value = params.get(key);
-                    bundle.putString(key, value);
-                }
-            } else if (objectParams != null && objectParams.size() > 0) {
-                for (String key : objectParams.keySet()) {
-                    Object value = objectParams.get(key);
-                    if (value instanceof List) {
-                        bundle.putParcelableArrayList(key, (ArrayList<? extends Parcelable>) value);
+                    } else if (value instanceof String) {
+                        bundle.putString(key, (String) value);
                     } else {
                         bundle.putParcelable(key, (Parcelable) value);
                     }
@@ -109,13 +97,7 @@ public abstract class BaseFragment extends ImmersionFragment {
             fragment.setArguments(bundle);
             return fragment;
 
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (java.lang.InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

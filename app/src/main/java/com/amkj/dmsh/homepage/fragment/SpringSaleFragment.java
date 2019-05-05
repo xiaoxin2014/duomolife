@@ -116,6 +116,7 @@ public class SpringSaleFragment extends BaseFragment {
     private boolean isClickSelect;
     private int[] location = new int[2];
     private RemoveExistUtils removeExistUtils;
+    private String position;
 
     @Override
     protected int getContentView() {
@@ -419,8 +420,9 @@ public class SpringSaleFragment extends BaseFragment {
                         }
 
                         //获取淘宝关联商品数据
-                        getTaoBaoData();
-
+                        if ("0".equals(position)) {
+                            getTaoBaoData();
+                        }
                     }
 
                     @Override
@@ -430,6 +432,9 @@ public class SpringSaleFragment extends BaseFragment {
                 });
     }
 
+    /**
+     * 获取淘宝商品
+     */
     private void getTaoBaoData() {
         Map<String, Object> params = new HashMap<>();
         if (userId != 0) {
@@ -480,6 +485,7 @@ public class SpringSaleFragment extends BaseFragment {
         super.getReqParams(bundle);
         try {
             showTimeList = bundle.getParcelableArrayList("showTime");
+            position = bundle.getString("position", "0");
         } catch (Exception e) {
             e.printStackTrace();
         }

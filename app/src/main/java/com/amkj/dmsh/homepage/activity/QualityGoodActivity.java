@@ -43,10 +43,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
@@ -77,6 +75,7 @@ public class QualityGoodActivity extends BaseActivity {
     private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
     private QualityGoodNewProAdapter qualityGoodNewProAdapter;
     private RemoveExistUtils removeExistUtils;
+    private QualityGoodProductEntity mQualityGoodProductEntity;
 
     @Override
     protected int getContentView() {
@@ -180,37 +179,39 @@ public class QualityGoodActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        qualityGoodNewProAdapter.loadMoreComplete();
-                        if (page == 1) {
-                            goodsProList.clear();
-                            removeExistUtils.clearData();
-                        }
                         MultiTypeJsonParser<QualityGoodProductEntity.Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<QualityGoodProductEntity.Attribute>()
                                 .registerTypeElementName("objectType")
                                 .registerTargetClass(QualityGoodProductEntity.Attribute.class)
                                 .registerTypeElementValueWithClassType("product", LikedProductBean.class)
                                 .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
                                 .build();
-                        QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
-                        if (qualityGoodProductEntity != null) {
-                            if (qualityGoodProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                goodsProList.addAll(removeExistUtils.removeExistList(qualityGoodProductEntity.getGoodProductList()));
-                            } else if (qualityGoodProductEntity.getCode().equals(EMPTY_CODE)) {
-                                qualityGoodNewProAdapter.loadMoreEnd();
+                        mQualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
+                        List<QualityGoodProductEntity.Attribute> goodList = removeExistUtils.removeExistList(mQualityGoodProductEntity.getGoodProductList());
+                        if (mQualityGoodProductEntity != null) {
+                            if (goodList != null && goodList.size() > 0) {
+                                if (page == 1) {
+                                    goodsProList.clear();
+                                    removeExistUtils.clearData();
+                                }
+                                goodsProList.addAll(goodList);
+                                qualityGoodNewProAdapter.notifyDataSetChanged();
+                                qualityGoodNewProAdapter.loadMoreComplete();
+                            } else if (ERROR_CODE.equals(mQualityGoodProductEntity.getCode())) {
+                                qualityGoodNewProAdapter.loadMoreFail();
+                                ConstantMethod.showToast(mQualityGoodProductEntity.getMsg());
                             } else {
                                 qualityGoodNewProAdapter.loadMoreEnd();
-                                showToast(getActivity(), qualityGoodProductEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
-                        qualityGoodNewProAdapter.notifyDataSetChanged();
+
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, goodsProList, mQualityGoodProductEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        qualityGoodNewProAdapter.loadMoreEnd(true);
-                        NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                        qualityGoodNewProAdapter.loadMoreFail();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, goodsProList, mQualityGoodProductEntity);
                     }
                 });
     }
