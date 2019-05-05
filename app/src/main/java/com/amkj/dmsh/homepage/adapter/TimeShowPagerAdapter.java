@@ -98,6 +98,7 @@ public class TimeShowPagerAdapter extends FragmentPagerAdapter {
             timeShowBeanList.addAll(timeShowBeanWaitList);
         }
         params.put("showTime", timeShowBeanList);
+        params.put("position", String.valueOf(position));
         return BaseFragment.newInstance(SpringSaleFragment.class, null, params);
     }
 
