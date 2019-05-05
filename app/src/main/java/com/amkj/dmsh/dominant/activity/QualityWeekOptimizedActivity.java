@@ -45,6 +45,7 @@ import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -352,6 +353,15 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                                 , shopBuyDetailBean.getCoverImgUrl());
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
+                            //筛选空行
+                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
+                            while (iterator.hasNext()) {
+                                CommunalDetailBean bean = iterator.next();
+                                if ("text".equals(bean.getType()) && "<p><br/></p>".equals(bean.getContent())) {
+                                    iterator.remove();
+                                }
+                            }
+
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
@@ -421,7 +431,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     , "每周优选"
                     , "摸透你的心，为你精选最应季最实用最优质的热门精品"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html"
-                    , "pages/weekly_optimization/weekly_optimization",shopBuyDetailBean.getId());
+                    , "pages/weekly_optimization/weekly_optimization", shopBuyDetailBean.getId());
         }
     }
 }
