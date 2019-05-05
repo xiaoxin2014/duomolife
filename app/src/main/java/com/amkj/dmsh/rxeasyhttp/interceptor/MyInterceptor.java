@@ -60,7 +60,7 @@ public class MyInterceptor implements Interceptor {
         String DomoJson = new JSONObject(newMap).toString();
         builder.addHeader("domo-custom", getBase64(newMap));
         Response response = chain.proceed(builder.build());
-        String responseInfo = response.peekBody(1024 * 1024 * 4).string();
+        String responseInfo = response.peekBody(1024 * 1024).string();
 
         //如果Token校验失败，就不要传uid和token
         try {

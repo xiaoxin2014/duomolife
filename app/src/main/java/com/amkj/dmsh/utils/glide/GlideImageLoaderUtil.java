@@ -481,14 +481,25 @@ public class GlideImageLoaderUtil {
                         imgUrlX = (String) params.get("imgUrl");
                         imageViewX = (ImageView) params.get("imgView");
                         imageUrlWidthHeight = (int[]) params.get("imgSize");
-                        if (imageUrlWidthHeight.length > 1) {
+                        int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                        if (imageUrlWidthHeight != null && imageUrlWidthHeight.length > 1) {
                             imgWidth = imageUrlWidthHeight[0];
                             imgHeight = imageUrlWidthHeight[1];
-                            if (imageUrlWidthHeight[1] > 3574) {
-                                imgWidth = (int) (3574f / imgHeight * imgWidth);
-                                imgHeight = 3574;
+                            //判断图片宽度是否大于屏幕宽度
+                            if (imgWidth > screenWidth) {
+                                int height = screenWidth * imgHeight / imgWidth;
+                                imgWidth = screenWidth;
+                                imgHeight = height;
+                            }
+
+                            //判断缩放后的高度是否大于限制高度
+                            int limitHeight = getOpenglRenderLimitValue();
+                            if (imgHeight > limitHeight) {
+                                imgWidth = (int) (limitHeight * 1.0f / (imgHeight * 1.0f) * imgWidth);
+                                imgHeight = limitHeight;
                             }
                         }
+
                         if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).load(imgUrlX)
                                     .apply(new RequestOptions()
@@ -532,7 +543,7 @@ public class GlideImageLoaderUtil {
         } else {
             maxsize = getOpenglRenderLimitBelowLollipop();
         }
-        return maxsize == 0 ? 4096 : maxsize;
+        return maxsize == 0 ? 3574 : maxsize;
     }
 
     private static int getOpenglRenderLimitBelowLollipop() {
