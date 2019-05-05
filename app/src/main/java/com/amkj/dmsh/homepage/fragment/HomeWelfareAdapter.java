@@ -88,6 +88,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                         for (UserLikedProductEntity.LikedProductBean.MarketLabelBean marketLabelBean : goodsBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                                 fbl_label.addView(getLabelInstance().createLabelText(mContext, marketLabelBean.getTitle(), 0));
+                                if (fbl_label.getChildCount()>=2) break;
                             }
                         }
                     }

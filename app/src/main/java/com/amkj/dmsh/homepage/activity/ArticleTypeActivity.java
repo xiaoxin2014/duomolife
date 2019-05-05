@@ -80,17 +80,7 @@ public class ArticleTypeActivity extends BaseActivity {
                         mViewpagerContainer.setAdapter(qualityPageAdapter);
                         mStbArtical.setViewPager(mViewpagerContainer);
                         mViewpagerContainer.setOffscreenPageLimit(mCategoryTypeList.size() - 1);
-                        if (mCategoryId != 0) {
-                            for (int i = 0; i < mCategoryTypeList.size(); i++) {
-                                int id = mCategoryTypeList.get(i).getId();
-                                if (mCategoryId == id) {
-                                    mStbArtical.setCurrentTab(i);
-                                    break;
-                                }
-                            }
-                        } else {
-                            mStbArtical.setCurrentTab(0);
-                        }
+                        setCurrentTab();
                     } else {
                         showToast(getActivity(), mCategoryTypeEntity.getMsg());
                     }
@@ -104,6 +94,20 @@ public class ArticleTypeActivity extends BaseActivity {
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mCategoryTypeList, mCategoryTypeEntity);
             }
         });
+    }
+
+    private void setCurrentTab() {
+        if (mCategoryId != 0) {
+            for (int i = 0; i < mCategoryTypeList.size(); i++) {
+                int id = mCategoryTypeList.get(i).getId();
+                if (mCategoryId == id) {
+                    mStbArtical.setCurrentTab(i);
+                    break;
+                }
+            }
+        } else {
+            mStbArtical.setCurrentTab(0);
+        }
     }
 
     @Override

@@ -43,7 +43,8 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
             goodsUrl = GlideImageLoaderUtil.getWaterMarkImgUrl(goodsBean.getPicUrl(), goodsBean.getWaterRemark());
         }
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsUrl);
-        helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()))
+        helper.setGone(R.id.iv_com_pro_tag_out, goodsBean.getQuantity() < 1)
+                .setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()))
                 .setText(R.id.tv_name, getStrings(goodsBean.getName()));
         FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
         if (!TextUtils.isEmpty(goodsBean.getActivityTag()) || (goodsBean.getMarketLabelList() != null
@@ -58,6 +59,7 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
                 for (LikedProductBean.MarketLabelBean marketLabelBean : goodsBean.getMarketLabelList()) {
                     if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                         fbl_label.addView(getLabelInstance().createLabelText(mContext, marketLabelBean.getTitle(), 0));
+                        if (fbl_label.getChildCount()>=2) break;
                     }
                 }
             }

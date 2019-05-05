@@ -22,7 +22,7 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/6/29
- * class description:商品列表
+ * class description:分类商品列表
  */
 
 public class QualityTypeProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseViewHolder> {
