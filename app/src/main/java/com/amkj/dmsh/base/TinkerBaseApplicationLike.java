@@ -36,6 +36,7 @@ import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.netloadpage.NetLoadTranslucenceCallback;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.util.LogUtils;
+import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
@@ -165,6 +166,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //        腾讯hotfix
 //        已包含bugly 初始化
         mAppContext = getApplication().getApplicationContext();
+        //初始化EasyHttp
+        EasyHttp.setContext(mAppContext);
         setTotalChanel();
         activityLinkedList = new LinkedList<>();
         getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
@@ -257,7 +260,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //        initBaiCHotFix();
         if (LeakCanary.isInAnalyzerProcess(getApplication())) {
             // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
+            // You should not setContext your app in this process.
             return;
         }
         LeakCanary.install(getApplication());
@@ -389,7 +392,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 //            strategy.setAppChannel(channel);  //设置渠道
 //            strategy.setAppVersion(getVersionName());      //App的版本
 //            strategy.setAppPackageName(getStrings(mAppContext.getPackageName()));  //App的包名
-//            Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
+//            Bugly.setContext(mAppContext, BUGLY_APP_ID, isDebugTag, strategy);
 //        } else {
         if (!BuildConfig.DEBUG) {
             Bugly.init(mAppContext, BUGLY_APP_ID, isDebugTag);

@@ -27,7 +27,7 @@ import java.util.Locale;
 
 /**
  * Created by xiaoxin on 2019/3/22 0022
- * ClassDescription :
+ * ClassDescription :设备信息工具类
  */
 public class DeviceUtils {
 
