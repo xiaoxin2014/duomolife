@@ -121,8 +121,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             map.putAll(((BaseActivity) context).commonMap);
         }
         if (NetWorkUtils.checkNet(context)) {
-//            先进行框架初始化
-            NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = getHttpParams(map);
 
             EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
@@ -176,10 +174,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     public void loadNetDataPost(Context context, String url, Map<String, Object> params, NetLoadListener netLoadListener) {
         WeakReference<Context> weakReference = new WeakReference<>(context);
         if (NetWorkUtils.checkNet(context)) {
-//            先进行框架初始化
-            NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = getHttpParams(params);
-
             EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
@@ -258,8 +253,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      */
     public String loadNetDataPostSync(Context context, String url, Map<String, Object> params) {
         if (NetWorkUtils.checkNet(context)) {
-            //            先进行框架初始化
-            NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = getHttpParams(params);
             final String[] resultSuccess = {null};
             EasyHttp.post(url).params(httpParams).syncRequest(true).execute(new SimpleCallBack<String>() {
@@ -311,8 +304,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 if (!TextUtils.isEmpty(reqId)) map.put("reqId", reqId);
             }
 
-            //            先进行框架初始化
-            NetApiManager.getInstance().initNetInstance();
             HttpParams httpParams = new HttpParams();
             httpParams.put(map);
             CacheMode cacheMode = NetWorkUtils.isConnectedByState(mAppContext) ? (isForceNet ? FIRSTREMOTE : CACHEANDREMOTE) : ONLYCACHE;

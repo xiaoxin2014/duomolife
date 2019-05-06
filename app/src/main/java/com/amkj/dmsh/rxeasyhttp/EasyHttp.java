@@ -16,11 +16,11 @@
 
 package com.amkj.dmsh.rxeasyhttp;
 
-import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.rxeasyhttp.cache.RxCache;
+import com.amkj.dmsh.rxeasyhttp.cache.converter.GsonDiskConverter;
 import com.amkj.dmsh.rxeasyhttp.cache.converter.IDiskConverter;
 import com.amkj.dmsh.rxeasyhttp.cache.converter.SerializableDiskConverter;
 import com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode;
@@ -39,6 +39,7 @@ import com.amkj.dmsh.rxeasyhttp.request.PutRequest;
 import com.amkj.dmsh.rxeasyhttp.utils.HttpLog;
 import com.amkj.dmsh.rxeasyhttp.utils.RxUtil;
 import com.amkj.dmsh.rxeasyhttp.utils.Utils;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -61,6 +62,8 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import static com.amkj.dmsh.constant.Url.BASE_URL;
+
 /**
  * <p>描述：网络请求入口类</p>
  * 主要功能：</br>
@@ -80,8 +83,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
  * 版本： v1.0<br>
  */
 public final class EasyHttp {
-    private static Application sContext;
-    public static final int DEFAULT_MILLISECONDS = 60000;             //默认的超时时间
+    private static Context sContext;
+    private static final int DEFAULT_MILLISECONDS = 60000;             //默认的超时时间
     private static final int DEFAULT_RETRY_COUNT = 3;                 //默认重试次数
     private static final int DEFAULT_RETRY_INCREASEDELAY = 0;         //默认重试叠加时间
     private static final int DEFAULT_RETRY_DELAY = 500;               //默认重试延时
@@ -105,15 +108,17 @@ public final class EasyHttp {
 
     private EasyHttp() {
         okHttpClientBuilder = new OkHttpClient.Builder();
-        okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
-        okHttpClientBuilder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.addInterceptor(new MyInterceptor(sContext));
+        okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier())
+                .connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .addInterceptor(new MyInterceptor(sContext));
         retrofitBuilder = new Retrofit.Builder();
         retrofitBuilder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());//增加RxJava2CallAdapterFactory
         rxCacheBuilder = new RxCache.Builder().init(sContext)
                 .diskConverter(new SerializableDiskConverter());      //目前只支持Serializable和Gson缓存其它可以自己扩展
+
+        init();
     }
 
     public static EasyHttp getInstance() {
@@ -128,11 +133,24 @@ public final class EasyHttp {
         return singleton;
     }
 
+    public void init() {
+        String rxCacheFileName = getContext().getCacheDir() + "/rxCache";
+        File rxCacheFile = new File(rxCacheFileName);
+        if (!rxCacheFile.exists()) {
+            rxCacheFile.mkdir();
+        }
+        setBaseUrl(BASE_URL).setConnectTimeout(15 * 1000)
+                .setRetryDelay(500)//每次延时500ms重试
+                .setCacheDirectory(rxCacheFile) //设置缓存路径
+                .setCacheMaxSize(20 * 1024 * 1024)
+                .setCacheDiskConverter(new GsonDiskConverter());//设置缓存转换器
+    }
+
     /**
      * 必须在全局Application先调用，获取context上下文，否则缓存无法使用
      */
-    public static void init(Application app) {
-        sContext = app;
+    public static void setContext(Context context) {
+        sContext = context;
     }
 
     /**
@@ -144,8 +162,10 @@ public final class EasyHttp {
     }
 
     private static void testInitialize() {
-        if (sContext == null)
-            throw new ExceptionInInitializerError("请先在全局Application中调用 EasyHttp.init() 初始化！");
+        if (sContext == null) {
+            sContext = TinkerManager.getTinkerApplicationLike().getApplication().getApplicationContext();
+        }
+//        throw new ExceptionInInitializerError("请先在全局Application中调用 EasyHttp.setContext() 初始化！");
     }
 
     public static OkHttpClient getOkHttpClient() {

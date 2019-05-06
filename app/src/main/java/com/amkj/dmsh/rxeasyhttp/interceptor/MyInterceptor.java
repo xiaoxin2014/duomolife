@@ -12,6 +12,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
@@ -57,29 +58,32 @@ public class MyInterceptor implements Interceptor {
             newMap.put("uid", NetLoadUtils.uid);
             newMap.put("token", NetLoadUtils.token);
         }
-        String DomoJson = new JSONObject(newMap).toString();
-        builder.addHeader("domo-custom", getBase64(newMap));
-        Response response = chain.proceed(builder.build());
-        String responseInfo = response.peekBody(1024 * 1024).string();
 
-        //如果Token校验失败，就不要传uid和token
+        Response response = null;
         try {
+            String DomoJson = new JSONObject(newMap).toString();
+            builder.addHeader("domo-custom", getBase64(newMap));
+            response = chain.proceed(builder.build());
+            String responseInfo = response.peekBody(1024 * 1024).string();
+
+            //如果Token校验失败，就不要传uid和token
             Map<String, Object> responseMap = JSON.parseObject(responseInfo);
             if ("52".equals(responseMap.get("code"))) {
                 Request.Builder newBuilder = request.newBuilder();
                 newBuilder.addHeader("domo-custom", getBase64(mDomoCommon));
                 return chain.proceed(newBuilder.build());
             }
+
+            //打印响应结果
+            httpLog(request, DomoJson, responseInfo);
         } catch (IOException e) {
-            Log.d("retro", "interceptorException");
+            //上报异常
+            CrashReport.postCatchedException(new Exception(
+                    e.getMessage(), e.getCause()));
+            throw e;
         }
 
-        //打印响应结果
-        try {
-            httpLog(request, DomoJson, responseInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         return response;
     }
 
