@@ -68,7 +68,7 @@ public class EditorSelectFragment extends BaseFragment {
     }
 
     private void initRv() {
-        mEditorAdapter = new EditorSelectAdapter(getActivity(), R.layout.item_editor_introduce, EditorList);
+        mEditorAdapter = new EditorSelectAdapter(getActivity(), EditorList);
         mEditorAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             EditorBean itemBean = (EditorBean) view.getTag();
             Intent intent;
@@ -108,6 +108,7 @@ public class EditorSelectFragment extends BaseFragment {
         mRvEditor.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
                 getActivity(), LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(mAppContext, 1), getResources().getColor(R.color.text_color_e_s)));
+        mRvEditor.setNestedScrollingEnabled(false);
         mEditorHeadView = new EditorHeadView(getActivity());
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);

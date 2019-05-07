@@ -34,8 +34,8 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS
 public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHolder> {
     private BaseActivity context;
 
-    public EditorSelectAdapter(Activity context, int layoutResId, @Nullable List<EditorBean> data) {
-        super(layoutResId, data);
+    public EditorSelectAdapter(Activity context, @Nullable List<EditorBean> data) {
+        super(R.layout.item_editor_introduce, data);
         this.context = (BaseActivity) context;
     }
 
@@ -57,7 +57,6 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         RecyclerView rvPicGoods = helper.getView(R.id.communal_recycler_wrap);
         rvPicGoods.setLayoutManager(new LinearLayoutManager(context));
         rvPicGoods.setNestedScrollingEnabled(false);
-        rvPicGoods.setFocusable(false);
         //手动修改itemtype，显示立即购买按钮
         List<CommunalDetailObjectBean> webDetailsFormatDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(item.getContent());
         for (int i = 0; i < webDetailsFormatDataList.size(); i++) {
@@ -82,7 +81,6 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         RecyclerView rvGoods = helper.getView(R.id.rv_goods);
         rvGoods.setLayoutManager(new LinearLayoutManager(context));
         rvGoods.setNestedScrollingEnabled(false);
-        rvGoods.setFocusable(false);
         BaseQuickAdapter<AttachProductListBean, BaseViewHolder> childAdapter = new BaseQuickAdapter<AttachProductListBean, BaseViewHolder>(R.layout.item_editor_goods, item.getAttachProductList()) {
             @Override
             protected void convert(BaseViewHolder helper, AttachProductListBean item) {
