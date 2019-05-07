@@ -37,12 +37,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_PID;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 
-;
 
 /**
  * Created by xiaoxin on 2019/4/21 0021
  * Version:v4.0.0
- * ClassDescription :
+ * ClassDescription :一级分类相关商品
  */
 public class HomeCatergoryActivity extends BaseActivity {
     @BindView(R.id.smart_layout)

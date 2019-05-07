@@ -42,7 +42,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TWO_LEVEL_LIST;
 /**
  * Created by xiaoxin on 2019/4/22 0022
  * Version:v4.0.0
- * ClassDescription :
+ * ClassDescription :一级分类相关商品列表头部
  */
 public class CatergoryHeadView extends LinearLayout {
 
