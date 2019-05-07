@@ -2,6 +2,7 @@ package com.amkj.dmsh.rxeasyhttp.interceptor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.rxeasyhttp.model.HttpHeaders;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -62,16 +64,28 @@ public class MyInterceptor implements Interceptor {
         Response response = null;
         try {
             String DomoJson = new JSONObject(newMap).toString();
+            //添加公共请求参数
             builder.addHeader("domo-custom", getBase64(newMap));
-            response = chain.proceed(builder.build());
-            String responseInfo = response.peekBody(1024 * 1024).string();
+            //默认添加 Accept -Language
+            String acceptLanguage = HttpHeaders.getAcceptLanguage();
+            if (!TextUtils.isEmpty(acceptLanguage)) {
+                builder.addHeader(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
+            }
+
+            //默认添加 User-Agent
+            String userAgent = HttpHeaders.getUserAgent();
+            if (!TextUtils.isEmpty(userAgent)) {
+                builder.addHeader(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
+            }
 
             //如果Token校验失败，就不要传uid和token
+            response = chain.proceed(builder.build());
+            String responseInfo = response.peekBody(1024 * 1024).string();
             Map<String, Object> responseMap = JSON.parseObject(responseInfo);
             if ("52".equals(responseMap.get("code"))) {
-                Request.Builder newBuilder = request.newBuilder();
-                newBuilder.addHeader("domo-custom", getBase64(mDomoCommon));
-                return chain.proceed(newBuilder.build());
+                builder.removeHeader("domo-custom");
+                builder.addHeader("domo-custom", getBase64(mDomoCommon));
+                return chain.proceed(builder.build());
             }
 
             //打印响应结果

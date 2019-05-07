@@ -28,7 +28,6 @@ import com.amkj.dmsh.rxeasyhttp.https.HttpsUtils;
 import com.amkj.dmsh.rxeasyhttp.interceptor.BaseDynamicInterceptor;
 import com.amkj.dmsh.rxeasyhttp.interceptor.CacheInterceptor;
 import com.amkj.dmsh.rxeasyhttp.interceptor.CacheInterceptorOffline;
-import com.amkj.dmsh.rxeasyhttp.interceptor.HeadersInterceptor;
 import com.amkj.dmsh.rxeasyhttp.interceptor.NoCacheInterceptor;
 import com.amkj.dmsh.rxeasyhttp.model.HttpHeaders;
 import com.amkj.dmsh.rxeasyhttp.model.HttpParams;
@@ -123,13 +122,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
         retryIncreaseDelay = config.getRetryIncreaseDelay();              //超时重试叠加延时
         //Okhttp  cache
         cache = config.getHttpCache();
-        //默认添加 Accept-Language
-        String acceptLanguage = HttpHeaders.getAcceptLanguage();
-        if (!TextUtils.isEmpty(acceptLanguage))
-            headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
-        //默认添加 User-Agent
-        String userAgent = HttpHeaders.getUserAgent();
-        if (!TextUtils.isEmpty(userAgent)) headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
+//        //默认添加 Accept-Language
+//        String acceptLanguage = HttpHeaders.getAcceptLanguage();
+//        if (!TextUtils.isEmpty(acceptLanguage))
+//            headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
+//        //默认添加 User-Agent
+//        String userAgent = HttpHeaders.getUserAgent();
+//        if (!TextUtils.isEmpty(userAgent)) headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
         //添加公共请求参数
         if (config.getCommonParams() != null) params.put(config.getCommonParams());
         if (config.getCommonHeaders() != null) headers.put(config.getCommonHeaders());
@@ -404,8 +403,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
             if (proxy != null) newClientBuilder.proxy(proxy);
             if (cookies.size() > 0) EasyHttp.getCookieJar().addCookies(cookies);
 
-            //添加头  头添加放在最前面方便其他拦截器可能会用到
-            newClientBuilder.addInterceptor(new HeadersInterceptor(headers));
+//            //添加头  头添加放在最前面方便其他拦截器可能会用到
+//            newClientBuilder.addInterceptor(new HeadersInterceptor(headers));
 
             for (Interceptor interceptor : interceptors) {
                 if (interceptor instanceof BaseDynamicInterceptor) {
