@@ -503,6 +503,7 @@ public class GlideImageLoaderUtil {
                         if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).load(imgUrlX)
                                     .apply(new RequestOptions()
+                                            .placeholder(R.drawable.load_loading_image)
                                             .error(R.drawable.load_loading_image)
                                             .skipMemoryCache(true)
                                             .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -513,6 +514,7 @@ public class GlideImageLoaderUtil {
                         if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).asDrawable().load(imgUrl)
                                     .apply(new RequestOptions().dontAnimate()
+                                            .placeholder(R.drawable.load_loading_image)
                                             .error(R.drawable.load_loading_image)
                                             .override(imgWidth, imgHeight))
                                     .into(imageViewX);

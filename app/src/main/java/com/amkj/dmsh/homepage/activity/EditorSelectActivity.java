@@ -37,7 +37,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.EDITOR_SELECT_FAVOR;
 
 /**
@@ -73,7 +73,7 @@ public class EditorSelectActivity extends BaseActivity {
     }
 
     private void initRv() {
-        mEditorAdapter = new EditorSelectAdapter(this,EditorList);
+        mEditorAdapter = new EditorSelectAdapter(this, EditorList);
         mEditorAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             EditorBean itemBean = (EditorBean) view.getTag();
             Intent intent;
@@ -113,7 +113,7 @@ public class EditorSelectActivity extends BaseActivity {
         mRvEditor.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
                 this, LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(this, 1), getResources().getColor(R.color.text_color_e_s)));
-//        mRvEditor.setNestedScrollingEnabled(false);
+        mRvEditor.setNestedScrollingEnabled(false);
         mEditorHeadView = new EditorHeadView(EditorSelectActivity.this);
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);
@@ -123,7 +123,7 @@ public class EditorSelectActivity extends BaseActivity {
     protected void loadData() {
         Map<String, Object> map = new HashMap<>();
         map.put("currentPage", page);
-        map.put("showCount", TOTAL_COUNT_TEN);
+        map.put("showCount", TOTAL_COUNT_TWENTY);
         if (userId > 0) {
             map.put("uid", userId);
         }
@@ -142,10 +142,15 @@ public class EditorSelectActivity extends BaseActivity {
                         if (page == 1) {
                             EditorList.clear();
                         }
-                        EditorList.addAll(mEditorEntity.getResult());
+                        EditorList.addAll(resultList);
                         mEditorAdapter.notifyDataSetChanged();
                         mEditorHeadView.updateData(mEditorEntity);
-                        mEditorAdapter.loadMoreComplete();
+                        //不满一页
+                        if (resultList.size() < TOTAL_COUNT_TWENTY) {
+                            mEditorAdapter.loadMoreEnd();
+                        } else {
+                            mEditorAdapter.loadMoreComplete();
+                        }
                     } else {
                         showToast(EditorSelectActivity.this, mEditorEntity.getMsg());
                         mEditorAdapter.loadMoreFail();
