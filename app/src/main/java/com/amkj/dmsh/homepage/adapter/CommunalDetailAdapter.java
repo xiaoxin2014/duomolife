@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -435,14 +436,37 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         iv_communal_image.setTag(R.id.iv_tag, content);
                         iv_communal_image.setOnClickListener(this);
                         //判断content是不是正确的图片地址
-                        boolean isPic =  content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
+                        boolean isPic = content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
                                 content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif");
                         GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
                     } else {
                         rel_communal_image.setVisibility(View.GONE);
                         tv_content_type.setVisibility(View.VISIBLE);
-//                        硬件加速不能关闭，会对图片展示不兼容
-                        tv_content_type.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        //                    匹配显示位置
+                        int alignGravityIndex = content.indexOf(alignGravity);
+                        if (alignGravityIndex != -1 && !isImageTag) {
+                            if (content.indexOf(endStyle, alignGravityIndex) != -1) {
+                                String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endStyle, alignGravityIndex)).trim();
+                                if (locationGravity.equals(alignCenter)) {
+                                    tv_content_type.setGravity(Gravity.CENTER);
+                                } else if (locationGravity.equals(alignRight)) {
+                                    tv_content_type.setGravity(Gravity.RIGHT);
+                                } else {
+                                    tv_content_type.setGravity(Gravity.LEFT);
+                                }
+                            } else if (content.indexOf(endDash, alignGravityIndex) != -1) {
+                                String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endDash, alignGravityIndex)).trim();
+                                if (locationGravity.equals(alignCenter)) {
+                                    tv_content_type.setGravity(Gravity.CENTER);
+                                } else if (locationGravity.equals(alignRight)) {
+                                    tv_content_type.setGravity(Gravity.RIGHT);
+                                } else {
+                                    tv_content_type.setGravity(Gravity.LEFT);
+                                }
+                            }
+                        }
+
+                        RichText.initCacheDir(context);
                         DrawableGetter drawableGetter = new DrawableGetter() {
                             @Override
                             public Drawable getDrawable(ImageHolder holder, RichTextConfig config, TextView textView) {
