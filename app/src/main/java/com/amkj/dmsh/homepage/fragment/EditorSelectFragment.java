@@ -35,7 +35,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.EDITOR_SELECT_FAVOR;
 
 /**
@@ -118,7 +118,7 @@ public class EditorSelectFragment extends BaseFragment {
     protected void loadData() {
         Map<String, Object> map = new HashMap<>();
         map.put("currentPage", page);
-        map.put("showCount", TOTAL_COUNT_TEN);
+        map.put("showCount", TOTAL_COUNT_TWENTY);
         if (userId > 0) {
             map.put("uid", userId);
         }
@@ -137,10 +137,15 @@ public class EditorSelectFragment extends BaseFragment {
                         if (page == 1) {
                             EditorList.clear();
                         }
-                        EditorList.addAll(mEditorEntity.getResult());
+                        EditorList.addAll(resultList);
                         mEditorAdapter.notifyDataSetChanged();
                         mEditorHeadView.updateData(mEditorEntity);
-                        mEditorAdapter.loadMoreComplete();
+                        //不满一页
+                        if (resultList.size() < TOTAL_COUNT_TWENTY) {
+                            mEditorAdapter.loadMoreEnd();
+                        } else {
+                            mEditorAdapter.loadMoreComplete();
+                        }
                     } else {
                         showToast(getActivity(), mEditorEntity.getMsg());
                         mEditorAdapter.loadMoreFail();
