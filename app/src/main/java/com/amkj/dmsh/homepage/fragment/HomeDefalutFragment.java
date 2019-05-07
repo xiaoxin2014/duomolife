@@ -425,7 +425,7 @@ public class HomeDefalutFragment extends BaseFragment {
     //Top活动位
     private void getHomeIndexType() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), GTE_HOME_TOP, map, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GTE_HOME_TOP, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
