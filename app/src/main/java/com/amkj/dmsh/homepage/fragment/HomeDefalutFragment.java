@@ -199,7 +199,15 @@ public class HomeDefalutFragment extends BaseFragment {
         mSmartLayout.setEnableAutoLoadMore(true);
         mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
         mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
-        mSmartLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
+        ClassicsFooter classicsFooter = new ClassicsFooter(getActivity());
+//        classicsFooter.setProgressResource(R.drawable.red_progressbar);
+        mSmartLayout.setRefreshFooter(classicsFooter);
+//        View view1 = mSmartLayout.getRefreshFooter().getView();
+//        ViewGroup.LayoutParams layoutParams = view1.getLayoutParams();
+//        layoutParams.width = MATCH_PARENT;
+//        layoutParams.height = AutoSizeUtils.dp2px(getActivity(), 40);
+//        view1.setLayoutParams(layoutParams);
+
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             articalPage = 1;

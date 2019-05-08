@@ -109,6 +109,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -3057,14 +3058,6 @@ public class ConstantMethod {
         return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
-//    public static Bitmap getResourceBitmap(Context context, int resId) {
-//        BitmapFactory.Options opt = new BitmapFactory.Options();
-//        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-//        opt.inPurgeable = true;
-//        opt.inInputShareable = true;
-//        InputStream is = context.getResources().openRawResource(resId);
-//        return BitmapFactory.decodeStream(is, null, opt);
-//    }
 
     //根据类名获取sourceType
     public static int getSourceType(String className) {
@@ -3075,12 +3068,14 @@ public class ConstantMethod {
             case "QualityShopHistoryListActivity"://历史清单
                 return 2;
             case "DoMoLifeWelfareActivity"://福利社专题列表
+            case "DoMoLifeWelfareFragment"://福利社专题列表
             case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
+            case "DoMoLifeWelfareDetailsFragment"://福利社专题详情
                 return 3;
             case "DmlOptimizedSelDetailActivity"://多么定制详情
-//            case "QualityCustomTopicActivity"://自定义专区
                 return 4;
             case "EditorSelectActivity"://小编精选
+            case "EditorSelectFragment"://小编精选
                 return 5;
             case "QualityWeekOptimizedActivity"://每周优选
                 return 6;
@@ -3089,31 +3084,21 @@ public class ConstantMethod {
         }
     }
 
-    //判断该类是不是需要埋点的类
-    public static String getSourceName(String className) {
-        switch (className) {
-            case "DoMoLifeWelfareActivity"://福利社专题
-            case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
-            case "QualityShopBuyListActivity"://必买清单
-            case "QualityShopHistoryListActivity"://历史清单
-            case "QualityWeekOptimizedActivity"://每周优选
-            case "DmlOptimizedSelDetailActivity"://多么定制详情
-//            case "QualityCustomTopicActivity"://自定义专区
-            case "EditorSelectActivity"://小编精选
-            case "ArticleOfficialActivity"://文章详情
-                return className;
-            default:
-                return "";
+    //保存sourceId到全局map
+    public static void saveSourceId(String className, String id) {
+        if (!MainActivity.class.getSimpleName().equals(className)) {
+            ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().put(className, id);
+        } else {
+            TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+            String mainCheckedFragment = getMainCheckedFragment(tinkerBaseApplicationLike);
+            if (!TextUtils.isEmpty(mainCheckedFragment)) {
+                ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().put(mainCheckedFragment, id);
+            }
         }
     }
 
-    //保存sourceId到全局map
-    public static void saveSourceId(String className, String id) {
-        ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().put(className, id);
-    }
-
     //根据类名获取sourceId
-    public static String getSourceId(String className) {
+    private static String getSourceId(String className) {
         return (String) ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().get(className);
     }
 
@@ -3124,9 +3109,37 @@ public class ConstantMethod {
         String simpleName = tinkerBaseApplicationLike.getPreviousActivity();
         int sourceType = getSourceType(simpleName);
         String sourceId = getSourceId(simpleName);
+        //如果没有找到对应的埋点Activity,再次判断是否是从首页Tab栏的Fragment进入的
+        if (sourceType == -1) {
+            String mainCheckedFragment = getMainCheckedFragment(tinkerBaseApplicationLike);
+            //如果是，重新获取SourceType和SourceId
+            if (!TextUtils.isEmpty(mainCheckedFragment)) {
+                sourceType = getSourceType(mainCheckedFragment);
+                sourceId = getSourceId(mainCheckedFragment);
+            }
+        }
+
         if (sourceType != -1 && !TextUtils.isEmpty(sourceId)) {
             params.put("sourceType", sourceType);
             params.put("sourceId", sourceId);
         }
+    }
+
+
+    //如果没有找到对应的埋点Activity,再次判断是否是从首页Tab栏的Fragment进入的
+    private static String getMainCheckedFragment(TinkerBaseApplicationLike tinkerBaseApplicationLike) {
+        String FragmentName = "";
+        LinkedList<Activity> activityLinkedList = tinkerBaseApplicationLike.getActivityLinkedList();
+        for (int i = 0; i < activityLinkedList.size(); i++) {
+            Activity activity = activityLinkedList.get(i);
+            if (activity != null && !activity.isFinishing()) {
+                if (activity instanceof MainActivity) {
+                    FragmentName = ((MainActivity) activity).getCheckedFragmentName();
+                    break;
+                }
+            }
+        }
+
+        return FragmentName;
     }
 }

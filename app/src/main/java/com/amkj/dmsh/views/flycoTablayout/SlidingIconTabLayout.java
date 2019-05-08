@@ -948,6 +948,10 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         }
     }
 
+    public ViewPager getViewPager() {
+        return mViewPager;
+    }
+
     @Override
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();

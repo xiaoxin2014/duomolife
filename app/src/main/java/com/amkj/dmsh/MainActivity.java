@@ -264,6 +264,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, false);
                     SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, GET_FIRST_INSTALL_INFO, true);
                 }
+
                 @Override
                 public void onNotNetOrException() {
                     super.onNotNetOrException();
@@ -1363,5 +1364,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
+    }
+
+    //获取HomePageFragment被选中的Fragment的类名
+    public String getCheckedFragmentName() {
+        if (rp_bottom_main.getCheckedRadioButtonId() == R.id.rb_homepage) {
+            if (lastFragment instanceof HomePageFragment) {
+                return ((HomePageFragment) lastFragment).getFragmentName();
+            }
+        }
+
+        return "";
     }
 }

@@ -1,6 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,11 +31,11 @@ import java.util.List;
  */
 
 public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, BaseViewHolder> {
-    private final Context context;
+    private final Activity context;
     private final String type;
     private List<DMLGoodsBean> goodsList;
 
-    public QualityOsMailHeaderAdapter(Context context, List<DMLThemeBean> dmlThemeBeanList, String type) {
+    public QualityOsMailHeaderAdapter(Activity context, List<DMLThemeBean> dmlThemeBeanList, String type) {
         super(R.layout.adapter_welfare_header_item, dmlThemeBeanList);
         this.type = type;
         this.context = context;
@@ -85,7 +85,7 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                         intent.putExtra("productId", String.valueOf(dMLGoodsBean.getId()));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         //记录埋点参数sourceId(福利社专题对应的ID)
-                        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
+                        ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
                         context.startActivity(intent);
                     } else if (dMLGoodsBean.getItemType() == ConstantVariable.TYPE_1) {
                         switch (type) {
