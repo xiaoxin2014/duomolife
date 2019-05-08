@@ -95,7 +95,6 @@ public class EditorSelectFragment extends BaseFragment {
                     startActivity(intent);
                     break;
             }
-
         });
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             page = 1;

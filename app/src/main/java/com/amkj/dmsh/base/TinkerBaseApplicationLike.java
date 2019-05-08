@@ -826,13 +826,25 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
             Activity activity = activityLinkedList.get(i);
             String simpleName = activity.getClass().getSimpleName();
-            if (!TextUtils.isEmpty(ConstantMethod.getSourceName(simpleName))) {
+            if (ConstantMethod.getSourceType(simpleName) != -1) {
                 return simpleName;
             }
         }
 
         return "";
     }
+//
+//  public String getPreviousActivity() {
+//        for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
+//            Activity activity = activityLinkedList.get(i);
+//            String simpleName = activity.getClass().getSimpleName();
+//            if (!TextUtils.isEmpty(ConstantMethod.getSourceName(simpleName))) {
+//                return simpleName;
+//            }
+//        }
+//
+//        return "";
+//    }
 
     /**
      * 获取 webUrlTransform
@@ -875,5 +887,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
     public Map<String, Object> getSourceMap() {
         return sourceMap;
+    }
+
+    public LinkedList<Activity> getActivityLinkedList() {
+        return activityLinkedList;
     }
 }

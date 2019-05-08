@@ -195,8 +195,6 @@ public class QualityOverseasMailFragment extends BaseFragment {
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
                 .create());
         qualityOsMailHeaderAdapter = new QualityOsMailHeaderAdapter(getActivity(), themeList, "overseas");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityOsMailHeaderAdapter);

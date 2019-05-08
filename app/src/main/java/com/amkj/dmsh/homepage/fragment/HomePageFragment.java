@@ -1,6 +1,8 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -305,5 +307,21 @@ public class HomePageFragment extends BaseFragment {
     @Override
     protected boolean isLazy() {
         return false;
+    }
+
+    public String getFragmentName() {
+        if (mTablayoutHome != null && mTablayoutHome.getViewPager() != null) {
+            int currentTab = mTablayoutHome.getCurrentTab();
+            PagerAdapter adapter = mTablayoutHome.getViewPager().getAdapter();
+            if (adapter instanceof HomePageNewAdapter) {
+                Fragment item = ((HomePageNewAdapter) adapter).getItem(currentTab);
+                if (item != null) {
+                    return item.getClass().getSimpleName();
+                }
+            } else {
+                return "";
+            }
+        }
+        return "";
     }
 }

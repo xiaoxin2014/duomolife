@@ -161,8 +161,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
                 .create());
         qualityPreviousAdapter = new QualityHistoryAdapter(welfarePreviousList);
         qualityPreviousAdapter.setEnableLoadMore(false);
