@@ -310,5 +310,4 @@ dependencies {
     implementation project(':convenientbanner')
     implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
     implementation project(':FloatingActionButton')
-
 }

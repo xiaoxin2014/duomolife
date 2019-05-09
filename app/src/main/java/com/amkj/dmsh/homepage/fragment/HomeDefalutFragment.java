@@ -1,16 +1,13 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -65,7 +62,6 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,7 +74,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -196,18 +191,7 @@ public class HomeDefalutFragment extends BaseFragment {
     protected void initViews() {
         isLazy = false;
         int screenHeight = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenHeight();
-        mSmartLayout.setEnableAutoLoadMore(true);
-        mSmartLayout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
-        mSmartLayout.setEnableOverScrollBounce(false);//关闭越界回弹功能
-        ClassicsFooter classicsFooter = new ClassicsFooter(getActivity());
-//        classicsFooter.setProgressResource(R.drawable.red_progressbar);
-        mSmartLayout.setRefreshFooter(classicsFooter);
-//        View view1 = mSmartLayout.getRefreshFooter().getView();
-//        ViewGroup.LayoutParams layoutParams = view1.getLayoutParams();
-//        layoutParams.width = MATCH_PARENT;
-//        layoutParams.height = AutoSizeUtils.dp2px(getActivity(), 40);
-//        view1.setLayoutParams(layoutParams);
-
+        mSmartLayout.setEnableLoadMore(true);
         mSmartLayout.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             articalPage = 1;
@@ -793,19 +777,5 @@ public class HomeDefalutFragment extends BaseFragment {
             getDynamic();
             isFirst = false;
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 }
