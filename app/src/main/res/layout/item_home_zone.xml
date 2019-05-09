@@ -56,40 +56,33 @@
                 android:padding="@dimen/sc_mm_1"
                 android:scaleType="centerCrop"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sc_mm_24"
                 android:orientation="horizontal">
 
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="¥"-->
-                    <!--android:textColor="@color/rmb_small"-->
-                    <!--android:textSize="@dimen/sc_mm_22"/>-->
-
                 <TextView
                     android:id="@+id/tv_price_left"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left|bottom"
+                    android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/text_normal_red"
                     android:textSize="@dimen/sc_mm_28"/>
 
                 <TextView
                     android:id="@+id/tv_market_price_left"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_price_left"
+                    android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/sc_mm_28"
-                    android:layout_weight="1"
-                    android:gravity="right|bottom"
+                    android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/color_blue_reply_com"
                     android:textSize="@dimen/sc_mm_20"/>
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -108,40 +101,33 @@
                 android:padding="@dimen/sc_mm_1"
                 android:scaleType="centerCrop"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sc_mm_24"
                 android:orientation="horizontal">
 
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="¥"-->
-                    <!--android:textColor="@color/rmb_small"-->
-                    <!--android:textSize="@dimen/sc_mm_22"/>-->
-
                 <TextView
                     android:id="@+id/tv_price_right"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left|bottom"
+                    android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/text_normal_red"
                     android:textSize="@dimen/sc_mm_28"/>
 
                 <TextView
                     android:id="@+id/tv_market_price_right"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_price_right"
+                    android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/sc_mm_28"
-                    android:layout_weight="1"
-                    android:gravity="right|bottom"
+                    android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/color_blue_reply_com"
                     android:textSize="@dimen/sc_mm_20"/>
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
