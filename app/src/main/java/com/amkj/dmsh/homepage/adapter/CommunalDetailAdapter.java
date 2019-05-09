@@ -436,8 +436,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         iv_communal_image.setTag(R.id.iv_tag, content);
                         iv_communal_image.setOnClickListener(this);
                         //判断content是不是正确的图片地址
-                        boolean isPic = content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
-                                content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif");
+                        boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
+                                content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif"));
                         GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
                     } else {
                         rel_communal_image.setVisibility(View.GONE);

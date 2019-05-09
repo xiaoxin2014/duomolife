@@ -484,7 +484,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <!--多么优选-->
+        <!--多么定制-->
         <activity
             android:name=".dominant.activity.DmlOptimizedSelActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -495,7 +495,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <!--多么优选详情-->
+        <!--多么定制详情-->
         <activity
             android:name=".dominant.activity.DmlOptimizedSelDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

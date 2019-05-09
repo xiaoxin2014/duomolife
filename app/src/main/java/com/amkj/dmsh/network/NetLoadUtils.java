@@ -155,10 +155,14 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 }
             });
         } else {
-            showToast(context, R.string.unConnectedNetwork);
-            if (netLoadListener != null) {
-                netLoadListener.onNotNetOrException();
-                netLoadListener.netClose();
+            try {
+                showToast(context, R.string.unConnectedNetwork);
+                if (netLoadListener != null) {
+                    netLoadListener.onNotNetOrException();
+                    netLoadListener.netClose();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -207,10 +211,14 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 }
             });
         } else {
-            showToast(context, R.string.unConnectedNetwork);
-            if (netLoadListener != null) {
-                netLoadListener.onNotNetOrException();
-                netLoadListener.netClose();
+            try {
+                showToast(context, R.string.unConnectedNetwork);
+                if (netLoadListener != null) {
+                    netLoadListener.onNotNetOrException();
+                    netLoadListener.netClose();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -277,8 +285,12 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (checkTokenExpire(activity, url)) {
             loadNetDataGetCache(activity, url, null, isForceNet, netCacheLoadListener);
         } else {
-            netCacheLoadListener.onNotNetOrException();
-            netCacheLoadListener.netClose();
+            try {
+                netCacheLoadListener.onNotNetOrException();
+                netCacheLoadListener.netClose();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

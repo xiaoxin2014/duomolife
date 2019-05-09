@@ -24,6 +24,9 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 /**
@@ -40,7 +43,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
     @Override
     public void convert(ViewHolder helper, int position, HomeWelfareBean item) {
         if (item == null) return;
-        GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), 5);
+        GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_welfare_cover), item.getPicUrl(), AutoSizeUtils.mm2px(mAppContext, 10));
         helper.getView(R.id.iv_welfare_cover).setOnClickListener(view -> {
             Intent intent = new Intent(mContext, DoMoLifeWelfareDetailsActivity.class);
             intent.putExtra("welfareId", String.valueOf(item.getId()));

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -280,6 +281,27 @@ public class GlideImageLoaderUtil {
     }
 
     /**
+     * 获取矩形圆角
+     *
+     * @param radius
+     * @return
+     */
+    public static String getCornerImg(String imgUrl, int radius) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String ossDataUrl = applicationLike.getOSSDataUrl();
+        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
+            String ossPrefix = "?x-oss-process=image";
+            String ossImgRadius = "/rounded-corners,r_" + String.valueOf(radius) + "/format,png";
+            if (imgUrl.contains(ossPrefix)) {
+                return imgUrl + ossImgRadius;
+            } else {
+                return imgUrl + ossPrefix + ossImgRadius;
+            }
+        }
+        return imgUrl;
+    }
+
+    /**
      * 获取头像缩略图
      *
      * @param imgUrl
@@ -346,7 +368,7 @@ public class GlideImageLoaderUtil {
                     .apply(new RequestOptions().dontAnimate()
                             .placeholder(defaultImgResource)
                             .error(defaultImgResource)
-                            .transforms(new GlideRoundTransform(radius)))
+                            .transforms(new CenterCrop(), new RoundedCornersTransformation(radius, 0)))
                     .into(iv);
         }
     }
