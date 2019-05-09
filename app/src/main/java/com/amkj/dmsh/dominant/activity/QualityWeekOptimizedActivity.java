@@ -45,7 +45,6 @@ import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -162,8 +161,6 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
                 .create());
         qualityBuyListAdapter = new QualityBuyListAdapter(QualityWeekOptimizedActivity.this, qualityBuyListBeanList);
         qualityBuyListAdapter.setHeaderAndEmpty(true);
@@ -348,19 +345,19 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
                         //记录埋点参数sourceId(每周优选id)
                         ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
-//                        配置封面图
+//                        //配置封面图
                         GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
                                 , shopBuyDetailBean.getCoverImgUrl());
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
-                            //筛选空行
-                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
-                            while (iterator.hasNext()) {
-                                CommunalDetailBean bean = iterator.next();
-                                if ("text".equals(bean.getType()) && "<p><br/></p>".equals(bean.getContent())) {
-                                    iterator.remove();
-                                }
-                            }
+//                            //筛选空行
+//                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
+//                            while (iterator.hasNext()) {
+//                                CommunalDetailBean bean = iterator.next();
+//                                if ("text".equals(bean.getType()) && bean.getContent() instanceof String && "<p><br/></p>".equals(bean.getContent())) {
+//                                    iterator.remove();
+//                                }
+//                            }
 
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }

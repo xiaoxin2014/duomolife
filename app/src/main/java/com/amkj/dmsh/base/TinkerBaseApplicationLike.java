@@ -28,6 +28,7 @@ import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.amkj.dmsh.BuildConfig;
+import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -43,6 +44,8 @@ import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.kingja.loadsir.core.LoadSir;
 import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
@@ -168,6 +171,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         mAppContext = getApplication().getApplicationContext();
         //初始化EasyHttp
         EasyHttp.setContext(mAppContext);
+        //设置SmartLayout全局默认配置
+        setDefaultRefresh();
         setTotalChanel();
         activityLinkedList = new LinkedList<>();
         getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
@@ -309,6 +314,30 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                 }
             });
         }
+    }
+
+    private static void setDefaultRefresh() {
+        //设置全局默认配置（优先级最低，会被其他设置覆盖）
+        SmartRefreshLayout.setDefaultRefreshInitializer((context, layout) -> {
+            layout.setEnableAutoLoadMore(true);//惯性滑动到底部时触发加载更多
+            layout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
+            layout.setEnableOverScrollBounce(false);//禁止越界回弹
+            layout.setEnableLoadMore(false);//默认关闭加载更多
+            layout.setFooterHeight(40);//设置底部高度
+        });
+
+        //全局设置默认的 Footer
+        SmartRefreshLayout.setDefaultRefreshFooterCreator((context, layout) -> {
+            //开始设置全局的基本参数（这里设置的属性只跟下面的ClassicsFooter绑定，其他Header不会生效，能覆盖DefaultRefreshInitializer的属性和Xml设置的属性）
+            ClassicsFooter classicsFooter = new ClassicsFooter(context);
+            classicsFooter.setProgressResource(R.drawable.red_progressbar);
+            classicsFooter.setTextSizeTitle(14);
+            classicsFooter.setAccentColorId(R.color.black);
+            classicsFooter.setDrawableMarginRight(10);
+            ClassicsFooter.REFRESH_FOOTER_LOADING = "正在加载中...";
+            ClassicsFooter.REFRESH_FOOTER_NOTHING = "没有更多数据";
+            return classicsFooter;
+        });
     }
 
     /**
