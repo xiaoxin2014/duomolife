@@ -13,7 +13,9 @@ import com.amkj.dmsh.dominant.fragment.QualityCustomTopicFragment;
 import com.amkj.dmsh.dominant.fragment.QualityGroupShopFragment;
 import com.amkj.dmsh.dominant.fragment.QualityNewProFragment;
 import com.amkj.dmsh.dominant.fragment.QualityNewUserFragment;
+import com.amkj.dmsh.dominant.fragment.QualityShopBuyListFragment;
 import com.amkj.dmsh.dominant.fragment.QualityTypeHotSaleProFragment;
+import com.amkj.dmsh.dominant.fragment.QualityWeekOptimizedFragment;
 import com.amkj.dmsh.dominant.fragment.WholePointSpikeProductFragment;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
@@ -41,11 +43,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
-            "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity", "app://QualityCustomTopicActivity"};
+            "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity",
+            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity"};
     private String prefix = "app://";
 
-    //    productType = intent.getStringExtra("productType");
-//    showType = intent.getStringExtra("showType");
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
         super(fm);
         this.mHomeCommonBeanList = homeCommonBeanList;
@@ -54,11 +55,11 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
         Iterator<HomeCommonBean> iterator = mHomeCommonBeanList.iterator();
         while (iterator.hasNext()) {
             HomeCommonEntity.HomeCommonBean bean = iterator.next();
-            String link = bean.getLink();
-            if (TextUtils.isEmpty(link.trim())) {
+            String link = bean.getLink().trim();
+            if (TextUtils.isEmpty(link)) {
                 iterator.remove();
             } else {
-                if (link.contains(prefix) && !actionList.contains(bean.getLink())) {
+                if (link.contains(prefix) && !actionList.contains(link)) {
                     int prefixLength = link.indexOf(prefix) + prefix.length();
                     int urlIndex = link.indexOf("?", prefixLength);
                     if (urlIndex != -1) {
@@ -121,6 +122,10 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                         return BaseFragment.newInstance(EditorSelectFragment.class, null, null);
                     case "app://WholePointSpikeProductActivity"://整点秒杀
                         return BaseFragment.newInstance(WholePointSpikeProductFragment.class, null, null);
+                    case "app://QualityWeekOptimizedActivity"://每周优选
+                        return BaseFragment.newInstance(QualityWeekOptimizedFragment.class, null, null);
+                    case "app://QualityShopBuyListActivity"://必买清单
+                        return BaseFragment.newInstance(QualityShopBuyListFragment.class, null, null);
                     //良品优选
                     default:
                         return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);

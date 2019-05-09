@@ -57,13 +57,13 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
             List<RelateArticleBean.ArticlesBean> articlesList = relateArticle.getArticles();
             if (articlesList != null && articlesList.size() > 0) {
                 ArticlesBean articleLeftBean = articlesList.get(0);
-                GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_left_cover), articleLeftBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 5));
+                GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_left_cover), articleLeftBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 10));
                 helper.setText(R.id.tv_left_title, articleLeftBean.getDocumentName())
                         .addOnClickListener(R.id.fl_artical_left).setTag(R.id.fl_artical_left, relateArticle).
                         addOnClickListener(R.id.rl_more_artical).setTag(R.id.rl_more_artical, relateArticle);
                 if (articlesList.size() > 1) {
                     ArticlesBean articleRightBean = articlesList.get(1);
-                    GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_right_cover), articleRightBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 5));
+                    GlideImageLoaderUtil.loadRoundImg(mContext, helper.getView(R.id.iv_right_cover), articleRightBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 10));
                     helper.setText(R.id.tv_right_title, articleRightBean.getDocumentName())
                             .addOnClickListener(R.id.fl_artical_right).setTag(R.id.fl_artical_right, relateArticle);
                 }

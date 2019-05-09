@@ -1,9 +1,10 @@
-package com.amkj.dmsh.dominant.activity;
+package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -11,13 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityBuyListAdapter;
 import com.amkj.dmsh.dominant.bean.QualityBuyListEntity;
@@ -25,7 +25,6 @@ import com.amkj.dmsh.dominant.bean.QualityBuyListEntity.QualityBuyListBean;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity;
 import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
-import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -41,7 +40,6 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
-import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +48,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
@@ -63,12 +60,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_PRO;
-
 
 
 /**
@@ -77,7 +72,7 @@ import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_PRO;
  * created on 2017/9/15
  * class description:每周优选
  */
-public class QualityWeekOptimizedActivity extends BaseActivity {
+public class QualityWeekOptimizedFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
@@ -91,6 +86,8 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     ImageView iv_img_service;
     @BindView(R.id.fl_header_service)
     FrameLayout fl_header_service;
+    @BindView(R.id.tl_quality_bar)
+    Toolbar mTlQualityBar;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
@@ -110,9 +107,10 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        mTlQualityBar.setVisibility(GONE);
         tv_header_titleAll.setText("每周优选");
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
-        communal_recycler.setLayoutManager(new LinearLayoutManager(QualityWeekOptimizedActivity.this));
+        communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -161,9 +159,9 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
                 .create());
-        qualityBuyListAdapter = new QualityBuyListAdapter(QualityWeekOptimizedActivity.this, qualityBuyListBeanList);
+        qualityBuyListAdapter = new QualityBuyListAdapter(getActivity(), qualityBuyListBeanList);
         qualityBuyListAdapter.setHeaderAndEmpty(true);
-        View headerView = LayoutInflater.from(QualityWeekOptimizedActivity.this).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null);
+        View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null);
         shopBuyListView = new ShopBuyListView();
         ButterKnife.bind(shopBuyListView, headerView);
         shopBuyListView.initView();
@@ -181,7 +179,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
-                    Intent intent = new Intent(QualityWeekOptimizedActivity.this, ShopScrollDetailsActivity.class);
+                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
                     startActivity(intent);
                 }
@@ -202,7 +200,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
                                 baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(QualityWeekOptimizedActivity.this, baseAddCarProInfoBean, loadHud);
+                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
                                 constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
                                     @Override
                                     public void onAddCarSuccess() {
@@ -213,13 +211,13 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         }
                     } else {
                         loadHud.dismiss();
-                        getLoginStatus(QualityWeekOptimizedActivity.this);
+                        getLoginStatus(getActivity());
                     }
                 }
             }
         });
-        badge = getBadge(QualityWeekOptimizedActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(QualityWeekOptimizedActivity.this);
+        badge = getBadge(getActivity(), fl_header_service);
+        totalPersonalTrajectory = insertNewTotalData(getActivity());
     }
 
     private void getCarCount() {
@@ -228,7 +226,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
             String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -238,7 +236,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             int cartNumber = requestStatus.getResult().getCartNumber();
                             badge.setBadgeNumber(cartNumber);
                         } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityWeekOptimizedActivity.this, requestStatus);
+                            showToastRequestMsg(getActivity(), requestStatus);
                         }
                     }
                 }
@@ -247,34 +245,11 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            loadData();
-        }
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     protected void loadData() {
         page = 1;
         getCarCount();
         getBuyListDetailData();
         getBuyListRecommend();
-    }
-
-    @Override
-    protected View getLoadView() {
-        return smart_communal_refresh;
     }
 
     @Override
@@ -289,7 +264,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(QualityWeekOptimizedActivity.this, QUALITY_WEEK_OPTIMIZED_PRO
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_WEEK_OPTIMIZED_PRO
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -306,7 +281,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityWeekOptimizedActivity.this, qualityBuyListEntity.getMsg());
+                                showToast(getActivity(), qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
@@ -322,18 +297,18 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
 
                     @Override
                     public void netClose() {
-                        showToast(QualityWeekOptimizedActivity.this, R.string.unConnectedNetwork);
+                        showToast(getActivity(), R.string.unConnectedNetwork);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityWeekOptimizedActivity.this, R.string.invalidData);
+                        showToast(getActivity(), R.string.invalidData);
                     }
                 });
     }
 
     private void getBuyListDetailData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 itemDescriptionList.clear();
@@ -343,9 +318,9 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
                         //记录埋点参数sourceId(每周优选id)
-                        ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
+                        ConstantMethod.saveSourceId(QualityWeekOptimizedFragment.class.getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
 //                        //配置封面图
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), shopBuyListView.iv_communal_cover_wrap
                                 , shopBuyDetailBean.getCoverImgUrl());
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
@@ -361,13 +336,14 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityWeekOptimizedActivity.this, shopDetailsEntity.getMsg());
+                        showToast(getActivity(), shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
                 }
             }
         });
     }
+
 
     class ShopBuyListView {
         @BindView(R.id.communal_recycler_wrap)
@@ -378,8 +354,8 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         public void initView() {
             iv_communal_cover_wrap.setVisibility(View.VISIBLE);
             communal_recycler_wrap.setNestedScrollingEnabled(false);
-            communal_recycler_wrap.setLayoutManager(new LinearLayoutManager((QualityWeekOptimizedActivity.this)));
-            communalDetailAdapter = new CommunalDetailAdapter(QualityWeekOptimizedActivity.this, itemDescriptionList);
+            communal_recycler_wrap.setLayoutManager(new LinearLayoutManager((getActivity())));
+            communalDetailAdapter = new CommunalDetailAdapter(getActivity(), itemDescriptionList);
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
             communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                 @Override
@@ -393,7 +369,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
 
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
-                            .setWebDataClick(QualityWeekOptimizedActivity.this, shareDataBean, view, loadHud);
+                            .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
                 }
             });
             communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -401,33 +377,10 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
                     if (communalDetailBean != null) {
-                        ConstantMethod.skipProductUrl(QualityWeekOptimizedActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
+                        ConstantMethod.skipProductUrl(getActivity(), communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                     }
                 }
             });
-        }
-    }
-
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        finish();
-    }
-
-    @OnClick(R.id.iv_img_service)
-    void skipService(View view) {
-        Intent intent = new Intent(QualityWeekOptimizedActivity.this, ShopCarActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.iv_img_share)
-    void setShare(View view) {
-        if (shopBuyDetailBean != null) {
-            new UMShareAction(QualityWeekOptimizedActivity.this
-                    , shopBuyDetailBean.getCoverImgUrl()
-                    , "每周优选"
-                    , "摸透你的心，为你精选最应季最实用最优质的热门精品"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html"
-                    , "pages/weekly_optimization/weekly_optimization", shopBuyDetailBean.getId());
         }
     }
 }
