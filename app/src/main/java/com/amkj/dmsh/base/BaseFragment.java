@@ -375,4 +375,8 @@ public abstract class BaseFragment extends ImmersionFragment {
         AutoSize.autoConvertDensityOfGlobal(getActivity());
         totalPersonalTrajectory = new TotalPersonalTrajectory(getContext(), getClass().getSimpleName());
     }
+
+    protected String getSimpleName() {
+        return getClass().getSimpleName();
+    }
 }

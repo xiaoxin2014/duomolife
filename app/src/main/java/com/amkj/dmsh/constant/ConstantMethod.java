@@ -3065,6 +3065,7 @@ public class ConstantMethod {
             case "ArticleOfficialActivity"://文章
                 return 1;
             case "QualityShopBuyListActivity"://必买清单
+            case "QualityShopBuyListFragment"://必买清单
             case "QualityShopHistoryListActivity"://历史清单
                 return 2;
             case "DoMoLifeWelfareActivity"://福利社专题列表
@@ -3078,6 +3079,7 @@ public class ConstantMethod {
             case "EditorSelectFragment"://小编精选
                 return 5;
             case "QualityWeekOptimizedActivity"://每周优选
+            case "QualityWeekOptimizedFragment"://每周优选
                 return 6;
             default:
                 return -1;
