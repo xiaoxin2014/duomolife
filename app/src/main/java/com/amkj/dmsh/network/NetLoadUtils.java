@@ -123,7 +123,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (NetWorkUtils.checkNet(context)) {
             HttpParams httpParams = getHttpParams(map);
 
-            EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
+            EasyHttp.post(url).params(httpParams).execute(context, new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
                     if (weakReference.get() != null) {
@@ -179,7 +179,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         WeakReference<Context> weakReference = new WeakReference<>(context);
         if (NetWorkUtils.checkNet(context)) {
             HttpParams httpParams = getHttpParams(params);
-            EasyHttp.post(url).params(httpParams).execute(new SimpleCallBack<String>() {
+            EasyHttp.post(url).params(httpParams).execute(context, new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
                     if (weakReference.get() != null) {
@@ -263,7 +263,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (NetWorkUtils.checkNet(context)) {
             HttpParams httpParams = getHttpParams(params);
             final String[] resultSuccess = {null};
-            EasyHttp.post(url).params(httpParams).syncRequest(true).execute(new SimpleCallBack<String>() {
+            EasyHttp.post(url).params(httpParams).syncRequest(true).execute(context, new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
                     resultSuccess[0] = null;
@@ -443,7 +443,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     public void showLoadSir(LoadService loadService, List<T> list, E resultClass) {
         if (loadService != null) {
             if (resultClass != null) {
-                if (list != null && list.size() > 0 ) {
+                if (list != null && list.size() > 0) {
                     loadService.showWithConvertor(SUCCESS_CODE);
                 } else if (ERROR_CODE.equals(resultClass.getCode())) {
                     loadService.showWithConvertor(ERROR_CODE);

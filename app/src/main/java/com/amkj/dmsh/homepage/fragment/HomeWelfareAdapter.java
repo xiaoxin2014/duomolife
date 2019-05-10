@@ -104,6 +104,8 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             if (goodsBean != null) {
                 Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(goodsBean.getId()));
+                //记录埋点参数sourceId(福利社专题对应的ID)
+                ConstantMethod.saveSourceId(HomeDefalutFragment.class.getSimpleName(), String.valueOf(item.getId()));
                 mContext.startActivity(intent);
             }
         });

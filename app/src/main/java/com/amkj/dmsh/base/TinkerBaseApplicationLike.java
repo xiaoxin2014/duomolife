@@ -847,7 +847,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     /**
-     * 寻找当前Activity的前一个
+     * 寻找当前Activity的前一个埋点Activity
      *
      * @return 返回类名
      */
