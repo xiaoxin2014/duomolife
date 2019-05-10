@@ -78,6 +78,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
+import io.reactivex.plugins.RxJavaPlugins;
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
 
@@ -165,10 +166,14 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
     @Override
     public void onCreate() {
-        // 调试时，将第三个参数改为true
-//        腾讯hotfix
-//        已包含bugly 初始化
         mAppContext = getApplication().getApplicationContext();
+        //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
+        RxJavaPlugins.setErrorHandler(throwable -> {
+            //异常处理
+            if (BuildConfig.DEBUG) {
+                ConstantMethod.showToast(throwable.getMessage());
+            }
+        });
         //初始化EasyHttp
         EasyHttp.setContext(mAppContext);
         //设置SmartLayout全局默认配置
