@@ -103,7 +103,7 @@ public class CatergoryHeadView extends LinearLayout {
                 List<ArticlesBean> articlesList = relateArticleBean.getArticles();
                 if (articlesList != null && articlesList.size() > 0) {
                     ArticlesBean articleLeftBean = articlesList.get(0);
-                    GlideImageLoaderUtil.loadRoundImg(mContext, mIvLeftCover, articleLeftBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 5));
+                    GlideImageLoaderUtil.loadRoundImg(mContext, mIvLeftCover, articleLeftBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 10));
                     mTvLeftTitle.setText(ConstantMethod.getStrings(articleLeftBean.getDocumentName()));
                     mFlArticalLeft.setOnClickListener(new OnClickListener() {
                         @Override
@@ -115,7 +115,7 @@ public class CatergoryHeadView extends LinearLayout {
                     });
                     if (articlesList.size() > 1) {
                         ArticlesBean articleRightBean = articlesList.get(1);
-                        GlideImageLoaderUtil.loadRoundImg(mContext, mIvRightCover, articleRightBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 5));
+                        GlideImageLoaderUtil.loadRoundImg(mContext, mIvRightCover, articleRightBean.getDocumentPicurl(), AutoSizeUtils.mm2px(mAppContext, 10));
                         mTvRightTitle.setText(getStrings(articleRightBean.getDocumentName()));
                         mFlArticalRight.setOnClickListener(view -> {
                             Intent intent = new Intent(mContext, ArticleOfficialActivity.class);

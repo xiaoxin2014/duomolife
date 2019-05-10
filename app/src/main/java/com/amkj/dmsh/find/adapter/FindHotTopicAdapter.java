@@ -11,6 +11,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -33,10 +36,10 @@ public class FindHotTopicAdapter extends BaseQuickAdapter<FindHotTopicBean, Base
     @Override
     protected void convert(BaseViewHolder helper, FindHotTopicBean hotTopicBean) {
         GlideImageLoaderUtil.loadRoundImg(context, (ImageView) helper.getView(R.id.iv_find_hot_topic)
-                , getStrings(hotTopicBean.getImg_url()),4);
+                , getStrings(hotTopicBean.getImg_url()), AutoSizeUtils.mm2px(mAppContext, 10));
         helper.setText(R.id.tv_find_hot_topic_name,
                 String.format(context.getResources().getString(R.string.topic_format)
-                ,getStrings(hotTopicBean.getTitle())))
+                        , getStrings(hotTopicBean.getTitle())))
                 .setText(R.id.tv_find_hot_topic_join, hotTopicBean.getParticipants_number() + "人参与")
                 .itemView.setTag(hotTopicBean);
     }

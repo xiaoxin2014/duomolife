@@ -17,6 +17,9 @@
 package com.amkj.dmsh.rxeasyhttp.request;
 
 
+import android.content.Context;
+
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.rxeasyhttp.cache.model.CacheResult;
 import com.amkj.dmsh.rxeasyhttp.callback.CallBack;
 import com.amkj.dmsh.rxeasyhttp.callback.CallBackProxy;
@@ -28,6 +31,7 @@ import com.amkj.dmsh.rxeasyhttp.model.ApiResult;
 import com.amkj.dmsh.rxeasyhttp.subsciber.CallBackSubsciber;
 import com.amkj.dmsh.rxeasyhttp.utils.RxUtil;
 import com.google.gson.reflect.TypeToken;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.lang.reflect.Type;
 
@@ -44,7 +48,7 @@ import okhttp3.ResponseBody;
  * 日期： 2017/4/28 14:29 <br>
  * 版本： v1.0<br>
  */
-@SuppressWarnings(value={"unchecked", "deprecation"})
+@SuppressWarnings(value = {"unchecked", "deprecation"})
 public class PostRequest extends BaseBodyRequest<PostRequest> {
     public PostRequest(String url) {
         super(url);
@@ -74,22 +78,37 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
                 });
     }
 
-    public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
+    public <T> Disposable execute(Context context, CallBack<T> callBack) {
+        return execute(context, new CallBackProxy<ApiResult<T>, T>(callBack) {
         });
     }
 
-    public <T> Disposable execute(CallBackProxy<? extends ApiResult<T>, T> proxy) {
-        Observable<CacheResult<T>> observable = build().toObservable(generateRequest(), proxy);
-        if (CacheResult.class != proxy.getCallBack().getRawType()) {
-            return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
-                @Override
-                public ObservableSource<T> apply(@NonNull Observable<CacheResult<T>> upstream) {
-                    return upstream.map(new CacheResultFunc<T>());
-                }
-            }).subscribeWith(new CallBackSubsciber<T>(context, proxy.getCallBack()));
+    public <T> Disposable execute(Context context, CallBackProxy<? extends ApiResult<T>, T> proxy) {
+        if (context instanceof BaseActivity) {
+            Observable<CacheResult<T>> observable = build().toObservable(generateRequest(), proxy);
+            if (CacheResult.class != proxy.getCallBack().getRawType()) {
+                return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
+                    @Override
+                    public ObservableSource<T> apply(@NonNull Observable<CacheResult<T>> upstream) {
+                        return upstream.map(new CacheResultFunc<T>());
+                    }
+                }).compose(((BaseActivity) context).bindUntilEvent(ActivityEvent.DESTROY))
+                        .subscribeWith(new CallBackSubsciber<T>(context, proxy.getCallBack()));
+            } else {
+                return observable.subscribeWith(new CallBackSubsciber<CacheResult<T>>(context, proxy.getCallBack()));
+            }
         } else {
-            return observable.subscribeWith(new CallBackSubsciber<CacheResult<T>>(context, proxy.getCallBack()));
+            Observable<CacheResult<T>> observable = build().toObservable(generateRequest(), proxy);
+            if (CacheResult.class != proxy.getCallBack().getRawType()) {
+                return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
+                    @Override
+                    public ObservableSource<T> apply(@NonNull Observable<CacheResult<T>> upstream) {
+                        return upstream.map(new CacheResultFunc<T>());
+                    }
+                }).subscribeWith(new CallBackSubsciber<T>(context, proxy.getCallBack()));
+            } else {
+                return observable.subscribeWith(new CallBackSubsciber<CacheResult<T>>(context, proxy.getCallBack()));
+            }
         }
     }
 

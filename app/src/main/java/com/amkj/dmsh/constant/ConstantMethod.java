@@ -1663,7 +1663,6 @@ public class ConstantMethod {
             }
             addSourceParameter(params);
 
-
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
@@ -3072,6 +3071,7 @@ public class ConstantMethod {
             case "DoMoLifeWelfareFragment"://福利社专题列表
             case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
             case "DoMoLifeWelfareDetailsFragment"://福利社专题详情
+            case "HomeDefalutFragment"://首页良品商城福利社专区
                 return 3;
             case "DmlOptimizedSelDetailActivity"://多么定制详情
                 return 4;
