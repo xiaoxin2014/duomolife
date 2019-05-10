@@ -98,6 +98,11 @@
         </activity>
 
         <activity
+            android:name=".WelcomeLaunchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/fullTheme1"/>
+
+        <activity
             android:name=".MiddleActivity"
             android:screenOrientation="portrait">
             <meta-data
@@ -835,10 +840,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".WelcomeLaunchActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/fullTheme1"/>
         <!--首页 - 搜索 -->
         <activity
             android:name=".homepage.activity.HomePageSearchActivity"

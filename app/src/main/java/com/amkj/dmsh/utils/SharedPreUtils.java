@@ -104,8 +104,4 @@ public class SharedPreUtils {
     public static void clear(String key) {
         clear(null, key);
     }
-
-    public static void setmContext(Context mContext) {
-        SharedPreUtils.mContext = mContext;
-    }
 }

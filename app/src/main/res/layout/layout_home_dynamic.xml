@@ -7,6 +7,7 @@
     <include layout="@layout/view_decoration_20_gray"/>
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/ll_dynamic"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_416"
@@ -14,6 +15,7 @@
         android:background="@color/white">
 
         <ImageView
+            android:background="@color/white"
             android:id="@+id/iv_dynamic_cover"
             android:layout_width="@dimen/sc_mm_240"
             android:layout_height="match_parent"

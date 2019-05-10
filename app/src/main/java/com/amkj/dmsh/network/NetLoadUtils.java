@@ -116,7 +116,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (params != null) {
             map.putAll(params);
         }
-        WeakReference<Context> weakReference = new WeakReference<>(context);
+        WeakReference<Activity> weakReference = new WeakReference<>(context);
         if (context instanceof BaseActivity) {
             map.putAll(((BaseActivity) context).commonMap);
         }
