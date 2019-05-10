@@ -915,6 +915,11 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         payCancelDialogHelper.show();
                     }
                 }
+
+                @Override
+                public void netClose() {
+                    finish();
+                }
             });
         } else {
             finish();

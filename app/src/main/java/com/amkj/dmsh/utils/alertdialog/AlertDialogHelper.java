@@ -2,9 +2,11 @@ package com.amkj.dmsh.utils.alertdialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -26,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  * version 3.1.3
  * class description:默认样式dialog
  */
-public class AlertDialogHelper implements View.OnClickListener {
+public class AlertDialogHelper {
     private Context context;
     private String title;
     private String msg;
@@ -44,6 +46,21 @@ public class AlertDialogHelper implements View.OnClickListener {
     private final String CANCEL = "cancel";
     private final String CONFIRM = "confirm";
     private final View dialogView;
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            String clickType = (String) v.getTag();
+            if (alertConfirmCancelListener != null) {
+                if (CONFIRM.equals(clickType)) {
+                    alertConfirmCancelListener.confirm();
+                } else if (CANCEL.equals(clickType)) {
+                    alertConfirmCancelListener.cancel();
+                }
+            }
+        }
+    };
+
 
     public AlertDialogHelper(Context context) {
         this.context = context;
@@ -54,17 +71,37 @@ public class AlertDialogHelper implements View.OnClickListener {
         tv_alert_message = dialogView.findViewById(R.id.tv_alert_message);
         tv_alert_confirm = dialogView.findViewById(R.id.tv_alert_confirm);
         tv_alert_cancel = dialogView.findViewById(R.id.tv_alert_cancel);
-        tv_alert_confirm.setOnClickListener(this);
+
+        tv_alert_confirm.setOnClickListener(onClickListener);
         tv_alert_confirm.setTag(CONFIRM);
-        tv_alert_cancel.setOnClickListener(this);
+        tv_alert_cancel.setOnClickListener(onClickListener);
         tv_alert_cancel.setTag(CANCEL);
         isFirstSet = true;
         defaultAlertDialog = builder.create();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            Window window = defaultAlertDialog.getWindow();
+            if (window != null) {
+                window.getDecorView()
+                        .getViewTreeObserver()
+                        .addOnWindowAttachListener(new ViewTreeObserver.OnWindowAttachListener() {
+                            @Override
+                            public void onWindowAttached() {
+                            }
+
+                            @Override
+                            public void onWindowDetached() {
+                                onClickListener = null;
+                            }
+                        });
+            }
+        }
     }
 
     public AlertDialog getAlertDialog() {
         return defaultAlertDialog;
     }
+
 
     /**
      * @param cancelable
@@ -247,6 +284,7 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     /**
      * dialog 是否在展示
+     *
      * @return
      */
     public boolean isShowing() {
@@ -256,19 +294,6 @@ public class AlertDialogHelper implements View.OnClickListener {
 
     public void setAlertListener(AlertConfirmCancelListener alertConfirmCancelListener) {
         this.alertConfirmCancelListener = alertConfirmCancelListener;
-    }
-
-    @Override
-    public void onClick(View v) {
-        String clickType = (String) v.getTag();
-        if (alertConfirmCancelListener != null) {
-            if (CONFIRM.equals(clickType)) {
-                alertConfirmCancelListener.confirm();
-            } else if (CANCEL.equals(clickType)) {
-                alertConfirmCancelListener.cancel();
-            }
-        }
-        dismiss();
     }
 
     public interface AlertConfirmCancelListener {
