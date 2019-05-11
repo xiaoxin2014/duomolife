@@ -90,7 +90,7 @@ public class MyInterceptor implements Interceptor {
 
             //打印响应结果
             httpLog(request, DomoJson, responseInfo);
-        } catch (IOException e) {
+        } catch (Exception e) {
             //上报异常
             CrashReport.postCatchedException(new Exception(
                     e.getMessage(), e.getCause()));

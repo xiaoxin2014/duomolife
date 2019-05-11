@@ -2,10 +2,12 @@ package com.amkj.dmsh;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.utils.SharedPreUtils;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_NEW_USER;
@@ -20,7 +23,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_NEW_USER;
 /**
  * 闪屏页
  */
-public class SplashLaunchActivity extends BaseActivity {
+public class SplashLaunchActivity extends AppCompatActivity {
     @BindView(R.id.vp_guide_images)
     ViewPager vp_guide_images;
     //    网络图片
@@ -30,9 +33,14 @@ public class SplashLaunchActivity extends BaseActivity {
     private boolean isConform = false;
 
     @Override
-    protected int getContentView() {
-        return R.layout.activity_launch_guide;
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_launch_guide);
+        ButterKnife.bind(this);
+        initViews();
     }
+
+
 
     protected void initViews() {
         hideNavStatus();
@@ -81,7 +89,6 @@ public class SplashLaunchActivity extends BaseActivity {
     }
 
 
-
     private void hideNavStatus() {
         View decorView = getWindow().getDecorView();
         //隐藏虚拟按键，并且全屏
@@ -95,14 +102,10 @@ public class SplashLaunchActivity extends BaseActivity {
     }
 
     private void skipWelcome() {
-        Intent intent = new Intent(SplashLaunchActivity.this, WelcomeLaunchActivity.class);
+        Intent intent = new Intent(this, WelcomeLaunchActivity.class);
         startActivity(intent);
         finish();
         overridePendingTransition(0, 0);
-    }
-
-    @Override
-    protected void loadData() {
     }
 
     // 添加此处目的是针对后台APP通过uri scheme唤起的情况，
