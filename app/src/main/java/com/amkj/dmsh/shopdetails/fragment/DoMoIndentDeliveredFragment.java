@@ -52,10 +52,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 
-;
-;
-;
-
 /**
  * Created by atd48 on 2016/8/23.
  * 待收货
@@ -269,5 +265,10 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean isDataInitiated() {
+        return false;
     }
 }

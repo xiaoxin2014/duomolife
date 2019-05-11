@@ -287,16 +287,8 @@ public class DoMoIndentWaitPayFragment extends BaseFragment {
         });
     }
 
-    public void onPause() {
-        isOnPause = true;
-        super.onPause();
-    }
-
     @Override
-    public void onResume() {
-        super.onResume();
-        if (isOnPause) {
-            loadData();
-        }
+    protected boolean isDataInitiated() {
+        return false;
     }
 }

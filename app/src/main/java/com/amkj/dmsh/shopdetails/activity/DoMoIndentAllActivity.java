@@ -58,6 +58,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
         communal_stl_tab.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
         indentPagerAdapter = new IndentPagerAdapter(getSupportFragmentManager());
         vp_indent_container.setAdapter(indentPagerAdapter);
+        vp_indent_container.setOffscreenPageLimit(4);
         communal_stl_tab.setViewPager(vp_indent_container);
         communal_stl_tab.setOnTabSelectListener(new OnTabSelectListener() {
             @Override

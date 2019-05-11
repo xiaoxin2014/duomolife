@@ -67,8 +67,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
-;
-;
 
 /**
  * Created by atd48 on 2016/8/23.
@@ -223,19 +221,6 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    public void onPause() {
-        super.onPause();
-        isOnPause = true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isOnPause) {
-            loadData();
-        }
     }
 
     @Override
@@ -404,5 +389,11 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                 + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
                 + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo),qualityGroupShareBean.getGpInfoId());
+    }
+
+
+    @Override
+    protected boolean isDataInitiated() {
+        return false;
     }
 }

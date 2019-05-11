@@ -411,7 +411,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                 } else if (!code.equals(EMPTY_CODE)) {
                     showToast(getActivity(), msg);
-                }else{
+                } else {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
@@ -433,7 +433,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -456,7 +456,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
         params.put("orderProductId",/*orderBean.getId()*/0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -479,7 +479,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -503,7 +503,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("orderNo", no);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -597,19 +597,11 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                 + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo),qualityGroupShareBean.getGpInfoId());
-    }
-
-    public void onPause() {
-        super.onPause();
-        isOnPause = true;
+                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (isOnPause) {
-            loadData();
-        }
+    protected boolean isDataInitiated() {
+        return false;
     }
 }

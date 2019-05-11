@@ -189,7 +189,6 @@ public class HomeDefalutFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLazy = false;
         int screenHeight = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenHeight();
         mSmartLayout.setEnableLoadMore(true);
         mSmartLayout.setOnRefreshListener(refreshLayout -> {

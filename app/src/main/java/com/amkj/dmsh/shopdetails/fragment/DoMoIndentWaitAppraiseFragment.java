@@ -322,16 +322,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
     }
 
     @Override
-    public void onPause() {
-        isOnPause = true;
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isOnPause) {
-            loadData();
-        }
+    protected boolean isDataInitiated() {
+        return false;
     }
 }
