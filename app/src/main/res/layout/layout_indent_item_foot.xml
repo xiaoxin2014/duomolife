@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:gravity="center_vertical|right">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:gravity="center_vertical|right"
+              android:orientation="vertical">
 
     <TextView
-        android:layout_marginTop="@dimen/sc_mm_24"
         android:id="@+id/tv_intent_count_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginTop="@dimen/sc_mm_24"
         android:layout_marginRight="@dimen/gap_right"
         android:layout_marginBottom="@dimen/sc_mm_10"
         android:gravity="center_vertical|right"
         android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_28" />
+        android:textSize="@dimen/sc_mm_28"/>
+
     <include
+        layout="@layout/layout_communal_indent_bottom"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_98"
         android:layout_marginLeft="@dimen/gap_left"
-        android:layout_marginRight="@dimen/gap_right"
-        layout="@layout/layout_communal_indent_bottom"/>
+        android:layout_marginRight="@dimen/gap_right"/>
 </LinearLayout>
