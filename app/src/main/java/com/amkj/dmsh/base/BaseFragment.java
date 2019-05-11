@@ -203,7 +203,7 @@ public abstract class BaseFragment extends ImmersionFragment {
 
     //判断懒加载条件
     public void prepareFetchData() {
-        if (isVisibleToUser && isViewInitiated && isLazy() && !isDataInitiated) {
+        if (isVisibleToUser && isViewInitiated && isLazy() && !isDataInitiated()) {
             loadData();
             isDataInitiated = true;
         }
@@ -213,6 +213,12 @@ public abstract class BaseFragment extends ImmersionFragment {
     protected boolean isLazy() {
         return isLazy;
     }
+
+    //判断是否每次可见时都加载数据
+    protected boolean isDataInitiated() {
+        return isDataInitiated;
+    }
+
 
 
     /**

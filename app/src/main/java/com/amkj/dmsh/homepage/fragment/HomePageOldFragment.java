@@ -143,7 +143,6 @@ public class HomePageOldFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        isLazy = false;
         smart_refresh_home.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             loadData();
