@@ -60,9 +60,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 
-;
-;
-
 /**
  * Created by atd48 on 2016/8/24.
  * 待评价

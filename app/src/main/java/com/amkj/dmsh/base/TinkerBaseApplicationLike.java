@@ -46,7 +46,6 @@ import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
@@ -268,12 +267,12 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         }
         super.onCreate();
 //        initBaiCHotFix();
-        if (LeakCanary.isInAnalyzerProcess(getApplication())) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not setContext your app in this process.
-            return;
-        }
-        LeakCanary.install(getApplication());
+//        if (LeakCanary.isInAnalyzerProcess(getApplication())) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not setContext your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(getApplication());
         initAutoSizeScreen();
         //        LinkedMe 深度链接
         initLinkMe();

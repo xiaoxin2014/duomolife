@@ -269,7 +269,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
             intentFView.tv_border_second_blue.setTag(R.id.tag_first, CONFIRM_ORDER);
             intentFView.tv_border_second_blue.setTag(R.id.tag_second, orderListBean);
             intentFView.tv_border_second_blue.setOnClickListener(this);
-        } else if (30 <= statusCode && statusCode <= 40) {
+        } else if (30 <= statusCode && statusCode <= 41) {
             if (statusCode == 40) { //已评价状态
 //                评价晒单
                 if (orderListBean.isBaskReader()) {
