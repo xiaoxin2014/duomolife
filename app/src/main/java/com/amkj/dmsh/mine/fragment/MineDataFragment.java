@@ -236,6 +236,7 @@ public class MineDataFragment extends BaseFragment {
         rv_mine_indent.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         indentTypeAdapter = new IndentTypeAdapter(getActivity(), indentTypeList);
         rv_mine_indent.setAdapter(indentTypeAdapter);
+        rv_mine_indent.setNestedScrollingEnabled(false);
         indentTypeAdapter.setOnItemClickListener((adapter, view, position) -> {
             QualityTypeBean qualityTypeBean = (QualityTypeBean) view.getTag();
             if (qualityTypeBean != null) {

@@ -466,6 +466,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         productPage = 1;
         themePage = 1;
         page = 1;
+        qualityWelfareHeaderAdapter.setPage(1);
         getData();
     }
 
