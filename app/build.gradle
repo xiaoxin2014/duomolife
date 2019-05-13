@@ -160,6 +160,7 @@ dependencies {
 
     //    下拉刷新
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-21'
+    implementation 'xiao.free.horizontalrefreshlayout:lib:v0.1.2'
 
     //    leakcanary 内存
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
