@@ -11,10 +11,13 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+
+
 
 /**
  * @author LGuiPeng
@@ -31,20 +34,24 @@ public class MarketUtils {
         MarketPackages.add("com.huawei.appmarket");
 //        小米应用商店
         MarketPackages.add("com.xiaomi.market");
+//        魅族应用商店
+        MarketPackages.add("com.meizu.mstore");
+//        联想应用商店
+        MarketPackages.add("com.lenovo.leos.appstore");
+//        OPPO应用商店
+        MarketPackages.add("com.oppo.market");
+//        VIVO应用商店
+        MarketPackages.add("com.bbk.appstore");
 //        应用宝
         MarketPackages.add("com.tencent.android.qqdownloader");
 //        百度手机助手
         MarketPackages.add("com.baidu.appsearch");
 //        360手机助手
         MarketPackages.add("com.qihoo.appstore");
-//        魅族应用商店
-        MarketPackages.add("com.meizu.mstore");
-//        联想应用商店
-        MarketPackages.add("com.lenovo.leos.appstore");
-//        安卓市场
-        MarketPackages.add("com.android.vending");
 //        豌豆荚
-//        MarketPackages.add("com.wandoujia.phoenix2");
+        MarketPackages.add("com.wandoujia.phoenix2");
+//        谷歌市场
+        MarketPackages.add("com.android.vending");
     }
 
     public static List<String> getMarketPackages() {

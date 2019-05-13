@@ -66,6 +66,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
+import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
@@ -2665,20 +2666,52 @@ public class ConstantMethod {
      * 获取应用市场
      */
     public static void getMarketApp(Context context, String hintText) {
-        //        获取已安装应用商店的包名列表
+        //        获取已安装应用的包名列表
         try {
             List<PackageInfo> packageInfo = context.getPackageManager().getInstalledPackages(0);
             List<String> marketPackages = MarketUtils.getMarketPackages();
+            //本地安装的应用商店列表
+            List<String> installList = new ArrayList<>();
             String appMarketStore = "";
-            outLoop:
             for (int i = 0; i < packageInfo.size(); i++) {
-                for (int j = 0; j < marketPackages.size(); j++) {
-                    if (packageInfo.get(i).packageName.equals(marketPackages.get(j))) {
-                        appMarketStore = marketPackages.get(j);
-                        break outLoop;
-                    }
+                String packageName = packageInfo.get(i).packageName;
+                if (marketPackages.contains(packageName) && !installList.contains(packageName)) {
+                    installList.add(packageName);
                 }
             }
+            //获取本地是否安装官方应用商店(优先跳转厂商官方应用商店)
+            String model = DeviceUtils.getManufacturer().toLowerCase();
+            switch (model) {
+                case "huawei":
+                    if (installList.contains("com.huawei.appmarket"))
+                        appMarketStore = "com.huawei.appmarket";
+                    break;
+                case "meizu":
+                    if (installList.contains("com.meizu.mstore"))
+                        appMarketStore = "com.meizu.mstore";
+                    break;
+                case "xiaomi":
+                    if (installList.contains("com.xiaomi.market"))
+                        appMarketStore = "com.xiaomi.market";
+                    break;
+                case "oppo":
+                    if (installList.contains("com.oppo.market"))
+                        appMarketStore = "com.oppo.market";
+                    break;
+                case "vivo":
+                    if (installList.contains("com.bbk.appstore"))
+                        appMarketStore = "com.bbk.appstore";
+                    break;
+                case "lenovo":
+                    if (installList.contains("com.lenovo.leos.appstore"))
+                        appMarketStore = "com.lenovo.leos.appstore";
+                    break;
+                default:
+                    if (installList.size() > 0)
+                        appMarketStore = installList.get(0);
+                    break;
+            }
+
             if (!TextUtils.isEmpty(appMarketStore)) {
                 try {
                     MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
