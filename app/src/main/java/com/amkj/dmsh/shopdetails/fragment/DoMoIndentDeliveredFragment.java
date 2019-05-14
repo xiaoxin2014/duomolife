@@ -73,6 +73,7 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
     private float screenHeight;
     private InquiryOrderEntry inquiryOrderEntry;
     private AlertDialogHelper alertDialogHelper;
+    private boolean isOnPause;
 
     @Override
     protected int getContentView() {
@@ -228,7 +229,7 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                 } else if (!code.equals(EMPTY_CODE)) {
                     showToast(getActivity(), msg);
-                }else{
+                } else {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
@@ -249,8 +250,8 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        params.put("orderProductId",0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        params.put("orderProductId", 0);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -271,4 +272,14 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
     protected boolean isDataInitiated() {
         return false;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isOnPause) {
+            loadData();
+        }
+        isOnPause = true;
+    }
+
 }

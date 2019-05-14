@@ -396,4 +396,13 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
     protected boolean isDataInitiated() {
         return false;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isOnPause) {
+            loadData();
+        }
+        isOnPause = true;
+    }
 }
