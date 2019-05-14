@@ -45,15 +45,16 @@ public class DirectMyCouponActivity extends BaseActivity {
         getLoginStatus(this);
         tv_header_titleAll.setText("优惠券");
         header_shared.setVisibility(View.INVISIBLE);
-        stdMineCoupon.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+        stdMineCoupon.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         setCouponData();
     }
 
     private void setCouponData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         CouponStatusAdapter couponStatusAdapter = new CouponStatusAdapter(getSupportFragmentManager());
+        vpMineCoupon.setOffscreenPageLimit(couponStatusAdapter.getCount() - 1);
         vpMineCoupon.setAdapter(couponStatusAdapter);
         stdMineCoupon.setViewPager(vpMineCoupon);
     }

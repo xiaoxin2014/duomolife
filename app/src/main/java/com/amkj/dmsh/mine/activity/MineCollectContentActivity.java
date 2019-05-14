@@ -34,10 +34,12 @@ public class MineCollectContentActivity extends BaseActivity {
     SlidingTabLayout communal_stl_tab;
     @BindView(R.id.vp_content_contain)
     ViewPager vp_content_contain;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_mine_col_content;
     }
+
     @Override
     protected void initViews() {
         getLoginStatus(this);
@@ -45,11 +47,12 @@ public class MineCollectContentActivity extends BaseActivity {
     }
 
     private void getCollectContentData() {
-        if(userId>0){
+        if (userId > 0) {
             tv_header_titleAll.setText("收藏内容");
             tv_header_shared.setVisibility(View.GONE);
-            communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
+            communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
             MineContentPageAdapter mineContentPageAdapter = new MineContentPageAdapter(getSupportFragmentManager());
+            vp_content_contain.setOffscreenPageLimit(mineContentPageAdapter.getCount() - 1);
             vp_content_contain.setAdapter(mineContentPageAdapter);
             communal_stl_tab.setViewPager(vp_content_contain);
         }

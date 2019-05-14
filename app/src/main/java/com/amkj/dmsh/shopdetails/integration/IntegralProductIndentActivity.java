@@ -56,9 +56,11 @@ public class IntegralProductIndentActivity extends BaseActivity {
     }
 
     private void setFragmentAdapter() {
-        if(userId>0){
-            stl_integral_indent.setTextsize(AutoSizeUtils.mm2px(mAppContext,28));
-            vp_integral_indent_container.setAdapter(new IntegralIndentPagerAdapter(getSupportFragmentManager()));
+        if (userId > 0) {
+            stl_integral_indent.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
+            IntegralIndentPagerAdapter integralIndentPagerAdapter = new IntegralIndentPagerAdapter(getSupportFragmentManager());
+            vp_integral_indent_container.setOffscreenPageLimit(integralIndentPagerAdapter.getCount() - 1);
+            vp_integral_indent_container.setAdapter(integralIndentPagerAdapter);
             stl_integral_indent.setViewPager(vp_integral_indent_container);
         }
     }
@@ -73,11 +75,12 @@ public class IntegralProductIndentActivity extends BaseActivity {
     void foundService() {
         QyServiceUtils.getQyInstance()
                 .openQyServiceChat(this
-                        , "积分订单列表","");
+                        , "积分订单列表", "");
     }
 
     @Override
-    protected void loadData() {}
+    protected void loadData() {
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

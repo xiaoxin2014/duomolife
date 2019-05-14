@@ -42,8 +42,8 @@ import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, BaseViewHolder> {
     private final Activity context;
     private final String type;
-    private int page = 1;
     private final List<DMLThemeBean> mDMLThemeBeanList;
+    private Map<Integer, Integer> pageMap = new HashMap<>();
 
     public QualityOsMailHeaderAdapter(Activity context, List<DMLThemeBean> dmlThemeBeanList, String type) {
         super(R.layout.adapter_welfare_header_item, dmlThemeBeanList);
@@ -111,17 +111,18 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
             }
         });
         horGvAdapter.setOnLoadMoreListener(() -> {
-            page++;
+            Integer page = pageMap.get(helper.getAdapterPosition());
+            pageMap.put(helper.getAdapterPosition(), page == null ? 2 : page + 1);
             getWelfareThemeData(horGvAdapter, helper.getAdapterPosition());
         }, rv_wrap_bar_none);
     }
 
-    //    福利社主题商品列表
+    //关联商品分页处理
     private void getWelfareThemeData(DuMoLifeHorRecyclerAdapter horGvAdapter, int position) {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
-        params.put("showCount", 1);
-        params.put("goodsCurrentPage", page);
+        params.put("showCount", mDMLThemeBeanList.size());
+        params.put("goodsCurrentPage", pageMap.get(position).intValue());
         params.put("goodsShowCount", ConstantVariable.TOTAL_COUNT_TEN);
         NetLoadUtils.getNetInstance().loadNetDataPost(context, H_DML_THEME
                 , params, new NetLoadListenerHelper() {
@@ -132,7 +133,14 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                         if (dmlTheme != null) {
                             List<DMLThemeBean> themeList = dmlTheme.getThemeList();
                             if (themeList != null && themeList.size() > 0) {
-                                DMLThemeBean dmlThemeBean = themeList.get(0);
+                                int id = mDMLThemeBeanList.get(position).getId();
+                                DMLThemeBean dmlThemeBean = null;
+                                for (int i = 0; i < themeList.size(); i++) {
+                                    if (id == themeList.get(position).getId()) {
+                                        dmlThemeBean = themeList.get(position);
+                                        break;
+                                    }
+                                }
                                 if (dmlThemeBean != null) {
                                     List<DMLGoodsBean> goods = dmlThemeBean.getGoods();
                                     if (goods != null && goods.size() > 0) {
@@ -145,6 +153,8 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                                     } else {
                                         horGvAdapter.loadMoreEnd();
                                     }
+                                } else {
+                                    horGvAdapter.loadMoreEnd();
                                 }
                             } else {
                                 horGvAdapter.loadMoreEnd();
@@ -161,7 +171,7 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                 });
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public void refreshPage() {
+        pageMap.clear();
     }
 }
