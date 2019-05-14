@@ -282,7 +282,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
                             orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                         } else if (!code.equals(EMPTY_CODE)) {
                             showToast(getActivity(), msg);
-                        }else{
+                        } else {
                             doMoIndentListAdapter.loadMoreEnd();
                         }
                         doMoIndentListAdapter.notifyDataSetChanged();
@@ -304,7 +304,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -324,5 +324,14 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
     @Override
     protected boolean isDataInitiated() {
         return false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isOnPause) {
+            loadData();
+        }
+        isOnPause = true;
     }
 }

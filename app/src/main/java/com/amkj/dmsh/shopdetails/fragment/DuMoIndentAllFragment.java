@@ -22,7 +22,6 @@ import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoB
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
@@ -104,7 +103,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private OrderListBean orderBean;
     private DirectAppraisePassBean directAppraisePassBean;
-    private boolean isOnPause;
+    private boolean isOnPause = false;
     private int scrollY = 0;
     private float screenHeight;
     private InquiryOrderEntry inquiryOrderEntry;
@@ -185,8 +184,6 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 orderBean = orderListBean;
                 Intent intent = new Intent();
                 Bundle bundle;
-                AlertSettingBean alertSettingBean;
-                AlertSettingBean.AlertData alertData;
                 switch (type) {
                     case BUY_AGAIN:
 //                        再次购买
@@ -603,5 +600,14 @@ public class DuMoIndentAllFragment extends BaseFragment {
     @Override
     protected boolean isDataInitiated() {
         return false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isOnPause) {
+            loadData();
+        }
+        isOnPause = true;
     }
 }
