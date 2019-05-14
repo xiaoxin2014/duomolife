@@ -322,7 +322,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         params.put("currentPage", themePage);
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("goodsCurrentPage", 1);
-        params.put("goodsShowCount", 3);
+        params.put("goodsShowCount",TOTAL_COUNT_TEN);
         NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, H_DML_THEME
                 , params, new NetLoadListenerHelper() {
                     @Override
@@ -466,7 +466,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         productPage = 1;
         themePage = 1;
         page = 1;
-        qualityWelfareHeaderAdapter.setPage(1);
+        qualityWelfareHeaderAdapter.refreshPage();
         getData();
     }
 
