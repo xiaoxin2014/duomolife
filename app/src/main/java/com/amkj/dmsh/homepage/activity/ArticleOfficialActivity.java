@@ -414,7 +414,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     private void getArticleData() {
         Map<String, String> params = new HashMap<>();
-        params.put("id", String.valueOf(19772));
+        params.put("id", String.valueOf(artId));
         /**
          * 3.1.8 加入并列商品 两排 三排
          */

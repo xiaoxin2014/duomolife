@@ -70,7 +70,6 @@ import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_PRO;
 
 
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -269,7 +268,6 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         page = 1;
         getCarCount();
         getBuyListDetailData();
-        getBuyListRecommend();
     }
 
     @Override
@@ -280,6 +278,49 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    private void getBuyListDetailData() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                itemDescriptionList.clear();
+                Gson gson = new Gson();
+                ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
+                if (shopDetailsEntity != null) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
+                        //记录埋点参数sourceId(每周优选id)
+                        ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
+//                        //配置封面图
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
+                                , shopBuyDetailBean.getCoverImgUrl());
+                        List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
+                        if (descriptionBeanList != null) {
+//                            //筛选空行
+//                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
+//                            while (iterator.hasNext()) {
+//                                CommunalDetailBean bean = iterator.next();
+//                                if ("text".equals(bean.getType()) && bean.getContent() instanceof String && "<p><br/></p>".equals(bean.getContent())) {
+//                                    iterator.remove();
+//                                }
+//                            }
+
+                            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
+                        }
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(QualityWeekOptimizedActivity.this, shopDetailsEntity.getMsg());
+                    }
+                    communalDetailAdapter.setNewData(itemDescriptionList);
+                    getBuyListRecommend();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                getBuyListRecommend();
+            }
+        });
     }
 
     private void getBuyListRecommend() {
@@ -319,54 +360,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         qualityBuyListAdapter.loadMoreEnd(true);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityBuyListBeanList, qualityBuyListEntity);
                     }
-
-                    @Override
-                    public void netClose() {
-                        showToast(QualityWeekOptimizedActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(QualityWeekOptimizedActivity.this, R.string.invalidData);
-                    }
                 });
-    }
-
-    private void getBuyListDetailData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                itemDescriptionList.clear();
-                Gson gson = new Gson();
-                ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
-                if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
-                        shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
-                        //记录埋点参数sourceId(每周优选id)
-                        ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
-//                        //配置封面图
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
-                                , shopBuyDetailBean.getCoverImgUrl());
-                        List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                        if (descriptionBeanList != null) {
-//                            //筛选空行
-//                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
-//                            while (iterator.hasNext()) {
-//                                CommunalDetailBean bean = iterator.next();
-//                                if ("text".equals(bean.getType()) && bean.getContent() instanceof String && "<p><br/></p>".equals(bean.getContent())) {
-//                                    iterator.remove();
-//                                }
-//                            }
-
-                            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
-                        }
-                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityWeekOptimizedActivity.this, shopDetailsEntity.getMsg());
-                    }
-                    communalDetailAdapter.setNewData(itemDescriptionList);
-                }
-            }
-        });
     }
 
     class ShopBuyListView {

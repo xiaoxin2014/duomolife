@@ -50,7 +50,6 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
@@ -364,7 +363,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
 
     private void setData(QualityWefBean qualityWefBean) {
-        GlideImageLoaderUtil.loadCenterCrop(DoMoLifeWelfareDetailsActivity.this, welfareHeaderView.iv_welfare_detail_bg, qualityWefBean.getPicUrl());
         tv_header_titleAll.setText(getStrings(qualityWefBean.getTitle()));
         if (!TextUtils.isEmpty(qualityWefBean.getSubtitle())) {
             welfareHeaderView.tv_welfare_details_content.setText(qualityWefBean.getSubtitle());
