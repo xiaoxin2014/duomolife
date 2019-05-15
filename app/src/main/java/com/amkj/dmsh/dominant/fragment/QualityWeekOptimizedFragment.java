@@ -249,12 +249,54 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
         page = 1;
         getCarCount();
         getBuyListDetailData();
-        getBuyListRecommend();
     }
 
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    private void getBuyListDetailData() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                itemDescriptionList.clear();
+                Gson gson = new Gson();
+                ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
+                if (shopDetailsEntity != null) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
+                        //记录埋点参数sourceId(每周优选id)
+                        ConstantMethod.saveSourceId(QualityWeekOptimizedFragment.class.getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
+//                        //配置封面图
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), shopBuyListView.iv_communal_cover_wrap
+                                , shopBuyDetailBean.getCoverImgUrl());
+                        List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
+                        if (descriptionBeanList != null) {
+//                            //筛选空行
+//                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
+//                            while (iterator.hasNext()) {
+//                                CommunalDetailBean bean = iterator.next();
+//                                if ("text".equals(bean.getType()) && bean.getContent() instanceof String && "<p><br/></p>".equals(bean.getContent())) {
+//                                    iterator.remove();
+//                                }
+//                            }
+
+                            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
+                        }
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), shopDetailsEntity.getMsg());
+                    }
+                    communalDetailAdapter.setNewData(itemDescriptionList);
+                    getBuyListRecommend();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                getBuyListRecommend();
+            }
+        });
     }
 
     private void getBuyListRecommend() {
@@ -294,54 +336,7 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                         qualityBuyListAdapter.loadMoreEnd(true);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityBuyListBeanList, qualityBuyListEntity);
                     }
-
-                    @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
-                    }
                 });
-    }
-
-    private void getBuyListDetailData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_WEEK_OPTIMIZED_DETAIL, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                itemDescriptionList.clear();
-                Gson gson = new Gson();
-                ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
-                if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
-                        shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
-                        //记录埋点参数sourceId(每周优选id)
-                        ConstantMethod.saveSourceId(QualityWeekOptimizedFragment.class.getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
-//                        //配置封面图
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), shopBuyListView.iv_communal_cover_wrap
-                                , shopBuyDetailBean.getCoverImgUrl());
-                        List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                        if (descriptionBeanList != null) {
-//                            //筛选空行
-//                            Iterator<CommunalDetailBean> iterator = descriptionBeanList.iterator();
-//                            while (iterator.hasNext()) {
-//                                CommunalDetailBean bean = iterator.next();
-//                                if ("text".equals(bean.getType()) && bean.getContent() instanceof String && "<p><br/></p>".equals(bean.getContent())) {
-//                                    iterator.remove();
-//                                }
-//                            }
-
-                            itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
-                        }
-                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), shopDetailsEntity.getMsg());
-                    }
-                    communalDetailAdapter.setNewData(itemDescriptionList);
-                }
-            }
-        });
     }
 
 

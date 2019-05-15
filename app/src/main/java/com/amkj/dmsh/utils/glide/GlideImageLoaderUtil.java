@@ -71,7 +71,7 @@ public class GlideImageLoaderUtil {
         if (null != context) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions().fitCenter()
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
                     .into(iv);
@@ -90,7 +90,7 @@ public class GlideImageLoaderUtil {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
                             .error(R.drawable.load_loading_image)
-                            .diskCacheStrategy(DiskCacheStrategy.DATA))
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                     .into(iv);
         }
     }
@@ -104,9 +104,11 @@ public class GlideImageLoaderUtil {
         if (null != context) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)
-                            .centerCrop().error(R.drawable.load_loading_image))
-                    .transition(withCrossFade())
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                            .centerCrop()
+                            .placeholder(R.drawable.load_loading_image)
+                            .error(R.drawable.load_loading_image))
                     .into(iv);
         }
     }
@@ -121,7 +123,7 @@ public class GlideImageLoaderUtil {
         if (null != context) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .skipMemoryCache(true)
                             .centerCrop().error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
@@ -156,7 +158,7 @@ public class GlideImageLoaderUtil {
     public static void loadThumbCenterCrop(Context context, final ImageView iv, String imgUrl, String waterRemark, boolean isDouble) {
         if (null != context && iv != null) {
             Glide.with(context).load(getThumbImgUrl(imgUrl, waterRemark, isDouble))
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .centerCrop().error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
                     .into(iv);
@@ -188,7 +190,7 @@ public class GlideImageLoaderUtil {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions().dontAnimate()
                             .centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .placeholder(defaultImgResource)
                             .error(errorImgResource)).transition(withCrossFade()).into(iv);
         }
@@ -202,7 +204,7 @@ public class GlideImageLoaderUtil {
     public static void loadHeaderImg(final Context context, final ImageView iv, String imgUrl) {
         if (null != context) {
             Glide.with(context).load(getHeaderThumbImgUrl(imgUrl))
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .centerCrop()
                             .placeholder(R.drawable.default_ava_img)
                             .error(R.drawable.default_ava_img))
@@ -525,17 +527,19 @@ public class GlideImageLoaderUtil {
                         if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).load(imgUrlX)
                                     .apply(new RequestOptions()
+                                            .dontAnimate()
                                             .placeholder(R.drawable.load_loading_image)
                                             .error(R.drawable.load_loading_image)
                                             .skipMemoryCache(true)
-                                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                             .override(imgWidth, imgHeight))
                                     .into(imageViewX);
                         }
                     } catch (Exception e) {
                         if (isContextExisted(context) && imageViewX != null) {
                             Glide.with(context).asDrawable().load(imgUrl)
-                                    .apply(new RequestOptions().dontAnimate()
+                                    .apply(new RequestOptions()
+                                            .dontAnimate()
                                             .placeholder(R.drawable.load_loading_image)
                                             .error(R.drawable.load_loading_image)
                                             .override(imgWidth, imgHeight))
@@ -672,7 +676,7 @@ public class GlideImageLoaderUtil {
                                     .apply(new RequestOptions()
                                             .error(R.drawable.load_loading_image)
                                             .skipMemoryCache(true)
-                                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                             .override(imgWidth, imgHeight))
                                     .into(imageViewX);
                         }
@@ -683,7 +687,7 @@ public class GlideImageLoaderUtil {
                                     .apply(new RequestOptions()
                                             .error(R.drawable.load_loading_image)
                                             .skipMemoryCache(true)
-                                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                             .override(imgWidth, imgHeight))
                                     .into(imageViewX);
                         }
@@ -714,7 +718,7 @@ public class GlideImageLoaderUtil {
                 @Override
                 public void subscribe(ObservableEmitter<File> emitter) {
                     Glide.with(context).download(originalImgUrl).apply(new RequestOptions().skipMemoryCache(true)
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)).listener(new RequestListener<File>() {
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).listener(new RequestListener<File>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
                             emitter.onError(e);
@@ -938,7 +942,7 @@ public class GlideImageLoaderUtil {
                     try {
 //                必须为子线程调用，否则阻塞线程
                         File file = Glide.with(context).downloadOnly().load(picUrl)
-                                .apply(new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.DATA)).submit().get();
+                                .apply(new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.RESOURCE)).submit().get();
                         if (file != null) {
                             FileStreamUtils.forChannel(file, new File(imageFilePath));
                         }
@@ -978,7 +982,7 @@ public class GlideImageLoaderUtil {
                     try {
 //                必须为子线程调用，否则阻塞线程
                         File file = Glide.with(context).downloadOnly().load(picUrl)
-                                .apply(new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.DATA)).submit().get();
+                                .apply(new RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.RESOURCE)).submit().get();
                         if (file != null) {
                             try {
                                 File saveFile = new File(imageFilePath);
