@@ -655,7 +655,7 @@ public class HomeDefalutFragment extends BaseFragment {
             if (i > qualityTypeList.size() - 1) {
                 if (mCatergoryPage - qualityTypeList.size() >= 3) {
                     mSmartLayout.finishLoadMoreWithNoMoreData();
-                    mSmartLayout.setNoMoreData(true);
+                    mSmartLayout.resetNoMoreData();
                 }
                 return;
             }

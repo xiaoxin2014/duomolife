@@ -396,7 +396,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
                                             Glide.with(mContext).load(homeCommonBean.getIcon())
                                                     .apply(new RequestOptions().override(newWidth, newHeight)//
                                                             .error(R.drawable.load_loading_image)
-                                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                                                            .diskCacheStrategy(DiskCacheStrategy.DATA))
                                                     .into(iv_tab_title);
                                         }
                                     }
