@@ -15,8 +15,12 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewProActivity;
+import com.amkj.dmsh.dominant.activity.QualityTypeHotSaleProActivity;
+import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
@@ -126,6 +130,17 @@ public class QyServiceUtils {
                         showToast(context, "暂无订单数据");
                     }
                 } else if (quickEntry.getId() == 2) {
+                    Intent intent = new Intent(context, QualityTypeHotSaleProActivity.class);
+                    context.startActivity(intent);
+                } else if (quickEntry.getId() == 3) {
+                    Intent intent = new Intent(context, DoMoLifeWelfareActivity.class);
+                    context.startActivity(intent);
+                } else if (quickEntry.getId() == 4) {
+                    ConstantMethod.setSkipPath(context, "app://QualityCustomTopicActivity?productType=5", false);
+                } else if (quickEntry.getId() == 5) {
+                    Intent intent = new Intent(context, EditorSelectActivity.class);
+                    context.startActivity(intent);
+                } else if (quickEntry.getId() == 6) {
                     Intent intent = new Intent(context, QualityNewProActivity.class);
                     context.startActivity(intent);
                 }
@@ -222,7 +237,11 @@ public class QyServiceUtils {
         if (userId > 0) {
             pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
         }
-        pageSource.quickEntryList.add(new QuickEntry(2, "新品发布", ""));
+        pageSource.quickEntryList.add(new QuickEntry(2, "热销爆品", ""));
+        pageSource.quickEntryList.add(new QuickEntry(3, "精选专题", ""));
+        pageSource.quickEntryList.add(new QuickEntry(4, "优惠特价", ""));
+        pageSource.quickEntryList.add(new QuickEntry(5, "小编推荐", ""));
+        pageSource.quickEntryList.add(new QuickEntry(6, "新品发布", ""));
         getIndentProductData(context);
 
 //        排队设置
@@ -299,7 +318,7 @@ public class QyServiceUtils {
             array.put(userInfoDataItem("mobile_phone", getStrings(mobile), -1, null, null));
 //            array.add(userInfoDataItem("email", email, -1,null, null)); // email
             array.put(userInfoDataItem("avatar", getStrings(avatar), -1, null, null));
-            if(!TextUtils.isEmpty(avatar)){
+            if (!TextUtils.isEmpty(avatar)) {
                 uiCustomization.rightAvatar = avatar;
             }
         }
@@ -333,6 +352,7 @@ public class QyServiceUtils {
 
     /**
      * 注销用户
+     *
      * @param context
      */
     public void logoutQyUser(Context context) {

@@ -284,6 +284,43 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
         private String titleX;
         private String type;
         private int itemType;
+        private String waterRemark;
+        private String activityTag;
+        private List<LikedProductBean.MarketLabelBean> marketLabelList;
+        private int quantity = 1;
+
+
+        public String getWaterRemark() {
+            return waterRemark;
+        }
+
+        public void setWaterRemark(String waterRemark) {
+            this.waterRemark = waterRemark;
+        }
+
+        public String getActivityTag() {
+            return activityTag;
+        }
+
+        public void setActivityTag(String activityTag) {
+            this.activityTag = activityTag;
+        }
+
+        public List<LikedProductBean.MarketLabelBean> getMarketLabelList() {
+            return marketLabelList;
+        }
+
+        public void setMarketLabelList(List<LikedProductBean.MarketLabelBean> marketLabelList) {
+            this.marketLabelList = marketLabelList;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
 
         public String getPicUrlX() {
             return picUrlX;

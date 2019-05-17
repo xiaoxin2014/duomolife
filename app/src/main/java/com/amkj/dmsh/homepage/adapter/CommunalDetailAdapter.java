@@ -740,13 +740,39 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             }
                         }
                     });
-                    GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_details_goods_image), getStrings(goodsParataxisBean.getPicUrlX()));
+                    String picUrlX = goodsParataxisBean.getPicUrlX();
+                    if (!TextUtils.isEmpty(goodsParataxisBean.getWaterRemark())) {
+                        picUrlX = GlideImageLoaderUtil.getWaterMarkImgUrl(goodsParataxisBean.getPicUrlX(), goodsParataxisBean.getWaterRemark());
+                    }
+                    GlideImageLoaderUtil.loadCenterCrop(context, iv_details_goods_image, getStrings(picUrlX));
                     TextView tv_details_goods_market_price = helper.getView(R.id.tv_details_goods_market_price);
                     tv_details_goods_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
-                    helper.setText(R.id.tv_details_goods_name, getStrings(goodsParataxisBean.getTitleX()))
+                    helper.setGone(R.id.iv_com_pro_tag_out, goodsParataxisBean.getQuantity() < 1)
+                            .setText(R.id.tv_details_goods_name, getStrings(goodsParataxisBean.getTitleX()))
                             .setText(R.id.tv_details_goods_price, getStringsChNPrice(context, goodsParataxisBean.getPrice()))
                             .setText(R.id.tv_details_goods_market_price, getStringsChNPrice(context, goodsParataxisBean.getMarketPrice()))
                             .itemView.setTag(R.id.iv_tag, goodsParataxisBean);
+
+                    FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
+                    if (!TextUtils.isEmpty(goodsParataxisBean.getActivityTag()) || (goodsParataxisBean.getMarketLabelList() != null
+                            && goodsParataxisBean.getMarketLabelList().size() > 0)) {
+                        fbl_label.setVisibility(View.VISIBLE);
+                        fbl_label.removeAllViews();
+                        if (!TextUtils.isEmpty(goodsParataxisBean.getActivityTag())) {
+                            fbl_label.addView(getLabelInstance().createLabelText(context, goodsParataxisBean.getActivityTag(), 1));
+                        }
+                        if (goodsParataxisBean.getMarketLabelList() != null
+                                && goodsParataxisBean.getMarketLabelList().size() > 0) {
+                            for (LikedProductBean.MarketLabelBean marketLabelBean : goodsParataxisBean.getMarketLabelList()) {
+                                if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                                    fbl_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
+                                    if (fbl_label.getChildCount() >= 2) break;
+                                }
+                            }
+                        }
+                    } else {
+                        fbl_label.setVisibility(View.GONE);
+                    }
                     break;
             }
         }

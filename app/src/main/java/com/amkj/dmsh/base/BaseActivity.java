@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,7 +28,6 @@ import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,7 +47,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
 
-public abstract class BaseActivity extends RxAppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     public KProgressHUD loadHud;
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
