@@ -35,28 +35,28 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, LikedProductBean goodsBean) {
-        if (goodsBean == null) return;
-        String waterRemark = goodsBean.getWaterRemark();
-        String goodsUrl = goodsBean.getPicUrl();
+    protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
+        if (likedProductBean == null) return;
+        String waterRemark = likedProductBean.getWaterRemark();
+        String goodsUrl = likedProductBean.getPicUrl();
         if (!TextUtils.isEmpty(waterRemark)) {
-            goodsUrl = GlideImageLoaderUtil.getWaterMarkImgUrl(goodsBean.getPicUrl(), goodsBean.getWaterRemark());
+            goodsUrl = GlideImageLoaderUtil.getWaterMarkImgUrl(likedProductBean.getPicUrl(), likedProductBean.getWaterRemark());
         }
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsUrl);
-        helper.setGone(R.id.iv_com_pro_tag_out, goodsBean.getQuantity() < 1)
-                .setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()))
-                .setText(R.id.tv_name, getStrings(goodsBean.getName()));
+        helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
+                .setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, likedProductBean.getPrice()))
+                .setText(R.id.tv_name, getStrings(likedProductBean.getName()));
         FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
-        if (!TextUtils.isEmpty(goodsBean.getActivityTag()) || (goodsBean.getMarketLabelList() != null
-                && goodsBean.getMarketLabelList().size() > 0)) {
+        if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
+                && likedProductBean.getMarketLabelList().size() > 0)) {
             fbl_label.setVisibility(View.VISIBLE);
             fbl_label.removeAllViews();
-            if (!TextUtils.isEmpty(goodsBean.getActivityTag())) {
-                fbl_label.addView(getLabelInstance().createLabelText(mContext, goodsBean.getActivityTag(), 1));
+            if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
+                fbl_label.addView(getLabelInstance().createLabelText(mContext, likedProductBean.getActivityTag(), 1));
             }
-            if (goodsBean.getMarketLabelList() != null
-                    && goodsBean.getMarketLabelList().size() > 0) {
-                for (LikedProductBean.MarketLabelBean marketLabelBean : goodsBean.getMarketLabelList()) {
+            if (likedProductBean.getMarketLabelList() != null
+                    && likedProductBean.getMarketLabelList().size() > 0) {
+                for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                     if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                         fbl_label.addView(getLabelInstance().createLabelText(mContext, marketLabelBean.getTitle(), 0));
                         if (fbl_label.getChildCount()>=2) break;
@@ -69,10 +69,10 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
 
         helper.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
-            intent.putExtra("productId", String.valueOf(goodsBean.getId()));
+            intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
             mContext.startActivity(intent);
 
         });
-        helper.itemView.setTag(goodsBean);
+        helper.itemView.setTag(likedProductBean);
     }
 }

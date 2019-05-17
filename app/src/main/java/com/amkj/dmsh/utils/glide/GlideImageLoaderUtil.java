@@ -68,7 +68,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadFitCenter(Context context, ImageView iv, String imgUrl) {
-        if (null != context) {
+        if (null != context && iv != null) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions().fitCenter()
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -86,7 +86,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadImage(Context context, final ImageView iv, String imgUrl) {
-        if (isContextExisted(context)) {
+        if (isContextExisted(context) && iv != null) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
                             .error(R.drawable.load_loading_image)
@@ -101,7 +101,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadCenterCrop(Context context, final ImageView iv, String imgUrl) {
-        if (null != context) {
+        if (null != context && iv != null) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -118,7 +118,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadCenterCropListener(Context context, final ImageView iv, String imgUrl
             , ImageLoaderListener imageLoaderListener) {
-        if (null != context) {
+        if (null != context && iv != null) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -171,7 +171,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadCenterCrop(Context context, ImageView iv, String imgUrl,
                                       int defaultImgResource) {
-        if (null != context) {
+        if (null != context && iv != null) {
             loadCenterCrop(context, iv, imgUrl, defaultImgResource, R.drawable.load_loading_image);
         }
     }
@@ -184,7 +184,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadCenterCrop(Context context, ImageView iv, String imgUrl,
                                       int defaultImgResource, int errorImgResource) {
-        if (null != context) {
+        if (null != context && iv != null) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions().dontAnimate()
                             .centerCrop()
@@ -200,7 +200,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadHeaderImg(final Context context, final ImageView iv, String imgUrl) {
-        if (null != context) {
+        if (null != context && iv != null) {
             Glide.with(context).load(getHeaderThumbImgUrl(imgUrl))
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
                             .centerCrop()
@@ -331,7 +331,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadWithFitCenter(Context context, ImageView iv, String imgUrl,
                                          int defaultImgResource) {
-        if (null != context) {
+        if (null != context && iv != null) {
             Glide.with(context).load(imgUrl)
                     .apply(new RequestOptions()
                             .fitCenter().placeholder(defaultImgResource))
@@ -347,7 +347,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadRoundImg(final Context context, final ImageView iv,
                                     String imgUrl, int radius) {
-        if (null != context) {
+        if (null != context && iv != null) {
             loadRoundImg(context, iv, imgUrl, radius, R.drawable.load_loading_image);
         }
     }
@@ -360,7 +360,7 @@ public class GlideImageLoaderUtil {
      */
     public static void loadRoundImg(final Context context, final ImageView iv,
                                     String imgUrl, int radius, int defaultImgResource) {
-        if (null != context) {
+        if (null != context && iv != null) {
             if (TextUtils.isEmpty(imgUrl)) {
                 imgUrl = "android.resource://com.amkj.dmsh/" + defaultImgResource;
             }
@@ -468,7 +468,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
-        if (null != context && !TextUtils.isEmpty(imgUrl)) {
+        if (null != context && imageView != null && !TextUtils.isEmpty(imgUrl)) {
             // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
             Map<String, Object> params = new HashMap<>();
             params.put("imgUrl", imgUrl);
@@ -624,7 +624,7 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadGif(final Context context, final ImageView imageView, String imgUrl) {
-        if (null != context) {
+        if (null != context && imageView != null) {
             // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
             Map<String, Object> params = new HashMap<>();
             params.put("imgUrl", imgUrl);
@@ -1088,61 +1088,4 @@ public class GlideImageLoaderUtil {
          */
         return new int[]{options.outWidth, options.outHeight};
     }
-
-    /**
-     * 获取当前应用最大能展示的图片尺寸
-     */
-//    public static int getMaxLoader() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            return getGLESTextureLimitEqualAboveLollipop();
-//        } else {
-//            return getGLESTextureLimitBelowLollipop();
-//        }
-//    }
-//
-//    private static int getGLESTextureLimitBelowLollipop() {
-//        int[] maxSize = new int[1];
-//        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
-//        return maxSize[0];
-//    }
-//
-//    private static int getGLESTextureLimitEqualAboveLollipop() {
-//        EGL10 egl = (EGL10) EGLContext.getEGL();
-//        EGLDisplay dpy = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-//        int[] vers = new int[2];
-//        egl.eglInitialize(dpy, vers);
-//        int[] configAttr = {
-//                EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER,
-//                EGL10.EGL_LEVEL, 0,
-//                EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
-//                EGL10.EGL_NONE
-//        };
-//        EGLConfig[] configs = new EGLConfig[1];
-//        int[] numConfig = new int[1];
-//        egl.eglChooseConfig(dpy, configAttr, configs, 1, numConfig);
-//        if (numConfig[0] == 0) {// TROUBLE! No config found.
-//        }
-//        EGLConfig config = configs[0];
-//        int[] surfAttr = {
-//                EGL10.EGL_WIDTH, 64,
-//                EGL10.EGL_HEIGHT, 64,
-//                EGL10.EGL_NONE
-//        };
-//        EGLSurface surf = egl.eglCreatePbufferSurface(dpy, config, surfAttr);
-//        final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;  // missing in EGL10
-//        int[] ctxAttrib = {
-//                EGL_CONTEXT_CLIENT_VERSION, 1,
-//                EGL10.EGL_NONE
-//        };
-//        EGLContext ctx = egl.eglCreateContext(dpy, config, EGL10.EGL_NO_CONTEXT, ctxAttrib);
-//        egl.eglMakeCurrent(dpy, surf, surf, ctx);
-//        int[] maxSize = new int[1];
-//        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
-//        egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE,
-//                EGL10.EGL_NO_CONTEXT);
-//        egl.eglDestroySurface(dpy, surf);
-//        egl.eglDestroyContext(dpy, ctx);
-//        egl.eglTerminate(dpy);
-//        return maxSize[0];
-//    }
 }

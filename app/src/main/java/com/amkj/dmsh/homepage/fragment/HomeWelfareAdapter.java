@@ -63,10 +63,11 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
         List<HomeWelfareBean.GoodsBean> goods = item.getGoods();
         List<HomeWelfareBean.GoodsBean> newGoods = new ArrayList<>();
         //最多显示三个
-        for (int i = 0; i < (goods.size() > 3 ? 3 : goods.size()); i++) {
-            newGoods.add(goods.get(i));
+        if (goods!=null){
+            for (int i = 0; i < (goods.size() > 3 ? 3 : goods.size()); i++) {
+                newGoods.add(goods.get(i));
+            }
         }
-
 
         //初始化福利社商品适配器
         BaseQuickAdapter topicGoodsAdapter = new BaseQuickAdapter<HomeWelfareBean.GoodsBean, BaseViewHolder>(R.layout.item_welfear_goods, newGoods) {

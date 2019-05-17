@@ -691,6 +691,8 @@ public class HomeDefalutFragment extends BaseFragment {
                                 }
 
                                 if (likedProductBeanList != null && likedProductBeanList.size() > 0 && ConstantVariable.SUCCESS_CODE.equals(mUserLikedProductEntity.getCode())) {
+                                    //虽然showCount = 6，但是由于置顶商品的原因，返回的商品数量可能会超过showCount控制的数量
+                                    mUserLikedProductEntity.setLikedProductBeanList(likedProductBeanList.subList(0, likedProductBeanList.size() > 6 ? 6 : likedProductBeanList.size()));
                                     mProductList.add(mUserLikedProductEntity);
                                     //按照分类名称排序，因为同步调用多个接口无法保证顺序
                                     Collections.sort(mProductList);
