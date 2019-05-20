@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -76,13 +77,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
-import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
-import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.NORTEXT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_AUDIO;
@@ -105,6 +103,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_RELEV
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getOpenglRenderLimitValue;
 import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
 import static me.jessyan.autosize.utils.AutoSizeUtils.mm2px;
 
@@ -393,153 +392,195 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case NORTEXT:
                 String content = detailObjectBean.getContent();
-                final TextView tv_content_type = holder.getView(R.id.tv_content_type);
+                final EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
                 tv_content_type.setPadding(0, 0, 0, 0);
                 final RelativeLayout rel_communal_image = holder.getView(R.id.rel_communal_image);
                 final ImageView iv_communal_image = holder.getView(R.id.iv_communal_image);
                 if (!TextUtils.isEmpty(content)) {
-                    //                正则匹配br样式
+//                    //                正则匹配br样式
                     content = content.replaceAll(brStyleReg, br);
                     content = content.replaceAll(pTagStart, rTagStart);
                     content = content.replaceAll(pTagEnd, rTagEnd);
                     content = content.replaceAll(blankStyle, " ");
+//
+////                匹配图片地址
+//                    Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
+//                    isImageTag = imgIsFind.find();
+//                    if (isImageTag) {
+//                        //                    匹配网址
+//                        Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
+//                        boolean isImageUrl = aMatcher.find();
+//                        if (isImageUrl) {
+//                            //                    匹配网址
+//                            String tbUrlImgValue = "";
+//                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
+//                            while (matcher.find()) {
+//                                tbUrlImgValue = matcher.group();
+//                                if (matcher.find()) {
+//                                    content = matcher.group();
+//                                }
+//                            }
+//                            iv_communal_image.setTag(R.id.iv_two_tag, tbUrlImgValue);
+//                        } else {
+//                            String stringContent = imgIsFind.group();
+//                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
+//                            while (matcher.find()) {
+//                                content = matcher.group();
+//                            }
+//                        }
+//                        rel_communal_image.setVisibility(View.VISIBLE);
+//                        iv_communal_image.setVisibility(View.VISIBLE);
+//                        tv_content_type.setVisibility(View.GONE);
+//                        iv_communal_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
+//                        iv_communal_image.setTag(R.id.iv_tag, content);
+//                        iv_communal_image.setOnClickListener(this);
+//                        //判断content是不是正确的图片地址
+//                        boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
+//                                content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG"));
+//                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
+//                    } else {
+                    rel_communal_image.setVisibility(View.GONE);
+                    tv_content_type.setVisibility(View.VISIBLE);
 
-//                匹配图片地址
-                    Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
-                    isImageTag = imgIsFind.find();
-                    if (isImageTag) {
-                        //                    匹配网址
-                        Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
-                        boolean isImageUrl = aMatcher.find();
-                        if (isImageUrl) {
-                            //                    匹配网址
-                            String tbUrlImgValue = "";
-                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
-                            while (matcher.find()) {
-                                tbUrlImgValue = matcher.group();
-                                if (matcher.find()) {
-                                    content = matcher.group();
-                                }
+//                //                字体样式
+//                int lineStyleIndex = 0;
+//                int fontStyleTag = content.indexOf(lineStyle);
+//                if (fontStyleTag != -1) {
+//                    try {
+//                        lineStyleIndex = content.indexOf(";", fontStyleTag) > 0 ?
+//                                content.indexOf(";", fontStyleTag) :
+//                                content.indexOf(lineFontEndStyle, fontStyleTag) < 0 ? fontStyleTag + 4
+//                                        : content.indexOf(lineFontEndStyle, fontStyleTag);
+//                        content = content.replaceAll(content.substring(fontStyleTag, lineStyleIndex), "");
+//                    } catch (Exception e) {
+//                        lineStyleIndex = -1;
+//                        e.printStackTrace();
+//                    }
+//                }
+//                    tv_content_type.setGravity(Gravity.LEFT);
+
+//                    tv_content_type.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 30));
+//                    tv_content_type.setTextColor(context.getResources().getColor(R.color.home_text_color));
+//                    ViewGroup.LayoutParams layoutParams = tv_content_type.getLayoutParams();
+//                    tv_content_type.setText("");
+//                if (content.contains(br)
+//                        && ((lineStyleIndex > 0 && !Pattern.compile("[\u4e00-\u9fa5]").matcher(content).find()))) {
+//                    layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 12);
+//                    tv_content_type.setLayoutParams(layoutParams);
+//                } else {
+//                    if (layoutParams.height != -2) {
+//                        layoutParams.height = -2;
+//                        tv_content_type.setLayoutParams(layoutParams);
+//                    }
+//
+//                    //                匹配间距
+//                    if (detailObjectBean.getFirstLinePadding()) {
+//                        tv_content_type.setPadding(0, AutoSizeUtils.mm2px(mAppContext, 10), 0, 0);
+//                    }
+//                }
+                    //                    匹配显示位置
+                    int alignGravityIndex = content.indexOf(alignGravity);
+                    if (alignGravityIndex != -1 && !isImageTag) {
+                        if (content.indexOf(endStyle, alignGravityIndex) != -1) {
+                            String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endStyle, alignGravityIndex)).trim();
+                            if (locationGravity.equals(alignCenter)) {
+                                tv_content_type.setGravity(Gravity.CENTER);
+                            } else if (locationGravity.equals(alignRight)) {
+                                tv_content_type.setGravity(Gravity.RIGHT);
+                            } else {
+                                tv_content_type.setGravity(Gravity.LEFT);
                             }
-                            iv_communal_image.setTag(R.id.iv_two_tag, tbUrlImgValue);
-                        } else {
-                            String stringContent = imgIsFind.group();
-                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
-                            while (matcher.find()) {
-                                content = matcher.group();
+                        } else if (content.indexOf(endDash, alignGravityIndex) != -1) {
+                            String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endDash, alignGravityIndex)).trim();
+                            if (locationGravity.equals(alignCenter)) {
+                                tv_content_type.setGravity(Gravity.CENTER);
+                            } else if (locationGravity.equals(alignRight)) {
+                                tv_content_type.setGravity(Gravity.RIGHT);
+                            } else {
+                                tv_content_type.setGravity(Gravity.LEFT);
                             }
                         }
-                        rel_communal_image.setVisibility(View.VISIBLE);
-                        iv_communal_image.setVisibility(View.VISIBLE);
-                        tv_content_type.setVisibility(View.GONE);
-                        iv_communal_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
-                        iv_communal_image.setTag(R.id.iv_tag, content);
-                        iv_communal_image.setOnClickListener(this);
-                        //判断content是不是正确的图片地址
-                        boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
-                                content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif"));
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
-                    } else {
-                        rel_communal_image.setVisibility(View.GONE);
-                        tv_content_type.setVisibility(View.VISIBLE);
-                        //                    匹配显示位置
-                        int alignGravityIndex = content.indexOf(alignGravity);
-                        if (alignGravityIndex != -1 && !isImageTag) {
-                            if (content.indexOf(endStyle, alignGravityIndex) != -1) {
-                                String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endStyle, alignGravityIndex)).trim();
-                                if (locationGravity.equals(alignCenter)) {
-                                    tv_content_type.setGravity(Gravity.CENTER);
-                                } else if (locationGravity.equals(alignRight)) {
-                                    tv_content_type.setGravity(Gravity.RIGHT);
-                                } else {
-                                    tv_content_type.setGravity(Gravity.LEFT);
-                                }
-                            } else if (content.indexOf(endDash, alignGravityIndex) != -1) {
-                                String locationGravity = content.substring(alignGravityIndex + alignGravity.length(), content.indexOf(endDash, alignGravityIndex)).trim();
-                                if (locationGravity.equals(alignCenter)) {
-                                    tv_content_type.setGravity(Gravity.CENTER);
-                                } else if (locationGravity.equals(alignRight)) {
-                                    tv_content_type.setGravity(Gravity.RIGHT);
-                                } else {
-                                    tv_content_type.setGravity(Gravity.LEFT);
-                                }
-                            }
-                        }
-
-                        RichText.initCacheDir(context);
-                        DrawableGetter drawableGetter = new DrawableGetter() {
-                            @Override
-                            public Drawable getDrawable(ImageHolder holder, RichTextConfig config, TextView textView) {
-                                return context.getResources().getDrawable(R.drawable.load_loading_image);
-                            }
-                        };
-                        RichText.from(content).autoFix(true).autoPlay(false).scaleType(ImageHolder.ScaleType.fit_center)
-                                .placeHolder(drawableGetter)
-                                .errorImage(drawableGetter).fix(new SimpleImageFixCallback() {
-                            @Override
-                            public void onInit(ImageHolder holder) {
-                                super.onInit(holder);
-                            }
-
-                            @Override
-                            public void onSizeReady(ImageHolder holder, int imageWidth, int imageHeight, ImageHolder.SizeHolder sizeHolder) {
-                                int height = (int) (imageHeight * ((screenWidth * 1f) / imageWidth + 1));
-                                holder.setWidth(screenWidth);
-                                holder.setHeight(height);
-                            }
-
-                            @Override
-                            public void onImageReady(ImageHolder holder, int width, int height) {
-                                if (width >= 50) {
-                                    int reallyHeight = (int) (height * ((screenWidth) * 1f / width) + 1);
-                                    if (reallyHeight > 3072) {
-                                        holder.setWidth((int) (width * (3072 * 1f / height) + 1));
-                                        holder.setHeight(3072);
-                                    } else {
-                                        if (screenWidth != 0) {
-                                            holder.setWidth(screenWidth);
-                                            holder.setHeight(reallyHeight);
-                                        }
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(ImageHolder holder, Exception e) {
-                                holder.setSize(screenWidth, AutoSizeUtils.mm2px(mAppContext, 400));
-                                super.onFailure(holder, e);
-                            }
-                        }).imageClick(new OnImageClickListener() {
-                            @Override
-                            public void imageClicked(List<String> imageUrls, int position) {
-                                String key = imageUrls.get(position);
-                                if (loadHud != null) {
-                                    loadHud.show();
-                                }
-                                if (!TextUtils.isEmpty(urlMap.get(key))) {
-                                    skipAliBCWebView(urlMap.get(key));
-                                } else {
-                                    if (loadHud != null) {
-                                        loadHud.dismiss();
-                                    }
-                                    ImageBean imageBean = null;
-                                    List<ImageBean> imageBeanList = new ArrayList<>();
-                                    for (String picUrl : imageUrls) {
-                                        imageBean = new ImageBean();
-                                        imageBean.setPicUrl(picUrl);
-                                        imageBeanList.add(imageBean);
-                                    }
-                                    ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position, null);
-                                }
-                            }
-                        }).urlClick(new OnUrlClickListener() {
-                            @Override
-                            public boolean urlClicked(String url) {
-                                setSkipPath(context, url, false);
-                                return true;
-                            }
-                        }).into(tv_content_type);
                     }
+
+                    RichText.initCacheDir(context);
+                    DrawableGetter drawableGetter = new DrawableGetter() {
+                        @Override
+                        public Drawable getDrawable(ImageHolder holder, RichTextConfig config, TextView textView) {
+                            return context.getResources().getDrawable(R.drawable.load_loading_image);
+                        }
+                    };
+                    RichText.from(content).autoFix(true).scaleType(ImageHolder.ScaleType.fit_xy).autoPlay(true).resetSize(true)
+                            .placeHolder(drawableGetter)
+                            .errorImage(drawableGetter).fix(new SimpleImageFixCallback() {
+                        @Override
+                        public void onInit(ImageHolder holder) {
+                            super.onInit(holder);
+                        }
+
+                        @Override
+                        public void onSizeReady(ImageHolder holder, int imgWidth, int imgHeight, ImageHolder.SizeHolder sizeHolder) {
+                            //图片下载完成（未加载到内存）
+                            try {
+                                int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                                if (imgWidth > 0 && imgHeight > 0) {
+                                    //判断图片宽度是否大于屏幕宽度
+                                    if (imgWidth > screenWidth) {
+                                        int height = screenWidth * imgHeight / imgWidth;
+                                        sizeHolder.setSize(screenWidth, height);
+                                    }
+
+                                    //判断缩放后的高度是否大于限制高度
+                                    int limitHeight = getOpenglRenderLimitValue();
+                                    if (imgHeight > limitHeight) {
+                                        sizeHolder.setSize((int) (limitHeight * 1.0f / (imgHeight * 1.0f) * imgWidth), limitHeight);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onImageReady(ImageHolder holder, int imgWidth, int imgHeight) {
+                            //图片已加载到内存
+                        }
+
+                        @Override
+                        public void onFailure(ImageHolder holder, Exception e) {
+                            holder.setSize(screenWidth, AutoSizeUtils.mm2px(mAppContext, 400));
+                            super.onFailure(holder, e);
+                        }
+                    }).imageClick(new OnImageClickListener() {
+                        @Override
+                        public void imageClicked(List<String> imageUrls, int position) {
+                            String key = imageUrls.get(position);
+                            if (loadHud != null) {
+                                loadHud.show();
+                            }
+                            if (!TextUtils.isEmpty(urlMap.get(key))) {
+                                skipAliBCWebView(urlMap.get(key));
+                            } else {
+                                if (loadHud != null) {
+                                    loadHud.dismiss();
+                                }
+                                ImageBean imageBean = null;
+                                List<ImageBean> imageBeanList = new ArrayList<>();
+                                for (String picUrl : imageUrls) {
+                                    imageBean = new ImageBean();
+                                    imageBean.setPicUrl(picUrl);
+                                    imageBeanList.add(imageBean);
+                                }
+                                ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position, null);
+                            }
+                        }
+                    }).urlClick(new OnUrlClickListener() {
+                        @Override
+                        public boolean urlClicked(String url) {
+                            setSkipPath(context, url, false);
+                            return true;
+                        }
+                    }).into(tv_content_type);
+//                    }
                 }
                 break;
             case TYPE_SHARE:
@@ -554,7 +595,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         if (!TextUtils.isEmpty(url)) {
             if (uid != 0) {
                 skipNewTaoBao(url);
-//                skipOldTaoBao(url);
             } else {
                 if (loadHud != null) {
                     loadHud.dismiss();
