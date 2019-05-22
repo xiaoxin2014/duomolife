@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.baichuan.android.trade.AlibcTrade;
@@ -393,91 +392,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             case NORTEXT:
                 String content = detailObjectBean.getContent();
                 final EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
-                tv_content_type.setPadding(0, 0, 0, 0);
-                final RelativeLayout rel_communal_image = holder.getView(R.id.rel_communal_image);
-                final ImageView iv_communal_image = holder.getView(R.id.iv_communal_image);
                 if (!TextUtils.isEmpty(content)) {
-//                    //                正则匹配br样式
-                    content = content.replaceAll(brStyleReg, br);
-                    content = content.replaceAll(pTagStart, rTagStart);
-                    content = content.replaceAll(pTagEnd, rTagEnd);
-                    content = content.replaceAll(blankStyle, " ");
-//
-////                匹配图片地址
-//                    Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
-//                    isImageTag = imgIsFind.find();
-//                    if (isImageTag) {
-//                        //                    匹配网址
-//                        Matcher aMatcher = Pattern.compile(regexATextUrl).matcher(content);
-//                        boolean isImageUrl = aMatcher.find();
-//                        if (isImageUrl) {
-//                            //                    匹配网址
-//                            String tbUrlImgValue = "";
-//                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
-//                            while (matcher.find()) {
-//                                tbUrlImgValue = matcher.group();
-//                                if (matcher.find()) {
-//                                    content = matcher.group();
-//                                }
-//                            }
-//                            iv_communal_image.setTag(R.id.iv_two_tag, tbUrlImgValue);
-//                        } else {
-//                            String stringContent = imgIsFind.group();
-//                            Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
-//                            while (matcher.find()) {
-//                                content = matcher.group();
-//                            }
-//                        }
-//                        rel_communal_image.setVisibility(View.VISIBLE);
-//                        iv_communal_image.setVisibility(View.VISIBLE);
-//                        tv_content_type.setVisibility(View.GONE);
-//                        iv_communal_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
-//                        iv_communal_image.setTag(R.id.iv_tag, content);
-//                        iv_communal_image.setOnClickListener(this);
-//                        //判断content是不是正确的图片地址
-//                        boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
-//                                content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG"));
-//                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
-//                    } else {
-                    rel_communal_image.setVisibility(View.GONE);
-                    tv_content_type.setVisibility(View.VISIBLE);
-
-//                //                字体样式
-//                int lineStyleIndex = 0;
-//                int fontStyleTag = content.indexOf(lineStyle);
-//                if (fontStyleTag != -1) {
-//                    try {
-//                        lineStyleIndex = content.indexOf(";", fontStyleTag) > 0 ?
-//                                content.indexOf(";", fontStyleTag) :
-//                                content.indexOf(lineFontEndStyle, fontStyleTag) < 0 ? fontStyleTag + 4
-//                                        : content.indexOf(lineFontEndStyle, fontStyleTag);
-//                        content = content.replaceAll(content.substring(fontStyleTag, lineStyleIndex), "");
-//                    } catch (Exception e) {
-//                        lineStyleIndex = -1;
-//                        e.printStackTrace();
-//                    }
-//                }
-//                    tv_content_type.setGravity(Gravity.LEFT);
-
-//                    tv_content_type.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 30));
-//                    tv_content_type.setTextColor(context.getResources().getColor(R.color.home_text_color));
-//                    ViewGroup.LayoutParams layoutParams = tv_content_type.getLayoutParams();
-//                    tv_content_type.setText("");
-//                if (content.contains(br)
-//                        && ((lineStyleIndex > 0 && !Pattern.compile("[\u4e00-\u9fa5]").matcher(content).find()))) {
-//                    layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 12);
-//                    tv_content_type.setLayoutParams(layoutParams);
-//                } else {
-//                    if (layoutParams.height != -2) {
-//                        layoutParams.height = -2;
-//                        tv_content_type.setLayoutParams(layoutParams);
-//                    }
-//
-//                    //                匹配间距
-//                    if (detailObjectBean.getFirstLinePadding()) {
-//                        tv_content_type.setPadding(0, AutoSizeUtils.mm2px(mAppContext, 10), 0, 0);
-//                    }
-//                }
                     //                    匹配显示位置
                     int alignGravityIndex = content.indexOf(alignGravity);
                     if (alignGravityIndex != -1 && !isImageTag) {
