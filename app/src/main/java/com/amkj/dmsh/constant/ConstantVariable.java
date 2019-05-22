@@ -158,6 +158,10 @@ public class ConstantVariable {
     public static final String IMG_REGEX_TAG = "<img.*src=(.*?)[^>]*?>";
     //    匹配是否是图片链接 匹配a标签
     public static final String regexATextUrl = "<a [\\s\\S]*?href=\"[\\s\\S]*?\"[\\s\\S]*?>";
+    public static final String aRegex = "<a[^>]*href=(\\\"([^\\\"]*)\\\"|\\'([^\\']*)\\'|([^\\\\s>]*))[^>]*>(.*?)</a>";
+    public static final String pRegex = "<p.*?>(.*?)</p>";
+
+
     //    数字
     public static final String REGEX_NUM = "[+|-]*\\d+(\\.\\d+)?";
     //    正则匹配空格 换行符

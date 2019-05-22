@@ -80,6 +80,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.ConstantVariable.aRegex;
+import static com.amkj.dmsh.constant.ConstantVariable.pRegex;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.NORTEXT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_AUDIO;
@@ -393,6 +395,29 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 String content = detailObjectBean.getContent();
                 final EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
                 if (!TextUtils.isEmpty(content)) {
+                    //匹配p标签里面的内容，如果不包含图片并且不是换行标签，就在末尾添加br进行换行
+                    Matcher matcher = Pattern.compile(pRegex).matcher(content);
+                    while (matcher.find()) {
+                        String pContent = matcher.group(0);
+                        if (!pContent.contains("<img") && !TextUtils.isEmpty(matcher.group(1)) && !br.equals(matcher.group(1).trim())) {
+                            content = content.replace(pContent, pContent + br);
+                        }
+                    }
+
+                    //将p标签全部替换成span，因为段落之间默认会有很大的空白间距
+                    content = content.replaceAll(pTagStart, rTagStart);
+                    content = content.replaceAll(pTagEnd, rTagEnd);
+
+                    //匹配a标签，如果是纯文本超链接直接删除
+                    Matcher aMatcher = Pattern.compile(aRegex).matcher(content);
+                    while (aMatcher.find()) {
+                        String aContent = aMatcher.group(0);
+
+                        if (!aContent.contains("<img")) {
+                            content = content.replace(aContent, "");
+                        }
+                    }
+
                     //                    匹配显示位置
                     int alignGravityIndex = content.indexOf(alignGravity);
                     if (alignGravityIndex != -1 && !isImageTag) {
