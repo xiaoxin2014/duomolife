@@ -528,7 +528,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     , qualityWefBean.getTitle()
                     , ""
                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
-                    + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")), qualityWefBean.getId());
+                    + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")), "pages/topic/topic?id=" + qualityWefBean.getId(), qualityWefBean.getId());
         }
     }
 
