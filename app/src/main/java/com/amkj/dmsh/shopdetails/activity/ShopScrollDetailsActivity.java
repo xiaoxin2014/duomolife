@@ -72,17 +72,18 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.gyf.barlibrary.ImmersionBar;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
@@ -152,6 +153,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODU
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
+;
 ;
 
 /**
@@ -232,15 +234,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //    立即购买
     @BindView(R.id.tv_sp_details_buy_it)
     TextView tv_sp_details_buy_it;
-
-    @BindView(R.id.iv_img_service)
-    ImageView iv_img_service;
     // 首次分享提示
     @BindView(R.id.tv_product_share_tint)
     TextView tv_product_share_tint;
 
     @BindView(R.id.fl_header_service)
-    FrameLayout fl_header_service;
+    RelativeLayout fl_header_service;
     //    商品收藏
     @BindView(R.id.tv_sp_details_collect)
     TextView tv_sp_details_collect;
@@ -270,6 +269,26 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     LinearLayout ll_details_bottom;
     @BindView(R.id.download_btn_communal)
     FloatingActionButton download_btn_communal;
+    @BindView(R.id.fl_quality_bar)
+    FrameLayout mTlQualityBar;
+    @BindView(R.id.iv_life_back)
+    ImageView mIvLifeBack;
+    @BindView(R.id.iv_img_service)
+    ImageView mIvImgService;
+    @BindView(R.id.iv_img_share)
+    ImageView mIvImgShare;
+    @BindView(R.id.iv_life_back2)
+    ImageView mIvLifeBack2;
+    @BindView(R.id.iv_img_service2)
+    ImageView mIvImgService2;
+    @BindView(R.id.iv_img_share2)
+    ImageView mIvImgShare2;
+    @BindView(R.id.rl_toolbar)
+    RelativeLayout mRlToolbar;
+    @BindView(R.id.rl_toolbar2)
+    RelativeLayout mRlToolbar2;
+    @BindView(R.id.top_view)
+    View mTopView;
     //    赠品信息
     private List<PresentProductInfoBean> presentProductInfoBeans = new ArrayList<>();
     //    domo推荐
@@ -322,6 +341,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        ImmersionBar.with(this).titleBar(mTlQualityBar).statusBarView(mTopView).fullScreen(true)
+                .addTag("PicAndColor").init();
         tv_count_time_before_white.setTextColor(getResources().getColor(R.color.text_black_t));
         tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 24));
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
@@ -337,7 +358,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         dynamic.setShowDay(true);
         dynamic.setSuffixGravity(Gravity.CENTER);
         cv_countdownTime_white_hours.dynamicShow(dynamic.build());
-        iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
         recommendFlag = intent.getStringExtra("recommendFlag");
@@ -488,6 +508,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
         ctb_qt_pro_details.setCurrentTab(0);
+        int bannerHeight = AutoSizeUtils.mm2px(this, 750);
         scroll_pro.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -520,6 +541,26 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     if (download_btn_communal.isVisible()) {
                         download_btn_communal.hide(false);
                     }
+                }
+
+
+                //设置标题栏
+                float alpha = scrollY * 1.0f / bannerHeight * 1.0f;
+                if (alpha >= 1) {
+                    mRlToolbar2.setAlpha(0);
+                    mRlToolbar.setAlpha(1);
+                    ImmersionBar.with(getActivity()).statusBarColorTransform(R.color.white)
+                            .barAlpha(1).init();
+                } else if (alpha > 0) {
+                    mRlToolbar2.setAlpha(alpha > 0.3f ? 0 : 1 - alpha);
+                    mRlToolbar.setAlpha(alpha < 0.3f ? 0 : alpha);
+                    ImmersionBar.with(getActivity()).statusBarColorTransform(R.color.white)
+                            .barAlpha(alpha).init();
+                } else {
+                    mRlToolbar2.setAlpha(1);
+                    mRlToolbar.setAlpha(0);
+                    ImmersionBar.with(getActivity()).statusBarColorTransform(R.color.white)
+                            .barAlpha(0).init();
                 }
             }
         });
@@ -561,7 +602,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 download_btn_communal.hide(false);
             }
         });
-        badge = getBadge(ShopScrollDetailsActivity.this, fl_header_service);
+        badge = getBadge(ShopScrollDetailsActivity.this, fl_header_service).setBadgeGravity(Gravity.END | Gravity.TOP);
         insertNewTotalData();
     }
 
@@ -1326,11 +1367,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    private void setSkuProp(ShopDetailsEntity.ShopPropertyBean shopProperty) {
+    private void setSkuProp(ShopPropertyBean shopProperty) {
         if (shopProperty.getSkuSale() != null) {
             if (shopProperty.getSkuSale().size() > 1) {
                 //        获取价格排序范围
-                List<ShopDetailsEntity.ShopPropertyBean.SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
+                List<ShopPropertyBean.SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
                 Collections.sort(skuSaleList, (lhs, rhs) -> {
                     if (!TextUtils.isEmpty(lhs.getPrice()) && !TextUtils.isEmpty(rhs.getPrice())) {
                         float p1 = getFloatNumber(lhs.getPrice());
@@ -1798,7 +1839,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.tv_life_back)
+    @OnClick(R.id.iv_life_back)
     void goBack() {
         finish();
     }
@@ -2043,4 +2084,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         banner_ql_sp_pro_details.setCanScroll(true);
         banner_ql_sp_pro_details.setPointViewVisible(true);
     }
+
+
 }

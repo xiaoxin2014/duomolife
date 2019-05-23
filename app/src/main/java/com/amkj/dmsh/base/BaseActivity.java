@@ -19,6 +19,7 @@ import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.gyf.barlibrary.ImmersionBar;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -136,17 +137,24 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             });
         }
+        setStatusBar();
         initViews();
         loadData();
-        setStatusBar();
     }
 
     /**
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false)
-                .statusBarDarkFont(true).fitsSystemWindows(true).init();
+        if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)) {
+            //设置共同沉浸式样式
+            ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false)
+                    .statusBarDarkFont(true).init();
+        } else {
+            ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false)
+                    .statusBarDarkFont(true).fitsSystemWindows(true).init();
+        }
+
     }
 
     @Override
