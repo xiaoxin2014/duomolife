@@ -61,7 +61,6 @@ public class UMShareAction {
     private AlertDialogShareHelper alertDialogShareHelper;
     private boolean isSharing = false;
     private String routineUrl;
-    private String mShareType;
     public static String routineId = "gh_cdbcf7765273";
     private ConstantMethod constantMethod;
 
@@ -416,18 +415,10 @@ public class UMShareAction {
     private void statisticsShare(Activity activity, int objId, String ObjName, int status, SHARE_MEDIA platform) {
         int shareType = getShareType(activity.getClass().getSimpleName());
         if (shareType == -1) {
-            if (TextUtils.isEmpty(mShareType)) {
-                return;
-            }
-
-            try {
-                shareType = Integer.parseInt(mShareType);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+            return;
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("mShareType", shareType);
+        map.put("shareType", shareType);
         map.put("objId", objId);
         map.put("road", getShareRoad(platform));
         map.put("objName", ObjName);
@@ -521,6 +512,8 @@ public class UMShareAction {
                 return 12;
             case "QualityWeekOptimizedActivity"://每周优选
                 return 13;
+            case "DoMoLifeCommunalActivity"://公共web
+                return 14;
             default:
                 return -1;
         }
@@ -535,6 +528,7 @@ public class UMShareAction {
             case "DmlOptimizedSelDetailActivity":
             case "DoMoLifeWelfareDetailsActivity":
             case "ArticleOfficialActivity":
+            case "DoMoLifeCommunalActivity":
                 return true;
             default:
                 return false;
@@ -572,9 +566,5 @@ public class UMShareAction {
         localContentValues.put("_data", paramFile.getAbsolutePath());
         localContentValues.put("_size", paramFile.length());
         return localContentValues;
-    }
-
-    public void setShareType(String shareType) {
-        mShareType = shareType;
     }
 }
