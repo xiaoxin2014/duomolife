@@ -1244,6 +1244,15 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     String imageUrl = jsonObject.getString("imageUrl");
                     String content = jsonObject.getString("content");
                     String url = jsonObject.getString("url");
+                    int objId = 1;
+                    try {
+                        objId = Integer.parseInt(jsonObject.getString("objId"));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String shareType = jsonObject.getString("shareType");
                     String routineUrl = null;
                     try {
                         routineUrl = jsonObject.getString("routineUrl");
@@ -1254,7 +1263,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
                             , TextUtils.isEmpty(content) ? "" : content
-                            , url, routineUrl,1);
+                            , url, routineUrl,objId);
+                    umShareAction.setShareType(shareType);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

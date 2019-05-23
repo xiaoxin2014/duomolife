@@ -61,6 +61,7 @@ public class UMShareAction {
     private AlertDialogShareHelper alertDialogShareHelper;
     private boolean isSharing = false;
     private String routineUrl;
+    private String mShareType;
     public static String routineId = "gh_cdbcf7765273";
     private ConstantMethod constantMethod;
 
@@ -409,14 +410,24 @@ public class UMShareAction {
      * @param activity
      * @param objId    对应的内容ID，如-分享文章类型，则传文章ID，对于一些固定的专区，如每周优选，传0即可
      * @param ObjName  分享对象名称， 如分享文章类型，则传文章标题
-     * @param status   要分享的平台
-     * @param platform 分享状态 （0-取消，1-成功） 如果不能获取到分享是否被取消，则固定传1
+     * @param platform 要分享的平台
+     * @param status   分享状态 （0-取消，1-成功） 如果不能获取到分享是否被取消，则固定传1
      */
     private void statisticsShare(Activity activity, int objId, String ObjName, int status, SHARE_MEDIA platform) {
         int shareType = getShareType(activity.getClass().getSimpleName());
-        if (shareType == -1) return;
+        if (shareType == -1) {
+            if (TextUtils.isEmpty(mShareType)) {
+                return;
+            }
+
+            try {
+                shareType = Integer.parseInt(mShareType);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
         Map<String, Object> map = new HashMap<>();
-        map.put("shareType", getShareType(activity.getClass().getSimpleName()));
+        map.put("mShareType", shareType);
         map.put("objId", objId);
         map.put("road", getShareRoad(platform));
         map.put("objName", ObjName);
@@ -561,5 +572,9 @@ public class UMShareAction {
         localContentValues.put("_data", paramFile.getAbsolutePath());
         localContentValues.put("_size", paramFile.length());
         return localContentValues;
+    }
+
+    public void setShareType(String shareType) {
+        mShareType = shareType;
     }
 }
