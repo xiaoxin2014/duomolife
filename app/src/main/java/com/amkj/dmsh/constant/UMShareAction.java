@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -231,6 +232,11 @@ public class UMShareAction {
                     umMin.setPath(routineUrl);
                     //小程序页面路径
                     umMin.setUserName(routineId);
+                    if (BuildConfig.DEBUG) {
+                        // 测试环境下设置成开发版
+                        com.umeng.socialize.Config.setMiniTest();
+                    }
+
                     // 小程序原始id,在微信平台查询
                     new ShareAction(context)
                             .withMedia(umMin)
