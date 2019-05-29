@@ -121,7 +121,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return fl_personal_info;
     }
 

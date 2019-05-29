@@ -19,6 +19,7 @@
             <include layout="@layout/layout_ql_cart_share_header"/>
 
             <ScrollView
+                android:id="@+id/scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

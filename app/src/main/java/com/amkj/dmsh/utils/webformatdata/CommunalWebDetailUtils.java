@@ -19,6 +19,7 @@ import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
@@ -414,7 +415,7 @@ public class CommunalWebDetailUtils {
             case R.id.iv_communal_cover_wrap:
                 CommunalDetailObjectBean detailObjectBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
                 if (detailObjectBean != null) {
-                    if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG||detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY) {
+                    if (detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG || detailObjectBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY) {
                         Intent newIntent = new Intent(mContext, ShopScrollDetailsActivity.class);
                         newIntent.putExtra("productId", String.valueOf(detailObjectBean.getId()));
                         mContext.startActivity(newIntent);
@@ -610,11 +611,11 @@ public class CommunalWebDetailUtils {
      */
     public void setShareData(Activity activity, ShareDataBean shareDataBean) {
         if (shareDataBean != null && !TextUtils.isEmpty(shareDataBean.getImgUrl())) {
-            UMShareAction umShareAction = new UMShareAction(activity
+            UMShareAction umShareAction = new UMShareAction((BaseActivity) activity
                     , shareDataBean.getImgUrl()
                     , getStrings(shareDataBean.getTitle())
                     , getStrings(shareDataBean.getDescription())
-                    , getStrings(shareDataBean.getUrlLink()), shareDataBean.getBackId());
+                    , getStrings(shareDataBean.getUrlLink()), shareDataBean.getRoutineUrl(), shareDataBean.getBackId());
             if (shareDataBean.getBackId() > 0) {
                 umShareAction.setOnShareSuccessListener(() ->
                         addArticleShareCount(activity, shareDataBean.getBackId())

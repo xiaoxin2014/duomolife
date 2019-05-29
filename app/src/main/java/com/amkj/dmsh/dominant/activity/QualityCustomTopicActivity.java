@@ -112,6 +112,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
     private View headerView;
     private CommunalDetailAdapter communalDetailAdapter;
     private UserLikedProductEntity userLikedProductEntity;
+    private GridLayoutManager mGridLayoutManager;
 
     @Override
     protected int getContentView() {
@@ -130,7 +131,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
         tv_header_titleAll.setText("");
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
-        communal_recycler.setLayoutManager(new GridLayoutManager(QualityCustomTopicActivity.this, 2));
+        mGridLayoutManager = new GridLayoutManager(QualityCustomTopicActivity.this, 2);
+        communal_recycler.setLayoutManager(mGridLayoutManager);
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
@@ -179,8 +181,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
                 .create());
         qualityCustomTopicAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -242,7 +242,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_communal_refresh;
     }
 
@@ -494,4 +494,10 @@ public class QualityCustomTopicActivity extends BaseActivity {
             totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
+
+    @Override
+    public View getTopView() {
+        return communal_recycler;
+    }
+
 }

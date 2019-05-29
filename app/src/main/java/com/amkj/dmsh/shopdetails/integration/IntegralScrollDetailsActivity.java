@@ -262,7 +262,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return fl_integral_product;
     }
 

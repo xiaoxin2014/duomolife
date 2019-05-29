@@ -199,7 +199,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_refresh_ql_welfare_details;
     }
 

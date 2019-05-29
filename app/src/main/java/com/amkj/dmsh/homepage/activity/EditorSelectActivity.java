@@ -185,7 +185,7 @@ public class EditorSelectActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return mSmartLayout;
     }
 

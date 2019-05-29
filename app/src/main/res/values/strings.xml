@@ -103,7 +103,7 @@
     <string name="ql_normal_gp_tint">有小伙伴正在发起拼团，您可以直接参与 </string>
     <string name="join_group">去参团</string>
     <string name="join_new_group">新人团</string>
-    <string name="sel_pro_sku">请选择%1$s</string>
+    <string name="sel_pro_sku">请选择 %1$s</string>
     <string name="not_attention_self">亲亲，这个是你呦</string>
     <string name="skip_topic">进入%1$s专区</string>
     <string name="look_indent">查看订单</string>
@@ -237,4 +237,7 @@
     <string name="subscriber_cancle">成功取消订阅</string>
     <string name="subscriber_failed">订阅失败</string>
     <string name="unsubscriber_failed">取消订阅失败</string>
+    <string name="limited_time_preference">【限时特价¥%s起】</string>
+    <string name="bracket">【%s】</string>
+    <string name="group_price">【拼团只需%s元】</string>
 </resources>

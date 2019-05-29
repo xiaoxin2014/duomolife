@@ -74,9 +74,6 @@ import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1192,7 +1189,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this) ? 1 : 0));
     }
 
-    /**android 原生进行jS交互（调起Js方法）
+    /**
+     * android 原生进行jS交互（调起Js方法）
+     *
      * @param jsUrl
      */
     private void webViewJs(@NonNull String jsUrl) {
@@ -1239,23 +1238,25 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             String shareData = (String) msg.obj;
             if (!TextUtils.isEmpty(shareData)) {
                 try {
-                    JSONObject jsonObject = new JSONObject(shareData);
-                    String title = jsonObject.getString("title");
-                    String imageUrl = jsonObject.getString("imageUrl");
-                    String content = jsonObject.getString("content");
-                    String url = jsonObject.getString("url");
-                    String routineUrl = null;
+                    Map<String, Object> jsonObject = JSON.parseObject(shareData);
+                    String title = (String) jsonObject.get("title");
+                    String imageUrl = (String) jsonObject.get("imageUrl");
+                    String content = (String) jsonObject.get("content");
+                    String url = (String) jsonObject.get("url");
+                    int objId = -1;
                     try {
-                        routineUrl = jsonObject.getString("routineUrl");
-                    } catch (JSONException e) {
+                        objId = Integer.parseInt((String) jsonObject.get("objId"));
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
+                    String routineUrl = null;
+                    routineUrl = (String) jsonObject.get("routineUrl");
                     UMShareAction umShareAction = new UMShareAction(DoMoLifeCommunalActivity.this
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
                             , TextUtils.isEmpty(content) ? "" : content
-                            , url, routineUrl,1);
-                } catch (JSONException e) {
+                            , url, routineUrl, objId);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

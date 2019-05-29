@@ -106,6 +106,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -992,7 +993,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         if (productDetailBean != null) {
             new UMShareAction(ShopTimeScrollDetailsActivity.this
                     , productDetailBean.getPicUrl()
-                    , "我在多么生活看中了" + productDetailBean.getName()
+                    , getStringsFormat(this, R.string.group_price, productDetailBean.getPrice()) + productDetailBean.getName()
                     , getStrings(productDetailBean.getSubtitle())
                     , sharePageUrl + productDetailBean.getId(), productDetailBean.getId());
         }

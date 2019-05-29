@@ -431,7 +431,7 @@ public class AccountLogoutActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return fl_account_logout_container;
     }
 }

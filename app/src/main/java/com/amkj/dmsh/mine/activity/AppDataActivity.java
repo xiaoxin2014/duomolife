@@ -15,7 +15,7 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
@@ -40,7 +40,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.NEW_USER_DIALOG;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -48,7 +47,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
-;
 
 /**
  * Created by atd48 on 2016/8/18.
@@ -185,11 +183,10 @@ public class AppDataActivity extends BaseActivity {
                 public void confirm() {
                     NEW_USER_DIALOG = true;
                     //调用登出接口
-                    NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.LOG_OUT, null, null);
-                    savePersonalInfoCache(AppDataActivity.this, null);
+                    ConstantMethod.logout(getActivity());
                     showToast(AppDataActivity.this, "注销成功");
                     exitNewTaoBaoAccount();
-//        清除账号 修改我的页面
+                    //        清除账号 修改我的页面
                     finish();
                 }
 

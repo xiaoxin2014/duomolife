@@ -58,6 +58,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
                 helper.setText(R.id.tv_price_right,getRmbFormat(mContext, rightBean.getPrice()));
                 helper.setText(R.id.tv_market_price_right, "¥" + stripTrailingZeros(getStrings(rightBean.getMarketPrice())));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setAntiAlias(true);
             }
         }
 

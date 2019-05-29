@@ -277,7 +277,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 dl_art_detail_pro.closeDrawers();
                 skipProductUrl(ArticleOfficialActivity.this, productListBean.getItemTypeId(), productListBean.getId());
 //                    统计商品点击
-                totalProNum(getActivity(),productListBean.getId(), dmlSearchDetailBean.getId());
+                totalProNum(getActivity(), productListBean.getId(), dmlSearchDetailBean.getId());
             }
         });
 
@@ -338,7 +338,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_communal_refresh;
     }
 
@@ -733,7 +733,8 @@ public class ArticleOfficialActivity extends BaseActivity {
                             , getStrings(dmlSearchDetailBean.getTitle())
                             , getStrings(dmlSearchDetailBean.getDigest())
                             , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="
-                            + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")), dmlSearchDetailBean.getId()));
+                            + dmlSearchDetailBean.getId() + (userId > 0 ? "&sid=" + userId : "")), "pages/article/article?id=" + dmlSearchDetailBean.getId()
+                            , dmlSearchDetailBean.getId()));
         }
     }
 
@@ -851,7 +852,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (communalDetailBean != null) {
                     skipProductUrl(ArticleOfficialActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
 //                    统计商品点击
-                    totalProNum(getActivity(),communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                    totalProNum(getActivity(), communalDetailBean.getId(), dmlSearchDetailBean.getId());
                 }
             });
             communalDescripAdapter.setOnItemChildClickListener((adapter, view, position) -> {
@@ -963,7 +964,7 @@ public class ArticleOfficialActivity extends BaseActivity {
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(imm!=null){
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }
@@ -991,5 +992,10 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
+
+    @Override
+    public View getTopView() {
+        return communal_recycler;
     }
 }

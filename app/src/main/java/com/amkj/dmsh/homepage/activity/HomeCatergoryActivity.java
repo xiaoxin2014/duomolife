@@ -192,7 +192,7 @@ public class HomeCatergoryActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return mSmartLayout;
     }
 

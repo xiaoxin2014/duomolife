@@ -20,6 +20,7 @@ import com.amkj.dmsh.dominant.fragment.WholePointSpikeProductFragment;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
+import com.amkj.dmsh.homepage.fragment.ArticleTypeFragment;
 import com.amkj.dmsh.homepage.fragment.EditorSelectFragment;
 import com.amkj.dmsh.homepage.fragment.HomeCouponGetFragment;
 import com.amkj.dmsh.homepage.fragment.HomeDefalutFragment;
@@ -44,7 +45,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity",
-            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity"};
+            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity"};
     private String prefix = "app://";
 
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
@@ -96,6 +97,8 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                         return BaseFragment.newInstance(DoMoLifeWelfareDetailsFragment.class, urlParams, null);
                     case "app://QualityCustomTopicActivity"://自定义专区
                         return BaseFragment.newInstance(QualityCustomTopicFragment.class, urlParams, null);
+                    case "app://ArticleTypeActivity"://种草特辑(文章分类)
+                        return BaseFragment.newInstance(ArticleTypeFragment.class, urlParams, null);
                     default:
                         return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);
                 }
@@ -126,6 +129,8 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                         return BaseFragment.newInstance(QualityWeekOptimizedFragment.class, null, null);
                     case "app://QualityShopBuyListActivity"://必买清单
                         return BaseFragment.newInstance(QualityShopBuyListFragment.class, null, null);
+                    case "app://ArticleTypeActivity"://种草特辑(文章分类)
+                        return BaseFragment.newInstance(ArticleTypeFragment.class, null, null);
                     //良品优选
                     default:
                         return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);

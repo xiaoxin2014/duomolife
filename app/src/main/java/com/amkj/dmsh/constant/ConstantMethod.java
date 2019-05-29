@@ -328,17 +328,29 @@ public class ConstantMethod {
     }
 
     /**
-     * 人民币价格格式化
+     * 带货币单位价格格式化
      *
-     * @param priceText
      * @return
      */
     public static CharSequence getRmbFormat(Context context, String priceText) {
+        return getRmbFormat(context, priceText, true);
+    }
+
+
+    /**
+     * 带货币单位价格格式化
+     *
+     * @param append 是否追加货币符号
+     * @return
+     */
+    public static CharSequence getRmbFormat(Context context, String priceText, boolean append) {
+
         try {
             String price = getStrings(priceText);
             if (!TextUtils.isEmpty(price)) {
-                price = "¥" + stripTrailingZeros(price);
-                Link link = new Link("¥");
+                price = append ? "￥" + stripTrailingZeros(price) : stripTrailingZeros(price);
+                Pattern pattern = Pattern.compile("[￥]");
+                Link link = new Link(pattern);
                 link.setTextColor(Color.parseColor("#ff5a6b"));
                 link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
                 link.setUnderlined(false);
@@ -350,7 +362,7 @@ public class ConstantMethod {
                 return context.getResources().getString(R.string.defaul);
             }
         } catch (Exception e) {
-            return getStrings("¥" + priceText);
+            return getStrings("￥" + priceText);
         }
     }
 
@@ -365,7 +377,7 @@ public class ConstantMethod {
         try {
             return new BigDecimal(priceText).stripTrailingZeros().toPlainString();
         } catch (Exception e) {
-            return getStrings("¥" + priceText);
+            return getStrings(priceText);
         }
     }
 
@@ -742,6 +754,19 @@ public class ConstantMethod {
             Intent intent = new Intent(activity, MineLoginActivity.class);
             activity.startActivityForResult(intent, IS_LOGIN_CODE);
         }
+    }
+
+    /**
+     * 调用登出接口,清除后台记录的token信息
+     *
+     * @param activity
+     */
+    public static void logout(Activity activity) {
+        NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
+        NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, null);
+        //Token过期,清除本地登录信息
+        savePersonalInfoCache(activity, null);
     }
 
     private static void skipNewTaoBao(final String url, Context context) {
@@ -3176,5 +3201,14 @@ public class ConstantMethod {
         }
 
         return FragmentName;
+    }
+
+    //回收bitmap
+    public static void recycleBitmap(Bitmap bitmap) {
+        if (bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+            bitmap = null;
+        }
+        System.gc();
     }
 }

@@ -20,13 +20,15 @@ public class Url {
             } else if (position == 3) {//泽鑫
 //                BASE_URL = "http://192.168.1.180:8080/";
                 BASE_URL = "http://192.168.1.51:8080/";
-            } else if (position == 4) {//子维
-                BASE_URL = "http://192.168.1.212/";
+            } else if (position == 4) {//泽鑫2
+                BASE_URL = "http://192.168.1.180:9090/";
             } else if (position == 6) {//预发布
                 BASE_URL = "http://dev.domolife.cn/";
-            } else if (position == 7) {//王凯
+            } else if (position == 7) {//王凯2
                 BASE_URL = "http://192.168.1.87:8080/";
-            } else if (position == 8) {//鸿星
+            } else if (position == 8) {//王凯1
+                BASE_URL = "http://192.168.1.212:80/";
+            } else if (position == 9) {//鸿星
 //                BASE_URL = "http://192.168.101.12:8080/";
                 BASE_URL = "http://192.168.1.9:8080/";
             }

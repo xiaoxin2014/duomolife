@@ -75,7 +75,7 @@ import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
-;
+
 
 /**
  * Created by atd48 on 2016/6/27.
@@ -471,7 +471,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_communal_refresh;
     }
 

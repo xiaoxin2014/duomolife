@@ -124,7 +124,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_scroll_communal_refresh;
     }
 

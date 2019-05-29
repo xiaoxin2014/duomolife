@@ -117,7 +117,7 @@ public class CatergoryTwoLevelActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return mLlCatergory;
     }
 }
