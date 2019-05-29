@@ -349,7 +349,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return sv_layout_refund;
     }
 

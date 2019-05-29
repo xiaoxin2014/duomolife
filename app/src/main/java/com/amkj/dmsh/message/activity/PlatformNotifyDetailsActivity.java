@@ -186,7 +186,7 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_official_details;
     }
 

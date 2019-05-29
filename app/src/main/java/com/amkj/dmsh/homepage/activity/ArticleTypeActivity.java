@@ -116,7 +116,7 @@ public class ArticleTypeActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return mLlCatergory;
     }
 

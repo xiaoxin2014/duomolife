@@ -10,16 +10,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ScrollView;
 
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
+import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.utils.AsyncUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
 import com.amkj.dmsh.utils.alertdialog.ShareIconTitleBean;
@@ -64,6 +72,8 @@ public class UMShareAction {
     private String routineUrl;
     public static String routineId = "gh_cdbcf7765273";
     private ConstantMethod constantMethod;
+    private Bitmap mBitmap;
+
 
     /**
      * UMImage image = new UMImage(ShareActivity.this, "imageurl");//网络图片
@@ -79,14 +89,11 @@ public class UMShareAction {
      * @param description
      * @param urlLink
      */
-    public UMShareAction(final Activity context, String imgUrl,
+    public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, int id) {
         this(context, imgUrl, title, description, urlLink, null, id);
     }
-//    public UMShareAction(final Activity context, String imgUrl,
-//                         final String title, final String description, final String urlLink) {
-//        this(context, imgUrl, title, description, urlLink, null);
-//    }
+
 
     /**
      * 分享内容 加载图片
@@ -98,14 +105,11 @@ public class UMShareAction {
      * @param urlLink     正常地址
      * @param routineUrl  小程序地址
      */
-    public UMShareAction(final Activity context, String imgUrl,
+    public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, String routineUrl, int id) {
         this(context, imgUrl, title, description, urlLink, routineUrl, id, false);
     }
-//    public UMShareAction(final Activity context, String imgUrl,
-//                         final String title, final String description, final String urlLink, String routineUrl) {
-//        this(context, imgUrl, title, description, urlLink, routineUrl, 0, false);
-//    }
+
 
     /**
      * @param context
@@ -116,7 +120,7 @@ public class UMShareAction {
      * @param routineUrl  小程序地址
      * @param isSaveImg   是否展示保存图片
      */
-    public UMShareAction(final Activity context, String imgUrl,
+    public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, String routineUrl
             , int productId, boolean isSaveImg) {
         this.context = context;
@@ -139,6 +143,7 @@ public class UMShareAction {
                 if (!isSharing) {
                     isSharing = true;
                     switch (shareIconTitleBean.getSharePlatformType()) {
+                        //复制链接
                         case POCKET:
                             ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData mClipData = ClipData.newPlainText("Label", !TextUtils.isEmpty(urlLink) ? urlLink : "多么生活");
@@ -166,30 +171,57 @@ public class UMShareAction {
                             constantMethod.getPermissions(context, com.yanzhenjie.permission.Permission.WRITE_EXTERNAL_STORAGE);
                             isSharing = false;
                             break;
+                        //分享到第三方应用
                         default:
                             SHARE_MEDIA sharePlatformType = shareIconTitleBean.getSharePlatformType();
-                            if (!TextUtils.isEmpty(imgUrl)) {
-                                //        加载图片
-                                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                            //统计用户分享行为
+                            statisticsShare(context, id, title, 1, sharePlatformType);
+                            View view = context.getTopView();
+                            if (view != null) {
+                                if (context instanceof DoMoLifeWelfareDetailsActivity) {
+                                    ((ScrollView) view).scrollTo(0, 0);
+                                } else {
+                                    ((RecyclerView) view).scrollToPosition(0);
+                                }
+                                new Handler().postDelayed(() -> new AsyncUtils<Bitmap>(context) {
                                     @Override
-                                    public void onSuccess(Bitmap bitmap) {
-                                        setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
+                                    public Bitmap runOnIO() {
+                                        return GlideImageLoaderUtil.getBitmapFromView(view);
                                     }
 
                                     @Override
-                                    public void onError() {
-                                        setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                    public void runOnUI(Bitmap bitmap) {
+                                        mBitmap = bitmap;
+                                        setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
                                     }
-                                });
+                                }.excueTask(), 100);
                             } else {
-                                setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                if (!TextUtils.isEmpty(imgUrl)) {
+                                    //        加载图片
+                                    GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                        @Override
+                                        public void onSuccess(Bitmap bitmap) {
+                                            mBitmap = bitmap;
+                                            setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                        }
+                                    });
+                                } else {
+                                    setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                }
                             }
+
                             break;
                     }
                 }
             }
         });
     }
+
 
     /**
      * 加载图片分享
@@ -208,7 +240,10 @@ public class UMShareAction {
         final UMWeb web = new UMWeb(!TextUtils.isEmpty(urlLink) ? urlLink : "");
         web.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");//标题
         web.setThumb(umImage);  //缩略图
-        web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述
+        if (context instanceof DoMoLifeCommunalActivity) {
+            web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述（v4.1.0版本开始 只有从网页分享以及分享到微信小程序需要副标题）
+        }
+
         switch (platformType) {
             case SINA:
                 new ShareAction(context).setPlatform(platformType)
@@ -378,14 +413,12 @@ public class UMShareAction {
                 shareRewardSuccess(userId, context);
             }
 
-            //统计用户分享行为
-            statisticsShare(context, id, title, 1, platform);
-
             //文章分享统计
             if (needStatistics(context)) {
                 ConstantMethod.addArticleShareCount(context, id);
             }
 
+            ConstantMethod.recycleBitmap(mBitmap);
         }
 
         @Override
@@ -394,7 +427,9 @@ public class UMShareAction {
             if (alertDialogShareHelper != null) {
                 alertDialogShareHelper.setLoading(1);
             }
+
             showToast(context, getPlatFormText(platform) + " 分享失败,请检查是否安装该应用");
+            ConstantMethod.recycleBitmap(mBitmap);
         }
 
         @Override
@@ -404,8 +439,8 @@ public class UMShareAction {
             if (alertDialogShareHelper != null) {
                 alertDialogShareHelper.dismiss();
             }
-            //统计用户分享行为
-            statisticsShare(context, id, title, 0, platform);
+
+            ConstantMethod.recycleBitmap(mBitmap);
         }
     };
 

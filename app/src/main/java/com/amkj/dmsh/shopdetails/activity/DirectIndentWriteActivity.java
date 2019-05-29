@@ -1102,7 +1102,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return ll_indent_details;
     }
 

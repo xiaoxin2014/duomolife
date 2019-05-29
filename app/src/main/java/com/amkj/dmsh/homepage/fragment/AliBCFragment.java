@@ -52,6 +52,7 @@ import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -1226,7 +1227,7 @@ public class AliBCFragment extends BaseFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            new UMShareAction(getActivity()
+            new UMShareAction((BaseActivity) getActivity()
                     , imageUrl
                     , TextUtils.isEmpty(title) ? "多么生活" : title
                     , TextUtils.isEmpty(content) ? "" : content

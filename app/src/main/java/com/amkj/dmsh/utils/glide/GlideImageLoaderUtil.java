@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.opengl.GLES10;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
@@ -1087,5 +1090,35 @@ public class GlideImageLoaderUtil {
          *options.outHeight为原始图片的高
          */
         return new int[]{options.outWidth, options.outHeight};
+    }
+
+
+    //获取分享封面图（整个页面控件减去状态栏和标题栏的高度）
+    public static Bitmap getBitmapFromView(View v) {
+        Bitmap b = null;
+        try {
+            TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+            int screenWidth = tinkerApplicationLike.getScreenWidth();
+            b = Bitmap.createBitmap(screenWidth, screenWidth, Bitmap.Config.RGB_565);
+            Canvas c = new Canvas(b);
+            int left = v.getLeft();
+            int top = v.getTop();
+            int right = v.getRight();
+            int bottom = v.getBottom();
+            v.layout(left, top, right, bottom);
+            // Draw background
+            Drawable bgDrawable = v.getBackground();
+            if (bgDrawable != null)
+                bgDrawable.draw(c);
+            else
+                c.drawColor(Color.WHITE);
+            // Draw view to canvas
+            v.draw(c);
+        } catch (Exception e) {
+            return null;
+        }
+
+        return b;
+
     }
 }

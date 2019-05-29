@@ -105,6 +105,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -420,7 +421,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return fl_group_product;
     }
 
@@ -979,7 +980,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             GroupShopDetailsBean groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
             new UMShareAction(QualityGroupShopDetailActivity.this
                     , !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage()
-                    , groupShopDetailsBean.getName()
+                    , getStringsFormat(this, R.string.group_price, groupShopDetailsBean.getGpPrice()) + groupShopDetailsBean.getName()
                     , "超值两人团，好货又便宜。"
                     , sharePageUrl + groupShopDetailsBean.getGpInfoId(), "pages/groupDetails/groupDetails?id=" + groupShopDetailsBean.getGpInfoId(), groupShopDetailsBean.getGpInfoId());
         }

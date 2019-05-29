@@ -147,12 +147,10 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public void setStatusBar() {
         if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)) {
-            //设置共同沉浸式样式
-            ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false)
-                    .statusBarDarkFont(true).init();
+            ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
         } else {
-            ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false)
-                    .statusBarDarkFont(true).fitsSystemWindows(true).init();
+            //设置共同沉浸式样式
+            ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fitsSystemWindows(true).init();
         }
 
     }
@@ -276,7 +274,17 @@ public abstract class BaseActivity extends AppCompatActivity {
      *
      * @return
      */
-    protected View getLoadView() {
+    public View getLoadView() {
+        return null;
+    }
+
+
+    /**
+     * 获取顶部view(用于分享封面图)
+     *
+     * @return
+     */
+    public View getTopView() {
         return null;
     }
 

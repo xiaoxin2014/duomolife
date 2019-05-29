@@ -337,7 +337,7 @@ public class EditorCommentActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return mSmartLayout;
     }
 

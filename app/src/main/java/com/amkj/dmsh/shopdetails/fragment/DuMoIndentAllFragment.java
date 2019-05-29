@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -588,7 +589,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
      * @param orderNo
      */
     private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean, String orderNo) {
-        new UMShareAction(getActivity()
+        new UMShareAction((BaseActivity) getActivity()
                 , qualityGroupShareBean.getGpPicUrl()
                 , qualityGroupShareBean.getName()
                 , getStrings(qualityGroupShareBean.getSubtitle())

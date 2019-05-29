@@ -271,7 +271,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_communal_refresh;
     }
 

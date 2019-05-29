@@ -1,0 +1,45 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_right"
+    android:layout_width="@dimen/sc_mm_180"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/sc_mm_20"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="@dimen/sc_mm_180"
+        android:layout_height="@dimen/sc_mm_180">
+
+        <ImageView
+            android:id="@+id/iv_cover_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/home_goods_bg"
+            android:padding="@dimen/sc_mm_1"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/tv_save_price"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_40"
+            android:layout_alignParentBottom="true"
+            android:background="@color/text_pink_red_fe"
+            android:gravity="center"
+            android:lines="1"
+            android:text="------"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_22"/>
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_price_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_14"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_normal_red"
+        android:textSize="@dimen/sc_mm_30"/>
+
+</LinearLayout>

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -382,7 +383,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
      * @param qualityGroupShareBean 参团信息
      */
     private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean, String orderNo) {
-        new UMShareAction(getActivity()
+        new UMShareAction((BaseActivity) getActivity()
                 , qualityGroupShareBean.getGpPicUrl()
                 , qualityGroupShareBean.getName()
                 , getStrings(qualityGroupShareBean.getSubtitle())

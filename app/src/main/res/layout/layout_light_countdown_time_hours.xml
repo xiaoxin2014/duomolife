@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/ll_light_communal_time_hours"
+              android:layout_width="wrap_content"
+              android:layout_height="@dimen/sc_mm_36"
+              android:gravity="center_vertical"
+              android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_light_count_time_before_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_10"
+        android:gravity="center_vertical"
+        android:text="距结束"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_24"/>
+
+    <cn.iwgang.countdownview.CountdownView
+        android:id="@+id/cv_light_countdownTime_white_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/sc_mm_10"
+        app:isHideTimeBackground="true"
+        app:isShowDay="true"
+        app:isShowHour="true"
+        app:isShowMillisecond="false"
+        app:isShowMinute="true"
+        app:isShowSecond="true"
+        app:suffixDay=" 天 "
+        app:suffixGravity="center"
+        app:suffixHour=":"
+        app:suffixMinute=":"
+        app:suffixTextColor="@color/white"
+        app:suffixTextSize="@dimen/sc_mm_18"
+        app:timeTextColor="@color/white"
+        app:timeTextSize="@dimen/sc_mm_24"/>
+</LinearLayout>

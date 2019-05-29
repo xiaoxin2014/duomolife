@@ -242,7 +242,7 @@ public class WholePointSpikeProductActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smartPointSpike;
     }
 

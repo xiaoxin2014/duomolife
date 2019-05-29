@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,8 +18,6 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.NewUserCouponAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityNewUserShopAdapter;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
@@ -428,20 +425,6 @@ public class QualityNewUserFragment extends BaseFragment {
             } else {
                 getLoginStatus(getActivity());
             }
-        }
-    }
-
-
-    //    页面分享
-    @OnClick(R.id.iv_img_share)
-    void sendShare() {
-        if (!TextUtils.isEmpty(newUserImgUrl)) {
-            new UMShareAction(getActivity()
-                    , newUserImgUrl
-                    , "新人专享"
-                    , "注册有礼"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/new_exclusive.html"
-                    , "pages/new_exclusive/new_exclusive", 1);
         }
     }
 }

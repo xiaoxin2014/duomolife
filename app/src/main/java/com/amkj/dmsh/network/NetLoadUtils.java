@@ -47,12 +47,10 @@ import java.util.Map;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringMapValue;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.CACHEANDREMOTE;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.FIRSTREMOTE;
@@ -635,12 +633,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                     } else {
                         //判断条件是为了避免重复调用
                         if (ConstantMethod.userId > 0) {
-                            //调用登出接口,清除后台记录的token信息
-                            token = (String) SharedPreUtils.getParam(TOKEN, "");
-                            uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
-                            NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.LOG_OUT, null, null);
-                            //Token过期,清除本地登录信息
-                            savePersonalInfoCache(mContext, null);
+                            //调用登出接口
+                            ConstantMethod.logout(mContext);
                             //通知我的界面刷新
                             EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
                             //提示用户登录

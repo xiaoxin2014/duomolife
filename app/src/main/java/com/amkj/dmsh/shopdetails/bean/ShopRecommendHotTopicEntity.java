@@ -68,12 +68,16 @@ public class ShopRecommendHotTopicEntity extends BaseEntity{
         private int category_id;
         private int type_id;
         private String price;
+        private String marketPrice;
         private int favor_num;
         private String subtitle;
         private int id;
         private String title;
+        private String description;
         private String activity_code;
         private int itemType;
+        private String save_num;
+
         /**
          * androidLink : app://ArticleOfficialActivity?ArtId=14516
          * iosLink : app://DMLActicleDetailViewController?aid=14516
@@ -86,6 +90,31 @@ public class ShopRecommendHotTopicEntity extends BaseEntity{
         private String androidLink;
         private String type;
         private List<MarketLabelBean> marketLabelList;
+
+
+        public String getSave_num() {
+            return save_num;
+        }
+
+        public void setSave_num(String save_num) {
+            this.save_num = save_num;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getMarketPrice() {
+            return marketPrice;
+        }
+
+        public void setMarketPrice(String marketPrice) {
+            this.marketPrice = marketPrice;
+        }
 
         public static ShopRecommendHotTopicBean objectFromData(String str) {
 

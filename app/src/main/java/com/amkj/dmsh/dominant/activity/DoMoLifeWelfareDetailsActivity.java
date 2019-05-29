@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -144,6 +145,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     TextView tv_article_bottom_collect;
     @BindView(R.id.tl_quality_bar)
     Toolbar tl_quality_bar;
+    @BindView(R.id.scrollview)
+    ScrollView mScrollview;
 
 
     private List<CommunalDetailObjectBean> itemDescriptionList = new ArrayList();
@@ -308,7 +311,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_communal_refresh;
     }
 
@@ -794,5 +797,10 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
+
+    @Override
+    public View getTopView() {
+        return mScrollview;
     }
 }

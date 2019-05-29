@@ -235,7 +235,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     @Override
-    protected View getLoadView() {
+    public View getLoadView() {
         return smart_communal_refresh;
     }
 

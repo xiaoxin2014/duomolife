@@ -81,12 +81,14 @@
                             <LinearLayout
                                 android:id="@+id/ll_product_activity_detail"
                                 android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_70"
-                                android:background="@color/text_light_pink_da"
+                                android:layout_height="wrap_content"
+                                android:background="@color/bg_red_rule"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal"
                                 android:paddingLeft="@dimen/gap_left"
+                                android:paddingTop="@dimen/sc_mm_14"
                                 android:paddingRight="@dimen/gap_right"
+                                android:paddingBottom="@dimen/sc_mm_14"
                                 android:visibility="gone">
 
                                 <include layout="@layout/layout_communal_pro_tag_red"/>
@@ -98,10 +100,11 @@
                                     android:layout_weight="1"
                                     android:paddingLeft="@dimen/sc_mm_10"
                                     android:paddingRight="@dimen/sc_mm_10"
-                                    android:textColor="@color/text_black_t"
+                                    android:textColor="@color/white"
                                     android:textSize="@dimen/sc_mm_26"/>
 
-                                <include layout="@layout/layout_countdown_time_hours"/>
+                                <include
+                                    layout="@layout/layout_countdown_time_hours"/>
 
                                 <include
                                     layout="@layout/layout_comm_next_right"
@@ -110,121 +113,102 @@
                                     android:layout_marginLeft="@dimen/gap_left"/>
                             </LinearLayout>
 
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/tv_ql_sp_pro_sc_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/sc_mm_18"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingLeft="@dimen/sc_mm_30"
+                                android:paddingTop="@dimen/sc_mm_20"
+                                android:paddingRight="@dimen/sc_mm_30"
+                                android:paddingBottom="@dimen/sc_mm_10"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_32"
+                                android:visibility="visible"/>
 
-                                <TextView
-                                    android:id="@+id/tv_ql_sp_pro_sc_name"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:maxLines="2"
-                                    android:paddingLeft="@dimen/gap_left"
-                                    android:paddingRight="@dimen/gap_right"
-                                    android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_32"
-                                    android:visibility="visible"/>
-
-                                <ImageView
-                                    android:id="@+id/iv_ql_shop_pro_cp_tag"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="@dimen/sc_mm_32"
-                                    android:paddingRight="@dimen/gap_right"
-                                    android:src="@drawable/no_use_coupon_icon"
-                                    android:visibility="gone"/>
-                            </LinearLayout>
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_115"
-                                android:background="@color/white"
-                                android:gravity="center_vertical"
-                                android:paddingLeft="@dimen/gap_left"
-                                android:paddingTop="@dimen/sc_mm_30"
-                                android:paddingRight="@dimen/gap_right"
-                                android:paddingBottom="@dimen/sc_mm_24">
-
-                                <TextView
-                                    android:id="@+id/tv_ql_sp_pro_sc_price"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:gravity="bottom"
-                                    android:minHeight="@dimen/sc_mm_32"
-                                    android:textColor="@color/text_red_color"
-                                    android:textSize="@dimen/sc_mm_32"/>
-
-                                <TextView
-                                    android:id="@+id/tv_ql_sp_pro_sc_market_price"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginLeft="@dimen/sc_mm_38"
-                                    android:layout_toRightOf="@id/tv_ql_sp_pro_sc_price"
-                                    android:textColor="@color/text_gray_hint_n"
-                                    android:textSize="@dimen/sc_mm_22"/>
-
-                                <TextView
-                                    android:id="@+id/tv_ql_sp_pro_sc_integral_hint"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:drawableLeft="@drawable/inte_mon_icon"
-                                    android:drawableRight="@drawable/ql_ques_icon"
-                                    android:drawablePadding="@dimen/sc_mm_8"
-                                    android:gravity="center"
-                                    android:paddingLeft="@dimen/gap_left"
-                                    android:textColor="@color/text_login_gray_s"
-                                    android:textSize="@dimen/sc_mm_24"
-                                    android:visibility="gone"/>
-                            </RelativeLayout>
+                            <include layout="@layout/layout_scrool_detail_price"/>
 
                             <com.google.android.flexbox.FlexboxLayout
                                 xmlns:app="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/fbl_details_market_label"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/gap_left"
-                                android:layout_marginRight="@dimen/gap_right"
-                                android:layout_marginBottom="@dimen/sc_mm_30"
+                                android:layout_marginLeft="@dimen/sc_mm_30"
+                                android:layout_marginRight="@dimen/sc_mm_30"
                                 android:visibility="gone"
                                 app:dividerDrawable="@drawable/item_divider_nine_dp_white"
+                                app:showDivider="middle"/>
+
+                            <com.google.android.flexbox.FlexboxLayout
+                                xmlns:app="http://schemas.android.com/apk/res-auto"
+                                android:id="@+id/flex_product_point"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/sc_mm_30"
+                                android:background="@drawable/border_cir_5dp_gray_light"
+                                android:padding="@dimen/sc_mm_27"
+                                android:visibility="gone"
+                                app:dividerDrawable="@drawable/item_divider_product_tag_transparent"
+                                app:flexDirection="column"
                                 app:showDivider="middle"/>
 
                             <android.support.v7.widget.RecyclerView
                                 android:id="@+id/rv_shop_details_text_communal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/gap_left"
                                 android:scrollbars="none"/>
 
                             <LinearLayout
                                 android:id="@+id/ll_sp_pro_sku_value"
                                 android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_100"
+                                android:layout_height="wrap_content"
                                 android:background="@color/light_gray_f"
                                 android:orientation="horizontal"
                                 android:paddingTop="@dimen/sc_mm_10">
 
                                 <TextView
                                     android:id="@+id/tv_ql_sp_pro_sku"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/sc_mm_100"
                                     android:layout_weight="1"
                                     android:background="@color/white"
                                     android:drawableRight="@drawable/right_btn_nor"
                                     android:gravity="center_vertical|left"
-                                    android:paddingLeft="@dimen/gap_left"
-                                    android:paddingRight="@dimen/gap_right"
+                                    android:paddingLeft="@dimen/sc_mm_30"
+                                    android:paddingRight="@dimen/sc_mm_30"
                                     android:text="选择商品属性"
-                                    android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_28"/>
+                                    android:textColor="@color/color_blue_reply_com"
+                                    android:textSize="@dimen/sc_mm_30"/>
                             </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_product_group"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/border_top_divider_10dp"
+                                android:orientation="vertical"
+                                android:paddingLeft="@dimen/sc_mm_30"
+                                android:paddingBottom="@dimen/sc_mm_40"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/sc_mm_30"
+                                    android:paddingTop="@dimen/sc_mm_30"
+                                    android:text="组合套餐"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_30"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/rv_goods_group"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/sc_mm_30"
+                                    android:scrollbars="none"/>
+                            </LinearLayout>
+
 
                             <RelativeLayout
                                 android:id="@+id/rel_shop_details_comment"
@@ -236,77 +220,103 @@
                                 <include layout="@layout/layout_communal_recycler_wrap"/>
                             </RelativeLayout>
 
+                            <include
+                                layout="@layout/item_recommend_artical"/>
+
                             <LinearLayout
-                                android:id="@+id/ll_layout_pro_sc_tag"
+                                android:id="@+id/ll_product_recommend"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/border_top_divider_10dp"
+                                android:orientation="vertical"
+                                android:paddingLeft="@dimen/sc_mm_30"
+                                android:paddingBottom="@dimen/sc_mm_40"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/sc_mm_30"
+                                    android:paddingTop="@dimen/sc_mm_30"
+                                    android:text="相关商品推荐"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_30"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/rv_goods_recommend"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/sc_mm_30"
+                                    android:scrollbars="none"/>
+                            </LinearLayout>
+
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@color/light_gray_f"
-                                android:gravity="center_vertical"
-                                android:orientation="vertical"
-                                android:paddingTop="@dimen/dp_10">
-
-                                <LinearLayout
-                                    android:id="@+id/ll_pro_buy_before"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/border_bottom_line"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:paddingLeft="@dimen/gap_left"
-                                    android:paddingTop="@dimen/sc_mm_15"
-                                    android:paddingBottom="@dimen/sc_mm_15"
-                                    android:visibility="visible">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="购前须知："
-                                        android:textColor="@color/text_black_t"
-                                        android:textSize="@dimen/sc_mm_24"/>
-
-                                    <TextView
-                                        android:id="@+id/tv_pro_buy_text"
-                                        android:layout_width="0px"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:ellipsize="end"
-                                        android:maxLines="2"
-                                        android:textColor="@color/text_login_gray_s"
-                                        android:textSize="@dimen/sc_mm_24"/>
-
-                                    <ImageView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:paddingLeft="@dimen/sc_mm_20"
-                                        android:paddingRight="@dimen/gap_right"
-                                        android:src="@drawable/right_btn_nor"/>
-                                </LinearLayout>
+                                android:paddingTop="10dp">
 
                                 <RelativeLayout
-                                    android:id="@+id/rel_product_tag"
+                                    android:id="@+id/ll_layout_pro_sc_tag"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/sc_mm_80"
+                                    android:background="@color/white"
+                                    android:orientation="horizontal"
+                                    android:paddingLeft="@dimen/sc_mm_30"
+                                    android:paddingRight="@dimen/sc_mm_30">
+
+                                    <com.google.android.flexbox.FlexboxLayout
+                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        android:id="@+id/flex_product_tag"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerVertical="true"
+                                        app:dividerDrawable="@drawable/item_divider_product_tag"
+                                        app:flexDirection="row"
+                                        app:showDivider="middle"/>
+
+                                    <ImageView
+                                        android:id="@+id/iv_more_tag"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_centerVertical="true"
+                                        android:background="@color/white"
+                                        android:src="@drawable/right_btn_nor"/>
+                                </RelativeLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_pro_buy_before"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/border_top_line"
+                                android:orientation="vertical"
+                                android:padding="@dimen/sc_mm_30">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="购前须知"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_30"/>
+
+                                <com.google.android.flexbox.FlexboxLayout
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/flex_bug_before"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:background="@color/white"
-                                    android:gravity="center"
-                                    android:paddingLeft="@dimen/gap_left"
-                                    android:paddingTop="@dimen/sc_mm_15"
-                                    android:paddingRight="@dimen/gap_right"
-                                    android:paddingBottom="@dimen/sc_mm_15">
-
-                                    <include layout="@layout/layout_communal_flexbox"/>
-                                </RelativeLayout>
+                                    android:layout_marginTop="@dimen/sc_mm_30"
+                                    android:background="@drawable/border_cir_5dp_gray_light"
+                                    android:padding="@dimen/sc_mm_27"
+                                    app:dividerDrawable="@drawable/item_divider_product_tag_transparent"
+                                    app:flexDirection="column"
+                                    app:showDivider="middle"/>
                             </LinearLayout>
                         </LinearLayout>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rv_product_details"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:scrollbars="none"/>
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/rv_ql_sp_good_recommend"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:scrollbars="none"/>
@@ -320,19 +330,7 @@
         <include layout="@layout/layout_communal_floating"/>
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <View
-            android:id="@+id/top_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"/>
-
-        <include layout="@layout/layout_ql_product_scroll_detail_header"/>
-    </LinearLayout>
-
+    <include layout="@layout/layout_ql_product_scroll_detail_header"/>
 
     <TextView
         android:id="@+id/tv_product_share_tint"

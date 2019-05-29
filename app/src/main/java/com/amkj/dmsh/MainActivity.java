@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
     private AlertView selectServer;
-    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "修改UID", "预发布", "王凯2", "鸿星"};
+    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "修改UID", "预发布","王凯2",  "王凯1", "鸿星"};
     private AlertView mAlertViewExt;
     private EditText etName;
     private List<MainIconBean> iconDataList = new ArrayList<>();

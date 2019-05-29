@@ -30,7 +30,7 @@
         app:suffixMinute=":"
         app:isShowSecond="true"
         app:suffixGravity="center"
-        app:suffixTextColor="@color/text_login_gray_s"
+        app:suffixTextColor="@color/white"
         app:suffixTextSize="@dimen/sc_mm_22"
         app:timeTextColor="@color/text_login_gray_s"
         app:timeTextSize="@dimen/sc_mm_22" />
