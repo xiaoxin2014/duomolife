@@ -123,6 +123,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -1943,9 +1944,29 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @OnClick(R.id.iv_img_share)
     void setShare(View view) {
         if (shopPropertyBean != null) {
-            new UMShareAction(ShopScrollDetailsActivity.this
+            String title = shopPropertyBean.getName();
+            String activityCode = shopPropertyBean.getActivityCode();
+            if (!TextUtils.isEmpty(activityCode)) {
+                if (activityCode.contains("XSG")) {
+                    //限时购活动
+                    List<ShopPropertyBean.SkuSaleBean> skuSale = shopPropertyBean.getSkuSale();
+                    if (skuSale != null && skuSale.size() > 0) {
+                        String price = skuSale.get(0).getPrice();
+                        title = getStringsFormat(getActivity(), R.string.limited_time_preference, price) + shopPropertyBean.getName();
+                    }
+                } else if (activityCode.contains("LJ")) {
+                    //立减活动
+                    title = TextUtils.isEmpty(shopPropertyBean.getSubtitle()) ? "我在多么生活看中了" + shopPropertyBean.getName()
+                            : getStringsFormat(getActivity(), R.string.bracket, shopPropertyBean.getActivityRule()) + shopPropertyBean.getName();
+                }
+            } else {
+                //普通商品
+                title = TextUtils.isEmpty(shopPropertyBean.getSubtitle()) ? "我在多么生活看中了" + shopPropertyBean.getName()
+                        : shopPropertyBean.getSubtitle() + "•" + shopPropertyBean.getName();
+            }
+            new UMShareAction(getActivity()
                     , shopPropertyBean.getPicUrl()
-                    , "我在多么生活看中了" + shopPropertyBean.getName()
+                    , title
                     , getStrings(shopPropertyBean.getSubtitle())
                     , sharePageUrl + shopPropertyBean.getId()
                     , "pages/goodsDetails/goodsDetails?id=" + shopPropertyBean.getId()

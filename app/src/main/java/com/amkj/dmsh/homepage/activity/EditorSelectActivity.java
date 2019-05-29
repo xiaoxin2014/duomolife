@@ -32,7 +32,6 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -202,8 +201,8 @@ public class EditorSelectActivity extends BaseActivity {
                     if (editorBean != null) {
                         new UMShareAction(this
                                 , editorBean.getCoverImg()
-                                , getStrings(mEditorEntity.getTitle())
-                                , getStrings(mEditorEntity.getDescription())
+                                , "小编精选：内部员工淘货秘籍，跟着买就对了~"
+                                , "每一件都精挑细选，买对又省钱，过时不候哦！"
                                 , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), 1);
                     }
                 }

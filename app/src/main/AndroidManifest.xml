@@ -1121,6 +1121,17 @@
             </intent-filter>
         </activity>
 
+        <!--积分商品订单-->
+        <activity
+            android:name=".shopdetails.activity.ProRecommendActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ProRecommendActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <!--小编精选-->
         <activity
             android:name=".homepage.activity.EditorSelectActivity"

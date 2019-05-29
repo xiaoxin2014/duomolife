@@ -108,7 +108,7 @@ import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
  * Created by atd48 on 2016/10/27.
  * 申请退款
  */
-public class DirectApplyRefundActivity extends BaseActivity{
+public class DirectApplyRefundActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -278,10 +278,6 @@ public class DirectApplyRefundActivity extends BaseActivity{
                     .setDividerId(R.drawable.item_divider_img_white)
 
 
-
-
-
-
                     .create());
             imgGridRecyclerAdapter = new ImgGridRecyclerAdapter(this, imagePathBeans);
             rv_apply_refund_img.setAdapter(imgGridRecyclerAdapter);
@@ -313,6 +309,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
             }
         });
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -343,6 +340,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
         }
         return false;
     }
+
     @Override
     protected void loadData() {
         getApplyRefund();
@@ -359,7 +357,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
     }
 
     private void getApplyRefund() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -464,8 +462,11 @@ public class DirectApplyRefundActivity extends BaseActivity{
             refundTypeMap.clear();
             while (iterator.hasNext()) {
                 Map.Entry<String, String> entry = iterator.next();
-                refundTypeList.add(entry.getValue());
-                refundTypeMap.put(entry.getValue(), entry.getKey());
+                //4.0.3版本开始不支持售后维修（隐藏入口）
+                if (!"售后维修".equals(entry.getValue())) {
+                    refundTypeList.add(entry.getValue());
+                    refundTypeMap.put(entry.getValue(), entry.getKey());
+                }
             }
             if (0 < refundTypeList.size() && refundTypeList.size() < 2) {
                 tv_dir_indent_apply_type_sel.setText(refundTypeList.get(refundTypeList.size() - 1));
@@ -543,9 +544,9 @@ public class DirectApplyRefundActivity extends BaseActivity{
      * 获取默认地址
      */
     private void getDefaultAddress() {
-        Map<String,Object> params = new HashMap<>();
-        params.put("uid",userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,DELIVERY_ADDRESS,params,new NetLoadListenerHelper(){
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -787,7 +788,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
             e.printStackTrace();
         }
         params.put("userAddressId", addressId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_REFUND_REPAIR_SUB,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REFUND_REPAIR_SUB, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -820,12 +821,12 @@ public class DirectApplyRefundActivity extends BaseActivity{
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(DirectApplyRefundActivity.this,R.string.do_failed);
+                showToast(DirectApplyRefundActivity.this, R.string.do_failed);
             }
 
             @Override
             public void netClose() {
-                showToast(DirectApplyRefundActivity.this,R.string.unConnectedNetwork);
+                showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -881,7 +882,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
             }
             params.put("refundType", refundBean.getRefundType());
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -907,12 +908,12 @@ public class DirectApplyRefundActivity extends BaseActivity{
 
             @Override
             public void netClose() {
-                showToast(DirectApplyRefundActivity.this,R.string.unConnectedNetwork);
+                showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(DirectApplyRefundActivity.this,R.string.do_failed);
+                showToast(DirectApplyRefundActivity.this, R.string.do_failed);
             }
         });
     }
@@ -930,7 +931,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
             params.put("msg", refundBean.getContent());
         }
         params.put("reason", refundBean.getReason());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CANCEL_INDENT_REFUND,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CANCEL_INDENT_REFUND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -978,7 +979,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
 
             @Override
             public void netClose() {
-                showToast(DirectApplyRefundActivity.this,R.string.unConnectedNetwork);
+                showToast(DirectApplyRefundActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -1115,7 +1116,7 @@ public class DirectApplyRefundActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(commitDialogHelper!=null&&commitDialogHelper.isShowing()){
+        if (commitDialogHelper != null && commitDialogHelper.isShowing()) {
             commitDialogHelper.dismiss();
         }
         KeyboardUtils.unregisterSoftInputChangedListener(this);

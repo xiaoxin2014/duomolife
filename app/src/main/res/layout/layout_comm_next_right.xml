@@ -4,4 +4,4 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginRight="@dimen/sc_mm_24"
-    android:src="@drawable/light_next_icon" />
+    android:src="@drawable/black_next_icon" />

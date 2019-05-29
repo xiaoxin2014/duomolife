@@ -23,7 +23,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
-import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -240,9 +239,7 @@ public class UMShareAction {
         final UMWeb web = new UMWeb(!TextUtils.isEmpty(urlLink) ? urlLink : "");
         web.setTitle(!TextUtils.isEmpty(title) ? title : "多么生活");//标题
         web.setThumb(umImage);  //缩略图
-        if (context instanceof DoMoLifeCommunalActivity) {
-            web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述（v4.1.0版本开始 只有从网页分享以及分享到微信小程序需要副标题）
-        }
+        web.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//描述（v4.1.0版本开始 只有从网页分享以及分享到微信小程序需要副标题）
 
         switch (platformType) {
             case SINA:

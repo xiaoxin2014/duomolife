@@ -438,7 +438,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     if (view.getId() == R.id.tv_communal_share && customProList.size() > 0) {
                         LikedProductBean likedProductBean = customProList.get(0);
                         shareDataBean = new ShareDataBean(likedProductBean.getPicUrl()
-                                , "推荐你看看这个"
+                                , getStrings(userLikedProductEntity.getZoneName())
                                 , "我在多么生活发现这几样好物，性价比不错，还包邮"
                                 , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType);
 
@@ -468,7 +468,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
             LikedProductBean likedProductBean = customProList.get(0);
             new UMShareAction(QualityCustomTopicActivity.this
                     , likedProductBean.getPicUrl()
-                    , "推荐你看看这个"
+                    , getStrings(userLikedProductEntity.getZoneName())
                     , "我在多么生活发现这几样好物，性价比不错，还包邮"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType
                     , "pages/handpick/handpick?id=" + productType, likedProductBean.getType_id());
