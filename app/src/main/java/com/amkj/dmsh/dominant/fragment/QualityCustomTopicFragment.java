@@ -13,7 +13,6 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -39,8 +38,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +58,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
-import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 ;
 
@@ -190,12 +186,6 @@ public class QualityCustomTopicFragment extends BaseFragment {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        EventBus.getDefault().post(new EventMessage(updateCarNum, updateCarNum));
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -309,7 +299,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (userLikedProductEntity != null) {
                     if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        customProList.addAll(removeExistUtils.removeExistList(userLikedProductEntity.getLikedProductBeanList()));
+                        customProList.addAll(removeExistUtils.removeExistList(userLikedProductEntity.getGoodsList()));
                     } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                         qualityTypeProductAdapter.loadMoreEnd();
                     } else {
@@ -359,5 +349,4 @@ public class QualityCustomTopicFragment extends BaseFragment {
     protected void getReqParams(Bundle bundle) {
         productType = bundle.getString("productType");
     }
-
 }

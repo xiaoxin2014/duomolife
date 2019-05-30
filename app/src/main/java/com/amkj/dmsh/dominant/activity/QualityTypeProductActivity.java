@@ -647,7 +647,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                                typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
                             } else {
                                 qualityTypeProductAdapter.loadMoreEnd();
                                 if (!EMPTY_CODE.equals(likedProductEntity.getCode())) {

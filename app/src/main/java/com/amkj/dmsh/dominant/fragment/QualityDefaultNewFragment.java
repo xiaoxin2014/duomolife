@@ -14,7 +14,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeAreaNewAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
@@ -78,10 +78,10 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<QualityHomeTypeBean> typeBeanArrayList = new ArrayList<>();
     private List<QualityHomeTypeBean> typeBeanCenterList = new ArrayList<>();
-    private List<Attribute> goodsProList = new ArrayList<>();
+    private List<LikedProductBean> goodsProList = new ArrayList<>();
     private QualityTypeAreaNewAdapter qualityTypeAreaAdapter;
     private QualityTypeAreaNewAdapter qualityTypeCenterAdapter;
-    private QualityGoodNewProAdapter qualityGoodNewProAdapter;
+    private GoodProductAdapter qualityGoodNewProAdapter;
     private QualityTypeView qualityTypeView;
     private CBViewHolderCreator cbViewHolderCreator;
     private RemoveExistUtils removeExistUtils;
@@ -105,7 +105,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
             }
         });
 //        好物
-        qualityGoodNewProAdapter = new QualityGoodNewProAdapter(((BaseActivity) getActivity()), goodsProList);
+        qualityGoodNewProAdapter = new GoodProductAdapter(((BaseActivity) getActivity()), goodsProList);
         View typeHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_qt_pro_type, null, false);
         qualityTypeView = new QualityTypeView();
         ButterKnife.bind(qualityTypeView, typeHeaderView);

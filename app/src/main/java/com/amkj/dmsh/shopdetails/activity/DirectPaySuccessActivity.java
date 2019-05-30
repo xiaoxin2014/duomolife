@@ -271,7 +271,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                        typeDetails.addAll(likedProductEntity.getGoodsList());
                     } else {
                         showToast(DirectPaySuccessActivity.this, likedProductEntity.getMsg());
                     }

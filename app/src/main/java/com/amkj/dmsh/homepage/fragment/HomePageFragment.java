@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,8 +13,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
@@ -43,20 +45,18 @@ import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_NAVBAR;
 import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 
 /**
@@ -193,34 +193,8 @@ public class HomePageFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getMessageWarm();
-        getCarCount();
     }
 
-
-    private void getCarCount() {
-        if (userId < 1) {
-            badgeCart.setBadgeNumber(0);
-            return;
-        }
-        //购物车数量展示
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        int cartNumber = requestStatus.getResult().getCartNumber();
-                        badgeCart.setBadgeNumber(cartNumber);
-                    } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToastRequestMsg(getActivity(), requestStatus);
-                    }
-                }
-            }
-        });
-    }
 
     private void getMessageWarm() {
         if (userId < 1) {
@@ -323,5 +297,12 @@ public class HomePageFragment extends BaseFragment {
             }
         }
         return "";
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badgeCart);
+        }
     }
 }

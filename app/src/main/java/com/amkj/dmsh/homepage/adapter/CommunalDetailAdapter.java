@@ -2,7 +2,6 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,7 +11,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,9 +26,11 @@ import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
@@ -39,7 +39,6 @@ import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.GoodsParataxisBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -81,8 +80,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.NORTEXT;
@@ -108,7 +105,6 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getOpenglRenderLimitValue;
 import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
-import static me.jessyan.autosize.utils.AutoSizeUtils.mm2px;
 
 
 /**
@@ -255,21 +251,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         }
                     }
                 }
-                CommunalGoodListAdapter communalGoodListAdapter = new CommunalGoodListAdapter(detailObjectBean.getGoodsList());
-                communalGoodListAdapter.setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        GoodsParataxisBean goodsParataxisBean = (GoodsParataxisBean) view.getTag(R.id.iv_tag);
-                        if (goodsParataxisBean != null) {
-                            Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
-                            intent.putExtra("productId", String.valueOf(goodsParataxisBean.getId()));
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            //记录埋点参数sourceId
-//                            ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(goodsParataxisBean.getId()));
-                            context.startActivity(intent);
-                        }
-                    }
-                });
+                GoodProductAdapter communalGoodListAdapter = new GoodProductAdapter(((BaseActivity) context), detailObjectBean.getGoodsList());
                 holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
                 break;
             case TYPE_PRODUCT_RECOMMEND:
@@ -735,106 +717,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             communal_recycler_wrap = view.findViewById(R.id.communal_recycler_wrap);
             if (communal_recycler_wrap != null) {
                 communal_recycler_wrap.setNestedScrollingEnabled(false);
-            }
-        }
-    }
-
-    private class CommunalGoodListAdapter extends BaseMultiItemQuickAdapter<GoodsParataxisBean, BaseViewHolder> {
-
-        public CommunalGoodListAdapter(List<GoodsParataxisBean> goodsParataxisBeans) {
-            super(goodsParataxisBeans);
-            addItemType(TYPE_0, R.layout.adapter_communal_details_goods);
-            addItemType(TYPE_1, R.layout.adapter_communal_details_goods_pic);
-        }
-
-        @Override
-        protected void convert(BaseViewHolder helper, GoodsParataxisBean goodsParataxisBean) {
-            switch (goodsParataxisBean.getItemType()) {
-                case TYPE_1:
-                    ImageView iv_communal_details_goods_pic = helper.getView(R.id.iv_communal_details_goods_pic);
-                    GlideImageLoaderUtil.loadCenterCrop(helper.itemView.getContext(), iv_communal_details_goods_pic, goodsParataxisBean.getPicUrlX());
-                    iv_communal_details_goods_pic.setTag(R.id.iv_two_tag, getStrings(goodsParataxisBean.getType()));
-                    iv_communal_details_goods_pic.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            iv_communal_details_goods_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            String type = (String) iv_communal_details_goods_pic.getTag(R.id.iv_two_tag);
-                            if (!TextUtils.isEmpty(type)) {
-//                                计算边距距离
-                                int numberCount = Integer.parseInt(ConstantMethod.getNumber(type));
-                                int height;
-                                if (numberCount > 2) {
-                                    height = mm2px(context, 320);
-                                } else {
-                                    height = mm2px(context, 385);
-                                }
-                                ViewGroup.LayoutParams layoutParams = iv_communal_details_goods_pic.getLayoutParams();
-                                layoutParams.height = height;
-                                iv_communal_details_goods_pic.setLayoutParams(layoutParams);
-                            } else {
-                                iv_communal_details_goods_pic.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            }
-                        }
-                    });
-                    helper.itemView.setTag(R.id.iv_tag, goodsParataxisBean);
-                    break;
-                default:
-                    ImageView iv_details_goods_image = helper.getView(R.id.iv_details_goods_image);
-                    iv_details_goods_image.setTag(R.id.iv_two_tag, getStrings(goodsParataxisBean.getType()));
-                    iv_details_goods_image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            iv_details_goods_image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            String type = (String) iv_details_goods_image.getTag(R.id.iv_two_tag);
-                            if (!TextUtils.isEmpty(type)) {
-//                                计算边距距离
-                                int numberCount = Integer.parseInt(ConstantMethod.getNumber(type));
-                                if (numberCount < 1) {
-                                    numberCount = 1;
-                                }
-                                int numberLine = numberCount + 1;
-                                int numberWidthLine = numberLine * dp2px(context, 5);
-                                float width = (screenWidth - numberWidthLine) * 1f / numberCount;
-                                ViewGroup.LayoutParams layoutParams = iv_details_goods_image.getLayoutParams();
-                                layoutParams.height = (int) width;
-                                iv_details_goods_image.setLayoutParams(layoutParams);
-                            }
-                        }
-                    });
-                    String picUrlX = goodsParataxisBean.getPicUrlX();
-                    if (!TextUtils.isEmpty(goodsParataxisBean.getWaterRemark())) {
-                        picUrlX = GlideImageLoaderUtil.getWaterMarkImgUrl(goodsParataxisBean.getPicUrlX(), goodsParataxisBean.getWaterRemark());
-                    }
-                    GlideImageLoaderUtil.loadCenterCrop(context, iv_details_goods_image, getStrings(picUrlX));
-                    TextView tv_details_goods_market_price = helper.getView(R.id.tv_details_goods_market_price);
-                    tv_details_goods_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
-                    helper.setGone(R.id.iv_com_pro_tag_out, goodsParataxisBean.getQuantity() < 1)
-                            .setText(R.id.tv_details_goods_name, getStrings(goodsParataxisBean.getTitleX()))
-                            .setText(R.id.tv_details_goods_price, getStringsChNPrice(context, goodsParataxisBean.getPrice()))
-                            .setText(R.id.tv_details_goods_market_price, getStringsChNPrice(context, goodsParataxisBean.getMarketPrice()))
-                            .itemView.setTag(R.id.iv_tag, goodsParataxisBean);
-
-                    FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
-                    if (!TextUtils.isEmpty(goodsParataxisBean.getActivityTag()) || (goodsParataxisBean.getMarketLabelList() != null
-                            && goodsParataxisBean.getMarketLabelList().size() > 0)) {
-                        fbl_label.setVisibility(View.VISIBLE);
-                        fbl_label.removeAllViews();
-                        if (!TextUtils.isEmpty(goodsParataxisBean.getActivityTag())) {
-                            fbl_label.addView(getLabelInstance().createLabelText(context, goodsParataxisBean.getActivityTag(), 1));
-                        }
-                        if (goodsParataxisBean.getMarketLabelList() != null
-                                && goodsParataxisBean.getMarketLabelList().size() > 0) {
-                            for (LikedProductBean.MarketLabelBean marketLabelBean : goodsParataxisBean.getMarketLabelList()) {
-                                if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
-                                    fbl_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
-                                    if (fbl_label.getChildCount() >= 2) break;
-                                }
-                            }
-                        }
-                    } else {
-                        fbl_label.setVisibility(View.GONE);
-                    }
-                    break;
             }
         }
     }

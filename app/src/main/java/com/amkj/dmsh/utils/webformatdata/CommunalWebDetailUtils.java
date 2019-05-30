@@ -30,7 +30,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.GoodsParataxisBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -55,8 +55,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
@@ -118,8 +116,8 @@ public class CommunalWebDetailUtils {
                     try {
                         Gson gson = new Gson();
                         String strContent = gson.toJson(descriptionBean.getContent());
-                        List<GoodsParataxisBean> goodList = gson.fromJson(strContent
-                                , new TypeToken<List<GoodsParataxisBean>>() {
+                        List<LikedProductBean> goodList = gson.fromJson(strContent
+                                , new TypeToken<List<LikedProductBean>>() {
                                 }.getType());
                         if (goodList == null || goodList.size() < 1) {
                             continue;
@@ -129,11 +127,13 @@ public class CommunalWebDetailUtils {
                         } else {
                             goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
                         }
-                        for (GoodsParataxisBean goodsParataxisBean : goodList) {
-                            if (descriptionBean.getType().contains("goodsX")) {
-                                goodsParataxisBean.setItemType(TYPE_0);
+                        for (LikedProductBean likedProductBean : goodList) {
+                            if (likedProductBean.getType().contains("goodsX")) {
+                                //普通商品
+                                likedProductBean.setObjectType("product");
                             } else {
-                                goodsParataxisBean.setItemType(TYPE_1);
+                                //封面图片
+                                likedProductBean.setObjectType("ad");
                             }
                         }
                         detailObjectBean.setItemType(TYPE_PARATAXIS_GOOD);

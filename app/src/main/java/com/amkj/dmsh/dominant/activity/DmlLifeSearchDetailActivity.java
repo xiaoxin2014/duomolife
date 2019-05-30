@@ -80,6 +80,7 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
@@ -97,7 +98,6 @@ import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TAG;
 
@@ -375,14 +375,9 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     protected void getData() {
         getSearchData();
         getSearchComment();
-        getCarCount();
+        getCarCount(getActivity(), badge);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
 
     private void getSearchComment() {
         Map<String, Object> params = new HashMap<>();
@@ -551,27 +546,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         tv_communal_pro_tag.setBackground(drawable);
         tv_communal_pro_tag.setText(searchProductList.size() + "商品");
         tv_communal_pro_title.setText(getStrings(dmlSearchDetailBean.getTitle()));
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        }
-                    }
-                }
-            });
-        }
     }
 
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {
@@ -761,7 +735,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     , getStrings(dmlSearchDetailBean.getTitle())
                     , getStrings(dmlSearchDetailBean.getDigest())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/study_detail.html?id="
-                    + dmlSearchDetailBean.getId(),dmlSearchDetailBean.getId());
+                    + dmlSearchDetailBean.getId(), dmlSearchDetailBean.getId());
         }
     }
 
@@ -847,6 +821,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     articleCommentList.set(i, dmlSearchCommentBean);
                 }
             }
+        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(), badge);
         }
     }
 

@@ -168,7 +168,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         this.activityRule = activityRule;
     }
 
-    public List<LikedProductBean> getLikedProductBeanList() {
+    public List<LikedProductBean> getGoodsList() {
         return likedProductBeanList;
     }
 
@@ -218,7 +218,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
 
     @Override
     public int compareTo(UserLikedProductEntity userLikedProductEntity) {
-        return this.getPosition()-userLikedProductEntity.getPosition();
+        return this.getPosition() - userLikedProductEntity.getPosition();
     }
 
     public static class LikedProductBean extends Attribute implements MultiItemEntity {
@@ -230,7 +230,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private String ext;
         private int type_id;
         private int commentNum;
-        @SerializedName(value = "picUrl", alternate = "path")
+        @SerializedName(value = "picUrl", alternate = {"path", "pic_url"})
         private String picUrl;
         private String price;
         private String name;
@@ -240,13 +240,24 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private String tagContent;
         private String sellStatus;
         private String activityCode;
+        private String type;
         private int limitBuy;
         private int category_id;
         @SerializedName("buyIntergral")
         private int buyIntegral;
         private String waterRemark;
         private String activityTag;
+        @SerializedName(value = "android_link", alternate = "androidLink")
+        private String androidLink;
         private List<MarketLabelBean> marketLabelList;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public int getBuyIntegral() {
             return buyIntegral;
@@ -270,6 +281,14 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
 
         public void setMarketLabelList(List<MarketLabelBean> marketLabelList) {
             this.marketLabelList = marketLabelList;
+        }
+
+        public String getAndroidLink() {
+            return androidLink;
+        }
+
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
         }
 
         public int getCategory_id() {

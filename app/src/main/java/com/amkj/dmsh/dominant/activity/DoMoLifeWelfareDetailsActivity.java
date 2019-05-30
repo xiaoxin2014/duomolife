@@ -27,10 +27,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
@@ -78,12 +78,12 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.R.id.ll_communal_pro_list;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -96,7 +96,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
 
@@ -306,7 +305,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         //头部信息
         page = 1;
         getThemeDetailsData();
-        getCarCount();
+        getCarCount(getActivity(), badge);
         getTopicComment();
     }
 
@@ -475,35 +474,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 adapterTopicComment.loadMoreEnd(true);
             }
         });
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(DoMoLifeWelfareDetailsActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
     }
 
     @Override
@@ -677,6 +647,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     articleCommentList.set(i, dmlSearchCommentBean);
                 }
             }
+        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 
@@ -803,4 +775,5 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     public View getTopView() {
         return mScrollview;
     }
+
 }

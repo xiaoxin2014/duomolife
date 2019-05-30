@@ -230,7 +230,7 @@ public class HomeCouponGetFragment extends BaseFragment {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                likedProductBeanList.addAll(likedProductEntity.getLikedProductBeanList());
+                                likedProductBeanList.addAll(likedProductEntity.getGoodsList());
                             } else if (EMPTY_CODE.equals(likedProductEntity.getCode())) {
                                 couponProTitleAdapter.loadMoreEnd();
                             }

@@ -19,10 +19,10 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.QNewProTimeShaftEntity.QNewProTimeShaftBean;
@@ -63,12 +63,12 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -79,7 +79,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_AD;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_LIST;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_TIME_SHAFT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -236,12 +235,6 @@ public class QualityNewProActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(QualityNewProActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -275,13 +268,13 @@ public class QualityNewProActivity extends BaseActivity {
         page = 1;
         getNewProShaft();
         getNewProAd();
-        getCarCount();
+        getCarCount(getActivity(),badge);
     }
 
     private void getNewProAd() {
         Map<String, Object> params = new HashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_NEW_PRO_AD,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_NEW_PRO_AD, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -323,7 +316,7 @@ public class QualityNewProActivity extends BaseActivity {
     }
 
     private void getNewProShaft() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_NEW_PRO_TIME_SHAFT,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_NEW_PRO_TIME_SHAFT, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -357,11 +350,6 @@ public class QualityNewProActivity extends BaseActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -372,7 +360,7 @@ public class QualityNewProActivity extends BaseActivity {
         if (requestCode == IS_LOGIN_CODE) {
             page = 1;
             getQualityNewPro();
-            getCarCount();
+            getCarCount(getActivity(),badge);
         }
     }
 
@@ -397,7 +385,7 @@ public class QualityNewProActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                newProList.addAll(likedProductEntity.getLikedProductBeanList());
+                                newProList.addAll(likedProductEntity.getGoodsList());
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
@@ -428,28 +416,6 @@ public class QualityNewProActivity extends BaseActivity {
                 });
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityNewProActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     class QNewProView {
         @BindView(R.id.rel_communal_banner)
@@ -563,6 +529,8 @@ public class QualityNewProActivity extends BaseActivity {
                 qNewProView.ad_communal_banner.stopTurning();
                 qNewProView.ad_communal_banner.setPointViewVisible(false);
             }
+        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 }

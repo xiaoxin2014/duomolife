@@ -637,7 +637,7 @@ public class AttendanceActivity extends BaseActivity {
                         LikedProductBean likedProductBean = new LikedProductBean();
                         likedProductBean.setItemType(TYPE_2);
                         doubleIntegrationList.add(likedProductBean);
-                        for (LikedProductBean likedProduct : userLikedProductEntity.getLikedProductBeanList()) {
+                        for (LikedProductBean likedProduct : userLikedProductEntity.getGoodsList()) {
                             likedProduct.setItemType(TYPE_1);
                             doubleIntegrationList.add(likedProduct);
                         }

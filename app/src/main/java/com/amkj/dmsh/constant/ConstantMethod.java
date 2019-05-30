@@ -51,6 +51,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
@@ -96,6 +97,8 @@ import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -136,6 +139,7 @@ import static com.ali.auth.third.core.context.KernelContext.getApplicationContex
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
@@ -156,6 +160,7 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_DIALOG_COUNT;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -172,7 +177,6 @@ public class ConstantMethod {
     private OnGetPermissionsSuccessListener onGetPermissionsSuccessListener;
     private Context context;
     private KProgressHUD loadHud;
-    private OnAddCarListener onAddCarListener;
     private ScheduledExecutorService scheduler;
     private static Toast toast = null;
     //   定时时间更新
@@ -1674,9 +1678,9 @@ public class ConstantMethod {
         });
     }
 
+    //加入购物车
     private void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku) {
         if (userId != 0) {
-//          加入购物车
             String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_ADD_CAR;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
@@ -1700,14 +1704,13 @@ public class ConstantMethod {
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
                             showToast(context, context.getString(R.string.AddCarSuccess));
-                            if (onAddCarListener != null) {
-                                onAddCarListener.onAddCarSuccess();
-                            }
                             TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
                             Map<String, String> totalMap = new HashMap<>();
                             totalMap.put("productId", String.valueOf(shopCarGoodsSku.getProductId()));
                             totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
+                            //通知刷新购物车数量
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
                         } else {
                             showToastRequestMsg(context, status);
                         }
@@ -1734,15 +1737,30 @@ public class ConstantMethod {
         }
     }
 
-
-    /**
-     * 加入购物车
-     *
-     * @param onAddCarListener
-     */
-    public void setAddOnCarListener(OnAddCarListener onAddCarListener) {
-        this.onAddCarListener = onAddCarListener;
+    //更新购物车商品数量
+    public static void getCarCount(Activity activity, Badge badge) {
+        if (userId > 0) {
+            //购物车数量展示
+            Map<String, Object> params = new HashMap<>();
+            params.put("userId", userId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson = new Gson();
+                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            int cartNumber = requestStatus.getResult().getCartNumber();
+                            badge.setBadgeNumber(cartNumber);
+                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
+                            showToastRequestMsg(activity, requestStatus);
+                        }
+                    }
+                }
+            });
+        }
     }
+
 
     /**
      * 过滤掉常见特殊字符,常见的表情

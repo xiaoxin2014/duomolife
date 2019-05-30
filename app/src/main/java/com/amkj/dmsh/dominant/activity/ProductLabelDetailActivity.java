@@ -14,10 +14,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -47,6 +48,7 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -56,7 +58,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_PRODUCT_LABEL;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 /**
  * @author LGuiPeng
@@ -157,12 +158,6 @@ public class ProductLabelDetailActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(ProductLabelDetailActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -251,7 +246,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                labelProductList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                                labelProductList.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
@@ -282,42 +277,16 @@ public class ProductLabelDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getCarCount();
+            getCarCount(getActivity(),badge);
         }
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
@@ -328,5 +297,13 @@ public class ProductLabelDetailActivity extends BaseActivity {
     void skipShopCar(View view) {
         Intent intent = new Intent(this, ShopCarActivity.class);
         startActivity(intent);
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
+        }
     }
 }

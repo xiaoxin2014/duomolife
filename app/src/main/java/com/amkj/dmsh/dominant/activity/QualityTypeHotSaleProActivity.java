@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -15,8 +16,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.adapter.QualityHotSaleAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity.HotSaleShaftBean;
@@ -25,10 +26,10 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -38,9 +39,7 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -49,17 +48,15 @@ import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_AD;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_SHAFT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -131,12 +128,6 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
@@ -151,7 +142,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     protected void loadData() {
         getHotSaleAd();
         getQualityProductShaft();
-        getCarCount();
+        getCarCount(getActivity(),badge);
     }
 
     private void getHotSaleAd() {
@@ -243,7 +234,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         if (hotSaleShaft != null && hotSaleShaft.size() > 0) {
             QualityHotSaleAdapter qualityHotSaleAdapter = new QualityHotSaleAdapter(getSupportFragmentManager(), hotSaleShaft);
             stdDominantHotSale.setVisibility(View.VISIBLE);
-            if(screenWidth ==0){
+            if (screenWidth == 0) {
                 TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                 screenWidth = applicationLike.getScreenWidth();
             }
@@ -257,33 +248,12 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                 }
             }
             vpDominantHotSale.setAdapter(qualityHotSaleAdapter);
+            vpDominantHotSale.setOffscreenPageLimit(qualityHotSaleAdapter.getCount() - 1);
             stdDominantHotSale.setViewPager(vpDominantHotSale);
             stdDominantHotSale.setCurrentTab(currentTab);
         }
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityTypeHotSaleProActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     @OnClick(R.id.iv_img_service)
     void skipShopCar() {
@@ -294,5 +264,13 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
+        }
     }
 }

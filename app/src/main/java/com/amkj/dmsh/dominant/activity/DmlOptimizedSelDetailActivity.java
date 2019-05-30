@@ -2,6 +2,7 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,9 +19,10 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
@@ -58,17 +60,16 @@ import static android.view.View.GONE;
 import static com.amkj.dmsh.R.id.tv_communal_pro_tag;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_DML_OPTIMIZED_DETAIL;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 /**
  * @author LGuiPeng
@@ -292,34 +293,6 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         tv_communal_pro_title.setText(getStrings(dmlOptimizedSelDetailBean.getTitle()));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(DmlOptimizedSelDetailActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -397,6 +370,14 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             Map<String, String> totalMap = new HashMap<>();
             totalMap.put("relate_id", optimizedId);
             totalPersonalTrajectory.stopTotal(totalMap);
+        }
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 }

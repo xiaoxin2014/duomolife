@@ -163,13 +163,13 @@ public class CatergoryGoodsFragment extends BaseFragment {
                         Gson gson = new Gson();
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
-                            List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
+                            List<LikedProductBean> likedProductBeanList = likedProductEntity.getGoodsList();
                             if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
                                 if (page == 1) {
                                     productList.clear();
                                     removeExistUtils.clearData();
                                 }
-                                productList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                                productList.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
                                 mCatergoryGoodsAdapter.notifyDataSetChanged();
                                 mCatergoryGoodsAdapter.loadMoreComplete();
                             } else if (ERROR_CODE.equals(likedProductEntity.getCode())) {

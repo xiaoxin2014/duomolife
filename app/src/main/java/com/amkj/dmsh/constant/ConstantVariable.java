@@ -349,4 +349,9 @@ public class ConstantVariable {
 
     public static final String DEMO_LIFE_FILE = "duomolife";//用户信息本地shared_prefs文件名
 
+
+    /**
+     * Eventbus类型常量
+     */
+    public static final String UPDATE_CAR_NUM = "updateCarNum";//用户信息本地shared_prefs文件名
 }

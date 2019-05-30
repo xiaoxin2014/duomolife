@@ -10,7 +10,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.dominant.adapter.QualityHotSaleAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHotSaleShaftEntity;
@@ -19,10 +18,10 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -30,9 +29,7 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -43,13 +40,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_AD;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_SHAFT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -102,7 +96,6 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
     protected void loadData() {
         getHotSaleAd();
         getQualityProductShaft();
-        getCarCount();
     }
 
     private void getHotSaleAd() {
@@ -213,26 +206,4 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
         }
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(getActivity(), requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 }

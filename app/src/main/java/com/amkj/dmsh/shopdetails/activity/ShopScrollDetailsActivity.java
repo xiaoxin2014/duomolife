@@ -31,6 +31,7 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -93,6 +94,8 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,6 +121,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getDistinctString;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -631,7 +635,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             communalDetailAdapter.notifyDataSetChanged();
             getShopProDetails();
             getServiceData(productId);
-            getCarCount();
+            getCarCount(getActivity(), badge);
         }
     }
 
@@ -1577,7 +1581,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                             showToast(getActivity(), "添加商品成功");
-                            getCarCount();
+                            //通知刷新购物车数量
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
                             if (skuDialog != null) {
                                 shopCarGoodsSkuDif = null;
                             }
@@ -1609,30 +1614,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     }
                 });
             }
-        }
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(getActivity(), requestStatus);
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -2065,6 +2046,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (banner_ql_sp_pro_details != null && banner_ql_sp_pro_details.isCanScroll()) {
                 stopScrollBanner();
             }
+        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(), badge);
         }
     }
 

@@ -163,7 +163,7 @@ public class CouponProductActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                couponProductList.addAll(likedProductEntity.getLikedProductBeanList());
+                                couponProductList.addAll(likedProductEntity.getGoodsList());
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {

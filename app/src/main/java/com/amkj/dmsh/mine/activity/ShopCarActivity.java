@@ -580,7 +580,7 @@ public class ShopCarActivity extends BaseActivity {
                 likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProduct != null) {
                     if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                        cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
+                        cartProRecommendList.addAll(likedProduct.getGoodsList());
                         if (cartProRecommendList.size() > 0) {
                             if (cartHeaderView.getParent() == null) {
                                 shopCarGoodsAdapter.addFooterView(cartHeaderView);
@@ -614,7 +614,7 @@ public class ShopCarActivity extends BaseActivity {
                 likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProduct != null) {
                     if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                        cartProRecommendList.addAll(likedProduct.getLikedProductBeanList());
+                        cartProRecommendList.addAll(likedProduct.getGoodsList());
                         if (cartProRecommendList.size() > 0) {
                             shopCarGoodsAdapter.addFooterView(cartHeaderView);
                             recommendHeaderView.tv_pro_title.setText("-商品推荐-");

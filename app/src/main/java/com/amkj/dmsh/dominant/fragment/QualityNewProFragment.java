@@ -18,7 +18,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -64,7 +63,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
@@ -74,7 +72,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_AD;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_LIST;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_TIME_SHAFT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -214,12 +211,6 @@ public class QualityNewProFragment extends BaseFragment {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -248,7 +239,6 @@ public class QualityNewProFragment extends BaseFragment {
         page = 1;
         getNewProShaft();
         getNewProAd();
-        getCarCount();
     }
 
     private void getNewProAd() {
@@ -351,7 +341,7 @@ public class QualityNewProFragment extends BaseFragment {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                newProList.addAll(likedProductEntity.getLikedProductBeanList());
+                                newProList.addAll(likedProductEntity.getGoodsList());
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
@@ -382,28 +372,6 @@ public class QualityNewProFragment extends BaseFragment {
                 });
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(getActivity(), requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     class QNewProView {
         @BindView(R.id.rel_communal_banner)

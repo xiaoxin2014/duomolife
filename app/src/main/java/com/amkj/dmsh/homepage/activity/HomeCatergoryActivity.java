@@ -155,7 +155,7 @@ public class HomeCatergoryActivity extends BaseActivity {
                         Gson gson = new Gson();
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
-                            List<LikedProductBean> likedProductBeanList = likedProductEntity.getLikedProductBeanList();
+                            List<LikedProductBean> likedProductBeanList = likedProductEntity.getGoodsList();
                             if (likedProductBeanList != null && likedProductBeanList.size() > 0) {
                                 if (page == 1) {
                                     productList.clear();

@@ -21,7 +21,6 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -61,11 +60,11 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -76,7 +75,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_LIST;
 import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_THEME;
 import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -197,12 +195,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(QualityOverseasMailActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -292,7 +284,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                 UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                        typeDetails.addAll(likedProductEntity.getGoodsList());
                         qualityTypeProductAdapter.notifyDataSetChanged();
                     } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         isLoadProData = false;
@@ -399,34 +391,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUERY_CAR_COUNT,params,new NetLoadListenerHelper(){
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityOverseasMailActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -437,7 +401,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
         if (requestCode == IS_LOGIN_CODE) {
             productPage = 1;
             getOverseasProData();
-            getCarCount();
+            getCarCount(getActivity(),badge);
         }
     }
 

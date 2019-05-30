@@ -256,7 +256,7 @@ public class SearchDetailsProductFragment extends BaseFragment {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                productSearList.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                                productSearList.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
                             } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(getActivity(), likedProductEntity.getMsg());
                             }
@@ -319,12 +319,12 @@ public class SearchDetailsProductFragment extends BaseFragment {
                     likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
                         if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (likedProductEntity.getLikedProductBeanList().size() > 0) {
+                            if (likedProductEntity.getGoodsList().size() > 0) {
                                 LikedProductBean likedProductBean = new LikedProductBean();
                                 likedProductBean.setItemType(TYPE_1);
                                 proRecommendList.add(likedProductBean);
                             }
-                            proRecommendList.addAll(likedProductEntity.getLikedProductBeanList());
+                            proRecommendList.addAll(likedProductEntity.getGoodsList());
                             productSearList.addAll(removeExistUtils.removeExistList(proRecommendList));
                         } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(getActivity(), likedProductEntity.getMsg());

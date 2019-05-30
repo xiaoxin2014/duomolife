@@ -15,10 +15,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
@@ -55,11 +56,11 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -70,7 +71,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -216,12 +216,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(QualityCustomTopicActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -255,7 +249,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
     protected void getData() {
         getCustomCoverDescription();
         getQualityCustomPro();
-        getCarCount();
+        getCarCount(getActivity(), badge);
     }
 
     /**
@@ -324,11 +318,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -337,7 +326,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getCarCount();
+            getCarCount(getActivity(),badge);
         }
     }
 
@@ -362,7 +351,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                for (LikedProductBean likedProductBean : userLikedProductEntity.getLikedProductBeanList()) {
+                                for (LikedProductBean likedProductBean : userLikedProductEntity.getGoodsList()) {
                                     likedProductBean.setItemType(DOUBLE_INTEGRAL_TYPE.equals(showType) ? TYPE_1 : TYPE_0);
                                     customProList.add(likedProductBean);
                                 }
@@ -396,28 +385,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
                 });
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityCustomTopicActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     class QNewProView {
         @BindView(R.id.iv_communal_cover_wrap)
@@ -500,4 +467,10 @@ public class QualityCustomTopicActivity extends BaseActivity {
         return communal_recycler;
     }
 
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(), badge);
+        }
+    }
 }

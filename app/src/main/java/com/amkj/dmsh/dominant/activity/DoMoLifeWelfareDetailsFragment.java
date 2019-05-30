@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -79,7 +78,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -91,7 +89,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
 
@@ -304,7 +301,6 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
         //头部信息
         page = 1;
         getThemeDetailsData();
-        getCarCount();
         getTopicComment();
     }
 
@@ -472,29 +468,6 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                 adapterTopicComment.loadMoreEnd(true);
             }
         });
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(getActivity(), requestStatus);
-                        }
-                    }
-                }
-            });
-        }
     }
 
     private void setCommentLike(DmlSearchCommentBean dmlSearchCommentBean) {

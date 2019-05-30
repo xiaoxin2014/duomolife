@@ -19,12 +19,13 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.adapter.QualityHistoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
@@ -60,12 +61,11 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -73,7 +73,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
 import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 
 
@@ -210,12 +209,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(DoMoLifeWelfareActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -306,7 +299,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                        typeDetails.addAll(likedProductEntity.getGoodsList());
                     } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
                     }
@@ -369,35 +362,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(DoMoLifeWelfareActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
     /**
      * 往期福利社
      */
@@ -457,7 +421,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         if (requestCode == IS_LOGIN_CODE) {
             productPage = 1;
             getWelfareProData();
-            getCarCount();
+            getCarCount(getActivity(),badge);
         }
     }
 
@@ -509,6 +473,14 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
             dr_communal_pro.closeDrawers();
         } else {
             dr_communal_pro.openDrawer(ll_communal_pro_list);
+        }
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 }

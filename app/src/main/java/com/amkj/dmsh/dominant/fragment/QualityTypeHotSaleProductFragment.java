@@ -164,7 +164,7 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                         typeProductBean = gson.fromJson(result, UserLikedProductEntity.class);
                         if (typeProductBean != null) {
                             if (typeProductBean.getCode().equals(SUCCESS_CODE)) {
-                                likedProductBeans.addAll(removeExistUtils.removeExistList(typeProductBean.getLikedProductBeanList()));
+                                likedProductBeans.addAll(removeExistUtils.removeExistList(typeProductBean.getGoodsList()));
                             } else if (typeProductBean.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {

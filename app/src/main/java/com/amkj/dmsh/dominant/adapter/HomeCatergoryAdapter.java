@@ -98,7 +98,7 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
             rvGoods.setTag(userLikedProductEntity);
         }
         rvGoods.setNestedScrollingEnabled(false);
-        CatergoryGoodsAdapter catergoryGoodsAdapter = new CatergoryGoodsAdapter(mContext, userLikedProductEntity.getLikedProductBeanList());
+        CatergoryGoodsAdapter catergoryGoodsAdapter = new CatergoryGoodsAdapter(mContext, userLikedProductEntity.getGoodsList());
         catergoryGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
             LikedProductBean goodsBean = (LikedProductBean) view.getTag();
             if (goodsBean != null) {

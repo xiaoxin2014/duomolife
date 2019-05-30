@@ -134,7 +134,7 @@ public class SearchGoodProMoreActivity extends BaseActivity {
                         likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProduct != null) {
                             if (likedProduct.getCode().equals(SUCCESS_CODE)) {
-                                productSearList.addAll(likedProduct.getLikedProductBeanList());
+                                productSearList.addAll(likedProduct.getGoodsList());
                             } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
                                 showToast(SearchGoodProMoreActivity.this, likedProduct.getMsg());
                             }

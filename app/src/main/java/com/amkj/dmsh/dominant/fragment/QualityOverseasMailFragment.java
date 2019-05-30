@@ -41,8 +41,6 @@ import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +66,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_LIST;
 import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
-import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 ;
 
@@ -165,12 +162,6 @@ public class QualityOverseasMailFragment extends BaseFragment {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        EventBus.getDefault().post(new EventMessage(updateCarNum, updateCarNum));
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -223,7 +214,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getLikedProductBeanList()));
+                        typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
                         qualityTypeProductAdapter.notifyDataSetChanged();
                     } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         isLoadProData = false;

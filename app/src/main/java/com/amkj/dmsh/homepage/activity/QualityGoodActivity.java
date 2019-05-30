@@ -11,15 +11,14 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
-import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
-import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.utils.multitypejson.MultiTypeJsonParser;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -61,10 +60,10 @@ public class QualityGoodActivity extends BaseActivity {
     @BindView(R.id.tl_quality_bar)
     Toolbar mTlQualityBar;
     private int page = 1;
-    private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
-    private QualityGoodNewProAdapter qualityGoodNewProAdapter;
+    private List<LikedProductBean> goodsProList = new ArrayList<>();
+    private GoodProductAdapter qualityGoodNewProAdapter;
     private RemoveExistUtils removeExistUtils;
-    private QualityGoodProductEntity mQualityGoodProductEntity;
+    private UserLikedProductEntity mQualityGoodProductEntity;
 
     @Override
     protected int getContentView() {
@@ -87,7 +86,7 @@ public class QualityGoodActivity extends BaseActivity {
             }
         });
         //        好物
-        qualityGoodNewProAdapter = new QualityGoodNewProAdapter(getActivity(), goodsProList);
+        qualityGoodNewProAdapter = new GoodProductAdapter(getActivity(), goodsProList);
         communal_recycler.setAdapter(qualityGoodNewProAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -122,14 +121,8 @@ public class QualityGoodActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        MultiTypeJsonParser<QualityGoodProductEntity.Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<QualityGoodProductEntity.Attribute>()
-                                .registerTypeElementName("objectType")
-                                .registerTargetClass(QualityGoodProductEntity.Attribute.class)
-                                .registerTypeElementValueWithClassType("product", LikedProductBean.class)
-                                .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
-                                .build();
-                        mQualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
-                        List<QualityGoodProductEntity.Attribute> goodList = removeExistUtils.removeExistList(mQualityGoodProductEntity.getGoodProductList());
+                        mQualityGoodProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
+                        List<LikedProductBean> goodList = removeExistUtils.removeExistList(mQualityGoodProductEntity.getGoodsList());
                         if (mQualityGoodProductEntity != null) {
                             if (goodList != null && goodList.size() > 0) {
                                 if (page == 1) {

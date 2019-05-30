@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.DmlOptimizedSelDetailActivity;
 import com.amkj.dmsh.dominant.adapter.DmlOptimizedSelAdapter;
@@ -50,7 +49,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_DML_OPTIMIZED_LIST;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 /**
  * Created by xiaoxin on 2019/4/12 0012
@@ -162,7 +160,6 @@ public class DmlOptimizedSelFragment extends BaseFragment {
 
     private void getData() {
         getOptimizedData();
-        getCarCount();
     }
 
     private void getOptimizedData() {
@@ -214,27 +211,6 @@ public class DmlOptimizedSelFragment extends BaseFragment {
                         showToast(getActivity(), R.string.invalidData);
                     }
                 });
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        }
-                    }
-                }
-            });
-        }
     }
 
 

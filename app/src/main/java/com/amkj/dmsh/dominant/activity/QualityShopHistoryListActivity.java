@@ -13,11 +13,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityBuyListAdapter;
@@ -56,11 +57,11 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -168,12 +169,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(QualityShopHistoryListActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -231,35 +226,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         totalPersonalTrajectory = insertNewTotalData(QualityShopHistoryListActivity.this, listId);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityShopHistoryListActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -277,7 +243,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
     @Override
     protected void loadData() {
         page = 1;
-        getCarCount();
+        getCarCount(getActivity(), badge);
         getBuyListDetailData();
         getBuyListRecommend();
     }
@@ -316,8 +282,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
-                            }else {
-                                showToast(QualityShopHistoryListActivity.this,qualityBuyListEntity.getMsg());
+                            } else {
+                                showToast(QualityShopHistoryListActivity.this, qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
@@ -438,7 +404,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                     , shopBuyDetailBean.getCoverImgUrl()
                     , "必买清单"
                     , "集结各路口碑好货，为你精选出必买的家居、母婴优品，不踩雷，买得更顺心。"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/must_buy.html",shopBuyDetailBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/must_buy.html", shopBuyDetailBean.getId());
         }
     }
 
@@ -459,6 +425,14 @@ public class QualityShopHistoryListActivity extends BaseActivity {
             Map<String, String> totalMap = new HashMap<>();
             totalMap.put("relate_id", listId);
             totalPersonalTrajectory.stopTotal(totalMap);
+        }
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 }

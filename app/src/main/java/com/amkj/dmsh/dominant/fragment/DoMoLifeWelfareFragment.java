@@ -21,7 +21,6 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
@@ -63,15 +62,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
 import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 /**
  * Created by xiaoxin on 2019/4/12 0012
@@ -201,12 +197,6 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -297,7 +287,7 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
                 UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                        typeDetails.addAll(likedProductEntity.getLikedProductBeanList());
+                        typeDetails.addAll(likedProductEntity.getGoodsList());
                     } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), likedProductEntity.getMsg());
                     }
@@ -360,28 +350,6 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
                 });
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(getActivity(), requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     /**
      * 往期福利社

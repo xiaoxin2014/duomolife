@@ -12,11 +12,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.QualityBuyListAdapter;
@@ -56,11 +57,11 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -202,12 +203,6 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(QualityWeekOptimizedActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -219,36 +214,6 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         });
         badge = getBadge(QualityWeekOptimizedActivity.this, fl_header_service);
         totalPersonalTrajectory = insertNewTotalData(QualityWeekOptimizedActivity.this);
-    }
-
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            String url = Url.BASE_URL + Url.Q_QUERY_CAR_COUNT;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityWeekOptimizedActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCarCount();
     }
 
     @Override
@@ -266,7 +231,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     @Override
     protected void loadData() {
         page = 1;
-        getCarCount();
+        getCarCount(getActivity(),badge);
         getBuyListDetailData();
     }
 
@@ -422,6 +387,14 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                     , "摸透你的心，为你精选最应季最实用最优质的热门精品"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/home/weekly_optimization.html"
                     , "pages/weekly_optimization/weekly_optimization", shopBuyDetailBean.getId());
+        }
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 }

@@ -29,8 +29,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
-import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
@@ -53,7 +52,6 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.utils.multitypejson.MultiTypeJsonParser;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -158,13 +156,13 @@ public class HomeDefalutFragment extends BaseFragment {
     private HomeCatergoryAdapter mHomeCatergoryAdapter;
     private HomeZoneAdapter mHomeZoneAdapter;
     private HomeTopAdapter mHomeTopAdapter;
-    private QualityGoodNewProAdapter qualityGoodNewProAdapter;
+    private GoodProductAdapter qualityGoodNewProAdapter;
     private HomeArticleNewAdapter homeArticleAdapter;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<HomeCommonBean> mTopList = new ArrayList<>();
     private List<HomeWelfareBean> mThemeList = new ArrayList<>();
     private List<HomeCommonBean> mZoneList = new ArrayList<>();
-    private List<QualityGoodProductEntity.Attribute> goodsProList = new ArrayList<>();
+    private List<LikedProductBean> goodsProList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeList = new ArrayList<>();
     private List<CommunalArticleBean> articleTypeAllList = new ArrayList<>();
     private List<QualityTypeBean> qualityTypeList = new ArrayList<>();
@@ -262,7 +260,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
         mRvNice.setNestedScrollingEnabled(false);
-        qualityGoodNewProAdapter = new QualityGoodNewProAdapter(((BaseActivity) getActivity()), goodsProList);
+        qualityGoodNewProAdapter = new GoodProductAdapter(((BaseActivity) getActivity()), goodsProList);
         mRvNice.setAdapter(qualityGoodNewProAdapter);
 
 
@@ -506,15 +504,10 @@ public class HomeDefalutFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         mSmartLayout.finishRefresh();
-                        MultiTypeJsonParser<QualityGoodProductEntity.Attribute> multiTypeJsonParser = new MultiTypeJsonParser.Builder<QualityGoodProductEntity.Attribute>()
-                                .registerTypeElementName("objectType")
-                                .registerTargetClass(QualityGoodProductEntity.Attribute.class)
-                                .registerTypeElementValueWithClassType("product", LikedProductBean.class)
-                                .registerTypeElementValueWithClassType("ad", CommunalADActivityBean.class)
-                                .build();
-                        QualityGoodProductEntity qualityGoodProductEntity = multiTypeJsonParser.fromJson(result, QualityGoodProductEntity.class);
-                        if (qualityGoodProductEntity != null) {
-                            List<QualityGoodProductEntity.Attribute> goodProductList = qualityGoodProductEntity.getGoodProductList();
+
+                        UserLikedProductEntity userLikedProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
+                        if (userLikedProductEntity != null) {
+                            List<LikedProductBean> goodProductList = userLikedProductEntity.getGoodsList();
                             if (goodProductList != null && goodProductList.size() > 0) {
                                 goodsProList.clear();
                                 for (int i = 0; i < (goodProductList.size() > 6 ? 6 : goodProductList.size()); i++) {
@@ -632,7 +625,7 @@ public class HomeDefalutFragment extends BaseFragment {
                                 mUserLikedProductEntity.setPid(String.valueOf(qualityTypeBean.getPid()));
                                 mUserLikedProductEntity.setType(String.valueOf(qualityTypeBean.getType()));
                                 mUserLikedProductEntity.setPosition(catergoryPage);
-                                List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getLikedProductBeanList();
+                                List<LikedProductBean> likedProductBeanList = mUserLikedProductEntity.getGoodsList();
                                 if (qualityTypeBean.getAd() != null) {
                                     List<UserLikedProductEntity.AdBean> ad = qualityTypeBean.getAd();
                                     mUserLikedProductEntity.setAdList(ad);

@@ -19,10 +19,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
@@ -56,10 +57,10 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -67,7 +68,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 ;
 
@@ -176,12 +176,6 @@ public class QualityProductActActivity extends BaseActivity {
                                 baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                                 ConstantMethod constantMethod = new ConstantMethod();
                                 constantMethod.addShopCarGetSku(QualityProductActActivity.this, baseAddCarProInfoBean, loadHud);
-                                constantMethod.setAddOnCarListener(new ConstantMethod.OnAddCarListener() {
-                                    @Override
-                                    public void onAddCarSuccess() {
-                                        getCarCount();
-                                    }
-                                });
                                 break;
                         }
                     } else {
@@ -238,7 +232,7 @@ public class QualityProductActActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getCarCount();
+            getCarCount(getActivity(), badge);
         }
     }
 
@@ -246,7 +240,7 @@ public class QualityProductActActivity extends BaseActivity {
     protected void loadData() {
         page = 1;
         getActProActivityData();
-        getCarCount();
+        getCarCount(getActivity(), badge);
     }
 
     @Override
@@ -280,7 +274,7 @@ public class QualityProductActActivity extends BaseActivity {
                         likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                actProActivityList.addAll(likedProductEntity.getLikedProductBeanList());
+                                actProActivityList.addAll(likedProductEntity.getGoodsList());
                                 setActProInfo(likedProductEntity);
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
@@ -331,28 +325,6 @@ public class QualityProductActActivity extends BaseActivity {
         tv_header_titleAll.setText(getStrings(likedProductEntity.getTitle()));
     }
 
-    private void getCarCount() {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
-                            badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(QualityProductActActivity.this, requestStatus);
-                        }
-                    }
-                }
-            });
-        }
-    }
 
     class QActivityProView {
         @BindView(R.id.tv_communal_pro_red_tag)
@@ -441,9 +413,9 @@ public class QualityProductActActivity extends BaseActivity {
 
     @OnClick(R.id.iv_img_share)
     void setShare() {
-        if (likedProductEntity != null && likedProductEntity.getLikedProductBeanList() != null
-                && likedProductEntity.getLikedProductBeanList().size() > 0) {
-            LikedProductBean likedProductBean = likedProductEntity.getLikedProductBeanList().get(0);
+        if (likedProductEntity != null && likedProductEntity.getGoodsList() != null
+                && likedProductEntity.getGoodsList().size() > 0) {
+            LikedProductBean likedProductBean = likedProductEntity.getGoodsList().get(0);
             new UMShareAction(QualityProductActActivity.this
                     , likedProductBean.getPicUrl()
                     , getStrings(likedProductEntity.getTitle())
@@ -470,6 +442,14 @@ public class QualityProductActActivity extends BaseActivity {
             Map<String, String> totalMap = new HashMap<>();
             totalMap.put("relate_id", activityCode);
             totalPersonalTrajectory.stopTotal(totalMap);
+        }
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(),badge);
         }
     }
 }
