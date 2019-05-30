@@ -26,10 +26,10 @@ import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
@@ -40,7 +40,6 @@ import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
@@ -88,12 +87,13 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GIF_IMG;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_2X;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_3X;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_WEL;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_LINK_TAOBAO;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_LUCKY_MONEY;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_RECOMMEND;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TAG;
@@ -188,8 +188,10 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         addItemType(TYPE_EMPTY_OBJECT, R.layout.layout_empty_object);
 //        限时特惠商品详情头部
         addItemType(TYPE_PROMOTION_TITLE, R.layout.layout_promotion_product_details_header_title);
-//        并列商品
-        addItemType(TYPE_PARATAXIS_GOOD, R.layout.layout_communal_recycler_wrap);
+//        并列商品2X
+        addItemType(TYPE_GOODS_2X, R.layout.layout_communal_recycler_wrap);
+//        并列商品3X
+        addItemType(TYPE_GOODS_3X, R.layout.layout_communal_recycler_wrap);
         this.context = context;
         urlMap = new HashMap<>();
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
@@ -228,8 +230,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 holder.addOnClickListener(R.id.iv_communal_cover_wrap).setTag(R.id.iv_communal_cover_wrap, R.id.iv_tag, detailObjectBean);
                 holder.itemView.setTag(detailObjectBean);
                 break;
-            case TYPE_PARATAXIS_GOOD:
-                holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, detailObjectBean.getGoodsList().size()));
+            case TYPE_GOODS_2X:
+            case TYPE_GOODS_3X:
+                holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, holder.getItemViewType() == TYPE_GOODS_2X ? 2 : 3));
                 holder.communal_recycler_wrap.setNestedScrollingEnabled(false);
                 if (detailObjectBean.getGoodsList().size() > 0) {
                     if (detailObjectBean.getGoodsList().get(0).getType().contains("goodsX")) {
@@ -251,32 +254,25 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         }
                     }
                 }
-                GoodProductAdapter communalGoodListAdapter = new GoodProductAdapter(((BaseActivity) context), detailObjectBean.getGoodsList());
-                holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
+
+                if (holder.getItemViewType() == TYPE_GOODS_2X) {
+                    GoodProductAdapter communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList());
+                    holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
+                } else if (holder.getItemViewType() == TYPE_GOODS_3X) {
+                    CatergoryGoodsAdapter communalGoodListAdapter = new CatergoryGoodsAdapter((context), detailObjectBean.getGoodsList());
+                    holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
+                }
+
                 break;
             case TYPE_PRODUCT_RECOMMEND:
-                ProNoShopCarAdapter qualityTypeProductAdapter = new ProNoShopCarAdapter(context, detailObjectBean.getProductList());
+                GoodProductAdapter goodProductAdapter = new GoodProductAdapter(context, detailObjectBean.getProductList());
                 holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, 2));
                 if (holder.communal_recycler_wrap.getItemDecorationCount() < 1) {
                     holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                             // 设置分隔线资源ID
                             .setDividerId(R.drawable.item_divider_five_dp).create());
                 }
-                holder.communal_recycler_wrap.setAdapter(qualityTypeProductAdapter);
-                qualityTypeProductAdapter.setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                        if (likedProductBean != null) {
-                            Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
-                            intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            //记录埋点参数sourceId
-//                            ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(likedProductBean.getId()));
-                            context.startActivity(intent);
-                        }
-                    }
-                });
+                holder.communal_recycler_wrap.setAdapter(goodProductAdapter);
                 break;
             case TYPE_RELEVANCE_PRODUCT:
                 holder.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(context));

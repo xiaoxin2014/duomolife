@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -105,7 +104,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
             }
         });
 //        好物
-        qualityGoodNewProAdapter = new GoodProductAdapter(((BaseActivity) getActivity()), goodsProList);
+        qualityGoodNewProAdapter = new GoodProductAdapter(getActivity(), goodsProList);
         View typeHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_qt_pro_type, null, false);
         qualityTypeView = new QualityTypeView();
         ButterKnife.bind(qualityTypeView, typeHeaderView);
@@ -150,7 +149,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
     private void getAdLoop() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + Q_HOME_AD_LOOP, params, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + Q_HOME_AD_LOOP, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 getADJsonData(result);

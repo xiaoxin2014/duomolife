@@ -60,7 +60,8 @@ import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PARATAXIS_GOOD;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_2X;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_3X;
 
 /**
  * @author LGuiPeng
@@ -112,21 +113,16 @@ public class CommunalWebDetailUtils {
                     } catch (Exception e) {
                         detailObjectBean = null;
                     }
-                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType()) || "goodsX2".equals(descriptionBean.getType()) || "pictureGoodsX2".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType()))) {
+                } else if (descriptionBean.getContent() != null && ("goodsX2".equals(descriptionBean.getType()) || "pictureGoodsX2".equals(descriptionBean.getType()))) {
                     try {
                         Gson gson = new Gson();
                         String strContent = gson.toJson(descriptionBean.getContent());
-                        List<LikedProductBean> goodList = gson.fromJson(strContent
-                                , new TypeToken<List<LikedProductBean>>() {
-                                }.getType());
+                        List<LikedProductBean> goodList = gson.fromJson(strContent, new TypeToken<List<LikedProductBean>>() {
+                        }.getType());
                         if (goodList == null || goodList.size() < 1) {
                             continue;
                         }
-                        if ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType())) {
-                            goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
-                        } else {
-                            goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
-                        }
+                        goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
                         for (LikedProductBean likedProductBean : goodList) {
                             if (likedProductBean.getType().contains("goodsX")) {
                                 //普通商品
@@ -136,7 +132,34 @@ public class CommunalWebDetailUtils {
                                 likedProductBean.setObjectType("ad");
                             }
                         }
-                        detailObjectBean.setItemType(TYPE_PARATAXIS_GOOD);
+                        detailObjectBean.setItemType(TYPE_GOODS_2X);
+                        detailObjectBean.setGoodsList(goodList);
+                    } catch (Exception e) {
+                        detailObjectBean = null;
+                        e.printStackTrace();
+                    }
+                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType()))) {
+                    try {
+                        Gson gson = new Gson();
+                        String strContent = gson.toJson(descriptionBean.getContent());
+                        List<LikedProductBean> goodList = gson.fromJson(strContent
+                                , new TypeToken<List<LikedProductBean>>() {
+                                }.getType());
+                        if (goodList == null || goodList.size() < 1) {
+                            continue;
+                        }
+
+                        goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
+                        for (LikedProductBean likedProductBean : goodList) {
+                            if (descriptionBean.getType().contains("goodsX")) {
+                                //普通商品(picture)
+                                likedProductBean.setObjectType("product");
+                            } else {
+                                //封面图片
+                                likedProductBean.setObjectType("ad");
+                            }
+                        }
+                        detailObjectBean.setItemType(TYPE_GOODS_3X);
                         detailObjectBean.setGoodsList(goodList);
                     } catch (Exception e) {
                         detailObjectBean = null;

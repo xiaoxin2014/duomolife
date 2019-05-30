@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.CommonPagerAdapter;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
@@ -28,8 +27,8 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
-import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
+import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
@@ -260,7 +259,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
         mRvNice.setNestedScrollingEnabled(false);
-        qualityGoodNewProAdapter = new GoodProductAdapter(((BaseActivity) getActivity()), goodsProList);
+        qualityGoodNewProAdapter = new GoodProductAdapter(( getActivity()), goodsProList);
         mRvNice.setAdapter(qualityGoodNewProAdapter);
 
 

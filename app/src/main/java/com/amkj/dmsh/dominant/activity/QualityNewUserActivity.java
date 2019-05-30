@@ -119,8 +119,6 @@ public class QualityNewUserActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
                 .create());
 
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {

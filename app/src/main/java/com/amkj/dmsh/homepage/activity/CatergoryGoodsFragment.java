@@ -11,7 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -52,7 +52,7 @@ public class CatergoryGoodsFragment extends BaseFragment {
     private int page = 1;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
-    QualityTypeProductAdapter mCatergoryGoodsAdapter;
+    GoodProductAdapter mCatergoryGoodsAdapter;
     private String mId;
     private String mPid;
 
@@ -100,7 +100,7 @@ public class CatergoryGoodsFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create();
         mRvCatergoryGoods.addItemDecoration(itemDecoration);
-        mCatergoryGoodsAdapter = new QualityTypeProductAdapter(getActivity(), productList);
+        mCatergoryGoodsAdapter = new GoodProductAdapter(getActivity(), productList);
         mCatergoryGoodsAdapter.setOnLoadMoreListener(() -> {
             page++;
             loadData();

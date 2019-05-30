@@ -93,8 +93,10 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     public static final int TYPE_RELEVANCE_PRODUCT = 16;
     //    限时特惠 头部红柱 + 标题 top灰色间隔
     public static final int TYPE_PROMOTION_TITLE = 17;
-    //    并列商品列表
-    public static final int TYPE_PARATAXIS_GOOD = 18;
+    //    两个并列商品列表
+    public static final int TYPE_GOODS_2X = 18;
+    //    三个并列商品列表
+    public static final int TYPE_GOODS_3X = 20;
 
     public CommunalDetailObjectBean() {
     }

@@ -223,6 +223,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
 
     public static class LikedProductBean extends Attribute implements MultiItemEntity {
         private String savepath;
+        @SerializedName(value = "title", alternate = "name")
         private String title;
         private int favor_num;
         private int favorNum;
@@ -233,7 +234,6 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         @SerializedName(value = "picUrl", alternate = {"path", "pic_url"})
         private String picUrl;
         private String price;
-        private String name;
         private String subtitle;
         private int quantity = 1;
         private int itemType;
@@ -388,11 +388,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         }
 
         public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
+            return title;
         }
 
         public String getSubtitle() {

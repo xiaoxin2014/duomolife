@@ -1,5 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
@@ -36,9 +37,9 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
  */
 
 public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseViewHolder> {
-    private final BaseActivity context;
+    private final Activity context;
 
-    public GoodProductAdapter(BaseActivity context, List<LikedProductBean> goodsProList) {
+    public GoodProductAdapter(Activity context, List<LikedProductBean> goodsProList) {
         super(R.layout.item_good_product, goodsProList);
         this.context = context;
     }
@@ -90,7 +91,7 @@ public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseV
 
                 //加入购物车
                 helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {
-                    context.loadHud.show();
+                    ((BaseActivity) context).loadHud.show();
                     if (userId > 0) {
                         BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
                         baseAddCarProInfoBean.setProductId(likedProductBean.getId());
@@ -98,9 +99,9 @@ public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseV
                         baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
                         baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
                         ConstantMethod constantMethod = new ConstantMethod();
-                        constantMethod.addShopCarGetSku(context, baseAddCarProInfoBean, context.loadHud);
+                        constantMethod.addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
                     } else {
-                        context.loadHud.dismiss();
+                        ((BaseActivity) context).loadHud.dismiss();
                         getLoginStatus(context);
                     }
                 });
@@ -119,6 +120,7 @@ public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseV
                         for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                                 fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
+                                if (fbl_market_label.getChildCount() >= 3) break;
                             }
                         }
                     }

@@ -1,55 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/sc_mm_10">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/white">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/ll_quality_product"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/sc_mm_10">
 
-        <ImageView
-            android:id="@+id/iv_goods_pic"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_236"
-            android:scaleType="centerCrop"/>
+            android:layout_height="wrap_content">
 
-        <include layout="@layout/layout_communal_pro_out_img"/>
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_goods_pic"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_236"
+                android:scaleType="centerCrop"/>
 
-    <com.google.android.flexbox.FlexboxLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/fbl_label"
+            <include layout="@layout/layout_communal_pro_out_img"/>
+        </RelativeLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/fbl_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/sc_mm_10"
+            android:paddingLeft="@dimen/sc_mm_12"
+            app:dividerDrawable="@drawable/item_divider_img_red"
+            app:flexWrap="wrap"
+            app:showDivider="middle"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_14"
+            android:maxLines="2"
+            android:paddingLeft="@dimen/sc_mm_12"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t2"
+            android:textSize="@dimen/sc_mm_26"/>
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:paddingLeft="@dimen/sc_mm_12"
+            android:text="@string/defaul"
+            android:textColor="@color/text_normal_red"
+            android:textSize="@dimen/sc_mm_30"/>
+    </LinearLayout>
+
+    <ImageView
+        android:minHeight="@dimen/sc_mm_300"
+        android:id="@+id/iv_quality_good_product_ad"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/sc_mm_10"
-        android:paddingLeft="@dimen/sc_mm_12"
-        app:dividerDrawable="@drawable/item_divider_img_red"
-        app:flexWrap="wrap"
-        app:showDivider="middle"/>
-
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_14"
-        android:maxLines="2"
-        android:paddingLeft="@dimen/sc_mm_12"
-        android:text="@string/defaul"
-        android:textColor="@color/text_black_t2"
-        android:textSize="@dimen/sc_mm_26"/>
-
-    <TextView
-        android:id="@+id/tv_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_16"
-        android:paddingLeft="@dimen/sc_mm_12"
-        android:text="@string/defaul"
-        android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_30"/>
-</LinearLayout>
+        android:layout_height="match_parent"/>
+</FrameLayout>
