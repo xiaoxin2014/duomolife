@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.activity;
 
-import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,15 +10,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.QualityGoodNewProAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -27,8 +23,6 @@ import com.amkj.dmsh.utils.multitypejson.MultiTypeJsonParser;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,15 +32,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
-import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 /**
  * Created by xiaoxin on 2019/4/17 0017
@@ -97,7 +86,7 @@ public class QualityGoodActivity extends BaseActivity {
                 loadData();
             }
         });
-//        好物
+        //        好物
         qualityGoodNewProAdapter = new QualityGoodNewProAdapter(getActivity(), goodsProList);
         communal_recycler.setAdapter(qualityGoodNewProAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
@@ -109,52 +98,6 @@ public class QualityGoodActivity extends BaseActivity {
             page++;
             getGoodsPro();
         }, communal_recycler);
-        qualityGoodNewProAdapter.setOnItemClickListener((adapter, view, position) -> {
-            QualityGoodProductEntity.Attribute attribute = (QualityGoodProductEntity.Attribute) view.getTag();
-            if (attribute != null) {
-                switch (attribute.getObjectType()) {
-                    case "product":
-                        LikedProductBean likedProductBean = (LikedProductBean) attribute;
-                        Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                        startActivity(intent);
-                        break;
-                    case "ad":
-                        CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) attribute;
-                        /**
-                         * 3.1.9 加入好物广告统计
-                         */
-                        adClickTotal(getActivity(), communalADActivityBean.getId());
-                        setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
-                        break;
-                }
-
-            }
-        });
-        qualityGoodNewProAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            loadHud.show();
-            QualityGoodProductEntity.Attribute attribute = (QualityGoodProductEntity.Attribute) view.getTag();
-            if (attribute != null) {
-                if (userId > 0) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            LikedProductBean likedProductBean = (LikedProductBean) attribute;
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                            constantMethod.setAddOnCarListener(() -> EventBus.getDefault().post(new EventMessage(updateCarNum, updateCarNum)));
-                            break;
-                    }
-                } else {
-                    loadHud.dismiss();
-                    getLoginStatus(this);
-                }
-            }
-        });
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName());
         removeExistUtils = new RemoveExistUtils();
     }

@@ -1,6 +1,5 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +8,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -26,7 +25,6 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -39,8 +37,6 @@ import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -50,10 +46,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -67,7 +60,6 @@ import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_HOME_AD_LOOP;
 import static com.amkj.dmsh.constant.Url.Q_HOME_CENTER_TYPE;
 import static com.amkj.dmsh.constant.Url.Q_HOME_CLASS_TYPE;
-import static com.amkj.dmsh.dominant.fragment.QualityOldFragment.updateCarNum;
 
 ;
 
@@ -113,7 +105,7 @@ public class QualityDefaultNewFragment extends BaseFragment {
             }
         });
 //        好物
-        qualityGoodNewProAdapter = new QualityGoodNewProAdapter(getActivity(), goodsProList);
+        qualityGoodNewProAdapter = new QualityGoodNewProAdapter(((BaseActivity) getActivity()), goodsProList);
         View typeHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_qt_pro_type, null, false);
         qualityTypeView = new QualityTypeView();
         ButterKnife.bind(qualityTypeView, typeHeaderView);
@@ -135,52 +127,6 @@ public class QualityDefaultNewFragment extends BaseFragment {
             QualityHomeTypeBean qualityHomeTypeBean = (QualityHomeTypeBean) view.getTag();
             if (qualityHomeTypeBean != null) {
                 setSkipPath(getActivity(), qualityHomeTypeBean.getAndroidLink(), false);
-            }
-        });
-        qualityGoodNewProAdapter.setOnItemClickListener((adapter, view, position) -> {
-            Attribute attribute = (Attribute) view.getTag();
-            if (attribute != null) {
-                switch (attribute.getObjectType()) {
-                    case "product":
-                        LikedProductBean likedProductBean = (LikedProductBean) attribute;
-                        Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                        startActivity(intent);
-                        break;
-                    case "ad":
-                        CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) attribute;
-                        /**
-                         * 3.1.9 加入好物广告统计
-                         */
-                        adClickTotal(getActivity(), communalADActivityBean.getId());
-                        setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
-                        break;
-                }
-
-            }
-        });
-        qualityGoodNewProAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            loadHud.show();
-            Attribute attribute = (Attribute) view.getTag();
-            if (attribute != null) {
-                if (userId > 0) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            LikedProductBean likedProductBean = (LikedProductBean) attribute;
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                            constantMethod.setAddOnCarListener(() -> EventBus.getDefault().post(new EventMessage(updateCarNum, updateCarNum)));
-                            break;
-                    }
-                } else {
-                    loadHud.dismiss();
-                    getLoginStatus(QualityDefaultNewFragment.this);
-                }
             }
         });
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName());

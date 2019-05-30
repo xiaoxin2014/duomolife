@@ -64,14 +64,14 @@ import com.amkj.dmsh.shopdetails.fragment.DirectImgArticleFragment;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -126,6 +126,7 @@ import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
+;
 ;
 
 /**

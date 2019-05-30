@@ -114,10 +114,7 @@ public class CommunalWebDetailUtils {
                     } catch (Exception e) {
                         detailObjectBean = null;
                     }
-                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType())
-                        || "goodsX2".equals(descriptionBean.getType())
-                        || "pictureGoodsX2".equals(descriptionBean.getType())
-                        || "pictureGoodsX3".equals(descriptionBean.getType()))) {
+                } else if (descriptionBean.getContent() != null && ("goodsX3".equals(descriptionBean.getType()) || "goodsX2".equals(descriptionBean.getType()) || "pictureGoodsX2".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType()))) {
                     try {
                         Gson gson = new Gson();
                         String strContent = gson.toJson(descriptionBean.getContent());

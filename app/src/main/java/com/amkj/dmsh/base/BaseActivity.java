@@ -19,6 +19,7 @@ import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.gyf.barlibrary.ImmersionBar;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -145,12 +146,12 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-//        if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)) {
-//            ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
-//        } else {
-            //设置共同沉浸式样式
+        if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)) {
+            ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
+        } else {
+//            设置共同沉浸式样式
             ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fitsSystemWindows(true).init();
-//        }
+        }
     }
 
     @Override
