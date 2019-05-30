@@ -124,7 +124,7 @@ public class CommunalWebDetailUtils {
                         }
                         goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
                         for (LikedProductBean likedProductBean : goodList) {
-                            if (likedProductBean.getType().contains("goodsX")) {
+                            if (descriptionBean.getType().contains("goodsX")) {
                                 //普通商品
                                 likedProductBean.setObjectType("product");
                             } else {

@@ -68,7 +68,6 @@ import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_COVER;
 import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_GET_COUPON;
 import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_LIST;
 
-;
 
 
 /**
