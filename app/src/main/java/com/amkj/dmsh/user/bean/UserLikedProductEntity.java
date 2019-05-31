@@ -1,5 +1,8 @@
 package com.amkj.dmsh.user.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
@@ -447,7 +450,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
             this.ext = ext;
         }
 
-        public static class MarketLabelBean {
+        public static class MarketLabelBean implements Parcelable {
             private int id;
             private String title;
             //            自定义属性 1 为活动标签 0 为营销标签
@@ -486,6 +489,41 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
             public void setActivityCode(String activityCode) {
                 this.activityCode = activityCode;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeInt(this.id);
+                dest.writeString(this.title);
+                dest.writeInt(this.labelCode);
+                dest.writeString(this.activityCode);
+            }
+
+            public MarketLabelBean() {
+            }
+
+            protected MarketLabelBean(Parcel in) {
+                this.id = in.readInt();
+                this.title = in.readString();
+                this.labelCode = in.readInt();
+                this.activityCode = in.readString();
+            }
+
+            public static final Parcelable.Creator<MarketLabelBean> CREATOR = new Parcelable.Creator<MarketLabelBean>() {
+                @Override
+                public MarketLabelBean createFromParcel(Parcel source) {
+                    return new MarketLabelBean(source);
+                }
+
+                @Override
+                public MarketLabelBean[] newArray(int size) {
+                    return new MarketLabelBean[size];
+                }
+            };
         }
     }
 

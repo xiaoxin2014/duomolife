@@ -348,7 +348,6 @@ public class ConstantMethod {
      * @return
      */
     public static CharSequence getRmbFormat(Context context, String priceText, boolean append) {
-
         try {
             String price = getStrings(priceText);
             if (!TextUtils.isEmpty(price)) {

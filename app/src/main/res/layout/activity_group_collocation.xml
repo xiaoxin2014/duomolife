@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray_f"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_ql_cart_share_header"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/smart_communal_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            cube_ptr:srlEnableOverScrollBounce="false">
+
+            <include layout="@layout/layout_refresh_header_gif"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:paddingBottom="@dimen/sc_mm_98"
+                android:id="@+id/communal_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:paddingLeft="@dimen/sc_mm_24"
+                android:paddingRight="@dimen/sc_mm_24"
+                android:scrollbars="none"/>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/sc_mm_98"
+                android:layout_weight="1"
+                android:gravity="center_vertical">
+
+
+                <TextView
+                    android:id="@+id/tv_group_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="@dimen/sc_mm_22"
+                    android:paddingRight="@dimen/sc_mm_24"
+                    android:text="@string/defaul"
+                    android:textColor="@color/text_normal_red"
+                    android:textSize="@dimen/sc_mm_30"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/sc_mm_40"
+                    android:layout_toLeftOf="@+id/tv_group_price"
+                    android:text="组合价:"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_28"/>
+
+                <TextView
+                    android:id="@+id/tv_save_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_group_price"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:paddingRight="@dimen/sc_mm_24"
+                    android:text="@string/defaul"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_24"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_add_car"
+                android:layout_width="@dimen/sc_mm_225"
+                android:layout_height="match_parent"
+                android:background="@color/text_pink_red"
+                android:gravity="center"
+                android:text="加入购物车"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_30"/>
+
+            <TextView
+                android:id="@+id/tv_buy"
+                android:layout_width="@dimen/sc_mm_225"
+                android:layout_height="match_parent"
+                android:background="@color/text_normal_red"
+                android:gravity="center"
+                android:text="立即购买"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_30"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -583,7 +583,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         mGoodsGroupAdapter.setOnItemClickListener((adapter, view, position) -> {
             ShopRecommendHotTopicBean shopRecommendHotTopicBean = (ShopRecommendHotTopicBean) view.getTag();
             if (shopRecommendHotTopicBean != null) {
-                skipProDetail(shopRecommendHotTopicBean);
+                Intent intent1 = new Intent(getActivity(), GroupCollocationActivity.class);
+                intent1.putParcelableArrayListExtra("groupList", (ArrayList<? extends Parcelable>) goodsGroupList);
+                intent1.putExtra("productId", productId);
+                startActivity(intent1);
             }
         });
 

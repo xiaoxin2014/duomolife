@@ -120,6 +120,10 @@ public class HomePageFragment extends BaseFragment {
         if (!isAutoClose) {
             getMarqueeData();
         }
+        //购物车数量
+        getCarCount(getActivity(), badgeCart);
+        //获取消息数量
+        getMessageWarm();
     }
 
 
@@ -302,7 +306,7 @@ public class HomePageFragment extends BaseFragment {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badgeCart);
+            getCarCount(getActivity(), badgeCart);
         }
     }
 }
