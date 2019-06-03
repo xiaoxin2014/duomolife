@@ -259,7 +259,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
         mRvNice.setNestedScrollingEnabled(false);
-        qualityGoodNewProAdapter = new GoodProductAdapter(( getActivity()), goodsProList);
+        qualityGoodNewProAdapter = new GoodProductAdapter((getActivity()), goodsProList);
         mRvNice.setAdapter(qualityGoodNewProAdapter);
 
 
@@ -304,7 +304,7 @@ public class HomeDefalutFragment extends BaseFragment {
     @Override
     protected void loadData() {
         getAdLoop();
-        getHomeIndexType();
+        getTop();
         getDynamic();
         getWelfare();
         getSpecialZone();
@@ -359,9 +359,9 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     //Top活动位
-    private void getHomeIndexType() {
+    private void getTop() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GTE_HOME_TOP, map, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), GTE_HOME_TOP, map, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

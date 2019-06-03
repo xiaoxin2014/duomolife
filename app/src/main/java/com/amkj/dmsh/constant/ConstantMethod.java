@@ -51,6 +51,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
@@ -762,12 +763,31 @@ public class ConstantMethod {
     /**
      * 调用登出接口,清除后台记录的token信息
      *
-     * @param activity
+     * @param isHandOperation 是否是手动退出登录
      */
-    public static void logout(Activity activity) {
+    public static void logout(Activity activity, boolean isHandOperation) {
+        if (isHandOperation) {
+            ((BaseActivity) activity).loadHud.show();
+        }
         NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
         NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (isHandOperation) {
+                    ((BaseActivity) activity).loadHud.dismiss();
+                    activity.finish();
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (isHandOperation) {
+                    ((BaseActivity) activity).loadHud.dismiss();
+                    activity.finish();
+                }
+            }
+        });
         //Token过期,清除本地登录信息
         savePersonalInfoCache(activity, null);
     }

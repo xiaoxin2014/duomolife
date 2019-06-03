@@ -225,7 +225,7 @@
     <string name="subscriber">订阅</string>
     <string name="first_subsribe">首次订阅可得%d积分</string>
     <string name="direct_bug"><![CDATA[立即购买>]]></string>
-    <string name="defaul">----</string>
+    <string name="defaul">---</string>
     <string name="see_detail"><![CDATA[查看详情>]]></string>
     <string name="write_comment">写评论...</string>
     <string name="send">发送</string>

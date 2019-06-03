@@ -634,7 +634,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         //判断条件是为了避免重复调用
                         if (ConstantMethod.userId > 0) {
                             //调用登出接口
-                            ConstantMethod.logout(mContext);
+                            ConstantMethod.logout(mContext,false);
                             //通知我的界面刷新
                             EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
                             //提示用户登录

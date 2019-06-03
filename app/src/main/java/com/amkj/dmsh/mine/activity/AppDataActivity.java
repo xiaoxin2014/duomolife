@@ -183,11 +183,9 @@ public class AppDataActivity extends BaseActivity {
                 public void confirm() {
                     NEW_USER_DIALOG = true;
                     //调用登出接口
-                    ConstantMethod.logout(getActivity());
+                    ConstantMethod.logout(getActivity(),true);
                     showToast(AppDataActivity.this, "注销成功");
                     exitNewTaoBaoAccount();
-                    //        清除账号 修改我的页面
-                    finish();
                 }
 
                 @Override

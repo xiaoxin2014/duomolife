@@ -56,7 +56,8 @@
                     android:background="@color/white"
                     android:clipChildren="false"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/sc_mm_35">
+                    android:paddingTop="@dimen/sc_mm_35"
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/rl_more_welfare_topic"
