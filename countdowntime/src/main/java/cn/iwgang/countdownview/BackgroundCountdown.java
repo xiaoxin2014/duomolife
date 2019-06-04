@@ -99,7 +99,7 @@ class BackgroundCountdown extends BaseCountdown {
         super.initTimeTextBaseInfo();
 
         if (mDefSetTimeBgSize == 0 || mTimeBgSize < mTimeTextWidth) {
-            mTimeBgSize = mTimeTextWidth + (Utils.dp2px(mContext, 2) * 4);
+            mTimeBgSize = mTimeTextWidth + (Utils.dp2px(mContext, 2) * 2);
         }
     }
 

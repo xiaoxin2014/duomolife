@@ -25,8 +25,10 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.InputFilter;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -332,6 +334,7 @@ public class ConstantMethod {
         return String.format(context.getResources().getString(R.string.money_price_chn), price);
     }
 
+
     /**
      * 带货币单位价格格式化
      *
@@ -370,6 +373,18 @@ public class ConstantMethod {
         }
     }
 
+    public static CharSequence getSpannableString(String text, int start, int end, float proportion) {
+        SpannableString spannableString = null;
+        try {
+            spannableString = new SpannableString(text);
+            RelativeSizeSpan sizeSpan01 = new RelativeSizeSpan(proportion);
+            spannableString.setSpan(sizeSpan01, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        } catch (Exception e) {
+            return text;
+        }
+
+        return spannableString;
+    }
 
     /**
      * 去掉多余的0

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -12,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,6 +126,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getDistinctString;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
@@ -133,6 +134,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -236,8 +238,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //  营销活动规则
     @BindView(R.id.ll_product_activity_detail)
     LinearLayout ll_product_activity_detail;
-    @BindView(R.id.tv_communal_pro_red_tag)
-    TextView tv_communal_pro_tag;
     @BindView(R.id.tv_product_activity_description)
     TextView tv_product_activity_description;
     //        结束时间
@@ -301,6 +301,20 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     LinearLayout mllProductRecommend;
     @BindView(R.id.ll_product_group)
     LinearLayout mllProductGroup;
+    @BindView(R.id.ll_scrool_detail_price)
+    RelativeLayout mLlScroolDetailPrice;
+    @BindView(R.id.rl_activity_price)
+    RelativeLayout mRlActivityPrice;
+    @BindView(R.id.ll_countdown_time_bottom)
+    LinearLayout mLlTimeHoursBottom;
+    @BindView(R.id.tv_product_min_price)
+    TextView mTvProductMinPrice;
+    @BindView(R.id.tv_product_martket_price)
+    TextView mTvProductMartketPrice;
+    @BindView(R.id.tv_tips)
+    TextView mTvTipsBottom;
+    @BindView(R.id.cv_countdownTime_bottom)
+    CountdownView mCtCountDownBottom;
 
 
     //    赠品信息
@@ -355,21 +369,35 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        tv_count_time_before_white.setTextColor(getResources().getColor(R.color.white));
-        tv_count_time_before_white.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 24));
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
         dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
+        //设置上面活动倒计时
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setTimeTextColor(0xffffffff);
-        dynamic.setSuffixTextColor(0xffffffff);
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 18));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 24));
-        dynamic.setSuffixDay(getStrings(" 天 "));
-        dynamic.setShowDay(true);
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
         dynamic.setSuffixGravity(Gravity.CENTER);
+        DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
+        backgroundInfo.setColor(getResources().getColor(R.color.text_normal_red))
+                .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext, 5))
+                .setBorderColor(getResources().getColor(R.color.text_normal_red))
+                .setShowTimeBgBorder(true);
+        dynamic.setBackgroundInfo(backgroundInfo);
         cv_countdownTime_white_hours.dynamicShow(dynamic.build());
+        //设置下面活动倒计时
+        DynamicConfig.Builder dynamicBottom = new DynamicConfig.Builder();
+        dynamicBottom.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
+        dynamicBottom.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
+        dynamicBottom.setSuffixGravity(Gravity.CENTER);
+        DynamicConfig.BackgroundInfo backgroundInfoBottom = new DynamicConfig.BackgroundInfo();
+        backgroundInfoBottom.setColor(getResources().getColor(R.color.white))
+                .setBorderRadius((float) AutoSizeUtils.mm2px(mAppContext, 3))
+                .setBorderColor(getResources().getColor(R.color.text_normal_red))
+                .setBorderSize((float) AutoSizeUtils.mm2px(mAppContext, 1))
+                .setShowTimeBgBorder(true);
+        dynamicBottom.setBackgroundInfo(backgroundInfoBottom);
+        mCtCountDownBottom.dynamicShow(dynamicBottom.build());
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
         recommendFlag = intent.getStringExtra("recommendFlag");
@@ -456,13 +484,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             ShareDataBean shareDataBean = null;
             if (view.getId() == R.id.tv_communal_share && shopPropertyBean != null) {
-                String title = "";
-
                 shareDataBean = new ShareDataBean(shopPropertyBean.getPicUrl()
                         , "我在多么生活看中了" + shopPropertyBean.getName()
                         , getStrings(shopPropertyBean.getSubtitle())
                         , sharePageUrl + shopPropertyBean.getId());
-
             }
             CommunalWebDetailUtils.getCommunalWebInstance()
                     .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
@@ -600,7 +625,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 skipProDetail(shopRecommendHotTopicBean);
             }
         });
-
 
         mLlArtical.setOnClickListener(v -> {
             if (articalRecommendList != null && articalRecommendList.size() > 0) {
@@ -848,6 +872,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     private void setProductData(final ShopPropertyBean shopProperty) {
+        if (shopProperty == null) return;
         String[] images = shopProperty.getImages().split(",");
 //        视频video
         imagesVideoList.clear();
@@ -981,40 +1006,47 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             }
         }
-        /**
-         * 活动商品
-         */
-        if (!TextUtils.isEmpty(shopProperty.getActivityTag()) && shopDetailsEntity.getShopPropertyBean() != null
-                && shopDetailsEntity.getShopPropertyBean().getActivityStartTime() != null) {
+
+        //设置活动标签信息以及状态
+        String activityCode = shopProperty.getActivityCode();
+        if (!TextUtils.isEmpty(activityCode) && !TextUtils.isEmpty(shopProperty.getActivityTag()) && !isEndOrStartTime(shopDetailsEntity.getCurrentTime()
+                , shopPropertyBean.getActivityEndTime())) {
+            //活动标签不为空并且活动未结束才显示活动信息以及倒计时
             ll_product_activity_detail.setVisibility(VISIBLE);
-            tv_communal_pro_tag.setVisibility(VISIBLE);
-            tv_communal_pro_tag.setText(getStrings(shopProperty.getActivityTag()));
-            if (!TextUtils.isEmpty(shopPropertyBean.getActivityCode())
-                    && shopPropertyBean.getActivityCode().contains("XSG")) {
-                tv_product_activity_description.setText("");
-                setActCountTime();
-                if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime()
-                        , shopPropertyBean.getActivityEndTime())) {
-                    ll_communal_time_hours.setVisibility(VISIBLE);
-                    getConstant();
-                    constantMethod.createSchedule();
-                    constantMethod.setRefreshTimeListener(() -> {
-                        shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
-                        setActCountTime();
-                    });
-                } else {
-                    if (constantMethod != null) {
-                        constantMethod.stopSchedule();
-                    }
-                    ll_communal_time_hours.setVisibility(GONE);
-                }
-            } else {
+
+            if (activityCode.contains("XSG")) {
+                mRlActivityPrice.setVisibility(VISIBLE);       //限时购价格
+                tv_product_activity_description.setVisibility(GONE);//活动描述
+                tv_product_activity_description.setSelected(false);
+                mLlScroolDetailPrice.setVisibility(GONE); //非限时购价格
+                startCountDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);//开启倒计时
+                mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
+                ll_communal_time_hours.setVisibility(VISIBLE);//上面的倒计时
+            } else if (activityCode.contains("LJ") || activityCode.contains("ZC") || activityCode.contains("BJ")) {
+                mRlActivityPrice.setVisibility(GONE);
+                tv_product_activity_description.setVisibility(VISIBLE);
+                tv_product_activity_description.setSelected(false);
+                mLlScroolDetailPrice.setVisibility(VISIBLE);
+                startCountDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);
+                mLlTimeHoursBottom.setVisibility(GONE);
+                ll_communal_time_hours.setVisibility(VISIBLE);
+            } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
+                mRlActivityPrice.setVisibility(GONE);
+                tv_product_activity_description.setVisibility(VISIBLE);
+                tv_product_activity_description.setSelected(true);
+                mLlScroolDetailPrice.setVisibility(VISIBLE);
+                startCountDownTime(mTvTipsBottom, mCtCountDownBottom);
+                mLlTimeHoursBottom.setVisibility(VISIBLE);
                 ll_communal_time_hours.setVisibility(GONE);
-                tv_product_activity_description.setText(getStrings(shopProperty.getActivityRule()));
             }
+
+            tv_product_activity_description.setText(getStrings(shopProperty.getActivityRule()));
         } else {
-            ll_product_activity_detail.setVisibility(View.GONE);
-            tv_communal_pro_tag.setVisibility(View.GONE);
+            ll_product_activity_detail.setVisibility(GONE);
+            mLlScroolDetailPrice.setVisibility(VISIBLE);
+            if (constantMethod != null) {
+                constantMethod.stopSchedule();
+            }
         }
 
         if (!TextUtils.isEmpty(shopPropertyBean.getActivityPrice())
@@ -1067,6 +1099,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 rv_shop_details_text_communal.setVisibility(View.GONE);
             }
         }
+
+        //营销以及活动标签
         if (!TextUtils.isEmpty(shopProperty.getActivityTag()) ||
                 (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0)) {
             fbl_details_market_label.setVisibility(VISIBLE);
@@ -1088,9 +1122,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             fbl_details_market_label.setVisibility(GONE);
         }
 
+        //设置价格以及SKU
         setSkuProp(shopProperty);
+
+        //设置商品标题
         String productName = TextUtils.isEmpty(shopProperty.getSubtitle()) ? shopProperty.getName() : (shopProperty.getSubtitle() + "•" + shopProperty.getName());
-//        商品名字
         tv_ql_sp_pro_sc_name.setText(getStrings(productName));
 
         // 商品卖点
@@ -1214,6 +1250,16 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         scroll_pro.scrollTo(0, 0);
     }
 
+    private void startCountDownTime(TextView tipView, CountdownView countDownTimeView) {
+        setActCountTime(tipView, countDownTimeView);
+        getConstant();
+        constantMethod.createSchedule();
+        constantMethod.setRefreshTimeListener(() -> {
+            shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
+            setActCountTime(tipView, countDownTimeView);
+        });
+    }
+
     private void setReplenishmentNotice() {
         ShopPropertyBean.SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
         if (shopPropertyBean.getSkuSale().size() > 0 && shopPropertyBean.getSkuSale().size() < 2
@@ -1285,9 +1331,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-    private void setActCountTime() {
+    private void setActCountTime(TextView tipView, CountdownView countDownTimeView) {
         if (isTimeStart(shopDetailsEntity)) {
-            tv_count_time_before_white.setText("距结束 ");
+            tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
             try {
                 //格式化结束时间
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -1299,18 +1345,20 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     dateCurrent = new Date();
                 }
                 if ((dateEnd.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000) > 0) {
-                    cv_countdownTime_white_hours.updateShow((dateEnd.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
+                    countDownTimeView.updateShow((dateEnd.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
                 } else {
-                    cv_countdownTime_white_hours.updateShow(0);
+                    //活动已结束
+                    countDownTimeView.updateShow(0);
                     if (constantMethod != null) {
                         constantMethod.stopSchedule();
                     }
+                    loadData();
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         } else {
-            tv_count_time_before_white.setText("距开始 ");
+            tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
             try {
                 //格式化结束时间
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -1322,29 +1370,22 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     dateCurrent = new Date();
                 }
                 if (((dateStart.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000)) > 0) {
-                    cv_countdownTime_white_hours.updateShow((dateStart.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
+                    countDownTimeView.updateShow((dateStart.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
                 } else {
-                    cv_countdownTime_white_hours.updateShow(0);
+                    //活动已开始
+                    countDownTimeView.updateShow(0);
                     if (constantMethod != null) {
                         constantMethod.stopSchedule();
                     }
+                    loadData();
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if (!isEndOrStartTimeAddSeconds(shopDetailsEntity.getCurrentTime()
-                    , shopPropertyBean.getActivityEndTime()
-                    , shopPropertyBean.getAddSecond())) {
-                cv_countdownTime_white_hours.setOnCountdownEndListener(cv -> {
-                    cv.setOnCountdownEndListener(null);
-                    loadData();
-                });
-            } else {
-                cv_countdownTime_white_hours.setOnCountdownEndListener(null);
-            }
         }
     }
 
+    //判断活动是否开始
     public boolean isTimeStart(ShopDetailsEntity shopDetailsEntity) {
         try {
             //格式化开始时间
@@ -1403,10 +1444,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     private void setSkuProp(ShopPropertyBean shopProperty) {
-        if (shopProperty.getSkuSale() != null) {
+        if (shopProperty.getSkuSale() != null && shopProperty.getSkuSale().size() > 0) {
+            List<ShopPropertyBean.SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
+            //有多个SKU
             if (shopProperty.getSkuSale().size() > 1) {
                 //        获取价格排序范围
-                List<ShopPropertyBean.SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
                 Collections.sort(skuSaleList, (lhs, rhs) -> {
                     if (!TextUtils.isEmpty(lhs.getPrice()) && !TextUtils.isEmpty(rhs.getPrice())) {
                         float p1 = getFloatNumber(lhs.getPrice());
@@ -1416,14 +1458,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         return 0;
                     }
                 });
-                if (!skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice())) {
-                    setReallyPrice(skuSaleList.get(0).getPrice());
-                    mTvMaxPrice.setVisibility(VISIBLE);
-                    mTvMaxPrice.setText(getRmbFormat(this, "~" + "￥" + skuSaleList.get(skuSaleList.size() - 1).getPrice(), false));
-                } else {
-                    setReallyPrice(skuSaleList.get(0).getPrice());
-                    mTvMaxPrice.setVisibility(GONE);
-                }
+
                 ll_sp_pro_sku_value.setVisibility(VISIBLE);
                 editGoodsSkuBean = new EditGoodsSkuBean();
                 editGoodsSkuBean.setQuantity(shopProperty.getQuantity());
@@ -1454,6 +1489,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 skuDialog = new SkuDialog(getActivity());
                 skuDialog.refreshView(editGoodsSkuBean);
             } else {
+                //仅有一个SKU
                 ll_sp_pro_sku_value.setVisibility(View.GONE);
                 setReallyPrice((!TextUtils.isEmpty(shopProperty.getSkuSale().get(0).getPrice())
                         ? shopProperty.getSkuSale().get(0).getPrice() : shopProperty.getPrice()));
@@ -1469,6 +1505,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                                 ? shopProperty.getPropvalues().get(0).getPropValueName() : "默认");
                 shopCarGoodsSkuDif.setPresentIds(getStrings(shopProperty.getSkuSale().get(0).getPresentSkuIds()));
             }
+
+
+            String minPrice = skuSaleList.get(0).getPrice();
+            String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
+            mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
+            //设置最低价
+            setReallyPrice(minPrice);
+            //设置市场价
+            mTvProductMartketPrice.setText("￥" + getStrings(shopProperty.getMarketPrice()));
+            mTvProductMartketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            mTvProductMartketPrice.getPaint().setAntiAlias(true);
+            //设置最高价
+            mTvMaxPrice.setText(getRmbFormat(this, "~" + "￥" + maxPrice, false));
         } else {
             showToast(this, "商品数据错误");
         }
@@ -1507,31 +1556,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     private void setReallyPrice(String price) {
-        if (!TextUtils.isEmpty(shopPropertyBean.getActivityCode())
-                && shopPropertyBean.getActivityCode().contains("XSG")
-                && isTimeStart(shopDetailsEntity)) {
+        if (!TextUtils.isEmpty(shopPropertyBean.getActivityCode()) && shopPropertyBean.getActivityCode().contains("XSG") && isTimeStart(shopDetailsEntity)) {
             mTvActivityPrice.setVisibility(VISIBLE);
         } else {
             mTvActivityPrice.setVisibility(GONE);
         }
         tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, price));
-    }
-
-
-    /**
-     * 获取着色
-     */
-    private CharSequence getChNText(String priceText) {
-        Pattern pattern = Pattern.compile("[^\\x00-\\xff]");
-        Link link = new Link(pattern);
-        link.setTextColor(Color.parseColor("#ff5a6b"));
-        link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
-        link.setBgColor(Color.parseColor("#ffffff"));
-        link.setUnderlined(false);
-        link.setHighlightAlpha(0f);
-        return LinkBuilder.from(ShopScrollDetailsActivity.this, priceText)
-                .addLink(link)
-                .build();
+        String minPrice = getStringsFormat(this, R.string.min_price, stripTrailingZeros(price.trim()));
+        mTvProductMinPrice.setText(getSpannableString(minPrice, 1, minPrice.length() - 1, 1.6f));
     }
 
     //    七鱼客服
@@ -1731,7 +1763,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
-
 
     class ShopCommentHeaderView {
         //        商品评论展示

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
 
-    <include layout="@layout/activity_domolife_header" />
+    <include layout="@layout/activity_domolife_header"/>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/smart_time_product_details"
@@ -18,13 +18,14 @@
         android:baselineAligned="false">
 
         <include layout="@layout/layout_refresh_header_gif"/>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <android.support.v4.widget.NestedScrollView
-                android:layout_width="match_parent"
                 android:id="@+id/nsv_time_detail"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -37,7 +38,7 @@
                         android:id="@+id/banner_shop_time_details"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sc_mm_750"
-                        android:background="@drawable/border_bottom_line" />
+                        android:background="@drawable/border_bottom_line"/>
 
                     <RelativeLayout
                         android:id="@+id/rel_promotion_product_time"
@@ -53,7 +54,7 @@
                             android:layout_centerVertical="true"
                             android:text="中奖倒计时"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_28" />
+                            android:textSize="@dimen/sc_mm_28"/>
 
                         <cn.iwgang.countdownview.CountdownView
                             android:id="@+id/ct_promotion_product_time"
@@ -75,7 +76,7 @@
                             app:suffixTextColor="@color/text_black_t"
                             app:suffixTextSize="@dimen/sc_mm_28"
                             app:timeTextColor="@color/white"
-                            app:timeTextSize="@dimen/sc_mm_28" />
+                            app:timeTextSize="@dimen/sc_mm_28"/>
                     </RelativeLayout>
 
                     <LinearLayout
@@ -94,7 +95,7 @@
                             android:layout_marginTop="@dimen/sc_mm_24"
                             android:lineSpacingExtra="@dimen/dimen_6_dp"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_28" />
+                            android:textSize="@dimen/sc_mm_28"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -109,7 +110,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="1000"
                                 android:textColor="@color/text_normal_red"
-                                android:textSize="@dimen/sc_mm_34" />
+                                android:textSize="@dimen/sc_mm_34"/>
 
                             <TextView
                                 android:id="@+id/tv_shop_time_product_mk_price"
@@ -119,7 +120,7 @@
                                 android:layout_weight="1"
                                 android:text="非团购价300"
                                 android:textColor="@color/text_gray_hint_n"
-                                android:textSize="@dimen/sc_mm_24" />
+                                android:textSize="@dimen/sc_mm_24"/>
 
                             <TextView
                                 android:id="@+id/tv_product_details_join_count"
@@ -129,18 +130,18 @@
                                 android:background="@drawable/border_circle_4_yellow"
                                 android:ellipsize="end"
                                 android:gravity="center_vertical"
-                                android:paddingBottom="@dimen/sc_mm_4"
                                 android:paddingLeft="@dimen/sc_mm_15"
-                                android:paddingRight="@dimen/sc_mm_15"
                                 android:paddingTop="@dimen/sc_mm_4"
+                                android:paddingRight="@dimen/sc_mm_15"
+                                android:paddingBottom="@dimen/sc_mm_4"
                                 android:singleLine="true"
                                 android:text="30人已参团"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_22" />
+                                android:textSize="@dimen/sc_mm_22"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <include layout="@layout/layout_communal_recycler_wrap" />
+                    <include layout="@layout/layout_communal_recycler_wrap"/>
 
                     <com.amkj.dmsh.views.flycoTablayout.CommonTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                                                                         android:id="@+id/ctb_promotion_product"
@@ -157,18 +158,19 @@
                                                                         tl:tl_tab_space_equal="true"
                                                                         tl:tl_textSelectColor="@color/text_normal_red"
                                                                         tl:tl_textUnselectColor="@color/text_black_t"
-                                                                        tl:tl_textsize="15sp" />
+                                                                        tl:tl_textsize="15sp"/>
 
                     <FrameLayout
                         android:id="@+id/fl_promotion_product_details_contain"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="@dimen/sc_mm_500" />
+                        android:minHeight="@dimen/sc_mm_500"/>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
+
             <include layout="@layout/layout_communal_floating"/>
         </FrameLayout>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-    <include layout="@layout/layout_time_product_bottom" />
+    <include layout="@layout/layout_time_product_bottom"/>
 </LinearLayout>

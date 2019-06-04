@@ -212,6 +212,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
     protected void loadData() {
         page = 1;
         getProductLabelData();
+        getCarCount(getActivity(),badge);
     }
 
     @Override

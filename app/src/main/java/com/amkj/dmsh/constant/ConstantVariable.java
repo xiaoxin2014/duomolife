@@ -299,6 +299,18 @@ public class ConstantVariable {
     public static String DOUBLE_INTEGRAL_PREFECTURE = "50";
     //    双倍积分 专区类型
     public static String DOUBLE_INTEGRAL_TYPE = "doubleIntegralType";
+
+//    /**
+//     * 活动Code
+//     */
+//    public static String XSG = "XSG";//限时购
+//    public static String LJ = "LJ";//立减
+//    public static String ZC = "ZC";//折扣
+//    public static String BJ = "BJ";//第二件半价
+//    public static String MJ = "MJ";//满减
+//    public static String MM = "MM";//每满
+//    public static String MZ = "MZ";//满赠
+
     /**
      * 分享提示展示
      */

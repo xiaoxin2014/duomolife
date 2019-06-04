@@ -1,5 +1,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_scrool_detail_price"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_70"
     android:background="@color/white"

@@ -108,4 +108,5 @@
     <color name="bg_black_one_a">#1a000000</color>
     <color name="bg_gray_fa">#fafafa</color>
     <color name="bg_trans_80_ffs_pink">#ccff6d79</color>
+    <color name="time_bg_yellow">#ffe9b8</color>
 </resources>

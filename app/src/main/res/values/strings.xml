@@ -240,4 +240,5 @@
     <string name="limited_time_preference">【限时特价¥%s起】</string>
     <string name="bracket">【%s】</string>
     <string name="group_price">【拼团只需%s元】</string>
+    <string name="min_price">¥%s起</string>
 </resources>
