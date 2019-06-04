@@ -238,7 +238,7 @@ public class ShopCarNewInfoEntity {
              * allowCoupon : 0
              * status : 1
              */
-//            待售
+//            待售（可以加入购物车，但是不能购买）
             private boolean isForSale;
             private int productId;
             private SaleSkuBean saleSku;
@@ -256,12 +256,13 @@ public class ShopCarNewInfoEntity {
             private int id;
             //        是否可用券
             private int allowCoupon;
+            //是否失效（如果加入购物车时间过长就会失效，1为正常）
             private int status;
             //            是否加间距
             private int showLine;
-//            正确级
+            //            正确级
             private int currentPosition;
-//            上一级position
+            //            上一级position
             private int parentPosition;
             private int currentPage;
             private ActivityInfoBean activityInfoBean;
@@ -283,7 +284,13 @@ public class ShopCarNewInfoEntity {
             /**
              * 是否被选中
              */
+            @SerializedName(value = "isSelected", alternate = "toDayProduct")
             private boolean isSelected;
+
+            /**
+             * 是否被选中
+             */
+            private boolean isDelete;
 
             /**
              * 自定义属性
@@ -299,6 +306,14 @@ public class ShopCarNewInfoEntity {
 
             public void setCurrentPosition(int currentPosition) {
                 this.currentPosition = currentPosition;
+            }
+
+            public boolean isDelete() {
+                return isDelete;
+            }
+
+            public void setDelete(boolean delete) {
+                isDelete = delete;
             }
 
             public int getParentPosition() {
@@ -597,72 +612,6 @@ public class ShopCarNewInfoEntity {
             public CartInfoBean() {
             }
 
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel dest, int flags) {
-                dest.writeByte(this.isForSale ? (byte) 1 : (byte) 0);
-                dest.writeInt(this.productId);
-                dest.writeParcelable(this.saleSku, flags);
-                dest.writeString(this.saleSkuValue);
-                dest.writeInt(this.count);
-                dest.writeString(this.priceTag);
-                dest.writeString(this.picUrl);
-                dest.writeInt(this.totalQuantity);
-                dest.writeString(this.price);
-                dest.writeString(this.name);
-                dest.writeString(this.activityCode);
-                dest.writeByte(this.isMore ? (byte) 1 : (byte) 0);
-                dest.writeInt(this.id);
-                dest.writeInt(this.allowCoupon);
-                dest.writeInt(this.status);
-                dest.writeInt(this.showLine);
-                dest.writeParcelable(this.activityInfoBean, flags);
-                dest.writeParcelable(this.activityInfoData, flags);
-                dest.writeByte(this.isEditing ? (byte) 1 : (byte) 0);
-                dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
-                dest.writeInt(this.cartId);
-            }
-
-            protected CartInfoBean(Parcel in) {
-                this.isForSale = in.readByte() != 0;
-                this.productId = in.readInt();
-                this.saleSku = in.readParcelable(SaleSkuBean.class.getClassLoader());
-                this.saleSkuValue = in.readString();
-                this.count = in.readInt();
-                this.priceTag = in.readString();
-                this.picUrl = in.readString();
-                this.totalQuantity = in.readInt();
-                this.price = in.readString();
-                this.name = in.readString();
-                this.activityCode = in.readString();
-                this.isMore = in.readByte() != 0;
-                this.id = in.readInt();
-                this.allowCoupon = in.readInt();
-                this.status = in.readInt();
-                this.showLine = in.readInt();
-                this.activityInfoBean = in.readParcelable(ActivityInfoBean.class.getClassLoader());
-                this.activityInfoData = in.readParcelable(ActivityInfoBean.class.getClassLoader());
-                this.isEditing = in.readByte() != 0;
-                this.isSelected = in.readByte() != 0;
-                this.cartId = in.readInt();
-            }
-
-            public static final Creator<CartInfoBean> CREATOR = new Creator<CartInfoBean>() {
-                @Override
-                public CartInfoBean createFromParcel(Parcel source) {
-                    return new CartInfoBean(source);
-                }
-
-                @Override
-                public CartInfoBean[] newArray(int size) {
-                    return new CartInfoBean[size];
-                }
-            };
-
             public static class CartProductInfoBean implements MultiItemEntity, Parcelable {
                 /**
                  * isPresentProduct:true
@@ -925,6 +874,90 @@ public class ShopCarNewInfoEntity {
                     }
                 };
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeByte(this.isForSale ? (byte) 1 : (byte) 0);
+                dest.writeInt(this.productId);
+                dest.writeParcelable(this.saleSku, flags);
+                dest.writeString(this.saleSkuValue);
+                dest.writeString(this.activityPriceDesc);
+                dest.writeInt(this.count);
+                dest.writeString(this.priceTag);
+                dest.writeString(this.picUrl);
+                dest.writeInt(this.totalQuantity);
+                dest.writeString(this.price);
+                dest.writeString(this.name);
+                dest.writeString(this.activityCode);
+                dest.writeByte(this.isMore ? (byte) 1 : (byte) 0);
+                dest.writeInt(this.id);
+                dest.writeInt(this.allowCoupon);
+                dest.writeInt(this.status);
+                dest.writeInt(this.showLine);
+                dest.writeInt(this.currentPosition);
+                dest.writeInt(this.parentPosition);
+                dest.writeInt(this.currentPage);
+                dest.writeParcelable(this.activityInfoBean, flags);
+                dest.writeParcelable(this.activityInfoData, flags);
+                dest.writeString(this.combineParentId);
+                dest.writeString(this.presentParentId);
+                dest.writeTypedList(this.combineProductInfoList);
+                dest.writeTypedList(this.presentProductInfoList);
+                dest.writeByte(this.isEditing ? (byte) 1 : (byte) 0);
+                dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
+                dest.writeByte(this.isDelete ? (byte) 1 : (byte) 0);
+                dest.writeInt(this.cartId);
+            }
+
+            protected CartInfoBean(Parcel in) {
+                this.isForSale = in.readByte() != 0;
+                this.productId = in.readInt();
+                this.saleSku = in.readParcelable(SaleSkuBean.class.getClassLoader());
+                this.saleSkuValue = in.readString();
+                this.activityPriceDesc = in.readString();
+                this.count = in.readInt();
+                this.priceTag = in.readString();
+                this.picUrl = in.readString();
+                this.totalQuantity = in.readInt();
+                this.price = in.readString();
+                this.name = in.readString();
+                this.activityCode = in.readString();
+                this.isMore = in.readByte() != 0;
+                this.id = in.readInt();
+                this.allowCoupon = in.readInt();
+                this.status = in.readInt();
+                this.showLine = in.readInt();
+                this.currentPosition = in.readInt();
+                this.parentPosition = in.readInt();
+                this.currentPage = in.readInt();
+                this.activityInfoBean = in.readParcelable(ActivityInfoBean.class.getClassLoader());
+                this.activityInfoData = in.readParcelable(ActivityInfoBean.class.getClassLoader());
+                this.combineParentId = in.readString();
+                this.presentParentId = in.readString();
+                this.combineProductInfoList = in.createTypedArrayList(CartProductInfoBean.CREATOR);
+                this.presentProductInfoList = in.createTypedArrayList(CartProductInfoBean.CREATOR);
+                this.isEditing = in.readByte() != 0;
+                this.isSelected = in.readByte() != 0;
+                this.isDelete = in.readByte() != 0;
+                this.cartId = in.readInt();
+            }
+
+            public static final Creator<CartInfoBean> CREATOR = new Creator<CartInfoBean>() {
+                @Override
+                public CartInfoBean createFromParcel(Parcel source) {
+                    return new CartInfoBean(source);
+                }
+
+                @Override
+                public CartInfoBean[] newArray(int size) {
+                    return new CartInfoBean[size];
+                }
+            };
         }
     }
 }

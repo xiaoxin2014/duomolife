@@ -1,7 +1,10 @@
 package com.amkj.dmsh.mine.biz;
 
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.CheckBox;
 
+import com.amkj.dmsh.R;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.amkj.dmsh.shopdetails.GoodsPriceCalculate;
@@ -18,28 +21,18 @@ public class ShoppingCartBiz {
     /**
      * 选择全部，点下全部按钮，改变所有商品选中状态
      */
-    public static boolean selectAll(List<CartInfoBean> list, boolean isSelectAll) {
+    public static boolean selectDeleteAll(List<CartInfoBean> list, boolean isSelect) {
         for (int i = 0; i < list.size(); i++) {
-            list.get(i).setSelected(isSelectAll);
+            list.get(i).setDelete(isSelect);
         }
-        return !isSelectAll;
+        return !isSelect;
     }
 
-    public static void isEditStatus(List<CartInfoBean> list, boolean isEditStatus) {
+    public static void saveEditStatus(List<CartInfoBean> list, boolean isEditStatus) {
         for (int i = 0; i < list.size(); i++) {
             CartInfoBean cartInfoBean = list.get(i);
-            if (!isEditStatus) {
-                cartInfoBean.setEditing(isEditStatus);
-                if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
-                        && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale()) {
-                    cartInfoBean.setSelected(!isEditStatus);
-                } else {
-                    cartInfoBean.setSelected(isEditStatus);
-                }
-            } else {
-                cartInfoBean.setEditing(isEditStatus);
-                cartInfoBean.setSelected(!isEditStatus);
-            }
+            //保存编辑状态
+            cartInfoBean.setEditing(isEditStatus);
             list.set(i, cartInfoBean);
         }
     }
@@ -50,7 +43,7 @@ public class ShoppingCartBiz {
      * @param shopGoodsList
      * @param isChecked
      */
-    public static void isNorMalAll(List<CartInfoBean> shopGoodsList, boolean isChecked) {
+    public static void selectBuyAll(List<CartInfoBean> shopGoodsList, boolean isChecked) {
         for (int i = 0; i < shopGoodsList.size(); i++) {
             CartInfoBean cartInfoBean = shopGoodsList.get(i);
             if (isChecked) {
@@ -67,17 +60,14 @@ public class ShoppingCartBiz {
         }
     }
 
-    /**
-     * 删除选中商品
-     *
-     * @param list
-     * @return
-     */
-    public static StringBuffer delSelGoods(List<CartInfoBean> list) {
+    public static StringBuffer delSelGoods(RecyclerView recyclerView, List<CartInfoBean> list) {
         StringBuffer carIds = new StringBuffer();
         int index = 0;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).isSelected()) {
+        int itemCount = recyclerView.getChildCount();
+        for (int i = 0; i < itemCount; i++) {
+            View childView = recyclerView.getChildAt(i);
+            View view = childView.findViewById(R.id.cb_shop_car_sel);
+            if (view instanceof CheckBox && ((CheckBox) view).isChecked()) {
                 index++;
                 if (index == 1) {
                     carIds.append(list.get(i).getId());
@@ -90,15 +80,42 @@ public class ShoppingCartBiz {
     }
 
     /**
+     * 删除选中商品
+     *
      * @param list
-     * @param position 单选
      * @return
      */
-    public static boolean selectOne(List<CartInfoBean> list, int position) {
-        boolean isSelectedOne = !(list.get(position).isSelected());
-        //单个图标的处理
-        list.get(position).setSelected(isSelectedOne);
-        return isSelectedOne;
+    public static StringBuffer delSelGoods(List<CartInfoBean> list) {
+        StringBuffer carIds = new StringBuffer();
+        int index = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).isDelete()) {
+                index++;
+                if (index == 1) {
+                    carIds.append(list.get(i).getId());
+                } else {
+                    carIds.append("," + list.get(i).getId());
+                }
+            }
+        }
+        return carIds;
+    }
+
+    /**
+     * 单个图标的处理
+     *
+     * @param list
+     * @param position
+     */
+    public static void selectOne(List<CartInfoBean> list, int position) {
+        CartInfoBean cartInfoBean = list.get(position);
+        if (cartInfoBean.isEditing()) {
+            boolean isDelete = !(cartInfoBean.isDelete());
+            cartInfoBean.setDelete(isDelete);
+        } else {
+            boolean isSelected = !(cartInfoBean.isSelected());
+            cartInfoBean.setSelected(isSelected);
+        }
     }
 
     /**

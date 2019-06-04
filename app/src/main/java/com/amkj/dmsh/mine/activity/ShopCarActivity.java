@@ -290,15 +290,12 @@ public class ShopCarActivity extends BaseActivity {
         isEditStatus = !isEditStatus;
         header_shared.setText(isEditStatus ? "完成" : "编辑");
         header_shared.setSelected(isEditStatus);
-        ShoppingCartBiz.isEditStatus(shopGoodsList, isEditStatus);
+        ShoppingCartBiz.saveEditStatus(shopGoodsList, isEditStatus);
         if (isEditStatus) {
             check_box_all_del.setChecked(false);
             ll_settlement_shop_car.setVisibility(View.GONE);
             rel_del_shop_car.setVisibility(View.VISIBLE);
         } else {
-            if (!check_box_all_buy.isChecked()) {
-                check_box_all_buy.setChecked(true);
-            }
             ll_settlement_shop_car.setVisibility(View.VISIBLE);
             rel_del_shop_car.setVisibility(View.GONE);
             getSettlePrice();
@@ -443,13 +440,6 @@ public class ShopCarActivity extends BaseActivity {
     }
 
     private void getShopCarProInfo() {
-        if (page == 1) {
-            if (isEditStatus) {
-                check_box_all_del.setChecked(false);
-            } else {
-                check_box_all_buy.setChecked(true);
-            }
-        }
         boolean allCheckedStatus = isEditStatus ? check_box_all_del.isChecked() : check_box_all_buy.isChecked();
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", TOTAL_COUNT_FORTY);
@@ -498,11 +488,11 @@ public class ShopCarActivity extends BaseActivity {
                                                 cartInfoBean.setActivityInfoData(activityInfoBean);
                                             }
                                         }
-                                        cartInfoBean.setSelected(false);
-                                        if (!isEditStatus && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
-                                                && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale()) {
-                                            cartInfoBean.setSelected(allCheckedStatus);
-                                        }
+//                                        cartInfoBean.setSelected(false);
+//                                        if (!saveEditStatus && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
+//                                                && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale()) {
+//                                            cartInfoBean.setSelected(allCheckedStatus);
+//                                        }
                                         if (shopGoodsList.size() > 0) {
                                             cartInfoBean.setCurrentPosition(shopGoodsList.size());
                                         }
@@ -683,23 +673,24 @@ public class ShopCarActivity extends BaseActivity {
         }
     }
 
-    //    全选 /全不选
+    //    全选删除
     @OnCheckedChanged(R.id.check_box_all_del)
     void allCheckDel(CompoundButton buttonView, boolean isChecked) {
-        ShoppingCartBiz.selectAll(shopGoodsList, isChecked);
+        ShoppingCartBiz.selectDeleteAll(shopGoodsList, isChecked);
         shopCarGoodsAdapter.setNewData(shopGoodsList);
     }
 
-    //    全选 /全不选
+    //    全选结算
     @OnCheckedChanged(R.id.check_box_all_buy)
     void allCheckBuy(CompoundButton buttonView, boolean isChecked) {
         if (!isEditStatus) {
-            ShoppingCartBiz.isNorMalAll(shopGoodsList, isChecked);
+            ShoppingCartBiz.selectBuyAll(shopGoodsList, isChecked);
             shopCarGoodsAdapter.setNewData(shopGoodsList);
             getSettlePrice();
         }
     }
 
+    //编辑
     @OnClick(R.id.tv_header_shared)
     void changeMode(View view) {
         setEditStatus();
@@ -788,8 +779,7 @@ public class ShopCarActivity extends BaseActivity {
     private void getGoodsSkuDetails(final View view) {
         final TextView textView = (TextView) view;
         final CartInfoBean cartInfoBean = (CartInfoBean) view.getTag();
-        if (cartInfoBean != null
-                && cartInfoBean.getSaleSku() != null) {
+        if (cartInfoBean != null && cartInfoBean.getSaleSku() != null) {
             //商品详情内容
             Map<String, Object> params = new HashMap<>();
             params.put("productId", cartInfoBean.getProductId());

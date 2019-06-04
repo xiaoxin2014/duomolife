@@ -20,7 +20,6 @@
             android:layout_gravity="center_vertical"
             android:background="@color/transparent"
             android:button="@null"
-
             android:drawableLeft="@drawable/sel_check_box_shop_car"
             android:focusable="false"
             android:focusableInTouchMode="false"

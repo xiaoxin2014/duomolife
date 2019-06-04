@@ -31,7 +31,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
-;
 
 /**
  * Created by atd48 on 2016/10/22.
@@ -54,15 +53,16 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
         CheckBox cb_shop_car_sel = helper.getView(R.id.cb_shop_car_sel);
 //        数量增减
         final RectAddAndSubViewCommunal rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
-        helper.setChecked(R.id.cb_shop_car_sel, cartInfoBean.isSelected());
+        helper.setChecked(R.id.cb_shop_car_sel, cartInfoBean.isEditing() ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
+        //1.待售并且不在编辑状态   2.失效并且不在编辑状态   3.没有库存并且不在编辑状态时   （无法选中进行购买）
         if (cartInfoBean.isForSale() && !cartInfoBean.isEditing() || !cartInfoBean.isEditing() && cartInfoBean.getStatus() != 1 ||
-                !cartInfoBean.isEditing() && cartInfoBean.getStatus() == 1
-                        && cartInfoBean.getSaleSku() != null && cartInfoBean.getSaleSku().getQuantity() < 1) {
+                !cartInfoBean.isEditing() && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null && cartInfoBean.getSaleSku().getQuantity() < 1) {
             cb_shop_car_sel.setEnabled(false);
             cb_shop_car_sel.setChecked(false);
         } else {
             cb_shop_car_sel.setEnabled(true);
         }
+
 //        产品图片
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());
         if (cartInfoBean.getActivityInfoData() != null && cartInfoBean.getActivityInfoData().getShowActInfo() == 1) {
@@ -103,9 +103,9 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
                 .setGone(R.id.tv_line_ten, cartInfoBean.getShowLine() == 1)
                 .setTag(R.id.communal_rect_add_sub, R.id.shop_car_position, helper.getAdapterPosition())
                 .addOnClickListener(R.id.img_integration_details_credits_add)
-                .setTag(R.id.img_integration_details_credits_add,cartInfoBean)
+                .setTag(R.id.img_integration_details_credits_add, cartInfoBean)
                 .addOnClickListener(R.id.img_integration_details_credits_minus)
-                .setTag(R.id.img_integration_details_credits_minus,cartInfoBean);
+                .setTag(R.id.img_integration_details_credits_minus, cartInfoBean);
 //        商品状态
 //        tv_w_buy_tag 待售状态
         if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null) {
