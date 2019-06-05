@@ -52,7 +52,7 @@ public class QualityNewUserShopEntity extends BaseEntity{
         private String tag;
         private String activityCode;
         private int cItemType;
-        private String cTitle;
+        private int cTitle;
 
         public String getActivityCode() {
             return activityCode;
@@ -96,7 +96,7 @@ public class QualityNewUserShopEntity extends BaseEntity{
 
         public String getName() {
             return name;
-        }
+    }
 
         public void setName(String name) {
             this.name = name;
@@ -127,11 +127,11 @@ public class QualityNewUserShopEntity extends BaseEntity{
             this.cItemType = cItemType;
         }
 
-        public String getcTitle() {
+        public int getcTitle() {
             return cTitle;
         }
 
-        public void setcTitle(String cTitle) {
+        public void setcTitle(int cTitle) {
             this.cTitle = cTitle;
         }
     }

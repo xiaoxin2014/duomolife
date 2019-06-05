@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/ll_communal_time_hours"
-              android:layout_width="wrap_content"
+              android:layout_width="@dimen/sc_mm_300"
               android:layout_height="match_parent"
               android:background="@color/time_bg_yellow"
-              android:minWidth="@dimen/sc_mm_300"
               android:orientation="vertical"
               android:paddingTop="@dimen/sc_mm_10"
               android:paddingBottom="@dimen/sc_mm_10">

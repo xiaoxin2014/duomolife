@@ -52,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="￥0.00 "
                 android:layout_toRightOf="@id/tv_set_total_text"
                 android:textColor="@color/text_b_red_color"
                 android:textSize="@dimen/sc_mm_28" />

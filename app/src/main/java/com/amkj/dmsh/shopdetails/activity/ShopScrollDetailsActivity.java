@@ -315,6 +315,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     TextView mTvTipsBottom;
     @BindView(R.id.cv_countdownTime_bottom)
     CountdownView mCtCountDownBottom;
+    @BindView(R.id.iv_next_icon)
+    ImageView mIvNextIcon;
+    @BindView(R.id.rl_product_activity_detail)
+    LinearLayout rl_product_activity_detail;
 
 
     //    赠品信息
@@ -369,6 +373,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        tv_product_activity_description.setSelected(true);
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
         dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
@@ -1016,28 +1021,27 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
             if (activityCode.contains("XSG")) {
                 mRlActivityPrice.setVisibility(VISIBLE);       //限时购价格
-                tv_product_activity_description.setVisibility(GONE);//活动描述
-                tv_product_activity_description.setSelected(false);
+                rl_product_activity_detail.setVisibility(GONE);
                 mLlScroolDetailPrice.setVisibility(GONE); //非限时购价格
                 startCountDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);//开启倒计时
                 mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
                 ll_communal_time_hours.setVisibility(VISIBLE);//上面的倒计时
-            } else if (activityCode.contains("LJ") || activityCode.contains("ZC") || activityCode.contains("BJ")) {
+            } else if (activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("BJ")) {
                 mRlActivityPrice.setVisibility(GONE);
+                mIvNextIcon.setVisibility(GONE);
                 tv_product_activity_description.setVisibility(VISIBLE);
-                tv_product_activity_description.setSelected(false);
                 mLlScroolDetailPrice.setVisibility(VISIBLE);
                 startCountDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);
                 mLlTimeHoursBottom.setVisibility(GONE);
                 ll_communal_time_hours.setVisibility(VISIBLE);
             } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
+                ll_communal_time_hours.setVisibility(GONE);
                 mRlActivityPrice.setVisibility(GONE);
+                mIvNextIcon.setVisibility(VISIBLE);
                 tv_product_activity_description.setVisibility(VISIBLE);
-                tv_product_activity_description.setSelected(true);
                 mLlScroolDetailPrice.setVisibility(VISIBLE);
                 startCountDownTime(mTvTipsBottom, mCtCountDownBottom);
                 mLlTimeHoursBottom.setVisibility(VISIBLE);
-                ll_communal_time_hours.setVisibility(GONE);
             }
 
             tv_product_activity_description.setText(getStrings(shopProperty.getActivityRule()));
@@ -1233,7 +1237,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         prop.setProperty("proId", shopDetailsEntity.getShopPropertyBean().getId() + "");
         StatService.trackCustomKVEvent(getActivity(), "qlProLook", prop);
 
-        iv_ql_shop_pro_cp_tag.setVisibility(shopProperty.getAllowCoupon() == 0 ? View.GONE : VISIBLE);
+//        iv_ql_shop_pro_cp_tag.setVisibility(shopProperty.getAllowCoupon() == 0 ? View.GONE : VISIBLE);
         tv_sp_details_collect.setSelected(shopProperty.isCollect());
 
         List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(shopProperty.getItemBody());
@@ -1557,9 +1561,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setReallyPrice(String price) {
         if (!TextUtils.isEmpty(shopPropertyBean.getActivityCode()) && shopPropertyBean.getActivityCode().contains("XSG") && isTimeStart(shopDetailsEntity)) {
-            mTvActivityPrice.setVisibility(VISIBLE);
+            mTvActivityPrice.setText("活动价");
         } else {
-            mTvActivityPrice.setVisibility(GONE);
+            mTvActivityPrice.setText("");
         }
         tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, price));
         String minPrice = getStringsFormat(this, R.string.min_price, stripTrailingZeros(price.trim()));
@@ -1642,7 +1646,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
-                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
+//                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
                             addCarCheckLoginStatus();
                             setPresentProData(shopCarGoodsSkuDif.getPresentIds());
                         }

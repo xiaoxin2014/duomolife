@@ -60,8 +60,8 @@
     </LinearLayout>
 
     <ImageView
-        android:minHeight="@dimen/sc_mm_300"
         android:id="@+id/iv_quality_good_product_ad"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/sc_mm_300"/>
 </FrameLayout>

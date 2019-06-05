@@ -46,6 +46,7 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -160,6 +161,8 @@ public class ShopCarActivity extends BaseActivity {
         communal_recycler.setAdapter(shopCarGoodsAdapter);
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            check_box_all_buy.setChecked(false);
+            check_box_all_del.setChecked(false);
             loadData();
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
@@ -275,7 +278,6 @@ public class ShopCarActivity extends BaseActivity {
         recommendHeaderView = new RecommendHeaderView();
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
-        check_box_all_buy.setChecked(true);
     }
 
     private void skipProDetail(CartInfoBean cartInfoBean) {
@@ -488,11 +490,10 @@ public class ShopCarActivity extends BaseActivity {
                                                 cartInfoBean.setActivityInfoData(activityInfoBean);
                                             }
                                         }
-//                                        cartInfoBean.setSelected(false);
-//                                        if (!saveEditStatus && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
-//                                                && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale()) {
-//                                            cartInfoBean.setSelected(allCheckedStatus);
-//                                        }
+                                        if (!isEditStatus && cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null
+                                                && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale() && check_box_all_buy.isChecked()) {
+                                            cartInfoBean.setSelected(true);
+                                        }
                                         if (shopGoodsList.size() > 0) {
                                             cartInfoBean.setCurrentPosition(shopGoodsList.size());
                                         }
@@ -643,6 +644,8 @@ public class ShopCarActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (isOnPause) {
+            //默认不要全选
+            check_box_all_buy.setChecked(false);
             loadData();
         }
         isOnPause = false;
@@ -676,14 +679,17 @@ public class ShopCarActivity extends BaseActivity {
     //    全选删除
     @OnCheckedChanged(R.id.check_box_all_del)
     void allCheckDel(CompoundButton buttonView, boolean isChecked) {
-        ShoppingCartBiz.selectDeleteAll(shopGoodsList, isChecked);
-        shopCarGoodsAdapter.setNewData(shopGoodsList);
+        if (smart_communal_refresh.getState() == RefreshState.None) {
+            ShoppingCartBiz.selectDeleteAll(shopGoodsList, isChecked);
+            shopCarGoodsAdapter.setNewData(shopGoodsList);
+        }
+
     }
 
     //    全选结算
     @OnCheckedChanged(R.id.check_box_all_buy)
     void allCheckBuy(CompoundButton buttonView, boolean isChecked) {
-        if (!isEditStatus) {
+        if (!isEditStatus && smart_communal_refresh.getState() == RefreshState.None) {
             ShoppingCartBiz.selectBuyAll(shopGoodsList, isChecked);
             shopCarGoodsAdapter.setNewData(shopGoodsList);
             getSettlePrice();

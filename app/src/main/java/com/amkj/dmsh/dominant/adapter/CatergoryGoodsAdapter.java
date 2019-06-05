@@ -87,7 +87,6 @@ public class CatergoryGoodsAdapter extends BaseQuickAdapter<LikedProductBean, Ba
             Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
             intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
             context.startActivity(intent);
-
         });
         helper.itemView.setTag(likedProductBean);
     }

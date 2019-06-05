@@ -236,6 +236,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private int commentNum;
         @SerializedName(value = "picUrl", alternate = {"path", "pic_url"})
         private String picUrl;
+        @SerializedName(value = "price", alternate = "preferentialPrice")
         private String price;
         private String subtitle;
         private int quantity = 1;
@@ -244,6 +245,8 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private String sellStatus;
         private String activityCode;
         private String type;
+        //新人专享商品专用字段（省多少钱）
+        private String decreasePrice;
         private int limitBuy;
         private int category_id;
         @SerializedName("buyIntergral")
@@ -253,6 +256,14 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         @SerializedName(value = "android_link", alternate = "androidLink")
         private String androidLink;
         private List<MarketLabelBean> marketLabelList;
+
+        public String getDecreasePrice() {
+            return decreasePrice;
+        }
+
+        public void setDecreasePrice(String decreasePrice) {
+            this.decreasePrice = decreasePrice;
+        }
 
         public String getType() {
             return type;

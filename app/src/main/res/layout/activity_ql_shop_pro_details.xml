@@ -78,63 +78,9 @@
                                 <include layout="@layout/layout_down_time_prodetails"/>
                             </RelativeLayout>
 
-                            <LinearLayout
-                                android:id="@+id/ll_product_activity_detail"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_106"
-                                android:orientation="horizontal"
-                                android:visibility="gone">
-
-                                <RelativeLayout
-                                    android:id="@+id/rl_activity_price"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:background="@color/text_normal_red"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:id="@+id/tv_product_min_price"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="@dimen/sc_mm_30"
-                                        android:layout_marginRight="@dimen/sc_mm_30"
-                                        android:background="@color/text_normal_red"
-                                        android:textColor="@color/white"
-                                        android:textSize="@dimen/sc_mm_30"/>
-
-                                    <TextView
-                                        android:id="@+id/tv_product_martket_price"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignBaseline="@+id/tv_product_min_price"
-                                        android:layout_toRightOf="@+id/tv_product_min_price"
-                                        android:ellipsize="end"
-                                        android:maxLines="1"
-                                        android:textColor="@color/white"
-                                        android:textSize="@dimen/sc_mm_22"/>
-                                </RelativeLayout>
-
-                                <TextView
-                                    android:id="@+id/tv_product_activity_description"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:background="@color/text_normal_red"
-                                    android:drawableRight="@drawable/sel_next_icon"
-                                    android:drawablePadding="@dimen/sc_mm_28"
-                                    android:ellipsize="end"
-                                    android:gravity="center_vertical"
-                                    android:maxLines="1"
-                                    android:paddingLeft="@dimen/sc_mm_30"
-                                    android:paddingRight="@dimen/sc_mm_28"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_30"/>
-
-                                <include
-                                    layout="@layout/layout_new_countdown_time_hours"/>
-                            </LinearLayout>
+                            <include
+                                layout="@layout/layout_product_activity_detail"
+                                android:visibility="gone"/>
 
                             <include
                                 layout="@layout/layout_countdown_time_bottom"

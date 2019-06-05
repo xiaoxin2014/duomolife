@@ -152,7 +152,7 @@ public class QualityNewUserFragment extends BaseFragment {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        qualityNewUserShopAdapter = new QualityNewUserShopAdapter(getActivity(), qualityNewUserShopList);
+//        qualityNewUserShopAdapter = new QualityNewUserShopAdapter(getActivity(), qualityNewUserShopList);
         qualityNewUserShopAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
             @Override
             public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
@@ -311,7 +311,7 @@ public class QualityNewUserFragment extends BaseFragment {
                     if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
                         QualityNewUserShopBean qualityNewUserShopBean = new QualityNewUserShopBean();
                         qualityNewUserShopBean.setcItemType(TYPE_1);
-                        qualityNewUserShopBean.setcTitle("- 用券专区 -");
+//                        qualityNewUserShopBean.setcTitle("- 用券专区 -");
                         qualityNewUserCouponList.add(qualityNewUserShopBean);
                         for (QualityNewUserShopBean qualityNewUserProductBean : qualityNewUserShopEntity.getQualityNewUserShopList()) {
                             qualityNewUserProductBean.setcItemType(TYPE_2);

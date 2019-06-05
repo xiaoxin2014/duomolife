@@ -1,27 +1,27 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
-import android.widget.TextView;
+import android.content.Intent;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
+import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
-import me.jessyan.autosize.utils.AutoSizeUtils;
-
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
-;
 
 /**
  * @author LGuiPeng
@@ -30,53 +30,57 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
  * class description:新人专享
  */
 
-public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<QualityNewUserShopBean, BaseViewHolder> {
+public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<UserLikedProductEntity.LikedProductBean, BaseViewHolder> {
     private final Context context;
 
-    public QualityNewUserShopAdapter(Context context, List<QualityNewUserShopBean> qualityNewUserShopList) {
+    public QualityNewUserShopAdapter(Context context, List<UserLikedProductEntity.LikedProductBean> qualityNewUserShopList) {
         super(qualityNewUserShopList);
-        addItemType(TYPE_0, R.layout.adapter_layout_qt_pro);
-//        头部标题栏
-        addItemType(TYPE_1, R.layout.adapter_ql_goods_pro_header);
-//        购物车商品
-        addItemType(TYPE_2, R.layout.adapter_layout_qt_pro);
+        addItemType(TYPE_0, R.layout.item_home_catergory_goods);
+        addItemType(TYPE_1, R.layout.adapter_new_user_header);//        头部标题栏
         this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, QualityNewUserShopBean qualityNewUserShopBean) {
+    protected void convert(BaseViewHolder helper, UserLikedProductEntity.LikedProductBean likedProductBean) {
         if (helper.getItemViewType() == TYPE_0) {
-            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_qt_pro_img)
-                    , qualityNewUserShopBean.getPicUrl());
-            TextView tv_qt_pro_wait_buy = helper.getView(R.id.tv_qt_pro_wait_buy);
-            GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext,16));
-            gradientDrawable.setColor(context.getResources().getColor(R.color.yellow_bg_ffae));
-            tv_qt_pro_wait_buy.setBackground(gradientDrawable);
-            helper.setGone(R.id.iv_com_pro_tag_out, qualityNewUserShopBean.getQuantity() < 1)
-                    .setText(R.id.tv_qt_pro_descrip, getStrings(qualityNewUserShopBean.getName()))
-                    .setText(R.id.tv_qt_pro_price, "￥" + qualityNewUserShopBean.getPrice())
-                    .setText(R.id.tv_qt_pro_wait_buy, "新人专享")
-                    .setGone(R.id.tv_qt_pro_wait_buy, true)
-                    .setGone(R.id.iv_pro_add_car, false)
-                    .setGone(R.id.tv_qt_pro_name, false)
-                    .itemView.setTag(qualityNewUserShopBean);
+            String waterRemark = likedProductBean.getWaterRemark();
+            String goodsUrl = likedProductBean.getPicUrl();
+            if (!TextUtils.isEmpty(waterRemark)) {
+                goodsUrl = GlideImageLoaderUtil.getWaterMarkImgUrl(likedProductBean.getPicUrl(), likedProductBean.getWaterRemark());
+            }
+            GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_goods_pic), goodsUrl);
+            helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
+                    .setText(R.id.tv_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
+                    .setText(R.id.tv_name, getStrings(likedProductBean.getName()));
+            FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
+            if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
+                    && likedProductBean.getMarketLabelList().size() > 0)) {
+                fbl_label.setVisibility(View.VISIBLE);
+                fbl_label.removeAllViews();
+                if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
+                    fbl_label.addView(getLabelInstance().createLabelText(context, likedProductBean.getActivityTag(), 1));
+                }
+                if (likedProductBean.getMarketLabelList() != null
+                        && likedProductBean.getMarketLabelList().size() > 0) {
+                    for (UserLikedProductEntity.LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                        if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                            fbl_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
+                            if (fbl_label.getChildCount() >= 2) break;
+                        }
+                    }
+                }
+            } else {
+                fbl_label.setVisibility(View.GONE);
+            }
+
+            helper.itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
+                context.startActivity(intent);
+            });
         } else if (helper.getItemViewType() == TYPE_1) {
-            TextView textView = helper.getView(R.id.tv_pro_title);
-            textView.setBackgroundColor(context.getResources().getColor(R.color.white));
-            helper.setText(R.id.tv_pro_title, getStrings(qualityNewUserShopBean.getcTitle()));
-        } else if (helper.getItemViewType() == TYPE_2) {
-            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_qt_pro_img)
-                    , qualityNewUserShopBean.getPicUrl());
-            helper.setGone(R.id.iv_com_pro_tag_out, qualityNewUserShopBean.getQuantity() < 1)
-                    .setText(R.id.tv_qt_pro_descrip, getStrings(qualityNewUserShopBean.getName()))
-                    .setText(R.id.tv_qt_pro_price, getStringsChNPrice(context, qualityNewUserShopBean.getPrice()))
-                    .setGone(R.id.tv_qt_pro_wait_buy, false)
-                    .setGone(R.id.iv_pro_add_car, true)
-                    .addOnClickListener(R.id.iv_pro_add_car)
-                    .setTag(R.id.iv_pro_add_car, R.id.iv_tag, qualityNewUserShopBean)
-                    .setGone(R.id.tv_qt_pro_name, false)
-                    .itemView.setTag(qualityNewUserShopBean);
+            ImageView imageView = helper.getView(R.id.iv_type);
+            imageView.setImageResource(likedProductBean.getType_id());
         }
     }
 }

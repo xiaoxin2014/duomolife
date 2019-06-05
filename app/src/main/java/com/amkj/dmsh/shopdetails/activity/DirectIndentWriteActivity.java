@@ -112,8 +112,6 @@ import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_RE_BUY_INDENT;
 
-;
-;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -342,6 +340,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         });
     }
 
+    //提交订单
     @OnClick(R.id.tv_indent_write_commit)
     void goExchange() {
         if (type.equals(INDENT_W_TYPE)) {

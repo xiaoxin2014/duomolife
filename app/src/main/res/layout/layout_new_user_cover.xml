@@ -1,65 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:background="@color/white"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
 
-    android:layout_height="wrap_content"
-    android:divider="@drawable/item_divider_five_dp"
-    android:showDividers="end"
-    android:gravity="center"
-    android:orientation="vertical">
+              android:background="@color/white"
+              android:divider="@drawable/item_divider_five_dp"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:showDividers="end">
+
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/sc_mm_45"
-        android:padding="@dimen/sc_mm_24"
-        android:layout_height="wrap_content">
+        android:padding="@dimen/sc_mm_24">
+
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/rel_new_user_got"
-            android:visibility="visible"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
             <include layout="@layout/layout_communal_recycler_wrap"/>
+
             <TextView
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/communal_recycler_wrap"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/sc_mm_45"
-                android:textSize="@dimen/sc_mm_32"
                 android:text="领取成功"
                 android:textColor="@color/text_black_t"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/sc_mm_32"/>
         </RelativeLayout>
+
         <ImageView
-            android:layout_width="match_parent"
-            android:scaleType="fitXY"
             android:id="@+id/iv_new_user_cover"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
     </FrameLayout>
+
     <TextView
-        android:layout_width="@dimen/sc_mm_420"
-        android:gravity="center"
         android:id="@+id/tv_new_user_get_coupon"
-        android:textColor="@color/white"
-        android:text="立即领取"
-        android:textSize="@dimen/sc_mm_34"
+        android:layout_width="@dimen/sc_mm_420"
+        android:layout_height="@dimen/sc_mm_85"
         android:background="@drawable/border_cir_42_bg_red_ffae"
-        android:layout_height="@dimen/sc_mm_85" />
+        android:gravity="center"
+        android:text="立即领取"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_34"/>
+
     <TextView
+        android:id="@+id/tv_look_mine_coupon"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:paddingTop="@dimen/sc_mm_30"
         android:paddingBottom="@dimen/sc_mm_30"
         android:text="查看我的优惠券>"
-        android:textSize="@dimen/sc_mm_28"
-        android:id="@+id/tv_look_mine_coupon"
         android:textColor="@color/text_black_t"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="@dimen/sc_mm_32"
-        android:layout_marginBottom="@dimen/sc_mm_30"
-        android:layout_marginTop="@dimen/sc_mm_30"
-        android:textColor="@color/text_login_gray_s"
-        android:text="- 新人专享 -"
-        android:layout_height="wrap_content" />
+        android:textSize="@dimen/sc_mm_28"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/newuser_exclusive"/>
 </LinearLayout>

@@ -14,10 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:paddingRight="@dimen/sc_mm_10"
-        android:text="活动价"
         android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_22"
-        android:visibility="gone"/>
+        android:textSize="@dimen/sc_mm_22"/>
 
     <TextView
         android:id="@+id/tv_ql_sp_pro_sc_price"
@@ -46,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_activity_price"
         android:layout_marginLeft="@dimen/sc_mm_36"
-        android:layout_toRightOf="@id/tv_ql_sp_pro_sc_market_price"
+        android:layout_toRightOf="@id/tv_max_price"
         android:text="---------"
         android:textColor="@color/text_gray_hint_n"
         android:textSize="@dimen/sc_mm_24"/>
