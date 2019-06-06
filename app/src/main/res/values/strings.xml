@@ -62,7 +62,7 @@
     <string name="coupon_start_fee">满%1$d可使用</string>
     <string name="coupon_period_date">有效期:%1$s~%2$s</string>
     <!--淘宝优惠券-->
-    <string name="coupon_tb_price">￥%1$s元优惠券</string>
+    <string name="coupon_tb_price">¥%1$s元优惠券</string>
 
     <string name="AddCarSuccess">添加商品成功</string>
     <string name="integral_hint">积分可以兑换礼品，晒单可获得更多积分</string>
@@ -121,10 +121,10 @@
     <string name="umeng_share_c_url">复制链接</string>
     <!--商品-->
     <string name="refrence_only">该金额仅供参考，具体金额以实际结算为准</string>
-    <string name="text_act_not_start">活动价 ￥%1$s（未开始）</string>
-    <string name="car_discount_price">优惠了￥%1$s元</string>
-    <string name="money_price_chn">￥%1$s</string>
-    <string name="money_market_price_chn">参考价￥%1$s</string>
+    <string name="text_act_not_start">活动价 ¥%1$s（未开始）</string>
+    <string name="car_discount_price">优惠了¥%1$s元</string>
+    <string name="money_price_chn">¥%1$s</string>
+    <string name="money_market_price_chn">参考价¥%1$s</string>
     <string name="cart_present">【赠品】%1$s</string>
     <string name="cart_combine">【组合购】%1$s</string>
     <string name="comment_count">全部评论(%1$d)</string>
@@ -133,7 +133,7 @@
     <string name="sku_max_discount_price">最多可优惠%1$s元</string>
     <string name="sku_discount_price">优惠了%1$s元</string>
     <!--订单商品信息-->
-    <string name="price_count">共 %1$d 件 合计:￥%2$s</string>
+    <string name="price_count">共 %1$d 件 合计:¥%2$s</string>
     <string name="appraise_integral">评价赢积分</string>
     <string name="appraise_integral_score">评价赢%1$s积分</string>
     <string name="appraise_public_hint">带图评价商品超过10个字有机会获取积分哦！</string>
@@ -194,7 +194,7 @@
     <!--积分订单-->
     <string name="integral_product_and_price">%1$d积分+%2$s元</string>
     <string name="integral_product_add">%1$d积分+</string>
-    <string name="integral_indent_product_price_and_money">%1$d积分+￥%2$s</string>
+    <string name="integral_indent_product_price_and_money">%1$d积分+¥%2$s</string>
     <string name="integral_indent_product_price">%1$d积分</string>
     <string name="integral_indent_product_count">共%1$d件 实付:</string>
     <string name="product_comment_count">Ta们在说(%1$d)</string>

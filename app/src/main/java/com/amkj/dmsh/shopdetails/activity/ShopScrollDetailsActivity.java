@@ -9,15 +9,16 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -365,6 +366,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private int screenHeight;
     private GoodsRecommendAdapter mGoodsRecommendAdapter;
     private GoodsGroupAdapter mGoodsGroupAdapter;
+    private AlertDialog alertDialog;
+    private DirectGoodsServerEntity mDirectGoodsServerEntity;
+
 
     @Override
     protected int getContentView() {
@@ -1018,7 +1022,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 , shopPropertyBean.getActivityEndTime())) {
             //活动标签不为空并且活动未结束才显示活动信息以及倒计时
             ll_product_activity_detail.setVisibility(VISIBLE);
-
             if (activityCode.contains("XSG")) {
                 mRlActivityPrice.setVisibility(VISIBLE);       //限时购价格
                 rl_product_activity_detail.setVisibility(GONE);
@@ -1181,8 +1184,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         textView.setLines(1);
                         textView.setText(getStrings(tagName));
                         flex_product_tag.addView(textView);
-                        int width = flex_product_tag.getMeasuredWidth();
-                        Log.d("", width + "");
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
@@ -1290,12 +1291,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                DirectGoodsServerEntity directGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
-                if (directGoodsServerEntity != null) {
-                    if (directGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
+                mDirectGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
+                if (mDirectGoodsServerEntity != null) {
+                    if (mDirectGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
                         serviceDataList.clear();
                         serviceDataTotalList.clear();
-                        DirectGoodsServerBean directGoodsServerBean = directGoodsServerEntity.getDirectGoodsServerBean();
+                        DirectGoodsServerBean directGoodsServerBean = mDirectGoodsServerEntity.getDirectGoodsServerBean();
                         if (directGoodsServerBean != null) {
                             List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
                             if (servicePromiseList.size() > 0) {
@@ -1567,7 +1568,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
         tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, price));
         String minPrice = getStringsFormat(this, R.string.min_price, stripTrailingZeros(price.trim()));
-        mTvProductMinPrice.setText(getSpannableString(minPrice, 1, minPrice.length() - 1, 1.6f,null));
+        mTvProductMinPrice.setText(getSpannableString(minPrice, 1, minPrice.length() - 1, 1.6f, null));
     }
 
     //    七鱼客服
@@ -1857,7 +1858,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @OnClick({R.id.iv_life_back, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
             R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.iv_img_service, R.id.iv_img_share,
-            R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku})
+            R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -1972,8 +1973,73 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     });
                 }
                 break;
+            case R.id.ll_layout_pro_sc_tag:
+                if (mDirectGoodsServerEntity != null) {
+                    if (alertDialog == null) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTransDialog);
+                        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_ql_gp_dialog, communal_recycler_wrap, false);
+                        initDialogView(dialogView);
+                        alertDialog = builder.create();
+                        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        alertDialog.setCanceledOnTouchOutside(true);
+                        alertDialog.show();
+                        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                        int dialogHeight = (int) (app.getScreenHeight() * 0.618 + 1);
+                        Window window = alertDialog.getWindow();
+                        window.getDecorView().setPadding(0, 0, 0, 0);
+                        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
+                        window.setGravity(Gravity.BOTTOM);//底部出现
+                        window.setContentView(dialogView);
+                    } else {
+                        alertDialog.show();
+                    }
+                }
+                break;
+        }
+    }
 
+    private void initDialogView(View dialogView) {
+        FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
+        RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
+        TextView tv_pro_buy_detail_text = dialogView.findViewById(R.id.tv_pro_buy_detail_text);
+        TextView tv_title_text = dialogView.findViewById(R.id.tv_title_text);
+        tv_title_text.setText("服务承诺");
+        tv_pro_buy_detail_text.setVisibility(GONE);
+        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
+        communal_recycler_wrap.setNestedScrollingEnabled(false);
+        CommunalDetailAdapter gpRuleDetailsAdapter = new CommunalDetailAdapter(getActivity(), null);
+        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
+        communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
+        ShopPropertyBean shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
+        //        标签
+        final String[] tagArray = shopPropertyBean.getTagIds().split(",");
+        if (tagArray.length > 0) {
+            flex_communal_tag.setVisibility(View.VISIBLE);
+            flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
+            flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
+            flex_communal_tag.removeAllViews();
+            for (int i = 0; i < tagArray.length; i++) {
+                flex_communal_tag.addView(getLabelInstance().createProductTag(getActivity(), tagArray[i]));
+            }
+        } else {
+            flex_communal_tag.setVisibility(GONE);
+        }
 
+        if (mDirectGoodsServerEntity != null) {
+            DirectGoodsServerBean directGoodsServerBean = mDirectGoodsServerEntity.getDirectGoodsServerBean();
+            if (directGoodsServerBean != null) {
+                List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
+                if (servicePromiseList != null && servicePromiseList.size() > 0) {
+                    List<CommunalDetailObjectBean> ruleList = new ArrayList<>();
+                    for (int i = 0; i < servicePromiseList.size(); i++) {
+                        CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+                        DirectGoodsServerBean.ServicePromiseBean servicePromiseBean = servicePromiseList.get(i);
+                        communalDetailObjectBean.setContent(servicePromiseBean.getContent());
+                        ruleList.add(communalDetailObjectBean);
+                    }
+                    gpRuleDetailsAdapter.setNewData(ruleList);
+                }
+            }
         }
     }
 
