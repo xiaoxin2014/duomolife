@@ -366,4 +366,14 @@ public class ConstantVariable {
      * Eventbus类型常量
      */
     public static final String UPDATE_CAR_NUM = "updateCarNum";//用户信息本地shared_prefs文件名
+
+
+    /**
+     * 商品item类型
+     */
+    public static final int PRODUCT = 0;//普通商品
+    public static final int AD_COVER = 1;//好物封面
+    public static final int TITLE = 2;//标题
+    public static final int PIC_GOODS = 3;//图片商品
+
 }

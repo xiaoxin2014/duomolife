@@ -35,8 +35,8 @@ public class QualityNewUserShopAdapter extends BaseMultiItemQuickAdapter<UserLik
 
     public QualityNewUserShopAdapter(Context context, List<UserLikedProductEntity.LikedProductBean> qualityNewUserShopList) {
         super(qualityNewUserShopList);
-        addItemType(TYPE_0, R.layout.item_home_catergory_goods);
-        addItemType(TYPE_1, R.layout.adapter_new_user_header);//        头部标题栏
+        addItemType(TYPE_0, R.layout.item_commual_goods_3x);
+        addItemType(TYPE_1, R.layout.adapter_new_user_header);//头部标题栏
         this.context = context;
     }
 

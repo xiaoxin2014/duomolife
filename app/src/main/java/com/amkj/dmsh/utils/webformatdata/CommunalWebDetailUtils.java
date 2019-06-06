@@ -24,6 +24,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -126,10 +127,10 @@ public class CommunalWebDetailUtils {
                         for (LikedProductBean likedProductBean : goodList) {
                             if (descriptionBean.getType().contains("goodsX")) {
                                 //普通商品
-                                likedProductBean.setObjectType("product");
+                                likedProductBean.setItemType(ConstantVariable.PRODUCT);
                             } else {
                                 //封面图片
-                                likedProductBean.setObjectType("ad");
+                                likedProductBean.setItemType(ConstantVariable.AD_COVER);
                             }
                         }
                         detailObjectBean.setItemType(TYPE_GOODS_2X);
@@ -153,10 +154,10 @@ public class CommunalWebDetailUtils {
                         for (LikedProductBean likedProductBean : goodList) {
                             if (descriptionBean.getType().contains("goodsX")) {
                                 //普通商品(picture)
-                                likedProductBean.setObjectType("product");
+                                likedProductBean.setItemType(ConstantVariable.PRODUCT);
                             } else {
                                 //封面图片
-                                likedProductBean.setObjectType("ad");
+                                likedProductBean.setItemType(ConstantVariable.AD_COVER);
                             }
                         }
                         detailObjectBean.setItemType(TYPE_GOODS_3X);

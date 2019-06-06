@@ -28,6 +28,7 @@ import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -373,12 +374,25 @@ public class ConstantMethod {
         }
     }
 
-    public static CharSequence getSpannableString(String text, int start, int end, float proportion) {
+    /**
+     * 带货币单位价格格式化
+     *
+     * @param proportion 字体大小缩放比例
+     * @return
+     */
+    public static CharSequence getSpannableString(String text, int start, int end, float proportion, String color) {
         SpannableString spannableString = null;
         try {
             spannableString = new SpannableString(text);
-            RelativeSizeSpan sizeSpan01 = new RelativeSizeSpan(proportion);
-            spannableString.setSpan(sizeSpan01, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            if (proportion > 0) {
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(proportion);
+                spannableString.setSpan(sizeSpan, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+
+            if (!TextUtils.isEmpty(color)) {
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor(color));
+                spannableString.setSpan(colorSpan, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
         } catch (Exception e) {
             return text;
         }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
@@ -15,7 +14,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
 
@@ -26,6 +25,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
+import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 
@@ -36,24 +37,23 @@ import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
  * class description:好物
  */
 
-public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseViewHolder> {
+public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
     private final Activity context;
 
     public GoodProductAdapter(Activity context, List<LikedProductBean> goodsProList) {
-        super(R.layout.item_good_product, goodsProList);
+        super(goodsProList);
+        addItemType(PRODUCT, R.layout.item_commual_goods_2x);//普通商品
+        addItemType(AD_COVER, R.layout.item_commual_cover_pic_2x);//封面图片
         this.context = context;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
         if (likedProductBean == null) return;
-        LinearLayout ll_quality_product = helper.getView(R.id.ll_quality_product);
-        ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
-        switch (getStrings(likedProductBean.getObjectType())) {
+        switch (likedProductBean.getItemType()) {
             //封面图片
-            case "ad":
-                ll_quality_product.setVisibility(View.GONE);
-                iv_quality_good_product_ad.setVisibility(View.VISIBLE);
+            case AD_COVER:
+                ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(likedProductBean.getPicUrl()));
                 //点击广告封面图片
                 helper.itemView.setOnClickListener(v -> {
@@ -71,9 +71,7 @@ public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseV
                 });
                 break;
             //普通商品（product类型）
-            default:
-                iv_quality_good_product_ad.setVisibility(View.GONE);
-                ll_quality_product.setVisibility(View.VISIBLE);
+            case PRODUCT:
                 GlideImageLoaderUtil.loadThumbCenterCrop(context, helper.getView(R.id.iv_qt_pro_img)
                         , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), true);
                 helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
@@ -127,9 +125,9 @@ public class GoodProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseV
                 } else {
                     fbl_market_label.setVisibility(View.GONE);
                 }
+                helper.itemView.setTag(likedProductBean);
                 break;
 
         }
-        helper.itemView.setTag(likedProductBean);
     }
 }

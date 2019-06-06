@@ -23,6 +23,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
+import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -154,7 +155,7 @@ public class UMShareAction {
                             alertDialogShareHelper.setLoading(1);
                             isSharing = false;
                             break;
-                        //                            保存图片
+                        //保存图片
                         case MORE:
                             if (constantMethod == null) {
                                 constantMethod = new ConstantMethod();
@@ -210,7 +211,7 @@ public class UMShareAction {
                                         }
                                     });
                                 } else {
-                                    setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                    setLoadImageShare(sharePlatformType, new UMImage(context, context instanceof QualityNewUserActivity ? R.drawable.newuser_top_img : R.drawable.domolife_logo), context, urlLink, title, description);
                                 }
                             }
 

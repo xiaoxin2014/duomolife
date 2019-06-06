@@ -1,41 +1,29 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.adapter.NewUserCouponAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityNewUserShopAdapter;
+import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
-import com.amkj.dmsh.dominant.bean.NewUserCouponEntity.CouponGiftBean;
-import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity;
-import com.amkj.dmsh.dominant.bean.QualityNewUserShopEntity.QualityNewUserShopBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -50,17 +38,13 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_COUPON_LIST;
-import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_COVER;
 import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_GET_COUPON;
 import static com.amkj.dmsh.constant.Url.QUALITY_NEW_USER_LIST;
 
@@ -78,19 +62,16 @@ public class QualityNewUserFragment extends BaseFragment {
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
     @BindView(R.id.tl_quality_bar)
-    Toolbar mTlQualityBar;
+    public android.support.v7.widget.Toolbar mToolbar;
     private int scrollY;
     private float screenHeight;
-    private List<QualityNewUserShopBean> qualityNewUserShopList = new ArrayList();
+    private List<LikedProductBean> qualityNewUserShopList = new ArrayList();
     //    用券专区
-    private List<QualityNewUserShopBean> qualityNewUserCouponList = new ArrayList();
-    private List<CouponGiftBean> couponGiftList = new ArrayList<>();
-    private QualityNewUserShopAdapter qualityNewUserShopAdapter;
-    private QNewUserCoverHelper qNewUserCoverHelper;
+    private List<LikedProductBean> qualityNewUserCouponList = new ArrayList();
+    private CatergoryGoodsAdapter qualityNewUserShopAdapter;
+    private QualityNewUserFragment.QNewUserCoverHelper qNewUserCoverHelper;
     private View qNewUserCoverView;
-    private String newUserImgUrl;
-    private NewUserCouponAdapter newUserCouponAdapter;
-    private QualityNewUserShopEntity qualityNewUserShopEntity;
+    private UserLikedProductEntity qualityNewUserShopEntity;
 
     @Override
     protected int getContentView() {
@@ -99,21 +80,18 @@ public class QualityNewUserFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        mTlQualityBar.setVisibility(GONE);
-        communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mToolbar.setVisibility(GONE);
+        communal_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create());
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                qualityNewUserShopList.clear();
-                qualityNewUserCouponList.clear();
-                getQualityTypePro();
-                getNewUserCouponProduct();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            qualityNewUserShopList.clear();
+            qualityNewUserCouponList.clear();
+            getQualityTypePro();
+            getNewUserCouponProduct();
         });
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
@@ -139,69 +117,29 @@ public class QualityNewUserFragment extends BaseFragment {
                 }
             }
         });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
+        download_btn_communal.setOnClickListener(v -> {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
+            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+            int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
+                    - linearLayoutManager.findFirstVisibleItemPosition() + 1;
+            if (firstVisibleItemPosition > mVisibleCount) {
+                communal_recycler.scrollToPosition(mVisibleCount);
             }
+            communal_recycler.smoothScrollToPosition(0);
         });
-//        qualityNewUserShopAdapter = new QualityNewUserShopAdapter(getActivity(), qualityNewUserShopList);
+        qualityNewUserShopAdapter = new CatergoryGoodsAdapter(getActivity(), qualityNewUserShopList);
         qualityNewUserShopAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
             @Override
             public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
-                return qualityNewUserShopList.get(position).getItemType() == TYPE_1 ? 2 : 1;
+                return qualityNewUserShopList.get(position).getItemType() == ConstantVariable.TITLE ? 3 : 1;
             }
         });
         qNewUserCoverView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_new_user_cover, communal_recycler, false);
-        qNewUserCoverHelper = new QNewUserCoverHelper();
+        qNewUserCoverHelper = new QualityNewUserFragment.QNewUserCoverHelper();
         ButterKnife.bind(qNewUserCoverHelper, qNewUserCoverView);
-        qNewUserCoverHelper.initViews();
         qualityNewUserShopAdapter.addHeaderView(qNewUserCoverView);
         communal_recycler.setAdapter(qualityNewUserShopAdapter);
-        qualityNewUserShopAdapter.setEnableLoadMore(false);
-        qualityNewUserShopAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityNewUserShopBean qualityNewUserShopBean = (QualityNewUserShopBean) view.getTag();
-                if (qualityNewUserShopBean != null) {
-                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(qualityNewUserShopBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
-        qualityNewUserShopAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
-                QualityNewUserShopBean qualityNewUserShopBean = (QualityNewUserShopBean) view.getTag(R.id.iv_tag);
-                if (qualityNewUserShopBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(qualityNewUserShopBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(qualityNewUserShopBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(qualityNewUserShopBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(qualityNewUserShopBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(getActivity());
-                    }
-                }
-            }
-        });
+
         totalPersonalTrajectory = insertNewTotalData(getActivity());
     }
 
@@ -215,38 +153,9 @@ public class QualityNewUserFragment extends BaseFragment {
     protected void loadData() {
         getQualityTypePro();
         getNewUserCouponProduct();
-        getCoverImg();
     }
 
-    private void getCoverImg() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_NEW_USER_COVER, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        if (qualityNewUserShopAdapter.getHeaderLayoutCount() < 1) {
-                            qualityNewUserShopAdapter.addHeaderView(qNewUserCoverView);
-                        }
-                        newUserImgUrl = requestStatus.getImgUrl();
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), qNewUserCoverHelper.iv_new_user_cover,
-                                getStrings(requestStatus.getImgUrl()));
-                    } else {
-                        qualityNewUserShopAdapter.removeAllHeaderView();
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (qualityNewUserShopAdapter.getHeaderLayoutCount() > 0) {
-                    qualityNewUserShopAdapter.removeAllHeaderView();
-                }
-            }
-        });
-    }
-
+    //新人专享
     private void getQualityTypePro() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
@@ -261,11 +170,16 @@ public class QualityNewUserFragment extends BaseFragment {
                         smart_communal_refresh.finishRefresh();
                         qualityNewUserShopAdapter.loadMoreComplete();
                         Gson gson = new Gson();
-                        qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
+                        qualityNewUserShopEntity = gson.fromJson(result, UserLikedProductEntity.class);
                         if (qualityNewUserShopEntity != null) {
                             if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
                                 qualityNewUserShopList.clear();
-                                qualityNewUserShopList.addAll(qualityNewUserShopEntity.getQualityNewUserShopList());
+                                List<LikedProductBean> goodsList = qualityNewUserShopEntity.getGoodsList();
+                                for (int i = 0; i < goodsList.size(); i++) {
+                                    LikedProductBean likedProductBean = goodsList.get(i);
+                                    likedProductBean.setActivityTag("新人专享");
+                                }
+                                qualityNewUserShopList.addAll(goodsList);
                             } else if (!qualityNewUserShopEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(getActivity(), qualityNewUserShopEntity.getMsg());
                             }
@@ -297,26 +211,21 @@ public class QualityNewUserFragment extends BaseFragment {
                 });
     }
 
-    /**
-     * 新人专享
-     */
+    //用券专区
     private void getNewUserCouponProduct() {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_NEW_USER_COUPON_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityNewUserCouponList.clear();
                 Gson gson = new Gson();
-                QualityNewUserShopEntity qualityNewUserShopEntity = gson.fromJson(result, QualityNewUserShopEntity.class);
+                UserLikedProductEntity qualityNewUserShopEntity = gson.fromJson(result, UserLikedProductEntity.class);
                 if (qualityNewUserShopEntity != null) {
                     if (qualityNewUserShopEntity.getCode().equals(SUCCESS_CODE)) {
-                        QualityNewUserShopBean qualityNewUserShopBean = new QualityNewUserShopBean();
-                        qualityNewUserShopBean.setcItemType(TYPE_1);
-//                        qualityNewUserShopBean.setcTitle("- 用券专区 -");
+                        LikedProductBean qualityNewUserShopBean = new LikedProductBean();
+                        qualityNewUserShopBean.setItemType(ConstantVariable.TITLE);
+                        qualityNewUserShopBean.setType_id(R.drawable.coupon_zone);
                         qualityNewUserCouponList.add(qualityNewUserShopBean);
-                        for (QualityNewUserShopBean qualityNewUserProductBean : qualityNewUserShopEntity.getQualityNewUserShopList()) {
-                            qualityNewUserProductBean.setcItemType(TYPE_2);
-                            qualityNewUserCouponList.add(qualityNewUserProductBean);
-                        }
+                        qualityNewUserCouponList.addAll(qualityNewUserShopEntity.getGoodsList());
                     }
                     if (qualityNewUserShopList.size() > 0) {
                         qualityNewUserShopList.addAll(qualityNewUserCouponList);
@@ -350,73 +259,27 @@ public class QualityNewUserFragment extends BaseFragment {
                 NewUserCouponEntity newUserCouponEntity = gson.fromJson(result, NewUserCouponEntity.class);
                 if (newUserCouponEntity != null) {
                     if (newUserCouponEntity.getCode().equals(SUCCESS_CODE)) {
-                        couponGiftList.clear();
-                        couponGiftList.addAll(newUserCouponEntity.getCouponGiftList());
-                        setNewUserCouponShowWay();
+                        qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");
                     } else if (!newUserCouponEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), newUserCouponEntity.getMsg());
-                        setNewUserGetCouponShowWay();
+                        qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");
                     }
-                    newUserCouponAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onNotNetOrException() {
-                loadHud.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
                 showToast(getActivity(), "领取失败");
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-                setNewUserGetCouponShowWay();
+                loadHud.dismiss();
             }
         });
     }
 
-    private void setNewUserGetCouponShowWay() {
-        qNewUserCoverHelper.rel_new_user_got.setVisibility(View.GONE);
-        qNewUserCoverHelper.iv_new_user_cover.setVisibility(View.VISIBLE);
-        qNewUserCoverHelper.tv_new_user_get_coupon.setVisibility(View.VISIBLE);
-        qNewUserCoverHelper.tv_new_user_get_coupon.setText("立即领取");
-    }
-
-    private void setNewUserCouponShowWay() {
-        qNewUserCoverHelper.rel_new_user_got.setVisibility(View.VISIBLE);
-        qNewUserCoverHelper.iv_new_user_cover.setVisibility(View.GONE);
-        qNewUserCoverHelper.tv_new_user_get_coupon.setVisibility(View.GONE);
-    }
-
-
-    class QNewUserCoverHelper {
+    public class QNewUserCoverHelper {
         @BindView(R.id.iv_new_user_cover)
         ImageView iv_new_user_cover;
-        @BindView(R.id.rel_new_user_got)
-        RelativeLayout rel_new_user_got;
-        @BindView(R.id.communal_recycler_wrap)
-        RecyclerView communal_recycler_wrap;
         @BindView(R.id.tv_new_user_get_coupon)
         TextView tv_new_user_get_coupon;
-
-        public void initViews() {
-            communal_recycler_wrap.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            newUserCouponAdapter = new NewUserCouponAdapter(getActivity(), couponGiftList);
-            communal_recycler_wrap.setAdapter(newUserCouponAdapter);
-            communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
-                    // 设置分隔线资源ID
-                    .setDividerId(R.drawable.item_divider_coupon_white).create());
-        }
-
-        @OnClick(R.id.tv_look_mine_coupon)
-        void lookMineCoupon() {
-            Intent intent = new Intent(getActivity(), DirectMyCouponActivity.class);
-            startActivity(intent);
-        }
 
         @OnClick(R.id.tv_new_user_get_coupon)
         void getNewUserCoupon() {
@@ -427,4 +290,5 @@ public class QualityNewUserFragment extends BaseFragment {
             }
         }
     }
+
 }

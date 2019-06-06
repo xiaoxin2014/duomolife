@@ -109,4 +109,5 @@
     <color name="bg_gray_fa">#fafafa</color>
     <color name="bg_trans_80_ffs_pink">#ccff6d79</color>
     <color name="time_bg_yellow">#ffe9b8</color>
+    <color name="economize_money">#EEEEEE</color>
 </resources>

@@ -490,7 +490,7 @@ public class HomeDefalutFragment extends BaseFragment {
     //获取好物商品
     private void getGoodsPro() {
         Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", articalPage);
+        params.put("currentPage", 1);
         /**
          * version 1 区分是否带入广告页
          */

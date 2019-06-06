@@ -1567,7 +1567,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
         tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, price));
         String minPrice = getStringsFormat(this, R.string.min_price, stripTrailingZeros(price.trim()));
-        mTvProductMinPrice.setText(getSpannableString(minPrice, 1, minPrice.length() - 1, 1.6f));
+        mTvProductMinPrice.setText(getSpannableString(minPrice, 1, minPrice.length() - 1, 1.6f,null));
     }
 
     //    七鱼客服

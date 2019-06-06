@@ -2,10 +2,12 @@ package com.amkj.dmsh.user.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -224,7 +226,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         return this.getPosition() - userLikedProductEntity.getPosition();
     }
 
-    public static class LikedProductBean extends Attribute implements MultiItemEntity {
+    public static class LikedProductBean extends BaseRemoveExistProductBean implements MultiItemEntity {
         private String savepath;
         @SerializedName(value = "title", alternate = "name")
         private String title;
@@ -241,6 +243,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private String subtitle;
         private int quantity = 1;
         private int itemType;
+        private String objectType;
         private String tagContent;
         private String sellStatus;
         private String activityCode;
@@ -256,6 +259,14 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         @SerializedName(value = "android_link", alternate = "androidLink")
         private String androidLink;
         private List<MarketLabelBean> marketLabelList;
+
+        public String getObjectType() {
+            return objectType;
+        }
+
+        public void setObjectType(String objectType) {
+            this.objectType = objectType;
+        }
 
         public String getDecreasePrice() {
             return decreasePrice;
@@ -354,7 +365,11 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         }
 
         public int getItemType() {
-            return itemType;
+            if (TextUtils.isEmpty(objectType)) {
+                return itemType;
+            } else {
+                return "ad".equals(objectType) ? ConstantVariable.AD_COVER : ConstantVariable.PRODUCT;
+            }
         }
 
         public void setItemType(int itemType) {
