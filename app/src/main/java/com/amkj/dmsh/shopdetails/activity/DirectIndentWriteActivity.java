@@ -1355,7 +1355,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 case DIRECT_COUPON_REQ:
                     //            获取优惠券
                     couponId = data.getIntExtra("couponId", 0);
-                    int couponAmount = data.getIntExtra("couponAmount", 0);
+                    double couponAmount = data.getDoubleExtra("couponAmount", 0);
                     if (couponId < 1) {
                         pullFootView.tv_direct_product_favorable.setEnabled(true);
                         pullFootView.tv_direct_product_favorable.setSelected(false);

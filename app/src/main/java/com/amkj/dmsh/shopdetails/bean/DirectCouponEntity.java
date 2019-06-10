@@ -46,7 +46,7 @@ public class DirectCouponEntity extends BaseEntity{
          * type : 活动
          */
 
-        private int amount;
+        private Double amount;
         private int id;
         private int status;
         @SerializedName(value = "end_time",alternate = "endTime")
@@ -55,7 +55,7 @@ public class DirectCouponEntity extends BaseEntity{
         @SerializedName(value = "start_time",alternate = "startTime")
         private String startTime;
         @SerializedName(value = "start_fee",alternate = "startFee")
-        private int startFee;
+        private Double startFee;
         private String type;
         private int itemType;
         private String title;
@@ -103,11 +103,11 @@ public class DirectCouponEntity extends BaseEntity{
             this.android_link = android_link;
         }
 
-        public int getAmount() {
+        public Double getAmount() {
             return amount;
         }
 
-        public void setAmount(int amount) {
+        public void setAmount(Double amount) {
             this.amount = amount;
         }
 
@@ -151,11 +151,11 @@ public class DirectCouponEntity extends BaseEntity{
             this.startTime = startTime;
         }
 
-        public int getStartFee() {
+        public Double getStartFee() {
             return startFee;
         }
 
-        public void setStartFee(int startFee) {
+        public void setStartFee(Double startFee) {
             this.startFee = startFee;
         }
 
@@ -250,13 +250,13 @@ public class DirectCouponEntity extends BaseEntity{
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(this.amount);
+            dest.writeDouble(this.amount);
             dest.writeInt(this.id);
             dest.writeInt(this.status);
             dest.writeString(this.endTime);
             dest.writeString(this.beOverdue);
             dest.writeString(this.startTime);
-            dest.writeInt(this.startFee);
+            dest.writeDouble(this.startFee);
             dest.writeString(this.type);
             dest.writeInt(this.itemType);
             dest.writeString(this.title);
@@ -272,13 +272,13 @@ public class DirectCouponEntity extends BaseEntity{
         }
 
         protected DirectCouponBean(Parcel in) {
-            this.amount = in.readInt();
+            this.amount = in.readDouble();
             this.id = in.readInt();
             this.status = in.readInt();
             this.endTime = in.readString();
             this.beOverdue = in.readString();
             this.startTime = in.readString();
-            this.startFee = in.readInt();
+            this.startFee = in.readDouble();
             this.type = in.readString();
             this.itemType = in.readInt();
             this.title = in.readString();

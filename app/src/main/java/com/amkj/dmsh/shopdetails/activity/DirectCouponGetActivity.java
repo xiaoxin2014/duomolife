@@ -96,8 +96,6 @@ public class DirectCouponGetActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_twenty_white)
-
-
                 .create());
         directMyCouponAdapter = new DirectMyCouponAdapter(couponList, "couponGet");
         communal_recycler.setAdapter(directMyCouponAdapter);
