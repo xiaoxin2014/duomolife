@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -434,7 +435,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(this,orderNo, webManualFinish);
+                unionPay.unionPayResult(this, orderNo, webManualFinish);
             } else {
                 showToast("支付取消！");
             }
@@ -671,6 +672,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
 
     /**
      * 根据主订单状态展示布局
+     *
      * @param indentInfoDetailBean
      */
     private void setIntentStatus(IndentInfoDetailBean indentInfoDetailBean) {
@@ -1105,7 +1107,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                 + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo),qualityGroupShareBean.getGpInfoId());
+                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
     }
 
     @Override
@@ -1278,13 +1280,15 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     private void skipDirectIndent() {
-        if (totalPersonalTrajectory != null) {
-            totalPersonalTrajectory.getFileTotalTrajectory();
-        }
-        Intent intent = new Intent(DirectExchangeDetailsActivity.this, DirectPaySuccessActivity.class);
-        intent.putExtra("indentNo", orderNo);
-        intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
-        startActivity(intent);
+        new Handler().postDelayed(() -> {
+            if (totalPersonalTrajectory != null) {
+                totalPersonalTrajectory.getFileTotalTrajectory();
+            }
+            Intent intent = new Intent(DirectExchangeDetailsActivity.this, DirectPaySuccessActivity.class);
+            intent.putExtra("indentNo", orderNo);
+            intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
+            startActivity(intent);
+        }, 1000);
     }
 
     private void doAliPay(String pay_param) {

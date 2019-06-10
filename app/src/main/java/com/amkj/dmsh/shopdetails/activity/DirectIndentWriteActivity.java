@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -1021,8 +1022,15 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 intent.putExtra("indentNo", qualityUnionIndent.getQualityCreateUnionPayIndent().getNo());
             }
         }
-        startActivity(intent);
-        finish();
+
+        //延时跳转到支付成功页面（因为线程问题，立即跳转可能会失效）
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent);
+                finish();
+            }
+        }, 1000);
     }
 
     /**

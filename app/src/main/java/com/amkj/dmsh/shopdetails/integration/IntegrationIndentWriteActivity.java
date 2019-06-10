@@ -3,6 +3,7 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -663,11 +664,13 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
      * 跳转支付完成页面
      */
     private void skipDirectIndent() {
-        Intent intent = new Intent(this, DirectPaySuccessActivity.class);
-        intent.putExtra("indentNo", orderCreateNo);
-        intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_INTEGRAL_PRODUCT);
-        startActivity(intent);
-        finish();
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(getActivity(), DirectPaySuccessActivity.class);
+            intent.putExtra("indentNo", orderCreateNo);
+            intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_INTEGRAL_PRODUCT);
+            startActivity(intent);
+            finish();
+        }, 1000);
     }
 
     @Override
@@ -686,7 +689,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         } else if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(this,orderCreateNo, webManualFinish);
+                unionPay.unionPayResult(this, orderCreateNo, webManualFinish);
             } else {
                 cancelIntegralIndent();
             }
