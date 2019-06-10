@@ -1160,53 +1160,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
 
         //商品服务标签
-        List<TagsBean> tags = shopProperty.getTags();
-        tags.add(new TagsBean(21, "tag1111111111111111111111111111"));
-        tags.add(new TagsBean(22, "tag22222222222222222222222222222222222222"));
-        tags.add(new TagsBean(23, "tag333333333333333333333333333"));
-        tags.add(new TagsBean(24, "tag4444444444444444"));
-        String tagIds = shopProperty.getTagIds();
-        tagIds = tagIds + ",21,22,23,24";
-        shopProperty.setTagIds(tagIds);
-        if (tags != null && tags.size() > 0 && !TextUtils.isEmpty(tagIds) && tagIds.split(",").length > 0) {
-            ll_layout_pro_sc_tag.setVisibility(VISIBLE);
-            final Map<Integer, String> tagMap = new HashMap<>();
-            for (TagsBean tagsBean : shopProperty.getTags()) {
-                tagMap.put(tagsBean.getId(), getStrings(tagsBean.getName()));
-            }
-            final String[] tagSelected = shopProperty.getTagIds().split(",");
-            flex_product_tag.removeAllViews();
-            for (int j = 0; j < tagSelected.length; j++) {
-                try {
-                    String tagName = tagMap.get(Integer.parseInt(tagSelected[j]));
-                    if (!TextUtils.isEmpty(tagName)) {
-                        TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_product_tag, null, false);
-                        textView.setLines(1);
-                        textView.setText(getStrings(tagName));
-                        flex_product_tag.addView(textView);
-                    }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            ViewTreeObserver observer = flex_product_tag.getViewTreeObserver();
-            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    int width = flex_product_tag.getMeasuredWidth();
-                    int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
-                    int max = screenWidth - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
-                    if (width >= max) {
-                        flex_product_tag.removeViewAt(flex_product_tag.getChildCount() - 1);
-                    } else {
-                        flex_product_tag.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                }
-            });
-        } else {
-            ll_layout_pro_sc_tag.setVisibility(GONE);
-        }
+        setSeviceTag(shopProperty, ll_layout_pro_sc_tag, flex_product_tag, true);
 
         //购前须知标签
         List<String> strList2 = new ArrayList<>();
@@ -1253,6 +1207,55 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         communalDetailAdapter.notifyDataSetChanged();
         ctb_qt_pro_details.setCurrentTab(0);
         scroll_pro.scrollTo(0, 0);
+    }
+
+    //商品服务标签
+    private void setSeviceTag(ShopPropertyBean shopProperty, ViewGroup viewGroup, FlexboxLayout flexboxLayout, boolean maxOneLine) {
+        List<TagsBean> tags = shopProperty.getTags();
+        String tagIds = shopProperty.getTagIds();
+        shopProperty.setTagIds(tagIds);
+        if (tags != null && tags.size() > 0 && !TextUtils.isEmpty(tagIds) && tagIds.split(",").length > 0) {
+            viewGroup.setVisibility(VISIBLE);
+            final Map<Integer, String> tagMap = new HashMap<>();
+            for (TagsBean tagsBean : shopProperty.getTags()) {
+                tagMap.put(tagsBean.getId(), getStrings(tagsBean.getName()));
+            }
+            final String[] tagSelected = shopProperty.getTagIds().split(",");
+            flexboxLayout.removeAllViews();
+            for (int j = 0; j < tagSelected.length; j++) {
+                try {
+                    String tagName = tagMap.get(Integer.parseInt(tagSelected[j]));
+                    if (!TextUtils.isEmpty(tagName)) {
+                        TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_product_tag, null, false);
+                        textView.setLines(1);
+                        textView.setText(getStrings(tagName));
+                        flexboxLayout.addView(textView);
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (maxOneLine) {
+                ViewTreeObserver observer = flexboxLayout.getViewTreeObserver();
+                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        int width = flexboxLayout.getMeasuredWidth();
+                        int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                        int max = screenWidth - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
+                        if (width >= max) {
+                            flexboxLayout.removeViewAt(flexboxLayout.getChildCount() - 1);
+                        } else {
+                            flexboxLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                });
+            }
+
+        } else {
+            ll_layout_pro_sc_tag.setVisibility(GONE);
+        }
     }
 
     private void startCountDownTime(TextView tipView, CountdownView countDownTimeView) {
@@ -2011,19 +2014,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
         ShopPropertyBean shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
-        //        标签
-        final String[] tagArray = shopPropertyBean.getTagIds().split(",");
-        if (tagArray.length > 0) {
-            flex_communal_tag.setVisibility(View.VISIBLE);
-            flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
-            flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
-            flex_communal_tag.removeAllViews();
-            for (int i = 0; i < tagArray.length; i++) {
-                flex_communal_tag.addView(getLabelInstance().createProductTag(getActivity(), tagArray[i]));
-            }
-        } else {
-            flex_communal_tag.setVisibility(GONE);
-        }
+
+        setSeviceTag(shopPropertyBean, flex_communal_tag, flex_communal_tag, false);
 
         if (mDirectGoodsServerEntity != null) {
             DirectGoodsServerBean directGoodsServerBean = mDirectGoodsServerEntity.getDirectGoodsServerBean();
