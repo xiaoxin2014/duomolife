@@ -1364,17 +1364,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     //            获取优惠券
                     couponId = data.getIntExtra("couponId", 0);
                     double couponAmount = data.getDoubleExtra("couponAmount", 0);
-                    if (couponId < 1) {
-                        pullFootView.tv_direct_product_favorable.setEnabled(true);
-                        pullFootView.tv_direct_product_favorable.setSelected(false);
-                        pullFootView.tv_direct_product_favorable.setText("不使用优惠券");
-                        getIndentDiscounts(true);
-                    } else {
-                        pullFootView.tv_direct_product_favorable.setEnabled(true);
-                        pullFootView.tv_direct_product_favorable.setSelected(true);
-                        pullFootView.tv_direct_product_favorable.setText(("-￥" + couponAmount));
-                        getIndentDiscounts(false);
-                    }
+                    pullFootView.tv_direct_product_favorable.setEnabled(true);
+                    pullFootView.tv_direct_product_favorable.setSelected(false);
+                    pullFootView.tv_direct_product_favorable.setEnabled(true);
+                    pullFootView.tv_direct_product_favorable.setSelected(true);
+                    pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-￥" + couponAmount);
+                    getIndentDiscounts(couponId < 1);
                     break;
                 case REQ_INVOICE:
                     invoiceTitle = data.getStringExtra("invoiceTitle");
