@@ -1122,7 +1122,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * 结算金额 不带优惠券
      */
     private void getIndentDiscounts(boolean disuseCoupon) {
-        couponId = 0;
         if (discountBeanList.size() > 0) {
             //优惠详情信息
             String url = Url.BASE_URL + Url.INDENT_DISCOUNTS_INFO;
