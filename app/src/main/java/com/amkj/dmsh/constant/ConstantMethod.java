@@ -800,6 +800,8 @@ public class ConstantMethod {
         }
         NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
         NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
+        //Token过期,清除本地登录信息
+        savePersonalInfoCache(activity, null);
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -817,8 +819,6 @@ public class ConstantMethod {
                 }
             }
         });
-        //Token过期,清除本地登录信息
-        savePersonalInfoCache(activity, null);
     }
 
     private static void skipNewTaoBao(final String url, Context context) {

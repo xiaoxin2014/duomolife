@@ -97,14 +97,12 @@ public class AppDataActivity extends BaseActivity {
             tv_mine_setting_address.setText("");
         } else {
             tv_set_account_exit.setVisibility(View.VISIBLE);
-            loadData();
+            getDefaultAddress();
         }
     }
 
     @Override
     protected void loadData() {
-//        获取默认地址
-        getDefaultAddress();
     }
 
     private void getDefaultAddress() {
@@ -183,8 +181,7 @@ public class AppDataActivity extends BaseActivity {
                 public void confirm() {
                     NEW_USER_DIALOG = true;
                     //调用登出接口
-                    ConstantMethod.logout(getActivity(),true);
-                    showToast(AppDataActivity.this, "注销成功");
+                    ConstantMethod.logout(getActivity(), true);
                     exitNewTaoBaoAccount();
                 }
 
