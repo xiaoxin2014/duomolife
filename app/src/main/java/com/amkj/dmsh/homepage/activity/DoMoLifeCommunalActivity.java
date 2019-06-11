@@ -124,7 +124,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     @BindView(R.id.iv_close_reload_page)
     ImageView iv_close_reload_page;
     @BindView(R.id.bottom_seek_web_progress)
-    SeekBar bottom_seek_web_progress;
+    SeekBar mSeekBar;
     @BindView(R.id.tl_web_normal_bar)
     Toolbar tl_web_normal_bar;
     @BindView(R.id.rel_communal_net_error)
@@ -554,6 +554,15 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 if (RefreshState.Refreshing.equals(smart_web_refresh.getState())) {
                     smart_web_refresh.finishRefresh();
                 }
+            }
+
+            if (newProgress == 100 && mSeekBar != null) {
+                mSeekBar.setVisibility(View.INVISIBLE);
+            } else if (mSeekBar != null) {
+                if (View.INVISIBLE == mSeekBar.getVisibility()) {
+                    mSeekBar.setVisibility(View.VISIBLE);
+                }
+                mSeekBar.setProgress(newProgress);
             }
         }
 
@@ -1248,8 +1257,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     try {
                         objId = Integer.parseInt((String) jsonObject.get("objId"));
                     } catch (NumberFormatException e) {
-                        CrashReport.postCatchedException(new NumberFormatException(
-                                "-----自定义异常：解析objId格式化错误-----" + "h5传过来的json信息：" + shareData));
+                        CrashReport.postCatchedException(new NumberFormatException("-----自定义异常：解析objId格式化错误-----" + "h5传过来的json信息：" + shareData));
                     }
                     String routineUrl = null;
                     routineUrl = (String) jsonObject.get("routineUrl");
