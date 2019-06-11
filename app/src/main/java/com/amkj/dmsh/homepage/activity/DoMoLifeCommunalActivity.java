@@ -71,6 +71,7 @@ import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -1239,7 +1240,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             if (!TextUtils.isEmpty(shareData)) {
                 try {
                     Map<String, Object> jsonObject = JSON.parseObject(shareData);
-                    String title = (String) jsonObject.get("title");
+                    String title = (String) jsonObject.get("objName");
                     String imageUrl = (String) jsonObject.get("imageUrl");
                     String content = (String) jsonObject.get("content");
                     String url = (String) jsonObject.get("url");
@@ -1247,7 +1248,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     try {
                         objId = Integer.parseInt((String) jsonObject.get("objId"));
                     } catch (NumberFormatException e) {
-                        e.printStackTrace();
+                        CrashReport.postCatchedException(new NumberFormatException(
+                                "-----自定义异常：解析objId格式化错误-----" + "h5传过来的json信息：" + shareData));
                     }
                     String routineUrl = null;
                     routineUrl = (String) jsonObject.get("routineUrl");
