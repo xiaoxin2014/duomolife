@@ -65,7 +65,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
         addItemType(TYPE_1, R.layout.adapter_layout_ql_group_join);
         addItemType(TYPE_2, R.layout.adapter_layout_ql_group_share);
         this.constantMethod = constantMethod;
-        if(constantMethod==null){
+        if (constantMethod == null) {
             getConstant();
         }
     }
@@ -143,6 +143,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
 
     @Override
     protected void convert(BaseViewHolder helper, GroupShopJoinBean groupShopJoinBean) {
+        if (groupShopJoinBean == null) return;
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         switch (helper.getItemViewType()) {
             case TYPE_0:
@@ -217,6 +218,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
 
     /**
      * 拼团是否已结束
+     *
      * @param groupShopJoinBean
      * @return
      */

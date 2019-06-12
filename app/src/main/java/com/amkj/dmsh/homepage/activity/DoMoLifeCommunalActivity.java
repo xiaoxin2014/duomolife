@@ -1256,8 +1256,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     } catch (NumberFormatException e) {
                         CrashReport.postCatchedException(new NumberFormatException("-----自定义异常：解析objId格式化错误-----" + "h5传过来的json信息：" + shareData));
                     }
-                    String routineUrl = null;
-                    routineUrl = (String) jsonObject.get("routineUrl");
+                    String routineUrl = (String) jsonObject.get("routineUrl");
                     UMShareAction umShareAction = new UMShareAction(DoMoLifeCommunalActivity.this
                             , imageUrl
                             , TextUtils.isEmpty(title) ? "多么生活" : title
