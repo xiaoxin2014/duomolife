@@ -34,8 +34,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.alibaba.baichuan.android.trade.AlibcTrade;
@@ -123,8 +123,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     TextView tv_web_title;
     @BindView(R.id.iv_close_reload_page)
     ImageView iv_close_reload_page;
-    @BindView(R.id.bottom_seek_web_progress)
-    SeekBar mSeekBar;
+    @BindView(R.id.myProgressBar)
+    ProgressBar mPb;
     @BindView(R.id.tl_web_normal_bar)
     Toolbar tl_web_normal_bar;
     @BindView(R.id.rel_communal_net_error)
@@ -550,19 +550,16 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100) {
+            if (newProgress == 100 && mPb != null) {
                 if (RefreshState.Refreshing.equals(smart_web_refresh.getState())) {
                     smart_web_refresh.finishRefresh();
                 }
-            }
-
-            if (newProgress == 100 && mSeekBar != null) {
-                mSeekBar.setVisibility(View.INVISIBLE);
-            } else if (mSeekBar != null) {
-                if (View.INVISIBLE == mSeekBar.getVisibility()) {
-                    mSeekBar.setVisibility(View.VISIBLE);
+                mPb.setVisibility(View.INVISIBLE);
+            } else if (mPb != null) {
+                if (View.INVISIBLE == mPb.getVisibility()) {
+                    mPb.setVisibility(View.VISIBLE);
                 }
-                mSeekBar.setProgress(newProgress);
+                mPb.setProgress(newProgress);
             }
         }
 

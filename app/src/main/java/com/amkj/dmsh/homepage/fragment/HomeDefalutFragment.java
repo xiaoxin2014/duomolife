@@ -68,7 +68,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
@@ -145,7 +144,6 @@ public class HomeDefalutFragment extends BaseFragment {
     FloatingActionButton download_btn_communal;
     @BindView(R.id.scrollview)
     NestedScrollView mScrollview;
-    Unbinder unbinder;
     private CBViewHolderCreator cbViewHolderCreator;
     private HomeCommonEntity mHomeCommonEntity;
     private HomeWelfareEntity mHomeWelfareEntity;

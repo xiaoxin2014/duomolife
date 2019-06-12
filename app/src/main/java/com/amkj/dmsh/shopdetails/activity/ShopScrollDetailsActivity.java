@@ -1499,8 +1499,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             } else {
                 //仅有一个SKU
                 ll_sp_pro_sku_value.setVisibility(View.GONE);
-                setReallyPrice((!TextUtils.isEmpty(shopProperty.getSkuSale().get(0).getPrice())
-                        ? shopProperty.getSkuSale().get(0).getPrice() : shopProperty.getPrice()));
                 shopCarGoodsSkuDif = new ShopCarGoodsSku();
                 shopCarGoodsSkuDif.setCount(1);
                 shopCarGoodsSkuDif.setSaleSkuId(shopProperty.getSkuSale().get(0).getId());
@@ -1514,18 +1512,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 shopCarGoodsSkuDif.setPresentIds(getStrings(shopProperty.getSkuSale().get(0).getPresentSkuIds()));
             }
 
-
+            //设置最低价
             String minPrice = skuSaleList.get(0).getPrice();
+            setReallyPrice(minPrice);
+            //设置最高价
             String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
             mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
-            //设置最低价
-            setReallyPrice(minPrice);
+            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + maxPrice, false));
             //设置市场价
-            mTvProductMartketPrice.setText("￥" + getStrings(shopProperty.getMarketPrice()));
+            mTvProductMartketPrice.setText("¥" + getStrings(shopProperty.getMarketPrice()));
             mTvProductMartketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             mTvProductMartketPrice.getPaint().setAntiAlias(true);
-            //设置最高价
-            mTvMaxPrice.setText(getRmbFormat(this, "~" + "￥" + maxPrice, false));
+
         } else {
             showToast(this, "商品数据错误");
         }
@@ -1583,7 +1581,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             qyProductIndentInfo.setTitle(getStrings(shopPropertyBean.getSubtitle()));
             qyProductIndentInfo.setPicUrl(shopPropertyBean.getPicUrl());
             qyProductIndentInfo.setDesc(getStrings(shopPropertyBean.getName()));
-            qyProductIndentInfo.setNote("￥" + shopPropertyBean.getPrice());
+            qyProductIndentInfo.setNote("¥" + shopPropertyBean.getPrice());
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, "自营商品详情", sharePageUrl + productId, qyProductIndentInfo);
     }
@@ -1708,7 +1706,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
-                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
+//                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
                             setPresentProData(shopCarGoodsSkuDif.getPresentIds());
                             buyGoItCheckStatus();
                         }
@@ -1957,7 +1955,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
-                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
+//                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
                             setPresentProData(shopCarGoodsSkuDif.getPresentIds());
                             if (!TextUtils.isEmpty(shopCarGoodsSkuDif.getProType())) {
                                 switch (shopCarGoodsSkuDif.getProType()) {

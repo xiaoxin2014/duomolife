@@ -30,8 +30,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,8 +85,8 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     RelativeLayout rel_communal_net_error;
     @BindView(R.id.smart_web_refresh)
     SmartRefreshLayout smart_web_refresh;
-    @BindView(R.id.bottom_seek_web_progress)
-    SeekBar mSeekBar;
+    @BindView(R.id.myProgressBar)
+    ProgressBar mPb;
     private String turnId;
     private String errorUrl;
 
@@ -443,13 +443,13 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100 && mSeekBar != null) {
-                mSeekBar.setVisibility(View.INVISIBLE);
-            } else if (mSeekBar != null) {
-                if (View.INVISIBLE == mSeekBar.getVisibility()) {
-                    mSeekBar.setVisibility(View.VISIBLE);
+            if (newProgress == 100 && mPb != null) {
+                mPb.setVisibility(View.INVISIBLE);
+            } else if (mPb != null) {
+                if (View.INVISIBLE == mPb.getVisibility()) {
+                    mPb.setVisibility(View.VISIBLE);
                 }
-                mSeekBar.setProgress(newProgress);
+                mPb.setProgress(newProgress);
             }
         }
 

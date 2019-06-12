@@ -36,6 +36,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -136,6 +137,8 @@ public class AliBCFragment extends BaseFragment {
     RelativeLayout rel_communal_net_error;
     @BindView(R.id.smart_web_fragment_refresh)
     SmartRefreshLayout smart_web_fragment_refresh;
+    @BindView(R.id.myProgressBar)
+    ProgressBar mPb;
     private String webUrl;
     private String shareData;
     private String paddingStatus;
@@ -535,9 +538,21 @@ public class AliBCFragment extends BaseFragment {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100) {
+            if (newProgress == 100 && mPb != null) {
+                //加载完成隐藏刷新控件
                 if (RefreshState.Refreshing.equals(smart_web_fragment_refresh.getState())) {
                     smart_web_fragment_refresh.finishRefresh();
+                }
+                mPb.setVisibility(View.INVISIBLE);
+            } else if (mPb != null) {
+                if (View.INVISIBLE == mPb.getVisibility()) {
+                    mPb.setVisibility(View.VISIBLE);
+                }
+                mPb.setProgress(newProgress);
+
+                //手动刷新时不要显示进度
+                if (RefreshState.Refreshing.equals(smart_web_fragment_refresh.getState())) {
+                    mPb.setVisibility(View.INVISIBLE);
                 }
             }
         }
@@ -1231,7 +1246,7 @@ public class AliBCFragment extends BaseFragment {
                     , imageUrl
                     , TextUtils.isEmpty(title) ? "多么生活" : title
                     , TextUtils.isEmpty(content) ? "" : content
-                    , url, routineUrl,1);
+                    , url, routineUrl, 1);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1250,15 +1265,17 @@ public class AliBCFragment extends BaseFragment {
     private void addWebReminderCallback(String productId, int backCode) {
         webViewJs(String.format(getResources().getString(R.string.web_add_reminder), getStrings(productId), backCode));
     }
+
     /**
      * 回调通知开关
      */
     private void notificationStatusCallback() {
-        if(activityWeakReference.get()==null){
+        if (activityWeakReference.get() == null) {
             return;
         }
         webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(activityWeakReference.get()) ? 1 : 0));
     }
+
     /**
      * @param jsUrl
      */

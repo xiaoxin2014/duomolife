@@ -356,8 +356,8 @@ public class ConstantMethod {
         try {
             String price = getStrings(priceText);
             if (!TextUtils.isEmpty(price)) {
-                price = append ? "￥" + stripTrailingZeros(price) : stripTrailingZeros(price);
-                Pattern pattern = Pattern.compile("[￥]");
+                price = append ? "¥" + stripTrailingZeros(price) : stripTrailingZeros(price);
+                Pattern pattern = Pattern.compile("[¥]");
                 Link link = new Link(pattern);
                 link.setTextColor(Color.parseColor("#ff5a6b"));
                 link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
@@ -370,7 +370,7 @@ public class ConstantMethod {
                 return context.getResources().getString(R.string.defaul);
             }
         } catch (Exception e) {
-            return getStrings("￥" + priceText);
+            return getStrings("¥" + priceText);
         }
     }
 
@@ -1839,7 +1839,7 @@ public class ConstantMethod {
         InputFilter specialCharFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                String regexStr = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+                String regexStr = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#¥%……&*（）——+|{}【】‘；：”“’。，、？]";
                 Pattern pattern = Pattern.compile(regexStr);
                 Matcher matcher = pattern.matcher(source.toString());
                 if (matcher.matches()) {
