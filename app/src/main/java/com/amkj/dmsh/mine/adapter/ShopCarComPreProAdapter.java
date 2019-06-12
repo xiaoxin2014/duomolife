@@ -60,7 +60,7 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                             .setText(R.id.tv_cart_cp_price_discount, String.format(context.getResources().getString(R.string.car_discount_price)
                                     , getStrings(cartProductInfoBean.getCombineDecreasePrice())))
                             .setText(R.id.tv_cart_cp_value, getStrings(cartProductInfoBean.getSaleSkuValue()))
-                            .setText(R.id.tv_cart_cp_price, ("￥" + getStrings(cartProductInfoBean.getPrice())))
+                            .setText(R.id.tv_cart_cp_price, ("¥" + getStrings(cartProductInfoBean.getPrice())))
                             .itemView.setTag(cartProductInfoBean);
                     if (!TextUtils.isEmpty(cartProductInfoBean.getIndentType())) {
                         setIndentProStatus(helper, cartProductInfoBean);
@@ -85,7 +85,7 @@ public class ShopCarComPreProAdapter extends BaseMultiItemQuickAdapter<CartProdu
                             .setText(R.id.tv_cart_cp_price_discount, String.format(context.getResources().getString(R.string.car_discount_price)
                                     , getStrings(cartProductInfoBean.getCombineDecreasePrice())))
                             .setText(R.id.tv_cart_cp_value, getStrings(cartProductInfoBean.getSaleSkuValue()))
-                            .setText(R.id.tv_cart_cp_price, ("￥" + getStrings(cartProductInfoBean.getPrice())))
+                            .setText(R.id.tv_cart_cp_price, ("¥" + getStrings(cartProductInfoBean.getPrice())))
                             .itemView.setTag(cartProductInfoBean);
                 }
                 helper.setGone(R.id.tv_cart_com_pre_count, cartProductInfoBean.getCount() > 0)

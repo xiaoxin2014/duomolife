@@ -36,12 +36,12 @@ public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<OrderListBe
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), orderListBean.getPicUrl());
         helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderListBean.getName()))
                 .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderListBean.getSaleSkuValue()))
-                .setText(R.id.tv_direct_indent_pro_price, "￥" + orderListBean.getPrice())
+                .setText(R.id.tv_direct_indent_pro_price, "¥" + orderListBean.getPrice())
                 .setGone(R.id.tv_direct_indent_pro_price,getFloatNumber(orderListBean.getPrice())>0)
                 .setText(R.id.tv_direct_pro_count, "x" + orderListBean.getCount())
                 .setGone(R.id.tv_dir_indent_pro_status,false)
                 .setGone(R.id.tv_indent_pro_refund_price, getFloatNumber(orderListBean.getRefundPrice())>0)
-                .setText(R.id.tv_indent_pro_refund_price, "退款金额：￥" + orderListBean.getRefundPrice())
+                .setText(R.id.tv_indent_pro_refund_price, "退款金额：¥" + orderListBean.getRefundPrice())
                 .setText(R.id.tv_goods_indent_code, "申请时间 " + getStrings(orderListBean.getRefundTime()))
                 .addOnClickListener(R.id.tv_indent_reply_border_first_gray).setTag(R.id.tv_indent_reply_border_first_gray, orderListBean);
         helper.itemView.setTag(orderListBean);

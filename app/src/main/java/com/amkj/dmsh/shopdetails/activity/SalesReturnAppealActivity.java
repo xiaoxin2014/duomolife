@@ -187,7 +187,7 @@ public class SalesReturnAppealActivity extends BaseActivity {
         if (goodsBean != null) {
             GlideImageLoaderUtil.loadCenterCrop(SalesReturnAppealActivity.this, img_direct_indent_product, goodsBean.getPicUrl());
             tv_direct_indent_product_name.setText(getStrings(goodsBean.getName()));
-            tv_direct_indent_product_price.setText("￥" + goodsBean.getPrice());
+            tv_direct_indent_product_price.setText("¥" + goodsBean.getPrice());
             tv_goods_count.setText("x" + goodsBean.getCount());
         }
     }

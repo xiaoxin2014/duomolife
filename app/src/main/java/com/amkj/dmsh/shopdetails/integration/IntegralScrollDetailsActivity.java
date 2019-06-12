@@ -474,7 +474,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 .addLink(redNum)
                 .build();
 //           市场价
-        tv_integral_introduce_mk.setText(("市场价￥" + productInfoBean.getMarketPrice()));
+        tv_integral_introduce_mk.setText(("市场价¥" + productInfoBean.getMarketPrice()));
 //
         if (productInfoBean.getProductDetails() != null && productInfoBean.getProductDetails().size() > 0) {
             itemBodyList.clear();

@@ -48,7 +48,7 @@ public class MineCollectProAdapter extends BaseQuickAdapter<CollectProBean, Base
         GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.iv_mine_col_pro), collectProBean.getPicUrl());
         helper.setText(R.id.tv_mine_col_pro_name, getStrings(collectProBean.getName()))
                 .setText(R.id.tv_mine_col_pro_tag, getStrings(collectProBean.getPriceTag()))
-                .setText(R.id.tv_mine_col_pro_price, "￥" + getStrings(collectProBean.getPrice()))
+                .setText(R.id.tv_mine_col_pro_price, "¥" + getStrings(collectProBean.getPrice()))
                 .setGone(R.id.tv_mine_col_pro_tag, !TextUtils.isEmpty(collectProBean.getPriceTag()))
                 .addOnClickListener(R.id.tv_mine_col_pro_buy).setTag(R.id.tv_mine_col_pro_buy, collectProBean)
                 .setTag(R.id.cb_collect_product, collectProBean)

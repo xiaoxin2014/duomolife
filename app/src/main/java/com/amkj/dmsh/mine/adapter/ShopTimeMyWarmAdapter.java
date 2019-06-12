@@ -200,7 +200,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
                 break;
         }
         helper.setText(R.id.tv_mine_warm_product_name, getStrings(mineWarmBean.getTitle()))
-                .setText(R.id.tv_mine_warm_product_price, "￥" + mineWarmBean.getPrice())
+                .setText(R.id.tv_mine_warm_product_price, "¥" + mineWarmBean.getPrice())
                 .addOnClickListener(R.id.tv_mine_warm_set_status).setTag(R.id.tv_mine_warm_set_status, mineWarmBean);
         CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();

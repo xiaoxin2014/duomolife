@@ -30,7 +30,7 @@ public class QualityTimeAdapter extends BaseQuickAdapter<Goods, BaseViewHolder> 
     protected void convert(BaseViewHolder helper, Goods goods) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_quality_time_item), goods.getPicUrl());
         helper.setText(R.id.tv_quality_time_item_name, getStrings(goods.getName()))
-                .setText(R.id.tv_quality_time_item_price, "￥" + goods.getPrice());
+                .setText(R.id.tv_quality_time_item_price, "¥" + goods.getPrice());
         helper.itemView.setTag(goods);
     }
 }

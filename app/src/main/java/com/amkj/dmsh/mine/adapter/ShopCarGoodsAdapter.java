@@ -143,13 +143,13 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
          */
         if (cartInfoBean.getCombineProductInfoList() != null && cartInfoBean.getCombineProductInfoList().size() > 0) {
             helper.setText(R.id.tv_shop_car_product_price, context.getString(R.string.combine_price) +
-                    "￥" + (cartInfoBean.getSaleSku() != null
+                    "¥" + (cartInfoBean.getSaleSku() != null
                     ? cartInfoBean.getSaleSku().getPrice() : cartInfoBean.getPrice()));
         } else {
             if (!TextUtils.isEmpty(cartInfoBean.getActivityPriceDesc())) {
                 setReallyPrice((TextView) helper.getView(R.id.tv_shop_car_product_price), cartInfoBean);
             } else {
-                helper.setText(R.id.tv_shop_car_product_price, "￥" + (cartInfoBean.getSaleSku() != null
+                helper.setText(R.id.tv_shop_car_product_price, "¥" + (cartInfoBean.getSaleSku() != null
                         ? cartInfoBean.getSaleSku().getPrice() : cartInfoBean.getPrice()));
             }
         }

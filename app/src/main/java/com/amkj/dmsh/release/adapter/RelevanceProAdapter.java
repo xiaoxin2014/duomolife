@@ -35,7 +35,7 @@ public class RelevanceProAdapter extends BaseQuickAdapter<RelevanceProBean, Base
     protected void convert(BaseViewHolder helper, RelevanceProBean relevanceProBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_rev_pro_img), getStrings(relevanceProBean.getPictureUrl()));
         helper.setText(R.id.tv_rev_pro_name, getStrings(relevanceProBean.getTitle()))
-                .setText(R.id.tv_rev_pro_price, "￥" + getStrings(relevanceProBean.getPrice()))
+                .setText(R.id.tv_rev_pro_price, "¥" + getStrings(relevanceProBean.getPrice()))
                 .setChecked(R.id.cb_rev_pro_sel, relevanceProBean.isSelPro())
                 .addOnClickListener(R.id.cb_rev_pro_sel)
                 .setTag(R.id.cb_rev_pro_sel, relevanceProBean)

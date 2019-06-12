@@ -179,7 +179,7 @@
                         android:paddingLeft="@dimen/sc_mm_30"
                         android:background="@drawable/border_cir_4dp_gray_bg"
                         android:gravity="center_vertical"
-                        android:hint="￥"
+                        android:hint="¥"
                         android:textColor="@color/text_black_t"
                         android:textColorHint="@color/text_gray_c"
                         android:textSize="@dimen/sc_mm_28" />

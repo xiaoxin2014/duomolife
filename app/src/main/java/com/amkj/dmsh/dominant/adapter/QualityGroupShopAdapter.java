@@ -194,8 +194,8 @@ public class QualityGroupShopAdapter extends BaseQuickAdapter<QualityGroupBean, 
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_communal_img_bg), qualityGroupBean.getCoverImage());
         helper.setText(R.id.tv_gp_sp_name, getStrings(qualityGroupBean.getName()))
                 .setText(R.id.tv_gp_sp_per_count, qualityGroupBean.getGpType())//拼团人数
-                .setText(R.id.tv_gp_sp_per_price, "￥" + qualityGroupBean.getGpPrice())
-                .setText(R.id.tv_gp_sp_nor_price, "单买价￥" + qualityGroupBean.getPrice())
+                .setText(R.id.tv_gp_sp_per_price, "¥" + qualityGroupBean.getGpPrice())
+                .setText(R.id.tv_gp_sp_nor_price, "单买价¥" + qualityGroupBean.getPrice())
                 .setText(R.id.tv_gp_sp_open_count, "" + qualityGroupBean.getGpCount())
                 .setText(R.id.tv_gp_sp_inventory, qualityGroupBean.getGpProductQuantity() + "")
                 .setText(R.id.tv_gp_sp_count, qualityGroupBean.getGpProductQuantity() > 0 ? "去开团" : "已抢光")

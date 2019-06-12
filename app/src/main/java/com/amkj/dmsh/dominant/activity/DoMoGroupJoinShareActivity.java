@@ -241,7 +241,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         groupShareJoinView.tv_gp_ql_share_count.setText(getStrings(qualityGroupShareBean.getGpType()));
         groupShareJoinView.tv_gp_ql_share_open_count.setText(getString(R.string.group_buy_count, qualityGroupShareBean.getGpCount()));
         groupShareJoinView.tv_gp_ql_share_price.setText(getString(R.string.money_price_chn, getStrings(qualityGroupShareBean.getGpPrice())));
-        groupShareJoinView.tv_gp_ql_share_only_price.setText(("单买价￥" + getStrings(qualityGroupShareBean.getPrice())));
+        groupShareJoinView.tv_gp_ql_share_only_price.setText(("单买价¥" + getStrings(qualityGroupShareBean.getPrice())));
     }
 
     public void setCountTime(CountdownView countdownView, QualityGroupShareEntity qualityGroupShareEntity) {

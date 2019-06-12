@@ -291,13 +291,13 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         getSingleDouble(editGoodsSkuBean.isShowBottom(), editGoodsSkuBean.isSellStatus(), "确定", 0);
         if (skuSaleList.size() > 1) {
             if (skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice())) {
-                skuDialogView.tv_dir_indent_pro_price.setText(("￥" + skuSaleList.get(0).getPrice()));
+                skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleList.get(0).getPrice()));
             } else {
-                skuDialogView.tv_dir_indent_pro_price.setText(("￥" + skuSaleList.get(0).getPrice()
+                skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleList.get(0).getPrice()
                         + " - " + skuSaleList.get(skuSaleList.size() - 1).getPrice()));
             }
         } else {
-            skuDialogView.tv_dir_indent_pro_price.setText(("￥" + skuSaleList.get(0).getPrice()));
+            skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleList.get(0).getPrice()));
         }
         if (skuDialogView.layout_parameter_slp.getChildCount() > 0) {
             skuDialogView.layout_parameter_slp.removeAllViews();
@@ -1270,7 +1270,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     }
                     setDiscountPrice(skuSaleBean.getId());
                     setPresentProduct(skuSaleBean.getPresentSkuIds());
-                    skuDialogView.tv_dir_indent_pro_price.setText(("￥" + skuSaleBean.getPrice()));
+                    skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleBean.getPrice()));
                     break;
                 }
             }

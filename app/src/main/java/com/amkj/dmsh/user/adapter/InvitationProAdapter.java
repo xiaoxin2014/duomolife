@@ -39,7 +39,7 @@ public class InvitationProAdapter extends BaseMultiItemQuickAdapter<RelevancePro
             case ConstantVariable.TYPE_0:
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_inv_pro), relevanceProBean.getPictureUrl());
                 helper.setText(R.id.tv_inv_pro_name, getStrings(relevanceProBean.getTitle()))
-                        .setText(R.id.tv_inv_pro_price, "￥" + getStrings(relevanceProBean.getPrice()));
+                        .setText(R.id.tv_inv_pro_price, "¥" + getStrings(relevanceProBean.getPrice()));
                 helper.itemView.setTag(relevanceProBean);
                 break;
             case ConstantVariable.TYPE_1:

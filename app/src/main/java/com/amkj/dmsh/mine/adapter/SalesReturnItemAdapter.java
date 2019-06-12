@@ -40,7 +40,7 @@ public class SalesReturnItemAdapter extends BaseQuickAdapter<GoodsBean, BaseView
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), goodsBean.getPicUrl());
         helper.setGone(R.id.tv_tag_apply_appeal, true)
                 .setText(R.id.tv_direct_indent_pro_name, getStrings(goodsBean.getName()))
-                .setText(R.id.tv_direct_indent_pro_price, "￥" + goodsBean.getPrice())
+                .setText(R.id.tv_direct_indent_pro_price, "¥" + goodsBean.getPrice())
                 .setText(R.id.tv_goods_count, "x" + goodsBean.getCount());
         if (goodsBean.getStatus() >= 30) {
             tv_tag_apply_appeal.setEnabled(true);

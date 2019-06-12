@@ -28,7 +28,7 @@
             android:id="@+id/tv_tb_coupon_price"
             android:gravity="bottom"
             android:minHeight="@dimen/sc_mm_75"
-            android:text="￥30优惠券"
+            android:text="¥30优惠券"
             android:layout_height="wrap_content" />
     </RelativeLayout>
     <TextView

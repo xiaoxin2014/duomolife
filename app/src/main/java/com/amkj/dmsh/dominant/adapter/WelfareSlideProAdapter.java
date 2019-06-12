@@ -32,7 +32,7 @@ public class WelfareSlideProAdapter extends BaseQuickAdapter<ProductListBean, Ba
     protected void convert(BaseViewHolder helper, ProductListBean productListBean) {
         GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.iv_wel_slide_pro), productListBean.getPicUrl());
         helper.setText(R.id.tv_wel_slide_pro_name, getStrings(productListBean.getName()))
-                .setText(R.id.tv_wel_slide_pro_price, "￥ " + productListBean.getPrice());
+                .setText(R.id.tv_wel_slide_pro_price, "¥ " + productListBean.getPrice());
         helper.itemView.setTag(productListBean);
     }
 }

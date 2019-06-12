@@ -39,7 +39,7 @@ public class ProductIndentAdapter extends BaseQuickAdapter<OrderListBean, BaseVi
             name = goodsBean.getName();
         }
         helper.setText(R.id.tv_service_product_indent_name, name)
-                .setText(R.id.tv_service_product_indent_price,"订单金额 ￥" + orderListBean.getAmount())
+                .setText(R.id.tv_service_product_indent_price,"订单金额 ¥" + orderListBean.getAmount())
                 .setText(R.id.tv_service_product_indent_status, INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())))
                 .itemView.setTag(orderListBean);
     }

@@ -398,7 +398,7 @@ public class ShopCarActivity extends BaseActivity {
 //        选择商品件数
         String selectedCount = shoppingInfo[0];
 //        结算价格
-        tv_cart_total.setText(("￥" + getStrings(shopCarNewInfoEntity.getTotalProductPrice())));
+        tv_cart_total.setText(("¥" + getStrings(shopCarNewInfoEntity.getTotalProductPrice())));
 
         if (!TextUtils.isEmpty(shopCarNewInfoEntity.getTotalProductDiscountPrice())
                 && (Double.parseDouble(shopCarNewInfoEntity.getTotalProductDiscountPrice()) > 0)) {
@@ -419,7 +419,7 @@ public class ShopCarActivity extends BaseActivity {
 //        选择商品总价
         String totalPrice = shoppingInfo[1];
 //        结算价格
-        tv_cart_total.setText(("￥" + totalPrice));
+        tv_cart_total.setText(("¥" + totalPrice));
 //        结算商品件数
         tv_cart_buy_orCount.setText(("去结算(" + selectedCount + ")"));
     }

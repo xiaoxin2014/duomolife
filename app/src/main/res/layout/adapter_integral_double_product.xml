@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="￥369"
+            android:text="¥369"
             android:textColor="@color/text_normal_red"
             android:textSize="@dimen/sc_mm_26" />
         <TextView

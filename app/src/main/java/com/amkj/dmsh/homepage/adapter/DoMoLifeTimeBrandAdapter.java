@@ -40,7 +40,7 @@ public class DoMoLifeTimeBrandAdapter extends BaseQuickAdapter<DMLTimeDetailBean
             helper.setGone(R.id.img_spring_sale_tag_out, false);
         }
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_springSale_product_image), dmlTimeDetailBean.getPicUrl());
-        helper.setText(R.id.tv_product_promotion_price, "￥" + dmlTimeDetailBean.getPrice());
+        helper.setText(R.id.tv_product_promotion_price, "¥" + dmlTimeDetailBean.getPrice());
         helper.setText(R.id.tv_springSale_introduce, getStrings(dmlTimeDetailBean.getName()));
 //        if (isTimeStart(dmlTimeDetailBean)) {
 //            helper.setGone(R.id.iv_pro_time_warm, false);

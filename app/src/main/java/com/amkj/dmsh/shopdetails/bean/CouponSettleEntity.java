@@ -15,7 +15,7 @@ import java.util.List;
 public class CouponSettleEntity {
 
     /**
-     * result : {"color":"#FF0033","totalPrice":844.02,"name":"实付：","totalPriceName":"￥844.02"}
+     * result : {"color":"#FF0033","totalPrice":844.02,"name":"实付：","totalPriceName":"¥844.02"}
      * code : 01
      * msg : 请求成功
      */

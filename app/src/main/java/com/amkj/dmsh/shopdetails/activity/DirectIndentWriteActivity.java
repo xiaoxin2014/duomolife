@@ -1193,7 +1193,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         setDiscounts(indentDiscountsBean.getPriceInfoList());
         if (indentDiscountsBean.getUserCouponInfo() != null) {
             IndentDiscountsBean.UserCouponInfoBean userCouponInfo = indentDiscountsBean.getUserCouponInfo();
-            pullFootView.tv_direct_product_favorable.setText(("-￥" + userCouponInfo.getAmount()));
+            pullFootView.tv_direct_product_favorable.setText(("-¥" + userCouponInfo.getAmount()));
             couponId = userCouponInfo.getId();
             pullFootView.tv_direct_product_favorable.setSelected(true);
         } else {
@@ -1367,7 +1367,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     pullFootView.tv_direct_product_favorable.setSelected(false);
                     pullFootView.tv_direct_product_favorable.setEnabled(true);
                     pullFootView.tv_direct_product_favorable.setSelected(true);
-                    pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-￥" + couponAmount);
+                    pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-¥" + couponAmount);
                     getIndentDiscounts(couponId < 1);
                     break;
                 case REQ_INVOICE:

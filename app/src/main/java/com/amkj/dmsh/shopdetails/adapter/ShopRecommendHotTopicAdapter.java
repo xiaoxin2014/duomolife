@@ -78,7 +78,7 @@ public class ShopRecommendHotTopicAdapter extends BaseMultiItemQuickAdapter<Shop
                         , shopRecommendHotTopicBean.getPicUrl());
                 helper.setGone(R.id.iv_com_pro_tag_out, shopRecommendHotTopicBean.getQuantity() < 1)
                         .setText(R.id.tv_qt_pro_descrip, getStrings(shopRecommendHotTopicBean.getTitle()))
-                        .setText(R.id.tv_qt_pro_price, "￥" + shopRecommendHotTopicBean.getPrice())
+                        .setText(R.id.tv_qt_pro_price, "¥" + shopRecommendHotTopicBean.getPrice())
                         .setText(R.id.tv_qt_pro_name, getStrings(shopRecommendHotTopicBean.getSubtitle()))
                         .setGone(R.id.iv_pro_add_car, false);
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);

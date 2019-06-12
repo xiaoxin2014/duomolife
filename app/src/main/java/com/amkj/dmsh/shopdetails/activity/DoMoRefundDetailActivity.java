@@ -697,7 +697,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                 if (!TextUtils.isEmpty(refundDetailBean.getRepairExpressCompany())) {
                     refundTypeBeans.add(new RefundTypeBean(refundRepairTypes[3], getStrings(refundDetailBean.getRepairExpressCompany())));
                     refundTypeBeans.add(new RefundTypeBean(refundRepairTypes[4], getStrings(refundDetailBean.getRepairExpressNo())));
-                    refundTypeBeans.add(new RefundTypeBean(refundRepairTypes[5], "￥" + getStrings(refundDetailBean.getRepairExpressFee())));
+                    refundTypeBeans.add(new RefundTypeBean(refundRepairTypes[5], "¥" + getStrings(refundDetailBean.getRepairExpressFee())));
                 }
                 refundTypeBeans.add(new RefundTypeBean(refundRepairTypes[6],
                         getStrings(refundDetailBean.getRepairReceiveReceiver()) + "\t" + getStrings(refundDetailBean.getRepairReceivePhone()) + "\n" + getStrings(refundDetailBean.getRepairReceiveAddress())));

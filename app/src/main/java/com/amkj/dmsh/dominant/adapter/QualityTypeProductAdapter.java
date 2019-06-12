@@ -41,7 +41,7 @@ public class QualityTypeProductAdapter extends BaseQuickAdapter<LikedProductBean
                 .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
                 .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                         getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
-                .setText(R.id.tv_qt_pro_price, "￥" + likedProductBean.getPrice())
+                .setText(R.id.tv_qt_pro_price, "¥" + likedProductBean.getPrice())
                 .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean);
         FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
         if(!TextUtils.isEmpty(likedProductBean.getActivityTag())||(likedProductBean.getMarketLabelList()!=null

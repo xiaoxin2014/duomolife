@@ -42,7 +42,7 @@ public class QualityProTitleAdapter extends BaseQuickAdapter<LikedProductBean, B
         helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
                 .setText(R.id.tv_qt_pro_descrip, !TextUtils.isEmpty(likedProductBean.getName()) ?
                         getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
-                .setText(R.id.tv_qt_pro_price, "￥" + likedProductBean.getPrice())
+                .setText(R.id.tv_qt_pro_price, "¥" + likedProductBean.getPrice())
                 .setGone(R.id.iv_pro_add_car, false)
                 .setGone(R.id.tv_qt_pro_name, false);
         FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);

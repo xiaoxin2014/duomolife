@@ -92,7 +92,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
             if (directCouponBean.getMode() == 1) {
                 helper.setText(R.id.tv_coupon_type, directCouponBean.getStartFee() > 0 ? "满减券" : "无门槛")
                         .setGone(R.id.tv_money_symbol, true)
-                        .setText(R.id.tv_money_symbol, "￥")
+                        .setText(R.id.tv_money_symbol, "¥")
                         .setGone(R.id.tv_coupon_discount, false);
             } else if (directCouponBean.getMode() == 2) {
                 helper.setText(R.id.tv_coupon_type, "折扣券")

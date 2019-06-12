@@ -521,7 +521,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
         }
 //           市场价
-        tvShopTimeProductMkPrice.setText(("非团购价：￥" + productDetailBean.getMarketPrice()));
+        tvShopTimeProductMkPrice.setText(("非团购价：¥" + productDetailBean.getMarketPrice()));
         if (productDetailBean.getSkimEnable() == 1) {
             tvTimeProductDetailsBuyIt.setEnabled(true);
             tvTimeProductDetailsBuyIt.setText("提前预览");
@@ -765,7 +765,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             qyProductIndentInfo.setUrl(sourceUrl);
             qyProductIndentInfo.setTitle(getStrings(productDetailBean.getName()));
             qyProductIndentInfo.setPicUrl(getStrings(productDetailBean.getPicUrl()));
-            qyProductIndentInfo.setNote("￥" + getStrings(productDetailBean.getPrice()));
+            qyProductIndentInfo.setNote("¥" + getStrings(productDetailBean.getPrice()));
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }

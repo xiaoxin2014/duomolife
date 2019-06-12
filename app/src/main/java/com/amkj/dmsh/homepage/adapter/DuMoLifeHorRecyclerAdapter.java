@@ -47,7 +47,7 @@ public class DuMoLifeHorRecyclerAdapter extends BaseMultiItemQuickAdapter<DMLGoo
         if (helper.getItemViewType() == ConstantVariable.TYPE_0) {
             GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_duomolife_gv_item), DMLGoodsBean.getPicUrl());
             helper.setText(R.id.tv_duomolife_gv_item_content, getStrings(DMLGoodsBean.getName()))
-                    .setText(R.id.tv_duomolife_gv_item_price, "￥" + DMLGoodsBean.getPrice());
+                    .setText(R.id.tv_duomolife_gv_item_price, "¥" + DMLGoodsBean.getPrice());
         }
         helper.itemView.setTag(DMLGoodsBean);
     }

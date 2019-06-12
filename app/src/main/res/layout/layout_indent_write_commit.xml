@@ -16,7 +16,7 @@
         android:id="@+id/tv_indent_total_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="￥0.00 "
+        android:text="¥0.00 "
         android:layout_weight="1"
         android:textColor="@color/text_normal_red"
         android:textSize="@dimen/sc_mm_40" />

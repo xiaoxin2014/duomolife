@@ -47,7 +47,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:id="@+id/tv_point_spike_price"
-                    android:text="￥149"
+                    android:text="¥149"
                     android:textColor="@color/text_normal_red"
                     android:textSize="@dimen/sc_mm_34"
                     android:layout_height="wrap_content" />
@@ -59,7 +59,7 @@
                     android:id="@+id/tv_point_spike_market_price"
                     android:textColor="@color/text_gray_hint_n"
                     android:textSize="@dimen/sc_mm_24"
-                    android:text="￥199"
+                    android:text="¥199"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
 

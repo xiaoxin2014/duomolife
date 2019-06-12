@@ -778,7 +778,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         tv_ql_sp_pro_name.setText(getStrings(groupShopDetailsBean.getName()));
         tv_gp_sp_per_count.setText(getStrings(groupShopDetailsBean.getGpType()));
         tv_gp_sp_per_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
-        tv_gp_sp_nor_price.setText("单买价 ￥" + groupShopDetailsBean.getPrice());
+        tv_gp_sp_nor_price.setText("单买价 ¥" + groupShopDetailsBean.getPrice());
         tv_sp_details_ol_buy.setText("单独购买");
         tv_sp_details_ol_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getPrice()));
         if (groupShopDetailsBean.getQuantityStatus() == null) {
@@ -1047,7 +1047,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             qyProductIndentInfo.setTitle(getStrings(groupShopDetailsBean.getSubtitle()));
             qyProductIndentInfo.setPicUrl(groupShopDetailsBean.getGpPicUrl());
             qyProductIndentInfo.setDesc(getStrings(groupShopDetailsBean.getName()));
-            qyProductIndentInfo.setNote("￥" + groupShopDetailsBean.getGpPrice());
+            qyProductIndentInfo.setNote("¥" + groupShopDetailsBean.getGpPrice());
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }

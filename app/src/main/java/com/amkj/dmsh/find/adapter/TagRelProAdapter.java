@@ -34,7 +34,7 @@ public class TagRelProAdapter extends BaseQuickAdapter<RelevanceProBean, BaseVie
     protected void convert(BaseViewHolder helper, RelevanceProBean relevanceProBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_tag_rel_pro), getStrings(relevanceProBean.getPictureUrl()));
         helper.setText(R.id.tv_tag_rel_pro_name, getStrings(relevanceProBean.getTitle()))
-                .setText(R.id.tv_tag_rel_pro_price, "￥" + getStrings(relevanceProBean.getPrice()))
+                .setText(R.id.tv_tag_rel_pro_price, "¥" + getStrings(relevanceProBean.getPrice()))
                 .itemView.setTag(relevanceProBean);
     }
 }

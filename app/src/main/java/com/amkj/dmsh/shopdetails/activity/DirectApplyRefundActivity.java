@@ -194,7 +194,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
     private List<String> refundTypeList = new ArrayList<>();
     public static final String APPLY_REFUND = "applyRefund";
     //    正则匹配金额加货币
-    private String regexNum = "￥+\\d+(\\.\\d+)?";
+    private String regexNum = "¥+\\d+(\\.\\d+)?";
     private boolean isSelType = false;
     private ImgGridRecyclerAdapter imgGridRecyclerAdapter;
     private ArrayList<String> mSelectPath = new ArrayList();
