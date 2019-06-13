@@ -1,8 +1,11 @@
 package com.amkj.dmsh.views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.webkit.WebView;
+
+import me.jessyan.autosize.AutoSize;
 
 
 /**
@@ -51,5 +54,14 @@ public class HtmlWebView extends WebView {
      */
     public static interface OnScrollChangedCallback {
         public void onScroll(int dx, int dy);
+    }
+
+
+    //修复fragment嵌入H5，无法正常适配
+    @Override
+    public void setOverScrollMode(int mode) {
+        super.setOverScrollMode(mode);
+
+        AutoSize.autoConvertDensityOfGlobal((Activity) getContext());
     }
 }
