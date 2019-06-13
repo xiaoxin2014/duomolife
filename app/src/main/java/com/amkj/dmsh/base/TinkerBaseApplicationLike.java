@@ -79,6 +79,7 @@ import java.util.Map;
 import cn.jpush.android.api.JPushInterface;
 import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
+import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
 
@@ -167,6 +168,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     @Override
     public void onCreate() {
         mAppContext = getApplication().getApplicationContext();
+        //当 App 中出现多进程, 并且您需要适配所有的进程, 就需要在 App 初始化时调用 initCompatMultiProcess()
+        AutoSize.initCompatMultiProcess(mAppContext);
         //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
         RxJavaPlugins.setErrorHandler(e -> {
             //异常处理
@@ -195,6 +198,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         EasyHttp.setContext(mAppContext);
         //设置SmartLayout全局默认配置
         setDefaultRefresh();
+        //bugly统计
         setTotalChanel();
         activityLinkedList = new LinkedList<>();
         getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
@@ -433,9 +437,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         LinkedME.getInstance().setImmediate(true);
     }
 
-    /**
-     * 配置统计渠道
-     */
     private void setTotalChanel() {
 //        String channel = ChannelReaderUtil.getChannel(mAppContext);
 //        if (!TextUtils.isEmpty(channel)) {
