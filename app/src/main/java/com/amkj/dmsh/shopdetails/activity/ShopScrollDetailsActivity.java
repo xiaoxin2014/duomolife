@@ -685,11 +685,61 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         return fl_product_details;
     }
 
-    /**
-     * 获取推荐商品
-     *
-     * @param id
-     */
+
+    private void setProductEvaLike(View view) {
+        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
+        TextView tv_eva_like = (TextView) view;
+        String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", goodsCommentBean.getId());
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        tv_eva_like.setSelected(!tv_eva_like.isSelected());
+        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
+    }
+
+    //获取商品详情
+    private void getShopProDetails() {
+        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        if (!TextUtils.isEmpty(recommendFlag)) {
+            params.put("recommendFlag", recommendFlag);
+        }
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                smart_ql_sp_pro_details.finishRefresh();
+                Gson gson = new GsonBuilder().create();
+                shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
+                if (shopDetailsEntity != null) {
+                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
+                        getShopProComment(shopPropertyBean);
+                        getGoodsRecommend(shopPropertyBean.getId());
+                        getArticalRecommend(shopPropertyBean.getId());
+                        getGroupGoods(shopPropertyBean.getId());
+                        setProductData(shopPropertyBean);
+                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), shopDetailsEntity.getMsg());
+                    }
+                }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_ql_sp_pro_details.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
+            }
+        });
+    }
+
+    //获取推荐商品
     private void getGoodsRecommend(final int id) {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
@@ -714,11 +764,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-    /**
-     * 获取推荐文章
-     *
-     * @param id
-     */
+    //获取推荐文章
     private void getArticalRecommend(final int id) {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
@@ -747,7 +793,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-
     //获取组合商品
     private void getGroupGoods(int id) {
         String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
@@ -773,73 +818,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-    private void setProductEvaLike(View view) {
-        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
-        TextView tv_eva_like = (TextView) view;
-        String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", goodsCommentBean.getId());
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
-        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
-        tv_eva_like.setSelected(!tv_eva_like.isSelected());
-        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
-    }
-
-    private void getShopProDetails() {
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", productId);
-        if (!TextUtils.isEmpty(recommendFlag)) {
-            params.put("recommendFlag", recommendFlag);
-        }
-        if (userId > 0) {
-            params.put("uid", userId);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                smart_ql_sp_pro_details.finishRefresh();
-                Gson gson = new GsonBuilder().create();
-                shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
-                if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
-                        shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
-                        getShopProComment(shopPropertyBean);
-                        getRecommendData();
-                        setProductData(shopPropertyBean);
-                    } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), shopDetailsEntity.getMsg());
-                    }
-                }
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                smart_ql_sp_pro_details.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.connectedFaile);
-            }
-        });
-    }
-
-    private void getRecommendData() {
-        getGoodsRecommend(shopPropertyBean.getId());
-        getArticalRecommend(shopPropertyBean.getId());
-        getGroupGoods(shopPropertyBean.getId());
-    }
-
-
     //  获取商品评论
     private void getShopProComment(ShopPropertyBean shopPropertyBean) {
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COMMENT;
@@ -862,23 +840,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), goodsCommentEntity.getMsg());
                     }
-                    setCommentCount(goodsCommentEntity);
+                    rel_shop_details_comment.setVisibility(goodsCommentEntity.getEvaluateCount() < 1 ? View.GONE : VISIBLE);
+                    shopCommentHeaderView.tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
                     directEvaluationAdapter.setNewData(goodsComments);
                 }
             }
         });
     }
 
-    private void setCommentCount(GoodsCommentEntity goodsCommentEntity) {
-        if (goodsCommentEntity.getEvaluateCount() < 1) {
-            shopCommentHeaderView.rel_pro_comment.setVisibility(GONE);
-            rel_shop_details_comment.setVisibility(View.GONE);
-        } else {
-            shopCommentHeaderView.rel_pro_comment.setVisibility(VISIBLE);
-            rel_shop_details_comment.setVisibility(VISIBLE);
-            shopCommentHeaderView.tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
-        }
-    }
 
     private void setProductData(final ShopPropertyBean shopProperty) {
         if (shopProperty == null) return;
@@ -1056,6 +1025,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         }
 
+        //设置参考价
         if (!TextUtils.isEmpty(shopPropertyBean.getActivityPrice())
                 && shopDetailsEntity.getShopPropertyBean() != null
                 && shopDetailsEntity.getShopPropertyBean().getActivityStartTime() != null
@@ -1076,6 +1046,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), shopProperty.getMarketPrice()));
         }
+
+        //获取赠品信息
         if (!TextUtils.isEmpty(shopProperty.getPresentIds())) {
             setPresentProData(shopProperty.getPresentIds());
         } else if (shopProperty.getSkuSale() != null && shopProperty.getSkuSale().size() > 0) {
@@ -1236,6 +1208,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             }
 
+            //限制标签不能超过屏幕外
             if (maxOneLine) {
                 ViewTreeObserver observer = flexboxLayout.getViewTreeObserver();
                 observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1258,6 +1231,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
+    //开启倒计时
     private void startCountDownTime(TextView tipView, CountdownView countDownTimeView) {
         setActCountTime(tipView, countDownTimeView);
         getConstant();
@@ -1265,77 +1239,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         constantMethod.setRefreshTimeListener(() -> {
             shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
             setActCountTime(tipView, countDownTimeView);
-        });
-    }
-
-    private void setReplenishmentNotice() {
-        ShopPropertyBean.SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
-        if (shopPropertyBean.getSkuSale().size() > 0 && shopPropertyBean.getSkuSale().size() < 2
-                && (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2)) {
-            tv_sp_details_add_car.setEnabled(true);
-            tv_sp_details_add_car.setSelected(true);
-            skuSaleBeanId = skuSaleBean.getId();
-            tv_sp_details_add_car.setText(skuSaleBean.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
-        } else {
-            tv_sp_details_add_car.setEnabled(false);
-        }
-    }
-
-    /**
-     * 服务承诺
-     *
-     * @param productId
-     */
-    private void getServiceData(String productId) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_SERVICE_COMMITMENT;
-        Map<String, Object> params = new HashMap<>();
-        params.put("productId", productId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mDirectGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
-                if (mDirectGoodsServerEntity != null) {
-                    if (mDirectGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
-                        serviceDataList.clear();
-                        serviceDataTotalList.clear();
-                        DirectGoodsServerBean directGoodsServerBean = mDirectGoodsServerEntity.getDirectGoodsServerBean();
-                        if (directGoodsServerBean != null) {
-                            List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
-                            if (servicePromiseList.size() > 0) {
-                                CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
-                                communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
-                                communalDetailObjectBean.setContent("服务承诺");
-                                serviceDataList.add(communalDetailObjectBean);
-                                serviceDataTotalList.add(communalDetailObjectBean);
-                                int serviceSize = servicePromiseList.size();
-                                for (int i = 0; i < serviceSize; i++) {
-                                    communalDetailObjectBean = new CommunalDetailObjectBean();
-                                    if (i == 0) {
-                                        communalDetailObjectBean.setFirstLinePadding(true);
-                                    }
-                                    DirectGoodsServerBean.ServicePromiseBean servicePromiseBean = servicePromiseList.get(i);
-                                    communalDetailObjectBean.setContent(servicePromiseBean.getContent());
-                                    if (i <= 10) {
-                                        serviceDataList.add(communalDetailObjectBean);
-                                    }
-                                    serviceDataTotalList.add(communalDetailObjectBean);
-                                }
-                                if (serviceSize > 10) {
-                                    communalDetailObjectBean = new CommunalDetailObjectBean();
-                                    communalDetailObjectBean.setItemType(TYPE_PRODUCT_MORE);
-                                    communalDetailObjectBean.setMoreDataList(serviceDataTotalList);
-                                    serviceDataList.add(communalDetailObjectBean);
-                                }
-                            }
-                        }
-                        if (shopDetailBeanList.size() > 0) {
-                            shopDetailBeanList.addAll(serviceDataList);
-                            communalDetailAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }
         });
     }
 
@@ -1392,6 +1295,75 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         }
     }
+
+    private void setReplenishmentNotice() {
+        ShopPropertyBean.SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
+        if (shopPropertyBean.getSkuSale().size() > 0 && shopPropertyBean.getSkuSale().size() < 2
+                && (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2)) {
+            tv_sp_details_add_car.setEnabled(true);
+            tv_sp_details_add_car.setSelected(true);
+            skuSaleBeanId = skuSaleBean.getId();
+            tv_sp_details_add_car.setText(skuSaleBean.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
+        } else {
+            tv_sp_details_add_car.setEnabled(false);
+        }
+    }
+
+
+    //服务承诺
+    private void getServiceData(String productId) {
+        String url = Url.BASE_URL + Url.Q_SP_DETAIL_SERVICE_COMMITMENT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("productId", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                mDirectGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
+                if (mDirectGoodsServerEntity != null) {
+                    if (mDirectGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
+                        serviceDataList.clear();
+                        serviceDataTotalList.clear();
+                        DirectGoodsServerBean directGoodsServerBean = mDirectGoodsServerEntity.getDirectGoodsServerBean();
+                        if (directGoodsServerBean != null) {
+                            List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
+                            if (servicePromiseList.size() > 0) {
+                                CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+                                communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
+                                communalDetailObjectBean.setContent("服务承诺");
+                                serviceDataList.add(communalDetailObjectBean);
+                                serviceDataTotalList.add(communalDetailObjectBean);
+                                int serviceSize = servicePromiseList.size();
+                                for (int i = 0; i < serviceSize; i++) {
+                                    communalDetailObjectBean = new CommunalDetailObjectBean();
+                                    if (i == 0) {
+                                        communalDetailObjectBean.setFirstLinePadding(true);
+                                    }
+                                    DirectGoodsServerBean.ServicePromiseBean servicePromiseBean = servicePromiseList.get(i);
+                                    communalDetailObjectBean.setContent(servicePromiseBean.getContent());
+                                    if (i <= 10) {
+                                        serviceDataList.add(communalDetailObjectBean);
+                                    }
+                                    serviceDataTotalList.add(communalDetailObjectBean);
+                                }
+                                if (serviceSize > 10) {
+                                    communalDetailObjectBean = new CommunalDetailObjectBean();
+                                    communalDetailObjectBean.setItemType(TYPE_PRODUCT_MORE);
+                                    communalDetailObjectBean.setMoreDataList(serviceDataTotalList);
+                                    serviceDataList.add(communalDetailObjectBean);
+                                }
+                            }
+                        }
+                        if (shopDetailBeanList.size() > 0) {
+                            shopDetailBeanList.addAll(serviceDataList);
+                            communalDetailAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
 
     //判断活动是否开始
     public boolean isTimeStart(ShopDetailsEntity shopDetailsEntity) {
@@ -1529,11 +1501,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 设置赠品信息
-     *
-     * @param presentProData
-     */
+    //获取赠品信息
     private void setPresentProData(String presentProData) {
         if (!TextUtils.isEmpty(presentProData) && shopPropertyBean != null) {
             rv_shop_details_text_communal.setVisibility(VISIBLE);
@@ -1586,6 +1554,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         QyServiceUtils.getQyInstance().openQyServiceChat(this, "自营商品详情", sharePageUrl + productId, qyProductIndentInfo);
     }
 
+    //加入购物车
     private void addGoodsToCar() {
         if (shopCarGoodsSkuDif != null) {
 //          加入购物车
@@ -1648,7 +1617,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
-//                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
                             addCarCheckLoginStatus();
                             setPresentProData(shopCarGoodsSkuDif.getPresentIds());
                         }
@@ -1658,6 +1626,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
+    //立即购买
     private void buyGoIt() {
         if (shopCarGoodsSkuDif != null) {
             List<CartInfoBean> settlementGoods = new ArrayList<>();
@@ -1706,7 +1675,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
-//                            setReallyPrice(String.valueOf(shopCarGoodsSkuDif.getPrice()));
                             setPresentProData(shopCarGoodsSkuDif.getPresentIds());
                             buyGoItCheckStatus();
                         }
@@ -1845,11 +1813,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 推荐跳转更多推荐
-     *
-     * @param shopRecommendHotTopicBean
-     */
+    //推荐跳转更多推荐
     private void skipMoreRecommend(ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
         Intent intent = new Intent(ShopScrollDetailsActivity.this, ProRecommendActivity.class);
         intent.putExtra("recommendType", shopRecommendHotTopicBean.getType());
@@ -2064,7 +2028,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-
     private void addCarCheckLoginStatus() {
         if (userId > 0) {
             if (tv_sp_details_add_car.isSelected() && shopPropertyBean != null) {
@@ -2077,9 +2040,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 取消添加通知
-     */
+
+    //取消添加通知
     private void addCancelNotice() {
         String url = Url.BASE_URL + Url.Q_REPLENISHMENT_NOTICE;
         Map<String, Object> params = new HashMap<>();
