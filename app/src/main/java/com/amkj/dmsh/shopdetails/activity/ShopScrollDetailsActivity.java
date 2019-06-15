@@ -701,7 +701,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //获取商品详情
     private void getShopProDetails() {
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS;
+        String url = Url.BASE_URL + Url.Q_NEW_SHOP_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
         if (!TextUtils.isEmpty(recommendFlag)) {

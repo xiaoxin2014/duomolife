@@ -465,6 +465,8 @@ public class Url {
 
     //商品详情
     public static final String Q_SHOP_DETAILS = "api/goods/getGoods";
+    //商品详情 新版
+    public static final String Q_NEW_SHOP_DETAILS = "api/goods/getSelfProduct";
     //商品评价
     public static final String Q_SHOP_DETAILS_COMMENT = "api/goods/getEvaluate";
     //加入购物车 新版

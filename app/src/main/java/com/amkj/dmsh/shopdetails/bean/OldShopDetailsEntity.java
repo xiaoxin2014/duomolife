@@ -17,7 +17,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.replaceBlank;
 /**
  * Created by atd48 on 2016/10/4.
  */
-public class ShopDetailsEntity extends BaseEntity {
+public class OldShopDetailsEntity extends BaseEntity{
 
     /**
      * tags : [{"id":1,"name":"24小时发货"},{"id":2,"name":"正品保证"},{"id":3,"name":"海外直邮"},{"id":4,"name":"30天退货"}]
@@ -121,7 +121,7 @@ public class ShopDetailsEntity extends BaseEntity {
         private String activityRule;
         private String gpDiscounts;
         private int gpInfoId;
-        //        活动描述
+//        活动描述
         private String activityPriceDesc;
         private String activityPrice;
         private String priceDesc;
@@ -137,9 +137,9 @@ public class ShopDetailsEntity extends BaseEntity {
         private List<PropvaluesBean> propvalues;
         private List<PropsBean> props;
         private long addSecond;
-        //        售前内容
+//        售前内容
         private List<String> preSaleInfo;
-        //        商品卖点
+        //        售前内容
         private List<String> productPointInfo;
         @SerializedName("couponJson")
         private List<CouponJsonBean> couponJsonList;
@@ -776,9 +776,9 @@ public class ShopDetailsEntity extends BaseEntity {
             private int quantity;
             private String presentSkuIds;
             private String combineSkuIds;
-            //            积分商品独有属性
+//            积分商品独有属性
             private String moneyPrice;
-            //            是否开启补货通知
+//            是否开启补货通知
             private int isNotice;
 
             public int getIsNotice() {
@@ -915,7 +915,7 @@ public class ShopDetailsEntity extends BaseEntity {
             }
         }
 
-        public static class PresentProductInfoBean implements MultiItemEntity {
+        public static class PresentProductInfoBean implements MultiItemEntity{
 
             /**
              * presentName : 圣诞保温杯2
@@ -926,9 +926,9 @@ public class ShopDetailsEntity extends BaseEntity {
             private String presentSkuId;
             private boolean isChecked;
             private int itemType;
-            //            自定义参数 加顶部线条
+//            自定义参数 加顶部线条
             private boolean select;
-            //            是否是第一条
+//            是否是第一条
             private boolean firstTag;
             private String name;
             private int couponId;
