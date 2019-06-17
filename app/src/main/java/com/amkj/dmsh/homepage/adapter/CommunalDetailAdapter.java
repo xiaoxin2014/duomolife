@@ -40,6 +40,7 @@ import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
@@ -102,7 +103,6 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_RELEVANCE_PRODUCT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getOpenglRenderLimitValue;
 import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
 
@@ -343,11 +343,11 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 List<TagsBean> tagsBeans = detailObjectBean.getTagsBeans();
                 for (int i = 0; i < tagsBeans.size(); i++) {
                     if (i == 0) {
-                        flexboxLayout.addView(getLabelInstance().createArticleIcon(context));
+                        flexboxLayout.addView(ProductLabelCreateUtils.createArticleIcon(context));
                     }
                     TagsBean tagsBean = tagsBeans.get(i);
                     if (!TextUtils.isEmpty(tagsBean.getTag_name())) {
-                        flexboxLayout.addView(getLabelInstance().createArticleClickTag(context, tagsBean));
+                        flexboxLayout.addView(ProductLabelCreateUtils.createArticleClickTag(context, tagsBean));
                     }
                 }
                 break;

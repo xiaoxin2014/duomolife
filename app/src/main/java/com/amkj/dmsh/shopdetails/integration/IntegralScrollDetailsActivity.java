@@ -46,17 +46,18 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralProductInfoEntity.Inte
 import com.amkj.dmsh.shopdetails.integration.initview.IntegralPopWindows;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.amkj.dmsh.views.bottomdialog.SimpleSkuDialog;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
@@ -93,8 +94,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
+
+;
 
 public class IntegralScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_integral_details)
@@ -499,7 +501,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 flex_communal_tag.setVisibility(View.VISIBLE);
                 flex_communal_tag.removeAllViews();
                 for (String tagName : tagSelected) {
-                    flex_communal_tag.addView(getLabelInstance().createProductTag(IntegralScrollDetailsActivity.this, tagMap.get(Integer.parseInt(tagName))));
+                    flex_communal_tag.addView(ProductLabelCreateUtils.createProductTag(IntegralScrollDetailsActivity.this, tagMap.get(Integer.parseInt(tagName))));
                 }
             } else {
                 flex_communal_tag.setVisibility(View.GONE);

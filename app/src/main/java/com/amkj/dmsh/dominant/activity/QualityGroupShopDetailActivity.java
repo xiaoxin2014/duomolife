@@ -62,6 +62,7 @@ import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity;
 import com.amkj.dmsh.shopdetails.fragment.DirectImgArticleFragment;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
@@ -120,11 +121,10 @@ import static com.amkj.dmsh.constant.Url.GROUP_SHOP_COMMUNAL;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_DETAILS;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NRE_USER;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_OPEN_PERSON;
-import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS;
+import static com.amkj.dmsh.constant.Url.Q_NEW_SHOP_DETAILS;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_COMMENT;
 import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 ;
@@ -446,7 +446,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private void getShopDetails(GroupShopDetailsBean groupShopDetailsBean) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", groupShopDetailsBean.getProductId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_NEW_SHOP_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -652,7 +652,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             ll_layout_pro_tag.setVisibility(View.VISIBLE);
             flex_communal_tag.removeAllViews();
             for (int i = 0; i < (tagArray.length > 3 ? 3 : tagArray.length); i++) {
-                flex_communal_tag.addView(getLabelInstance().createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
+                flex_communal_tag.addView(ProductLabelCreateUtils.createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
             }
         } else {
             ll_layout_pro_tag.setVisibility(GONE);
@@ -938,7 +938,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
             flex_communal_tag.removeAllViews();
             for (int i = 0; i < tagArray.length; i++) {
-                flex_communal_tag.addView(getLabelInstance().createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
+                flex_communal_tag.addView(ProductLabelCreateUtils.createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
             }
         } else {
             flex_communal_tag.setVisibility(GONE);

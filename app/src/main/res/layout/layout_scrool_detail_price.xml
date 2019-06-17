@@ -8,21 +8,19 @@
     android:paddingRight="@dimen/sc_mm_30"
     android:paddingBottom="@dimen/sc_mm_20">
 
-    <TextView
-        android:id="@+id/tv_activity_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:paddingRight="@dimen/sc_mm_10"
-        android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_22"/>
+    <!--<TextView-->
+        <!--android:id="@+id/tv_activity_price"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:paddingRight="@dimen/sc_mm_10"-->
+        <!--android:textColor="@color/text_normal_red"-->
+        <!--android:textSize="@dimen/sc_mm_22"/>-->
 
     <TextView
         android:id="@+id/tv_ql_sp_pro_sc_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tv_activity_price"
-        android:layout_toRightOf="@+id/tv_activity_price"
         android:text="-----"
         android:textColor="@color/text_normal_red"
         android:textSize="@dimen/sc_mm_34"/>
@@ -31,7 +29,7 @@
         android:id="@+id/tv_max_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tv_activity_price"
+        android:layout_alignBaseline="@+id/tv_ql_sp_pro_sc_price"
         android:layout_toRightOf="@+id/tv_ql_sp_pro_sc_price"
         android:text="--------"
         android:textColor="@color/text_normal_red"
@@ -42,7 +40,7 @@
         android:id="@+id/tv_ql_sp_pro_sc_market_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tv_activity_price"
+        android:layout_alignBaseline="@+id/tv_ql_sp_pro_sc_price"
         android:layout_marginLeft="@dimen/sc_mm_36"
         android:layout_toRightOf="@id/tv_max_price"
         android:text="---------"

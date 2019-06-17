@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.bean.QualityBuyListEntity.QualityBuyListBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -17,7 +18,6 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -55,7 +55,7 @@ public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, 
                     &&qualityBuyListBean.getMarketLabelList().size()>0){
                 for (MarketLabelBean marketLabelBean:qualityBuyListBean.getMarketLabelList()) {
                     if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                        fbl_market_label.addView(getLabelInstance().createLabelText(context,marketLabelBean.getTitle(),0));
+                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context,marketLabelBean.getTitle(),0));
                     }
                 }
             }

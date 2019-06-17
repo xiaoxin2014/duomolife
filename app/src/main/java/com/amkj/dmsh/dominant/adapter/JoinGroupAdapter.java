@@ -12,6 +12,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -39,7 +40,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -191,7 +191,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                 flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
                 flex_communal_tag.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
                 for (int i = 0; i < groupShopJoinBean.getMemberListBeans().size(); i++) {
-                    flex_communal_tag.addView(getLabelInstance()
+                    flex_communal_tag.addView(ProductLabelCreateUtils
                             .createOpenGroupUserInfo(context, groupShopJoinBean.getMemberListBeans().get(i)));
                 }
                 CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);

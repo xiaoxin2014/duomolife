@@ -381,6 +381,7 @@ public class ConstantMethod {
      * @return
      */
     public static CharSequence getSpannableString(String text, int start, int end, float proportion, String color) {
+        if (TextUtils.isEmpty(text)) return "";
         SpannableString spannableString = null;
         try {
             spannableString = new SpannableString(text);
@@ -408,7 +409,7 @@ public class ConstantMethod {
      */
     public static String stripTrailingZeros(String priceText) {
         try {
-            return new BigDecimal(priceText).stripTrailingZeros().toPlainString();
+            return new BigDecimal(priceText.trim()).stripTrailingZeros().toPlainString();
         } catch (Exception e) {
             return getStrings(priceText);
         }

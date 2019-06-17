@@ -25,6 +25,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.utils.ImageConverterUtils;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -45,7 +46,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.find.activity.FindTopicDetailsActivity.TOPIC_TYPE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -212,9 +212,9 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
             flex_communal_tag.removeAllViews();
             for (int i = 0; i < invitationDetailBean.getTags().size(); i++) {
                 if (i == 0) {
-                    flex_communal_tag.addView(getLabelInstance().createArticleIcon(context));
+                    flex_communal_tag.addView(ProductLabelCreateUtils.createArticleIcon(context));
                 }
-                flex_communal_tag.addView(getLabelInstance().createArticleClickTag(context, invitationDetailBean.getTags().get(i)));
+                flex_communal_tag.addView(ProductLabelCreateUtils.createArticleClickTag(context, invitationDetailBean.getTags().get(i)));
             }
         } else {
             rel_tag_layout.setVisibility(View.INVISIBLE);

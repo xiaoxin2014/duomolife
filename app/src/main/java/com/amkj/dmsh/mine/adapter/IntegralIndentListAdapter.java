@@ -44,7 +44,8 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
     protected void convert(BaseViewHolder helper, OrderListBean orderListBean) {
         List<OrderListBean.GoodsBean> goods = orderListBean.getGoods();
         if (goods != null && goods.size() > 0) {
-            String price;
+            String price;//商品价格
+            String amout;//实付金额
             GoodsBean goodsBean = goods.get(0);
             helper.setText(R.id.tv_integral_indent_product_name, getStringFilter(goodsBean.getName()))
                     .setText(R.id.tv_integral_indent_sku_value, getStringFilter(goodsBean.getSaleSkuValue()))
@@ -53,11 +54,13 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
 //            纯积分
             if (goodsBean.getIntegralType() == 0) {
                 price = String.format(context.getResources().getString(R.string.integral_indent_product_price), goodsBean.getIntegralPrice());
+                amout = String.format(context.getResources().getString(R.string.integral_indent_product_price), goodsBean.getIntegralPrice() * goodsBean.getCount());
             } else { // 积分+金钱
-                price = String.format(context.getResources().getString(R.string.integral_indent_product_price_and_money), goodsBean.getIntegralPrice(), goodsBean.getPrice());
+                price = String.format(context.getResources().getString(R.string.integral_indent_product_price_and_money), goodsBean.getIntegralPrice(), String.valueOf(Double.parseDouble(goodsBean.getPrice())));
+                amout = String.format(context.getResources().getString(R.string.integral_indent_product_price_and_money), goodsBean.getIntegralPrice() * goodsBean.getCount(), String.valueOf(Double.parseDouble(goodsBean.getPrice()) * goodsBean.getCount()));
             }
             helper.setText(R.id.tv_integral_indent_product_price, price)
-                    .setText(R.id.tv_intent_count_price, (String.format(context.getResources().getString(R.string.integral_indent_product_count), goodsBean.getCount())) + price);
+                    .setText(R.id.tv_intent_count_price, (String.format(context.getResources().getString(R.string.integral_indent_product_count), goodsBean.getCount())) + amout);
             setIntegralIntentStatus(helper, orderListBean, goodsBean);
             GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_integral_indent_product_image), goodsBean.getPicUrl());
         }
@@ -73,7 +76,7 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
         helper.addOnClickListener(R.id.tv_indent_border_first_gray)
                 .addOnClickListener(R.id.tv_indent_border_second_blue);
         ll_indent_bottom.setVisibility(View.VISIBLE);
-        if(goodBean.getIntegralProductType()==0){
+        if (goodBean.getIntegralProductType() == 0) {
             if (0 <= statusCode && statusCode < 10) {
 //          底栏 件数
                 tv_indent_border_first_gray.setVisibility(View.VISIBLE);
@@ -130,10 +133,10 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
 //          确认订单
                 tv_indent_border_second_blue.setTag(R.id.tag_first, CONFIRM_ORDER);
                 tv_indent_border_second_blue.setTag(R.id.tag_second, orderListBean);
-            }  else if (30 <= statusCode && statusCode <= 40) {
-                if(statusCode==40){
+            } else if (30 <= statusCode && statusCode <= 40) {
+                if (statusCode == 40) {
                     tv_indent_border_first_gray.setVisibility(View.GONE);
-                }else{
+                } else {
                     tv_indent_border_first_gray.setVisibility(View.VISIBLE);
                     tv_indent_border_first_gray.setText("评价");
                     tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_APPRAISE);
@@ -157,10 +160,10 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
                 tv_indent_border_second_blue.setText(getStrings(INDENT_PRO_STATUS.get(String.valueOf(statusCode))));
                 tv_indent_border_second_blue.setTag(R.id.tag_first, REFUND_REPAIR);
                 tv_indent_border_second_blue.setTag(R.id.tag_second, orderListBean);
-            }else {
+            } else {
                 ll_indent_bottom.setVisibility(View.GONE);
             }
-        }else{
+        } else {
             ll_indent_bottom.setVisibility(View.VISIBLE);
             tv_indent_border_first_gray.setVisibility(View.GONE);
             tv_indent_border_second_blue.setVisibility(View.VISIBLE);

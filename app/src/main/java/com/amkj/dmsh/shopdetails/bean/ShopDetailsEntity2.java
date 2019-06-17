@@ -17,7 +17,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.replaceBlank;
 /**
  * Created by atd48 on 2016/10/4.
  */
-public class OldShopDetailsEntity extends BaseEntity{
+public class ShopDetailsEntity2 extends BaseEntity {
 
     /**
      * tags : [{"id":1,"name":"24小时发货"},{"id":2,"name":"正品保证"},{"id":3,"name":"海外直邮"},{"id":4,"name":"30天退货"}]
@@ -56,6 +56,7 @@ public class OldShopDetailsEntity extends BaseEntity{
      * code : 01
      * msg : 请求成功
      */
+    @SerializedName("result")
     private String currentTime;
 
     public ShopPropertyBean getShopPropertyBean() {
@@ -121,14 +122,16 @@ public class OldShopDetailsEntity extends BaseEntity{
         private String activityRule;
         private String gpDiscounts;
         private int gpInfoId;
-//        活动描述
+        //        活动描述
         private String activityPriceDesc;
         private String activityPrice;
         private String priceDesc;
         @SerializedName("vidoUrl")
         private String videoUrl;
-        @SerializedName("presentProductInfo")
-        private List<PresentProductInfoBean> presentProductInfoList;
+        //赠品信息
+        private PresentInfoBean presentInfo;
+        //满赠活动
+        private MZPresentInfoBean mzPresentInfo;
         @SerializedName("combineProductInfo")
         private List<CombineProductInfoBean> combineProductInfoList;
         private List<LuckyMoneyBean> luckyMoney;
@@ -137,19 +140,36 @@ public class OldShopDetailsEntity extends BaseEntity{
         private List<PropvaluesBean> propvalues;
         private List<PropsBean> props;
         private long addSecond;
-//        售前内容
-        private List<String> preSaleInfo;
         //        售前内容
-        private List<String> productPointInfo;
+        private List<String> preSaleInfo;
+        //        商品卖点
+        private List<String> buyReason;
         @SerializedName("couponJson")
         private List<CouponJsonBean> couponJsonList;
         private String flashBuyClickCount;
         private String integralTip;
         private List<MarketLabelBean> marketLabelList;
 
+
         public static ShopPropertyBean objectFromData(String str) {
 
             return new Gson().fromJson(str, ShopPropertyBean.class);
+        }
+
+        public MZPresentInfoBean getMzPresentInfo() {
+            return mzPresentInfo;
+        }
+
+        public void setMzPresentInfo(MZPresentInfoBean mzPresentInfo) {
+            this.mzPresentInfo = mzPresentInfo;
+        }
+
+        public PresentInfoBean getPresentInfo() {
+            return presentInfo;
+        }
+
+        public void setPresentInfo(PresentInfoBean presentInfo) {
+            this.presentInfo = presentInfo;
         }
 
         public String getIntegralTip() {
@@ -176,12 +196,12 @@ public class OldShopDetailsEntity extends BaseEntity{
             this.flashBuyClickCount = flashBuyClickCount;
         }
 
-        public List<String> getProductPointInfo() {
-            return productPointInfo;
+        public List<String> getBuyReason() {
+            return buyReason;
         }
 
-        public void setProductPointInfo(List<String> productPointInfo) {
-            this.productPointInfo = productPointInfo;
+        public void setBuyReason(List<String> productPointInfo) {
+            this.buyReason = productPointInfo;
         }
 
         public String getGpDiscounts() {
@@ -230,14 +250,6 @@ public class OldShopDetailsEntity extends BaseEntity{
 
         public void setCombineProductInfoList(List<CombineProductInfoBean> combineProductInfoList) {
             this.combineProductInfoList = combineProductInfoList;
-        }
-
-        public List<PresentProductInfoBean> getPresentProductInfoList() {
-            return presentProductInfoList;
-        }
-
-        public void setPresentProductInfoList(List<PresentProductInfoBean> presentProductInfoList) {
-            this.presentProductInfoList = presentProductInfoList;
         }
 
         public String getActivityPriceDesc() {
@@ -674,6 +686,52 @@ public class OldShopDetailsEntity extends BaseEntity{
             }
         }
 
+        public static class PresentInfoBean {
+            /**
+             * id : 1
+             * quantity : 1231
+             * picUrl : http://image.domolife.cn/platform/YEYnTXn3as1560503438864.jpg
+             * activityCode : ZP1560503944
+             */
+
+            private int id;
+            private int quantity;
+            private String picUrl;
+            private String activityCode;
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public int getQuantity() {
+                return quantity;
+            }
+
+            public void setQuantity(int quantity) {
+                this.quantity = quantity;
+            }
+
+            public String getPicUrl() {
+                return picUrl;
+            }
+
+            public void setPicUrl(String picUrl) {
+                this.picUrl = picUrl;
+            }
+
+            public String getActivityCode() {
+                return activityCode;
+            }
+
+            public void setActivityCode(String activityCode) {
+                this.activityCode = activityCode;
+            }
+        }
+
         public static class ProductType implements Parcelable {
             private String category_name;
             private int category_id;
@@ -776,10 +834,20 @@ public class OldShopDetailsEntity extends BaseEntity{
             private int quantity;
             private String presentSkuIds;
             private String combineSkuIds;
-//            积分商品独有属性
+            //            积分商品独有属性
             private String moneyPrice;
-//            是否开启补货通知
+            //            是否开启补货通知
             private int isNotice;
+
+            private String newUserTag;
+
+            public String getNewUserTag() {
+                return newUserTag;
+            }
+
+            public void setNewUserTag(String newUserTag) {
+                this.newUserTag = newUserTag;
+            }
 
             public int getIsNotice() {
                 return isNotice;
@@ -915,7 +983,7 @@ public class OldShopDetailsEntity extends BaseEntity{
             }
         }
 
-        public static class PresentProductInfoBean implements MultiItemEntity{
+        public static class PresentProductInfoBean implements MultiItemEntity {
 
             /**
              * presentName : 圣诞保温杯2
@@ -926,9 +994,9 @@ public class OldShopDetailsEntity extends BaseEntity{
             private String presentSkuId;
             private boolean isChecked;
             private int itemType;
-//            自定义参数 加顶部线条
+            //            自定义参数 加顶部线条
             private boolean select;
-//            是否是第一条
+            //            是否是第一条
             private boolean firstTag;
             private String name;
             private int couponId;
@@ -1072,6 +1140,33 @@ public class OldShopDetailsEntity extends BaseEntity{
             public void setCoupon_name(String coupon_name) {
                 this.coupon_name = coupon_name;
             }
+        }
+    }
+
+    private static class MZPresentInfoBean {
+
+        /**
+         * activityTag : 满赠
+         * activityCode : MZ1560504451
+         */
+
+        private String activityTag;
+        private String activityCode;
+
+        public String getActivityTag() {
+            return activityTag;
+        }
+
+        public void setActivityTag(String activityTag) {
+            this.activityTag = activityTag;
+        }
+
+        public String getActivityCode() {
+            return activityCode;
+        }
+
+        public void setActivityCode(String activityCode) {
+            this.activityCode = activityCode;
         }
     }
 }

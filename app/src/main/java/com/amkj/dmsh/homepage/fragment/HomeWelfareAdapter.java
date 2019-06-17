@@ -15,6 +15,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -27,7 +28,6 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 /**
  * Created by xiaoxin on 2019/4/14 0014
@@ -82,13 +82,13 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                     fbl_label.setVisibility(View.VISIBLE);
                     fbl_label.removeAllViews();
                     if (!TextUtils.isEmpty(goodsBean.getActivityTag())) {
-                        fbl_label.addView(getLabelInstance().createLabelText(mContext, goodsBean.getActivityTag(), 1));
+                        fbl_label.addView(ProductLabelCreateUtils.createLabelText(mContext, goodsBean.getActivityTag(), 1));
                     }
                     if (goodsBean.getMarketLabelList() != null
                             && goodsBean.getMarketLabelList().size() > 0) {
                         for (UserLikedProductEntity.LikedProductBean.MarketLabelBean marketLabelBean : goodsBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
-                                fbl_label.addView(getLabelInstance().createLabelText(mContext, marketLabelBean.getTitle(), 0));
+                                fbl_label.addView(ProductLabelCreateUtils.createLabelText(mContext, marketLabelBean.getTitle(), 0));
                                 if (fbl_label.getChildCount() >= 2) break;
                             }
                         }

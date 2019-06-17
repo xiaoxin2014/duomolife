@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -225,16 +226,16 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             this.editGoodsSkuBean = editGoodsSkuBean;
         }
 
-        if(editGoodsSkuBean!=null&&editGoodsSkuBean.getSkuSale()!=null&&editGoodsSkuBean.getSkuSale().size()>0){
+        if (editGoodsSkuBean != null && editGoodsSkuBean.getSkuSale() != null && editGoodsSkuBean.getSkuSale().size() > 0) {
             SkuSaleBean skuSaleBean = editGoodsSkuBean.getSkuSale().get(0);
             String[] skuValues = skuSaleBean.getPropValues().split(",");
-            if(skuValues.length>1){
+            if (skuValues.length > 1) {
                 scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
-                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext,600);
+                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 600);
                         scrollView.setLayoutParams(layoutParams);
                     }
                 });
@@ -289,15 +290,19 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             }
         });
         getSingleDouble(editGoodsSkuBean.isShowBottom(), editGoodsSkuBean.isSellStatus(), "确定", 0);
+        SkuSaleBean firstSaleBean = skuSaleList.get(0);
+        String minPrice = skuSaleList.get(0).getPrice();
+        String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
+        String newUserTag = getStrings(firstSaleBean.getNewUserTag());
+        skuDialogView.tv_dir_indent_pro_price.setTextColor(Color.parseColor(!TextUtils.isEmpty(firstSaleBean.getNewUserTag()) ? "#ff5e6b" : "#333000"));
         if (skuSaleList.size() > 1) {
-            if (skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice())) {
-                skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleList.get(0).getPrice()));
+            if (minPrice.equals(maxPrice)) {
+                skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice));
             } else {
-                skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleList.get(0).getPrice()
-                        + " - " + skuSaleList.get(skuSaleList.size() - 1).getPrice()));
+                skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice + " - " + maxPrice));
             }
         } else {
-            skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleList.get(0).getPrice()));
+            skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice));
         }
         if (skuDialogView.layout_parameter_slp.getChildCount() > 0) {
             skuDialogView.layout_parameter_slp.removeAllViews();
@@ -364,7 +369,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 }
             }
         }
-        getSingleDouble(isShowSingle, editGoodsSkuBean!=null&&editGoodsSkuBean.isSellStatus(), "", noticeType);
+        getSingleDouble(isShowSingle, editGoodsSkuBean != null && editGoodsSkuBean.isSellStatus(), "", noticeType);
     }
 
     private void setPresentData() {
@@ -540,8 +545,8 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         if (numCount == 0) {
             numCount = editGoodsSkuBean.getOldCount();
         }
-        rel_rect_count.setVisibility(numCount<1?View.GONE:View.VISIBLE);
-        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX,AutoSizeUtils.mm2px(mAppContext,28));
+        rel_rect_count.setVisibility(numCount < 1 ? View.GONE : View.VISIBLE);
+        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 28));
         rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
         setPresentData();
         rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);
@@ -556,7 +561,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                showToast(baseAct,R.string.product_sell_out);
+                showToast(baseAct, R.string.product_sell_out);
             }
         });
         skuDialogView.layout_parameter_slp.addView(numCountView);
@@ -1067,7 +1072,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 stringBuilder.append(",");
             }
             if (stringBuilder.length() > 0) {
-                stringBuilder.deleteCharAt(stringBuilder.length()-1);
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             }
             for (SkuSaleBean saleSkuBean : skuSaleList) {
                 if (saleSkuBean.getPropValues().contains(stringBuilder) && saleSkuBean.getQuantity() > 0) {
@@ -1240,7 +1245,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 valuesAppend.append(",");
             }
             if (valuesAppend.length() > 0) {
-                valuesAppend.deleteCharAt(valuesAppend.length()-1);
+                valuesAppend.deleteCharAt(valuesAppend.length() - 1);
             }
             for (int i = 0; i < skuSaleList.size(); i++) {
                 SkuSaleBean skuSaleBean = skuSaleList.get(i);
@@ -1248,7 +1253,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     if (numQuantity > skuSaleBean.getQuantity()) {
                         rectAddAndSubViewDirect.setNum(skuSaleBean.getQuantity());
                     }
-                    getSingleDouble(isShowSingle, editGoodsSkuBean!=null&&editGoodsSkuBean.isSellStatus(), "确定", skuSaleBean.getIsNotice());
+                    getSingleDouble(isShowSingle, editGoodsSkuBean != null && editGoodsSkuBean.isSellStatus(), "确定", skuSaleBean.getIsNotice());
                     for (ProductParameterTypeBean pro : productParameterTypeBeanList) {
                         for (ProductParameterValueBean productValue : pro.getValues()) {
                             if (valuesAppend.toString().contains(String.valueOf(productValue.getPropId()))) {
@@ -1270,7 +1275,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     }
                     setDiscountPrice(skuSaleBean.getId());
                     setPresentProduct(skuSaleBean.getPresentSkuIds());
-                    skuDialogView.tv_dir_indent_pro_price.setText(("¥" + skuSaleBean.getPrice()));
+                    skuDialogView.tv_dir_indent_pro_price.setText((getStrings(skuSaleBean.getNewUserTag()) + "¥" + skuSaleBean.getPrice()));
                     break;
                 }
             }
@@ -1459,21 +1464,21 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("skuId", skuSaleBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(baseAct,url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(baseAct, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(baseAct, requestStatus.getIsNotice() == 1?"已取消通知" : "已设置通知");
+                        showToast(baseAct, requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
                         if (isShowSingle) {
                             skuDialogView.bt_direct_attribute_buy.setText(requestStatus.getIsNotice() == 1 ? baseAct.getText(R.string.sku_notice) : baseAct.getText(R.string.sku_cancel_notice));
                         } else {
                             skuDialogView.bt_direct_attribute_car.setText(requestStatus.getIsNotice() == 1 ? baseAct.getText(R.string.sku_notice) : baseAct.getText(R.string.sku_cancel_notice));
                         }
                         skuSaleBean.setIsNotice(requestStatus.getIsNotice());
-                    }else{
+                    } else {
                         showToastRequestMsg(baseAct, requestStatus);
                     }
                 }

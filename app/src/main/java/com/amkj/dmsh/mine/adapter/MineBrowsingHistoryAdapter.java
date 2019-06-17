@@ -11,6 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.mine.bean.MineBrowsHistoryEntity.MineBrowsHistoryBean;
 import com.amkj.dmsh.mine.bean.MineBrowsHistoryEntity.MineBrowsHistoryBean.GoodsInfoListBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -23,7 +24,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 /**
  * @author LGuiPeng
@@ -84,11 +84,11 @@ public class MineBrowsingHistoryAdapter extends BaseMultiItemQuickAdapter<MultiI
                     if (!TextUtils.isEmpty(goodsInfoListBean.getActivityTag())) {
                         MarketLabelBean marketLabelBean = new MarketLabelBean();
                         marketLabelBean.setTitle(goodsInfoListBean.getActivityTag());
-                        fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 1));
+                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 1));
                     }
                     for (MarketLabelBean marketLabelBean : goodsInfoListBean.getGoodsTags()) {
                         if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
-                            fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
+                            fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                         }
                     }
                 } else {

@@ -109,6 +109,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/sc_mm_30"
                                 android:layout_marginRight="@dimen/sc_mm_30"
+                                android:layout_marginBottom="@dimen/sc_mm_30"
                                 android:visibility="gone"
                                 app:dividerDrawable="@drawable/item_divider_nine_dp_white"
                                 app:showDivider="middle"/>
@@ -118,7 +119,9 @@
                                 android:id="@+id/flex_product_point"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/sc_mm_30"
+                                android:layout_marginLeft="@dimen/sc_mm_30"
+                                android:layout_marginRight="@dimen/sc_mm_30"
+                                android:layout_marginBottom="@dimen/sc_mm_30"
                                 android:background="@drawable/border_cir_5dp_gray_light"
                                 android:padding="@dimen/sc_mm_27"
                                 android:visibility="gone"
@@ -188,7 +191,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@color/light_gray_f"
-                                android:paddingTop="@dimen/dimen_10_dp">
+                                android:paddingTop="@dimen/dimen_10_dp"
+                                android:visibility="gone">
 
                                 <include layout="@layout/layout_communal_recycler_wrap"/>
                             </RelativeLayout>

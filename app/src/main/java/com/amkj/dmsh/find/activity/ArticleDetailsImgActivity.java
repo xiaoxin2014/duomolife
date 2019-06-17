@@ -48,6 +48,7 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -95,7 +96,6 @@ import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
 import static com.amkj.dmsh.constant.Url.UPDATE_ATTENTION;
 import static com.amkj.dmsh.find.activity.FindTopicDetailsActivity.TOPIC_TYPE;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -696,9 +696,9 @@ public class ArticleDetailsImgActivity extends BaseActivity {
                 flex_communal_tag.removeAllViews();
                 for (int i = 0; i < detailsBean.getTagsList().size(); i++) {
                     if (i == 0) {
-                        flex_communal_tag.addView(getLabelInstance().createArticleIcon(ArticleDetailsImgActivity.this));
+                        flex_communal_tag.addView(ProductLabelCreateUtils.createArticleIcon(ArticleDetailsImgActivity.this));
                     }
-                    flex_communal_tag.addView(getLabelInstance().createArticleClickTag(ArticleDetailsImgActivity.this, detailsBean.getTagsList().get(i)));
+                    flex_communal_tag.addView(ProductLabelCreateUtils.createArticleClickTag(ArticleDetailsImgActivity.this, detailsBean.getTagsList().get(i)));
                 }
             } else {
                 rel_tag_layout_img.setVisibility(View.GONE);

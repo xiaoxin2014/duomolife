@@ -25,6 +25,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.google.android.flexbox.FlexboxLayout;
@@ -60,7 +61,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_COMMUNAL;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 
 /**
@@ -226,7 +226,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
             groupShareJoinView.flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
             groupShareJoinView.flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
             for (int i = 0; i < memberList.size(); i++) {
-                groupShareJoinView.flex_communal_tag.addView(getLabelInstance()
+                groupShareJoinView.flex_communal_tag.addView(ProductLabelCreateUtils
                         .createOpenGroupUserInfo(DoMoGroupJoinShareActivity.this, memberList.get(i)));
             }
         } else {

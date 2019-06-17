@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -22,7 +23,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 
 /**
@@ -88,7 +88,7 @@ public class ShopRecommendHotTopicAdapter extends BaseMultiItemQuickAdapter<Shop
                     fbl_market_label.removeAllViews();
                         for (MarketLabelBean marketLabelBean:shopRecommendHotTopicBean.getMarketLabelList()) {
                             if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                                fbl_market_label.addView(getLabelInstance().createLabelText(context,marketLabelBean.getTitle(),0));
+                                fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context,marketLabelBean.getTitle(),0));
                             }
                         }
                 }else{

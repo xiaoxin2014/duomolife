@@ -13,6 +13,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -27,7 +28,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 
 /**
@@ -110,14 +110,14 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                     fbl_market_label.removeAllViews();
                     //活动标签（仅有一个）
                     if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
-                        fbl_market_label.addView(getLabelInstance().createLabelText(context, likedProductBean.getActivityTag(), 1));
+                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getActivityTag(), 1));
                     }
                     //营销标签(可以有多个)
                     if (likedProductBean.getMarketLabelList() != null
                             && likedProductBean.getMarketLabelList().size() > 0) {
                         for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
-                                fbl_market_label.addView(getLabelInstance().createLabelText(context, marketLabelBean.getTitle(), 0));
+                                fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                                 if (fbl_market_label.getChildCount() >= 3) break;
                             }
                         }

@@ -25,6 +25,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.IndentSearchDetailsActivity;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxItemDecoration;
@@ -47,7 +48,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_HOT_SEARCH_LIST;
-import static com.amkj.dmsh.utils.ProductLabelCreateUtils.getLabelInstance;
 
 ;
 
@@ -192,7 +192,7 @@ public class HomePageSearchActivity extends BaseActivity {
                 ll_search_history.setVisibility(View.VISIBLE);
                 flex_communal_tag.removeAllViews();
                 for (String historyData :dataHistoryList) {
-                    TextView historySearchView = getLabelInstance().createHistorySearchRecord(HomePageSearchActivity.this, historyData);
+                    TextView historySearchView = ProductLabelCreateUtils.createHistorySearchRecord(HomePageSearchActivity.this, historyData);
                     historySearchView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
