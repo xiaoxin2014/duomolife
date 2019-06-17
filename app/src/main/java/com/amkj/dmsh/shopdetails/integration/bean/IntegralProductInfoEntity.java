@@ -2,10 +2,10 @@ package com.amkj.dmsh.shopdetails.integration.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropsBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropvaluesBean;
+import com.amkj.dmsh.shopdetails.bean.PropsBean;
+import com.amkj.dmsh.shopdetails.bean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.TagsBean;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

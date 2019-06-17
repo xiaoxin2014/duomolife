@@ -31,15 +31,32 @@
             android:textSize="@dimen/sc_mm_22"/>
     </RelativeLayout>
 
-
-    <TextView
-        android:id="@+id/tv_price_right"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_14"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_30"/>
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/tv_min_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_14"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_normal_red"
+            android:textSize="@dimen/sc_mm_30"/>
+
+        <TextView
+            android:id="@+id/tv_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_min_price"
+            android:layout_marginTop="@dimen/sc_mm_14"
+            android:layout_toRightOf="@+id/tv_min_price"
+            android:maxLines="1"
+            android:text="起"
+            android:textColor="@color/text_normal_red"
+            android:textSize="@dimen/sc_mm_22"
+            android:visibility="gone"/>
+    </RelativeLayout>
 </LinearLayout>

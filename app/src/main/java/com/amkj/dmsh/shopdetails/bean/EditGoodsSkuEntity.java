@@ -1,9 +1,6 @@
 package com.amkj.dmsh.shopdetails.bean;
 
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.CombineProductInfoBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropsBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropvaluesBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PresentProductInfoBean;
 import com.google.gson.annotations.SerializedName;
 

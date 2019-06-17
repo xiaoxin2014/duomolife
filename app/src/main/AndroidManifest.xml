@@ -1167,7 +1167,7 @@
 
         <!--组合搭配-->
         <activity
-            android:name=".shopdetails.activity.GroupCollocationActivity"
+            android:name=".shopdetails.activity.GroupMatchActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>

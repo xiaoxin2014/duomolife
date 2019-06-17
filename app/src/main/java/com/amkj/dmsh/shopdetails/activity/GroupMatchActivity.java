@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -7,17 +8,20 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.adapter.GroupCollocaAdapter;
-import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
-import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
+import com.amkj.dmsh.shopdetails.adapter.GroupMatchAdapter;
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity;
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -34,6 +38,7 @@ import q.rorbin.badgeview.Badge;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 /**
@@ -41,7 +46,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * Version:v4.1.0
  * ClassDescription :组合搭配
  */
-public class GroupCollocationActivity extends BaseActivity {
+public class GroupMatchActivity extends BaseActivity {
     @BindView(R.id.tv_life_back)
     TextView mTvLifeBack;
     @BindView(R.id.tv_header_title)
@@ -58,9 +63,12 @@ public class GroupCollocationActivity extends BaseActivity {
     RecyclerView mCommunalRecycler;
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout mSmartCommunalRefresh;
-    private List<ShopRecommendHotTopicBean> goodsGroupList = new ArrayList<>();
+    @BindView(R.id.ll_bottom)
+    LinearLayout mLlBottom;
     private Badge mBadge;
-    private GroupCollocaAdapter mGroupCollocaAdapter;
+    private GroupMatchAdapter mGroupCollocaAdapter;
+    private List<CombineCommonBean> groupGoods = new ArrayList<>();
+    private GroupGoodsEntity mGroupGoodsEntity;
     private String mProductId;
 
     @Override
@@ -70,25 +78,23 @@ public class GroupCollocationActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        if (getIntent() != null) {
-            goodsGroupList = getIntent().getParcelableArrayListExtra("groupList");
+        if (getIntent() != null && !TextUtils.isEmpty(getIntent().getStringExtra("productId"))) {
             mProductId = getIntent().getStringExtra("productId");
-            if (TextUtils.isEmpty(mProductId)) {
-                showToast("商品信息有误，请重试");
-                finish();
-            }
+        } else {
+            showToast("商品信息有误，请重试");
+            finish();
         }
         mTvHeaderTitle.setText("组合搭配");
         mIvImgService.setImageResource(R.drawable.shop_car_gray_icon);
         mBadge = getBadge(this, mFlHeaderService);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mGroupCollocaAdapter = new GroupCollocaAdapter(this, goodsGroupList);
+        mGroupCollocaAdapter = new GroupMatchAdapter(this, groupGoods);
         mCommunalRecycler.addItemDecoration(new RecycleViewDivider(
                 this, LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(this, 1), getResources().getColor(R.color.text_color_e_s)));
         mCommunalRecycler.setLayoutManager(layoutManager);
         mCommunalRecycler.setAdapter(mGroupCollocaAdapter);
         mGroupCollocaAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            ShopRecommendHotTopicBean bean = (ShopRecommendHotTopicBean) view.getTag();
+            CombineCommonBean bean = (CombineCommonBean) view.getTag();
             if (bean == null) return;
             switch (view.getId()) {
                 //选择sku
@@ -98,7 +104,7 @@ public class GroupCollocationActivity extends BaseActivity {
                 //选中或取消
                 case R.id.tv_shop_car_sel:
                     view.setSelected(!view.isSelected());
-                    bean.setChecked(view.isSelected());
+                    bean.setSelected(view.isSelected());
                     break;
             }
         });
@@ -111,33 +117,44 @@ public class GroupCollocationActivity extends BaseActivity {
         getGroupGoods(mProductId);
     }
 
-    //获取组合商品
+    //获取组合商品详细信息
     private void getGroupGoods(String id) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
+        String url = Url.BASE_URL + Url.Q_GROUP_GOODS_DETAIL;
         Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
+        params.put("productId", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 mSmartCommunalRefresh.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, ConstantVariable.SUCCESS_CODE);
-                ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
-                if (recommendHotTopicEntity != null) {
-                    List<ShopRecommendHotTopicBean> hotTopicList = recommendHotTopicEntity.getShopRecommendHotTopicList();
-                    if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (hotTopicList != null && hotTopicList.size() > 0) {
-                            goodsGroupList.clear();
-                            goodsGroupList.addAll(hotTopicList.subList(0, hotTopicList.size() > 20 ? 20 : hotTopicList.size()));
-                            mGroupCollocaAdapter.notifyDataSetChanged();
+                mGroupGoodsEntity = new Gson().fromJson(result, GroupGoodsEntity.class);
+                if (mGroupGoodsEntity != null && mGroupGoodsEntity.getResult() != null) {
+                    GroupGoodsEntity.GroupGoodsBean groupGoodsBean = mGroupGoodsEntity.getResult();
+                    if (mGroupGoodsEntity.getCode().equals(SUCCESS_CODE)) {
+                        CombineCommonBean combineMainProduct = groupGoodsBean.getCombineMainProduct();
+                        groupGoods.clear();
+                        if (combineMainProduct != null) {
+                            combineMainProduct.setMainProduct(true);
+                            groupGoods.add(combineMainProduct);
                         }
+                        List<CombineCommonBean> combineProductList = groupGoodsBean.getCombineMatchProductList();
+                        if (combineProductList != null && combineProductList.size() > 0) {
+                            groupGoods.addAll(combineProductList.subList(0, combineProductList.size() > 20 ? 20 : combineProductList.size()));
+                        }
+                        mGroupCollocaAdapter.notifyDataSetChanged();
+                    } else if (!mGroupGoodsEntity.getCode().equals(EMPTY_CODE)) {
+                        ConstantMethod.showToast(mGroupGoodsEntity.getMsg());
                     }
                 }
+
+                mLlBottom.setVisibility(groupGoods.size() > 0 ? View.VISIBLE : View.GONE);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, groupGoods, mGroupGoodsEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 mSmartCommunalRefresh.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, ConstantVariable.SUCCESS_CODE);
+                mLlBottom.setVisibility(groupGoods.size() > 0 ? View.VISIBLE : View.GONE);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, groupGoods, mGroupGoodsEntity);
             }
         });
     }
@@ -159,6 +176,8 @@ public class GroupCollocationActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.iv_img_service:
+                Intent intent = new Intent(getActivity(), ShopCarActivity.class);
+                startActivity(intent);
                 break;
             case R.id.iv_img_share:
                 break;

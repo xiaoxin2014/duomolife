@@ -577,6 +577,10 @@ public class Url {
     public static final String Q_SP_DETAIL_PRO_COLLECT = "api/home/addGoodsCollect";
     //    服务承诺
     public static final String Q_SP_DETAIL_SERVICE_COMMITMENT = "api/goods/order/getProductPromise";
+    //   组合商品基本信息
+    public static final String Q_GROUP_GOODS_BASIC = "api/goods/getCombineBasicInfo";
+    //   组合商品详细信息
+    public static final String Q_GROUP_GOODS_DETAIL = "api/goods/getCombineDetailInfo";
 
     //海外直邮主题列表
     public static final String QUALITY_OVERSEAS_THEME = "api/goods/overseas/getTopics";

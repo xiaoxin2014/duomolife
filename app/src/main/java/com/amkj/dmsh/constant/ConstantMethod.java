@@ -77,7 +77,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;

@@ -22,10 +22,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
+import com.amkj.dmsh.shopdetails.bean.PropsBean;
+import com.amkj.dmsh.shopdetails.bean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropsBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PropvaluesBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.SkuSaleBean;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 
 import java.util.ArrayList;

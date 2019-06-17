@@ -61,6 +61,8 @@ import com.amkj.dmsh.shopdetails.bean.DirectGoodsServerEntity.DirectGoodsServerB
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity;
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean;
@@ -69,6 +71,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.Present
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.TagsBean;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
@@ -325,7 +328,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //    商品推荐
     private List<ShopRecommendHotTopicBean> goodsRecommendList = new ArrayList<>();
     //    组合商品
-    private List<ShopRecommendHotTopicBean> goodsGroupList = new ArrayList<>();
+    private List<CombineCommonBean> goodsGroupList = new ArrayList<>();
     //    轮播图片视频
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
     //    商品评论
@@ -364,6 +367,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private GoodsGroupAdapter mGoodsGroupAdapter;
     private AlertDialog alertDialog;
     private DirectGoodsServerEntity mDirectGoodsServerEntity;
+    private GroupGoodsEntity mGroupGoodsEntity;
 
 
     @Override
@@ -606,19 +610,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         badge = getBadge(getActivity(), fl_header_service).setBadgeGravity(Gravity.END | Gravity.TOP);
         insertNewTotalData();
 
-        //初始化组团商品列表
+        //初始化组合商品列表
         mRvGoodsGroup.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mGoodsGroupAdapter = new GoodsGroupAdapter(this, goodsGroupList);
         mRvGoodsGroup.setAdapter(mGoodsGroupAdapter);
         mGoodsGroupAdapter.setOnItemClickListener((adapter, view, position) -> {
-            ShopRecommendHotTopicBean shopRecommendHotTopicBean = (ShopRecommendHotTopicBean) view.getTag();
-            if (shopRecommendHotTopicBean != null) {
-                Intent intent1 = new Intent(getActivity(), GroupCollocationActivity.class);
-                intent1.putParcelableArrayListExtra("groupList", (ArrayList<? extends Parcelable>) goodsGroupList);
-                intent1.putExtra("productId", productId);
-                startActivity(intent1);
+            CombineCommonBean combineCommonBean = (CombineCommonBean) view.getTag();
+            if (combineCommonBean != null) {
+                Intent intent1 = new Intent(getActivity(), GroupMatchActivity.class);
+                intent1.putExtra("productId", String.valueOf(mGroupGoodsEntity.getResult().getCombineMainProduct().getProductId()));
+                getActivity().startActivity(intent1);
             }
         });
+
 
         //初始化推荐商品列表
         mRvGoodsRecommend.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -631,6 +635,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
 
+        //推荐文章
         mLlArtical.setOnClickListener(v -> {
             if (articalRecommendList != null && articalRecommendList.size() > 0) {
                 ShopRecommendHotTopicBean hotTopicBean = articalRecommendList.get(0);
@@ -788,21 +793,22 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-    //获取组合商品
+    //获取组合商品基本信息
     private void getGroupGoods(int id) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
+        String url = Url.BASE_URL + Url.Q_GROUP_GOODS_BASIC;
         Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
+        params.put("productId", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
-                if (recommendHotTopicEntity != null) {
-                    List<ShopRecommendHotTopicBean> hotTopicList = recommendHotTopicEntity.getShopRecommendHotTopicList();
-                    if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (hotTopicList != null && hotTopicList.size() > 0) {
+                mGroupGoodsEntity = new Gson().fromJson(result, GroupGoodsEntity.class);
+                if (mGroupGoodsEntity != null && mGroupGoodsEntity.getResult() != null) {
+                    if (mGroupGoodsEntity.getCode().equals(SUCCESS_CODE)) {
+                        GroupGoodsEntity.GroupGoodsBean groupGoodsBean = mGroupGoodsEntity.getResult();
+                        List<CombineCommonBean> combineProductList = groupGoodsBean.getCombineMatchProductList();
+                        if (combineProductList != null && combineProductList.size() > 0) {
                             goodsGroupList.clear();
-                            goodsGroupList.addAll(hotTopicList.subList(0, hotTopicList.size() > 20 ? 20 : hotTopicList.size()));
+                            goodsGroupList.addAll(combineProductList.subList(0, combineProductList.size() > 20 ? 20 : combineProductList.size()));
                             mGoodsGroupAdapter.notifyDataSetChanged();
                         }
 
@@ -1063,7 +1069,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .addLink(link)
                     .build();
         } else {
-            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), shopProperty.getMarketPrice()));
+            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), stripTrailingZeros(shopProperty.getMarketPrice())));
         }
 
 
@@ -1310,7 +1316,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     private void setReplenishmentNotice() {
-        ShopPropertyBean.SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
+        SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
         if (shopPropertyBean.getSkuSale().size() > 0 && shopPropertyBean.getSkuSale().size() < 2
                 && (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2)) {
             tv_sp_details_add_car.setEnabled(true);
@@ -1438,7 +1444,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setSkuProp(ShopPropertyBean shopProperty) {
         if (shopProperty.getSkuSale() != null && shopProperty.getSkuSale().size() > 0) {
-            List<ShopPropertyBean.SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
+            List<SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
             //有多个SKU
             if (shopProperty.getSkuSale().size() > 1) {
                 //        获取价格排序范围
@@ -1837,7 +1843,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     if (!TextUtils.isEmpty(activityCode)) {
                         if (activityCode.contains("XSG")) {
                             //限时购活动
-                            List<ShopPropertyBean.SkuSaleBean> skuSale = shopPropertyBean.getSkuSale();
+                            List<SkuSaleBean> skuSale = shopPropertyBean.getSkuSale();
                             if (skuSale != null && skuSale.size() > 0) {
                                 String price = skuSale.get(0).getPrice();
                                 title = getStringsFormat(getActivity(), R.string.limited_time_preference, price) + shopPropertyBean.getName();

@@ -2,9 +2,10 @@ package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -17,24 +18,24 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by xiaoxin on 2019/5/24
  * Version:v4.1.0
- * ClassDescription :自营商品详情页组团商品适配器
+ * ClassDescription :组合商品适配器
  */
-public class GoodsGroupAdapter extends BaseQuickAdapter<ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean, BaseViewHolder> {
+public class GoodsGroupAdapter extends BaseQuickAdapter<CombineCommonBean, BaseViewHolder> {
 
     private final Activity mContext;
 
-    public GoodsGroupAdapter(Activity context, @Nullable List<ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean> data) {
+    public GoodsGroupAdapter(Activity context, @Nullable List<CombineCommonBean> data) {
         super(R.layout.item_scroll_detail_goods_group, data);
         mContext = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean item) {
-        if (item != null) {
-            GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), item.getPicUrl());
-            helper.setText(R.id.tv_price_right, getRmbFormat(mContext, item.getPrice()))
-                    .setText(R.id.tv_save_price, getStrings(item.getSave_num()));
-            helper.itemView.setTag(item);
-        }
+    protected void convert(BaseViewHolder helper, CombineCommonBean item) {
+        if (item == null) return;
+        GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), item.getPicUrl());
+        helper.setText(R.id.tv_min_price, getRmbFormat(mContext, item.getMinPrice()))
+                .setGone(R.id.tv_min, (!TextUtils.isEmpty(item.getMaxPrice()) && !item.getMaxPrice().equals(item.getMinPrice())))
+                .setText(R.id.tv_save_price, getStrings(item.getTag()));
+        helper.itemView.setTag(item);
     }
 }
