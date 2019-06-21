@@ -1806,6 +1806,8 @@ public class ConstantMethod {
                     }
                 }
             });
+        } else {
+            if (badge != null) badge.setBadgeNumber(0);
         }
     }
 

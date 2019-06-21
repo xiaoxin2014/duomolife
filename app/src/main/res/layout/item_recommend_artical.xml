@@ -5,8 +5,8 @@
               android:layout_height="wrap_content"
               android:background="@drawable/border_top_line"
               android:orientation="horizontal"
-              android:visibility="gone"
-              android:padding="@dimen/sc_mm_30">
+              android:padding="@dimen/sc_mm_30"
+              android:visibility="gone">
 
     <ImageView
         android:id="@+id/iv_artical_cover"
@@ -27,7 +27,7 @@
             android:layout_gravity="top"
             android:layout_marginTop="@dimen/sc_mm_15"
             android:ellipsize="end"
-            android:lines="1"
+            android:maxLines="2"
             android:textColor="@color/text_black_t"
             android:textSize="@dimen/sc_mm_30"/>
 
@@ -38,7 +38,7 @@
             android:layout_marginTop="@dimen/sc_mm_14"
             android:ellipsize="end"
             android:gravity="left|top"
-            android:lines="2"
+            android:maxLines="2"
             android:textColor="@color/color_blue_reply_com"
             android:textSize="@dimen/sc_mm_24"/>
     </LinearLayout>

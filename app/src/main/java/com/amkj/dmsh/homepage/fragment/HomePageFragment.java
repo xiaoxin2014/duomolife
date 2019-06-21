@@ -197,6 +197,7 @@ public class HomePageFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getMessageWarm();
+        getCarCount(getActivity(), badgeCart);
     }
 
 

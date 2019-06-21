@@ -935,6 +935,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_group_product.setVisibility(GONE);
         }
         //选择规格
+        tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
         tv_ql_sp_pro_sku.setText(getString(R.string.sel_pro_sku
                 , getStrings(shopProperty.getProps().get(0).getPropName())));
         if (isEndOrStartTime(shopPropertyBean.getStartTime(), shopDetailsEntity.getCurrentTime())
@@ -1049,7 +1050,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         mTvProductMartketPrice.setText(getStringsFormat(this, R.string.xsg_market_price, shopProperty.getPrice()) + end);
                         mTvProductMartketPrice.setPaintFlags(mTvProductMartketPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                     }
-                } else if (activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("BJ")) {
+                } else if (activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("TH")) {
                     mRlActivityPrice.setVisibility(GONE);
                     mIvNextIcon.setVisibility(GONE);
                     tv_product_activity_description.setVisibility(VISIBLE);
@@ -1065,6 +1066,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     startCountDownTime(mTvTipsBottom, mCtCountDownBottom);
                     mLlTimeHoursBottom.setVisibility(VISIBLE);
+                }else {
+                    ll_product_activity_detail.setVisibility(GONE);
+                    mLlScroolDetailPrice.setVisibility(VISIBLE);
+                    mLlTimeHoursBottom.setVisibility(GONE);
                 }
 
                 //活动规则
@@ -1106,7 +1111,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .addLink(link)
                     .build();
         } else {
-            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), stripTrailingZeros(shopProperty.getMarketPrice())));
+            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), shopProperty.getMarketPrice()));
         }
 
 
@@ -1157,22 +1162,22 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
             }
 
-            //赠品营销标签
+            //赠品活动标签
             ShopPropertyBean.PresentInfoBean presentInfo = shopProperty.getPresentInfo();
             if (presentInfo != null) {
                 MarketLabelBean marketLabelBean = new MarketLabelBean();
                 marketLabelBean.setTitle("赠品");
-                marketLabelBean.setLabelCode(0);
+                marketLabelBean.setLabelCode(1);
                 fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
             }
 
-            //满赠营销标签
+            //满赠活动标签
             ShopPropertyBean.MZPresentInfoBean mzPresentInfo = shopProperty.getMzPresentInfo();
             if (mzPresentInfo != null && !shopProperty.getActivityCode().contains("MZ")) {
                 MarketLabelBean marketLabelBean = new MarketLabelBean();
                 marketLabelBean.setTitle(mzPresentInfo.getActivityTag());
                 marketLabelBean.setActivityCode(getStrings(mzPresentInfo.getActivityCode()));
-                marketLabelBean.setLabelCode(0);
+                marketLabelBean.setLabelCode(1);
                 fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
             }
 
@@ -1543,7 +1548,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             String minPrice = skuSaleList.get(0).getPrice();
             String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
             mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
-            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + stripTrailingZeros(maxPrice), false));
+            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" +stripTrailingZeros(maxPrice), false));
         } else {
             showToast(this, "商品数据错误");
         }
@@ -1625,6 +1630,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     public void getSkuProperty(ShopCarGoodsSku shopCarGoodsSku) {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
+                            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.text_black_t));
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
                             addCarCheckLoginStatus();
                         }
@@ -1664,6 +1670,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     public void getSkuProperty(ShopCarGoodsSku shopCarGoodsSku) {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
+                            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.text_black_t));
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
                             buyGoItCheckStatus();
                         }
@@ -1907,6 +1914,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     skuDialog.getGoodsSKu(shopCarGoodsSku -> {
                         shopCarGoodsSkuDif = shopCarGoodsSku;
                         if (shopCarGoodsSkuDif != null) {
+                            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.text_black_t));
                             tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
                             if (!TextUtils.isEmpty(shopCarGoodsSkuDif.getProType())) {
                                 switch (shopCarGoodsSkuDif.getProType()) {
@@ -1919,6 +1927,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                                 }
                             }
                         } else {
+                            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
                             tv_ql_sp_pro_sku.setText(String.format(getResources().getString(R.string.sel_pro_sku)
                                     , getStrings(shopPropertyBean.getProps().get(0).getPropName())));
                         }
@@ -1939,6 +1948,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         alertDialog.show();
                         Window window = alertDialog.getWindow();
                         window.getDecorView().setPadding(0, 0, 0, 0);
+                        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         window.setGravity(Gravity.BOTTOM);//底部出现
                         window.setContentView(dialogView);
                     } else {

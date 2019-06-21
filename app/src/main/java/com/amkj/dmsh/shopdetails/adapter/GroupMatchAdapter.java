@@ -43,9 +43,9 @@ public class GroupMatchAdapter extends BaseQuickAdapter<CombineCommonBean, BaseV
                 .setText(R.id.tv_min_price, getRmbFormat(context, item.getMinPrice()))
                 .setText(R.id.tv_max_price, "~" + "¥" + getRmbFormat(mContext, item.getMaxPrice(), false))
                 .setGone(R.id.tv_max_price, (!TextUtils.isEmpty(item.getMaxPrice()) && !item.getMaxPrice().equals(item.getMinPrice())))
-                .addOnClickListener(R.id.tv_select_sku).setTag(R.id.tv_select_sku, item)
+                .addOnClickListener(R.id.rl_cover).setTag(R.id.rl_cover, item)
                 .setEnabled(R.id.tv_select_sku, item.getSkuSale().size() > 1)
-                .addOnClickListener(R.id.tv_shop_car_sel).setTag(R.id.tv_shop_car_sel, item)
+                .addOnClickListener(R.id.tv_select_sku).setTag(R.id.tv_select_sku, item)
                 .setEnabled(R.id.tv_shop_car_sel, !item.isMainProduct() || item.getStock() < 1);//主商品和无库存商品不可编辑
 
         TextView tvSku = helper.getView(R.id.tv_select_sku);

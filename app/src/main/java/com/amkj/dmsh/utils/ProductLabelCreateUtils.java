@@ -25,7 +25,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 
 /**
  * @author LGuiPeng
@@ -84,7 +83,7 @@ public class ProductLabelCreateUtils {
         gradientDrawable.setColor(context.getResources().getColor(R.color.white));
         int colorValue;
         if (marketLabelBean.getLabelCode() == 1) {
-            colorValue = context.getResources().getColor(R.color.text_pink_red);
+            colorValue = context.getResources().getColor(R.color.text_normal_red);
         } else {
             colorValue = context.getResources().getColor(R.color.text_yel_f_s);
         }
@@ -93,7 +92,7 @@ public class ProductLabelCreateUtils {
         textView.setTextColor(colorValue);
         textView.setGravity(Gravity.CENTER);
         textView.setBackground(gradientDrawable);
-        textView.setText(getStringsFormat(context, R.string.communal_go_string, getStrings(marketLabelBean.getTitle())));
+        textView.setText(getStrings(marketLabelBean.getTitle()));
         textView.setTag(marketLabelBean);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 24));
         textView.setOnClickListener(v -> {

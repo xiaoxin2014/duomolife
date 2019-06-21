@@ -122,17 +122,11 @@ public class GroupMatchActivity extends BaseActivity {
                     selectSku(combineCommonBean, position, combineCommonBean.isSelected(), view);
                     break;
                 //选中或取消
-                case R.id.tv_shop_car_sel:
-                    boolean checkStatus = !view.isSelected();
-                    //已选择sku的情况下才能直接被选中
-                    if (combineCommonBean.getSkuId() > 0 || !checkStatus) {
-                        view.setSelected(!view.isSelected());
-                        combineCommonBean.setSelected(view.isSelected());
-                        updateTotalPrice();
-                    } else {
-                        selectSku(combineCommonBean, position, true, view);
-                    }
-
+                case R.id.rl_cover:
+                    int productId = combineCommonBean.getProductId();
+                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
+                    intent.putExtra("productId", String.valueOf(productId));
+                    startActivity(intent);
                     break;
             }
         });
@@ -140,10 +134,15 @@ public class GroupMatchActivity extends BaseActivity {
         mGroupCollocaAdapter.setOnItemClickListener((adapter, view, position) -> {
             CombineCommonBean combineCommonBean = (CombineCommonBean) view.getTag();
             if (combineCommonBean != null) {
-                int productId = combineCommonBean.getProductId();
-                Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                intent.putExtra("productId", String.valueOf(productId));
-                startActivity(intent);
+                boolean checkStatus = !view.isSelected();
+                //已选择sku的情况下才能直接被选中
+                if (combineCommonBean.getSkuId() > 0 || !checkStatus) {
+                    view.setSelected(!view.isSelected());
+                    combineCommonBean.setSelected(view.isSelected());
+                    updateTotalPrice();
+                } else {
+                    selectSku(combineCommonBean, position, true, view);
+                }
             }
         });
         mSmartCommunalRefresh.setOnRefreshListener((refreshLayout) -> {
@@ -308,7 +307,8 @@ public class GroupMatchActivity extends BaseActivity {
                                 ConstantMethod.showToast("至少选择一个组合商品");
                             }
                         } else {
-                            selectSku(groupGoods.get(0), 0, false, view);
+                            ConstantMethod.showToast("请选择主商品属性");
+//                            selectSku(groupGoods.get(0), 0, false, view);
                         }
                     }
                 } else {
@@ -340,8 +340,9 @@ public class GroupMatchActivity extends BaseActivity {
                                 ConstantMethod.showToast("至少选择一个组合商品");
                             }
                         } else {
-                            //弹窗选择主商品sku
-                            selectSku(groupGoods.get(0), 0, false, view);
+                            ConstantMethod.showToast("请选择主商品属性");
+//                            //弹窗选择主商品sku
+//                            selectSku(groupGoods.get(0), 0, false, view);
                         }
                     }
                 } else {
