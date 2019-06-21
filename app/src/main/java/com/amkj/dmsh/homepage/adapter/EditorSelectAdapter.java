@@ -23,6 +23,7 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY;
 
@@ -66,14 +67,18 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         }
         CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, webDetailsFormatDataList);
         communalDetailAdapter.setEnableLoadMore(false);
-        communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag(R.id.iv_tag);
+        communalDetailAdapter.setOnItemClickListener((adapter, view, position) -> {
+            CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
             if (communalDetailBean != null) {
-                CommunalWebDetailUtils.getCommunalWebInstance()
-                        .setWebDataClick(context, view, context.loadHud);
+                skipProductUrl(context, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
                 //记录埋点参数sourceId
                 ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
             }
+        });
+        communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            CommunalWebDetailUtils.getCommunalWebInstance().setWebDataClick(context, view, context.loadHud);
+            //记录埋点参数sourceId
+            ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
         });
         rvPicGoods.setAdapter(communalDetailAdapter);
 

@@ -238,8 +238,6 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
         View numCountView = LayoutInflater.from(baseAct).inflate(R.layout.layout_direct_count_num, (ViewGroup) skuDialogView.layout_parameter_slp.getParent(), false);
         rectAddAndSubViewDirect = (RectAddAndSubViewDirect) numCountView.findViewById(R.id.rect_number);
         rel_rect_count = (RelativeLayout) numCountView.findViewById(R.id.rel_rect_count);
-        RecyclerView communal_recycler_wrap = (RecyclerView) numCountView.findViewById(R.id.communal_recycler_wrap);
-        communal_recycler_wrap.setVisibility(View.GONE);
         if (numCount == 0) {
             numCount = editGoodsSkuBean.getOldCount();
         }

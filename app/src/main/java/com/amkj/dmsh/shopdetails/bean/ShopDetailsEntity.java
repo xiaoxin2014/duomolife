@@ -88,6 +88,7 @@ public class ShopDetailsEntity extends BaseEntity {
         private long addSecond;
         private String maxDiscounts;
 
+
         public String getMaxDiscounts() {
             return maxDiscounts;
         }

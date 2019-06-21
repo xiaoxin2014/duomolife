@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
@@ -30,7 +31,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TITLE;
 /**
  * Created by xiaoxin on 2019/4/20 0020
  * Version:v4.0.0
- * ClassDescription :分类商品适配器
+ * ClassDescription :一行三列商品通用适配器
  */
 public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
 
@@ -76,10 +77,27 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                         for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                                 fbl_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
-                                if (fbl_label.getChildCount() >= 2) break;
                             }
                         }
                     }
+
+                    //限制标签最多显示一行，超出屏幕外的自动移除
+                    if (fbl_label.getChildCount()>0){
+                        ViewTreeObserver observer = fbl_label.getViewTreeObserver();
+                        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                int width = fbl_label.getMeasuredWidth();
+                                int max = helper.itemView.getMeasuredWidth();
+                                if (width >= max) {
+                                    fbl_label.removeViewAt(fbl_label.getChildCount() - 1);
+                                } else {
+                                    fbl_label.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                }
+                            }
+                        });
+                    }
+
                 } else {
                     fbl_label.setVisibility(View.GONE);
                 }
@@ -87,7 +105,7 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                 break;
             case TITLE:
                 ImageView imageView = helper.getView(R.id.iv_type);
-                imageView.setImageResource(likedProductBean.getType_id());
+                imageView.setImageResource(likedProductBean.getTitleHead());
                 break;
             case AD_COVER:
                 ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
- * ClassDescription :
+ * ClassDescription :SKU实体类
  */
 public class SkuSaleBean implements Parcelable {
     /**
@@ -25,7 +25,7 @@ public class SkuSaleBean implements Parcelable {
     private int productId;
     private String price;
     private int quantity;
-    private String propValues;
+    private String propValues;  //sku，多个propValueId之间用逗号隔开   例如L,白色
     private int type;
     private int isNotice;
     private String presentSkuIds;

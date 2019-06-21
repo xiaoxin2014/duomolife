@@ -140,9 +140,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderProductInfoBean.getName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderProductInfoBean.getSaleSkuValue()));
                 if (orderProductInfoBean.getActivityInfoDetailBean() != null) {
+                    String activityTag = getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                            .setGone(R.id.tv_communal_activity_tag, true)
-                            .setText(R.id.tv_communal_activity_tag, getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityTag()))
+                            .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityTag))
+                            .setText(R.id.tv_communal_activity_tag, activityTag)
                             .setGone(R.id.tv_details_gray, orderProductInfoBean.getShowLine() == 1)
                             .setGone(R.id.ll_communal_activity_tag_rule, true)
                             .setText(R.id.tv_communal_activity_tag_rule, getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityRule()))
@@ -199,9 +200,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setGone(R.id.tv_indent_write_reason, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
                         .setText(R.id.tv_indent_write_reason, getStrings(productInfoBean.getNotBuyAreaInfo()));
                 if (productInfoBean.getActivityInfoBean() != null && productInfoBean.getShowActInfo() == 1) {
+                    String activityTag = getStrings(productInfoBean.getActivityInfoBean().getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                            .setGone(R.id.tv_communal_activity_tag, true)
-                            .setText(R.id.tv_communal_activity_tag, getStrings(productInfoBean.getActivityInfoBean().getActivityTag()))
+                            .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityTag))
+                            .setText(R.id.tv_communal_activity_tag, activityTag)
                             .setGone(R.id.ll_communal_activity_tag_rule, true)
                             .setText(R.id.tv_communal_activity_tag_rule, getStrings(productInfoBean.getActivityInfoBean().getActivityRule()))
                             .setGone(R.id.tv_communal_activity_tag_next,
@@ -316,9 +318,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, orderProductInfoBean.getPrice()))
                         .setText(R.id.tv_direct_pro_count, "x" + orderProductInfoBean.getCount());
                 if (orderProductInfoBean.getActivityInfoDetailBean() != null) {
+                    String activityTag = getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                            .setGone(R.id.tv_communal_activity_tag, true)
-                            .setText(R.id.tv_communal_activity_tag, getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityTag()))
+                            .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityTag))
+                            .setText(R.id.tv_communal_activity_tag, activityTag)
                             .setGone(R.id.tv_details_gray, orderProductInfoBean.getShowLine() == 1)
                             .setGone(R.id.ll_communal_activity_tag_rule, true)
                             .setText(R.id.tv_communal_activity_tag_rule, getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityRule()))

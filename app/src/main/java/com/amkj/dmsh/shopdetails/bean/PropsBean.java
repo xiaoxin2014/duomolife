@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
- * ClassDescription :
+ * ClassDescription :商品属性实体类（例如衣服有大小和颜色两种属性）
  */
 public class PropsBean implements Parcelable {
     /**
@@ -15,8 +15,8 @@ public class PropsBean implements Parcelable {
      * praentId : 0
      */
 
-    private int propId;
-    private String propName;
+    private int propId;  //属性id
+    private String propName;//属性名称
     private int praentId;
 
     public int getPropId() {

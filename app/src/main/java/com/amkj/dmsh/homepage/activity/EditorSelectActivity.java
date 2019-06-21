@@ -112,7 +112,6 @@ public class EditorSelectActivity extends BaseActivity {
         mRvEditor.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
                 this, LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(this, 1), getResources().getColor(R.color.text_color_e_s)));
-        mRvEditor.setNestedScrollingEnabled(false);
         mEditorHeadView = new EditorHeadView(EditorSelectActivity.this);
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);

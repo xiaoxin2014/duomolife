@@ -21,17 +21,11 @@
             android:layout_height="match_parent"
             android:descendantFocusability="blocksDescendants">
 
-            <android.support.v4.widget.NestedScrollView
-                android:id="@+id/scrollview"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_editor"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_editor"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="none"/>
-            </android.support.v4.widget.NestedScrollView>
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
         </RelativeLayout>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>

@@ -10,7 +10,3 @@
     app:dividerDrawable="@drawable/item_divider_product_tag"
     app:showDivider="middle"
     app:flexWrap="wrap"/>
-<!--android:paddingTop="@dimen/sc_mm_25"
-    android:paddingBottom="@dimen/sc_mm_10"
-    android:paddingLeft="@dimen/sc_mm_13"
-    android:paddingRight="@dimen/sc_mm_13"-->

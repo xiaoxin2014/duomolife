@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
- * ClassDescription :
+ * ClassDescription :SPU实体类   SKU最小组成单位
  */
 public class PropvaluesBean implements Parcelable {
     /**

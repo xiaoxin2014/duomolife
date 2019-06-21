@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -300,6 +301,13 @@ public class ShopCarNewInfoEntity {
              */
             private int cartId;
 
+            public CartInfoBean(CombineCommonBean combineCommonBean) {
+                setProductId(combineCommonBean.getProductId());
+                setId(combineCommonBean.getSkuId());
+                setCount(combineCommonBean.getCount());
+                setSaleSku(new SaleSkuBean(combineCommonBean.getQuantity(), combineCommonBean.getMinPrice(), combineCommonBean.getSkuId()));
+            }
+
             public int getCurrentPosition() {
                 return currentPosition;
             }
@@ -551,6 +559,15 @@ public class ShopCarNewInfoEntity {
                 private String price;
                 private int id;
 
+                public SaleSkuBean() {
+                }
+
+                public SaleSkuBean(int quantity, String price, int id) {
+                    this.quantity = quantity;
+                    this.price = price;
+                    this.id = id;
+                }
+
                 public int getQuantity() {
                     return quantity;
                 }
@@ -587,8 +604,6 @@ public class ShopCarNewInfoEntity {
                     dest.writeInt(this.id);
                 }
 
-                public SaleSkuBean() {
-                }
 
                 protected SaleSkuBean(Parcel in) {
                     this.quantity = in.readInt();

@@ -44,6 +44,7 @@
                             android:orientation="vertical">
 
                             <RelativeLayout
+                                android:id="@+id/rl_banner"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/sc_mm_750">
 
@@ -139,18 +140,18 @@
                                 android:id="@+id/ll_sp_pro_sku_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/light_gray_f"
+                                android:background="@drawable/border_top_divider_10dp"
+                                android:gravity="center_vertical"
                                 android:orientation="horizontal"
-                                android:paddingTop="@dimen/sc_mm_10">
+                                android:paddingTop="@dimen/dimen_10_dp"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:id="@+id/tv_ql_sp_pro_sku"
                                     android:layout_width="match_parent"
                                     android:layout_height="@dimen/sc_mm_100"
-                                    android:layout_weight="1"
-                                    android:background="@color/white"
                                     android:drawableRight="@drawable/right_btn_nor"
-                                    android:gravity="center_vertical|left"
+                                    android:gravity="center_vertical"
                                     android:paddingLeft="@dimen/sc_mm_30"
                                     android:paddingRight="@dimen/sc_mm_30"
                                     android:text="选择商品属性"
@@ -227,41 +228,34 @@
                                     android:scrollbars="none"/>
                             </LinearLayout>
 
-                            <LinearLayout
+                            <RelativeLayout
+                                android:id="@+id/ll_layout_pro_sc_tag"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/light_gray_f"
-                                android:paddingTop="10dp">
+                                android:background="@drawable/border_top_divider_10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingLeft="@dimen/sc_mm_30"
+                                android:paddingTop="@dimen/dp_10"
+                                android:paddingRight="@dimen/sc_mm_30">
 
-                                <RelativeLayout
-                                    android:id="@+id/ll_layout_pro_sc_tag"
-                                    android:layout_width="match_parent"
+                                <com.google.android.flexbox.FlexboxLayout
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/flex_product_tag"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="@dimen/sc_mm_80"
-                                    android:background="@color/white"
-                                    android:orientation="horizontal"
-                                    android:paddingLeft="@dimen/sc_mm_30"
-                                    android:paddingRight="@dimen/sc_mm_30">
+                                    app:dividerDrawable="@drawable/item_divider_product_tag"
+                                    app:showDivider="middle"/>
 
-                                    <com.google.android.flexbox.FlexboxLayout
-                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                        android:id="@+id/flex_product_tag"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:layout_centerVertical="true"
-                                        app:dividerDrawable="@drawable/item_divider_product_tag"
-                                        app:flexDirection="row"
-                                        app:showDivider="middle"/>
-
-                                    <ImageView
-                                        android:id="@+id/iv_more_tag"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentRight="true"
-                                        android:layout_centerVertical="true"
-                                        android:background="@color/white"
-                                        android:src="@drawable/right_btn_nor"/>
-                                </RelativeLayout>
-                            </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/iv_more_tag"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:paddingTop="@dimen/dp_10"
+                                    android:src="@drawable/right_btn_nor"/>
+                            </RelativeLayout>
 
                             <LinearLayout
                                 android:id="@+id/ll_pro_buy_before"
@@ -269,7 +263,8 @@
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/border_top_line"
                                 android:orientation="vertical"
-                                android:padding="@dimen/sc_mm_30">
+                                android:padding="@dimen/sc_mm_30"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:layout_width="wrap_content"

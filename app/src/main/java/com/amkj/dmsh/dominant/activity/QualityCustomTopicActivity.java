@@ -58,6 +58,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -326,7 +327,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getCarCount(getActivity(),badge);
+            getCarCount(getActivity(), badge);
         }
     }
 
@@ -438,7 +439,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     , getStrings(userLikedProductEntity.getZoneName())
                     , "我在多么生活发现这几样好物，性价比不错，还包邮"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType
-                    , "pages/handpick/handpick?id=" + productType, likedProductBean.getType_id());
+                    , "pages/handpick/handpick?id=" + productType, getStringChangeIntegers(productType));
         }
     }
 

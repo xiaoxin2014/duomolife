@@ -107,7 +107,6 @@ public class EditorSelectFragment extends BaseFragment {
         mRvEditor.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRvEditor.addItemDecoration(new RecycleViewDivider(
                 getActivity(), LinearLayoutManager.HORIZONTAL, AutoSizeUtils.mm2px(mAppContext, 1), getResources().getColor(R.color.text_color_e_s)));
-        mRvEditor.setNestedScrollingEnabled(false);
         mEditorHeadView = new EditorHeadView(getActivity());
         mEditorAdapter.addHeaderView(mEditorHeadView);
         mRvEditor.setAdapter(mEditorAdapter);

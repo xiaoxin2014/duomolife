@@ -2,6 +2,7 @@ package com.amkj.dmsh.shopdetails.bean;
 
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.CombineProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PresentProductInfoBean;
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -74,30 +75,50 @@ public class EditGoodsSkuEntity {
         //        积分商品专属
         private int userScore;
         private List<PresentProductInfoBean> presentProductInfoList;
-        /**
-         * id : 665
-         * price : 2.70
-         * propValues : 3,12
-         * quantity : 17
-         */
-
+        //是否是组合搭配
+        private boolean isGroupMatch;
         private List<SkuSaleBean> skuSale;
-        /**
-         * propId : 1
-         * propValueName : 赤
-         * propValueId : 1
-         */
-
         private List<PropvaluesBean> propvalues;
-        /**
-         * parentId : 0
-         * propId : 1
-         * propName : 颜色
-         */
-
         private List<PropsBean> props;
         //        组合优惠
         private List<CombineProductInfoBean> combineProductInfoList;
+        //是否是组合搭配
+        private boolean isCombine;
+
+        public EditGoodsSkuBean() {
+        }
+
+        public EditGoodsSkuBean(CombineCommonBean CombineCommonBean) {
+            this.picUrl = CombineCommonBean.getPicUrl();
+            this.id = CombineCommonBean.getProductId();
+            this.productName = CombineCommonBean.getName();
+            this.skuSale = CombineCommonBean.getSkuSale();
+            this.propvalues = CombineCommonBean.getPropvalues();
+            this.props = CombineCommonBean.getProps();
+            //加上这两个字段以后，打开sku弹窗会默认选中当前的sku
+            if (CombineCommonBean.getSkuId() > 0) {
+                setShopCarEdit(true);
+                this.skuId = CombineCommonBean.getSkuId();
+            }
+            this.isGroupMatch = true;
+            this.isCombine = true;
+        }
+
+        public boolean isCombine() {
+            return isCombine;
+        }
+
+        public void setCombine(boolean combine) {
+            isCombine = combine;
+        }
+
+        public boolean isGroupMatch() {
+            return isGroupMatch;
+        }
+
+        public void setGroupMatch(boolean groupMatch) {
+            isGroupMatch = groupMatch;
+        }
 
         public List<CombineProductInfoBean> getCombineProductInfoList() {
             return combineProductInfoList;
@@ -249,45 +270,6 @@ public class EditGoodsSkuEntity {
 
         public void setProps(List<PropsBean> props) {
             this.props = props;
-        }
-
-        public static class PropValuesBean {
-            private int propId;
-            private String propValueName;
-            private String propValueUrl;
-            private int propValueId;
-
-            public String getPropValueUrl() {
-                return propValueUrl;
-            }
-
-            public void setPropValueUrl(String propValueUrl) {
-                this.propValueUrl = propValueUrl;
-            }
-
-            public int getPropId() {
-                return propId;
-            }
-
-            public void setPropId(int propId) {
-                this.propId = propId;
-            }
-
-            public String getPropValueName() {
-                return propValueName;
-            }
-
-            public void setPropValueName(String propValueName) {
-                this.propValueName = propValueName;
-            }
-
-            public int getPropValueId() {
-                return propValueId;
-            }
-
-            public void setPropValueId(int propValueId) {
-                this.propValueId = propValueId;
-            }
         }
     }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/sc_mm_38"
+              android:paddingTop="@dimen/sc_mm_56"
+              android:paddingRight="@dimen/sc_mm_38"
+              android:paddingBottom="@dimen/sc_mm_56">
+
+    <include
+        layout="@layout/layout_communal_flexbox"/>
+
+</LinearLayout>

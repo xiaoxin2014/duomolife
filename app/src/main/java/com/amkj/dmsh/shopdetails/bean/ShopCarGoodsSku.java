@@ -24,6 +24,15 @@ public class ShopCarGoodsSku implements Parcelable {
     private String presentIds;
     private String proType;
     private String activityCode;
+    private int quantity;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
     public int getIntegralType() {
         return integralType;

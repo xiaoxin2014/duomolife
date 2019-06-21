@@ -250,6 +250,8 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private String type;
         //新人专享商品专用字段（省多少钱）
         private String decreasePrice;
+        //新人专享商品专区头部专用字段（省多少钱）
+        private int titleHead;
         private int limitBuy;
         private int category_id;
         @SerializedName("buyIntergral")
@@ -259,6 +261,14 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         @SerializedName(value = "android_link", alternate = "androidLink")
         private String androidLink;
         private List<MarketLabelBean> marketLabelList;
+
+        public int getTitleHead() {
+            return titleHead;
+        }
+
+        public void setTitleHead(int titleHead) {
+            this.titleHead = titleHead;
+        }
 
         public String getObjectType() {
             return objectType;

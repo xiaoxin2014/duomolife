@@ -24,13 +24,11 @@
     <com.google.android.flexbox.FlexboxLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fbl_label"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/sc_mm_10"
         android:paddingLeft="@dimen/sc_mm_12"
         app:dividerDrawable="@drawable/item_divider_img_red"
-        app:flexWrap="wrap"
         app:showDivider="middle"/>
 
     <TextView

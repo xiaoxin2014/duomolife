@@ -6,11 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +29,11 @@ import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.adapter.ProductTextAdapter;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.PropsBean;
 import com.amkj.dmsh.shopdetails.bean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.CombineProductInfoBean;
-import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PresentProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
@@ -71,9 +66,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 
-;
 
 /**
  * @author zwy
@@ -110,15 +103,12 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
     private List<PropvaluesBean> propValuesList;
     private List<PropsBean> propsList;
     private RectAddAndSubViewDirect rectAddAndSubViewDirect;
-    private RecyclerView communal_recycler_wrap;
     private int numCount;
     private SkuDialogView skuDialogView;
     private boolean isShowSingle;
     //    属性图片
     private List<ImageBean> picValueList = new ArrayList<>();
     private Map<Integer, Float> discountMap;
-    private List<PresentProductInfoBean> presentProductInfoList = new ArrayList<>();
-    private ProductTextAdapter presentProAdapter;
     private boolean isSelectNotice;
     private int noticeType;
     private RelativeLayout rel_rect_count;
@@ -219,13 +209,12 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
 
     //   刷新数据
     public void refreshView(EditGoodsSkuBean editGoodsSkuBean) {
-        if (dialog == null) {
-            init();
-        }
         if (editGoodsSkuBean != null) {
             this.editGoodsSkuBean = editGoodsSkuBean;
         }
-
+        if (dialog == null) {
+            init();
+        }
         if (editGoodsSkuBean != null && editGoodsSkuBean.getSkuSale() != null && editGoodsSkuBean.getSkuSale().size() > 0) {
             SkuSaleBean skuSaleBean = editGoodsSkuBean.getSkuSale().get(0);
             String[] skuValues = skuSaleBean.getPropValues().split(",");
@@ -372,34 +361,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         getSingleDouble(isShowSingle, editGoodsSkuBean != null && editGoodsSkuBean.isSellStatus(), "", noticeType);
     }
 
-    private void setPresentData() {
-        if (editGoodsSkuBean.getPresentProductInfoList() != null
-                && editGoodsSkuBean.getPresentProductInfoList().size() > 0) {
-            communal_recycler_wrap.setVisibility(View.VISIBLE);
-            communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(baseAct));
-            if (presentProAdapter == null) {
-                presentProductInfoList.clear();
-                for (PresentProductInfoBean presentProductInfoBean : editGoodsSkuBean.getPresentProductInfoList()) {
-                    PresentProductInfoBean pre = new PresentProductInfoBean();
-                    pre.setItemType(TYPE_1);
-                    pre.setPresentName(presentProductInfoBean.getPresentName());
-                    pre.setPresentQuantity(presentProductInfoBean.getPresentQuantity());
-                    pre.setPresentSkuId(presentProductInfoBean.getPresentSkuId());
-                    presentProductInfoList.add(pre);
-                }
-            }
-            presentProAdapter = new ProductTextAdapter(presentProductInfoList);
-            View headerView = LayoutInflater.from(baseAct).inflate(R.layout.adapter_layout_communal_text, null, false);
-            TextView tv_communal_text = headerView.findViewById(R.id.tv_communal_text);
-            tv_communal_text.setGravity(Gravity.BOTTOM);
-            tv_communal_text.setText("部分商品有赠品");
-            presentProAdapter.addHeaderView(headerView);
-            communal_recycler_wrap.setAdapter(presentProAdapter);
-        } else {
-            communal_recycler_wrap.setVisibility(View.GONE);
-        }
-    }
-
     /**
      * 优惠金额
      *
@@ -539,16 +500,14 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             numCount = rectAddAndSubViewDirect.getNum();
         }
         View numCountView = LayoutInflater.from(baseAct).inflate(R.layout.layout_direct_count_num, (ViewGroup) skuDialogView.layout_parameter_slp.getParent(), false);
-        rectAddAndSubViewDirect = (RectAddAndSubViewDirect) numCountView.findViewById(R.id.rect_number);
-        rel_rect_count = (RelativeLayout) numCountView.findViewById(R.id.rel_rect_count);
-        communal_recycler_wrap = (RecyclerView) numCountView.findViewById(R.id.communal_recycler_wrap);
+        rectAddAndSubViewDirect = numCountView.findViewById(R.id.rect_number);
+        rel_rect_count = numCountView.findViewById(R.id.rel_rect_count);
         if (numCount == 0) {
             numCount = editGoodsSkuBean.getOldCount();
         }
-        rel_rect_count.setVisibility(numCount < 1 ? View.GONE : View.VISIBLE);
+        numCountView.setVisibility(numCount < 1 || editGoodsSkuBean.isCombine() ? View.GONE : View.VISIBLE);
         rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 28));
         rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
-        setPresentData();
         rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);
         rectAddAndSubViewDirect.setOnNumChangeListener(new RectAddAndSubViewDirect.OnNumChangeListener() {
             @Override
@@ -564,7 +523,10 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 showToast(baseAct, R.string.product_sell_out);
             }
         });
-        skuDialogView.layout_parameter_slp.addView(numCountView);
+
+        if (!editGoodsSkuBean.isCombine()) {
+            skuDialogView.layout_parameter_slp.addView(numCountView);
+        }
     }
 
     //    转换成数字
@@ -813,6 +775,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         shopCarGoodsSku.setValuesName(String.valueOf(valuesNameAppend));
                         shopCarGoodsSku.setPicUrl(getStrings(picUrl));
                         shopCarGoodsSku.setActivityCode(getStrings(editGoodsSkuBean.getActivityCode()));
+                        shopCarGoodsSku.setQuantity(skuSaleBean.getQuantity());
                         if (numQuantity > skuSaleBean.getQuantity()) {
                             showToast(baseAct, "库存不足，请更改数量后再购买");
                             return;
@@ -870,8 +833,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             getSelectedSku(productParameterValueBean);
         } else {
             getDeselectSkuValue(productParameterValueBean);
-//            取消选中
-            setPresentProduct(null);
         }
         if (selectedSkuValueId.size() != editGoodsSkuBean.getProps().size()) {
             setNormalAndReplenishment();
@@ -1274,7 +1235,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         noticeType = 0;
                     }
                     setDiscountPrice(skuSaleBean.getId());
-                    setPresentProduct(skuSaleBean.getPresentSkuIds());
                     skuDialogView.tv_dir_indent_pro_price.setText((getStrings(skuSaleBean.getNewUserTag()) + "¥" + skuSaleBean.getPrice()));
                     break;
                 }
@@ -1317,35 +1277,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         skuDialogView.tv_pro_combine_discount.setText(
                 String.format(baseAct.getString(R.string.sku_max_discount_price)
                         , editGoodsSkuBean.getMaxDiscounts()));
-    }
-
-    /**
-     * 设置赠品商品信息
-     *
-     * @param presentId
-     */
-    private void setPresentProduct(String presentId) {
-        if (!TextUtils.isEmpty(presentId)) {
-            String[] preIds = presentId.split(",");
-            for (PresentProductInfoBean presentProductInfoBean : presentProductInfoList) {
-                presentProductInfoBean.setItemType(TYPE_1);
-                presentProductInfoBean.setChecked(false);
-                if (preIds.length > 0) {
-                    for (String preId : preIds) {
-                        if (preId.equals(presentProductInfoBean.getPresentSkuId())
-                                && presentProductInfoBean.getPresentQuantity() > 0) {
-                            presentProductInfoBean.setChecked(true);
-                            break;
-                        }
-                    }
-                }
-            }
-        } else {
-            for (PresentProductInfoBean presentProductInfoBean : presentProductInfoList) {
-                presentProductInfoBean.setItemType(TYPE_1);
-                presentProductInfoBean.setChecked(false);
-            }
-        }
     }
 
     private List<String> getSplitGroup(List<String> canSelectedGroup) {

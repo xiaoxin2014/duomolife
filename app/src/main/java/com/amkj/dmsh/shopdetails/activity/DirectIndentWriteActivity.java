@@ -394,7 +394,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             createGroupIndent(payWay, groupShopDetailsBean);
                         }
                     }
-
                 } else {
                     constantMethod.showImportantToast(this, "收货地址为空");
                 }

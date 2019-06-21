@@ -98,8 +98,6 @@ public class SearchDetailsProductFragment extends BaseFragment {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
                 .create());
         adapterProduct = new ProNoShopCarAdapter(getActivity(), productSearList);
         adapterProduct.setOnItemClickListener((adapter, view, position) -> {

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
@@ -118,9 +119,25 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                         for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                                 fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
-                                if (fbl_market_label.getChildCount() >= 3) break;
                             }
                         }
+                    }
+
+                    //限制标签最多显示一行，超出屏幕外的自动移除
+                    if (fbl_market_label.getChildCount() > 0) {
+                        ViewTreeObserver observer = fbl_market_label.getViewTreeObserver();
+                        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                int width = fbl_market_label.getMeasuredWidth();
+                                int max = helper.itemView.getMeasuredWidth();
+                                if (width >= max) {
+                                    fbl_market_label.removeViewAt(fbl_market_label.getChildCount() - 1);
+                                } else {
+                                    fbl_market_label.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                }
+                            }
+                        });
                     }
                 } else {
                     fbl_market_label.setVisibility(View.GONE);

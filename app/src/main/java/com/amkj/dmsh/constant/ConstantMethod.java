@@ -416,11 +416,6 @@ public class ConstantMethod {
     }
 
 
-    /**
-     * @param context
-     * @param textString
-     * @return
-     */
     public static String getStringsFormat(Context context, int resStringId, String textString) {
         if (context == null) {
             return "";
@@ -431,13 +426,17 @@ public class ConstantMethod {
         return String.format(context.getResources().getString(resStringId), getStrings(textString));
     }
 
-    /**
-     * @param context
-     * @param resStringId
-     * @param number
-     * @return
-     */
     public static String getIntegralFormat(Context context, int resStringId, @NonNull int number) {
+        if (context == null) {
+            return "";
+        }
+        if (resStringId <= 0) {
+            return "";
+        }
+        return String.format(context.getResources().getString(resStringId), number);
+    }
+
+    public static String getDoubleFormat(Context context, int resStringId, @NonNull double number) {
         if (context == null) {
             return "";
         }

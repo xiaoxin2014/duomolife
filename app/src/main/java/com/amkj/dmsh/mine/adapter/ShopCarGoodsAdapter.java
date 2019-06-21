@@ -67,7 +67,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, ShopCarG
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());
         if (cartInfoBean.getActivityInfoData() != null && cartInfoBean.getActivityInfoData().getShowActInfo() == 1) {
             helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                    .setGone(R.id.tv_communal_activity_tag, true)
+                    .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(cartInfoBean.getActivityInfoData().getActivityTag()))
                     .setText(R.id.tv_communal_activity_tag_next, "凑单")
                     .setText(R.id.tv_communal_activity_tag, getStrings(cartInfoBean.getActivityInfoData().getActivityTag()));
             switch (cartInfoBean.getActivityInfoData().getActivityType()) {

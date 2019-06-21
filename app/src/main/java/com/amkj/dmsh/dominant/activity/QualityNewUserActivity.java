@@ -202,7 +202,7 @@ public class QualityNewUserActivity extends BaseActivity {
                                 //添加新人专享头部
                                 LikedProductBean qualityNewUserShopBean = new LikedProductBean();
                                 qualityNewUserShopBean.setItemType(ConstantVariable.TITLE);
-                                qualityNewUserShopBean.setType_id(R.drawable.newuser_exclusive);
+                                qualityNewUserShopBean.setTitleHead(R.drawable.newuser_exclusive);
                                 qualityNewUserShopList.add(qualityNewUserShopBean);
                                 //添加活动标签
                                 for (int i = 0; i < goodsList.size(); i++) {
@@ -247,7 +247,7 @@ public class QualityNewUserActivity extends BaseActivity {
                         if (page == 1) {
                             LikedProductBean qualityNewUserShopBean = new LikedProductBean();
                             qualityNewUserShopBean.setItemType(ConstantVariable.TITLE);
-                            qualityNewUserShopBean.setType_id(R.drawable.coupon_zone);
+                            qualityNewUserShopBean.setTitleHead(R.drawable.coupon_zone);
                             qualityNewUserShopList.add(qualityNewUserShopBean);
                         }
                         qualityNewUserShopList.addAll(goodsList);

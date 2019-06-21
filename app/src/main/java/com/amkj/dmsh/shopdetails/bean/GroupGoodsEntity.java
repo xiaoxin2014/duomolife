@@ -90,12 +90,66 @@ public class GroupGoodsEntity extends BaseEntity {
             private String minPrice;
             private String maxPrice;
             private String name;
+            //所有sku商品总库存
+            private int Stock=1;
             private List<SkuSaleBean> skuSale;
             private List<PropvaluesBean> propvalues;
             private List<PropsBean> props;
+            //是否选中
             private boolean isSelected;
             //是否是主商品
             private boolean isMainProduct;
+            //当前选中的skuId
+            private int skuId;
+            //当前选中的skuValue(例如：颜色：白色,尺码：L)
+            private String skuValue;
+            //要购买的商品件数(默认一件)
+            private int count = 1;
+            //要购买的商品库存
+            private int quantity;
+
+            public int getStock() {
+                return Stock;
+            }
+
+            public void setStock(int stock) {
+                Stock = stock;
+            }
+
+            public int getQuantity() {
+                return quantity;
+            }
+
+            public void setQuantity(int quantity) {
+                this.quantity = quantity;
+            }
+
+            public int getSkuId() {
+                if (skuSale != null && skuSale.size() == 1) {
+                    return skuSale.get(0).getId();
+                }
+                return skuId;
+            }
+
+            public int getCount() {
+                return count;
+            }
+
+            public void setCount(int count) {
+                this.count = count;
+            }
+
+            public String getSkuValue() {
+                return skuValue;
+            }
+
+            public void setSkuValue(String skuValue) {
+                this.skuValue = skuValue;
+            }
+
+            public void setSkuId(int skuId) {
+                this.skuId = skuId;
+            }
 
             public boolean isMainProduct() {
                 return isMainProduct;
