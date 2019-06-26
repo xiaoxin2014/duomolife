@@ -319,7 +319,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.rl_product_activity_detail)
     LinearLayout rl_product_activity_detail;
 
-
     //    赠品信息
     private List<PresentProductInfoBean> presentProductInfoBeans = new ArrayList<>();
     //    文章主题推荐
@@ -622,7 +621,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 getActivity().startActivity(intent1);
             }
         });
-
 
         //初始化推荐商品列表
         mRvGoodsRecommend.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -1066,7 +1064,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     startCountDownTime(mTvTipsBottom, mCtCountDownBottom);
                     mLlTimeHoursBottom.setVisibility(VISIBLE);
-                }else {
+                } else {
                     ll_product_activity_detail.setVisibility(GONE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     mLlTimeHoursBottom.setVisibility(GONE);
@@ -1150,6 +1148,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 MarketLabelBean marketLabelBean = new MarketLabelBean();
                 marketLabelBean.setTitle(shopProperty.getNewUserTag());
                 marketLabelBean.setLabelCode(1);
+                marketLabelBean.setNewUserTag(true);
                 fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
             }
 
@@ -1162,21 +1161,21 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
             }
 
-            //赠品活动标签
-            ShopPropertyBean.PresentInfoBean presentInfo = shopProperty.getPresentInfo();
-            if (presentInfo != null) {
-                MarketLabelBean marketLabelBean = new MarketLabelBean();
-                marketLabelBean.setTitle("赠品");
-                marketLabelBean.setLabelCode(1);
-                fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
-            }
-
             //满赠活动标签
             ShopPropertyBean.MZPresentInfoBean mzPresentInfo = shopProperty.getMzPresentInfo();
             if (mzPresentInfo != null && !shopProperty.getActivityCode().contains("MZ")) {
                 MarketLabelBean marketLabelBean = new MarketLabelBean();
                 marketLabelBean.setTitle(mzPresentInfo.getActivityTag());
                 marketLabelBean.setActivityCode(getStrings(mzPresentInfo.getActivityCode()));
+                marketLabelBean.setLabelCode(1);
+                fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
+            }
+
+            //赠品活动标签
+            ShopPropertyBean.PresentInfoBean presentInfo = shopProperty.getPresentInfo();
+            if (presentInfo != null) {
+                MarketLabelBean marketLabelBean = new MarketLabelBean();
+                marketLabelBean.setTitle("赠品");
                 marketLabelBean.setLabelCode(1);
                 fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelClickText(getActivity(), marketLabelBean));
             }
@@ -1213,7 +1212,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         }
         mFlexProductPoint.setVisibility(mFlexProductPoint.getChildCount() > 0 ? VISIBLE : GONE);
-
 
         //商品服务标签
         setSeviceTag(shopProperty, ll_layout_pro_sc_tag, flex_product_tag, true);
@@ -1281,7 +1279,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
 
             //限制标签不能超过屏幕外
-            if (maxOneLine && flexboxLayout.getChildCount() > 0) {
+            if (maxOneLine && flexboxLayout.getChildCount() > 1) {
                 ViewTreeObserver observer = flexboxLayout.getViewTreeObserver();
                 observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -1289,7 +1287,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         int width = flexboxLayout.getMeasuredWidth();
                         int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
                         int max = screenWidth - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
-                        if (width >= max) {
+                        if (width >= max && flexboxLayout.getChildCount() > 1) {
                             flexboxLayout.removeViewAt(flexboxLayout.getChildCount() - 1);
                         } else {
                             flexboxLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -1548,7 +1546,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             String minPrice = skuSaleList.get(0).getPrice();
             String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
             mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
-            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" +stripTrailingZeros(maxPrice), false));
+            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + stripTrailingZeros(maxPrice), false));
         } else {
             showToast(this, "商品数据错误");
         }

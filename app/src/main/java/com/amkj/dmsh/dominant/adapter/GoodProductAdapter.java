@@ -124,14 +124,14 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                     }
 
                     //限制标签最多显示一行，超出屏幕外的自动移除
-                    if (fbl_market_label.getChildCount() > 0) {
+                    if (fbl_market_label.getChildCount() > 1) {
                         ViewTreeObserver observer = fbl_market_label.getViewTreeObserver();
                         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                             @Override
                             public void onGlobalLayout() {
                                 int width = fbl_market_label.getMeasuredWidth();
                                 int max = helper.itemView.getMeasuredWidth();
-                                if (width >= max) {
+                                if (width >= max && fbl_market_label.getChildCount() > 1) {
                                     fbl_market_label.removeViewAt(fbl_market_label.getChildCount() - 1);
                                 } else {
                                     fbl_market_label.getViewTreeObserver().removeOnGlobalLayoutListener(this);

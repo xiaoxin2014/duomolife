@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.activity.ProductLabelDetailActivity;
+import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
@@ -105,6 +106,8 @@ public class ProductLabelCreateUtils {
                 } else if (!TextUtils.isEmpty(marketLabelBean1.getActivityCode())) {
                     intent.setClass(context, QualityProductActActivity.class);
                     intent.putExtra("activityCode", marketLabelBean1.getActivityCode());
+                } else if (marketLabelBean1.isNewUserTag()) {
+                    intent.setClass(context, QualityNewUserActivity.class);
                 } else {
                     return;
                 }

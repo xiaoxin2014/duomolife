@@ -16,6 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_NEW_USER;
@@ -31,15 +32,15 @@ public class SplashLaunchActivity extends AppCompatActivity {
     private List<Integer> localImages = new ArrayList<>();
     private long oldSlidingGap = 0;
     private boolean isConform = false;
+    private Unbinder mBind;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch_guide);
-        ButterKnife.bind(this);
+        mBind = ButterKnife.bind(this);
         initViews();
     }
-
 
 
     protected void initViews() {
@@ -112,5 +113,11 @@ public class SplashLaunchActivity extends AppCompatActivity {
     // 注意：即使不区分用户是否登录也需要添加此设置，也可以添加到基类中
     private boolean isFirstRun() {
         return (boolean) SharedPreUtils.getParam(ConstantVariable.DEMO_LIFE_FILE, "isFirstRun", true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBind.unbind();
     }
 }

@@ -119,7 +119,7 @@ public class GroupMatchActivity extends BaseActivity {
             switch (view.getId()) {
                 //选择sku
                 case R.id.tv_select_sku:
-                    selectSku(combineCommonBean, position, combineCommonBean.isSelected(), view);
+                    selectSku(combineCommonBean, position, view);
                     break;
                 //选中或取消
                 case R.id.rl_cover:
@@ -134,14 +134,13 @@ public class GroupMatchActivity extends BaseActivity {
         mGroupCollocaAdapter.setOnItemClickListener((adapter, view, position) -> {
             CombineCommonBean combineCommonBean = (CombineCommonBean) view.getTag();
             if (combineCommonBean != null) {
-                boolean checkStatus = !view.isSelected();
                 //已选择sku的情况下才能直接被选中
-                if (combineCommonBean.getSkuId() > 0 || !checkStatus) {
+                if (combineCommonBean.getSkuId() > 0 ) {
                     view.setSelected(!view.isSelected());
                     combineCommonBean.setSelected(view.isSelected());
                     updateTotalPrice();
                 } else {
-                    selectSku(combineCommonBean, position, true, view);
+                    selectSku(combineCommonBean, position, view);
                 }
             }
         });
@@ -183,7 +182,7 @@ public class GroupMatchActivity extends BaseActivity {
         }
     }
 
-    private void selectSku(CombineCommonBean combineCommonBean, int position, boolean ischeck, View view) {
+    private void selectSku(CombineCommonBean combineCommonBean, int position, View view) {
         if (skuDialog == null || position != mPosition) {
             skuDialog = new SkuDialog(this);
             EditGoodsSkuBean editGoodsSkuBean = new EditGoodsSkuBean(combineCommonBean);
@@ -191,6 +190,11 @@ public class GroupMatchActivity extends BaseActivity {
             skuDialog.refreshView(editGoodsSkuBean);
             skuDialog.getGoodsSKu(shopCarGoodsSku -> {
                 if (shopCarGoodsSku != null && shopCarGoodsSku.getSaleSkuId() != combineCommonBean.getSkuId()) {
+                    //选择sku商品默认选中
+                    view.setSelected(true);
+                    if (!combineCommonBean.isMainProduct()){
+                        combineCommonBean.setSelected(true);
+                    }
                     //选择规格后更新商品价格和封面图
                     combineCommonBean.setPicUrl(shopCarGoodsSku.getPicUrl());
                     combineCommonBean.setMinPrice(String.valueOf(shopCarGoodsSku.getPrice() * shopCarGoodsSku.getCount()));
@@ -200,12 +204,8 @@ public class GroupMatchActivity extends BaseActivity {
                     combineCommonBean.setSkuValue(shopCarGoodsSku.getValuesName());
                     combineCommonBean.setQuantity(shopCarGoodsSku.getQuantity());
                     mGroupCollocaAdapter.notifyItemChanged(position);
-                    //商品被选中或者该商品是主商品时更新价格
-                    if (ischeck || combineCommonBean.isMainProduct()) {
-                        view.setSelected(!view.isSelected());
-                        combineCommonBean.setSelected(view.isSelected());
-                        updateTotalPrice();
-                    }
+                    //更新组合价
+                    updateTotalPrice();
                 }
             });
             mPosition = position;

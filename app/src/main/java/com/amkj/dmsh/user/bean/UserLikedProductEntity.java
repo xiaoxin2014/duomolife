@@ -489,10 +489,20 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         public static class MarketLabelBean implements Parcelable {
             private int id;
             private String title;
-            //            自定义属性 1 为活动标签 0 为营销标签
+            //自定义属性 1 为活动标签 0 为营销标签
             private int labelCode;
-            //            活动标签专属属性
+            //活动标签专属属性
             private String activityCode;
+            //新人专享活动商品专用字段
+            private boolean newUserTag;
+
+            public boolean isNewUserTag() {
+                return newUserTag;
+            }
+
+            public void setNewUserTag(boolean newUserTag) {
+                this.newUserTag = newUserTag;
+            }
 
             public int getId() {
                 return id;
