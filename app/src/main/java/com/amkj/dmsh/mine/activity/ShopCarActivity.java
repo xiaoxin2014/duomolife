@@ -733,18 +733,20 @@ public class ShopCarActivity extends BaseActivity {
                     ShopCarEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarEntity.class);
                     if (shopCarNewInfoEntity != null) {
                         ShopCartBean shopCartBean = shopCarNewInfoEntity.getResult();
-                        if (shopCarNewInfoEntity.getCode().equals(SUCCESS_CODE) && shopCartBean != null) {
+                        if (SUCCESS_CODE.equals(shopCarNewInfoEntity.getCode()) && shopCartBean != null) {
                             //更新结算金额
                             updatePrice(shopCarNewInfoEntity.getResult(), true);
                             //刷新条目
                             if (cartInfoBean != null && isNotifyItem && matchCartId(shopCartBean, cartInfoBean)) {
                                 shopCarGoodsAdapter.notifyItemChanged(cartInfoBean.getPosition());
                             }
+                        } else if (EMPTY_CODE.equals(shopCarNewInfoEntity.getCode())) {
+                            tv_cart_total.setText(("￥" + "0.00"));//结算金额
+                            tv_settlement_dis_car_price.setVisibility(View.GONE);
+                            tv_cart_buy_orCount.setText(("去结算(" + 0 + ")")); //结算商品件数
                         } else {
                             updateLocalPrice();
-                            if (cartIds.size() != 0) {
-                                showToast(ShopCarActivity.this, R.string.refrence_only);
-                            }
+                            showToast(ShopCarActivity.this, R.string.refrence_only);
                         }
                     }
                 }

@@ -177,7 +177,8 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private boolean isCombineProduct;
                 //存储搭配商品
                 private List<CartInfoBean> combineMatchProducts;
-                //针对失效
+                //针对失效组合商品特殊字段
+
 
 
                 //更新
@@ -569,6 +570,15 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private String activityTag;
                 private int activityType;
                 private String activityRule;
+                private String preActivityRule;
+
+                public String getPreActivityRule() {
+                    return preActivityRule;
+                }
+
+                public void setPreActivityRule(String preActivityRule) {
+                    this.preActivityRule = preActivityRule;
+                }
 
                 public String getActivityCode() {
                     return activityCode;

@@ -6,6 +6,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -56,12 +57,13 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, BaseView
 
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());
 //        "activityType": { "0": "满减", "1": "折扣", "2": "立减", "3": "限时购", "4": "满赠", "5": "首单赠", "6": "组合商品", "7": "赠品", "8": "第二件半价" }
-        if (cartInfoBean.getActivityInfoData() != null && cartInfoBean.getShowActInfo() == 1) {
+        ActivityInfoBean activityInfoData = cartInfoBean.getActivityInfoData();
+        if (activityInfoData != null && cartInfoBean.getShowActInfo() == 1) {
             //设置标签
             helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                    .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(cartInfoBean.getActivityInfoData().getActivityTag()))
+                    .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityInfoData.getActivityTag()))
                     .setText(R.id.tv_communal_activity_tag_next, "凑单")
-                    .setText(R.id.tv_communal_activity_tag, getStrings(cartInfoBean.getActivityInfoData().getActivityTag()));
+                    .setText(R.id.tv_communal_activity_tag, getStrings(activityInfoData.getActivityTag()));
 
             //设置规则
             switch (cartInfoBean.getActivityInfoData().getActivityType()) {
@@ -70,7 +72,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, BaseView
                 case 4:
                 case 8:
                     helper.setGone(R.id.ll_communal_activity_tag_rule, true)
-                            .setText(R.id.tv_communal_activity_tag_rule, getStrings(cartInfoBean.getActivityInfoData().getActivityRule()))
+                            .setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()))
                             .addOnClickListener(R.id.tv_communal_activity_tag_next).setTag(R.id.tv_communal_activity_tag_next, cartInfoBean)
                             .addOnClickListener(R.id.tv_communal_activity_tag_rule).setTag(R.id.tv_communal_activity_tag_rule, cartInfoBean);
                     break;
