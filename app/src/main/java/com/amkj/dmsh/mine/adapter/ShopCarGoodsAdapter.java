@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -48,7 +47,7 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, BaseView
         final RectAddAndSubViewCommunal rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
         helper.setChecked(R.id.cb_shop_car_sel, isEditStatus ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
         //商品有效或者在编辑状态时(编辑状态搭配商品单独选中)
-        if (ShopCarDao.isValid(cartInfoBean) || (isEditStatus && !cartInfoBean.isCombineProduct())) {
+        if (cartInfoBean.isValid() || (isEditStatus && !cartInfoBean.isCombineProduct())) {
             cb_shop_car_sel.setEnabled(true);
         } else {
             cb_shop_car_sel.setEnabled(false);
@@ -140,15 +139,15 @@ public class ShopCarGoodsAdapter extends BaseQuickAdapter<CartInfoBean, BaseView
 //                    "¥" + (cartInfoBean.getSaleSku() != null
 //                    ? cartInfoBean.getSaleSku().getPrice() : "--"));
 //        } else {
-            String activityPriceDesc = cartInfoBean.getActivityPriceDesc();
-            String price = getStringsFormat(context, R.string.shop_cart_rmb_price, getStrings(activityPriceDesc), cartInfoBean.getSaleSku() != null ? cartInfoBean.getSaleSku().getPrice() : "--");
-            if (!TextUtils.isEmpty(cartInfoBean.getActivityPriceDesc())) {
-                helper.setText(R.id.tv_shop_car_product_price, getSpannableString(price, 0, activityPriceDesc.length(), 0.8f, null))
-                        .setTextColor(R.id.tv_shop_car_product_price, context.getResources().getColor(R.color.text_normal_red));
-            } else {
-                helper.setText(R.id.tv_shop_car_product_price, price)
-                        .setTextColor(R.id.tv_shop_car_product_price, context.getResources().getColor(R.color.text_black_t));
-            }
+        String activityPriceDesc = cartInfoBean.getActivityPriceDesc();
+        String price = getStringsFormat(context, R.string.shop_cart_rmb_price, getStrings(activityPriceDesc), cartInfoBean.getSaleSku() != null ? cartInfoBean.getSaleSku().getPrice() : "--");
+        if (!TextUtils.isEmpty(cartInfoBean.getActivityPriceDesc())) {
+            helper.setText(R.id.tv_shop_car_product_price, getSpannableString(price, 0, activityPriceDesc.length(), 0.8f, null))
+                    .setTextColor(R.id.tv_shop_car_product_price, context.getResources().getColor(R.color.text_normal_red));
+        } else {
+            helper.setText(R.id.tv_shop_car_product_price, price)
+                    .setTextColor(R.id.tv_shop_car_product_price, context.getResources().getColor(R.color.text_black_t));
+        }
 //        }
         helper.itemView.setTag(cartInfoBean);
     }

@@ -350,63 +350,11 @@ public class ShopCarActivity extends BaseActivity {
                                 }
                                 List<CartBean> carts = shopCartBean.getCarts();
                                 List<CartBean> rubbishCarts = shopCartBean.getRubbishCarts();
-                                //失效商品
-                                if (rubbishCarts != null) {
-                                    carts.addAll(shopCartBean.getRubbishCarts());
-                                }
 
-                                //有效商品
-                                for (int i = 0; i < carts.size(); i++) {
-                                    CartBean cartBean = carts.get(i);
-                                    if (cartBean == null) return;
-                                    ActivityInfoBean activityInfoBean = cartBean.getActivityInfo();
-                                    List<CartInfoBean> cartInfoList = cartBean.getCartInfoList();
-                                    CartInfoBean combineMainProduct = cartBean.getCombineMainProduct();
-                                    List<CartInfoBean> combineMatchProducts = cartBean.getCombineMatchProducts();
-                                    //判断是否是组合搭配商品
-                                    if (combineMainProduct != null) {
-                                        if (cartInfoList == null) {
-                                            cartInfoList = new ArrayList<>();
-                                        }
-                                        cartInfoList.clear();
-                                        combineMainProduct.setMainProduct(true);//设置主商品标志
-                                        cartInfoList.add(combineMainProduct);
-                                        if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
-                                            //设置搭配商品购物车id，与主商品进行绑定
-                                            for (CartInfoBean CartInfoBean : combineMatchProducts) {
-                                                CartInfoBean.setId(combineMainProduct.getId());
-                                                CartInfoBean.setCombineProduct(true);
-                                                CartInfoBean.setCount(1);
-                                            }
-//                                            combineMainProduct.setCombineMatchProducts(combineMatchProducts);
-                                            cartInfoList.addAll(combineMatchProducts);
-                                        }
-                                    }
-
-                                    //普通商品
-                                    if (cartInfoList != null && cartInfoList.size() > 0) {
-                                        for (int j = 0; j < cartInfoList.size(); j++) {
-                                            CartInfoBean cartInfoBean = cartInfoList.get(j);
-                                            //如果有活动信息就加在活动数组第一条数据上
-                                            if (activityInfoBean != null && j == 0) {
-                                                cartInfoBean.setShowActInfo(1);
-                                                cartInfoBean.setActivityInfoData(activityInfoBean);
-                                            }
-
-                                            //加载数据时如果是全选状态,手动选中所有有效商品
-                                            if (!isEditStatus && ShopCarDao.isValid(cartInfoBean) && check_box_all_buy.isChecked()) {
-                                                cartInfoBean.setSelected(true);
-                                            }
-                                            shopGoodsList.add(cartInfoBean);
-                                        }
-
-                                        //设置分割线
-                                        if (activityInfoBean != null && shopGoodsList.size() > 0 && shopCartBean.getCarts().size() > i + 1) {
-                                            CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
-                                            cartInfoBean.setShowLine(1);
-                                        }
-                                    }
-                                }
+                                //添加有效商品
+                                addShopCartInfo(true, carts);
+                                //添加失效商品
+                                addShopCartInfo(false, rubbishCarts);
 
                                 if (page == 1) {
                                     updatePrice(shopCartBean, true);
@@ -446,6 +394,67 @@ public class ShopCarActivity extends BaseActivity {
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, shopGoodsList, mShopCarNewInfoEntity);
                     }
                 });
+    }
+
+    private void addShopCartInfo(boolean isValid, List<CartBean> carts) {
+        //有效商品
+        for (int i = 0; i < carts.size(); i++) {
+            CartBean cartBean = carts.get(i);
+            if (cartBean != null) {
+                ActivityInfoBean activityInfoBean = cartBean.getActivityInfo();
+                List<CartInfoBean> cartInfoList = cartBean.getCartInfoList();
+                CartInfoBean combineMainProduct = cartBean.getCombineMainProduct();
+                List<CartInfoBean> combineMatchProducts = cartBean.getCombineMatchProducts();
+                //判断是否是组合搭配商品
+                if (combineMainProduct != null) {
+                    if (cartInfoList == null) {
+                        cartInfoList = new ArrayList<>();
+                    }
+                    cartInfoList.clear();
+                    combineMainProduct.setMainProduct(true);//设置主商品标志
+                    cartInfoList.add(combineMainProduct);
+                    if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
+                        //设置搭配商品购物车id，与主商品进行绑定
+                        for (CartBean.CartInfoBean CartInfoBean : combineMatchProducts) {
+                            CartInfoBean.setId(combineMainProduct.getId());
+                            CartInfoBean.setCombineProduct(true);
+                            CartInfoBean.setCount(1);
+                            CartInfoBean.setValid(isValid);
+                        }
+                        cartInfoList.addAll(combineMatchProducts);
+                    }
+                }
+
+                //普通商品
+                if (cartInfoList != null && cartInfoList.size() > 0) {
+                    for (int j = 0; j < cartInfoList.size(); j++) {
+                        CartInfoBean cartInfoBean = cartInfoList.get(j);
+                        //如果有活动信息就加在活动数组第一条数据上
+                        if (activityInfoBean != null && j == 0) {
+                            cartInfoBean.setShowActInfo(1);
+                            cartInfoBean.setActivityInfoData(activityInfoBean);
+                        }
+
+                        cartInfoBean.setValid(isValid);
+
+                        //加载数据时如果是全选状态,手动选中所有有效商品
+                        if (!isEditStatus && isValid && check_box_all_buy.isChecked()) {
+                            cartInfoBean.setSelected(true);
+                        }
+
+
+                        shopGoodsList.add(cartInfoBean);
+                    }
+
+                    //设置分割线
+                    if (activityInfoBean != null && shopGoodsList.size() > 0 && carts.size() > i + 1) {
+                        CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
+                        cartInfoBean.setShowLine(1);
+                    }
+                }
+            }
+
+        }
     }
 
     private void updatePrice(ShopCartBean shopCartBean, boolean isPage1) {

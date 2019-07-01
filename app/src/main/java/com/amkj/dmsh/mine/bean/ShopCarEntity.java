@@ -31,6 +31,7 @@ public class ShopCarEntity extends BaseTimeEntity {
         private String totalProductDiscountPrice;
         private int totalCount;
         private List<CartBean> carts;
+        //失效商品集合（包含已下架和库存不足）
         private List<CartBean> rubbishCarts;
 
 
@@ -152,7 +153,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                 //购物车id
                 private int id;
                 private String activitypriceDesc;
-                //是否下架（不等于表示已下架）
+                //是否下架（不等于1表示已下架）
                 private int status = 1;
                 private boolean hasNewUserPrice;
                 private String updated;
@@ -177,8 +178,16 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private boolean isCombineProduct;
                 //存储搭配商品
                 private List<CartInfoBean> combineMatchProducts;
-                //针对失效组合商品特殊字段
+                //针对失效商品特殊字段
+                private boolean isValid;
 
+                public boolean isValid() {
+                    return isValid;
+                }
+
+                public void setValid(boolean valid) {
+                    isValid = valid;
+                }
 
 
                 //更新
