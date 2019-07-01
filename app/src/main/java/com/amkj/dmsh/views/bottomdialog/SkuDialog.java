@@ -776,6 +776,10 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         shopCarGoodsSku.setPicUrl(getStrings(picUrl));
                         shopCarGoodsSku.setActivityCode(getStrings(editGoodsSkuBean.getActivityCode()));
                         shopCarGoodsSku.setQuantity(skuSaleBean.getQuantity());
+                        //返回组合商品原始价格（方便计算出省了多少钱）
+                        if (editGoodsSkuBean != null && editGoodsSkuBean.isCombine()) {
+                            shopCarGoodsSku.setOriginalPrice(skuSaleBean.getPrePrice());
+                        }
                         if (numQuantity > skuSaleBean.getQuantity()) {
                             showToast(baseAct, "库存不足，请更改数量后再购买");
                             return;

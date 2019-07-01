@@ -10,6 +10,7 @@ public class ShopCarGoodsSku implements Parcelable {
     private int saleSkuId;
     private int count;
     private double price;
+    private String originalPrice;
     private int productId;
     /**
      * 积分商品专属
@@ -25,6 +26,14 @@ public class ShopCarGoodsSku implements Parcelable {
     private String proType;
     private String activityCode;
     private int quantity;
+
+    public String getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(String originalPrice) {
+        this.originalPrice = originalPrice;
+    }
 
     public int getQuantity() {
         return quantity;

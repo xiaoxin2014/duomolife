@@ -400,6 +400,8 @@ public class Url {
     public static final String PAY_CANCEL = "api/reminder/getLeaveConfirm";
     //    购物车结算金额
     public static final String PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatus";
+    //    新版购物车结算金额
+    public static final String NEW_PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatusV2";
     //订单详情
     public static final String Q_INDENT_DETAILS = "api/goods/order/getOrderNew";
     //订单删除
@@ -471,14 +473,18 @@ public class Url {
     public static final String Q_SHOP_DETAILS_COMMENT = "api/goods/getEvaluate";
     //加入购物车 新版
     public static final String Q_SHOP_DETAILS_ADD_CAR = "api/goods/cart/addNew";
-    //    新版购物车
+    //组合商品加入购物车
+    public static final String Q_COMBINE_PRODUCT_ADD_CAR = "api/goods/cart/addCombineProducts";
+    //    购物车列表
     public static final String MINE_SHOP_CAR_GOODS = "api/goods/cart/getCartNew";
+    //    新版购物车列表
+    public static final String NEW_MINE_SHOP_CAR_GOODS = "api/goods/cart/getCartNewV2";
     //    购物车推荐商品
     public static final String MINE_SHOP_CAR_RECOMMEND_GOODS = "api/goods/cart/shopFullCartRecommend";
     //    购物车无商品推荐
     public static final String SHOP_CART_RECOMMEND_EMPTY_GOODS = "api/goods/cart/shopEmptyCartRecommend";
     //查询购物车数量
-    public static final String Q_QUERY_CAR_COUNT = "api/goods/cart/getNumber";
+    public static final String Q_QUERY_CAR_COUNT = "api/goods/cart/getCartTip";
     //    添加取消到货通知
     public static final String Q_REPLENISHMENT_NOTICE = "api/goods/addUserSkuNotice";
     //    查询订单数量

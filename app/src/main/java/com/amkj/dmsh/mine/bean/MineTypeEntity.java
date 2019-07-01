@@ -48,12 +48,20 @@ public class MineTypeEntity extends BaseTimeEntity{
          * webUrl : https://www.domolife.cn/m/template/order_template/cart.html
          * iconUrl : http://image.domolife.cn/platform/4hZtyZzJPn1543390477783.png
          */
-
+        private boolean isGetCartTip;//自定义参数，调GetCartTip接口时才需要更新购物车数量
         private String name;
         private String androidUrl;
         private String iconUrl;
 
-//        自定义参数 消息提醒
+        public boolean isGetCartTip() {
+            return isGetCartTip;
+        }
+
+        public void setGetCartTip(boolean getCartTip) {
+            isGetCartTip = getCartTip;
+        }
+
+        //        自定义参数 消息提醒
         private int mesCount;
 
         public String getName() {

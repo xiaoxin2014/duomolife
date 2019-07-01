@@ -173,8 +173,6 @@ public class ConstantVariable {
 
     //    订单商品状态
     public static Map<String, String> INDENT_PRO_STATUS;
-    //    购物车活动状态
-    public static Map<String, String> CAR_PRO_STATUS;
     /**
      * 三方授权登录
      */
@@ -375,5 +373,13 @@ public class ConstantVariable {
     public static final int AD_COVER = 1;//好物封面
     public static final int TITLE = 2;//标题
     public static final int PIC_GOODS = 3;//图片商品
+
+
+     /**
+     * 购物车修改商品的类型
+     */
+    public static final int ADD_NUM = 0;//增加数量
+    public static final int REDUCE_NUM = 1;//减少数量
+    public static final int CHANGE_SKU = 2;//修改sku
 
 }

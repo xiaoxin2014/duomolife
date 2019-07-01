@@ -101,7 +101,6 @@
                     android:drawableRight="@drawable/sel_text_sku_drawable_right"
                     android:drawablePadding="@dimen/dimen_15_dp"
                     android:ellipsize="end"
-                    android:enabled="true"
                     android:lines="1"
                     android:paddingTop="@dimen/sc_mm_14"
                     android:paddingRight="@dimen/sc_mm_20"
@@ -149,14 +148,6 @@
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/sc_mm_80">
-
-        <include layout="@layout/layout_communal_recycler_wrap"/>
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_line_ten"

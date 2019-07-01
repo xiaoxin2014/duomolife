@@ -134,6 +134,10 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     }
 
 
+    /**
+     * @param helper
+     * @param orderListBean
+     */
     @Override
     protected void convert(IndentListViewHolder helper, final OrderListBean orderListBean) {
         //        订单件数

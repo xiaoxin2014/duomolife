@@ -13,6 +13,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.rxeasyhttp.model.HttpHeaders;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
+import com.amkj.dmsh.utils.EncodeUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -121,7 +122,7 @@ public class MyInterceptor implements Interceptor {
                 if (request.body() instanceof FormBody) {
                     FormBody formBody = (FormBody) request.body();
                     for (int i = 0; i < formBody.size(); i++) {
-                        sb.append(formBody.encodedName(i) + "=" + formBody.encodedValue(i) + ",");
+                        sb.append(formBody.encodedName(i) + "=" + EncodeUtils.urlDecode(formBody.encodedValue(i)).replace("<", "<").replace(">", ">").replace("%24", "$") + ",");
                     }
                     sb.delete(sb.length() - 1, sb.length());
                     Log.d("retrofitRequestBody", "{" + sb.toString() + "}");

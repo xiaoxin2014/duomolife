@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 
 import java.util.List;
 import java.util.Map;
@@ -540,7 +540,7 @@ public class RefundDetailEntity extends BaseEntity{
         public RefundDetailBean() {
         }
 
-        public static class ExpressInfoBean {
+        public static class ExpressInfoBean implements Parcelable {
             /**
              * expressNo : 888999888909988999
              * expressCompany : 中国邮政
@@ -569,9 +569,40 @@ public class RefundDetailEntity extends BaseEntity{
             public void setExpressCompany(String expressCompany) {
                 this.expressCompany = expressCompany;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.expressNo);
+                dest.writeString(this.expressCompany);
+            }
+
+            public ExpressInfoBean() {
+            }
+
+            protected ExpressInfoBean(Parcel in) {
+                this.expressNo = in.readString();
+                this.expressCompany = in.readString();
+            }
+
+            public static final Creator<ExpressInfoBean> CREATOR = new Creator<ExpressInfoBean>() {
+                @Override
+                public ExpressInfoBean createFromParcel(Parcel source) {
+                    return new ExpressInfoBean(source);
+                }
+
+                @Override
+                public ExpressInfoBean[] newArray(int size) {
+                    return new ExpressInfoBean[size];
+                }
+            };
         }
 
-        public static class RefundPayInfoBean {
+        public static class RefundPayInfoBean implements Parcelable {
             /**
              * receiveRefundTime : 已于2018-04-10 15:34:36到账
              * refundAccount : 微信(招商银行储蓄卡2101)
@@ -595,6 +626,37 @@ public class RefundDetailEntity extends BaseEntity{
             public void setRefundAccount(String refundAccount) {
                 this.refundAccount = refundAccount;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.receiveRefundTime);
+                dest.writeString(this.refundAccount);
+            }
+
+            public RefundPayInfoBean() {
+            }
+
+            protected RefundPayInfoBean(Parcel in) {
+                this.receiveRefundTime = in.readString();
+                this.refundAccount = in.readString();
+            }
+
+            public static final Creator<RefundPayInfoBean> CREATOR = new Creator<RefundPayInfoBean>() {
+                @Override
+                public RefundPayInfoBean createFromParcel(Parcel source) {
+                    return new RefundPayInfoBean(source);
+                }
+
+                @Override
+                public RefundPayInfoBean[] newArray(int size) {
+                    return new RefundPayInfoBean[size];
+                }
+            };
         }
 
         @Override
@@ -634,6 +696,16 @@ public class RefundDetailEntity extends BaseEntity{
             dest.writeTypedList(this.combineProductInfoList);
             dest.writeTypedList(this.presentProductInfoList);
             dest.writeParcelable(this.refundGoodsAddress, flags);
+            dest.writeParcelable(this.expressInfo, flags);
+            dest.writeString(this.repairReturnExpressCompany);
+            dest.writeString(this.repairReturnExpressNo);
+            dest.writeString(this.repairExpressFee);
+            dest.writeString(this.repairExpressCompany);
+            dest.writeString(this.repairExpressNo);
+            dest.writeString(this.repairReceivePhone);
+            dest.writeString(this.repairReceiveAddress);
+            dest.writeString(this.repairReceiveReceiver);
+            dest.writeParcelable(this.refundPayInfo, flags);
         }
 
         protected RefundDetailBean(Parcel in) {
@@ -667,9 +739,19 @@ public class RefundDetailEntity extends BaseEntity{
             this.combineProductInfoList = in.createTypedArrayList(CartProductInfoBean.CREATOR);
             this.presentProductInfoList = in.createTypedArrayList(CartProductInfoBean.CREATOR);
             this.refundGoodsAddress = in.readParcelable(RefundGoodsAddressBean.class.getClassLoader());
+            this.expressInfo = in.readParcelable(ExpressInfoBean.class.getClassLoader());
+            this.repairReturnExpressCompany = in.readString();
+            this.repairReturnExpressNo = in.readString();
+            this.repairExpressFee = in.readString();
+            this.repairExpressCompany = in.readString();
+            this.repairExpressNo = in.readString();
+            this.repairReceivePhone = in.readString();
+            this.repairReceiveAddress = in.readString();
+            this.repairReceiveReceiver = in.readString();
+            this.refundPayInfo = in.readParcelable(RefundPayInfoBean.class.getClassLoader());
         }
 
-        public static final Creator<RefundDetailBean> CREATOR = new Creator<RefundDetailBean>() {
+        public static final Parcelable.Creator<RefundDetailBean> CREATOR = new Parcelable.Creator<RefundDetailBean>() {
             @Override
             public RefundDetailBean createFromParcel(Parcel source) {
                 return new RefundDetailBean(source);

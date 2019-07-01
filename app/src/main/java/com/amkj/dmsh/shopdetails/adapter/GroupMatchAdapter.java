@@ -41,12 +41,13 @@ public class GroupMatchAdapter extends BaseQuickAdapter<CombineCommonBean, BaseV
                 .setGone(R.id.tv_save_price, !item.isMainProduct())
                 .setText(R.id.tv_name, item.getName())
                 .setText(R.id.tv_min_price, getRmbFormat(context, item.getMinPrice()))
-                .setText(R.id.tv_max_price, "~" + "¥" + getRmbFormat(mContext, item.getMaxPrice(), false))
+                .setText(R.id.tv_max_price, getRmbFormat(context, "~" + "¥" + item.getMaxPrice(), false))
+                //最低价！=最高价并且sku没有选中才会显示最高价
                 .setGone(R.id.tv_max_price, (!TextUtils.isEmpty(item.getMaxPrice()) && !item.getMaxPrice().equals(item.getMinPrice())))
                 .addOnClickListener(R.id.rl_cover).setTag(R.id.rl_cover, item)
                 .setEnabled(R.id.tv_select_sku, item.getSkuSale().size() > 1)
                 .addOnClickListener(R.id.tv_select_sku).setTag(R.id.tv_select_sku, item)
-                .setEnabled(R.id.tv_shop_car_sel, !item.isMainProduct() || item.getStock() < 1);//主商品和无库存商品不可编辑
+                .setEnabled(R.id.tv_shop_car_sel, !item.isMainProduct() && item.getStock() > 0);//主商品和无库存商品不可编辑
 
         TextView tvSku = helper.getView(R.id.tv_select_sku);
         //只有一个sku默认直接显示

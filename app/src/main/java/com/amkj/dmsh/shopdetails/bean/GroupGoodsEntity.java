@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class GroupGoodsEntity extends BaseEntity {
             this.combineMatchProductList = combineMatchProductList;
         }
 
-        public static class CombineCommonBean {
+        public static class CombineCommonBean implements Comparable<CombineCommonBean> {
 
             /**
              * productId : 17996
@@ -91,7 +92,7 @@ public class GroupGoodsEntity extends BaseEntity {
             private String maxPrice;
             private String name;
             //所有sku商品总库存
-            private int Stock=1;
+            private int Stock = 1;
             private List<SkuSaleBean> skuSale;
             private List<PropvaluesBean> propvalues;
             private List<PropsBean> props;
@@ -107,6 +108,39 @@ public class GroupGoodsEntity extends BaseEntity {
             private int count = 1;
             //要购买的商品库存
             private int quantity;
+            //当前选中的搭配商品省了多少钱
+            private double saveMoney;
+            //当前选中的搭配商品价格
+            private String price;
+            //存储主商品活动code
+            private String activityCode;
+
+            public String getActivityCode() {
+                return activityCode;
+            }
+
+            public void setActivityCode(String activityCode) {
+                this.activityCode = activityCode;
+            }
+
+            public String getPrice() {
+                return price;
+            }
+
+            public void setPrice(String price) {
+                this.price = price;
+            }
+
+            public double getSaveMoney() {
+                if (skuSale != null && skuSale.size() == 1) {
+                    return ConstantMethod.getStringChangeDouble(skuSale.get(0).getPrePrice()) - ConstantMethod.getStringChangeDouble(skuSale.get(0).getPrice());
+                }
+                return saveMoney;
+            }
+
+            public void setSaveMoney(double saveMoney) {
+                this.saveMoney = saveMoney;
+            }
 
             public int getStock() {
                 return Stock;
@@ -192,7 +226,7 @@ public class GroupGoodsEntity extends BaseEntity {
             }
 
             public String getMinPrice() {
-                return minPrice;
+                return ConstantMethod.getStrings(minPrice.replaceAll(" ", ""));
             }
 
             public void setMinPrice(String minPrice) {
@@ -200,7 +234,7 @@ public class GroupGoodsEntity extends BaseEntity {
             }
 
             public String getMaxPrice() {
-                return maxPrice;
+                return ConstantMethod.getStrings(maxPrice.replaceAll(" ", ""));
             }
 
             public void setMaxPrice(String maxPrice) {
@@ -237,6 +271,11 @@ public class GroupGoodsEntity extends BaseEntity {
 
             public void setProps(List<PropsBean> props) {
                 this.props = props;
+            }
+
+            @Override
+            public int compareTo(CombineCommonBean o) {
+                return Double.compare(ConstantMethod.getStringChangeDouble(this.getMinPrice()), ConstantMethod.getStringChangeDouble(o.getMinPrice()));
             }
         }
     }

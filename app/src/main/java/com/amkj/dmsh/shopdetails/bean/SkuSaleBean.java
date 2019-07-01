@@ -24,6 +24,7 @@ public class SkuSaleBean implements Parcelable {
     private int id;
     private int productId;
     private String price;
+    private String prePrice;
     private int quantity;
     private String propValues;  //sku，多个propValueId之间用逗号隔开   例如L,白色
     private int type;
@@ -33,6 +34,10 @@ public class SkuSaleBean implements Parcelable {
     private String newUserTag;
     //            积分商品独有属性
     private String moneyPrice;
+
+    public String getPrePrice() {
+        return prePrice;
+    }
 
     public String getPresentSkuIds() {
         return presentSkuIds;
@@ -132,6 +137,7 @@ public class SkuSaleBean implements Parcelable {
         dest.writeInt(this.id);
         dest.writeInt(this.productId);
         dest.writeString(this.price);
+        dest.writeString(this.prePrice);
         dest.writeInt(this.quantity);
         dest.writeString(this.propValues);
         dest.writeInt(this.type);
@@ -149,6 +155,7 @@ public class SkuSaleBean implements Parcelable {
         this.id = in.readInt();
         this.productId = in.readInt();
         this.price = in.readString();
+        this.prePrice = in.readString();
         this.quantity = in.readInt();
         this.propValues = in.readString();
         this.type = in.readInt();

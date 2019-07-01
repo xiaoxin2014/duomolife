@@ -15,10 +15,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
+import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
+import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.GroupMatchAdapter;
@@ -30,12 +34,13 @@ import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -47,7 +52,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getDoubleFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -82,6 +90,10 @@ public class GroupMatchActivity extends BaseActivity {
     TextView mTvGroupPrice;
     @BindView(R.id.rl_main)
     RelativeLayout mRlMain;
+    @BindView(R.id.tv_add_car)
+    TextView mTvAddCar;
+    @BindView(R.id.tv_buy)
+    TextView mTvBuy;
 
     private Badge mBadge;
     private GroupMatchAdapter mGroupCollocaAdapter;
@@ -131,11 +143,12 @@ public class GroupMatchActivity extends BaseActivity {
             }
         });
 
+        //选中和取消选中
         mGroupCollocaAdapter.setOnItemClickListener((adapter, view, position) -> {
             CombineCommonBean combineCommonBean = (CombineCommonBean) view.getTag();
-            if (combineCommonBean != null) {
-                //已选择sku的情况下才能直接被选中
-                if (combineCommonBean.getSkuId() > 0 ) {
+            if (combineCommonBean != null && !combineCommonBean.isMainProduct()) {
+                //已选择sku的情况下才能直接选中或取消选中
+                if (combineCommonBean.getSkuId() > 0) {
                     view.setSelected(!view.isSelected());
                     combineCommonBean.setSelected(view.isSelected());
                     updateTotalPrice();
@@ -146,40 +159,9 @@ public class GroupMatchActivity extends BaseActivity {
         });
         mSmartCommunalRefresh.setOnRefreshListener((refreshLayout) -> {
             getGroupGoods(mProductId);
-            //刷新组合价
-            mTvGroupPrice.setText(R.string.defaul);
             mTvSaveNum.setVisibility(View.GONE);
         });
 
-    }
-
-    //更新总价格
-    private void updateTotalPrice() {
-        try {
-            double totalPrice = 0;
-            double totalSave = 0;
-            //组合价格显示方案（判断是否搭配组合商品，如果没有，显示-- ，如果有搭配，再判断主商品是否选择sku，如果是，直接计算价格并显示，否则追加“起”）
-            if (isSelectGroup()) {
-                for (CombineCommonBean bean : groupGoods) {
-                    if ((bean.isSelected() && bean.getSkuId() > 0) || bean.isMainProduct()) {
-                        totalPrice += Double.parseDouble(bean.getMinPrice());
-                        if (!TextUtils.isEmpty(bean.getTag())) {
-                            Matcher m = Pattern.compile("[\\u4e00-\\u9fa5]").matcher(bean.getTag());
-                            double saveNum = Double.parseDouble(m.replaceAll("").trim());
-                            totalSave += saveNum;
-                        }
-                    }
-                }
-                mTvGroupPrice.setText(getDoubleFormat(this, groupGoods.get(0).getSkuId() > 0 ? R.string.group_total_price : R.string.group_total_price_start, totalPrice));
-                mTvSaveNum.setVisibility(View.VISIBLE);
-                mTvSaveNum.setText(getDoubleFormat(this, R.string.save_money, totalSave));
-            } else {
-                mTvGroupPrice.setText(getResources().getText(R.string.defaul));
-                mTvSaveNum.setVisibility(View.GONE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void selectSku(CombineCommonBean combineCommonBean, int position, View view) {
@@ -192,17 +174,18 @@ public class GroupMatchActivity extends BaseActivity {
                 if (shopCarGoodsSku != null && shopCarGoodsSku.getSaleSkuId() != combineCommonBean.getSkuId()) {
                     //选择sku商品默认选中
                     view.setSelected(true);
-                    if (!combineCommonBean.isMainProduct()){
+                    if (!combineCommonBean.isMainProduct()) {
                         combineCommonBean.setSelected(true);
                     }
                     //选择规格后更新商品价格和封面图
                     combineCommonBean.setPicUrl(shopCarGoodsSku.getPicUrl());
-                    combineCommonBean.setMinPrice(String.valueOf(shopCarGoodsSku.getPrice() * shopCarGoodsSku.getCount()));
+                    combineCommonBean.setMinPrice(String.valueOf(shopCarGoodsSku.getPrice()));
                     combineCommonBean.setMaxPrice(combineCommonBean.getMinPrice());
                     combineCommonBean.setSkuId(shopCarGoodsSku.getSaleSkuId());
                     combineCommonBean.setCount(shopCarGoodsSku.getCount());
                     combineCommonBean.setSkuValue(shopCarGoodsSku.getValuesName());
                     combineCommonBean.setQuantity(shopCarGoodsSku.getQuantity());
+                    combineCommonBean.setSaveMoney(getStringChangeDouble(shopCarGoodsSku.getOriginalPrice()) - shopCarGoodsSku.getPrice());
                     mGroupCollocaAdapter.notifyItemChanged(position);
                     //更新组合价
                     updateTotalPrice();
@@ -212,6 +195,46 @@ public class GroupMatchActivity extends BaseActivity {
         }
 
         skuDialog.show();
+    }
+
+    //更新总价格
+    private void updateTotalPrice() {
+        try {
+            double groupPrice = 0;
+            double totalSave = 0;
+            //组合商品价格计算方案（如果选择了组合商品，计算选中的组合商品总价格，否则筛选出最低的组合商品价格）
+            if (isSelectGroup()) {
+                for (CombineCommonBean bean : groupGoods) {
+                    if (bean.isSelected() && bean.getSkuId() > 0 && !bean.isMainProduct()) {
+                        groupPrice += Double.parseDouble(bean.getMinPrice());
+//                        if (!TextUtils.isEmpty(bean.getTag())) {
+//                            Matcher m = Pattern.compile("[\\u4e00-\\u9fa5]").matcher(bean.getTag());
+//                            double saveNum = Double.parseDouble(m.replaceAll("").trim());
+//                            totalSave += saveNum;
+//                        }
+
+                        totalSave += bean.getSaveMoney();
+                    }
+                }
+                mTvSaveNum.setVisibility(View.VISIBLE);
+                mTvSaveNum.setText(getDoubleFormat(this, R.string.save_money, totalSave));
+            } else {
+                groupPrice = getMinGroup();
+                mTvSaveNum.setVisibility(View.GONE);
+            }
+
+            //获取主商品价格
+            CombineCommonBean combineMainProduct = groupGoods.get(0);
+            double mainPrice = getStringChangeDouble(combineMainProduct.getMinPrice());
+            String end = (combineMainProduct.getSkuId() <= 0 || !isSelectGroup()) ? "起" : "";
+
+            //组合价=主商品价格+组合商品价格
+            String totalPrice = getDoubleFormat(this, R.string.group_total_price, mainPrice + groupPrice) + end;
+            CharSequence rmbFormat = getSpannableString(totalPrice, 1, TextUtils.isEmpty(end) ? totalPrice.length() : totalPrice.length() - 1, 1.6f, null);
+            mTvGroupPrice.setText(rmbFormat);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -238,6 +261,7 @@ public class GroupMatchActivity extends BaseActivity {
                         combineMainProduct = groupGoodsBean.getCombineMainProduct();
                         if (combineMainProduct != null) {
                             combineMainProduct.setMainProduct(true);
+                            combineMainProduct.setActivityCode(groupGoodsBean.getActivityCode());
                             groupGoods.add(combineMainProduct);
                         }
                         List<CombineCommonBean> combineProductList = groupGoodsBean.getCombineMatchProductList();
@@ -253,6 +277,8 @@ public class GroupMatchActivity extends BaseActivity {
                 mCommunalRecycler.setPadding(AutoSizeUtils.mm2px(mAppContext, 24), 0, AutoSizeUtils.mm2px(mAppContext, 24), AutoSizeUtils.mm2px(mAppContext, groupGoods.size() > 0 ? 98 : 0));
                 if (combineMainProduct != null) {
                     NetLoadUtils.getNetInstance().showLoadSir(loadService, groupGoods, mGroupGoodsEntity);
+                    updateTotalPrice();
+//                    mTvGroupPrice.setText(getDoubleFormat(getActivity(), R.string.group_total_price_start, getStringChangeDouble(combineMainProduct.getMinPrice()) + getMinGroup()));
                 } else {
                     NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
                 }
@@ -278,6 +304,9 @@ public class GroupMatchActivity extends BaseActivity {
         return mRlMain;
     }
 
+    /**
+     * @param view
+     */
     @OnClick({R.id.tv_life_back, R.id.iv_img_service, R.id.iv_img_share, R.id.tv_add_car, R.id.tv_buy})
     public void onViewClicked(View view) {
         Intent intent;
@@ -301,8 +330,35 @@ public class GroupMatchActivity extends BaseActivity {
                         if (groupGoods.get(0).getSkuId() > 0) {
                             //再判断是否搭配组合商品
                             if (isSelectGroup()) {
+                                mTvAddCar.setEnabled(false);
                                 //加入购物车
+                                Map<String, Object> params = new HashMap<>();
+                                params.put("userId", userId);
+                                String combines = ShopCarDao.getCombines(groupGoods);
+                                if (!TextUtils.isEmpty(combines)) {
+                                    params.put("combines", combines);
+                                }
+                                //添加埋点来源参数
+                                ConstantMethod.addSourceParameter(params);
+                                NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_COMBINE_PRODUCT_ADD_CAR, params, new NetLoadListenerHelper() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        mTvAddCar.setEnabled(true);
+                                        RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
+                                        if (status != null && SUCCESS_CODE.equals(status.getCode())) {
+                                            showToast(getActivity(), "添加商品成功");
+                                            //通知刷新购物车数量
+                                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
+                                        } else {
+                                            showToastRequestMsg(getActivity(), status);
+                                        }
+                                    }
 
+                                    @Override
+                                    public void onNotNetOrException() {
+                                        mTvAddCar.setEnabled(true);
+                                    }
+                                });
                             } else {
                                 ConstantMethod.showToast("至少选择一个组合商品");
                             }
@@ -355,12 +411,22 @@ public class GroupMatchActivity extends BaseActivity {
     //是否搭配组合商品
     private boolean isSelectGroup() {
         int selectNum = 0;
-        //排除主商品，所以从1开始
-        for (int i = 1; i < groupGoods.size(); i++) {
-            if (groupGoods.get(i).isSelected()) {
+        for (CombineCommonBean commonBean : groupGoods) {
+            if (commonBean.isSelected() && !commonBean.isMainProduct()) {
                 selectNum++;
             }
         }
         return selectNum > 0;
+    }
+
+    //获取最低价格的组合商品
+    private double getMinGroup() {
+        if (groupGoods != null && groupGoods.size() > 0) {
+            List<CombineCommonBean> groupList = new ArrayList<>(groupGoods);
+            Collections.sort(groupList);
+            return getStringChangeDouble(groupList.get(0).getMinPrice());
+        } else {
+            return 0;
+        }
     }
 }

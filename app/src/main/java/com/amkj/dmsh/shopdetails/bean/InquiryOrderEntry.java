@@ -4,8 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
 import com.google.gson.annotations.SerializedName;
+import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 
 import java.util.List;
 import java.util.Map;

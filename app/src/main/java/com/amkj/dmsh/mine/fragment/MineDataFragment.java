@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
@@ -34,6 +35,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
+import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
@@ -99,6 +101,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_LOG_OUT;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
+import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
 import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
@@ -160,7 +163,7 @@ public class MineDataFragment extends BaseFragment {
     public TextView tv_personal_data_sup;
     private CommunalUserInfoBean communalUserInfoBean;
     private MineTypeAdapter typeMineAdapter;
-    private List<MineTypeBean> mineTypeList = new ArrayList();
+    private List<MineTypeBean> mineTypeList = new ArrayList<>();
     private final String[] typeMineName = {"购物车", "优惠券", "分享赚", "积分订单", "秒杀提醒", "收藏商品", "收藏内容", "客服",};
     private final String[] typeMineUrl = {"app://ShopCarActivity", "app://DirectMyCouponActivity", MAKE_SHARE_URL, "app://IntegralProductIndentActivity",
             "app://ShopTimeMyWarmActivity", "app://MineCollectProductActivity",
@@ -168,7 +171,7 @@ public class MineDataFragment extends BaseFragment {
     private final String[] typeMinePic = {"m_s_car_icon", "m_coupon_icon", "m_share_icon", "m_i_integ_icon", "m_warm_icon", "m_c_pro_icon", "m_c_content_icon", "m_service_icon",};
     //    订单模块
     private IndentTypeAdapter indentTypeAdapter;
-    private List<QualityTypeBean> indentTypeList = new ArrayList();
+    private List<QualityTypeBean> indentTypeList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private final String[] typeIndentName = {"淘宝订单", "待付款", "待发货", "待收货", "退货/售后"};
     private final String[] typeIndentPic = {"i_tb_icon", "i_w_pay_icon", "i_w_send_icon", "i_w_appraise_icon", "i_s_af_icon"};
@@ -330,6 +333,7 @@ public class MineDataFragment extends BaseFragment {
         getMineAd();
     }
 
+
     private void getLoginStatus() {
         SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
         if (personalInfo.isLogin()) {
@@ -378,7 +382,7 @@ public class MineDataFragment extends BaseFragment {
                 MineTypeBean mineTypeBean = mineTypeList.get(i);
                 String androidLink = getStrings(mineTypeBean.getAndroidUrl());
                 if (androidLink.contains("ShopCarActivity")) {
-                    mineTypeBean.setMesCount(userData.getCartTotal());
+                    mineTypeBean.setGetCartTip(false);
                 } else if (androidLink.contains("DirectMyCouponActivity")) {
                     mineTypeBean.setMesCount(userData.getCouponTotal());
                 } else if (androidLink.contains("IntegralProductIndentActivity")) {
@@ -394,6 +398,7 @@ public class MineDataFragment extends BaseFragment {
             }
         }
         typeMineAdapter.notifyDataSetChanged();
+        getCarCount(getActivity());
     }
 
     @Override
@@ -839,5 +844,45 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected boolean isLazy() {
         return false;
+    }
+
+    //更新购物车商品数量
+    public void getCarCount(Activity activity) {
+        if (userId > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("userId", userId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson = new Gson();
+                    MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            int cartNumber = requestStatus.getResult();
+                            updateShopCartNum(cartNumber);
+                        }
+                    }
+                }
+            });
+        } else {
+            updateShopCartNum(0);
+        }
+    }
+
+    private void updateShopCartNum(int num) {
+        int position = 0;
+        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
+            for (int i = 0; i < mineTypeList.size(); i++) {
+                MineTypeBean mineTypeBean = mineTypeList.get(i);
+                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+                if (androidLink.contains("ShopCarActivity")) {
+                    mineTypeBean.setGetCartTip(true);
+                    mineTypeBean.setMesCount(num);
+                    position = i;
+                    break;
+                }
+            }
+            typeMineAdapter.notifyItemChanged(position);
+        }
     }
 }

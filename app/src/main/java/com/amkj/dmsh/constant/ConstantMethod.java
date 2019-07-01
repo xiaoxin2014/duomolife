@@ -59,6 +59,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
+import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -143,7 +144,6 @@ import static com.ali.auth.third.core.context.KernelContext.getApplicationContex
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
@@ -275,6 +275,27 @@ public class ConstantMethod {
         } else {
             try {
                 return Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+    }
+
+
+    /**
+     * String转换成int(先去掉中文和货币符号)
+     *
+     * @param text
+     * @return
+     */
+    public static double getStringChangeDouble(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return 0;
+        } else {
+            try {
+                Matcher m = Pattern.compile("[\\u4e00-\\u9fa5]").matcher(text);
+                return Double.parseDouble(m.replaceAll("").replaceAll("¥","").trim());
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return 0;
@@ -416,14 +437,24 @@ public class ConstantMethod {
     }
 
 
-    public static String getStringsFormat(Context context, int resStringId, String textString) {
+    /**
+     * @param context
+     * @param resStringId
+     * @param textString
+     * @return
+     */
+    public static String getStringsFormat(Context context, int resStringId, String... textString) {
         if (context == null) {
             return "";
         }
         if (resStringId <= 0) {
             return "";
         }
-        return String.format(context.getResources().getString(resStringId), getStrings(textString));
+        if (textString.length == 1) {
+            return String.format(context.getResources().getString(resStringId), getStrings(textString[0]));
+        } else {
+            return String.format(context.getResources().getString(resStringId), getStrings(textString[0]), getStrings(textString[1]));
+        }
     }
 
     public static String getIntegralFormat(Context context, int resStringId, @NonNull int number) {
@@ -1795,13 +1826,11 @@ public class ConstantMethod {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                    MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult().getCartNumber();
+                            int cartNumber = requestStatus.getResult();
                             badge.setBadgeNumber(cartNumber);
-                        } else if (!requestStatus.getCode().equals(EMPTY_CODE)) {
-                            showToastRequestMsg(activity, requestStatus);
                         }
                     }
                 }

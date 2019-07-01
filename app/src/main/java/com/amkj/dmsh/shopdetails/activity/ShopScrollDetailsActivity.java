@@ -45,7 +45,7 @@ import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
-import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean;
+import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
@@ -614,8 +614,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         mGoodsGroupAdapter = new GoodsGroupAdapter(this, goodsGroupList);
         mRvGoodsGroup.setAdapter(mGoodsGroupAdapter);
         mGoodsGroupAdapter.setOnItemClickListener((adapter, view, position) -> {
-            CombineCommonBean combineCommonBean = (CombineCommonBean) view.getTag();
-            if (combineCommonBean != null) {
+            if (mGroupGoodsEntity != null && mGroupGoodsEntity.getResult() != null && mGroupGoodsEntity.getResult().getCombineMainProduct() != null) {
                 Intent intent1 = new Intent(getActivity(), GroupMatchActivity.class);
                 intent1.putExtra("productId", String.valueOf(mGroupGoodsEntity.getResult().getCombineMainProduct().getProductId()));
                 getActivity().startActivity(intent1);
@@ -1826,8 +1825,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 break;
             //打开活动规则详情
             case R.id.ll_product_activity_detail:
-                if (shopPropertyBean != null) {
-                    intent = new Intent(getActivity(), QualityProductActActivity.class);
+                if (shopPropertyBean != null && !TextUtils.isEmpty(shopPropertyBean.getActivityCode())) {
+                    intent = new Intent(this, QualityProductActActivity.class);
                     intent.putExtra("activityCode", getStrings(shopPropertyBean.getActivityCode()));
                     startActivity(intent);
                 }

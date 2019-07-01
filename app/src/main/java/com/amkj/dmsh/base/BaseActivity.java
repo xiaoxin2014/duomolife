@@ -128,11 +128,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             loadService.setCallBack(NetEmptyCallback.class, new Transport() {
                 @Override
                 public void order(Context context, View view) {
-                    TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
-                    tv_communal_net_tint.setText(finalHintText);
                     if ("EditorCommentActivity".equals(mSimpleName)) {
                         ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
                         iv_communal_pic.setImageResource(R.drawable.editor_message);
+                    }else if ("ShopCarActivity".equals(mSimpleName)){
+                        ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
+                        iv_communal_pic.setImageResource(R.drawable.cart_empty_icon);
+                    }else {
+                        TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
+                        tv_communal_net_tint.setText(finalHintText);
                     }
                 }
             });

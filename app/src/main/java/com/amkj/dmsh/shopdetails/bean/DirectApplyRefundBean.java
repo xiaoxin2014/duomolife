@@ -2,8 +2,7 @@ package com.amkj.dmsh.shopdetails.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.amkj.dmsh.mine.bean.ShopCarNewInfoEntity.ShopCarNewInfoBean.CartInfoBean.CartProductInfoBean;
+import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 
 import java.util.List;
 
@@ -127,6 +126,14 @@ public class DirectApplyRefundBean implements Parcelable {
         private int refundReasonId;
         private List<CartProductInfoBean> cartProductInfoList;
 
+        public List<CartProductInfoBean> getCartProductInfoList() {
+            return cartProductInfoList;
+        }
+
+        public void setCartProductInfoList(List<CartProductInfoBean> cartProductInfoList) {
+            this.cartProductInfoList = cartProductInfoList;
+        }
+
         public int getIntegralPrice() {
             return integralPrice;
         }
@@ -197,14 +204,6 @@ public class DirectApplyRefundBean implements Parcelable {
 
         public void setName(String name) {
             this.name = name;
-        }
-
-        public List<CartProductInfoBean> getCartProductInfoList() {
-            return cartProductInfoList;
-        }
-
-        public void setCartProductInfoList(List<CartProductInfoBean> cartProductInfoList) {
-            this.cartProductInfoList = cartProductInfoList;
         }
 
         public DirectRefundProBean() {

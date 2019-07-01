@@ -7,7 +7,6 @@
     <include layout="@layout/adapter_ql_goods_pro_header" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:paddingLeft="@dimen/sc_mm_10"
         android:layout_height="wrap_content">
         <include layout="@layout/layout_communal_recycler_wrap"/>
     </RelativeLayout>

@@ -60,9 +60,10 @@
                     android:paddingRight="@dimen/sc_mm_24"
                     android:text="@string/defaul"
                     android:textColor="@color/text_normal_red"
-                    android:textSize="@dimen/sc_mm_30"/>
+                    android:textSize="@dimen/sc_mm_22"/>
 
                 <TextView
+                    android:layout_alignBaseline="@+id/tv_group_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/tv_group_price"
