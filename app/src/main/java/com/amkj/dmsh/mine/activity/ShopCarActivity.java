@@ -24,10 +24,10 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
+import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean;
-import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -43,6 +43,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -83,7 +84,7 @@ import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.getCartIds;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.isValid;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.matchCartId;
+import static com.amkj.dmsh.mine.biz.ShopCarDao.notifyItemChange;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.removeSelGoods;
 
 /**
@@ -132,7 +133,7 @@ public class ShopCarActivity extends BaseActivity {
     private int page = 1;
     private int shopCartNum = 0;
     private Boolean isEditStatus = Boolean.FALSE;
-    private List<CartInfoBean> shopGoodsList = new ArrayList<>();
+    private List<MultiItemEntity> shopGoodsList = new ArrayList<>();
     private List<LikedProductBean> cartProRecommendList = new ArrayList<>();
     private ShopCarGoodsAdapter shopCarGoodsAdapter;
     private boolean isOnPause;
@@ -179,73 +180,83 @@ public class ShopCarActivity extends BaseActivity {
             skipProDetail(cartInfoBean);
         });
         shopCarGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            CartInfoBean cartInfoBean = (CartInfoBean) view.getTag(R.id.shop_car_cb);
-            if (cartInfoBean == null) {
+            CartInfoBean cartInfoBean = null;
+            ActivityInfoBean activityInfoBean = null;
+            if (view.getId() == R.id.tv_communal_activity_tag_next || view.getId() == R.id.tv_communal_activity_tag_rule) {
+                activityInfoBean = (ActivityInfoBean) view.getTag();
+                activityInfoBean.setPosition(position);
+            } else {
                 cartInfoBean = (CartInfoBean) view.getTag();
-            }
-            if (cartInfoBean != null) {
-                cartInfoBean.setPosition(position);
-                switch (view.getId()) {
-                    //单个选中或者取消
-                    case R.id.cb_shop_car_sel:
-                        ShopCarDao.selectOne(shopGoodsList, position, isEditStatus);
-                        //商品有效并且不在编辑状态时更新结算价格
-                        if (isValid(cartInfoBean) && !isEditStatus) {
-                            getSettlePrice(cartInfoBean, true, true);
-                        }
-                        break;
-                    //修改购物车商品属性
-                    case R.id.tv_shop_car_product_sku:
-                        if (isEditStatus) {
-                            getGoodsSkuDetails(cartInfoBean, view);
-                        } else {
-                            skipProDetail(cartInfoBean);
-                        }
-                        break;
-                    //跳转活动专场
-                    case R.id.tv_communal_activity_tag_next:
-                    case R.id.tv_communal_activity_tag_rule:
-                        Intent intent = new Intent(ShopCarActivity.this, QualityProductActActivity.class);
-                        intent.putExtra("activityCode", cartInfoBean.getActivityInfoData().getActivityCode());
-                        startActivity(intent);
-                        break;
-                    //增加数量
-                    case R.id.img_integration_details_credits_add:
-                        int oldCount = cartInfoBean.getCount();
-                        int newNum = oldCount + 1;
-                        if (oldCount > 0 && isValid(cartInfoBean)) {
-                            int quantity = cartInfoBean.getSaleSku().getQuantity();
-                            if (newNum <= quantity) {
-                                if (cartInfoBean.isMainProduct()) {
-                                    showToast(this, "组合商品无法修改数量");
-                                } else {
-                                    changeGoods(null, newNum, ADD_NUM, cartInfoBean);
-                                }
-                            } else {
-                                showToast(this, R.string.product_sell_out);
-                            }
-                        }
-                        break;
-                    //减少数量
-                    case R.id.img_integration_details_credits_minus:
-                        oldCount = cartInfoBean.getCount();
-                        newNum = oldCount - 1;
-                        if (isValid(cartInfoBean)) {
-                            if (newNum > 0) {
-                                if (cartInfoBean.isMainProduct()) {
-                                    showToast(this, "组合商品无法修改数量");
-                                } else {
-                                    changeGoods(null, newNum, REDUCE_NUM, cartInfoBean);
-                                }
-                            } else {
-                                showToast(this, R.string.product_small_count);
-                            }
-                        }
-                        break;
+                if (cartInfoBean == null) {
+                    cartInfoBean = (CartInfoBean) view.getTag(R.id.shop_car_cb);
                 }
+                cartInfoBean.setPosition(position);
+                cartInfoBean.setParentPosition(adapter.getParentPosition(cartInfoBean));
             }
+
+            switch (view.getId()) {
+                //单个选中或者取消
+                case R.id.cb_shop_car_sel:
+                    ShopCarDao.selectOne(shopGoodsList, position, isEditStatus);
+                    //商品有效并且不在编辑状态时更新结算价格
+                    if (isValid(cartInfoBean) && !isEditStatus) {
+                        getSettlePrice(cartInfoBean, true, true);
+                    }
+                    break;
+                //修改购物车商品属性
+                case R.id.tv_shop_car_product_sku:
+                    if (isEditStatus) {
+                        getGoodsSkuDetails(cartInfoBean, view);
+                    } else {
+                        skipProDetail(cartInfoBean);
+                    }
+                    break;
+                //跳转活动专场
+                case R.id.tv_communal_activity_tag_next:
+                case R.id.tv_communal_activity_tag_rule:
+                    Intent intent = new Intent(ShopCarActivity.this, QualityProductActActivity.class);
+                    intent.putExtra("activityCode", activityInfoBean.getActivityCode());
+                    startActivity(intent);
+                    break;
+                //增加数量
+                case R.id.img_integration_details_credits_add:
+                    int oldCount = cartInfoBean.getCount();
+                    int newNum = oldCount + 1;
+                    if (oldCount > 0 && isValid(cartInfoBean)) {
+                        int quantity = cartInfoBean.getSaleSku().getQuantity();
+                        if (newNum <= quantity) {
+                            if (cartInfoBean.isMainProduct()) {
+                                showToast(this, "组合商品无法修改数量");
+                            } else {
+                                changeGoods(null, newNum, ADD_NUM, cartInfoBean);
+                            }
+                        } else {
+                            showToast(this, R.string.product_sell_out);
+                        }
+                    }
+                    break;
+                //减少数量
+                case R.id.img_integration_details_credits_minus:
+                    oldCount = cartInfoBean.getCount();
+                    newNum = oldCount - 1;
+                    if (isValid(cartInfoBean)) {
+                        if (newNum > 0) {
+                            if (cartInfoBean.isMainProduct()) {
+                                showToast(this, "组合商品无法修改数量");
+                            } else {
+                                changeGoods(null, newNum, REDUCE_NUM, cartInfoBean);
+                            }
+                        } else {
+                            showToast(this, R.string.product_small_count);
+                        }
+                    }
+                    break;
+            }
+
         });
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener()
+
+        {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -266,7 +277,9 @@ public class ShopCarActivity extends BaseActivity {
                 }
             }
         });
-        download_btn_communal.setOnClickListener(v -> {
+        download_btn_communal.setOnClickListener(v ->
+
+        {
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
             int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
             int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
@@ -276,8 +289,13 @@ public class ShopCarActivity extends BaseActivity {
             }
             communal_recycler.smoothScrollToPosition(0);
         });
-        cartHeaderView = LayoutInflater.from(ShopCarActivity.this).inflate(R.layout.layout_cart_recommend, null, false);
-        recommendHeaderView = new RecommendHeaderView();
+        cartHeaderView = LayoutInflater.from(ShopCarActivity.this).
+
+                inflate(R.layout.layout_cart_recommend, null, false);
+
+        recommendHeaderView = new
+
+                RecommendHeaderView();
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
     }
@@ -366,7 +384,7 @@ public class ShopCarActivity extends BaseActivity {
                                         updatePrice(shopCartBean, false);
                                     }
                                 }
-
+                                shopCarGoodsAdapter.expandAll();
                                 shopCarGoodsAdapter.notifyDataSetChanged();
                                 shopCarGoodsAdapter.loadMoreComplete();
                                 //更新购物车数量
@@ -397,7 +415,6 @@ public class ShopCarActivity extends BaseActivity {
     }
 
     private void addShopCartInfo(boolean isValid, List<CartBean> carts) {
-        //有效商品
         for (int i = 0; i < carts.size(); i++) {
             CartBean cartBean = carts.get(i);
             if (cartBean != null) {
@@ -429,11 +446,12 @@ public class ShopCarActivity extends BaseActivity {
                 if (cartInfoList != null && cartInfoList.size() > 0) {
                     for (int j = 0; j < cartInfoList.size(); j++) {
                         CartInfoBean cartInfoBean = cartInfoList.get(j);
-                        //如果有活动信息就加在活动数组第一条数据上
-                        if (activityInfoBean != null && j == 0) {
-                            cartInfoBean.setShowActInfo(1);
-                            cartInfoBean.setActivityInfoData(activityInfoBean);
-                        }
+
+//                        //如果有活动信息就加在活动数组第一条数据上
+//                        if (activityInfoBean != null && j == 0) {
+//                            cartInfoBean.setShowActInfo(1);
+//                            cartInfoBean.setActivityInfoData(activityInfoBean);
+//                        }
 
                         cartInfoBean.setValid(isValid);
 
@@ -442,16 +460,22 @@ public class ShopCarActivity extends BaseActivity {
                             cartInfoBean.setSelected(true);
                         }
 
-
-                        shopGoodsList.add(cartInfoBean);
+                        if (activityInfoBean == null) {
+                            activityInfoBean = new ActivityInfoBean();
+                        }
+                        activityInfoBean.addSubItem(cartInfoBean);
                     }
 
-                    //设置分割线
-                    if (activityInfoBean != null && shopGoodsList.size() > 0 && carts.size() > i + 1) {
-                        CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
-                        cartInfoBean.setShowLine(1);
-                    }
+
+//                    //设置分割线
+//                    if (activityInfoBean != null && shopGoodsList.size() > 0 && carts.size() > i + 1) {
+//                        CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
+//                        cartInfoBean.setShowLine(1);
+//                    }
                 }
+
+                shopGoodsList.add(activityInfoBean);
+
             }
 
         }
@@ -746,8 +770,8 @@ public class ShopCarActivity extends BaseActivity {
                             //更新结算金额
                             updatePrice(shopCarNewInfoEntity.getResult(), true);
                             //刷新条目
-                            if (cartInfoBean != null && isNotifyItem && matchCartId(shopCartBean, cartInfoBean)) {
-                                shopCarGoodsAdapter.notifyItemChanged(cartInfoBean.getPosition());
+                            if (cartInfoBean != null && isNotifyItem) {
+                                notifyItemChange(shopCarGoodsAdapter, shopCartBean, cartInfoBean);
                             }
                         } else if (EMPTY_CODE.equals(shopCarNewInfoEntity.getCode())) {
                             tv_cart_total.setText(("￥" + "0.00"));//结算金额
@@ -833,6 +857,7 @@ public class ShopCarActivity extends BaseActivity {
             });
             proNoShopCarAdapter.setEnableLoadMore(false);
         }
+
     }
 
     @Override

@@ -5,7 +5,9 @@ import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -122,7 +124,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                 this.cartInfo = cartInfoList;
             }
 
-            public static class CartInfoBean implements Parcelable {
+            public static class CartInfoBean implements Parcelable, MultiItemEntity {
                 /**
                  * isForSale : false
                  * productId : 17590
@@ -170,6 +172,8 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private int cartId;
                 //记录位置
                 private int position;
+                //记录父级位置
+                private int parentPosition;
                 //是否是活动商品数组第一条(如果是，显示活动信息)
                 private int showActInfo;
                 //是否是组合搭配主商品
@@ -189,6 +193,13 @@ public class ShopCarEntity extends BaseTimeEntity {
                     isValid = valid;
                 }
 
+                public int getParentPosition() {
+                    return parentPosition;
+                }
+
+                public void setParentPosition(int parentPosition) {
+                    this.parentPosition = parentPosition;
+                }
 
                 //更新
                 public void update(CartInfoBean cartInfoBean) {
@@ -411,6 +422,11 @@ public class ShopCarEntity extends BaseTimeEntity {
                     this.updated = updated;
                 }
 
+                @Override
+                public int getItemType() {
+                    return ConstantVariable.PRODUCT;
+                }
+
                 public static class SaleSkuBean implements Parcelable {
                     /**
                      * id : 9853
@@ -561,108 +577,6 @@ public class ShopCarEntity extends BaseTimeEntity {
                     @Override
                     public CartInfoBean[] newArray(int size) {
                         return new CartInfoBean[size];
-                    }
-                };
-            }
-
-            public static class ActivityInfoBean implements Parcelable {
-                /**
-                 * activityCode : LJ1507778006
-                 * limitBuy : 2
-                 * activityTag : 立减震撼来
-                 * activityType : 2
-                 * activityRule : 立减20.0元
-                 */
-
-                private String activityCode;
-                private int limitBuy;
-                private String activityTag;
-                private int activityType;
-                private String activityRule;
-                private String preActivityRule;
-
-                public String getPreActivityRule() {
-                    return preActivityRule;
-                }
-
-                public void setPreActivityRule(String preActivityRule) {
-                    this.preActivityRule = preActivityRule;
-                }
-
-                public String getActivityCode() {
-                    return activityCode;
-                }
-
-                public void setActivityCode(String activityCode) {
-                    this.activityCode = activityCode;
-                }
-
-                public int getLimitBuy() {
-                    return limitBuy;
-                }
-
-                public void setLimitBuy(int limitBuy) {
-                    this.limitBuy = limitBuy;
-                }
-
-                public String getActivityTag() {
-                    return activityTag;
-                }
-
-                public void setActivityTag(String activityTag) {
-                    this.activityTag = activityTag;
-                }
-
-                public int getActivityType() {
-                    return activityType;
-                }
-
-                public void setActivityType(int activityType) {
-                    this.activityType = activityType;
-                }
-
-                public String getActivityRule() {
-                    return activityRule;
-                }
-
-                public void setActivityRule(String activityRule) {
-                    this.activityRule = activityRule;
-                }
-
-                @Override
-                public int describeContents() {
-                    return 0;
-                }
-
-                @Override
-                public void writeToParcel(Parcel dest, int flags) {
-                    dest.writeString(this.activityCode);
-                    dest.writeInt(this.limitBuy);
-                    dest.writeString(this.activityTag);
-                    dest.writeInt(this.activityType);
-                    dest.writeString(this.activityRule);
-                }
-
-                public ActivityInfoBean() {
-                }
-
-                protected ActivityInfoBean(Parcel in) {
-                    this.activityCode = in.readString();
-                    this.limitBuy = in.readInt();
-                    this.activityTag = in.readString();
-                    this.activityType = in.readInt();
-                    this.activityRule = in.readString();
-                }
-
-                public static final Creator<ActivityInfoBean> CREATOR = new Creator<ActivityInfoBean>() {
-                    @Override
-                    public ActivityInfoBean createFromParcel(Parcel source) {
-                        return new ActivityInfoBean(source);
-                    }
-
-                    @Override
-                    public ActivityInfoBean[] newArray(int size) {
-                        return new ActivityInfoBean[size];
                     }
                 };
             }

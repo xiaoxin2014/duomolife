@@ -1,6 +1,7 @@
 package com.amkj.dmsh.mine.biz;
 
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
+import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
@@ -8,6 +9,7 @@ import com.amkj.dmsh.shopdetails.GoodsPriceCalculate;
 import com.amkj.dmsh.shopdetails.bean.CombineBean;
 import com.amkj.dmsh.shopdetails.bean.CombineBean.CombineMatchsBean;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
@@ -15,17 +17,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
+
 
 public class ShopCarDao {
 
     /**
      * 选择全部，点下全部按钮，改变所有商品选中状态
      */
-    public static boolean selectDeleteAll(List<CartInfoBean> list, boolean isSelect) {
-        for (int i = 0; i < list.size(); i++) {
-            list.get(i).setDelete(isSelect);
+    public static void selectDeleteAll(List<MultiItemEntity> list, boolean isSelect) {
+        for (MultiItemEntity multiItemEntity : list) {
+            if (multiItemEntity.getItemType() == PRODUCT) {
+                ((CartInfoBean) multiItemEntity).setDelete(isSelect);
+            }
         }
-        return !isSelect;
     }
 
     /**
@@ -33,32 +38,35 @@ public class ShopCarDao {
      *
      * @param isChecked true全部选中 false全部取消选中
      */
-    public static void selectBuyAll(List<CartInfoBean> shopGoodsList, boolean isChecked) {
+    public static void selectBuyAll(List<MultiItemEntity> shopGoodsList, boolean isChecked) {
         for (int i = 0; i < shopGoodsList.size(); i++) {
-            CartInfoBean cartInfoBean = shopGoodsList.get(i);
-            if (cartInfoBean.getStatus() == 1 && isValid(cartInfoBean)) {
-                cartInfoBean.setSelected(isChecked);
+            if (shopGoodsList.get(i).getItemType() == PRODUCT) {
+                CartInfoBean cartInfoBean = (CartInfoBean) shopGoodsList.get(i);
+                if (cartInfoBean.getStatus() == 1 && isValid(cartInfoBean)) {
+                    cartInfoBean.setSelected(isChecked);
+                }
             }
+
         }
     }
 
     /**
      * 获取所有被选中的删除商品的购物车id以及数量总和
      */
-    public static String[] getSelGoodsInfo(List<CartInfoBean> cartInfoBeans) {
+    public static String[] getSelGoodsInfo(List<MultiItemEntity> cartInfoBeans) {
         String[] infos = new String[2];
         StringBuilder carIds = new StringBuilder();
         int totalDelNum = 0;
         int index = 0;
-        for (CartInfoBean cartInfoBean : cartInfoBeans) {
-            if (cartInfoBean.isDelete()) {
+        for (MultiItemEntity cartInfoBean : cartInfoBeans) {
+            if (cartInfoBean.getItemType() == PRODUCT && ((CartInfoBean) cartInfoBean).isDelete()) {
                 index++;
                 if (index == 1) {
-                    carIds.append(cartInfoBean.getId());
+                    carIds.append(((CartInfoBean) cartInfoBean).getId());
                 } else {
-                    carIds.append(",").append(cartInfoBean.getId());
+                    carIds.append(",").append(((CartInfoBean) cartInfoBean).getId());
                 }
-                totalDelNum = totalDelNum + cartInfoBean.getCount();
+                totalDelNum = totalDelNum + ((CartInfoBean) cartInfoBean).getCount();
             }
         }
 
@@ -71,11 +79,11 @@ public class ShopCarDao {
     /**
      * 删除选中的商品
      */
-    public static void removeSelGoods(List<CartInfoBean> cartInfoBeans, ShopCarGoodsAdapter shopCarGoodsAdapter) {
+    public static void removeSelGoods(List<MultiItemEntity> cartInfoBeans, ShopCarGoodsAdapter shopCarGoodsAdapter) {
         List<Integer> mainCartIds = new ArrayList<>();
-        Iterator<CartInfoBean> iterator = cartInfoBeans.iterator();
+        Iterator<MultiItemEntity> iterator = cartInfoBeans.iterator();
         while (iterator.hasNext()) {
-            CartInfoBean cartInfoBean = iterator.next();
+            CartInfoBean cartInfoBean = (CartInfoBean) iterator.next();
             if (cartInfoBean.isDelete() || (cartInfoBean.isCombineProduct() && mainCartIds.contains(cartInfoBean.getId()))) {
                 if (cartInfoBean.isMainProduct()) {
                     mainCartIds.add(cartInfoBean.getId());
@@ -92,12 +100,11 @@ public class ShopCarDao {
      *
      * @param isEditStatus 是否编辑状态
      */
-    public static void selectOne(List<CartInfoBean> list, int position, boolean isEditStatus) {
-        CartInfoBean cartInfoBean = list.get(position);
+    public static void selectOne(List<MultiItemEntity> list, int position, boolean isEditStatus) {
+        CartInfoBean cartInfoBean = (CartInfoBean) list.get(position);
         if (isEditStatus) {
             boolean isDelete = !(cartInfoBean.isDelete());
             cartInfoBean.setDelete(isDelete);
-            //如果是组合商品，搭配商品跟随
         } else {
             boolean isSelected = !(cartInfoBean.isSelected());
             cartInfoBean.setSelected(isSelected);
@@ -109,37 +116,39 @@ public class ShopCarDao {
      *
      * @return 0=选中的商品数量；1=选中的商品总价 2=当前购物车商品总数量
      */
-    public static String[] getShoppingCount(List<CartInfoBean> listGoods) {
+    public static String[] getShoppingCount(List<MultiItemEntity> listGoods) {
         String[] infos = new String[3];
         int selectedCount = 0;
-        int totalCount = 0;
         double totalPrice = 0;
         for (int i = 0; i < listGoods.size(); i++) {
-            CartInfoBean cartInfoBean = listGoods.get(i);
-            boolean isSelected = cartInfoBean.isSelected();
-            if (isSelected && isValid(cartInfoBean)) {
-                String price = cartInfoBean.getSaleSku().getPrice();
-                int selectedCount1 = cartInfoBean.getCount();
-                double totalPrice1 = GoodsPriceCalculate.getPrice(selectedCount1, Double.parseDouble(price));
-                totalPrice = totalPrice + totalPrice1;
-                selectedCount = selectedCount + selectedCount1;
+            MultiItemEntity multiItemEntity = listGoods.get(i);
+            if (multiItemEntity instanceof ActivityInfoBean) {
+                ActivityInfoBean activityInfoBean = (ActivityInfoBean) multiItemEntity;
+                List<CartInfoBean> subItems = activityInfoBean.getSubItems();
+                for (CartInfoBean cartInfoBean : subItems) {
+                    boolean isSelected = cartInfoBean.isSelected();
+                    if (isSelected && isValid(cartInfoBean)) {
+                        String price = cartInfoBean.getSaleSku().getPrice();
+                        int selectedCount1 = cartInfoBean.getCount();
+                        double totalPrice1 = GoodsPriceCalculate.getPrice(selectedCount1, Double.parseDouble(price));
+                        totalPrice = totalPrice + totalPrice1;
+                        selectedCount = selectedCount + selectedCount1;
+                    }
+                }
             }
-
-            totalCount = totalCount + cartInfoBean.getCount();
         }
         infos[0] = (selectedCount + "");
         infos[1] = new BigDecimal(totalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "";
-        infos[2] = String.valueOf(totalCount);
         return infos;
     }
 
     /**
      * 获取结算商品
      */
-    public static List<CartInfoBean> getSettlementGoods(List<CartInfoBean> shopGoodsList) {
+    public static List<CartInfoBean> getSettlementGoods(List<MultiItemEntity> shopGoodsList) {
         List<CartInfoBean> shopCarGoodsSkuList = new ArrayList<>();
         for (int i = 0; i < shopGoodsList.size(); i++) {
-            CartInfoBean cartInfoBean = shopGoodsList.get(i);
+            CartInfoBean cartInfoBean = (CartInfoBean) shopGoodsList.get(i);
             boolean isSelected = cartInfoBean.isSelected();
             if (isSelected) {
                 shopCarGoodsSkuList.add(cartInfoBean);
@@ -151,11 +160,11 @@ public class ShopCarDao {
     /**
      * 获取选中的商品购物车id集合
      */
-    public static List<Integer> getCartIds(List<CartInfoBean> shopGoodsList) {
+    public static List<Integer> getCartIds(List<MultiItemEntity> shopGoodsList) {
         List<Integer> cartIds = new ArrayList<>();
-        for (CartInfoBean cartInfoBean : shopGoodsList) {
-            if (cartInfoBean.isSelected() && isValid(cartInfoBean)) {
-                cartIds.add(cartInfoBean.getId());
+        for (MultiItemEntity multiItemEntity : shopGoodsList) {
+            if (multiItemEntity.getItemType() == PRODUCT && ((CartInfoBean) multiItemEntity).isSelected() && isValid((CartInfoBean) multiItemEntity)) {
+                cartIds.add(((CartInfoBean) multiItemEntity).getId());
             }
         }
         return cartIds;
@@ -170,27 +179,28 @@ public class ShopCarDao {
     }
 
     //匹配购物车id
-    public static boolean matchCartId(ShopCartBean shopCartBean, CartInfoBean cartInfoBean) {
-        boolean match = false;
+    public static void notifyItemChange(ShopCarGoodsAdapter shopCarGoodsAdapter, ShopCartBean shopCartBean, CartInfoBean cartInfoBean) {
         List<CartBean> carts = shopCartBean.getCarts();
         //修改有活动信息的商品时，活动规则有可能会发生变化，所以需要更新
         if (carts != null && carts.size() > 0) {
             for (CartBean cartBean : carts) {
                 List<CartInfoBean> cartInfoList = cartBean.getCartInfoList();
-                if (cartInfoList!=null&&cartInfoList.size()>0){
+                if (cartInfoList != null && cartInfoList.size() > 0) {
                     for (CartInfoBean bean : cartInfoList) {
                         if (bean.getId() == cartInfoBean.getId()) {
                             cartInfoBean.update(bean);
-                            cartInfoBean.setActivityInfoData(cartBean.getActivityInfo());
-                            match = true;
+                            ActivityInfoBean activityInfoBean = ((ActivityInfoBean) shopCarGoodsAdapter.getData().get(cartInfoBean.getParentPosition()));
+                            if (cartBean.getActivityInfo() != null) {
+                                activityInfoBean.setActivityRule(cartBean.getActivityInfo().getActivityRule());
+                            }
+                            shopCarGoodsAdapter.notifyItemChanged(cartInfoBean.getParentPosition());
+                            shopCarGoodsAdapter.notifyItemChanged(cartInfoBean.getPosition());
                             break;
                         }
                     }
                 }
             }
         }
-
-        return match;
     }
 
     /*=====================上面是普通商品购物车相关业务，下面是组合搭配商品购物车业务=========================*/

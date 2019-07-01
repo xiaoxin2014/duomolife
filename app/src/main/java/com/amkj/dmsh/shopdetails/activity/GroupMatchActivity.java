@@ -333,7 +333,6 @@ public class GroupMatchActivity extends BaseActivity {
                                 mTvAddCar.setEnabled(false);
                                 //加入购物车
                                 Map<String, Object> params = new HashMap<>();
-                                params.put("userId", userId);
                                 String combines = ShopCarDao.getCombines(groupGoods);
                                 if (!TextUtils.isEmpty(combines)) {
                                     params.put("combines", combines);
